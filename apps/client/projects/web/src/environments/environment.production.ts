@@ -7,6 +7,8 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 const runtimeSiteUrl = runtimeGlobals.process?.env?.['PUBLIC_SITE_URL']
   ? runtimeGlobals.process.env['PUBLIC_SITE_URL']
   : defaultSiteUrl;
+const runtimeGa4Id =
+  runtimeGlobals.process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 
 export const environment = {
   environmentName: 'production',
@@ -15,5 +17,5 @@ export const environment = {
   apiBaseUrl: '',
   supabaseUrl: '',
   supabasePublishableKey: '',
-  ga4Id: '',
+  ga4Id: runtimeGa4Id,
 };

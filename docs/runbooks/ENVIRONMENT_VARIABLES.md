@@ -106,6 +106,9 @@ Variable optionnelle utile côté build :
 
 - `PUBLIC_SITE_URL` alimente le sitemap, `robots.txt` et la valeur de repli du
   site public lors des builds web hébergés
+- `PUBLIC_GA4_ID` (ex. `G-XXXXXXXXXX`) active Google Analytics 4 sur le site
+  web public lors du build `production`. Si la variable n'est pas définie,
+  l'analytics reste totalement désactivée (aucun script chargé)
 
 ## Supabase — `supabase/`
 

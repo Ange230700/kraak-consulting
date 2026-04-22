@@ -1,6 +1,8 @@
 import {
   ApplicationConfig,
   ErrorHandler,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideRouter, TitleStrategy } from '@angular/router';
@@ -14,6 +16,11 @@ import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
 import { KraakPreset } from './config/kraak-preset';
 import { KraakErrorHandler } from './core/error-handler/kraak-error-handler';
+import {
+  AnalyticsService,
+  GA4_MEASUREMENT_ID,
+} from './core/analytics/analytics.service';
+import { environment } from '../environments/environment';
 import { SeoTitleStrategy } from './seo/seo-title.strategy';
 
 export const appConfig: ApplicationConfig = {
@@ -42,5 +49,9 @@ export const appConfig: ApplicationConfig = {
       provide: TitleStrategy,
       useClass: SeoTitleStrategy,
     },
+    { provide: GA4_MEASUREMENT_ID, useValue: environment.ga4Id },
+    provideAppInitializer(() => {
+      inject(AnalyticsService).initialize();
+    }),
   ],
 };
