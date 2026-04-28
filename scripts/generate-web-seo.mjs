@@ -1,3 +1,5 @@
+// scripts\generate-web-seo.mjs
+
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,11 +21,36 @@ const seoSourcePath = join(
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
 const defaultSiteUrl = 'https://kraak-group.vercel.app';
 
+const trimTrailingSlashes = (value) => {
+  let end = value.length;
+
+  while (end > 0 && value.codePointAt(end - 1) === 47) {
+    end -= 1;
+  }
+
+  return value.slice(0, end);
+};
+
 const normalizeSiteUrl = (siteUrl) =>
-  siteUrl.replaceAll(/\/+$/g, '') || defaultSiteUrl;
+  trimTrailingSlashes(siteUrl) || defaultSiteUrl;
+
+const trimSlashes = (value) => {
+  let start = 0;
+  let end = value.length;
+
+  while (start < end && value.codePointAt(start) === 47) {
+    start += 1;
+  }
+
+  while (end > start && value.codePointAt(end - 1) === 47) {
+    end -= 1;
+  }
+
+  return value.slice(start, end);
+};
 
 const buildAbsoluteUrl = (path, siteUrl) => {
-  const normalizedPath = path.replaceAll(/^\/+|\/+$/g, '');
+  const normalizedPath = trimSlashes(path);
   const pathname = normalizedPath.length > 0 ? `/${normalizedPath}` : '/';
 
   return new URL(pathname, `${normalizeSiteUrl(siteUrl)}/`).toString();

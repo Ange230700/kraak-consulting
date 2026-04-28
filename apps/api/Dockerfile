@@ -1,3 +1,5 @@
+# apps\api\Dockerfile
+
 # -------------------------------------------------------------------
 # Image Docker multi-étapes pour @kraak/api (NestJS)
 # Contexte de build : racine du dépôt (docker build -f apps/api/Dockerfile .)
@@ -14,9 +16,10 @@ FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY apps/api/package.json apps/api/
 COPY apps/client/package.json apps/client/
+COPY packages/api-client/package.json packages/api-client/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/tokens/package.json packages/tokens/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # --- Étape 2 : build TypeScript ---
 FROM deps AS build
