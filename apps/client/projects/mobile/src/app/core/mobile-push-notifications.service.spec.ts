@@ -304,14 +304,7 @@ describe('MobilePushNotificationsService', () => {
     const service = TestBed.inject(MobilePushNotificationsService);
     const serviceForSpy = service as unknown as {
       resolveReceivePermission: () => Promise<'granted' | 'denied' | 'prompt'>;
-      registerAndResolveToken: () => Promise<
-        | { status: 'enabled'; token: string; reason: 'fcm-registration-ready' }
-        | {
-            status: 'stub';
-            token: string;
-            reason: 'registration-error' | 'registration-timeout';
-          }
-      >;
+      registerAndResolveToken: () => Promise<string>;
     };
 
     const resolveReceivePermissionSpy = vi
