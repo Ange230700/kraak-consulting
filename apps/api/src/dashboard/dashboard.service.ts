@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import type {
   AudienceTypeValue,
+  CohortStatusValue,
   DashboardAggregateDto,
   DashboardAnnouncementSummaryDto,
   DashboardProgramSummaryDto,
@@ -28,7 +29,7 @@ type EnrollmentProgramRow = {
 type EnrollmentCohortRow = {
   id: string;
   name: string;
-  status: string;
+  status: CohortStatusValue;
   start_date: string;
 };
 
@@ -37,8 +38,8 @@ type EnrollmentRow = {
   status: EnrollmentStatusValue;
   program_id: string;
   cohort_id: string | null;
-  program: EnrollmentProgramRow[] | null;
-  cohort: EnrollmentCohortRow[] | null;
+  program: EnrollmentProgramRow | EnrollmentProgramRow[] | null;
+  cohort: EnrollmentCohortRow | EnrollmentCohortRow[] | null;
 };
 
 type SessionProgramRow = {
@@ -50,7 +51,7 @@ type SessionProgramRow = {
 type SessionCohortRow = {
   id: string;
   name: string;
-  program: SessionProgramRow[] | null;
+  program: SessionProgramRow | SessionProgramRow[] | null;
 };
 
 type SessionRow = {
@@ -63,11 +64,15 @@ type SessionRow = {
   location_label: string | null;
   meeting_link: string | null;
   cohort_id: string;
-  cohort: SessionCohortRow[] | null;
+  cohort: SessionCohortRow | SessionCohortRow[] | null;
 };
 
-function firstOrNull<T>(value: T[] | null | undefined): T | null {
-  return Array.isArray(value) && value.length > 0 ? value[0] : null;
+function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value ?? null;
 }
 
 type AnnouncementRow = {
@@ -169,8 +174,8 @@ export class DashboardService {
 
     return ((data as EnrollmentRow[] | null) ?? [])
       .map((row) => {
-        const program = firstOrNull(row.program);
-        const cohort = firstOrNull(row.cohort);
+        const program = normalizeRelation(row.program);
+        const cohort = normalizeRelation(row.cohort);
 
         return {
           enrollmentId: row.id,
@@ -212,8 +217,8 @@ export class DashboardService {
 
     return ((data as SessionRow[] | null) ?? [])
       .map((row) => {
-        const cohort = firstOrNull(row.cohort);
-        const program = firstOrNull(cohort?.program);
+        const cohort = normalizeRelation(row.cohort);
+        const program = normalizeRelation(cohort?.program);
 
         return {
           id: row.id,
@@ -239,14 +244,29 @@ export class DashboardService {
     cohortIds: string[],
   ): Promise<DashboardAnnouncementSummaryDto[]> {
     const adminClient = this.supabaseService.getClient();
+    const visibilityFilters = ['audience_type.eq.all_participants'];
+
+    if (programIds.length > 0) {
+      visibilityFilters.push(
+        `and(audience_type.eq.program,program_id.in.(${programIds.join(',')}))`,
+      );
+    }
+
+    if (cohortIds.length > 0) {
+      visibilityFilters.push(
+        `and(audience_type.eq.cohort,cohort_id.in.(${cohortIds.join(',')}))`,
+      );
+    }
+
     const { data, error } = await adminClient
       .from('announcement')
       .select(
         'id, title, body, audience_type, program_id, cohort_id, published_at',
       )
       .eq('status', 'published')
+      .or(visibilityFilters.join(','))
       .order('published_at', { ascending: false })
-      .limit(30);
+      .limit(5);
 
     if (error) {
       throw new InternalServerErrorException({
@@ -257,7 +277,6 @@ export class DashboardService {
 
     return ((data as AnnouncementRow[] | null) ?? [])
       .filter((row) => this.isAnnouncementVisible(row, programIds, cohortIds))
-      .slice(0, 5)
       .map((row) => ({
         id: row.id,
         title: row.title,

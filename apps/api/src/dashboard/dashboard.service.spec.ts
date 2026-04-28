@@ -15,12 +15,24 @@ function createListQuery(result: { data: unknown; error: unknown }) {
   return {
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
+    or: jest.fn().mockReturnThis(),
     in: jest.fn().mockReturnThis(),
     gte: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
     limit: jest.fn().mockResolvedValue(result),
   };
 }
+
+type QueryConfig = {
+  participantData?: unknown;
+  participantError?: unknown;
+  enrollmentData?: unknown;
+  enrollmentError?: unknown;
+  sessionData?: unknown;
+  sessionError?: unknown;
+  announcementData?: unknown;
+  announcementError?: unknown;
+};
 
 describe('DashboardService', () => {
   let service: DashboardService;
@@ -40,88 +52,94 @@ describe('DashboardService', () => {
     getClient: jest.fn(() => adminClient),
   };
 
-  beforeEach(async () => {
-    jest.clearAllMocks();
+  const defaultConfig = (): QueryConfig => ({
+    participantData: { id: 'participant-1' },
+    participantError: null,
+    enrollmentData: [
+      {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership de service.',
+          status: 'published',
+          visibility: 'participants',
+        },
+        cohort: {
+          id: 'cohort-1',
+          name: 'Cohorte Avril',
+          status: 'active',
+          start_date: '2026-04-01',
+          end_date: null,
+        },
+      },
+    ],
+    enrollmentError: null,
+    sessionData: [
+      {
+        id: 'session-1',
+        cohort_id: 'cohort-1',
+        title: 'Atelier Vision',
+        status: 'scheduled',
+        starts_at: '2026-04-30T09:00:00.000Z',
+        ends_at: '2026-04-30T11:00:00.000Z',
+        location_type: 'online',
+        location_label: null,
+        meeting_link: 'https://meet.example.com/kraak',
+        cohort: {
+          id: 'cohort-1',
+          name: 'Cohorte Avril',
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+          },
+        },
+      },
+    ],
+    sessionError: null,
+    announcementData: [
+      {
+        id: 'announcement-1',
+        title: 'Session spéciale mentorat',
+        body: 'Une session additionnelle est planifiée vendredi prochain.',
+        audience_type: 'all_participants',
+        program_id: null,
+        cohort_id: null,
+        published_at: '2026-04-27T08:00:00.000Z',
+      },
+    ],
+    announcementError: null,
+  });
+
+  function mockDashboardQueries(overrides?: QueryConfig) {
+    const config = {
+      ...defaultConfig(),
+      ...overrides,
+    };
 
     const participantQuery = createSingleRowQuery({
-      data: { id: 'participant-1' },
-      error: null,
+      data: config.participantData,
+      error: config.participantError,
     });
 
     const enrollmentQuery = createListQuery({
-      data: [
-        {
-          id: 'enrollment-1',
-          status: 'active',
-          program_id: 'program-1',
-          cohort_id: 'cohort-1',
-          program: [
-            {
-              id: 'program-1',
-              slug: 'leadership-essentials',
-              title: 'Leadership Essentials',
-              summary: 'Bases du leadership de service.',
-              status: 'published',
-              visibility: 'participants',
-            },
-          ],
-          cohort: [
-            {
-              id: 'cohort-1',
-              name: 'Cohorte Avril',
-              status: 'active',
-              start_date: '2026-04-01',
-              end_date: null,
-            },
-          ],
-        },
-      ],
-      error: null,
+      data: config.enrollmentData,
+      error: config.enrollmentError,
     });
 
     const sessionQuery = createListQuery({
-      data: [
-        {
-          id: 'session-1',
-          cohort_id: 'cohort-1',
-          title: 'Atelier Vision',
-          status: 'scheduled',
-          starts_at: '2026-04-30T09:00:00.000Z',
-          ends_at: '2026-04-30T11:00:00.000Z',
-          location_type: 'online',
-          location_label: null,
-          meeting_link: 'https://meet.example.com/kraak',
-          cohort: [
-            {
-              id: 'cohort-1',
-              name: 'Cohorte Avril',
-              program: [
-                {
-                  id: 'program-1',
-                  slug: 'leadership-essentials',
-                  title: 'Leadership Essentials',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      error: null,
+      data: config.sessionData,
+      error: config.sessionError,
     });
 
     const announcementQuery = createListQuery({
-      data: [
-        {
-          id: 'announcement-1',
-          title: 'Session spéciale mentorat',
-          body: 'Une session additionnelle est planifiée vendredi prochain.',
-          audience_type: 'all_participants',
-          program_id: null,
-          cohort_id: null,
-          published_at: '2026-04-27T08:00:00.000Z',
-        },
-      ],
-      error: null,
+      data: config.announcementData,
+      error: config.announcementError,
     });
 
     adminClient.from.mockImplementation((tableName: string) => {
@@ -143,6 +161,11 @@ describe('DashboardService', () => {
 
       throw new Error(`Unexpected table ${tableName}`);
     });
+  }
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    mockDashboardQueries();
 
     authClient.auth.getUser.mockResolvedValue({
       data: {
@@ -219,23 +242,79 @@ describe('DashboardService', () => {
   // When l'agrégat dashboard est demandé
   // Then une réponse vide et stable est renvoyée
   it('Given un utilisateur sans participant, When getAggregate est appelé, Then une réponse vide est renvoyée', async () => {
-    const participantQuery = createSingleRowQuery({
-      data: null,
-      error: null,
-    });
-
-    adminClient.from.mockImplementation((tableName: string) => {
-      if (tableName === 'participant') {
-        return participantQuery;
-      }
-
-      throw new Error(`Unexpected table ${tableName}`);
+    mockDashboardQueries({
+      participantData: null,
     });
 
     await expect(service.getAggregate('access-token')).resolves.toMatchObject({
       programs: [],
       upcomingSessions: [],
       recentAnnouncements: [],
+    });
+  });
+
+  // Given une liste d'annonces mixte
+  // When l'agrégat dashboard est construit
+  // Then seules les annonces visibles du participant sont conservées
+  it('Given des annonces mixtes, When getAggregate est appelé, Then seules les annonces visibles sont renvoyées', async () => {
+    mockDashboardQueries({
+      announcementData: [
+        {
+          id: 'announcement-custom',
+          title: 'Annonce custom',
+          body: 'Non visible',
+          audience_type: 'custom',
+          program_id: null,
+          cohort_id: null,
+          published_at: '2026-05-01T11:00:00.000Z',
+        },
+        {
+          id: 'announcement-program',
+          title: 'Annonce programme',
+          body: 'Visible via programme',
+          audience_type: 'program',
+          program_id: 'program-1',
+          cohort_id: null,
+          published_at: '2026-05-01T10:00:00.000Z',
+        },
+        {
+          id: 'announcement-cohort',
+          title: 'Annonce cohorte',
+          body: 'Visible via cohorte',
+          audience_type: 'cohort',
+          program_id: null,
+          cohort_id: 'cohort-1',
+          published_at: '2026-05-01T09:00:00.000Z',
+        },
+      ],
+    });
+
+    await expect(service.getAggregate('access-token')).resolves.toMatchObject({
+      recentAnnouncements: [
+        {
+          id: 'announcement-program',
+        },
+        {
+          id: 'announcement-cohort',
+        },
+      ],
+    });
+  });
+
+  // Given une erreur de lecture des annonces
+  // When l'agrégat dashboard est demandé
+  // Then une erreur serveur explicite est renvoyée
+  it('Given une erreur de base sur les annonces, When getAggregate est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    mockDashboardQueries({
+      announcementData: null,
+      announcementError: { message: 'db-error' },
+    });
+
+    await expect(service.getAggregate('access-token')).rejects.toMatchObject({
+      response: {
+        success: false,
+        message: 'Impossible de charger les annonces du dashboard.',
+      },
     });
   });
 });

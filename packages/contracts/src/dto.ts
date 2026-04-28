@@ -104,7 +104,7 @@ export interface DashboardProgramSummaryDto {
   enrollmentStatus: EnrollmentStatusValue;
   cohortId: string | null;
   cohortName: string | null;
-  cohortStatus: string | null;
+  cohortStatus: CohortStatusValue | null;
   cohortStartDate: string | null;
 }
 

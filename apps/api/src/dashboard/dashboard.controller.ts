@@ -60,7 +60,11 @@ const dashboardAggregateSchema = {
           },
           cohortId: { type: 'string', nullable: true },
           cohortName: { type: 'string', nullable: true },
-          cohortStatus: { type: 'string', nullable: true },
+          cohortStatus: {
+            type: 'string',
+            nullable: true,
+            enum: ['draft', 'planned', 'active', 'completed', 'archived'],
+          },
           cohortStartDate: { type: 'string', nullable: true },
         },
       },
@@ -143,7 +147,7 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get()
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary:
       'Récupérer les données agrégées du dashboard participant (programmes, sessions, annonces)',
