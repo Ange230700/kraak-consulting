@@ -7,14 +7,22 @@ import {
 } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Component } from '@angular/core';
-import { authGuard, authChildGuard } from './auth.guard';
+import {
+  adminRoleChildGuard,
+  adminRoleGuard,
+  authChildGuard,
+  authGuard,
+  participantRoleChildGuard,
+  participantRoleGuard,
+} from './auth.guard';
 import { WebAuthService } from './web-auth.service';
 
 @Component({ template: '' })
 class DummyComponent {}
 
-const mockAuthService = (isAuthenticated: boolean) => ({
+const mockAuthService = (isAuthenticated: boolean, hasRole = false) => ({
   isAuthenticated: vi.fn(() => isAuthenticated),
+  hasRole: vi.fn(() => hasRole),
 });
 
 const buildRoute = (): ActivatedRouteSnapshot =>
@@ -114,5 +122,139 @@ describe('authChildGuard (web)', () => {
       const router = TestBed.inject(Router);
       expect(result).toEqual(router.createUrlTree(['/']));
     });
+  });
+});
+
+describe('participantRoleGuard (web)', () => {
+  describe('Given an authenticated participant user', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          provideRouter([]),
+          {
+            provide: WebAuthService,
+            useValue: mockAuthService(true, true),
+          },
+        ],
+      });
+    });
+
+    it('when the participant role guard is triggered, then navigation is allowed', () => {
+      const result = TestBed.runInInjectionContext(() =>
+        participantRoleGuard(buildRoute(), buildState()),
+      );
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('Given an authenticated non-participant user', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          provideRouter([{ path: '', component: DummyComponent }]),
+          {
+            provide: WebAuthService,
+            useValue: mockAuthService(true, false),
+          },
+        ],
+      });
+    });
+
+    it('when the participant role guard is triggered, then the user is redirected to home', () => {
+      const result = TestBed.runInInjectionContext(() =>
+        participantRoleGuard(buildRoute(), buildState()),
+      );
+
+      const router = TestBed.inject(Router);
+      expect(result).toEqual(router.createUrlTree(['/']));
+    });
+  });
+});
+
+describe('participantRoleChildGuard (web)', () => {
+  it('Given an authenticated participant user, when the child role guard is triggered, then navigation is allowed', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: mockAuthService(true, true),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      participantRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('adminRoleGuard (web)', () => {
+  describe('Given an authenticated admin user', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          provideRouter([]),
+          {
+            provide: WebAuthService,
+            useValue: mockAuthService(true, true),
+          },
+        ],
+      });
+    });
+
+    it('when the admin role guard is triggered, then navigation is allowed', () => {
+      const result = TestBed.runInInjectionContext(() =>
+        adminRoleGuard(buildRoute(), buildState()),
+      );
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('Given an authenticated non-admin user', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [
+          provideRouter([{ path: '', component: DummyComponent }]),
+          {
+            provide: WebAuthService,
+            useValue: mockAuthService(true, false),
+          },
+        ],
+      });
+    });
+
+    it('when the admin role guard is triggered, then the user is redirected to home', () => {
+      const result = TestBed.runInInjectionContext(() =>
+        adminRoleGuard(buildRoute(), buildState()),
+      );
+
+      const router = TestBed.inject(Router);
+      expect(result).toEqual(router.createUrlTree(['/']));
+    });
+  });
+});
+
+describe('adminRoleChildGuard (web)', () => {
+  it('Given an authenticated admin user, when the child admin role guard is triggered, then navigation is allowed', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: mockAuthService(true, true),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      adminRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    expect(result).toBe(true);
   });
 });

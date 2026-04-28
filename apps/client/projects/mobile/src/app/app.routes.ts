@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
+import { participantRoleGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -22,7 +22,7 @@ export const routes: Routes = [
     path: 'tabs',
     loadComponent: () =>
       import('./layouts/tabs/tabs.layout').then((m) => m.TabsLayout),
-    canActivate: [authGuard],
+    canActivate: [participantRoleGuard],
     children: [
       {
         path: 'accueil',
