@@ -81,6 +81,11 @@ Les environnements Angular sont définis dans :
 - `apps/client/projects/mobile/src/environments/environment.local.ts`
 - `apps/client/projects/mobile/src/environments/environment.staging.ts`
 
+Flags compile-time mobile (dans `projects/mobile/src/environments/environment.*.ts`) :
+
+- `pushNotificationsEnabled` (`boolean`) : active le wiring initial du service push mobile (`MOB-05`)
+- `pushNotificationsProvider` (`string`) : provider cible (valeur actuelle: `fcm`)
+
 Configurations Angular disponibles :
 
 - `web:build:local` remplace `environment.ts` par

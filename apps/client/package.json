@@ -57,6 +57,7 @@
     "@angular/ssr": "^21.2.7",
     "@capacitor/android": "^7.3.0",
     "@capacitor/core": "^7.3.0",
+    "@capacitor/push-notifications": "^7.0.3",
     "@ionic/angular": "^8.6.0",
     "@ionic/core": "8.8.3",
     "@kraak/api-client": "workspace:*",
