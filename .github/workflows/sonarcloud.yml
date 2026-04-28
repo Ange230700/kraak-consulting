@@ -1,0 +1,35 @@
+# Analyse SonarQube Cloud — kraak-group
+# Déclenchée sur push vers main et sur les pull requests ciblant main.
+# Nécessite les secrets : SONAR_TOKEN (token utilisateur SonarCloud).
+
+name: SonarCloud
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: sonarcloud-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Profondeur complète requise pour une analyse fiable (blame, etc.)
+          fetch-depth: 0
+
+      - name: Scan SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io

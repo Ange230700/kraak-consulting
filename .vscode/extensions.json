@@ -10,6 +10,9 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
 
+    // SonarLint (analyse statique, mode connecté à SonarCloud)
+    "sonarsource.sonarlint-vscode",
+
     // NestJS
     "ashinzekene.nestjs",
 

@@ -61,6 +61,10 @@ tmp/
 # Playwright MCP
 .playwright-mcp/
 
+# SonarQube / SonarLint (cache local, ne pas committer)
+.scannerwork/
+.sonarlint/connectedMode.local.json
+
 
 apps/client/projects/mobile/public/assets/runtime-config.js
 apps/client/projects/web/public/assets/runtime-config.js
