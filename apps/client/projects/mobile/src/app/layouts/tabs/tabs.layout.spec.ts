@@ -62,7 +62,7 @@ describe('TabsLayout', () => {
       fixture.nativeElement.querySelectorAll('ion-label'),
     ) as HTMLElement[];
     const texts = labels.map((l) =>
-      l.innerHTML.replace(/<!--.*?-->/g, '').trim(),
+      l.innerHTML.replaceAll(/<!--.*?-->/g, '').trim(),
     );
     expect(texts).toEqual(['Accueil', 'Programmes', 'Annonces', 'Support']);
   });
