@@ -120,7 +120,13 @@
           "defaultConfiguration": "local"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/web/tsconfig.spec.json",
+            "runnerConfig": "projects/web/vitest.config.ts",
+            "coverage": true,
+            "coverageReporters": ["lcov", "text"]
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
@@ -281,7 +287,9 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/mobile/tsconfig.spec.json",
-            "runnerConfig": "projects/mobile/vitest.config.ts"
+            "runnerConfig": "projects/mobile/vitest.config.ts",
+            "coverage": true,
+            "coverageReporters": ["lcov", "text"]
           }
         }
       }

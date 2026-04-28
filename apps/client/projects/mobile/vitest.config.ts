@@ -1,4 +1,8 @@
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Configuration Vitest pour le projet mobile.
@@ -31,6 +35,11 @@ export default defineConfig({
       deps: {
         inline: [/@ionic/, /ionicons/, /@stencil/],
       },
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      reportsDirectory: resolve(__dirname, '../../coverage/mobile'),
     },
   },
 });

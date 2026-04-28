@@ -32,6 +32,7 @@
     "test:workspace": "node --test ./scripts/workspace-commands.test.mjs ./scripts/ensure-capacitor-platform.test.mjs ./scripts/verify-supabase-auth-config.test.mjs ./scripts/verify-mobile-dev-server-config.test.mjs",
     "test:api": "pnpm --filter @kraak/api test",
     "test:libs": "pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test",
+    "test:coverage": "pnpm --filter @kraak/api test:cov && pnpm --filter @kraak/client test:coverage && pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test:coverage",
     "lint:api": "pnpm --filter @kraak/api lint",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
@@ -81,6 +82,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@vitest/coverage-v8": "^4.1.5",
     "commitizen": "^4.3.1",
     "cz-git": "^1.12.0",
     "husky": "^9.1.7",
