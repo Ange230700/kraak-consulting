@@ -59,18 +59,53 @@ function prefixStream(stream, prefix, target) {
   });
 }
 
+function needsWindowsQuoting(argument) {
+  for (let index = 0; index < argument.length; index += 1) {
+    const character = argument[index];
+
+    if (character === ' ' || character === '\t' || character === '"') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function quoteWindowsArgument(argument) {
   if (argument.length === 0) {
     return '""';
   }
 
-  if (!/[ \t"]/u.test(argument)) {
+  if (!needsWindowsQuoting(argument)) {
     return argument;
   }
 
-  const escaped1 = argument.replaceAll(/(\\*)"/g, String.raw`$1$1\"`);
-  const escaped2 = escaped1.replaceAll(/(\\+)$/g, '$1$1');
-  return `"${escaped2}"`;
+  let quotedArgument = '"';
+  let backslashCount = 0;
+
+  for (const element of argument) {
+    const character = element;
+
+    if (character === '\\') {
+      backslashCount += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
+      quotedArgument += '"';
+    } else {
+      quotedArgument += '\\'.repeat(backslashCount);
+      quotedArgument += character;
+    }
+
+    backslashCount = 0;
+  }
+
+  quotedArgument += '\\'.repeat(backslashCount * 2);
+  quotedArgument += '"';
+
+  return quotedArgument;
 }
 
 function spawnCommand(command) {
