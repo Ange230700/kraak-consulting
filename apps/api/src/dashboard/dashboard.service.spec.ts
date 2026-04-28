@@ -317,4 +317,126 @@ describe('DashboardService', () => {
       },
     });
   });
+
+  // Given une erreur de lecture du participant
+  // When l'agrégat dashboard est demandé
+  // Then une erreur serveur explicite est renvoyée
+  it('Given une erreur sur participant, When getAggregate est appelé, Then une InternalServerErrorException explicite est renvoyée', async () => {
+    mockDashboardQueries({
+      participantData: null,
+      participantError: { message: 'db-error' },
+    });
+
+    await expect(service.getAggregate('access-token')).rejects.toMatchObject({
+      response: {
+        success: false,
+        message: 'Impossible de charger le participant courant.',
+      },
+    });
+  });
+
+  // Given une erreur de lecture des programmes
+  // When l'agrégat dashboard est demandé
+  // Then une erreur serveur explicite est renvoyée
+  it('Given une erreur sur enrollment, When getAggregate est appelé, Then une InternalServerErrorException explicite est renvoyée', async () => {
+    mockDashboardQueries({
+      enrollmentData: null,
+      enrollmentError: { message: 'db-error' },
+    });
+
+    await expect(service.getAggregate('access-token')).rejects.toMatchObject({
+      response: {
+        success: false,
+        message: 'Impossible de charger les programmes du dashboard.',
+      },
+    });
+  });
+
+  // Given une erreur de lecture des sessions
+  // When l'agrégat dashboard est demandé
+  // Then une erreur serveur explicite est renvoyée
+  it('Given une erreur sur session, When getAggregate est appelé, Then une InternalServerErrorException explicite est renvoyée', async () => {
+    mockDashboardQueries({
+      sessionData: null,
+      sessionError: { message: 'db-error' },
+    });
+
+    await expect(service.getAggregate('access-token')).rejects.toMatchObject({
+      response: {
+        success: false,
+        message: 'Impossible de charger les sessions à venir du dashboard.',
+      },
+    });
+  });
+
+  // Given des relations imbriquées renvoyées sous forme de tableau
+  // When l'agrégat dashboard est demandé
+  // Then le service normalise les relations et conserve les données utiles
+  it('Given des relations en tableau, When getAggregate est appelé, Then la normalisation garde les données attendues', async () => {
+    mockDashboardQueries({
+      enrollmentData: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          program: [
+            {
+              id: 'program-1',
+              slug: 'leadership-essentials',
+              title: 'Leadership Essentials',
+              summary: 'Bases du leadership de service.',
+            },
+          ],
+          cohort: [
+            {
+              id: 'cohort-1',
+              name: 'Cohorte Avril',
+              status: 'active',
+              start_date: '2026-04-01',
+            },
+          ],
+        },
+      ],
+      sessionData: [
+        {
+          id: 'session-1',
+          cohort_id: 'cohort-1',
+          title: 'Atelier Vision',
+          status: 'scheduled',
+          starts_at: '2026-04-30T09:00:00.000Z',
+          ends_at: '2026-04-30T11:00:00.000Z',
+          location_type: 'online',
+          location_label: null,
+          meeting_link: 'https://meet.example.com/kraak',
+          cohort: [
+            {
+              id: 'cohort-1',
+              name: 'Cohorte Avril',
+              program: [
+                {
+                  id: 'program-1',
+                  slug: 'leadership-essentials',
+                  title: 'Leadership Essentials',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    await expect(service.getAggregate('access-token')).resolves.toMatchObject({
+      programs: [
+        {
+          title: 'Leadership Essentials',
+        },
+      ],
+      upcomingSessions: [
+        {
+          programTitle: 'Leadership Essentials',
+        },
+      ],
+    });
+  });
 });
