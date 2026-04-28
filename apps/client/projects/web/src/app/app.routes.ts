@@ -1,5 +1,6 @@
 import { Route, Routes } from '@angular/router';
 
+import { authGuard, authChildGuard } from './core/auth/auth.guard';
 import { findSeoPageByPath } from './seo/site-seo';
 
 const buildMarketingRoute = (
@@ -35,6 +36,23 @@ export const routes: Routes = [
     'contact',
     () => import('./features/contact/contact.page'),
   ),
+  {
+    path: 'participant',
+    canActivate: [authGuard],
+    canActivateChild: [authChildGuard],
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/participant/dashboard/dashboard.page'),
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+    ],
+  },
   {
     path: '**',
     redirectTo: '',
