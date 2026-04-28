@@ -3,6 +3,8 @@ export const environment = {
   production: true,
   siteUrl: 'https://client-six-indol-58.vercel.app',
   apiBaseUrl: 'https://kraak-api.onrender.com',
+  pushNotificationsEnabled: true,
+  pushNotificationsProvider: 'fcm',
   supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
   supabasePublishableKey: 'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
   ga4Id: '',
