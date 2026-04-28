@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { routes } from './app.routes';
-import { participantRoleGuard } from './core/auth/auth.guard';
+import {
+  participantRoleChildGuard,
+  participantRoleGuard,
+} from './core/auth/auth.guard';
 
 describe('Mobile routes', () => {
   const topPaths = routes.map((r) => r.path);
@@ -16,6 +19,7 @@ describe('Mobile routes', () => {
     expect(topPaths).toContain('tabs');
     const tabsRoute = routes.find((route) => route.path === 'tabs');
     expect(tabsRoute?.canActivate).toContain(participantRoleGuard);
+    expect(tabsRoute?.canActivateChild).toContain(participantRoleChildGuard);
   });
 
   it('should redirect empty path to tabs', () => {

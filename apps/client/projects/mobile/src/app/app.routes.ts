@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
-import { participantRoleGuard } from './core/auth/auth.guard';
+import {
+  participantRoleChildGuard,
+  participantRoleGuard,
+} from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -23,6 +26,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./layouts/tabs/tabs.layout').then((m) => m.TabsLayout),
     canActivate: [participantRoleGuard],
+    canActivateChild: [participantRoleChildGuard],
     children: [
       {
         path: 'accueil',
