@@ -1,5 +1,8 @@
 import { routes } from './app.routes';
-import { authGuard, authChildGuard } from './core/auth/auth.guard';
+import {
+  participantRoleGuard,
+  participantRoleChildGuard,
+} from './core/auth/auth.guard';
 
 describe('Web routes', () => {
   const paths = routes.map((r) => r.path);
@@ -42,8 +45,10 @@ describe('Web routes', () => {
     it('should define a protected participant route with auth guards', () => {
       const participantRoute = routes.find((r) => r.path === 'participant');
       expect(participantRoute).toBeDefined();
-      expect(participantRoute!.canActivate).toContain(authGuard);
-      expect(participantRoute!.canActivateChild).toContain(authChildGuard);
+      expect(participantRoute!.canActivate).toContain(participantRoleGuard);
+      expect(participantRoute!.canActivateChild).toContain(
+        participantRoleChildGuard,
+      );
     });
 
     it('should have a dashboard child route under participant', () => {

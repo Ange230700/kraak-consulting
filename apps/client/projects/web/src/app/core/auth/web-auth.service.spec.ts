@@ -99,8 +99,98 @@ describe('WebAuthService', () => {
 
       const stored = localStorage.getItem(WEB_AUTH_STORAGE_KEY);
       expect(stored).not.toBeNull();
-      const parsed = JSON.parse(stored!);
+      const parsed = JSON.parse(stored ?? '{}');
       expect(parsed.session.accessToken).toBe('access-token');
+    });
+
+    it('when the stored profile role is participant, then role helpers are resolved correctly', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signIn({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+      });
+
+      expect(service.currentRole()).toBe('participant');
+      expect(service.isParticipant()).toBe(true);
+      expect(service.isAdmin()).toBe(false);
+      expect(service.hasRole('participant')).toBe(true);
+      expect(service.hasRole('admin')).toBe(false);
+    });
+
+    it('when the stored profile role is admin, then role helpers detect admin access', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-2',
+              email: 'admin@example.com',
+              role: 'admin',
+              firstName: 'Admin',
+              lastName: 'Kraak',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signIn({
+        email: 'admin@example.com',
+        password: 'motdepasse-securise',
+      });
+
+      expect(service.currentRole()).toBe('admin');
+      expect(service.isAdmin()).toBe(true);
+      expect(service.isParticipant()).toBe(false);
+      expect(service.hasRole('admin')).toBe(true);
+      expect(service.hasRole('participant')).toBe(false);
     });
   });
 

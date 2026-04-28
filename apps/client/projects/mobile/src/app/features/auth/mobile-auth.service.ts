@@ -10,6 +10,7 @@ import type {
   SignInRequestDto,
   SignUpRequestDto,
   SignUpResponseDto,
+  UserRoleValue,
 } from '@kraak/contracts';
 import { environment } from '../../../environments/environment';
 
@@ -35,9 +36,19 @@ export class MobileAuthService {
 
   readonly currentSession = this.sessionState.asReadonly();
   readonly currentProfile = this.profileState.asReadonly();
+  readonly currentRole = computed<UserRoleValue | null>(
+    () => this.currentProfile()?.appUser.role ?? null,
+  );
   readonly isAuthenticated = computed(
     () => this.currentSession() !== null && this.currentProfile() !== null,
   );
+  readonly isParticipant = computed(() => this.currentRole() === 'participant');
+  readonly isAdmin = computed(() => this.currentRole() === 'admin');
+
+  hasRole(...roles: UserRoleValue[]): boolean {
+    const role = this.currentRole();
+    return role !== null && roles.includes(role);
+  }
 
   async signIn(body: SignInRequestDto): Promise<AuthSessionBundleDto> {
     const bundle = await this.client.auth.signIn(body);

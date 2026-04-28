@@ -1,6 +1,9 @@
 import { Route, Routes } from '@angular/router';
 
-import { authGuard, authChildGuard } from './core/auth/auth.guard';
+import {
+  participantRoleGuard,
+  participantRoleChildGuard,
+} from './core/auth/auth.guard';
 import { findSeoPageByPath } from './seo/site-seo';
 
 const buildMarketingRoute = (
@@ -38,8 +41,8 @@ export const routes: Routes = [
   ),
   {
     path: 'participant',
-    canActivate: [authGuard],
-    canActivateChild: [authChildGuard],
+    canActivate: [participantRoleGuard],
+    canActivateChild: [participantRoleChildGuard],
     children: [
       {
         path: 'dashboard',
