@@ -66,7 +66,7 @@ const requiredAssets = [
 function assertMatch(content, fragment) {
   assert.match(
     content,
-    new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+    new RegExp(fragment.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)),
   );
 }
 
