@@ -93,6 +93,55 @@ export interface AuthSessionContextDto {
 }
 
 // ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+export interface DashboardProgramSummaryDto {
+  enrollmentId: string;
+  programId: string;
+  slug: string;
+  title: string;
+  summary: string;
+  enrollmentStatus: EnrollmentStatusValue;
+  cohortId: string | null;
+  cohortName: string | null;
+  cohortStatus: CohortStatusValue | null;
+  cohortStartDate: string | null;
+}
+
+export interface DashboardSessionReminderDto {
+  id: string;
+  title: string;
+  status: SessionStatusValue;
+  startsAt: string;
+  endsAt: string;
+  locationType: LocationTypeValue;
+  locationLabel: string | null;
+  meetingLink: string | null;
+  cohortId: string;
+  cohortName: string;
+  programId: string;
+  programSlug: string;
+  programTitle: string;
+}
+
+export interface DashboardAnnouncementSummaryDto {
+  id: string;
+  title: string;
+  body: string;
+  audienceType: AudienceTypeValue;
+  programId: string | null;
+  cohortId: string | null;
+  publishedAt: string | null;
+}
+
+export interface DashboardAggregateDto {
+  generatedAt: string;
+  programs: DashboardProgramSummaryDto[];
+  upcomingSessions: DashboardSessionReminderDto[];
+  recentAnnouncements: DashboardAnnouncementSummaryDto[];
+}
+
+// ---------------------------------------------------------------------------
 // AppUser
 // ---------------------------------------------------------------------------
 export interface AppUserDto {
