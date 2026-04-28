@@ -1,0 +1,69 @@
+<main class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <section class="mb-12">
+      <h1 class="mb-2 text-4xl font-bold text-slate-900">
+        Bienvenue, {{ currentProfile()?.appUser?.firstName || 'Participant' }}!
+      </h1>
+      <p class="text-lg text-slate-600">
+        Retrouvez ci-dessous tous vos programmes et ressources de formation.
+      </p>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <article
+        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+      >
+        <h2
+          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
+        >
+          Programmes actifs
+        </h2>
+        <p class="text-3xl font-bold text-slate-900">—</p>
+        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
+      </article>
+
+      <article
+        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+      >
+        <h2
+          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
+        >
+          Sessions à venir
+        </h2>
+        <p class="text-3xl font-bold text-slate-900">—</p>
+        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
+      </article>
+
+      <article
+        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+      >
+        <h2
+          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
+        >
+          Ressources disponibles
+        </h2>
+        <p class="text-3xl font-bold text-slate-900">—</p>
+        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
+      </article>
+    </section>
+
+    <!-- Placeholder Content -->
+    <section class="rounded-lg bg-white p-8 shadow-md">
+      <h2 class="mb-4 text-2xl font-bold text-slate-900">Prochaines étapes</h2>
+      <p class="mb-6 text-slate-600">
+        Consultez vos programmes, sessions et ressources disponibles via la
+        navigation web.
+      </p>
+      <div class="space-y-3">
+        <a
+          href="/programmes"
+          class="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+        >
+          Voir mes programmes
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
