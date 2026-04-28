@@ -17,6 +17,7 @@ vi.mock('@capacitor/push-notifications', () => ({
 import { environment } from '../../environments/environment';
 import {
   MobilePushNotificationsService,
+  type PushInitializationResult,
   provideMobilePushNotificationsInitialization,
 } from './mobile-push-notifications.service';
 
@@ -258,8 +259,8 @@ describe('MobilePushNotificationsService', () => {
     const service = TestBed.inject(MobilePushNotificationsService);
     const result = await service.initialize();
 
-    expect(result.status).toBe('enabled');
-    expect(result.reason).toBe('fcm-registration-ready');
+    expect(result.status).toBe('stub');
+    expect(result.reason).toBe('registration-error');
     expect(result.token).toBe('stub-mobile-token-local-registration-error');
 
     expect(removers.get('registration')).toHaveBeenCalledOnce();
@@ -268,6 +269,8 @@ describe('MobilePushNotificationsService', () => {
     expect(service.currentToken()).toBe(
       'stub-mobile-token-local-registration-error',
     );
+    expect(service.currentStatus()).toBe('stub');
+    expect(service.currentReason()).toBe('registration-error');
   });
 
   it('Given registration does not emit a token, when the timeout is reached, then a timeout fallback token is exposed', async () => {
@@ -290,12 +293,32 @@ describe('MobilePushNotificationsService', () => {
 
     const result = await initializationPromise;
 
-    expect(result.status).toBe('enabled');
-    expect(result.reason).toBe('fcm-registration-ready');
+    expect(result.status).toBe('stub');
+    expect(result.reason).toBe('registration-timeout');
     expect(result.token).toBe('stub-mobile-token-local-registration-timeout');
 
     expect(removers.get('registration')).toHaveBeenCalledOnce();
     expect(removers.get('registrationError')).toHaveBeenCalledOnce();
+    expect(service.currentStatus()).toBe('stub');
+    expect(service.currentReason()).toBe('registration-timeout');
+  });
+
+  it('Given push plugin throws during initialization, when initializing, then a generic stub token is returned', async () => {
+    getPlatformMock.mockReturnValue('android');
+    pushNotificationsMock.checkPermissions.mockRejectedValue(
+      new Error('plugin-not-available'),
+    );
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    const result = await service.initialize();
+
+    expect(result.status).toBe('stub');
+    expect(result.reason).toBe('initialization-error');
+    expect(result.token).toBe('stub-mobile-token-local-initialization-error');
+
+    expect(service.currentToken()).toBe(result.token);
+    expect(service.currentStatus()).toBe('stub');
+    expect(service.currentReason()).toBe('initialization-error');
   });
 
   it('Given initialize is called more than once, when the first initialization is pending, then the same initialization result is reused', async () => {
@@ -304,7 +327,7 @@ describe('MobilePushNotificationsService', () => {
     const service = TestBed.inject(MobilePushNotificationsService);
     const serviceForSpy = service as unknown as {
       resolveReceivePermission: () => Promise<'granted' | 'denied' | 'prompt'>;
-      registerAndResolveToken: () => Promise<string>;
+      registerAndResolveToken: () => Promise<PushInitializationResult>;
     };
 
     const resolveReceivePermissionSpy = vi
@@ -313,7 +336,11 @@ describe('MobilePushNotificationsService', () => {
 
     const registerAndResolveTokenSpy = vi
       .spyOn(serviceForSpy, 'registerAndResolveToken')
-      .mockResolvedValue('memoized-token');
+      .mockResolvedValue({
+        status: 'enabled',
+        token: 'memoized-token',
+        reason: 'fcm-registration-ready',
+      });
 
     const [firstResult, secondResult] = await Promise.all([
       service.initialize(),

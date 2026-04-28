@@ -285,7 +285,7 @@ Enveloppe MVP (globale) :
 - Les éléments Souhaite ne peuvent être pris que si l'Indispensable est terminé et que la stabilité pilote n'est pas à risque.
 - Les éléments Plus tard restent hors périmètre jusqu'à décision post-pilote.
 
-## 11. Validation evidence - MOB-01 (Initialiser app Ionic Angular)
+## 11. Preuves de validation - MOB-01 (Initialiser app Ionic Angular)
 
 Contexte de vérification (date : 2026-04-28) :
 
@@ -314,9 +314,9 @@ Conclusion d'acceptation MOB-01 :
 
 - Scope MOB-01 implémenté : Oui (application Ionic Angular initialisée et buildable)
 - Dépendance SET-01 satisfaite : Oui (workspace Angular monorepo déjà en place)
-- Validation evidence ajoutée : Oui (section présente dans ce document)
+- Preuves de validation ajoutées : Oui (section présente dans ce document)
 
-## 12. Validation evidence - MOB-03 (Theming, design tokens et composants UI)
+## 12. Preuves de validation - MOB-03 (Theming, design tokens et composants UI)
 
 Contexte de vérification (date : 2026-04-28) :
 
@@ -366,4 +366,4 @@ Conclusion d'acceptation MOB-03 :
 
 - Scope MOB-03 implémenté : Oui
 - Dépendances MOB-01, LIB-01 satisfaites : Oui (app mobile initialisée + package `contracts` existant et utilisé dans le monorepo)
-- Validation evidence ajoutée : Oui (section présente dans ce document)
+- Preuves de validation ajoutées : Oui (section présente dans ce document)

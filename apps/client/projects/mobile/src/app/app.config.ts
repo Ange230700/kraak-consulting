@@ -14,6 +14,13 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideIonicAngular(),
-    provideAppInitializer(provideMobilePushNotificationsInitialization()),
+    provideAppInitializer(() => {
+      const initializeMobilePushNotifications =
+        provideMobilePushNotificationsInitialization();
+
+      void Promise.resolve(initializeMobilePushNotifications()).catch(
+        () => undefined,
+      );
+    }),
   ],
 };

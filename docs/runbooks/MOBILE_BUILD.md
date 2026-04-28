@@ -131,7 +131,7 @@ Objectif du stub MVP :
 - retourner un token device (token FCM en natif, token stub en fallback)
 - preparer les listeners minimaux pour la suite des travaux (`ANN-04`)
 
-Fichiers relies :
+Fichiers reliés :
 
 - `apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.ts`
 - `apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.spec.ts`

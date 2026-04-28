@@ -18,6 +18,12 @@ export interface PushInitializationResult {
   reason: string;
 }
 
+interface TokenResolutionResult {
+  token: string;
+  status: PushInitializationStatus;
+  reason: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -47,14 +53,23 @@ export class MobilePushNotificationsService {
       return this.applyStubState('non-native-platform');
     }
 
-    const receivePermission = await this.resolveReceivePermission();
+    try {
+      const receivePermission = await this.resolveReceivePermission();
 
-    if (receivePermission !== 'granted') {
-      return this.applyStubState('permission-not-granted');
+      if (receivePermission !== 'granted') {
+        return this.applyStubState('permission-not-granted');
+      }
+
+      const registrationResult = await this.registerAndResolveToken();
+
+      if (registrationResult.status === 'stub') {
+        return this.applyStubState(registrationResult.reason);
+      }
+
+      return this.applyEnabledState(registrationResult.token);
+    } catch {
+      return this.applyStubState('initialization-error');
     }
-
-    const token = await this.registerAndResolveToken();
-    return this.applyEnabledState(token);
   }
 
   private async resolveReceivePermission(): Promise<
@@ -70,22 +85,30 @@ export class MobilePushNotificationsService {
     return requestedPermission.receive;
   }
 
-  private async registerAndResolveToken(): Promise<string> {
-    let resolveToken: ((value: string) => void) | null = null;
-    const tokenPromise = new Promise<string>((resolve) => {
+  private async registerAndResolveToken(): Promise<TokenResolutionResult> {
+    let resolveToken: ((value: TokenResolutionResult) => void) | null = null;
+    const tokenPromise = new Promise<TokenResolutionResult>((resolve) => {
       resolveToken = resolve;
     });
 
     const registrationListener = await PushNotifications.addListener(
       'registration',
       (token: Token) => {
-        resolveToken?.(token.value);
+        resolveToken?.({
+          token: token.value,
+          status: 'enabled',
+          reason: 'fcm-registration-ready',
+        });
       },
     );
     const registrationErrorListener = await PushNotifications.addListener(
       'registrationError',
       () => {
-        resolveToken?.(this.buildStubToken('registration-error'));
+        resolveToken?.({
+          token: this.buildStubToken('registration-error'),
+          status: 'stub',
+          reason: 'registration-error',
+        });
       },
     );
     await PushNotifications.addListener(
@@ -100,13 +123,29 @@ export class MobilePushNotificationsService {
     try {
       await PushNotifications.register();
 
-      const timeoutFallbackToken = new Promise<string>((resolve) => {
-        setTimeout(() => {
-          resolve(this.buildStubToken('registration-timeout'));
-        }, FCM_REGISTRATION_TIMEOUT_MS);
-      });
+      let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+      const timeoutFallbackToken = new Promise<TokenResolutionResult>(
+        (resolve) => {
+          timeoutHandle = setTimeout(() => {
+            resolve({
+              token: this.buildStubToken('registration-timeout'),
+              status: 'stub',
+              reason: 'registration-timeout',
+            });
+          }, FCM_REGISTRATION_TIMEOUT_MS);
+        },
+      );
 
-      return await Promise.race([tokenPromise, timeoutFallbackToken]);
+      const registrationResult = await Promise.race([
+        tokenPromise,
+        timeoutFallbackToken,
+      ]);
+
+      if (timeoutHandle !== undefined) {
+        clearTimeout(timeoutHandle);
+      }
+
+      return registrationResult;
     } finally {
       await registrationListener.remove();
       await registrationErrorListener.remove();
@@ -161,6 +200,6 @@ export function provideMobilePushNotificationsInitialization(): () => Promise<vo
   return async () => {
     const pushNotificationsService = inject(MobilePushNotificationsService);
 
-    await pushNotificationsService.initialize();
+    void pushNotificationsService.initialize().catch(() => undefined);
   };
 }
