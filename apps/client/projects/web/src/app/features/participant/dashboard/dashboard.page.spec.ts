@@ -25,6 +25,34 @@ describe('Web Participant Dashboard Page', () => {
         TestBed.createComponent(DashboardPage).componentInstance;
       expect(component.currentProfile).toBeDefined();
     });
+
+    it('Given the participant dashboard loads, when the template is rendered, then it should expose MVP summary cards, reminders, latest news and quick links', () => {
+      TestBed.configureTestingModule({
+        imports: [DashboardPage],
+        providers: [WebAuthService],
+      });
+
+      const fixture = TestBed.createComponent(DashboardPage);
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      const text = element.textContent ?? '';
+      const links = Array.from(element.querySelectorAll('a')).map((anchor) =>
+        anchor.getAttribute('href'),
+      );
+
+      expect(text).toContain("Vue d'ensemble");
+      expect(text).toContain('Rappels');
+      expect(text).toContain('Dernieres actus');
+      expect(text).toContain('Programmes suivis');
+      expect(text).toContain('Prochaine session');
+      expect(text).toContain('Ressources a ouvrir');
+      expect(text).toContain('Finaliser votre dossier participant');
+      expect(text).toContain('Nouvelle annonce');
+      expect(links).toEqual(
+        expect.arrayContaining(['/programmes', '/contact']),
+      );
+    });
   });
 
   describe('Route Protection', () => {

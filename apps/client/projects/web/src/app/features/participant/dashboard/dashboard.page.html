@@ -1,68 +1,201 @@
-<main class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-  <div class="container mx-auto px-4 py-12">
-    <!-- Header -->
-    <section class="mb-12">
-      <h1 class="mb-2 text-4xl font-bold text-slate-900">
-        Bienvenue, {{ currentProfile()?.appUser?.firstName || 'Participant' }}!
-      </h1>
-      <p class="text-lg text-slate-600">
-        Retrouvez ci-dessous tous vos programmes et ressources de formation.
-      </p>
+<main
+  class="min-h-screen bg-[radial-gradient(circle_at_top,rgba(76,195,217,0.22),transparent_42%),linear-gradient(180deg,#f8fbfd_0%,#eef3f7_100%)]"
+>
+  <div class="container-page py-10 sm:py-12">
+    <section
+      class="grid gap-6 rounded-4xl bg-white/88 p-6 shadow-sm ring-1 ring-slate-200/80 backdrop-blur sm:p-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,0.9fr)]"
+    >
+      <div class="space-y-4">
+        <p
+          class="text-brand-blue text-sm font-semibold tracking-[0.28em] uppercase"
+        >
+          Accueil participant
+        </p>
+        <div class="space-y-3">
+          <h1 class="text-3xl font-semibold text-slate-950 sm:text-4xl">
+            Bonjour {{ currentProfile()?.appUser?.firstName || 'Participant' }},
+            voici votre vue d'ensemble.
+          </h1>
+          <p class="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+            Ce dashboard MVP synthétise les contenus prioritaires issus de votre
+            parcours: programmes suivis, prochaine session, rappels utiles et
+            dernieres actus a surveiller.
+          </p>
+        </div>
+      </div>
+
+      <aside class="rounded-3xl bg-slate-950 p-5 text-white shadow-sm">
+        <p
+          class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
+        >
+          Point d'attention
+        </p>
+        <h2 class="mt-3 text-2xl font-semibold">
+          Rester aligne sur la prochaine etape
+        </h2>
+        <p class="mt-3 text-sm leading-6 text-slate-200">
+          L'accueil sert de repere rapide avant l'arrivee du futur aggregate
+          dashboard: chaque bloc reprend deja les objets MVP prevus par ARC-04.
+        </p>
+      </aside>
     </section>
 
-    <!-- Quick Stats -->
-    <section class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+    <section class="mt-8">
+      <div class="mb-4 flex items-end justify-between gap-4">
+        <div>
+          <p
+            class="text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase"
+          >
+            Vue d'ensemble
+          </p>
+          <h2 class="mt-2 text-2xl font-semibold text-slate-950">
+            Les cartes qui structurent l'accueil MVP
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid gap-4 lg:grid-cols-3">
+        @for (card of summaryCards; track card.label) {
+          <article
+            class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm"
+          >
+            <p
+              class="text-sm font-semibold tracking-[0.2em] text-slate-500 uppercase"
+            >
+              {{ card.label }}
+            </p>
+            <p class="mt-4 text-3xl font-semibold text-slate-950">
+              {{ card.value }}
+            </p>
+            <p class="text-brand-blue mt-3 text-sm font-medium">
+              {{ card.highlight }}
+            </p>
+            <p class="mt-3 text-sm leading-6 text-slate-600">
+              {{ card.detail }}
+            </p>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section
+      class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]"
+    >
       <article
-        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+        class="rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-slate-200/80 sm:p-7"
       >
-        <h2
-          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
-        >
-          Programmes actifs
-        </h2>
-        <p class="text-3xl font-bold text-slate-900">—</p>
-        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p
+              class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase"
+            >
+              Rappels
+            </p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">
+              Les actions a ne pas laisser en attente
+            </h2>
+          </div>
+          <span
+            class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-amber-700 uppercase"
+          >
+            Priorites MVP
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          @for (reminder of reminders; track reminder.title) {
+            <article
+              class="rounded-[1.25rem] border p-4"
+              [class.border-amber-200]="reminder.tone === 'action'"
+              [class.bg-amber-50/70]="reminder.tone === 'action'"
+              [class.border-slate-200]="reminder.tone === 'info'"
+              [class.bg-slate-50]="reminder.tone === 'info'"
+            >
+              <h3 class="text-lg font-semibold text-slate-950">
+                {{ reminder.title }}
+              </h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                {{ reminder.detail }}
+              </p>
+            </article>
+          }
+        </div>
       </article>
 
       <article
-        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+        class="rounded-[1.75rem] bg-slate-950 p-6 text-white shadow-sm sm:p-7"
       >
-        <h2
-          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
+        <p
+          class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
         >
-          Sessions à venir
+          Acces rapides
+        </p>
+        <h2 class="mt-2 text-2xl font-semibold">
+          Des sorties utiles sans attendre l'API
         </h2>
-        <p class="text-3xl font-bold text-slate-900">—</p>
-        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
-      </article>
-
-      <article
-        class="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
-      >
-        <h2
-          class="mb-2 text-sm font-semibold tracking-wide text-slate-500 uppercase"
-        >
-          Ressources disponibles
-        </h2>
-        <p class="text-3xl font-bold text-slate-900">—</p>
-        <p class="mt-2 text-sm text-slate-600">Chargement en cours...</p>
+        <div class="mt-6 space-y-3">
+          @for (quickLink of quickLinks; track quickLink.href) {
+            <a
+              [href]="quickLink.href"
+              class="block rounded-[1.25rem] border border-white/12 bg-white/7 p-4 transition hover:border-cyan-200/60 hover:bg-white/12"
+            >
+              <span class="block text-lg font-semibold">{{
+                quickLink.label
+              }}</span>
+              <span class="mt-2 block text-sm leading-6 text-slate-200">{{
+                quickLink.detail
+              }}</span>
+            </a>
+          }
+        </div>
       </article>
     </section>
 
-    <!-- Placeholder Content -->
-    <section class="rounded-lg bg-white p-8 shadow-md">
-      <h2 class="mb-4 text-2xl font-bold text-slate-900">Prochaines étapes</h2>
-      <p class="mb-6 text-slate-600">
-        Consultez vos programmes, sessions et ressources disponibles via la
-        navigation web.
-      </p>
-      <div class="space-y-3">
-        <a
-          href="/programmes"
-          class="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-        >
-          Voir mes programmes
-        </a>
+    <section
+      class="mt-8 rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-slate-200/80 sm:p-7"
+    >
+      <div
+        class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+      >
+        <div>
+          <p
+            class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase"
+          >
+            Dernieres actus
+          </p>
+          <h2 class="mt-2 text-2xl font-semibold text-slate-950">
+            Ce qui doit remonter dans le flux d'annonces du participant
+          </h2>
+        </div>
+        <p class="max-w-xl text-sm leading-6 text-slate-600">
+          Cette zone prepare le futur raccordement aux annonces et notifications
+          du MVP, sans introduire de navigation cassée en attendant DSH-02.
+        </p>
+      </div>
+
+      <div class="mt-6 grid gap-4 lg:grid-cols-3">
+        @for (item of latestNews; track item.title) {
+          <article
+            class="rounded-[1.4rem] border border-slate-200/80 bg-slate-50 p-5"
+          >
+            <p
+              class="text-brand-blue text-xs font-semibold tracking-[0.24em] uppercase"
+            >
+              {{ item.category }}
+            </p>
+            <h3 class="mt-3 text-lg font-semibold text-slate-950">
+              {{ item.title }}
+            </h3>
+            <p class="mt-3 text-sm leading-6 text-slate-600">
+              {{ item.summary }}
+            </p>
+            <p
+              class="mt-4 text-xs font-medium tracking-[0.16em] text-slate-500 uppercase"
+            >
+              {{ item.publishedAt }}
+            </p>
+          </article>
+        }
       </div>
     </section>
   </div>
