@@ -1,3 +1,5 @@
+// scripts\workspace-runner.mjs
+
 import { spawn } from 'node:child_process';
 import process from 'node:process';
 
@@ -66,7 +68,9 @@ function quoteWindowsArgument(argument) {
     return argument;
   }
 
-  return `"${argument.replace(/(\\*)"/g, '$1$1\\"').replace(/(\\+)$/g, '$1$1')}"`;
+  const escaped1 = argument.replaceAll(/(\\*)"/g, String.raw`$1$1\"`);
+  const escaped2 = escaped1.replaceAll(/(\\+)$/g, '$1$1');
+  return `"${escaped2}"`;
 }
 
 function spawnCommand(command) {

@@ -52,3 +52,21 @@
   /* ── Shadows ── */
   --shadow-card: var(--kr-shadow-card);
 }
+
+@layer components {
+  .kraak-surface-card {
+    @apply rounded-card bg-brand-white shadow-card border border-neutral-200/80;
+  }
+
+  .kraak-overline {
+    @apply text-secondary text-xs font-semibold tracking-[0.24em] uppercase;
+  }
+
+  .kraak-section-title {
+    @apply text-primary text-2xl font-semibold;
+  }
+
+  .kraak-section-subtitle {
+    @apply text-sm leading-6 text-neutral-700;
+  }
+}

@@ -18,6 +18,7 @@ describe('FeatureCardComponent', () => {
 
     const article = fixture.nativeElement.querySelector('article');
 
+    expect(article.className).toContain('kraak-surface-card');
     expect(article.className).toContain('border-brand-cyan/18');
   });
 

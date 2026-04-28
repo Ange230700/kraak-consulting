@@ -16,7 +16,7 @@ export class FeatureCardComponent {
   @Input() tone: FeatureCardTone = 'primary';
 
   get cardClasses(): string {
-    const baseClasses = 'rounded-card bg-brand-white shadow-card border p-4';
+    const baseClasses = 'kraak-surface-card p-4';
     const toneClasses: Record<FeatureCardTone, string> = {
       primary: 'border-brand-blue/12',
       accent: 'border-brand-cyan/18',
@@ -27,7 +27,7 @@ export class FeatureCardComponent {
 
   get tagClasses(): string {
     return this.tone === 'accent'
-      ? 'text-accent text-xs font-semibold tracking-[0.24em] uppercase'
-      : 'text-secondary text-xs font-semibold tracking-[0.24em] uppercase';
+      ? 'kraak-overline text-accent'
+      : 'kraak-overline';
   }
 }

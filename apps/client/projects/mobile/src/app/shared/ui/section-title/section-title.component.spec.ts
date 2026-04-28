@@ -21,5 +21,15 @@ describe('SectionTitleComponent', () => {
     expect(text).toContain('Découvrir');
     expect(text).toContain('Bienvenue sur KRAAK');
     expect(text).toContain('Un accompagnement structuré.');
+
+    const overline = fixture.nativeElement.querySelector('p.kraak-overline');
+    const title = fixture.nativeElement.querySelector('h2.kraak-section-title');
+    const subtitle = fixture.nativeElement.querySelector(
+      'p.kraak-section-subtitle',
+    );
+
+    expect(overline).toBeTruthy();
+    expect(title).toBeTruthy();
+    expect(subtitle).toBeTruthy();
   });
 });
