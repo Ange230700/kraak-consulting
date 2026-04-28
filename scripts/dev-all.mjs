@@ -5,8 +5,44 @@ import path from 'node:path';
 
 const portInUsePattern = /Port \d+ is already in use/i;
 const addressInUsePattern = /EADDRINUSE|address already in use/i;
-const viteCacheLockPattern =
-  /EPERM: operation not permitted, rename .*\.angular[\\/]+cache.*[\\/]+vite[\\/]+deps_temp_/i;
+const maxViteCacheLockLineLength = 16_384;
+
+function isViteCacheLockLine(line) {
+  if (typeof line !== 'string') {
+    return false;
+  }
+
+  // Prevent oversized log lines from becoming an input-amplification vector.
+  if (line.length > maxViteCacheLockLineLength) {
+    return false;
+  }
+
+  const normalizedLine = line.toLowerCase().replaceAll('\\', '/');
+
+  const epermIndex = normalizedLine.indexOf(
+    'eperm: operation not permitted, rename ',
+  );
+
+  if (epermIndex === -1) {
+    return false;
+  }
+
+  const angularCacheIndex = normalizedLine.indexOf(
+    '.angular/cache',
+    epermIndex,
+  );
+
+  if (angularCacheIndex === -1) {
+    return false;
+  }
+
+  return (
+    normalizedLine.indexOf(
+      '/vite/deps_temp_',
+      angularCacheIndex + '.angular/cache'.length,
+    ) !== -1
+  );
+}
 
 const services = [
   {
@@ -193,17 +229,19 @@ async function startService(service) {
     env.PORT = String(port);
   }
 
-  const preferred = service.preferredPort === port
-    ? `port ${port}`
-    : `port ${port} (port préféré ${service.preferredPort} occupé)`;
+  const preferred =
+    service.preferredPort === port
+      ? `port ${port}`
+      : `port ${port} (port préféré ${service.preferredPort} occupé)`;
 
   if (dryRun) {
     const simulatedPort = allowPortFallback
       ? await findAvailablePort(service.preferredPort)
       : port;
-    const simulatedPreferred = service.preferredPort === simulatedPort
-      ? `port ${simulatedPort}`
-      : `port ${simulatedPort} (port préféré ${service.preferredPort} occupé)`;
+    const simulatedPreferred =
+      service.preferredPort === simulatedPort
+        ? `port ${simulatedPort}`
+        : `port ${simulatedPort} (port préféré ${service.preferredPort} occupé)`;
 
     process.stdout.write(
       `${service.color}[${service.name}]${reset} simulation sur ${simulatedPreferred}\n`,
@@ -215,6 +253,8 @@ async function startService(service) {
     `${service.color}[${service.name}]${reset} démarrage sur ${preferred}\n`,
   );
 
+  // SECURITY: service.command must remain hardcoded/trusted.
+  // Do not pass user-controlled values here while shell: true is enabled.
   const child = spawn(args[0], args.slice(1), {
     cwd: service.cwd,
     env,
@@ -244,7 +284,7 @@ async function startService(service) {
       service.angularCacheProject &&
       cacheRecoveryAttempts < 2 &&
       !recoverViteCache &&
-      viteCacheLockPattern.test(line)
+      isViteCacheLockLine(line)
     ) {
       recoverViteCache = true;
       process.stdout.write(
@@ -254,7 +294,11 @@ async function startService(service) {
       return;
     }
 
-    if (!service.portArg && !allowPortFallback && addressInUsePattern.test(line)) {
+    if (
+      !service.portArg &&
+      !allowPortFallback &&
+      addressInUsePattern.test(line)
+    ) {
       portBusyOnStart = true;
     }
   });
