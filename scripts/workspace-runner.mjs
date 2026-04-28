@@ -1,3 +1,5 @@
+// scripts\workspace-runner.mjs
+
 import { spawn } from 'node:child_process';
 import process from 'node:process';
 
@@ -57,16 +59,53 @@ function prefixStream(stream, prefix, target) {
   });
 }
 
+function needsWindowsQuoting(argument) {
+  for (const element of argument) {
+    const character = element;
+
+    if (character === ' ' || character === '\t' || character === '"') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function quoteWindowsArgument(argument) {
   if (argument.length === 0) {
     return '""';
   }
 
-  if (!/[ \t"]/u.test(argument)) {
+  if (!needsWindowsQuoting(argument)) {
     return argument;
   }
 
-  return `"${argument.replace(/(\\*)"/g, '$1$1\\"').replace(/(\\+)$/g, '$1$1')}"`;
+  let quotedArgument = '"';
+  let backslashCount = 0;
+
+  for (const element of argument) {
+    const character = element;
+
+    if (character === '\\') {
+      backslashCount += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
+      quotedArgument += '"';
+    } else {
+      quotedArgument += '\\'.repeat(backslashCount);
+      quotedArgument += character;
+    }
+
+    backslashCount = 0;
+  }
+
+  quotedArgument += '\\'.repeat(backslashCount * 2);
+  quotedArgument += '"';
+
+  return quotedArgument;
 }
 
 function spawnCommand(command) {

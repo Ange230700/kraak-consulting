@@ -284,3 +284,86 @@ Enveloppe MVP (globale) :
 - Le design et l'engineering démarrent depuis les fonctionnalités Indispensable uniquement.
 - Les éléments Souhaite ne peuvent être pris que si l'Indispensable est terminé et que la stabilité pilote n'est pas à risque.
 - Les éléments Plus tard restent hors périmètre jusqu'à décision post-pilote.
+
+## 11. Validation evidence - MOB-01 (Initialiser app Ionic Angular)
+
+Contexte de vérification (date : 2026-04-28) :
+
+- La cible définie par le backlog pour `MOB-01` est `apps/client/projects/mobile`.
+- Le projet mobile Ionic Angular est présent dans le workspace Angular (`projects.mobile` dans `apps/client/angular.json`) avec bootstrap standalone Ionic (`provideIonicAngular`).
+
+Preuves d'exécution :
+
+1. Build mobile
+
+- Commande : `pnpm --filter @kraak/client build:mobile`
+- Résultat : succès, bundle généré dans `apps/client/dist/mobile`
+- Note : un warning de budget initial est remonté (`651.03 kB` > budget `600 kB`), non bloquant pour l'initialisation de l'application
+
+1. Tests unitaires mobile
+
+- Commande : `pnpm --filter @kraak/client test:mobile`
+- Résultat : succès (`21` fichiers de test passés, `52` tests passés)
+
+1. Lint mobile
+
+- Commande : `pnpm --filter @kraak/client exec ng lint mobile`
+- Résultat : succès (`All files pass linting`)
+
+Conclusion d'acceptation MOB-01 :
+
+- Scope MOB-01 implémenté : Oui (application Ionic Angular initialisée et buildable)
+- Dépendance SET-01 satisfaite : Oui (workspace Angular monorepo déjà en place)
+- Validation evidence ajoutée : Oui (section présente dans ce document)
+
+## 12. Validation evidence - MOB-03 (Theming, design tokens et composants UI)
+
+Contexte de vérification (date : 2026-04-28) :
+
+- Le mobile consomme les tokens partagés via `@kraak/tokens/tokens.css` importé dans `projects/mobile/src/tailwind.css`.
+- Le thème Ionic mobile est aligné sur les tokens (`--ion-color-*`, `--ion-font-family`) dans `projects/mobile/src/styles.scss`.
+- Des composants UI de base partagés sont en place sous `projects/mobile/src/app/shared/ui/`.
+
+Scope livré pour MOB-03 :
+
+1. Theming mobile consolidé
+
+- Ajout de primitives UI réutilisables dans `projects/mobile/src/tailwind.css` :
+  - `.kraak-surface-card`
+  - `.kraak-overline`
+  - `.kraak-section-title`
+  - `.kraak-section-subtitle`
+
+1. Intégration des composants UI de base
+
+- `FeatureCardComponent` refactoré pour utiliser les primitives de thème (`kraak-surface-card`, `kraak-overline`).
+- `SectionTitleComponent` refactoré pour utiliser les primitives de thème (`kraak-overline`, `kraak-section-title`, `kraak-section-subtitle`).
+
+1. Tests unitaires renforcés
+
+- `feature-card.component.spec.ts` vérifie désormais la classe de surface commune.
+- `section-title.component.spec.ts` vérifie désormais les classes de titre/sous-titre/overline.
+
+Preuves d'exécution :
+
+1. Tests unitaires mobile
+
+- Commande : `pnpm --filter @kraak/client test:mobile`
+- Résultat : succès (`21` fichiers de test passés, `52` tests passés)
+
+1. Lint mobile
+
+- Commande : `pnpm --filter @kraak/client exec ng lint mobile`
+- Résultat : succès (`All files pass linting`)
+
+1. Build mobile
+
+- Commande : `pnpm --filter @kraak/client build:mobile`
+- Résultat : succès, bundle généré dans `apps/client/dist/mobile`
+- Note : warning budget initial maintenu (non bloquant) : `652.24 kB` pour un budget de `600 kB`
+
+Conclusion d'acceptation MOB-03 :
+
+- Scope MOB-03 implémenté : Oui
+- Dépendances MOB-01, LIB-01 satisfaites : Oui (app mobile initialisée + package `contracts` existant et utilisé dans le monorepo)
+- Validation evidence ajoutée : Oui (section présente dans ce document)
