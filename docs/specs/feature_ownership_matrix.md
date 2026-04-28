@@ -3,7 +3,6 @@
 > Référence : backlog (`docs/specs/BACKLOG.md`), modèle produit
 > (`docs/specs/product_model.md`), MVP mobile (`docs/specs/mobile_mvp.md`),
 > architecture (`ARCHITECTURE.md`).
-
 > État actuel : `packages/tokens` est déjà utilisé ; `packages/contracts/`,
 > `packages/domain/` et `packages/api-client/` sont encore des squelettes de
 > répertoires à compléter quand le partage de logique deviendra concret.
@@ -63,6 +62,11 @@ Surfaces cibles :
 | **packages/contracts**  | `packages/contracts/src/dashboard/`  | P0       | DTO `DashboardAggregate` (programmes, sessions à venir, annonces)  |
 | **packages/api-client** | `packages/api-client/src/dashboard/` | P1       | `DashboardClient.getAggregate()`                                   |
 | **api**                 | `apps/api/src/dashboard/`            | P0       | endpoint agrégé `/dashboard` par participant                       |
+
+Contrat API MVP stabilisé pour DSH-02 :
+
+- endpoint : `GET /dashboard` (Bearer token requis)
+- réponse : `DashboardAggregateDto` avec `programs`, `upcomingSessions`, `recentAnnouncements`
 
 ### 4. Programs (`PRG`)
 

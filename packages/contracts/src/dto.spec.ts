@@ -31,6 +31,10 @@ import type {
   SupportRequestDto,
   CreateSupportRequestDto,
   UpdateSupportRequestDto,
+  DashboardAggregateDto,
+  DashboardProgramSummaryDto,
+  DashboardSessionReminderDto,
+  DashboardAnnouncementSummaryDto,
 } from './dto';
 
 // Runtime import to ensure the module actually exists (prevents vacuous type test passes)
@@ -84,6 +88,26 @@ describe('ContactSubmissionResultDto', () => {
     expectTypeOf<ContactSubmissionResultDto>()
       .toHaveProperty('message')
       .toBeString();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+describe('DashboardAggregateDto', () => {
+  it('should expose a stable aggregate payload for participant dashboard', () => {
+    expectTypeOf<DashboardAggregateDto>()
+      .toHaveProperty('generatedAt')
+      .toBeString();
+    expectTypeOf<DashboardAggregateDto>()
+      .toHaveProperty('programs')
+      .toEqualTypeOf<DashboardProgramSummaryDto[]>();
+    expectTypeOf<DashboardAggregateDto>()
+      .toHaveProperty('upcomingSessions')
+      .toEqualTypeOf<DashboardSessionReminderDto[]>();
+    expectTypeOf<DashboardAggregateDto>()
+      .toHaveProperty('recentAnnouncements')
+      .toEqualTypeOf<DashboardAnnouncementSummaryDto[]>();
   });
 });
 
