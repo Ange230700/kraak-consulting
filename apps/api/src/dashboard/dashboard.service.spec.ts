@@ -55,21 +55,25 @@ describe('DashboardService', () => {
           status: 'active',
           program_id: 'program-1',
           cohort_id: 'cohort-1',
-          program: {
-            id: 'program-1',
-            slug: 'leadership-essentials',
-            title: 'Leadership Essentials',
-            summary: 'Bases du leadership de service.',
-            status: 'published',
-            visibility: 'participants',
-          },
-          cohort: {
-            id: 'cohort-1',
-            name: 'Cohorte Avril',
-            status: 'active',
-            start_date: '2026-04-01',
-            end_date: null,
-          },
+          program: [
+            {
+              id: 'program-1',
+              slug: 'leadership-essentials',
+              title: 'Leadership Essentials',
+              summary: 'Bases du leadership de service.',
+              status: 'published',
+              visibility: 'participants',
+            },
+          ],
+          cohort: [
+            {
+              id: 'cohort-1',
+              name: 'Cohorte Avril',
+              status: 'active',
+              start_date: '2026-04-01',
+              end_date: null,
+            },
+          ],
         },
       ],
       error: null,
@@ -87,15 +91,19 @@ describe('DashboardService', () => {
           location_type: 'online',
           location_label: null,
           meeting_link: 'https://meet.example.com/kraak',
-          cohort: {
-            id: 'cohort-1',
-            name: 'Cohorte Avril',
-            program: {
-              id: 'program-1',
-              slug: 'leadership-essentials',
-              title: 'Leadership Essentials',
+          cohort: [
+            {
+              id: 'cohort-1',
+              name: 'Cohorte Avril',
+              program: [
+                {
+                  id: 'program-1',
+                  slug: 'leadership-essentials',
+                  title: 'Leadership Essentials',
+                },
+              ],
             },
-          },
+          ],
         },
       ],
       error: null,

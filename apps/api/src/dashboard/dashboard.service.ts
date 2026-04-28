@@ -37,8 +37,8 @@ type EnrollmentRow = {
   status: EnrollmentStatusValue;
   program_id: string;
   cohort_id: string | null;
-  program: EnrollmentProgramRow | null;
-  cohort: EnrollmentCohortRow | null;
+  program: EnrollmentProgramRow[] | null;
+  cohort: EnrollmentCohortRow[] | null;
 };
 
 type SessionProgramRow = {
@@ -50,7 +50,7 @@ type SessionProgramRow = {
 type SessionCohortRow = {
   id: string;
   name: string;
-  program: SessionProgramRow | null;
+  program: SessionProgramRow[] | null;
 };
 
 type SessionRow = {
@@ -63,8 +63,12 @@ type SessionRow = {
   location_label: string | null;
   meeting_link: string | null;
   cohort_id: string;
-  cohort: SessionCohortRow | null;
+  cohort: SessionCohortRow[] | null;
 };
+
+function firstOrNull<T>(value: T[] | null | undefined): T | null {
+  return Array.isArray(value) && value.length > 0 ? value[0] : null;
+}
 
 type AnnouncementRow = {
   id: string;
@@ -164,19 +168,23 @@ export class DashboardService {
     }
 
     return ((data as EnrollmentRow[] | null) ?? [])
-      .filter((row) => Boolean(row.program))
-      .map((row) => ({
-        enrollmentId: row.id,
-        programId: row.program_id,
-        slug: row.program?.slug ?? '',
-        title: row.program?.title ?? '',
-        summary: row.program?.summary ?? '',
-        enrollmentStatus: row.status,
-        cohortId: row.cohort_id,
-        cohortName: row.cohort?.name ?? null,
-        cohortStatus: row.cohort?.status ?? null,
-        cohortStartDate: row.cohort?.start_date ?? null,
-      }))
+      .map((row) => {
+        const program = firstOrNull(row.program);
+        const cohort = firstOrNull(row.cohort);
+
+        return {
+          enrollmentId: row.id,
+          programId: row.program_id,
+          slug: program?.slug ?? '',
+          title: program?.title ?? '',
+          summary: program?.summary ?? '',
+          enrollmentStatus: row.status,
+          cohortId: row.cohort_id,
+          cohortName: cohort?.name ?? null,
+          cohortStatus: cohort?.status ?? null,
+          cohortStartDate: cohort?.start_date ?? null,
+        };
+      })
       .filter((program) => Boolean(program.slug && program.title));
   }
 
@@ -203,24 +211,27 @@ export class DashboardService {
     }
 
     return ((data as SessionRow[] | null) ?? [])
-      .filter((row) =>
-        Boolean(row.cohort?.program?.id && row.cohort?.program?.title),
-      )
-      .map((row) => ({
-        id: row.id,
-        title: row.title,
-        status: row.status,
-        startsAt: row.starts_at,
-        endsAt: row.ends_at,
-        locationType: row.location_type,
-        locationLabel: row.location_label,
-        meetingLink: row.meeting_link,
-        cohortId: row.cohort_id,
-        cohortName: row.cohort?.name ?? '',
-        programId: row.cohort?.program?.id ?? '',
-        programSlug: row.cohort?.program?.slug ?? '',
-        programTitle: row.cohort?.program?.title ?? '',
-      }));
+      .map((row) => {
+        const cohort = firstOrNull(row.cohort);
+        const program = firstOrNull(cohort?.program);
+
+        return {
+          id: row.id,
+          title: row.title,
+          status: row.status,
+          startsAt: row.starts_at,
+          endsAt: row.ends_at,
+          locationType: row.location_type,
+          locationLabel: row.location_label,
+          meetingLink: row.meeting_link,
+          cohortId: row.cohort_id,
+          cohortName: cohort?.name ?? '',
+          programId: program?.id ?? '',
+          programSlug: program?.slug ?? '',
+          programTitle: program?.title ?? '',
+        };
+      })
+      .filter((session) => Boolean(session.programId && session.programTitle));
   }
 
   private async readRecentAnnouncements(
