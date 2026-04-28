@@ -1,3 +1,5 @@
+// apps\client\projects\mobile\src\app\core\mobile-push-notifications.service.ts
+
 import { inject, Injectable, signal } from '@angular/core';
 import {
   PushNotifications,
