@@ -60,8 +60,8 @@ function prefixStream(stream, prefix, target) {
 }
 
 function needsWindowsQuoting(argument) {
-  for (let index = 0; index < argument.length; index += 1) {
-    const character = argument[index];
+  for (const element of argument) {
+    const character = element;
 
     if (character === ' ' || character === '\t' || character === '"') {
       return true;
