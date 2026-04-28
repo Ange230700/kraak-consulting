@@ -121,6 +121,38 @@ pnpm --filter @kraak/client cap:copy
 
 ---
 
+## Notifications push stub (MOB-05)
+
+Le mobile inclut un service de base `MobilePushNotificationsService` pour le wiring FCM initial.
+
+Objectif du stub MVP :
+
+- initialiser la chaine Capacitor Push Notifications au demarrage de l'application
+- retourner un token device (token FCM en natif, token stub en fallback)
+- preparer les listeners minimaux pour la suite des travaux (`ANN-04`)
+
+Fichiers relies :
+
+- `apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.ts`
+- `apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.spec.ts`
+- `apps/client/projects/mobile/src/app/app.config.ts`
+
+Comportement attendu :
+
+- plateforme web ou permissions refusees : token stub `stub-mobile-token-<env>-<raison>`
+- plateforme native + permissions accordees : tentative d'enregistrement FCM via `@capacitor/push-notifications`
+- timeout d'enregistrement : fallback automatique vers token stub
+
+Verification rapide :
+
+```bash
+pnpm --filter @kraak/client test:mobile
+```
+
+Note : le service est un wiring initial. L'envoi de notifications business et la navigation ciblee depuis une notification seront traites dans les taches suivantes.
+
+---
+
 ## Test avec live-reload (appareil physique ou emulateur)
 
 1. Demarrer le serveur de developpement mobile :
@@ -129,7 +161,7 @@ pnpm --filter @kraak/client cap:copy
 pnpm dev:mobile
 ```
 
-2. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les proprietes `server.url` et `cleartext` dans l'objet `server` :
+1. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les proprietes `server.url` et `cleartext` dans l'objet `server` :
 
 ```typescript
 server: {
@@ -140,7 +172,7 @@ server: {
 },
 ```
 
-3. Synchroniser la config puis ouvrir dans l'IDE :
+1. Synchroniser la config puis ouvrir dans l'IDE :
 
 ```bash
 pnpm cap:sync
@@ -149,7 +181,7 @@ pnpm --filter @kraak/client cap:open:android
 pnpm --filter @kraak/client cap:open:ios
 ```
 
-4. Lancer l'app depuis Android Studio ou Xcode sur un emulateur ou un appareil connecte.
+1. Lancer l'app depuis Android Studio ou Xcode sur un emulateur ou un appareil connecte.
 
 Important : ne pas commiter le bloc `url` / `cleartext` dans le depot, il est reserve au developpement local.
 

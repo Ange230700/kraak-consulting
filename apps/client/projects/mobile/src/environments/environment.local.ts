@@ -11,6 +11,8 @@ export const environment = {
   production: false,
   siteUrl: runtimeOrigin,
   apiBaseUrl: 'http://localhost:3000',
+  pushNotificationsEnabled: true,
+  pushNotificationsProvider: 'fcm',
   supabaseUrl: 'http://127.0.0.1:54321',
   supabasePublishableKey: '',
   ga4Id: '',
