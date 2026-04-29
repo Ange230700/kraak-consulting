@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProgramsModule } from './programs/programs.module';
+import { ResourcesModule } from './resources/resources.module';
 import { resolveApiEnvFilePaths } from './config/environment-files';
 import { SupabaseModule } from './supabase/supabase.module';
 import { SupportModule } from './support/support.module';
@@ -19,6 +20,7 @@ import { SupportModule } from './support/support.module';
     AuthModule,
     DashboardModule,
     ProgramsModule,
+    ResourcesModule,
     SupportModule,
   ],
   controllers: [AppController],

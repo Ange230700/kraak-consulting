@@ -1,0 +1,226 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import type {
+  ResourceAudienceValue,
+  ResourceDto,
+  ResourceThemeValue,
+  PublicationStatusValue,
+  ResourceTypeValue,
+} from '@kraak/contracts';
+import { SupabaseService } from '../supabase/supabase.service';
+
+type ResourceRow = {
+  id: string;
+  program_id: string | null;
+  cohort_id: string | null;
+  title: string;
+  description: string | null;
+  resource_type: ResourceTypeValue;
+  resource_theme: ResourceThemeValue;
+  resource_audience: ResourceAudienceValue;
+  url: string | null;
+  file_path: string | null;
+  status: PublicationStatusValue;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+@Injectable()
+export class ResourcesService {
+  constructor(private readonly supabaseService: SupabaseService) {}
+
+  /**
+   * List published resources with optional filtering and pagination.
+   * @param options - Filter options (theme, audience) and pagination (page, limit)
+   */
+  async listResources(options?: {
+    resourceTheme?: ResourceThemeValue;
+    resourceAudience?: ResourceAudienceValue;
+    programId?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ data: ResourceDto[]; total: number }> {
+    const adminClient = this.supabaseService.getClient();
+    const limit = Math.min(options?.limit ?? 20, 100);
+    const page = Math.max(options?.page ?? 1, 1);
+    const offset = (page - 1) * limit;
+
+    let query = adminClient
+      .from('resource')
+      .select(
+        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at, count:id.count()',
+        { count: 'exact' },
+      )
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (options?.programId) {
+      query = query.eq('program_id', options.programId);
+    }
+
+    if (options?.resourceTheme) {
+      query = query.eq('resource_theme', options.resourceTheme);
+    }
+
+    if (options?.resourceAudience) {
+      query = query.eq('resource_audience', options.resourceAudience);
+    }
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      throw new Error(`Failed to list resources: ${error.message}`);
+    }
+
+    const resources = ((data as ResourceRow[] | null) ?? []).map((row) =>
+      this.mapResource(row),
+    );
+
+    return {
+      data: resources,
+      total: count ?? 0,
+    };
+  }
+
+  /**
+   * Get a single resource by ID.
+   * @param id - Resource ID
+   */
+  async getResourceById(id: string): Promise<ResourceDto> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('resource')
+      .select(
+        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
+      )
+      .eq('id', id)
+      .eq('status', 'published')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException(
+        `Resource with ID ${id} not found or is not published.`,
+      );
+    }
+
+    return this.mapResource(data as ResourceRow);
+  }
+
+  /**
+   * Get resources by program and/or cohort with filtering.
+   * @param programId - Program ID (required)
+   * @param cohortId - Optional cohort ID to filter resources within a cohort
+   * @param options - Additional filter options
+   */
+  async getResourcesByProgram(
+    programId: string,
+    cohortId: string | null = null,
+    options?: {
+      resourceTheme?: ResourceThemeValue;
+      resourceAudience?: ResourceAudienceValue;
+    },
+  ): Promise<ResourceDto[]> {
+    const adminClient = this.supabaseService.getClient();
+
+    // Fetch program-level resources (cohort_id is null)
+    let programQuery = adminClient
+      .from('resource')
+      .select(
+        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
+      )
+      .eq('status', 'published')
+      .eq('program_id', programId)
+      .is('cohort_id', null);
+
+    if (options?.resourceTheme) {
+      programQuery = programQuery.eq('resource_theme', options.resourceTheme);
+    }
+
+    if (options?.resourceAudience) {
+      programQuery = programQuery.eq(
+        'resource_audience',
+        options.resourceAudience,
+      );
+    }
+
+    const { data: programResources, error: programError } = await programQuery;
+
+    if (programError) {
+      throw new Error(
+        `Failed to fetch program resources: ${programError.message}`,
+      );
+    }
+
+    let cohortResources: ResourceRow[] = [];
+
+    if (cohortId) {
+      let cohortQuery = adminClient
+        .from('resource')
+        .select(
+          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
+        )
+        .eq('status', 'published')
+        .eq('program_id', programId)
+        .eq('cohort_id', cohortId);
+
+      if (options?.resourceTheme) {
+        cohortQuery = cohortQuery.eq('resource_theme', options.resourceTheme);
+      }
+
+      if (options?.resourceAudience) {
+        cohortQuery = cohortQuery.eq(
+          'resource_audience',
+          options.resourceAudience,
+        );
+      }
+
+      const { data, error } = await cohortQuery;
+
+      if (error) {
+        throw new Error(`Failed to fetch cohort resources: ${error.message}`);
+      }
+
+      cohortResources = (data as ResourceRow[] | null) ?? [];
+    }
+
+    // Merge and deduplicate
+    const merged = [
+      ...((programResources as ResourceRow[] | null) ?? []),
+      ...cohortResources,
+    ];
+
+    const deduplicated = Array.from(
+      new Map(merged.map((row) => [row.id, row])).values(),
+    ).sort((left, right) => {
+      const leftTime = left.published_at
+        ? new Date(left.published_at).getTime()
+        : 0;
+      const rightTime = right.published_at
+        ? new Date(right.published_at).getTime()
+        : 0;
+      return rightTime - leftTime;
+    });
+
+    return deduplicated.slice(0, 50).map((row) => this.mapResource(row));
+  }
+
+  private mapResource(row: ResourceRow): ResourceDto {
+    return {
+      id: row.id,
+      programId: row.program_id,
+      cohortId: row.cohort_id,
+      title: row.title,
+      description: row.description,
+      resourceType: row.resource_type,
+      resourceTheme: row.resource_theme,
+      resourceAudience: row.resource_audience,
+      url: row.url,
+      filePath: row.file_path,
+      status: row.status,
+      publishedAt: row.published_at,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
+}
