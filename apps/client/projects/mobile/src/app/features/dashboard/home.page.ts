@@ -1,12 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonButton,
   IonContent,
   IonHeader,
+  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { ApiError, createApiClient } from '@kraak/api-client';
+import type {
+  DashboardAggregateDto,
+  DashboardAnnouncementSummaryDto,
+  DashboardProgramSummaryDto,
+  DashboardSessionReminderDto,
+} from '@kraak/contracts';
+import { environment } from '../../../environments/environment';
+import { MobileAuthService } from '../auth/mobile-auth.service';
 import { FeatureCardComponent } from '../../shared/ui/feature-card/feature-card.component';
 
 interface HomeHighlight {
@@ -25,13 +35,25 @@ interface HomeHighlight {
     IonToolbar,
     IonTitle,
     IonContent,
+    IonSpinner,
     RouterLink,
     FeatureCardComponent,
   ],
   templateUrl: './home.page.html',
 })
-export default class HomePage {
+export default class HomePage implements OnInit {
+  private readonly authService = inject(MobileAuthService);
+  private readonly dashboardClient = createApiClient({
+    baseUrl: environment.apiBaseUrl,
+    getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
+  }).dashboard;
+
   protected readonly resourceLibraryHref = '/tabs/programmes/ressources';
+  protected readonly dashboardState = signal<DashboardAggregateDto | null>(
+    null,
+  );
+  protected readonly loading = signal(true);
+  protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly highlights: HomeHighlight[] = [
     {
@@ -56,4 +78,66 @@ export default class HomePage {
       tone: 'primary',
     },
   ];
+
+  get programs(): readonly DashboardProgramSummaryDto[] {
+    return this.dashboardState()?.programs ?? [];
+  }
+
+  get upcomingSessions(): readonly DashboardSessionReminderDto[] {
+    return this.dashboardState()?.upcomingSessions ?? [];
+  }
+
+  get recentAnnouncements(): readonly DashboardAnnouncementSummaryDto[] {
+    return this.dashboardState()?.recentAnnouncements ?? [];
+  }
+
+  get hasDashboardContent(): boolean {
+    return (
+      this.programs.length > 0 ||
+      this.upcomingSessions.length > 0 ||
+      this.recentAnnouncements.length > 0
+    );
+  }
+
+  ngOnInit(): void {
+    void this.loadDashboardAggregate();
+  }
+
+  protected async reloadDashboard(): Promise<void> {
+    await this.loadDashboardAggregate();
+  }
+
+  private async loadDashboardAggregate(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      const aggregate = await this.dashboardClient.getAggregate();
+      this.dashboardState.set(aggregate);
+    } catch (error) {
+      this.dashboardState.set(null);
+      this.errorMessage.set(this.resolveDashboardErrorMessage(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private resolveDashboardErrorMessage(error: unknown): string {
+    if (
+      error instanceof ApiError &&
+      error.body &&
+      typeof error.body === 'object' &&
+      'message' in error.body &&
+      typeof error.body.message === 'string' &&
+      error.body.message.trim().length > 0
+    ) {
+      return error.body.message;
+    }
+
+    if (error instanceof Error && error.message.trim().length > 0) {
+      return error.message;
+    }
+
+    return 'Impossible de charger votre dashboard pour le moment.';
+  }
 }
