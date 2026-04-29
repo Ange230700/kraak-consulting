@@ -149,7 +149,11 @@ Verification rapide :
 pnpm --filter @kraak/client test:mobile
 ```
 
-Note : le service est un wiring initial. L'envoi de notifications business et la navigation ciblee depuis une notification seront traites dans les taches suivantes.
+ANN-04 (notification push annonce prioritaire) ajoute sur ce wiring :
+
+- detection des payloads `priority` en `high` ou `critical` pour les annonces
+- conservation du dernier payload prioritaire recu via le signal `lastPriorityAnnouncementPush`
+- navigation automatique vers `/tabs/annonces/:announcementId` lors de l'action utilisateur sur la notification
 
 ---
 
