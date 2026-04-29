@@ -278,6 +278,17 @@
   }
 }
 
+/*
+   UTILITIES - One-off helpers (Tailwind generates most of
+   these; add only custom ones below)
+*/
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -287,16 +298,5 @@
     transition-delay: 0ms !important;
     animation-duration: 0ms !important;
     animation-iteration-count: 1 !important;
-  }
-}
-
-/*
-   UTILITIES - One-off helpers (Tailwind generates most of
-   these; add only custom ones below)
-*/
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
   }
 }
