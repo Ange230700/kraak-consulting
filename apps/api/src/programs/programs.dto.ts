@@ -31,20 +31,22 @@ export function validateMarkSessionProgressPayload(
   }
 
   const sessionId = readTrimmedString(body['sessionId']);
-  const completed = body['completed'];
+  const completedValue = body['completed'];
   const errors: string[] = [];
 
   if (!sessionId) {
     errors.push('Le sessionId est requis.');
   }
 
-  if (typeof completed !== 'boolean') {
+  if (typeof completedValue !== 'boolean') {
     errors.push('Le champ completed doit être un booléen.');
   }
 
   if (errors.length > 0) {
     return { valid: false, errors };
   }
+
+  const completed = completedValue as boolean;
 
   return {
     valid: true,

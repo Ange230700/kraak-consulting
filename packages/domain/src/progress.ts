@@ -46,7 +46,7 @@ export function calculateProgramProgress(
       ? 0
       : Math.round((completedSessions / totalSessions) * 100);
 
-  let status = ProgramProgressStatus.NOT_STARTED;
+  let status: ProgramProgressDto['status'] = ProgramProgressStatus.NOT_STARTED;
 
   if (completedSessions > 0 && completedSessions < totalSessions) {
     status = ProgramProgressStatus.IN_PROGRESS;
