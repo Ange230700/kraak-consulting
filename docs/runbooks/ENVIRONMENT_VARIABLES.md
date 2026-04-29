@@ -36,6 +36,7 @@ Variables lues par `process.env` dans le code NestJS :
 | `SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase pour les flux auth API | —                                             |
 | `SUPABASE_SECRET_KEY`      | Clé service role (secret)                    | —                                             |
 | `RESEND_API_KEY`           | Clé API Resend (secret)                      | —                                             |
+| `CONTACT_FROM_EMAIL`       | Expéditeur des emails transactionnels        | `onboarding@resend.dev`                       |
 | `CONTACT_TO_EMAIL`         | Email destinataire des formulaires           | `contact@kraak.org`                           |
 | `CORS_ALLOWED_ORIGINS`     | Origines autorisées (virgule)                | `http://localhost:4200,http://localhost:4300` |
 
@@ -155,7 +156,7 @@ en développement local.
 
 Le fichier `render.yaml` déclare les variables d'environnement de production
 pour l'API : `NODE_ENV`, `PORT`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`,
-`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`.
+`RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`.
 
 ## Convention de gestion
 

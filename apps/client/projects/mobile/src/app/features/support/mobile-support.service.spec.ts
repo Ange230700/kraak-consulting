@@ -1,16 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ContactFormDto } from '@kraak/contracts';
 import { MobileAuthService } from '../../features/auth/mobile-auth.service';
 import { MobileSupportService } from './mobile-support.service';
 
-const contactClientMock = { submit: vi.fn() };
-
-vi.mock('@kraak/api-client', () => ({
-  createApiClient: vi.fn(() => ({
-    contact: contactClientMock,
-  })),
-}));
+const fetchMock = vi.fn();
 
 describe('MobileSupportService', () => {
   const authServiceMock = {
@@ -18,7 +12,8 @@ describe('MobileSupportService', () => {
   };
 
   beforeEach(() => {
-    contactClientMock.submit.mockReset();
+    fetchMock.mockReset();
+    vi.stubGlobal('fetch', fetchMock);
 
     TestBed.configureTestingModule({
       providers: [
@@ -26,6 +21,10 @@ describe('MobileSupportService', () => {
         { provide: MobileAuthService, useValue: authServiceMock },
       ],
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('should be created', () => {
@@ -43,14 +42,19 @@ describe('MobileSupportService', () => {
       category: 'technical',
     };
 
-    contactClientMock.submit.mockResolvedValue({
-      success: true,
-      message: 'Votre demande a bien été reçue.',
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        success: true,
+        message: 'Votre demande a bien été reçue.',
+      }),
     });
 
     const result = await service.submitContactForm(payload);
 
-    expect(contactClientMock.submit).toHaveBeenCalledWith(payload);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toContain('/support/contact');
     expect(result.success).toBe(true);
   });
 
@@ -64,7 +68,7 @@ describe('MobileSupportService', () => {
       category: 'program',
     };
 
-    contactClientMock.submit.mockRejectedValue(new Error('Network error'));
+    fetchMock.mockRejectedValue(new Error('Network error'));
 
     await expect(service.submitContactForm(payload)).rejects.toThrow(
       'Network error',

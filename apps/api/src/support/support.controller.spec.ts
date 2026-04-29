@@ -12,7 +12,7 @@ describe('SupportController', () => {
 
   beforeEach(async () => {
     supportService.submitContact.mockReset();
-    supportService.submitContact.mockReturnValue({
+    supportService.submitContact.mockResolvedValue({
       success: true,
       message:
         'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.',
@@ -51,8 +51,8 @@ describe('SupportController', () => {
   // Given une demande de contact valide sans catégorie explicite
   // When le client soumet le formulaire
   // Then le service reçoit des champs trims avec la catégorie par défaut other
-  it('Given une demande valide, When POST est appelé, Then le service reçoit un payload normalisé', () => {
-    controller.submit({
+  it('Given une demande valide, When POST est appelé, Then le service reçoit un payload normalisé', async () => {
+    await controller.submit({
       name: '  Alice Dupont  ',
       email: 'alice@exemple.com',
       subject: '  Demande de renseignements  ',
@@ -71,29 +71,33 @@ describe('SupportController', () => {
   // Given un payload invalide
   // When le client soumet le formulaire
   // Then l'API renvoie des erreurs utilisateur explicites
-  it('Given un payload invalide, When POST est appelé, Then une BadRequestException explicite est renvoyée', () => {
-    let thrownError: unknown;
-
-    try {
+  it('Given un payload invalide, When POST est appelé, Then une BadRequestException explicite est renvoyée', async () => {
+    await expect(
       controller.submit({
         name: 'A',
         email: 'not-an-email',
         subject: ' ',
         message: 'Court',
-      });
-    } catch (error) {
-      thrownError = error;
-    }
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
 
-    expect(thrownError).toBeInstanceOf(BadRequestException);
-    expect((thrownError as BadRequestException).getResponse()).toEqual({
-      success: false,
-      errors: [
-        'Le nom doit contenir au moins 2 caractères.',
-        "L'adresse e-mail est invalide.",
-        "L'objet est requis.",
-        'Le message doit contenir au moins 10 caractères.',
-      ],
+    await expect(
+      controller.submit({
+        name: 'A',
+        email: 'not-an-email',
+        subject: ' ',
+        message: 'Court',
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        success: false,
+        errors: [
+          'Le nom doit contenir au moins 2 caractères.',
+          "L'adresse e-mail est invalide.",
+          "L'objet est requis.",
+          'Le message doit contenir au moins 10 caractères.',
+        ],
+      },
     });
   });
 });
