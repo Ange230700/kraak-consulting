@@ -41,6 +41,8 @@ import type {
   ParticipantProgramListItemDto,
   MarkProgramSessionProgressRequestDto,
   MarkProgramSessionProgressResponseDto,
+  ContactFormDto,
+  ContactSubmissionResultDto,
 } from '@kraak/contracts';
 
 // ---------------------------------------------------------------------------
@@ -103,6 +105,13 @@ export interface AuthClient {
   getSession(options?: RequestOptions): Promise<AuthSessionContextDto>;
 }
 
+export interface ContactClient {
+  submit(
+    body: ContactFormDto,
+    options?: RequestOptions,
+  ): Promise<ContactSubmissionResultDto>;
+}
+
 export interface DashboardClient {
   getAggregate(options?: RequestOptions): Promise<DashboardAggregateDto>;
 }
@@ -126,6 +135,7 @@ export interface ParticipantProgramsClient {
 
 export interface ApiClient {
   auth: AuthClient;
+  contact: ContactClient;
   dashboard: DashboardClient;
   participantPrograms: ParticipantProgramsClient;
   users: FullResourceClient<AppUserDto, CreateAppUserDto, UpdateAppUserDto>;
@@ -322,6 +332,19 @@ function createAuthClient(config: ApiClientConfig): AuthClient {
   };
 }
 
+function createContactClient(config: ApiClientConfig): ContactClient {
+  return {
+    submit: (body, options?) =>
+      request<ContactSubmissionResultDto>(
+        config,
+        'POST',
+        '/support/contact',
+        body,
+        options,
+      ),
+  };
+}
+
 function createDashboardClient(config: ApiClientConfig): DashboardClient {
   return {
     getAggregate: (options?) =>
@@ -373,6 +396,7 @@ function createParticipantProgramsClient(
 export function createApiClient(config: ApiClientConfig): ApiClient {
   return {
     auth: createAuthClient(config),
+    contact: createContactClient(config),
     dashboard: createDashboardClient(config),
     participantPrograms: createParticipantProgramsClient(config),
     users: createFullResourceClient(config, '/users'),

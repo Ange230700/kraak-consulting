@@ -2,6 +2,7 @@ export { createApiClient, ApiError } from './client.js';
 export type {
   ApiClient,
   AuthClient,
+  ContactClient,
   DashboardClient,
   ApiClientConfig,
   RequestOptions,
