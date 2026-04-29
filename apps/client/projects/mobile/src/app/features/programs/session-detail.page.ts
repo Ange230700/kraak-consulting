@@ -5,7 +5,10 @@ import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import { MobileProgramsService } from './mobile-programs.service';
-import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
+import {
+  loadProgramDetailState,
+  readProgramId,
+} from './program-detail-loader.util';
 
 @Component({
   selector: 'kraak-session-detail-page',
@@ -41,32 +44,25 @@ export default class SessionDetailPage implements OnInit {
   );
 
   ngOnInit(): void {
-    const programId = this.route.snapshot.paramMap.get('programId');
+    const programId = readProgramId(this.route);
     if (programId) {
       this.loadProgramDetail(programId);
     }
   }
 
   protected async loadProgramDetail(programId: string): Promise<void> {
-    try {
-      this.loading.set(true);
-      this.errorMessage.set(null);
-      const data = await this.programsService.getProgramDetail(programId);
-      this.programDetail.set(data);
-    } catch (error) {
-      this.errorMessage.set(
-        resolveAuthErrorMessage(
-          error,
-          'Erreur lors du chargement de la session.',
-        ),
-      );
-    } finally {
-      this.loading.set(false);
-    }
+    await loadProgramDetailState({
+      programsService: this.programsService,
+      programId,
+      loading: this.loading,
+      errorMessage: this.errorMessage,
+      programDetail: this.programDetail,
+      fallbackMessage: 'Erreur lors du chargement de la session.',
+    });
   }
 
   protected async reloadSession(): Promise<void> {
-    const programId = this.route.snapshot.paramMap.get('programId');
+    const programId = readProgramId(this.route);
     if (programId) {
       await this.loadProgramDetail(programId);
     }
