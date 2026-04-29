@@ -7,7 +7,10 @@ import { MobileProgramsService } from './mobile-programs.service';
 import SessionDetailPage from './session-detail.page';
 
 describe('Mobile SessionDetailPage', () => {
-  let service: { getProgramDetail: ReturnType<typeof vi.fn> };
+  let service: {
+    getProgramDetail: ReturnType<typeof vi.fn>;
+    markSessionProgress: ReturnType<typeof vi.fn>;
+  };
   let activatedRoute: {
     snapshot: {
       paramMap: {
@@ -59,6 +62,14 @@ describe('Mobile SessionDetailPage', () => {
         updatedAt: new Date().toISOString(),
       },
     ],
+    progress: {
+      totalSessions: 1,
+      completedSessions: 0,
+      completionRate: 0,
+      status: 'not_started',
+      completedSessionIds: [],
+      updatedAt: null,
+    },
     resources: [],
     announcements: [],
   };
@@ -66,6 +77,7 @@ describe('Mobile SessionDetailPage', () => {
   beforeEach(async () => {
     service = {
       getProgramDetail: vi.fn(),
+      markSessionProgress: vi.fn(),
     };
 
     activatedRoute = {

@@ -65,6 +65,12 @@
             {{ program.program.summary }}
           </p>
 
+          <p class="text-xs leading-5 text-neutral-700">
+            Progression: {{ program.progress.completionRate }}% ({{
+              program.progress.completedSessions
+            }}/{{ program.progress.totalSessions }} sessions)
+          </p>
+
           @if (program.cohort) {
             <div
               class="rounded-lg bg-neutral-100/50 p-3 text-xs leading-5 text-neutral-700"

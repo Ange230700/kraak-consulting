@@ -38,6 +38,9 @@ import type {
   ParticipantProgramListItemDto,
   ParticipantProgramDetailDto,
   ProgramAnnouncementPreviewDto,
+  ProgramProgressDto,
+  MarkProgramSessionProgressRequestDto,
+  MarkProgramSessionProgressResponseDto,
 } from './dto';
 
 // Runtime import to ensure the module actually exists (prevents vacuous type test passes)
@@ -53,6 +56,7 @@ import type {
   ResourceTypeValue,
   AudienceTypeValue,
   EnrollmentStatusValue,
+  ProgramProgressStatusValue,
   NotificationTypeValue,
   NotificationChannelValue,
   SupportRequestStatusValue,
@@ -131,6 +135,55 @@ describe('ParticipantProgramListItemDto', () => {
     expectTypeOf<ParticipantProgramListItemDto>()
       .toHaveProperty('cohort')
       .toEqualTypeOf<CohortDto | null>();
+    expectTypeOf<ParticipantProgramListItemDto>()
+      .toHaveProperty('progress')
+      .toEqualTypeOf<ProgramProgressDto>();
+  });
+});
+
+describe('ProgramProgressDto', () => {
+  it('should expose minimal progression markers for participant programs', () => {
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('totalSessions')
+      .toBeNumber();
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('completedSessions')
+      .toBeNumber();
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('completionRate')
+      .toBeNumber();
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<ProgramProgressStatusValue>();
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('completedSessionIds')
+      .toEqualTypeOf<string[]>();
+    expectTypeOf<ProgramProgressDto>()
+      .toHaveProperty('updatedAt')
+      .toEqualTypeOf<string | null>();
+  });
+});
+
+describe('MarkProgramSessionProgress DTOs', () => {
+  it('should expose request payload for a session marker update', () => {
+    expectTypeOf<MarkProgramSessionProgressRequestDto>()
+      .toHaveProperty('sessionId')
+      .toBeString();
+    expectTypeOf<MarkProgramSessionProgressRequestDto>()
+      .toHaveProperty('completed')
+      .toBeBoolean();
+  });
+
+  it('should expose response payload with updated progression state', () => {
+    expectTypeOf<MarkProgramSessionProgressResponseDto>()
+      .toHaveProperty('enrollmentId')
+      .toBeString();
+    expectTypeOf<MarkProgramSessionProgressResponseDto>()
+      .toHaveProperty('enrollmentStatus')
+      .toEqualTypeOf<EnrollmentStatusValue>();
+    expectTypeOf<MarkProgramSessionProgressResponseDto>()
+      .toHaveProperty('progress')
+      .toEqualTypeOf<ProgramProgressDto>();
   });
 });
 
@@ -148,6 +201,9 @@ describe('ParticipantProgramDetailDto', () => {
     expectTypeOf<ParticipantProgramDetailDto>()
       .toHaveProperty('cohort')
       .toEqualTypeOf<CohortDto | null>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('progress')
+      .toEqualTypeOf<ProgramProgressDto>();
     expectTypeOf<ParticipantProgramDetailDto>()
       .toHaveProperty('sessions')
       .toEqualTypeOf<SessionDto[]>();

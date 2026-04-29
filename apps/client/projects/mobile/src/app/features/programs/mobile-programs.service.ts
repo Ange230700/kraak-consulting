@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { createApiClient } from '@kraak/api-client';
 import type {
+  MarkProgramSessionProgressResponseDto,
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
 } from '@kraak/contracts';
@@ -25,5 +26,16 @@ export class MobileProgramsService {
     programId: string,
   ): Promise<ParticipantProgramDetailDto> {
     return this.client.participantPrograms.getById(programId);
+  }
+
+  async markSessionProgress(
+    programId: string,
+    sessionId: string,
+    completed: boolean,
+  ): Promise<MarkProgramSessionProgressResponseDto> {
+    return this.client.participantPrograms.markSessionProgress(programId, {
+      sessionId,
+      completed,
+    });
   }
 }

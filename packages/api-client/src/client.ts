@@ -39,6 +39,8 @@ import type {
   DashboardAggregateDto,
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
+  MarkProgramSessionProgressRequestDto,
+  MarkProgramSessionProgressResponseDto,
 } from '@kraak/contracts';
 
 // ---------------------------------------------------------------------------
@@ -111,6 +113,11 @@ export interface ParticipantProgramsClient {
     options?: RequestOptions,
   ): Promise<ParticipantProgramDetailDto>;
   list(options?: RequestOptions): Promise<ParticipantProgramListItemDto[]>;
+  markSessionProgress(
+    programId: string,
+    body: MarkProgramSessionProgressRequestDto,
+    options?: RequestOptions,
+  ): Promise<MarkProgramSessionProgressResponseDto>;
 }
 
 // ---------------------------------------------------------------------------
@@ -346,6 +353,14 @@ function createParticipantProgramsClient(
         'GET',
         '/programs',
         undefined,
+        options,
+      ),
+    markSessionProgress: (programId, body, options?) =>
+      request<MarkProgramSessionProgressResponseDto>(
+        config,
+        'POST',
+        `/programs/${programId}/progress`,
+        body,
         options,
       ),
   };

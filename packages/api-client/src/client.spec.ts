@@ -277,6 +277,36 @@ describe('HTTP behaviour', () => {
     expect(url).toBe('https://api.test/dashboard');
     expect(init.method).toBe('GET');
   });
+
+  it('POST /programs/:id/progress envoie le marquage progression minimal', async () => {
+    fetchSpy = mockFetch(200, {
+      enrollmentId: 'enr-1',
+      enrollmentStatus: 'active',
+      progress: {
+        totalSessions: 2,
+        completedSessions: 1,
+        completionRate: 50,
+        status: 'in_progress',
+        completedSessionIds: ['session-1'],
+        updatedAt: '2026-04-29T10:00:00.000Z',
+      },
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.participantPrograms.markSessionProgress('prog-1', {
+      sessionId: 'session-1',
+      completed: true,
+    });
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/programs/prog-1/progress');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({
+      sessionId: 'session-1',
+      completed: true,
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------

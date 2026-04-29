@@ -26,6 +26,14 @@ describe('MobileProgramsService', () => {
       updatedAt: new Date().toISOString(),
     },
     cohort: null,
+    progress: {
+      totalSessions: 0,
+      completedSessions: 0,
+      completionRate: 0,
+      status: 'not_started',
+      completedSessionIds: [],
+      updatedAt: null,
+    },
   };
 
   const mockProgramDetail: ParticipantProgramDetailDto = {
@@ -33,6 +41,14 @@ describe('MobileProgramsService', () => {
     enrollmentStatus: 'active',
     program: mockProgramListItem.program,
     cohort: null,
+    progress: {
+      totalSessions: 0,
+      completedSessions: 0,
+      completionRate: 0,
+      status: 'not_started',
+      completedSessionIds: [],
+      updatedAt: null,
+    },
     sessions: [],
     resources: [],
     announcements: [],
@@ -112,6 +128,46 @@ describe('MobileProgramsService', () => {
         expect.stringContaining('/programs/prog-1'),
         expect.objectContaining({
           method: 'GET',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-token',
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('markSessionProgress', () => {
+    it('Given valid program/session IDs, when markSessionProgress is called, then it should post progression marker', async () => {
+      const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            enrollmentId: 'enr-1',
+            enrollmentStatus: 'active',
+            progress: {
+              totalSessions: 2,
+              completedSessions: 1,
+              completionRate: 50,
+              status: 'in_progress',
+              completedSessionIds: ['session-1'],
+              updatedAt: '2026-04-29T10:00:00.000Z',
+            },
+          }),
+          {
+            status: 200,
+          },
+        ),
+      );
+
+      await service.markSessionProgress('prog-1', 'session-1', true);
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/programs/prog-1/progress'),
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({
+            sessionId: 'session-1',
+            completed: true,
+          }),
           headers: expect.objectContaining({
             Authorization: 'Bearer test-token',
           }),

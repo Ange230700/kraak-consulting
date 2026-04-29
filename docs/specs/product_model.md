@@ -421,6 +421,8 @@ Champs minimums :
 - `status` (`pending` | `active` | `completed` | `cancelled`)
 - `enrolledAt`
 - `completedAt` (optionnel)
+- `progressCompletedSessionIds` (liste des sessions marquées terminées, optionnel)
+- `progressUpdatedAt` (horodatage de la dernière mise à jour progression, optionnel)
 - `createdAt`
 - `updatedAt`
 

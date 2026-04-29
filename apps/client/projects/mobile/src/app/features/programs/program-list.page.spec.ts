@@ -24,6 +24,14 @@ describe('Mobile ProgramListPage', () => {
       updatedAt: new Date().toISOString(),
     },
     cohort: null,
+    progress: {
+      totalSessions: 0,
+      completedSessions: 0,
+      completionRate: 0,
+      status: 'not_started',
+      completedSessionIds: [],
+      updatedAt: null,
+    },
   };
 
   beforeEach(async () => {

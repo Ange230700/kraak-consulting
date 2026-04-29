@@ -9,6 +9,7 @@ import type {
   ResourceTypeValue,
   AudienceTypeValue,
   EnrollmentStatusValue,
+  ProgramProgressStatusValue,
   NotificationTypeValue,
   NotificationChannelValue,
   SupportRequestStatusValue,
@@ -149,6 +150,27 @@ export interface ParticipantProgramListItemDto {
   enrollmentStatus: EnrollmentStatusValue;
   program: ProgramDto;
   cohort: CohortDto | null;
+  progress: ProgramProgressDto;
+}
+
+export interface ProgramProgressDto {
+  totalSessions: number;
+  completedSessions: number;
+  completionRate: number;
+  status: ProgramProgressStatusValue;
+  completedSessionIds: string[];
+  updatedAt: string | null;
+}
+
+export interface MarkProgramSessionProgressRequestDto {
+  sessionId: string;
+  completed: boolean;
+}
+
+export interface MarkProgramSessionProgressResponseDto {
+  enrollmentId: string;
+  enrollmentStatus: EnrollmentStatusValue;
+  progress: ProgramProgressDto;
 }
 
 export interface ProgramAnnouncementPreviewDto {
@@ -163,6 +185,7 @@ export interface ParticipantProgramDetailDto {
   enrollmentStatus: EnrollmentStatusValue;
   program: ProgramDto;
   cohort: CohortDto | null;
+  progress: ProgramProgressDto;
   sessions: SessionDto[];
   resources: ResourceDto[];
   announcements: ProgramAnnouncementPreviewDto[];
