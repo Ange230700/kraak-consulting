@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AnnouncementsModule } from './announcements/announcements.module';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProgramsModule } from './programs/programs.module';
@@ -18,6 +19,7 @@ import { SupportModule } from './support/support.module';
     }),
     SupabaseModule,
     AuthModule,
+    AnnouncementsModule,
     DashboardModule,
     ProgramsModule,
     ResourcesModule,
