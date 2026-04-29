@@ -120,6 +120,7 @@ const enrollmentProgramSelect =
 
 const progressUpdateErrorMessage =
   'Impossible de mettre à jour la progression du programme.';
+const sessionProgressPageSize = 200;
 
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
@@ -313,8 +314,7 @@ export class ProgramsService {
       });
     }
 
-    const sessions = await this.readSessions(cohort.id);
-    const sessionIds = sessions.map((session) => session.id);
+    const sessionIds = await this.readVisibleSessionIdsByCohort(cohort.id);
 
     if (!canMarkSessionProgress(sessionIds, payload.sessionId)) {
       throw new NotFoundException({
@@ -439,22 +439,36 @@ export class ProgramsService {
     }
 
     const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('session')
-      .select('id, cohort_id')
-      .in('cohort_id', uniqueCohortIds)
-      .in('status', ['scheduled', 'live', 'completed'])
-      .limit(200);
+    const rows: Array<{ id: string; cohort_id: string }> = [];
+    let from = 0;
 
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de charger la progression des programmes.',
-      });
+    while (true) {
+      const { data, error } = await adminClient
+        .from('session')
+        .select('id, cohort_id')
+        .in('cohort_id', uniqueCohortIds)
+        .in('status', ['scheduled', 'live', 'completed'])
+        .order('id', { ascending: true })
+        .range(from, from + sessionProgressPageSize - 1);
+
+      if (error) {
+        throw new InternalServerErrorException({
+          success: false,
+          message: 'Impossible de charger la progression des programmes.',
+        });
+      }
+
+      const batch =
+        (data as Array<{ id: string; cohort_id: string }> | null) ?? [];
+      rows.push(...batch);
+
+      if (batch.length < sessionProgressPageSize) {
+        break;
+      }
+
+      from += sessionProgressPageSize;
     }
 
-    const rows =
-      (data as Array<{ id: string; cohort_id: string }> | null) ?? [];
     const grouped = new Map<string, string[]>();
 
     for (const row of rows) {
@@ -464,6 +478,42 @@ export class ProgramsService {
     }
 
     return grouped;
+  }
+
+  private async readVisibleSessionIdsByCohort(
+    cohortId: string,
+  ): Promise<string[]> {
+    const adminClient = this.supabaseService.getClient();
+    const sessionIds: string[] = [];
+    let from = 0;
+
+    while (true) {
+      const { data, error } = await adminClient
+        .from('session')
+        .select('id')
+        .eq('cohort_id', cohortId)
+        .in('status', ['scheduled', 'live', 'completed'])
+        .order('id', { ascending: true })
+        .range(from, from + sessionProgressPageSize - 1);
+
+      if (error) {
+        throw new InternalServerErrorException({
+          success: false,
+          message: progressUpdateErrorMessage,
+        });
+      }
+
+      const batch = (data as Array<{ id: string }> | null) ?? [];
+      sessionIds.push(...batch.map((row) => row.id));
+
+      if (batch.length < sessionProgressPageSize) {
+        break;
+      }
+
+      from += sessionProgressPageSize;
+    }
+
+    return sessionIds;
   }
 
   private async readResources(

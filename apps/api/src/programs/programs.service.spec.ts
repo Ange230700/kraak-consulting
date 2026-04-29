@@ -24,6 +24,7 @@ function createListQuery(result: { data: unknown; error: unknown }) {
     in: jest.fn().mockReturnThis(),
     or: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
+    range: jest.fn().mockResolvedValue(result),
     limit: jest.fn().mockResolvedValue(result),
   };
 }

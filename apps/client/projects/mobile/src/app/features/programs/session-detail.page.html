@@ -15,7 +15,6 @@
         size="small"
         class="kraak-primary-button"
         (click)="reloadSession()"
-        (keydown.enter)="reloadSession()"
       >
         Réessayer
       </ion-button>
@@ -126,7 +125,6 @@
             class="kraak-secondary-button"
             [disabled]="markingProgress()"
             (click)="markSessionCompletion(false)"
-            (keydown.enter)="markSessionCompletion(false)"
           >
             Marquer comme non terminée
           </ion-button>
@@ -136,7 +134,6 @@
             class="kraak-primary-button"
             [disabled]="markingProgress()"
             (click)="markSessionCompletion(true)"
-            (keydown.enter)="markSessionCompletion(true)"
           >
             Marquer comme terminée
           </ion-button>

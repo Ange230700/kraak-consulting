@@ -31,7 +31,7 @@ describe('Programs DTO validation', () => {
     expect(result).toEqual({
       valid: false,
       errors: [
-        'Le sessionId est requis.',
+        'Le champ sessionId est requis.',
         'Le champ completed doit être un booléen.',
       ],
     });

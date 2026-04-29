@@ -35,7 +35,7 @@ export function validateMarkSessionProgressPayload(
   const errors: string[] = [];
 
   if (!sessionId) {
-    errors.push('Le sessionId est requis.');
+    errors.push('Le champ sessionId est requis.');
   }
 
   if (typeof completedValue !== 'boolean') {
