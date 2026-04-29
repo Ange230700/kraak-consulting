@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   AnnouncementDto,
   AnnouncementPriorityValue,
+  AudienceTypeValue,
   PublicationStatusValue,
 } from '@kraak/contracts';
 import {
@@ -18,7 +19,7 @@ type AnnouncementRow = {
   title: string;
   body: string;
   priority: AnnouncementPriorityValue;
-  audience_type: string;
+  audience_type: AudienceTypeValue;
   program_id: string | null;
   cohort_id: string | null;
   status: PublicationStatusValue;
@@ -245,7 +246,7 @@ export class AnnouncementsService {
   private async resolveParticipantId(
     accessToken: string,
   ): Promise<string | null> {
-    const authClient = this.supabaseService.getAuthClient();
+    const authClient = this.supabaseService.createAuthClient();
 
     const { data, error } = await authClient.auth.getUser(accessToken);
 

@@ -43,7 +43,7 @@ describe('AnnouncementsService', () => {
   };
 
   const mockSupabaseService = {
-    getAuthClient: jest.fn(() => mockAuthClient),
+    createAuthClient: jest.fn(() => mockAuthClient),
     getClient: jest.fn(),
   };
 
