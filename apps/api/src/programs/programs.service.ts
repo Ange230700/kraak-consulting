@@ -315,6 +315,7 @@ export class ProgramsService {
           'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
         )
         .eq('status', 'published')
+        .eq('program_id', programId)
         .eq('cohort_id', cohortId)
         .order('published_at', { ascending: false })
         .limit(50);

@@ -37,6 +37,8 @@ import type {
   SignUpRequestDto,
   SignUpResponseDto,
   DashboardAggregateDto,
+  ParticipantProgramDetailDto,
+  ParticipantProgramListItemDto,
 } from '@kraak/contracts';
 
 // ---------------------------------------------------------------------------
@@ -103,6 +105,14 @@ export interface DashboardClient {
   getAggregate(options?: RequestOptions): Promise<DashboardAggregateDto>;
 }
 
+export interface ParticipantProgramsClient {
+  getById(
+    id: string,
+    options?: RequestOptions,
+  ): Promise<ParticipantProgramDetailDto>;
+  list(options?: RequestOptions): Promise<ParticipantProgramListItemDto[]>;
+}
+
 // ---------------------------------------------------------------------------
 // ApiClient interface
 // ---------------------------------------------------------------------------
@@ -110,6 +120,7 @@ export interface DashboardClient {
 export interface ApiClient {
   auth: AuthClient;
   dashboard: DashboardClient;
+  participantPrograms: ParticipantProgramsClient;
   users: FullResourceClient<AppUserDto, CreateAppUserDto, UpdateAppUserDto>;
   participants: FullResourceClient<
     ParticipantDto,
@@ -317,6 +328,29 @@ function createDashboardClient(config: ApiClientConfig): DashboardClient {
   };
 }
 
+function createParticipantProgramsClient(
+  config: ApiClientConfig,
+): ParticipantProgramsClient {
+  return {
+    getById: (id, options?) =>
+      request<ParticipantProgramDetailDto>(
+        config,
+        'GET',
+        `/programs/${id}`,
+        undefined,
+        options,
+      ),
+    list: (options?) =>
+      request<ParticipantProgramListItemDto[]>(
+        config,
+        'GET',
+        '/programs',
+        undefined,
+        options,
+      ),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
@@ -325,6 +359,7 @@ export function createApiClient(config: ApiClientConfig): ApiClient {
   return {
     auth: createAuthClient(config),
     dashboard: createDashboardClient(config),
+    participantPrograms: createParticipantProgramsClient(config),
     users: createFullResourceClient(config, '/users'),
     participants: createFullResourceClient(config, '/participants'),
     programs: createFullResourceClient(config, '/programs'),

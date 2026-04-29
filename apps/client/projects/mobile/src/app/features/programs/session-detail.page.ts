@@ -1,10 +1,70 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
 import { PageShell } from '../../shared/page-shell/page-shell';
+import { MobileProgramsService } from './mobile-programs.service';
+import {
+  loadProgramDetailState,
+  readProgramId,
+} from './program-detail-loader.util';
 
 @Component({
   selector: 'kraak-session-detail-page',
   standalone: true,
-  imports: [PageShell],
+  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './session-detail.page.html',
 })
-export default class SessionDetailPage {}
+export default class SessionDetailPage implements OnInit {
+  private readonly programsService = inject(MobileProgramsService);
+  private readonly route = inject(ActivatedRoute);
+
+  protected readonly programDetail = signal<ParticipantProgramDetailDto | null>(
+    null,
+  );
+  protected readonly loading = signal(true);
+  protected readonly errorMessage = signal<string | null>(null);
+
+  protected readonly session = computed<SessionDto | null>(() => {
+    const sessionId = this.route.snapshot.paramMap.get('sessionId');
+    const detail = this.programDetail();
+
+    if (!sessionId || !detail) {
+      return null;
+    }
+
+    return detail.sessions.find((s) => s.id === sessionId) ?? null;
+  });
+
+  protected readonly programId = computed(
+    () =>
+      this.route.snapshot.paramMap.get('programId') ??
+      this.programDetail()?.program.id,
+  );
+
+  ngOnInit(): void {
+    const programId = readProgramId(this.route);
+    if (programId) {
+      this.loadProgramDetail(programId);
+    }
+  }
+
+  protected async loadProgramDetail(programId: string): Promise<void> {
+    await loadProgramDetailState({
+      programsService: this.programsService,
+      programId,
+      loading: this.loading,
+      errorMessage: this.errorMessage,
+      programDetail: this.programDetail,
+      fallbackMessage: 'Erreur lors du chargement de la session.',
+    });
+  }
+
+  protected async reloadSession(): Promise<void> {
+    const programId = readProgramId(this.route);
+    if (programId) {
+      await this.loadProgramDetail(programId);
+    }
+  }
+}

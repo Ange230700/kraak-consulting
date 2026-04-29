@@ -31,7 +31,7 @@ function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
 // ---------------------------------------------------------------------------
 
 describe('createApiClient', () => {
-  it('retourne un objet avec les 12 groupes de ressources', () => {
+  it('retourne un objet avec les 13 groupes de ressources', () => {
     const client = createApiClient(baseConfig());
     const keys = Object.keys(client).sort((a, b) => a.localeCompare(b));
     expect(keys).toEqual([
@@ -41,6 +41,7 @@ describe('createApiClient', () => {
       'dashboard',
       'enrollments',
       'notifications',
+      'participantPrograms',
       'participants',
       'programs',
       'resources',
