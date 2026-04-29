@@ -439,35 +439,20 @@ export class ProgramsService {
     }
 
     const adminClient = this.supabaseService.getClient();
-    const rows: Array<{ id: string; cohort_id: string }> = [];
-    let from = 0;
-
-    while (true) {
-      const { data, error } = await adminClient
-        .from('session')
-        .select('id, cohort_id')
-        .in('cohort_id', uniqueCohortIds)
-        .in('status', ['scheduled', 'live', 'completed'])
-        .order('id', { ascending: true })
-        .range(from, from + sessionProgressPageSize - 1);
-
-      if (error) {
-        throw new InternalServerErrorException({
-          success: false,
-          message: 'Impossible de charger la progression des programmes.',
-        });
-      }
-
-      const batch =
-        (data as Array<{ id: string; cohort_id: string }> | null) ?? [];
-      rows.push(...batch);
-
-      if (batch.length < sessionProgressPageSize) {
-        break;
-      }
-
-      from += sessionProgressPageSize;
-    }
+    const rows = await this.readPagedSessionRows<{
+      id: string;
+      cohort_id: string;
+    }>(
+      async (from, to) =>
+        adminClient
+          .from('session')
+          .select('id, cohort_id')
+          .in('cohort_id', uniqueCohortIds)
+          .in('status', ['scheduled', 'live', 'completed'])
+          .order('id', { ascending: true })
+          .range(from, to),
+      'Impossible de charger la progression des programmes.',
+    );
 
     const grouped = new Map<string, string[]>();
 
@@ -484,27 +469,44 @@ export class ProgramsService {
     cohortId: string,
   ): Promise<string[]> {
     const adminClient = this.supabaseService.getClient();
-    const sessionIds: string[] = [];
+    const rows = await this.readPagedSessionRows<{ id: string }>(
+      async (from, to) =>
+        adminClient
+          .from('session')
+          .select('id')
+          .eq('cohort_id', cohortId)
+          .in('status', ['scheduled', 'live', 'completed'])
+          .order('id', { ascending: true })
+          .range(from, to),
+      progressUpdateErrorMessage,
+    );
+
+    return rows.map((row) => row.id);
+  }
+
+  private async readPagedSessionRows<T>(
+    loadPage: (
+      from: number,
+      to: number,
+    ) => Promise<{ data: T[] | null; error: unknown }>,
+    errorMessage: string,
+  ): Promise<T[]> {
+    const rows: T[] = [];
     let from = 0;
 
     while (true) {
-      const { data, error } = await adminClient
-        .from('session')
-        .select('id')
-        .eq('cohort_id', cohortId)
-        .in('status', ['scheduled', 'live', 'completed'])
-        .order('id', { ascending: true })
-        .range(from, from + sessionProgressPageSize - 1);
+      const to = from + sessionProgressPageSize - 1;
+      const { data, error } = await loadPage(from, to);
 
       if (error) {
         throw new InternalServerErrorException({
           success: false,
-          message: progressUpdateErrorMessage,
+          message: errorMessage,
         });
       }
 
-      const batch = (data as Array<{ id: string }> | null) ?? [];
-      sessionIds.push(...batch.map((row) => row.id));
+      const batch = data ?? [];
+      rows.push(...batch);
 
       if (batch.length < sessionProgressPageSize) {
         break;
@@ -513,7 +515,7 @@ export class ProgramsService {
       from += sessionProgressPageSize;
     }
 
-    return sessionIds;
+    return rows;
   }
 
   private async readResources(

@@ -763,4 +763,99 @@ describe('ProgramsService', () => {
       }),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
+
+  // Given un cohort avec plus d'une page de sessions
+  // When markSessionProgress cible une session de la deuxième page
+  // Then le marquage est accepté et persisté
+  it('Given une session en page suivante, When markSessionProgress est appelé, Then la pagination des sessions permet le marquage', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const firstPage = Array.from({ length: 200 }, (_, index) => ({
+      id: `session-${index + 1}`,
+    }));
+    const pagedSessionsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({ data: firstPage, error: null })
+        .mockResolvedValueOnce({ data: [{ id: 'session-201' }], error: null }),
+    };
+    const enrollmentUpdateQuery = createUpdateQuery({ error: null });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentSelectQuery
+          : enrollmentUpdateQuery;
+      }
+
+      if (tableName === 'session') {
+        return pagedSessionsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-201',
+        completed: true,
+      }),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      enrollmentStatus: 'active',
+      progress: {
+        totalSessions: 201,
+        completedSessions: 1,
+      },
+    });
+
+    expect(pagedSessionsQuery.range).toHaveBeenCalledTimes(2);
+  });
 });
