@@ -23,7 +23,9 @@ import type {
   ProgramDto,
   ProgramVisibilityValue,
   PublicationStatusValue,
+  ResourceAudienceValue,
   ResourceDto,
+  ResourceThemeValue,
   ResourceTypeValue,
   SessionDto,
   SessionStatusValue,
@@ -95,6 +97,8 @@ type ResourceRow = {
   title: string;
   description: string | null;
   resource_type: ResourceTypeValue;
+  resource_theme: ResourceThemeValue;
+  resource_audience: ResourceAudienceValue;
   url: string | null;
   file_path: string | null;
   status: PublicationStatusValue;
@@ -527,7 +531,7 @@ export class ProgramsService {
       await adminClient
         .from('resource')
         .select(
-          'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
+          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
         )
         .eq('status', 'published')
         .eq('program_id', programId)
@@ -548,7 +552,7 @@ export class ProgramsService {
       const { data, error } = await adminClient
         .from('resource')
         .select(
-          'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
+          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
         )
         .eq('status', 'published')
         .eq('program_id', programId)
@@ -707,6 +711,8 @@ export class ProgramsService {
       title: row.title,
       description: row.description,
       resourceType: row.resource_type,
+      resourceTheme: row.resource_theme,
+      resourceAudience: row.resource_audience,
       url: row.url,
       filePath: row.file_path,
       status: row.status,
