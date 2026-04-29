@@ -18,7 +18,7 @@ const RESOURCE_THEME_OPTIONS: readonly {
   { value: 'training', label: 'Formation' },
   { value: 'project_management', label: 'Gestion de projet' },
   { value: 'immigration', label: 'Immigration' },
-  { value: 'career', label: 'Carriere' },
+  { value: 'career', label: 'Carrière' },
 ];
 
 const RESOURCE_AUDIENCE_OPTIONS: readonly {
@@ -28,7 +28,7 @@ const RESOURCE_AUDIENCE_OPTIONS: readonly {
   { value: 'all', label: 'Tous' },
   {
     value: 'young_professionals_students',
-    label: 'Jeunes pros et etudiants',
+    label: 'Jeunes pros et étudiants',
   },
   { value: 'organizations', label: 'Organisations' },
   { value: 'international_candidates', label: 'Candidats internationaux' },
@@ -37,7 +37,7 @@ const RESOURCE_AUDIENCE_OPTIONS: readonly {
 const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
   link: 'Lien',
   file: 'Fichier',
-  video: 'Video',
+  video: 'Vidéo',
   document: 'Document',
 };
 
@@ -49,6 +49,7 @@ const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
 })
 export default class ResourceListPage implements OnInit {
   private readonly resourcesService = inject(MobileResourcesService);
+  private latestLoadRequestId = 0;
 
   protected readonly resources = signal<ResourceDto[]>([]);
   protected readonly loading = signal(true);
@@ -126,6 +127,8 @@ export default class ResourceListPage implements OnInit {
   }
 
   private async loadResources(): Promise<void> {
+    const requestId = ++this.latestLoadRequestId;
+
     try {
       this.loading.set(true);
       this.errorMessage.set(null);
@@ -137,17 +140,23 @@ export default class ResourceListPage implements OnInit {
         limit: 100,
       });
 
-      this.resources.set(response.data);
+      if (requestId === this.latestLoadRequestId) {
+        this.resources.set(response.data);
+      }
     } catch (error) {
-      this.errorMessage.set(
-        resolveAuthErrorMessage(
-          error,
-          'Erreur lors du chargement des ressources.',
-        ),
-      );
-      this.resources.set([]);
+      if (requestId === this.latestLoadRequestId) {
+        this.errorMessage.set(
+          resolveAuthErrorMessage(
+            error,
+            'Erreur lors du chargement des ressources.',
+          ),
+        );
+        this.resources.set([]);
+      }
     } finally {
-      this.loading.set(false);
+      if (requestId === this.latestLoadRequestId) {
+        this.loading.set(false);
+      }
     }
   }
 }

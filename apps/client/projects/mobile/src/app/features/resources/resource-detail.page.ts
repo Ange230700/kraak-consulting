@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import type { ResourceDto } from '@kraak/contracts';
+import { map } from 'rxjs';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
@@ -19,20 +20,25 @@ export default class ResourceDetailPage implements OnInit {
   protected readonly resource = signal<ResourceDto | null>(null);
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly currentResourceId = signal<string | null>(null);
 
-  protected readonly resourceId = computed(
-    () => this.route.snapshot.paramMap.get('resourceId') ?? null,
-  );
+  protected readonly resourceId = computed(() => this.currentResourceId());
 
   ngOnInit(): void {
-    const resourceId = this.resourceId();
-    if (!resourceId) {
-      this.loading.set(false);
-      this.errorMessage.set('Identifiant de ressource manquant.');
-      return;
-    }
+    this.route.paramMap
+      .pipe(map((params) => params.get('resourceId')))
+      .subscribe((resourceId) => {
+        this.currentResourceId.set(resourceId);
 
-    this.loadResource(resourceId);
+        if (!resourceId) {
+          this.loading.set(false);
+          this.errorMessage.set('Identifiant de ressource manquant.');
+          this.resource.set(null);
+          return;
+        }
+
+        this.loadResource(resourceId);
+      });
   }
 
   protected async reloadResource(): Promise<void> {
@@ -55,7 +61,7 @@ export default class ResourceDetailPage implements OnInit {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          'Erreur lors du chargement du detail de la ressource.',
+          'Erreur lors du chargement du détail de la ressource.',
         ),
       );
       this.resource.set(null);

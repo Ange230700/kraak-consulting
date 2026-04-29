@@ -7,11 +7,13 @@ import {
 } from '@angular/router';
 import type { ResourceDto } from '@kraak/contracts';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { BehaviorSubject } from 'rxjs';
 import { MobileResourcesService } from './mobile-resources.service';
 import ResourceDetailPage from './resource-detail.page';
 
 describe('Mobile ResourceDetailPage', () => {
   let service: { getResourceById: ReturnType<typeof vi.fn> };
+  let paramMapSubject: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   const mockResource: ResourceDto = {
     id: 'resource-1',
@@ -34,6 +36,9 @@ describe('Mobile ResourceDetailPage', () => {
     service = {
       getResourceById: vi.fn(),
     };
+    paramMapSubject = new BehaviorSubject(
+      convertToParamMap({ resourceId: 'resource-1' }),
+    );
 
     await TestBed.configureTestingModule({
       imports: [ResourceDetailPage],
@@ -50,6 +55,7 @@ describe('Mobile ResourceDetailPage', () => {
             snapshot: {
               paramMap: convertToParamMap({ resourceId: 'resource-1' }),
             },
+            paramMap: paramMapSubject.asObservable(),
           },
         },
       ],
@@ -83,5 +89,28 @@ describe('Mobile ResourceDetailPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Erreur detail test');
+  });
+
+  it('Given the route param changes, when another resource id is emitted, then the detail reloads', async () => {
+    service.getResourceById
+      .mockResolvedValueOnce(mockResource)
+      .mockResolvedValueOnce({
+        ...mockResource,
+        id: 'resource-2',
+        title: 'Guide detail 2',
+      });
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    paramMapSubject.next(convertToParamMap({ resourceId: 'resource-2' }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(service.getResourceById).toHaveBeenCalledWith('resource-2');
+    expect(element.textContent).toContain('Guide detail 2');
   });
 });

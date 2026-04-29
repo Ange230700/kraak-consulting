@@ -28,14 +28,14 @@
           <span
             class="text-xs font-semibold tracking-wide text-neutral-700 uppercase"
           >
-            Theme
+            Thème
           </span>
           <select
             [value]="selectedTheme()"
             (change)="onThemeChange($event)"
             class="focus:border-brand-blue rounded-xl border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none"
           >
-            <option value="">Tous les themes</option>
+            <option value="">Tous les thèmes</option>
             @for (option of resourceThemeOptions; track option.value) {
               <option [value]="option.value">{{ option.label }}</option>
             }
@@ -92,7 +92,7 @@
         class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
       >
         <p class="text-sm leading-6 text-neutral-700">
-          Aucune ressource ne correspond a vos criteres.
+          Aucune ressource ne correspond à vos critères.
         </p>
       </article>
     } @else {
@@ -135,7 +135,7 @@
             expand="block"
             class="kraak-primary-button"
           >
-            Voir le detail
+            Voir le détail
           </ion-button>
         </article>
       }

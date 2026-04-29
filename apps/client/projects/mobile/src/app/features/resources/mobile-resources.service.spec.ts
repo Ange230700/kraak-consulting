@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ResourceDto } from '@kraak/contracts';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
@@ -38,6 +38,10 @@ describe('MobileResourcesService', () => {
     });
 
     service = TestBed.inject(MobileResourcesService);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('Given filters, when listResources is called, then it should send resourceTheme and resourceAudience query params', async () => {
