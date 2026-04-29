@@ -81,11 +81,21 @@ export default class SessionDetailPage implements OnInit {
     }
   }
 
+  protected onReloadKeydown(event: Event): void {
+    event.preventDefault();
+    void this.reloadSession();
+  }
+
+  protected onMarkKeydown(event: Event, completed: boolean): void {
+    event.preventDefault();
+    void this.markSessionCompletion(completed);
+  }
+
   protected async markSessionCompletion(completed: boolean): Promise<void> {
     const programId = this.programId();
     const currentSession = this.session();
 
-    if (!programId || !currentSession) {
+    if (!programId || !currentSession || this.markingProgress()) {
       return;
     }
 
