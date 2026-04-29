@@ -321,6 +321,65 @@ describe('MobilePushNotificationsService', () => {
     );
   });
 
+  it('Given an action payload without priority announcement data, when the user taps the notification, then no navigation is triggered', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority-action-ignore',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationActionPerformed')?.({
+      notification: {
+        data: {
+          announcementId: 123,
+          priority: 'critical',
+        },
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
+    expect(navigateByUrlMock).not.toHaveBeenCalled();
+  });
+
+  it('Given a priority payload with an empty announcement id, when a notification is received, then the payload is ignored', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority-empty-id',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: {
+        announcementId: '   ',
+        priority: 'high',
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
+  });
+
   it('Given permission is prompted then granted, when registration succeeds, then the FCM token is exposed', async () => {
     getPlatformMock.mockReturnValue('ios');
 
