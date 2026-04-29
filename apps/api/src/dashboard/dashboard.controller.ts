@@ -63,7 +63,7 @@ const dashboardAggregateSchema = {
           cohortStatus: {
             type: 'string',
             nullable: true,
-            enum: ['draft', 'planned', 'active', 'completed', 'archived'],
+            enum: ['draft', 'open', 'active', 'completed', 'archived'],
           },
           cohortStartDate: { type: 'string', nullable: true },
         },
