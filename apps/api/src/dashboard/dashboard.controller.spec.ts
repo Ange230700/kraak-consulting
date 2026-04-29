@@ -64,7 +64,7 @@ describe('DashboardController', () => {
     let thrownError: unknown;
 
     try {
-      await controller.getAggregate(undefined);
+      await controller.getAggregate();
     } catch (error) {
       thrownError = error;
     }
