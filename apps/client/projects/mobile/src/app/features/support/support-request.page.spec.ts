@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { ApiError } from '@kraak/api-client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MobileSupportService } from './mobile-support.service';
 import SupportRequestPage from './support-request.page';
@@ -107,6 +108,30 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBeTruthy();
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an API validation error payload, when submit is called, then the backend message is surfaced to the user', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(400, 'Bad Request', {
+        errors: ['Le message doit contenir au moins 10 caractères.'],
+      }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Bob Martin',
+      email: 'bob@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Le message doit contenir au moins 10 caractères.',
+    );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
 });

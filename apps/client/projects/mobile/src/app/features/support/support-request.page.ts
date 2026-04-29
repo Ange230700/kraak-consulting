@@ -66,7 +66,6 @@ export default class SupportRequestPage {
   });
 
   readonly submitting = signal(false);
-  readonly successMessage = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
 
   readonly categoryOptions: { value: SupportCategoryValue; label: string }[] = [
@@ -86,15 +85,11 @@ export default class SupportRequestPage {
     }
 
     this.submitting.set(true);
-    this.successMessage.set(null);
     this.errorMessage.set(null);
 
     try {
-      const result = await this.supportService.submitContactForm(
-        this.form.getRawValue(),
-      );
+      await this.supportService.submitContactForm(this.form.getRawValue());
 
-      this.successMessage.set(result.message);
       this.form.reset({ category: 'other' });
 
       await this.router.navigateByUrl('/tabs/support');
@@ -123,8 +118,91 @@ function normalizeTextControls(
 }
 
 function resolveSupportErrorMessage(error: unknown): string {
-  if (error instanceof ApiError && error.status === 400) {
-    return 'Les informations saisies sont invalides. Veuillez vérifier le formulaire.';
+  if (error instanceof ApiError) {
+    const body = error.body as
+      | {
+          message?: unknown;
+          errors?: unknown;
+        }
+      | undefined;
+
+    const message = readSupportErrorBody(body);
+
+    if (message !== null) {
+      return message;
+    }
+
+    if (typeof error.message === 'string' && error.message.trim() !== '') {
+      return error.message.trim();
+    }
+
+    if (error.status === 400) {
+      return 'Les informations saisies sont invalides. Veuillez vérifier le formulaire.';
+    }
   }
+
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string' &&
+    error.message.trim() !== ''
+  ) {
+    return error.message.trim();
+  }
+
   return 'Une erreur est survenue. Veuillez réessayer ultérieurement.';
+}
+
+function readSupportErrorBody(
+  body:
+    | {
+        message?: unknown;
+        errors?: unknown;
+      }
+    | undefined,
+): string | null {
+  if (typeof body?.message === 'string' && body.message.trim() !== '') {
+    return body.message.trim();
+  }
+
+  if (typeof body?.errors === 'string' && body.errors.trim() !== '') {
+    return body.errors.trim();
+  }
+
+  if (Array.isArray(body?.errors)) {
+    const messages = body.errors
+      .filter((value): value is string => typeof value === 'string')
+      .map((value) => value.trim())
+      .filter((value) => value !== '');
+
+    if (messages.length > 0) {
+      return messages.join('\n');
+    }
+  }
+
+  if (body?.errors && typeof body.errors === 'object') {
+    const messages = Object.values(body.errors)
+      .flatMap((value) => {
+        if (typeof value === 'string') {
+          return [value];
+        }
+
+        if (Array.isArray(value)) {
+          return value.filter(
+            (item): item is string => typeof item === 'string',
+          );
+        }
+
+        return [];
+      })
+      .map((value) => value.trim())
+      .filter((value) => value !== '');
+
+    if (messages.length > 0) {
+      return messages.join('\n');
+    }
+  }
+
+  return null;
 }
