@@ -4,7 +4,9 @@ import type { ContactFormDto } from '@kraak/contracts';
 import { MobileAuthService } from '../../features/auth/mobile-auth.service';
 import { MobileSupportService } from './mobile-support.service';
 
-const contactClientMock = { submit: vi.fn() };
+const { contactClientMock } = vi.hoisted(() => ({
+  contactClientMock: { submit: vi.fn() },
+}));
 
 vi.mock('@kraak/api-client', () => ({
   createApiClient: vi.fn(() => ({
