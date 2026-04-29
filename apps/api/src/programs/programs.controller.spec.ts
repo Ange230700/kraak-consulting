@@ -76,6 +76,9 @@ describe('ProgramsController', () => {
     expect(
       Reflect.getMetadata(METHOD_METADATA, controller.getProgramDetail),
     ).toBe(RequestMethod.GET);
+    expect(
+      Reflect.getMetadata(PATH_METADATA, controller.getProgramDetail),
+    ).toBe(':programId');
   });
 
   // Given un header Authorization Bearer valide
@@ -106,6 +109,15 @@ describe('ProgramsController', () => {
     await expect(controller.listPrograms()).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
+  });
+
+  // Given un header Authorization absent
+  // When GET /programs/:programId est appelé
+  // Then une erreur d'authentification explicite est renvoyée
+  it('Given un header Authorization absent, When getProgramDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.getProgramDetail('program-1'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
   // Given un programId inaccessible
