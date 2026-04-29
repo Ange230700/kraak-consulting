@@ -37,6 +37,7 @@ describe('ResourcesController', () => {
   const mockResourcesService = {
     listResources: jest.fn(),
     getResourceById: jest.fn(),
+    trackResourceConsultation: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -94,5 +95,18 @@ describe('ResourcesController', () => {
       resourceId,
     );
     expect(result).toEqual(mockResource);
+  });
+
+  it('Given a resource id, When trackResourceConsultation is called, Then it delegates to service and returns no content', async () => {
+    const resourceId = 'res-001';
+    mockResourcesService.trackResourceConsultation.mockResolvedValue(undefined);
+
+    await expect(
+      controller.trackResourceConsultation(resourceId),
+    ).resolves.toBeUndefined();
+
+    expect(mockResourcesService.trackResourceConsultation).toHaveBeenCalledWith(
+      resourceId,
+    );
   });
 });

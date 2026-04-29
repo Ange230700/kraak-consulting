@@ -11,6 +11,9 @@ import { SupabaseService } from '../supabase/supabase.service';
 const RESOURCE_SELECT_FIELDS =
   'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at';
 
+const RESOURCE_TRACKING_SELECT_FIELDS =
+  'id, consultation_count, last_consulted_at';
+
 const RESOURCE_SELECT_FIELDS_WITH_COUNT = `${RESOURCE_SELECT_FIELDS}, count:id.count()`;
 
 type ResourceRow = {
@@ -28,6 +31,12 @@ type ResourceRow = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+type ResourceTrackingRow = {
+  id: string;
+  consultation_count: number;
+  last_consulted_at: string | null;
 };
 
 @Injectable()
@@ -105,6 +114,43 @@ export class ResourcesService {
     }
 
     return this.mapResource(data as ResourceRow);
+  }
+
+  /**
+   * Record a consultation event for a published resource.
+   * @param id - Resource ID
+   */
+  async trackResourceConsultation(id: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+
+    const { data: existingData, error: existingError } = await adminClient
+      .from('resource')
+      .select(RESOURCE_TRACKING_SELECT_FIELDS)
+      .eq('id', id)
+      .eq('status', 'published')
+      .single();
+
+    if (existingError || !existingData) {
+      throw new NotFoundException(
+        `Resource with ID ${id} not found or is not published.`,
+      );
+    }
+
+    const currentResource = existingData as ResourceTrackingRow;
+    const { error: updateError } = await adminClient
+      .from('resource')
+      .update({
+        consultation_count: currentResource.consultation_count + 1,
+        last_consulted_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .eq('status', 'published');
+
+    if (updateError) {
+      throw new Error(
+        `Failed to track resource consultation: ${updateError.message}`,
+      );
+    }
   }
 
   /**

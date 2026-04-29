@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Query,
+  Post,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -175,5 +176,33 @@ export class ResourcesController {
   })
   async getResourceById(@Param('id') id: string) {
     return this.resourcesService.getResourceById(id);
+  }
+
+  @Post(':id/consultations')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Track a resource consultation',
+    description:
+      'Record a consultation event for a published resource and update its tracking counters.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Resource ID',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Consultation recorded successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Resource not found or not published',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Error recording resource consultation',
+  })
+  async trackResourceConsultation(@Param('id') id: string): Promise<void> {
+    await this.resourcesService.trackResourceConsultation(id);
   }
 }
