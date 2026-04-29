@@ -27,6 +27,7 @@ describe('App', () => {
 
   it('should expose a skip link and main landmark target for keyboard users', async () => {
     const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;

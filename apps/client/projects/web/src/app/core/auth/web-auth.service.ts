@@ -166,13 +166,14 @@ export class WebAuthService {
   }
 
   private getStorage(): Storage | null {
-    if (
-      !isPlatformBrowser(this.platformId) ||
-      typeof localStorage === 'undefined'
-    ) {
+    if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
 
-    return localStorage;
+    try {
+      return localStorage;
+    } catch {
+      return null;
+    }
   }
 }

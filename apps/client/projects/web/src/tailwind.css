@@ -283,13 +283,10 @@
   *::before,
   *::after {
     scroll-behavior: auto;
-  }
-
-  a,
-  button,
-  .kr-skip-link,
-  .kr-nav-link::after {
-    transition-duration: 0ms;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
