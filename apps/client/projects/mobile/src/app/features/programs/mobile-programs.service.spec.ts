@@ -55,7 +55,7 @@ describe('MobileProgramsService', () => {
 
   describe('listPrograms', () => {
     it('Given a user is authenticated, when listPrograms is called, then it should return a list of programs', async () => {
-      const mockFetch = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
         new Response(JSON.stringify([mockProgramListItem]), {
           status: 200,
         }),
@@ -78,7 +78,7 @@ describe('MobileProgramsService', () => {
     it('Given a user is not authenticated, when listPrograms is called, then it should still make the request without auth header', async () => {
       authService.currentSession = vi.fn(() => null);
 
-      const mockFetch = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
         new Response(JSON.stringify([]), {
           status: 401,
         }),
@@ -99,7 +99,7 @@ describe('MobileProgramsService', () => {
 
   describe('getProgramDetail', () => {
     it('Given a user is authenticated and a valid program ID, when getProgramDetail is called, then it should return program details', async () => {
-      const mockFetch = vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+      const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
         new Response(JSON.stringify(mockProgramDetail), {
           status: 200,
         }),

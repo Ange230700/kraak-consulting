@@ -105,6 +105,14 @@ export interface DashboardClient {
   getAggregate(options?: RequestOptions): Promise<DashboardAggregateDto>;
 }
 
+export interface ParticipantProgramsClient {
+  getById(
+    id: string,
+    options?: RequestOptions,
+  ): Promise<ParticipantProgramDetailDto>;
+  list(options?: RequestOptions): Promise<ParticipantProgramListItemDto[]>;
+}
+
 // ---------------------------------------------------------------------------
 // ApiClient interface
 // ---------------------------------------------------------------------------
@@ -112,15 +120,7 @@ export interface DashboardClient {
 export interface ApiClient {
   auth: AuthClient;
   dashboard: DashboardClient;
-  participantPrograms: ReadonlyResourceClient<
-    ParticipantProgramDetailDto | ParticipantProgramListItemDto
-  > & {
-    getById(
-      id: string,
-      options?: RequestOptions,
-    ): Promise<ParticipantProgramDetailDto>;
-    list(options?: RequestOptions): Promise<ParticipantProgramListItemDto[]>;
-  };
+  participantPrograms: ParticipantProgramsClient;
   users: FullResourceClient<AppUserDto, CreateAppUserDto, UpdateAppUserDto>;
   participants: FullResourceClient<
     ParticipantDto,
@@ -328,13 +328,9 @@ function createDashboardClient(config: ApiClientConfig): DashboardClient {
   };
 }
 
-function createParticipantProgramsClient(config: ApiClientConfig): {
-  getById(
-    id: string,
-    options?: RequestOptions,
-  ): Promise<ParticipantProgramDetailDto>;
-  list(options?: RequestOptions): Promise<ParticipantProgramListItemDto[]>;
-} {
+function createParticipantProgramsClient(
+  config: ApiClientConfig,
+): ParticipantProgramsClient {
   return {
     getById: (id, options?) =>
       request<ParticipantProgramDetailDto>(
