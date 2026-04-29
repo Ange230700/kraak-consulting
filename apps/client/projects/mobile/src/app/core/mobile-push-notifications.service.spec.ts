@@ -1,6 +1,7 @@
 // apps\client\projects\mobile\src\app\core\mobile-push-notifications.service.spec.ts
 
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const pushNotificationsMock = vi.hoisted(() => ({
@@ -24,6 +25,7 @@ import {
 describe('MobilePushNotificationsService', () => {
   const getPlatformMock = vi.fn();
   const originalPushNotificationsEnabled = environment.pushNotificationsEnabled;
+  const navigateByUrlMock = vi.fn();
 
   beforeEach(() => {
     getPlatformMock.mockReset();
@@ -38,8 +40,19 @@ describe('MobilePushNotificationsService', () => {
     pushNotificationsMock.requestPermissions.mockReset();
     pushNotificationsMock.addListener.mockReset();
     pushNotificationsMock.register.mockReset();
+    navigateByUrlMock.mockReset();
+    navigateByUrlMock.mockResolvedValue(true);
 
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: Router,
+          useValue: {
+            navigateByUrl: navigateByUrlMock,
+          },
+        },
+      ],
+    });
   });
 
   afterEach(() => {
@@ -211,6 +224,101 @@ describe('MobilePushNotificationsService', () => {
     expect(service.currentToken()).toBe('fcm-token-123');
     expect(service.currentStatus()).toBe('enabled');
     expect(service.currentReason()).toBe('fcm-registration-ready');
+  });
+
+  it('Given a high priority announcement push payload, when a notification is received, then the last priority push state is updated', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: {
+        announcementId: 'ann-priority-01',
+        priority: 'high',
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toEqual({
+      announcementId: 'ann-priority-01',
+      priority: 'high',
+    });
+  });
+
+  it('Given a non-priority announcement push payload, when a notification is received, then no priority push state is stored', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority-ignore',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: {
+        announcementId: 'ann-normal-01',
+        priority: 'normal',
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
+  });
+
+  it('Given a critical announcement action payload, when the user taps the push notification, then the app navigates to the announcement detail route', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority-action',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationActionPerformed')?.({
+      notification: {
+        data: {
+          announcement_id: 'ann-critical-01',
+          priority: 'critical',
+        },
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toEqual({
+      announcementId: 'ann-critical-01',
+      priority: 'critical',
+    });
+    expect(navigateByUrlMock).toHaveBeenCalledWith(
+      '/tabs/annonces/ann-critical-01',
+    );
   });
 
   it('Given permission is prompted then granted, when registration succeeds, then the FCM token is exposed', async () => {

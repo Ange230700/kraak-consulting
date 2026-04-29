@@ -2,10 +2,13 @@
 
 import { inject, Injectable, signal } from '@angular/core';
 import {
+  type ActionPerformed,
+  type PushNotificationSchema,
   PushNotifications,
   type PermissionStatus,
   type Token,
 } from '@capacitor/push-notifications';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 const FCM_REGISTRATION_TIMEOUT_MS = 5000;
@@ -24,20 +27,32 @@ interface TokenResolutionResult {
   reason: string;
 }
 
+type AnnouncementPriority = 'high' | 'critical';
+
+interface PriorityAnnouncementPush {
+  announcementId: string;
+  priority: AnnouncementPriority;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class MobilePushNotificationsService {
+  private readonly router = inject(Router, { optional: true });
   private readonly currentTokenState = signal<string | null>(null);
   private readonly currentStatusState =
     signal<PushInitializationStatus>('stub');
   private readonly currentReasonState = signal<string>('not-initialized');
+  private readonly lastPriorityAnnouncementPushState =
+    signal<PriorityAnnouncementPush | null>(null);
   private initializationPromise: Promise<PushInitializationResult> | null =
     null;
 
   readonly currentToken = this.currentTokenState.asReadonly();
   readonly currentStatus = this.currentStatusState.asReadonly();
   readonly currentReason = this.currentReasonState.asReadonly();
+  readonly lastPriorityAnnouncementPush =
+    this.lastPriorityAnnouncementPushState.asReadonly();
 
   initialize(): Promise<PushInitializationResult> {
     this.initializationPromise ??= this.initializeInternal();
@@ -113,11 +128,15 @@ export class MobilePushNotificationsService {
     );
     await PushNotifications.addListener(
       'pushNotificationReceived',
-      () => undefined,
+      (notification: PushNotificationSchema) => {
+        this.handlePriorityAnnouncementPush(notification.data);
+      },
     );
     await PushNotifications.addListener(
       'pushNotificationActionPerformed',
-      () => undefined,
+      (action: ActionPerformed) => {
+        this.handlePriorityAnnouncementAction(action);
+      },
     );
 
     try {
@@ -180,6 +199,66 @@ export class MobilePushNotificationsService {
 
   private buildStubToken(reason: string): string {
     return `stub-mobile-token-${environment.environmentName}-${reason}`;
+  }
+
+  private handlePriorityAnnouncementAction(action: ActionPerformed): void {
+    const matchedPush = this.resolvePriorityAnnouncementPush(
+      action.notification.data,
+    );
+
+    if (matchedPush === null) {
+      return;
+    }
+
+    this.lastPriorityAnnouncementPushState.set(matchedPush);
+    void this.router
+      ?.navigateByUrl(
+        `/tabs/annonces/${encodeURIComponent(matchedPush.announcementId)}`,
+      )
+      .catch(() => undefined);
+  }
+
+  private handlePriorityAnnouncementPush(data: unknown): void {
+    const matchedPush = this.resolvePriorityAnnouncementPush(data);
+
+    if (matchedPush !== null) {
+      this.lastPriorityAnnouncementPushState.set(matchedPush);
+    }
+  }
+
+  private resolvePriorityAnnouncementPush(
+    data: unknown,
+  ): PriorityAnnouncementPush | null {
+    if (data === null || typeof data !== 'object') {
+      return null;
+    }
+
+    let rawAnnouncementId: unknown;
+    if ('announcementId' in data) {
+      rawAnnouncementId = data.announcementId;
+    } else if ('announcement_id' in data) {
+      rawAnnouncementId = data.announcement_id;
+    }
+
+    const rawPriority = 'priority' in data ? data.priority : undefined;
+
+    if (typeof rawAnnouncementId !== 'string') {
+      return null;
+    }
+
+    if (rawPriority !== 'high' && rawPriority !== 'critical') {
+      return null;
+    }
+
+    const announcementId = rawAnnouncementId.trim();
+    if (announcementId.length === 0) {
+      return null;
+    }
+
+    return {
+      announcementId,
+      priority: rawPriority,
+    };
   }
 
   private resolveCapacitorPlatform(): string {
