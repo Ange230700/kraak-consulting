@@ -10,6 +10,7 @@ import type {
   ResourceThemeValue,
   ResourceAudienceValue,
   AudienceTypeValue,
+  AnnouncementPriorityValue,
   EnrollmentStatusValue,
   ProgramProgressStatusValue,
   NotificationTypeValue,
@@ -334,6 +335,7 @@ export interface AnnouncementDto {
   id: string;
   title: string;
   body: string;
+  priority: AnnouncementPriorityValue;
   audienceType: AudienceTypeValue;
   programId: string | null;
   cohortId: string | null;

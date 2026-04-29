@@ -60,68 +60,88 @@ describe('ResourcesService', () => {
     jest.clearAllMocks();
   });
 
+  const createAsyncQuery = <TResult extends object>(
+    terminalResult: TResult,
+    options?: { withOrder?: boolean; withRange?: boolean; withIs?: boolean },
+  ) => {
+    const base = Promise.resolve(terminalResult) as Promise<TResult> & {
+      from: ReturnType<typeof jest.fn>;
+      select: ReturnType<typeof jest.fn>;
+      eq: ReturnType<typeof jest.fn>;
+      is?: ReturnType<typeof jest.fn>;
+      order?: ReturnType<typeof jest.fn>;
+      range?: ReturnType<typeof jest.fn>;
+    };
+
+    base.from = jest.fn().mockReturnValue(base);
+    base.select = jest.fn().mockReturnValue(base);
+    base.eq = jest.fn().mockReturnValue(base);
+
+    if (options?.withIs) {
+      base.is = jest.fn().mockReturnValue(base);
+    }
+
+    if (options?.withOrder) {
+      base.order = jest.fn().mockReturnValue(base);
+    }
+
+    if (options?.withRange) {
+      base.range = jest.fn().mockReturnValue(base);
+    }
+
+    return base;
+  };
+
   const createListQuery = (result: {
     data: unknown;
     error: Error | null;
     count?: number | null;
-  }) => {
-    const query = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      is: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      range: jest.fn().mockReturnThis(),
-      then: (onFulfilled: (value: unknown) => unknown) =>
-        Promise.resolve(
-          onFulfilled({
-            data: result.data,
-            error: result.error,
-            count: result.count ?? null,
-          }),
-        ),
-    };
+  }) =>
+    createAsyncQuery(
+      {
+        data: result.data,
+        error: result.error,
+        count: result.count ?? null,
+      },
+      { withOrder: true, withRange: true, withIs: true },
+    );
 
-    return query;
-  };
+  const createProgramQuery = (result: { data: unknown; error: Error | null }) =>
+    createAsyncQuery(
+      {
+        data: result.data,
+        error: result.error,
+      },
+      { withIs: true },
+    );
 
-  const createProgramQuery = (result: {
+  const createCohortQuery = (result: { data: unknown; error: Error | null }) =>
+    createAsyncQuery({
+      data: result.data,
+      error: result.error,
+    });
+
+  const createTrackingSelectQuery = (result: {
     data: unknown;
     error: Error | null;
-  }) => {
-    const query = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      is: jest.fn().mockReturnThis(),
-      then: (onFulfilled: (value: unknown) => unknown) =>
-        Promise.resolve(
-          onFulfilled({
-            data: result.data,
-            error: result.error,
-          }),
-        ),
+  }) => ({
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({
+      data: result.data,
+      error: result.error,
+    }),
+  });
+
+  const createTrackingUpdateQuery = (result: { error: Error | null }) => {
+    const query = createAsyncQuery({
+      error: result.error,
+    }) as ReturnType<typeof createAsyncQuery> & {
+      update: ReturnType<typeof jest.fn>;
     };
 
-    return query;
-  };
-
-  const createCohortQuery = (result: {
-    data: unknown;
-    error: Error | null;
-  }) => {
-    const query = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      then: (onFulfilled: (value: unknown) => unknown) =>
-        Promise.resolve(
-          onFulfilled({
-            data: result.data,
-            error: result.error,
-          }),
-        ),
-    };
+    query.update = jest.fn().mockReturnValue(query);
 
     return query;
   };
@@ -248,6 +268,85 @@ describe('ResourcesService', () => {
       await expect(service.getResourceById('missing')).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('trackResourceConsultation', () => {
+    it('Given a published resource, When trackResourceConsultation is called, Then it increments consultation_count and updates last_consulted_at', async () => {
+      const trackingSelectQuery = createTrackingSelectQuery({
+        data: {
+          id: 'res-001',
+          consultation_count: 5,
+          last_consulted_at: null,
+        },
+        error: null,
+      });
+      const trackingUpdateQuery = createTrackingUpdateQuery({
+        error: null,
+      });
+
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementationOnce(() => trackingSelectQuery)
+          .mockImplementationOnce(() => trackingUpdateQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.trackResourceConsultation('res-001'),
+      ).resolves.toBeUndefined();
+
+      expect(trackingUpdateQuery.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          consultation_count: 6,
+          last_consulted_at: expect.any(String),
+        }),
+      );
+    });
+
+    it('Given an unknown resource, When trackResourceConsultation is called, Then it throws NotFoundException', async () => {
+      const trackingSelectQuery = createTrackingSelectQuery({
+        data: null,
+        error: new Error('Not found'),
+      });
+      const mockClient = {
+        from: jest.fn().mockImplementation(() => trackingSelectQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.trackResourceConsultation('res-missing'),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('Given an update failure, When trackResourceConsultation is called, Then it throws an explicit tracking error', async () => {
+      const trackingSelectQuery = createTrackingSelectQuery({
+        data: {
+          id: 'res-001',
+          consultation_count: 9,
+          last_consulted_at: '2026-04-20T10:00:00Z',
+        },
+        error: null,
+      });
+      const trackingUpdateQuery = createTrackingUpdateQuery({
+        error: new Error('Write failed'),
+      });
+
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementationOnce(() => trackingSelectQuery)
+          .mockImplementationOnce(() => trackingUpdateQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.trackResourceConsultation('res-001'),
+      ).rejects.toThrow('Failed to track resource consultation');
     });
   });
 

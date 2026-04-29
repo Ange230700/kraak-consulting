@@ -12,7 +12,10 @@ import { MobileResourcesService } from './mobile-resources.service';
 import ResourceDetailPage from './resource-detail.page';
 
 describe('Mobile ResourceDetailPage', () => {
-  let service: { getResourceById: ReturnType<typeof vi.fn> };
+  let service: {
+    getResourceById: ReturnType<typeof vi.fn>;
+    trackResourceConsultation: ReturnType<typeof vi.fn>;
+  };
   let paramMapSubject: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   const mockResource: ResourceDto = {
@@ -35,6 +38,7 @@ describe('Mobile ResourceDetailPage', () => {
   beforeEach(async () => {
     service = {
       getResourceById: vi.fn(),
+      trackResourceConsultation: vi.fn().mockResolvedValue(undefined),
     };
     paramMapSubject = new BehaviorSubject(
       convertToParamMap({ resourceId: 'resource-1' }),
@@ -73,11 +77,19 @@ describe('Mobile ResourceDetailPage', () => {
     const fixture = TestBed.createComponent(ResourceDetailPage);
     fixture.detectChanges();
     await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Guide detail');
     expect(element.textContent).toContain('Description detail');
+    expect(service.trackResourceConsultation).toHaveBeenCalledWith(
+      'resource-1',
+    );
   });
 
   it('Given an API failure, when detail loads, then an error message is shown', async () => {
@@ -107,10 +119,37 @@ describe('Mobile ResourceDetailPage', () => {
     paramMapSubject.next(convertToParamMap({ resourceId: 'resource-2' }));
     fixture.detectChanges();
     await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    expect(service.getResourceById).toHaveBeenCalledWith('resource-2');
+    expect(service.trackResourceConsultation).toHaveBeenCalledWith(
+      'resource-2',
+    );
+  });
+
+  it('Given tracking fails, when detail loads, then resource remains visible without blocking the page', async () => {
+    service.getResourceById.mockResolvedValue(mockResource);
+    service.trackResourceConsultation.mockRejectedValue(
+      new Error('Tracking unavailable'),
+    );
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(service.getResourceById).toHaveBeenCalledWith('resource-2');
-    expect(element.textContent).toContain('Guide detail 2');
+    expect(element.textContent).toContain('Guide detail');
+    expect(element.textContent).not.toContain('Tracking unavailable');
   });
 });

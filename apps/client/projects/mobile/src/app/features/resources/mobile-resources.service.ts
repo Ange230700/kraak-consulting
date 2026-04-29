@@ -57,11 +57,18 @@ export class MobileResourcesService {
     return this.request<ResourceDto>(`/resources/${resourceId}`);
   }
 
-  private async request<T>(path: string): Promise<T> {
+  async trackResourceConsultation(resourceId: string): Promise<void> {
+    await this.request<void>(`/resources/${resourceId}/consultations`, 'POST');
+  }
+
+  private async request<T>(
+    path: string,
+    method: 'GET' | 'POST' = 'GET',
+  ): Promise<T> {
     const authToken = this.authService.currentSession()?.accessToken ?? null;
 
     const response = await fetch(`${environment.apiBaseUrl}${path}`, {
-      method: 'GET',
+      method,
       headers: {
         Accept: 'application/json',
         ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
@@ -73,8 +80,8 @@ export class MobileResourcesService {
       try {
         const errorBody = (await response.json()) as { message?: string };
         responseMessage = errorBody.message?.trim() ?? '';
-      } catch (error) {
-        void error;
+      } catch {
+        // Ignore non-JSON error payloads and fallback to generic status message.
       }
 
       if (responseMessage.length > 0) {
@@ -82,6 +89,10 @@ export class MobileResourcesService {
       }
 
       throw new Error(`Erreur API (${response.status})`);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
     }
 
     return response.json() as Promise<T>;

@@ -306,10 +306,11 @@ export const UpdateResourceSchema = _ResourceCreateBase.partial();
 // ---------------------------------------------------------------------------
 // Announcement
 // ---------------------------------------------------------------------------
-export const AnnouncementSchema = z.object({
+const _AnnouncementBaseObject = z.object({
   id: z.string(),
   title: z.string(),
   body: z.string(),
+  priority: z.enum(['low', 'normal', 'high', 'critical']),
   audienceType: z.enum(['all_participants', 'program', 'cohort', 'custom']),
   programId: z.string().nullable(),
   cohortId: z.string().nullable(),
@@ -320,13 +321,49 @@ export const AnnouncementSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const CreateAnnouncementSchema = AnnouncementSchema.omit({
+const _isAnnouncementAudienceScopeValid = (data: {
+  audienceType: 'all_participants' | 'program' | 'cohort' | 'custom';
+  programId: string | null;
+  cohortId: string | null;
+}) => {
+  if (data.audienceType === 'all_participants') {
+    return data.programId === null && data.cohortId === null;
+  }
+
+  if (data.audienceType === 'program') {
+    return data.programId !== null && data.cohortId === null;
+  }
+
+  if (data.audienceType === 'cohort') {
+    return data.programId !== null && data.cohortId !== null;
+  }
+
+  // Reserved for future versions (V1.1+), not valid for MVP publication format.
+  return false;
+};
+
+const _announcementAudienceScopeMessage = {
+  message:
+    "Le ciblage annonce MVP est invalide: all_participants sans parent, program avec programId uniquement, cohort avec programId + cohortId. 'custom' est hors MVP.",
+};
+
+export const AnnouncementSchema = _AnnouncementBaseObject.refine(
+  _isAnnouncementAudienceScopeValid,
+  _announcementAudienceScopeMessage,
+);
+
+const _AnnouncementCreateBase = _AnnouncementBaseObject.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const UpdateAnnouncementSchema = CreateAnnouncementSchema.partial();
+export const CreateAnnouncementSchema = _AnnouncementCreateBase.refine(
+  _isAnnouncementAudienceScopeValid,
+  _announcementAudienceScopeMessage,
+);
+
+export const UpdateAnnouncementSchema = _AnnouncementCreateBase.partial();
 
 // ---------------------------------------------------------------------------
 // Enrollment

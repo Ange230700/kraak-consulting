@@ -1,0 +1,150 @@
+{
+  "fields": [
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVE",
+      "name": "Title",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVI",
+      "name": "Assignees",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBQnVM",
+      "name": "Status",
+      "options": [
+        { "id": "f75ad846", "name": "Todo" },
+        { "id": "47fc9ee4", "name": "In Progress" },
+        { "id": "98236657", "name": "Done" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVQ",
+      "name": "Labels",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVU",
+      "name": "Linked pull requests",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVY",
+      "name": "Milestone",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVc",
+      "name": "Repository",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVg",
+      "name": "Reviewers",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVk",
+      "name": "Parent issue",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQnVo",
+      "name": "Sub-issues progress",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTF_lAHOBZPn084BUGJOzhBQsNo",
+      "name": "Effort",
+      "type": "ProjectV2Field"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBQsOg",
+      "name": "Area",
+      "options": [
+        { "id": "84e59a1b", "name": "Content" },
+        { "id": "c66275ee", "name": "Design" },
+        { "id": "d8f1ca9f", "name": "Frontend" },
+        { "id": "d1433b50", "name": "Pages" },
+        { "id": "a30c6a79", "name": "Forms" },
+        { "id": "2fe3337b", "name": "SEO" },
+        { "id": "bffb837b", "name": "QA" },
+        { "id": "1744cfce", "name": "Deployment" },
+        { "id": "6ee4924f", "name": "Cross-cutting" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBQsOw",
+      "name": "Launch blocker",
+      "options": [
+        { "id": "6323999a", "name": "Yes" },
+        { "id": "42764200", "name": "No" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBQs1Q",
+      "name": "Priority",
+      "options": [
+        { "id": "e1fb1352", "name": "critical" },
+        { "id": "ab416947", "name": "high" },
+        { "id": "76a0c75d", "name": "medium" },
+        { "id": "b00cc953", "name": "low" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBZiIw",
+      "name": "Wave",
+      "options": [
+        { "id": "91415366", "name": "Wave 0 - Cadrage" },
+        { "id": "e0d2d155", "name": "Wave 1 - Socle" },
+        { "id": "628b911a", "name": "Wave 2 - Acces" },
+        { "id": "e3b6b719", "name": "Wave 3A - Site public" },
+        { "id": "228ff5d8", "name": "Wave 3B - Parcours participant" },
+        { "id": "088ef61c", "name": "Wave 4 - Qualite" },
+        { "id": "8065f38b", "name": "Wave 5 - Release" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBZiI0",
+      "name": "Coupling",
+      "options": [
+        { "id": "d5217deb", "name": "independent" },
+        { "id": "b1d11b46", "name": "handoff" },
+        { "id": "613624ea", "name": "paired" },
+        { "id": "0209b48b", "name": "portfolio" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBZiI4",
+      "name": "Surface",
+      "options": [
+        { "id": "c9f518b8", "name": "docs" },
+        { "id": "bddc2310", "name": "shared" },
+        { "id": "39f78a62", "name": "api" },
+        { "id": "0b1f24dc", "name": "web" },
+        { "id": "6895a7e7", "name": "mobile" },
+        { "id": "0f6933fe", "name": "qa" },
+        { "id": "cd2128d3", "name": "ops" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    },
+    {
+      "id": "PVTSSF_lAHOBZPn084BUGJOzhBZiI8",
+      "name": "Lane",
+      "options": [
+        { "id": "7292b715", "name": "Lane A - Web public" },
+        { "id": "002edcbd", "name": "Lane B - Platform & participant" },
+        { "id": "6546aa9b", "name": "Shared handoff" }
+      ],
+      "type": "ProjectV2SingleSelectField"
+    }
+  ],
+  "totalCount": 18
+}

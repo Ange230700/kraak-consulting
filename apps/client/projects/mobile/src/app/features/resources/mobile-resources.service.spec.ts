@@ -106,4 +106,26 @@ describe('MobileResourcesService', () => {
       'Erreur test backend',
     );
   });
+
+  it('Given a valid id, when trackResourceConsultation is called, then it should post to consultation endpoint', async () => {
+    const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(null, {
+        status: 204,
+      }),
+    );
+
+    await expect(
+      service.trackResourceConsultation('resource-1'),
+    ).resolves.toBeUndefined();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/resources/resource-1/consultations'),
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer test-token',
+        }),
+      }),
+    );
+  });
 });

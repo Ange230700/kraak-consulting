@@ -73,6 +73,13 @@ export const AudienceType = {
   CUSTOM: 'custom',
 } as const;
 
+export const AnnouncementPriority = {
+  LOW: 'low',
+  NORMAL: 'normal',
+  HIGH: 'high',
+  CRITICAL: 'critical',
+} as const;
+
 export const EnrollmentStatus = {
   PENDING: 'pending',
   ACTIVE: 'active',
@@ -134,6 +141,8 @@ export type ResourceAudienceValue =
   (typeof ResourceAudience)[keyof typeof ResourceAudience];
 export type AudienceTypeValue =
   (typeof AudienceType)[keyof typeof AudienceType];
+export type AnnouncementPriorityValue =
+  (typeof AnnouncementPriority)[keyof typeof AnnouncementPriority];
 export type EnrollmentStatusValue =
   (typeof EnrollmentStatus)[keyof typeof EnrollmentStatus];
 export type ProgramProgressStatusValue =

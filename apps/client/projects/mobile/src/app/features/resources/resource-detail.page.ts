@@ -57,6 +57,7 @@ export default class ResourceDetailPage implements OnInit {
       this.errorMessage.set(null);
       const data = await this.resourcesService.getResourceById(resourceId);
       this.resource.set(data);
+      await this.trackResourceConsultation(resourceId);
     } catch (error) {
       this.errorMessage.set(
         resolveAuthErrorMessage(
@@ -67,6 +68,14 @@ export default class ResourceDetailPage implements OnInit {
       this.resource.set(null);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  private async trackResourceConsultation(resourceId: string): Promise<void> {
+    try {
+      await this.resourcesService.trackResourceConsultation(resourceId);
+    } catch {
+      // Tracking failures should not block resource consultation.
     }
   }
 }

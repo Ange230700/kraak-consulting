@@ -720,6 +720,7 @@ describe('CreateAnnouncementSchema', () => {
   const valid = {
     title: 'Bienvenue',
     body: "Contenu de l'annonce",
+    priority: 'normal',
     audienceType: 'all_participants',
     programId: null,
     cohortId: null,
@@ -738,6 +739,69 @@ describe('CreateAnnouncementSchema', () => {
         .success,
     ).toBe(false);
   });
+
+  it('should reject all_participants with program or cohort scope', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'all_participants',
+        programId: 'prg-1',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should reject program audience without programId', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'program',
+        programId: null,
+        cohortId: null,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should reject cohort audience without both programId and cohortId', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'cohort',
+        programId: 'prg-1',
+        cohortId: null,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should reject custom audience for MVP format', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'custom',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should accept program audience with programId only', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'program',
+        programId: 'prg-1',
+        cohortId: null,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should accept cohort audience with programId and cohortId', () => {
+    expect(
+      CreateAnnouncementSchema.safeParse({
+        ...valid,
+        audienceType: 'cohort',
+        programId: 'prg-1',
+        cohortId: 'coh-1',
+      }).success,
+    ).toBe(true);
+  });
 });
 
 describe('UpdateAnnouncementSchema', () => {
@@ -755,6 +819,7 @@ describe('AnnouncementSchema', () => {
         id: 'ann-1',
         title: 'Bienvenue',
         body: 'Contenu',
+        priority: 'high',
         audienceType: 'program',
         programId: 'prg-1',
         cohortId: null,
