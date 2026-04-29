@@ -179,6 +179,36 @@ describe('ProgramsService', () => {
     await expect(service.listPrograms('access-token')).resolves.toEqual([]);
   });
 
+  // Given une erreur de lecture des enrollments
+  // When la liste programmes est demandée
+  // Then une InternalServerErrorException explicite est renvoyée
+  it('Given une erreur sur enrollment, When listPrograms est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: null,
+      error: { message: 'db-error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
   // Given un programme accessible avec cohorte
   // When le détail programme est demandé
   // Then le détail inclut sessions, ressources et annonces visibles
@@ -398,5 +428,128 @@ describe('ProgramsService', () => {
     await expect(
       service.getProgramDetail('access-token', 'program-1'),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given des annonces mixtes
+  // When le détail programme est demandé
+  // Then seules les annonces visibles pour le programme/cohorte sont renvoyées
+  it('Given des annonces mixtes, When getProgramDetail est appelé, Then seules les annonces visibles sont conservées', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({ data: [], error: null });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({
+      data: [
+        {
+          id: 'announcement-visible-all',
+          title: 'Visible all',
+          audience_type: 'all_participants',
+          published_at: '2026-04-25T00:00:00.000Z',
+          program_id: null,
+          cohort_id: null,
+        },
+        {
+          id: 'announcement-visible-program',
+          title: 'Visible program',
+          audience_type: 'program',
+          published_at: '2026-04-24T00:00:00.000Z',
+          program_id: 'program-1',
+          cohort_id: null,
+        },
+        {
+          id: 'announcement-visible-cohort',
+          title: 'Visible cohort',
+          audience_type: 'cohort',
+          published_at: '2026-04-23T00:00:00.000Z',
+          program_id: null,
+          cohort_id: 'cohort-1',
+        },
+        {
+          id: 'announcement-hidden-custom',
+          title: 'Hidden custom',
+          audience_type: 'custom',
+          published_at: '2026-04-22T00:00:00.000Z',
+          program_id: null,
+          cohort_id: null,
+        },
+        {
+          id: 'announcement-hidden-program',
+          title: 'Hidden program',
+          audience_type: 'program',
+          published_at: '2026-04-21T00:00:00.000Z',
+          program_id: 'program-other',
+          cohort_id: null,
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentDetailQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsQuery;
+      }
+
+      if (tableName === 'resource') {
+        return resourcesQuery;
+      }
+
+      if (tableName === 'announcement') {
+        return announcementsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).resolves.toMatchObject({
+      announcements: [
+        { id: 'announcement-visible-all' },
+        { id: 'announcement-visible-program' },
+        { id: 'announcement-visible-cohort' },
+      ],
+    });
   });
 });
