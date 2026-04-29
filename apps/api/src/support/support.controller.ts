@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Headers,
   HttpCode,
   HttpStatus,
   Post,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { ContactSubmissionResultDto } from '@kraak/contracts';
+import { extractAccessToken } from '../auth/auth.dto';
 import { SupportService } from './support.service';
 import { validateContactForm } from './support.dto';
 
@@ -46,6 +48,19 @@ export class SupportController {
       properties: {
         success: { type: 'boolean', example: true },
         message: { type: 'string' },
+        requestId: {
+          type: 'string',
+          nullable: true,
+          description:
+            'Identifiant de suivi, présent quand la demande est soumise avec une session authentifiée.',
+        },
+        requestStatus: {
+          type: 'string',
+          nullable: true,
+          enum: ['open', 'in_progress', 'resolved', 'closed'],
+          description:
+            'Statut de suivi initial, présent quand la demande est tracée.',
+        },
       },
     },
   })
@@ -59,7 +74,10 @@ export class SupportController {
       },
     },
   })
-  async submit(@Body() body: unknown): Promise<ContactSubmissionResultDto> {
+  async submit(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ContactSubmissionResultDto> {
     const validation = validateContactForm(body);
 
     if (!validation.valid) {
@@ -69,6 +87,11 @@ export class SupportController {
       });
     }
 
-    return this.supportService.submitContact(validation.data);
+    const token = extractAccessToken(authorizationHeader);
+
+    return this.supportService.submitContact(
+      validation.data,
+      token.valid ? token.data : undefined,
+    );
   }
 }

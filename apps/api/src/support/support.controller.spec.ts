@@ -59,13 +59,16 @@ describe('SupportController', () => {
       message: '  Bonjour, je souhaite en savoir plus sur vos services.  ',
     });
 
-    expect(supportService.submitContact).toHaveBeenCalledWith({
-      name: 'Alice Dupont',
-      email: 'alice@exemple.com',
-      subject: 'Demande de renseignements',
-      message: 'Bonjour, je souhaite en savoir plus sur vos services.',
-      category: 'other',
-    });
+    expect(supportService.submitContact).toHaveBeenCalledWith(
+      {
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Demande de renseignements',
+        message: 'Bonjour, je souhaite en savoir plus sur vos services.',
+        category: 'other',
+      },
+      undefined,
+    );
   });
 
   // Given un payload invalide

@@ -33,6 +33,12 @@ export interface ContactFormDto {
 export interface ContactSubmissionResultDto {
   success: boolean;
   message: string;
+  requestId?: string;
+  requestStatus?: SupportRequestStatusValue;
+}
+
+export interface UpdateSupportRequestStatusDto {
+  status: SupportRequestStatusValue;
 }
 
 // ---------------------------------------------------------------------------

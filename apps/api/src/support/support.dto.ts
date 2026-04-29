@@ -1,4 +1,8 @@
-import type { ContactFormDto } from '@kraak/contracts';
+import type {
+  ContactFormDto,
+  SupportRequestStatusValue,
+  UpdateSupportRequestStatusDto,
+} from '@kraak/contracts';
 
 type ContactCategory = ContactFormDto['category'];
 
@@ -16,12 +20,33 @@ export type ContactFormValidationResult =
   | ContactFormValidationSuccess
   | ContactFormValidationFailure;
 
+type SupportStatusUpdateValidationSuccess = {
+  valid: true;
+  data: UpdateSupportRequestStatusDto;
+};
+
+type SupportStatusUpdateValidationFailure = {
+  valid: false;
+  errors: string[];
+};
+
+export type SupportStatusUpdateValidationResult =
+  | SupportStatusUpdateValidationSuccess
+  | SupportStatusUpdateValidationFailure;
+
 const supportCategories: Set<ContactCategory> = new Set([
   'technical',
   'program',
   'session',
   'billing',
   'other',
+]);
+
+const supportRequestStatuses: Set<SupportRequestStatusValue> = new Set([
+  'open',
+  'in_progress',
+  'resolved',
+  'closed',
 ]);
 
 function readTrimmedString(value: unknown): string {
@@ -34,6 +59,12 @@ function isValidEmail(email: string): boolean {
 
 function isSupportCategory(value: string): value is ContactCategory {
   return supportCategories.has(value as ContactCategory);
+}
+
+function isSupportRequestStatus(
+  value: string,
+): value is SupportRequestStatusValue {
+  return supportRequestStatuses.has(value as SupportRequestStatusValue);
 }
 
 function validateName(name: string, errors: string[]): void {
@@ -112,6 +143,30 @@ export function validateContactForm(
       message,
       category:
         rawCategory && isSupportCategory(rawCategory) ? rawCategory : 'other',
+    },
+  };
+}
+
+export function validateSupportStatusUpdatePayload(
+  body: unknown,
+): SupportStatusUpdateValidationResult {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return { valid: false, errors: ['Corps de requête invalide.'] };
+  }
+
+  const status = readTrimmedString((body as Record<string, unknown>)['status']);
+
+  if (!status || !isSupportRequestStatus(status)) {
+    return {
+      valid: false,
+      errors: ['Le statut de la demande de support est invalide.'],
+    };
+  }
+
+  return {
+    valid: true,
+    data: {
+      status,
     },
   };
 }

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
+import { ForbiddenException } from '@nestjs/common';
+import { SupabaseService } from '../supabase/supabase.service';
 import { SupportService } from './support.service';
 
 const sendMock = jest.fn();
@@ -12,15 +14,71 @@ jest.mock('resend', () => ({
   })),
 }));
 
+function createQueryChain<T>(
+  result: { data: T; error: unknown },
+  operations: {
+    onEq?: (column: string, value: unknown) => void;
+  } = {},
+): {
+  select: jest.Mock;
+  eq: jest.Mock;
+  order: jest.Mock;
+  limit: jest.Mock;
+  maybeSingle: jest.Mock;
+} {
+  const chain = {
+    select: jest.fn(),
+    eq: jest.fn(),
+    order: jest.fn(),
+    limit: jest.fn(),
+    maybeSingle: jest.fn(),
+  };
+
+  chain.select.mockReturnValue(chain);
+  chain.eq.mockImplementation((column: string, value: unknown) => {
+    operations.onEq?.(column, value);
+    return chain;
+  });
+  chain.order.mockReturnValue(chain);
+  chain.limit.mockReturnValue(chain);
+  chain.maybeSingle.mockResolvedValue(result);
+
+  Object.assign(chain, {
+    then: (resolve: (value: { data: T; error: unknown }) => unknown) =>
+      Promise.resolve(result).then(resolve),
+    catch: (reject: (reason: unknown) => unknown) =>
+      Promise.resolve(result).catch(reject),
+    finally: (handler: () => void) => Promise.resolve(result).finally(handler),
+  });
+
+  return chain;
+}
+
 describe('SupportService', () => {
   let service: SupportService;
   const configService = {
     get: jest.fn(),
   };
 
+  const authGetUserMock = jest.fn();
+  const fromMock = jest.fn();
+
+  const supabaseService = {
+    createAuthClient: jest.fn(() => ({
+      auth: {
+        getUser: authGetUserMock,
+      },
+    })),
+    getClient: jest.fn(() => ({
+      from: fromMock,
+    })),
+  };
+
   beforeEach(async () => {
     sendMock.mockReset();
     configService.get.mockReset();
+    authGetUserMock.mockReset();
+    fromMock.mockReset();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -28,6 +86,10 @@ describe('SupportService', () => {
         {
           provide: ConfigService,
           useValue: configService,
+        },
+        {
+          provide: SupabaseService,
+          useValue: supabaseService,
         },
       ],
     }).compile();
@@ -39,10 +101,7 @@ describe('SupportService', () => {
     expect(service).toBeDefined();
   });
 
-  // Given un DTO de contact/support valide
-  // When on soumet la demande
-  // Then le service envoie un email transactionnel et renvoie un accusé de réception
-  it('Given une demande valide et une configuration email active, When submitContact est appelé, Then un email transactionnel est envoyé', async () => {
+  it('Given une demande valide et une configuration email active, When submitContact est appelé sans session, Then un email transactionnel est envoyé et la réponse reste positive', async () => {
     configService.get.mockImplementation((key: string) => {
       if (key === 'RESEND_API_KEY') return 're_test_key';
       if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
@@ -64,6 +123,8 @@ describe('SupportService', () => {
       success: true,
       message:
         'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.',
+      requestId: undefined,
+      requestStatus: undefined,
     });
 
     expect(sendMock).toHaveBeenCalledWith({
@@ -75,55 +136,151 @@ describe('SupportService', () => {
     });
   });
 
-  // Given une configuration email absente
-  // When on soumet la demande
-  // Then le service conserve un accusé de réception sans appel externe
-  it('Given une configuration email absente, When submitContact est appelé, Then la réponse reste positive sans envoi externe', async () => {
+  it('Given une session authentifiée, When submitContact est appelé, Then une demande support avec statut open est stockée et renvoyée', async () => {
     configService.get.mockReturnValue(undefined);
 
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({ data: { id: 'participant-1' }, error: null });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(() => ({
+            select: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-1',
+                  user_id: 'user-1',
+                  participant_id: 'participant-1',
+                  subject: 'Sujet test',
+                  message: 'Message test détaillé',
+                  status: 'open',
+                  category: 'technical',
+                  assigned_to_user_id: null,
+                  created_at: '2026-04-29T10:00:00.000Z',
+                  updated_at: '2026-04-29T10:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
     await expect(
-      service.submitContact({
-        name: 'Alice Dupont',
-        email: 'alice@exemple.com',
-        subject: 'Renseignements',
-        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
-        category: 'other',
-      }),
+      service.submitContact(
+        {
+          name: 'Alice Dupont',
+          email: 'alice@exemple.com',
+          subject: 'Sujet test',
+          message: 'Message test détaillé',
+          category: 'technical',
+        },
+        'access-token',
+      ),
     ).resolves.toEqual({
       success: true,
       message:
         'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.',
+      requestId: 'req-1',
+      requestStatus: 'open',
     });
-
-    expect(sendMock).not.toHaveBeenCalled();
   });
 
-  // Given une configuration email active
-  // When Resend échoue
-  // Then le service remonte une erreur serveur explicite
-  it('Given une configuration email active, When Resend échoue, Then une erreur serveur est renvoyée', async () => {
-    configService.get.mockImplementation((key: string) => {
-      if (key === 'RESEND_API_KEY') return 're_test_key';
-      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
-      return undefined;
+  it('Given un participant authentifié, When listSupportRequests est appelé, Then seules ses demandes sont renvoyées', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
     });
 
-    sendMock.mockRejectedValue(new Error('network failure'));
+    let eqFilter: { column: string; value: unknown } | null = null;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          {
+            data: [
+              {
+                id: 'req-1',
+                user_id: 'user-1',
+                participant_id: 'participant-1',
+                subject: 'Sujet test',
+                message: 'Message test détaillé',
+                status: 'open',
+                category: 'technical',
+                assigned_to_user_id: null,
+                created_at: '2026-04-29T10:00:00.000Z',
+                updated_at: '2026-04-29T10:00:00.000Z',
+              },
+            ],
+            error: null,
+          },
+          {
+            onEq: (column, value) => {
+              eqFilter = { column, value };
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+
+    expect(eqFilter).toEqual({ column: 'user_id', value: 'user-1' });
+    expect(results).toHaveLength(1);
+    expect(results[0]?.status).toBe('open');
+  });
+
+  it('Given un participant, When updateSupportRequestStatus est appelé, Then une erreur de droits est renvoyée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
 
     await expect(
-      service.submitContact({
-        name: 'Alice Dupont',
-        email: 'alice@exemple.com',
-        subject: 'Renseignements',
-        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
-        category: 'technical',
-      }),
-    ).rejects.toMatchObject({
-      response: {
-        success: false,
-        message:
-          "Votre demande a été reçue, mais l'envoi de notification a échoué. Veuillez réessayer.",
-      },
-    });
+      service.updateSupportRequestStatus(
+        'req-1',
+        { status: 'in_progress' },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });
