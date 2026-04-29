@@ -3,19 +3,87 @@
   title="Annonces"
   description="Gardez un oeil sur les informations à relayer rapidement."
 >
-  <section
-    class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Annonces et actualités à venir.
-    </p>
-
-    <ion-button
-      routerLink="/tabs/annonces/info-session"
-      expand="block"
-      class="kraak-primary-button mt-4"
+  @if (errorMessage()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
     >
-      Lire une annonce exemple
-    </ion-button>
-  </section>
+      <p class="text-sm leading-6 text-red-700">
+        {{ errorMessage() }}
+      </p>
+
+      <ion-button
+        expand="block"
+        class="kraak-primary-button"
+        (click)="reloadAnnouncements()"
+        (keydown.enter)="reloadAnnouncements()"
+      >
+        Recharger le flux
+      </ion-button>
+    </section>
+  } @else if (loading()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col items-center gap-4 border p-5"
+    >
+      <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+      <p class="text-sm leading-6 text-neutral-700">
+        Chargement des annonces...
+      </p>
+    </section>
+  } @else if (announcements().length === 0) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
+    >
+      <p class="text-sm leading-6 text-neutral-700">
+        Aucune annonce n'est disponible pour le moment.
+      </p>
+    </section>
+  } @else {
+    <section
+      class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card border p-5"
+    >
+      <p class="text-sm leading-6 text-neutral-700">
+        {{ announcements().length }} annonce(s) visible(s) sur {{ total() }}.
+      </p>
+    </section>
+
+    @for (announcement of announcements(); track announcement.id) {
+      <section
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        data-testid="announcement-card"
+      >
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            class="bg-brand-cyan/15 text-brand-navy rounded-full px-2 py-1 text-xs font-semibold"
+          >
+            {{ getPriorityLabel(announcement.priority) }}
+          </span>
+
+          @if (announcement.publishedAt) {
+            <span
+              class="rounded-full bg-neutral-100 px-2 py-1 text-xs font-semibold text-neutral-700"
+            >
+              Publié le {{ announcement.publishedAt | date: 'mediumDate' }}
+            </span>
+          }
+        </div>
+
+        <div>
+          <p class="text-primary text-lg font-semibold">
+            {{ announcement.title }}
+          </p>
+          <p class="mt-1 text-sm leading-6 text-neutral-700">
+            {{ announcement.body }}
+          </p>
+        </div>
+
+        <ion-button
+          [routerLink]="'/tabs/annonces/' + announcement.id"
+          expand="block"
+          class="kraak-primary-button"
+        >
+          Lire le détail
+        </ion-button>
+      </section>
+    }
+  }
 </kraak-page-shell>
