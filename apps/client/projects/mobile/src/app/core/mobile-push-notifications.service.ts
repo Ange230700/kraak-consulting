@@ -211,11 +211,11 @@ export class MobilePushNotificationsService {
     }
 
     this.lastPriorityAnnouncementPushState.set(matchedPush);
-    void this.router
-      ?.navigateByUrl(
-        `/tabs/annonces/${encodeURIComponent(matchedPush.announcementId)}`,
-      )
-      .catch(() => undefined);
+    const navigationPromise = this.router?.navigateByUrl(
+      `/tabs/annonces/${encodeURIComponent(matchedPush.announcementId)}`,
+    );
+
+    void navigationPromise?.catch(() => undefined);
   }
 
   private handlePriorityAnnouncementPush(data: unknown): void {
