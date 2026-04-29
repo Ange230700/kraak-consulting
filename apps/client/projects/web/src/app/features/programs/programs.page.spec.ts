@@ -10,15 +10,49 @@ describe('ProgramsPage', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the Programs page route, when the component initializes, then the page instance is created', () => {
     const fixture = TestBed.createComponent(ProgramsPage);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the heading', () => {
+  it('Given the Programs page, when the view is rendered, then the heading and key program cards are visible', () => {
     const fixture = TestBed.createComponent(ProgramsPage);
     fixture.detectChanges();
-    const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Nos programmes');
+    const page = fixture.nativeElement as HTMLElement;
+
+    expect(page.querySelector('h1')?.textContent).toContain('Nos programmes');
+    expect(page.textContent).toContain('Leadership & Management');
+    expect(page.textContent).toContain('Gestion de projet appliquée');
+    expect(page.textContent).toContain("Préparation à l'international");
+  });
+
+  it('Given the registration process section, when the Programs page is rendered, then the four expected steps are displayed in order', () => {
+    const fixture = TestBed.createComponent(ProgramsPage);
+    fixture.detectChanges();
+    const page = fixture.nativeElement as HTMLElement;
+
+    const content = page.textContent ?? '';
+    const candidatureIndex = content.indexOf('Candidature');
+    const entretienIndex = content.indexOf('Entretien');
+    const inscriptionIndex = content.indexOf('Inscription');
+    const demarrageIndex = content.indexOf('Démarrage');
+
+    expect(candidatureIndex).toBeGreaterThan(-1);
+    expect(entretienIndex).toBeGreaterThan(candidatureIndex);
+    expect(inscriptionIndex).toBeGreaterThan(entretienIndex);
+    expect(demarrageIndex).toBeGreaterThan(inscriptionIndex);
+  });
+
+  it('Given the Programs page CTA, when a visitor reaches the end of the page, then the registration call-to-action points to contact', () => {
+    const fixture = TestBed.createComponent(ProgramsPage);
+    fixture.detectChanges();
+    const page = fixture.nativeElement as HTMLElement;
+
+    const registrationLink = page.querySelector(
+      'a[href="/contact"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(registrationLink).toBeTruthy();
+    expect(registrationLink?.textContent).toContain("S'inscrire maintenant");
   });
 });
