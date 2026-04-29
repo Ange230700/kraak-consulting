@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonButton, IonSelectOption } from '@ionic/angular/standalone';
+import { IonButton } from '@ionic/angular/standalone';
 import type { SupportCategoryValue } from '@kraak/contracts';
 import { ApiError } from '@kraak/api-client';
 import { PageShell } from '../../shared/page-shell/page-shell';
@@ -23,7 +23,7 @@ interface SupportRequestFormModel {
 @Component({
   selector: 'kraak-support-request-page',
   standalone: true,
-  imports: [PageShell, ReactiveFormsModule, IonButton, IonSelectOption],
+  imports: [PageShell, ReactiveFormsModule, IonButton],
   templateUrl: './support-request.page.html',
 })
 export default class SupportRequestPage {
