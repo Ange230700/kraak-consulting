@@ -15,6 +15,7 @@
         size="small"
         class="kraak-primary-button"
         (click)="reloadPrograms()"
+        (keydown.enter)="reloadPrograms()"
       >
         Réessayer
       </ion-button>
@@ -56,7 +57,7 @@
             <p
               class="mt-1 text-xs leading-5 font-semibold tracking-wide text-neutral-700 uppercase"
             >
-              Status: {{ program.enrollmentStatus }}
+              Statut: {{ program.enrollmentStatus }}
             </p>
           </div>
 

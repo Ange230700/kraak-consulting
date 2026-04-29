@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
@@ -22,6 +22,10 @@ export default class ProgramDetailPage implements OnInit {
   );
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly pageTitle = computed(() => {
+    const detail = this.programDetail();
+    return detail ? detail.program.title : 'Programme';
+  });
 
   ngOnInit(): void {
     const programId = this.route.snapshot.paramMap.get('programId');

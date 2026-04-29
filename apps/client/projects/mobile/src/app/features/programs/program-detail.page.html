@@ -1,5 +1,5 @@
 <kraak-page-shell
-  [title]="programDetail()?.program.title ?? 'Programme'"
+  [title]="pageTitle()"
   eyebrow="Détail du programme"
   backHref="/tabs/programmes"
 >
@@ -15,6 +15,7 @@
         size="small"
         class="kraak-primary-button"
         (click)="reloadProgram()"
+        (keydown.enter)="reloadProgram()"
       >
         Réessayer
       </ion-button>
@@ -30,7 +31,6 @@
     </section>
   } @else if (programDetail(); as detail) {
     <section class="flex flex-col gap-5 px-4 py-5">
-      <!-- Programme Header -->
       <article
         class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
       >
@@ -62,7 +62,6 @@
         </div>
       </article>
 
-      <!-- Cohort Information -->
       @if (detail.cohort) {
         <article
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
@@ -98,7 +97,6 @@
         </article>
       }
 
-      <!-- Sessions -->
       @if (detail.sessions && detail.sessions.length > 0) {
         <article
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
@@ -146,7 +144,6 @@
         </p>
       }
 
-      <!-- Resources -->
       @if (detail.resources && detail.resources.length > 0) {
         <article
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
@@ -193,7 +190,6 @@
         </p>
       }
 
-      <!-- Announcements -->
       @if (detail.announcements && detail.announcements.length > 0) {
         <article
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
@@ -218,7 +214,6 @@
         </article>
       }
 
-      <!-- Back to list -->
       <ion-button
         routerLink="/tabs/programmes"
         expand="block"

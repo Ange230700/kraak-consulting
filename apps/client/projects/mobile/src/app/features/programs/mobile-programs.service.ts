@@ -12,28 +12,18 @@ import { MobileAuthService } from '../auth/mobile-auth.service';
 })
 export class MobileProgramsService {
   private readonly authService = inject(MobileAuthService);
+  private readonly client = createApiClient({
+    baseUrl: environment.apiBaseUrl,
+    getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
+  });
 
   async listPrograms(): Promise<ParticipantProgramListItemDto[]> {
-    const client = createApiClient({
-      baseUrl: environment.apiBaseUrl,
-      getAuthToken: () =>
-        this.authService.currentSession()?.accessToken ?? null,
-    });
-
-    const programs = await client.programs.list();
-    return programs as unknown as ParticipantProgramListItemDto[];
+    return this.client.participantPrograms.list();
   }
 
   async getProgramDetail(
     programId: string,
   ): Promise<ParticipantProgramDetailDto> {
-    const client = createApiClient({
-      baseUrl: environment.apiBaseUrl,
-      getAuthToken: () =>
-        this.authService.currentSession()?.accessToken ?? null,
-    });
-
-    const detail = await client.programs.getById(programId);
-    return detail as unknown as ParticipantProgramDetailDto;
+    return this.client.participantPrograms.getById(programId);
   }
 }
