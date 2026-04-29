@@ -1,4 +1,4 @@
-export { createApiClient, ApiError } from './client';
+export { createApiClient, ApiError } from './client.js';
 export type {
   ApiClient,
   AuthClient,
@@ -7,4 +7,4 @@ export type {
   ReadonlyResourceClient,
   CreatableResourceClient,
   FullResourceClient,
-} from './client';
+} from './client.js';
