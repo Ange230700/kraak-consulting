@@ -1,15 +1,71 @@
 <kraak-page-shell
   eyebrow="Ressource"
   title="Détail de la ressource"
-  description="Préparez l'ouverture ou le téléchargement depuis la stack mobile."
+  description="Consultez le contenu et accedez rapidement au lien ou au fichier associe."
   backHref="/tabs/programmes/ressources"
 >
-  <section
-    class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Le contenu détaillé, le type de ressource et l'action d'ouverture seront
-      branchés ici.
-    </p>
+  <section class="flex flex-col gap-4 px-4 py-5">
+    @if (errorMessage()) {
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
+      >
+        <p class="text-sm leading-6 text-red-700">
+          {{ errorMessage() }}
+        </p>
+        <ion-button
+          expand="block"
+          class="kraak-primary-button"
+          (click)="reloadResource()"
+          (keydown.enter)="reloadResource()"
+        >
+          Réessayer
+        </ion-button>
+      </article>
+    } @else if (loading()) {
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col items-center gap-4 border p-5"
+      >
+        <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+        <p class="text-sm leading-6 text-neutral-700">
+          Chargement de la ressource...
+        </p>
+      </article>
+    } @else if (resource()) {
+      <article
+        class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+      >
+        <h2 class="text-primary text-lg font-semibold">
+          {{ resource()!.title }}
+        </h2>
+
+        @if (resource()!.description) {
+          <p class="text-sm leading-6 text-neutral-700">
+            {{ resource()!.description }}
+          </p>
+        }
+
+        <p class="text-xs leading-5 text-neutral-700 uppercase">
+          Type: {{ resource()!.resourceType }}
+        </p>
+
+        @if (resource()!.url) {
+          <ion-button
+            [href]="resource()!.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            expand="block"
+            class="kraak-primary-button"
+          >
+            Ouvrir le lien
+          </ion-button>
+        }
+
+        @if (resource()!.filePath) {
+          <p class="text-xs leading-5 text-neutral-700">
+            Fichier: {{ resource()!.filePath }}
+          </p>
+        }
+      </article>
+    }
   </section>
 </kraak-page-shell>

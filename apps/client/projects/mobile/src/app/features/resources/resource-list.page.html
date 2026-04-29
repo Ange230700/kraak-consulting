@@ -1,22 +1,144 @@
 <kraak-page-shell
   eyebrow="Références"
   title="Ressources"
-  description="Accédez rapidement aux contenus utiles depuis l'onglet Programmes."
+  description="Recherchez et filtrez les contenus utiles selon votre besoin."
   backHref="/tabs/programmes"
 >
-  <section
-    class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Ressources et documents utiles.
-    </p>
-
-    <ion-button
-      routerLink="/tabs/programmes/ressources/guide-demarrage"
-      expand="block"
-      class="kraak-primary-button mt-4"
+  <section class="flex flex-col gap-4 px-4 py-5">
+    <article
+      class="rounded-card border-brand-cyan/18 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
     >
-      Ouvrir une ressource exemple
-    </ion-button>
+      <label class="flex flex-col gap-2">
+        <span
+          class="text-xs font-semibold tracking-wide text-neutral-700 uppercase"
+        >
+          Recherche
+        </span>
+        <input
+          type="search"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          placeholder="Titre, description, type..."
+          class="focus:border-brand-blue rounded-xl border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none"
+        />
+      </label>
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <label class="flex flex-col gap-2">
+          <span
+            class="text-xs font-semibold tracking-wide text-neutral-700 uppercase"
+          >
+            Theme
+          </span>
+          <select
+            [value]="selectedTheme()"
+            (change)="onThemeChange($event)"
+            class="focus:border-brand-blue rounded-xl border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none"
+          >
+            <option value="">Tous les themes</option>
+            @for (option of resourceThemeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="flex flex-col gap-2">
+          <span
+            class="text-xs font-semibold tracking-wide text-neutral-700 uppercase"
+          >
+            Audience
+          </span>
+          <select
+            [value]="selectedAudience()"
+            (change)="onAudienceChange($event)"
+            class="focus:border-brand-blue rounded-xl border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none"
+          >
+            <option value="">Toutes les audiences</option>
+            @for (option of resourceAudienceOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    </article>
+
+    @if (errorMessage()) {
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
+      >
+        <p class="text-sm leading-6 text-red-700">
+          {{ errorMessage() }}
+        </p>
+        <ion-button
+          expand="block"
+          class="kraak-primary-button"
+          (click)="reloadResources()"
+          (keydown.enter)="reloadResources()"
+        >
+          Réessayer
+        </ion-button>
+      </article>
+    } @else if (loading()) {
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col items-center gap-4 border p-5"
+      >
+        <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+        <p class="text-sm leading-6 text-neutral-700">
+          Chargement des ressources...
+        </p>
+      </article>
+    } @else if (filteredResources().length === 0) {
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
+      >
+        <p class="text-sm leading-6 text-neutral-700">
+          Aucune ressource ne correspond a vos criteres.
+        </p>
+      </article>
+    } @else {
+      @for (resource of filteredResources(); track resource.id) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+          data-testid="resource-card"
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <span
+              class="bg-brand-cyan/15 text-brand-navy rounded-full px-2 py-1 text-xs font-semibold"
+            >
+              {{ getResourceTypeLabel(resource.resourceType) }}
+            </span>
+            <span
+              class="bg-brand-blue/10 text-brand-navy rounded-full px-2 py-1 text-xs font-semibold"
+            >
+              {{ getResourceThemeLabel(resource.resourceTheme) }}
+            </span>
+            <span
+              class="rounded-full bg-neutral-100 px-2 py-1 text-xs font-semibold text-neutral-700"
+            >
+              {{ getResourceAudienceLabel(resource.resourceAudience) }}
+            </span>
+          </div>
+
+          <div>
+            <p class="text-primary text-lg font-semibold">
+              {{ resource.title }}
+            </p>
+            @if (resource.description) {
+              <p class="mt-1 text-sm leading-6 text-neutral-700">
+                {{ resource.description }}
+              </p>
+            }
+          </div>
+
+          <ion-button
+            [routerLink]="['/tabs/programmes/ressources', resource.id]"
+            expand="block"
+            class="kraak-primary-button"
+          >
+            Voir le detail
+          </ion-button>
+        </article>
+      }
+    }
   </section>
 </kraak-page-shell>
