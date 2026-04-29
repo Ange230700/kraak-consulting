@@ -155,6 +155,12 @@ describe('Mobile HomePage', () => {
     expect(text).toContain("Parcours d'integration");
     expect(text).toContain('Atelier CV');
     expect(text).toContain('Rappel documents');
+
+    const element = fixture.nativeElement as HTMLElement;
+    const links = element.querySelectorAll('a');
+
+    expect(links.length).toBeGreaterThan(0);
+    expect(element.textContent).toContain('Voir tout');
   });
 
   it('Given an empty dashboard aggregate, when the page loads, then it renders a global empty state', async () => {
