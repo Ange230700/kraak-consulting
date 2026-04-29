@@ -62,7 +62,7 @@ session_status        -- scheduled, in_progress, completed, cancelled
 enrollment_status     -- pending, active, paused, completed, cancelled, refunded
 
 -- Types
-location_type         -- online, in_person, hybrid
+location_type         -- online, onsite, hybrid
 resource_type         -- link, file, video, document
 resource_theme        -- training, project_management, immigration, career
 resource_audience     -- all, young_professionals_students, organizations, international_candidates
@@ -151,7 +151,7 @@ app_user ← support_request (1:N, user_id FK)
 - `cohort.capacity` : `CHECK (capacity > 0)`
 - `enrollment` : `UNIQUE (participant_id, program_id)` — un participant ne
   s'inscrit qu'une fois par programme
-- `resource` : `CHECK` — exactement un parent (`program_id` ou `cohort_id`)
+- `resource` : `CHECK` — au moins un parent (`program_id` ou `cohort_id`)
 - `resource.resource_theme` : catégorisation métier pour filtrer les contenus
 - `resource.resource_audience` : segment de public visé pour la ressource
 - Toutes les colonnes `id` : UUID v4 générés par `uuid_generate_v4()`

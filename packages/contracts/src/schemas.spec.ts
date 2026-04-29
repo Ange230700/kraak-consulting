@@ -633,7 +633,7 @@ describe('SessionSchema', () => {
 // ---------------------------------------------------------------------------
 describe('CreateResourceSchema', () => {
   const valid = {
-    programId: null,
+    programId: 'prog-1',
     cohortId: null,
     title: 'Guide PDF',
     description: null,
@@ -648,6 +648,16 @@ describe('CreateResourceSchema', () => {
 
   it('should accept valid data', () => {
     expect(CreateResourceSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('should reject when both programId and cohortId are null', () => {
+    expect(
+      CreateResourceSchema.safeParse({
+        ...valid,
+        programId: null,
+        cohortId: null,
+      }).success,
+    ).toBe(false);
   });
 
   it('should reject invalid resourceType', () => {
