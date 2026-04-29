@@ -142,6 +142,33 @@ export interface DashboardAggregateDto {
 }
 
 // ---------------------------------------------------------------------------
+// Programs
+// ---------------------------------------------------------------------------
+export interface ParticipantProgramListItemDto {
+  enrollmentId: string;
+  enrollmentStatus: EnrollmentStatusValue;
+  program: ProgramDto;
+  cohort: CohortDto | null;
+}
+
+export interface ProgramAnnouncementPreviewDto {
+  id: string;
+  title: string;
+  audienceType: AudienceTypeValue;
+  publishedAt: string | null;
+}
+
+export interface ParticipantProgramDetailDto {
+  enrollmentId: string;
+  enrollmentStatus: EnrollmentStatusValue;
+  program: ProgramDto;
+  cohort: CohortDto | null;
+  sessions: SessionDto[];
+  resources: ResourceDto[];
+  announcements: ProgramAnnouncementPreviewDto[];
+}
+
+// ---------------------------------------------------------------------------
 // AppUser
 // ---------------------------------------------------------------------------
 export interface AppUserDto {

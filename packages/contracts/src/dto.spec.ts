@@ -35,6 +35,9 @@ import type {
   DashboardProgramSummaryDto,
   DashboardSessionReminderDto,
   DashboardAnnouncementSummaryDto,
+  ParticipantProgramListItemDto,
+  ParticipantProgramDetailDto,
+  ProgramAnnouncementPreviewDto,
 } from './dto';
 
 // Runtime import to ensure the module actually exists (prevents vacuous type test passes)
@@ -108,6 +111,69 @@ describe('DashboardAggregateDto', () => {
     expectTypeOf<DashboardAggregateDto>()
       .toHaveProperty('recentAnnouncements')
       .toEqualTypeOf<DashboardAnnouncementSummaryDto[]>();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Programs for participant area
+// ---------------------------------------------------------------------------
+describe('ParticipantProgramListItemDto', () => {
+  it('should expose list item payload for participant programs', () => {
+    expectTypeOf<ParticipantProgramListItemDto>()
+      .toHaveProperty('enrollmentId')
+      .toBeString();
+    expectTypeOf<ParticipantProgramListItemDto>()
+      .toHaveProperty('enrollmentStatus')
+      .toEqualTypeOf<EnrollmentStatusValue>();
+    expectTypeOf<ParticipantProgramListItemDto>()
+      .toHaveProperty('program')
+      .toEqualTypeOf<ProgramDto>();
+    expectTypeOf<ParticipantProgramListItemDto>()
+      .toHaveProperty('cohort')
+      .toEqualTypeOf<CohortDto | null>();
+  });
+});
+
+describe('ParticipantProgramDetailDto', () => {
+  it('should expose detail payload for participant program page', () => {
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('enrollmentId')
+      .toBeString();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('enrollmentStatus')
+      .toEqualTypeOf<EnrollmentStatusValue>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('program')
+      .toEqualTypeOf<ProgramDto>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('cohort')
+      .toEqualTypeOf<CohortDto | null>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('sessions')
+      .toEqualTypeOf<SessionDto[]>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('resources')
+      .toEqualTypeOf<ResourceDto[]>();
+    expectTypeOf<ParticipantProgramDetailDto>()
+      .toHaveProperty('announcements')
+      .toEqualTypeOf<ProgramAnnouncementPreviewDto[]>();
+  });
+});
+
+describe('ProgramAnnouncementPreviewDto', () => {
+  it('should expose lightweight announcement summary for program detail', () => {
+    expectTypeOf<ProgramAnnouncementPreviewDto>()
+      .toHaveProperty('id')
+      .toBeString();
+    expectTypeOf<ProgramAnnouncementPreviewDto>()
+      .toHaveProperty('title')
+      .toBeString();
+    expectTypeOf<ProgramAnnouncementPreviewDto>()
+      .toHaveProperty('audienceType')
+      .toEqualTypeOf<AudienceTypeValue>();
+    expectTypeOf<ProgramAnnouncementPreviewDto>()
+      .toHaveProperty('publishedAt')
+      .toEqualTypeOf<string | null>();
   });
 });
 
