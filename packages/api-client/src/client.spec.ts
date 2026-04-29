@@ -31,13 +31,14 @@ function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
 // ---------------------------------------------------------------------------
 
 describe('createApiClient', () => {
-  it('retourne un objet avec les 13 groupes de ressources', () => {
+  it('retourne un objet avec les 14 groupes de ressources', () => {
     const client = createApiClient(baseConfig());
     const keys = Object.keys(client).sort((a, b) => a.localeCompare(b));
     expect(keys).toEqual([
       'announcements',
       'auth',
       'cohorts',
+      'contact',
       'dashboard',
       'enrollments',
       'notifications',
@@ -98,6 +99,11 @@ describe('createApiClient', () => {
   it('dashboard expose getAggregate', () => {
     const client = createApiClient(baseConfig());
     expect(typeof client.dashboard.getAggregate).toBe('function');
+  });
+
+  it('contact expose submit', () => {
+    const client = createApiClient(baseConfig());
+    expect(typeof client.contact.submit).toBe('function');
   });
 });
 

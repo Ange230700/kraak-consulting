@@ -1,14 +1,143 @@
 <kraak-page-shell
   eyebrow="Support"
   title="Nouvelle demande"
-  description="Préparez votre demande d'accompagnement dans un écran dédié."
+  description="Décrivez votre besoin et notre équipe vous répondra dans les plus brefs délais."
   backHref="/tabs/support"
 >
   <section
-    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
+    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
   >
-    <p class="text-sm leading-6 text-neutral-700">
-      Le formulaire mobile sera branché ici dans la suite du parcours support.
-    </p>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="flex flex-col gap-4"
+      novalidate
+    >
+      <!-- Nom -->
+      <div class="flex flex-col gap-2">
+        <label
+          for="support-name"
+          class="text-sm font-semibold text-neutral-900"
+        >
+          Nom complet
+        </label>
+        <input
+          id="support-name"
+          type="text"
+          formControlName="name"
+          autocomplete="name"
+          placeholder="Alice Dupont"
+          class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <p class="text-sm leading-6 text-rose-700">
+            Le nom est requis (2 à 80 caractères).
+          </p>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="flex flex-col gap-2">
+        <label
+          for="support-email"
+          class="text-sm font-semibold text-neutral-900"
+        >
+          Adresse email
+        </label>
+        <input
+          id="support-email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="vous@kraak.org"
+          class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <p class="text-sm leading-6 text-rose-700">
+            Saisissez une adresse email valide.
+          </p>
+        }
+      </div>
+
+      <!-- Catégorie -->
+      <div class="flex flex-col gap-2">
+        <label
+          for="support-category"
+          class="text-sm font-semibold text-neutral-900"
+        >
+          Catégorie
+        </label>
+        <select
+          id="support-category"
+          formControlName="category"
+          class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
+        >
+          @for (option of categoryOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Objet -->
+      <div class="flex flex-col gap-2">
+        <label
+          for="support-subject"
+          class="text-sm font-semibold text-neutral-900"
+        >
+          Objet
+        </label>
+        <input
+          id="support-subject"
+          type="text"
+          formControlName="subject"
+          placeholder="Résumez votre demande en quelques mots"
+          class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
+        />
+        @if (form.controls.subject.touched && form.controls.subject.invalid) {
+          <p class="text-sm leading-6 text-rose-700">
+            L'objet est requis (3 à 120 caractères).
+          </p>
+        }
+      </div>
+
+      <!-- Message -->
+      <div class="flex flex-col gap-2">
+        <label
+          for="support-message"
+          class="text-sm font-semibold text-neutral-900"
+        >
+          Message
+        </label>
+        <textarea
+          id="support-message"
+          formControlName="message"
+          rows="5"
+          placeholder="Décrivez votre demande en détail…"
+          class="rounded-card border-brand-blue/12 focus:border-brand-blue resize-none border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
+        ></textarea>
+        @if (form.controls.message.touched && form.controls.message.invalid) {
+          <p class="text-sm leading-6 text-rose-700">
+            Le message est requis (10 à 2 000 caractères).
+          </p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p
+          class="rounded-card bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700"
+        >
+          {{ errorMessage() }}
+        </p>
+      }
+
+      <ion-button
+        type="submit"
+        expand="block"
+        class="kraak-primary-button"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? 'Envoi en cours...' : 'Envoyer la demande' }}
+      </ion-button>
+    </form>
   </section>
 </kraak-page-shell>
