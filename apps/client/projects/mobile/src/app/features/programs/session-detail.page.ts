@@ -25,6 +25,8 @@ export default class SessionDetailPage implements OnInit {
   );
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly markingProgress = signal(false);
+  protected readonly markErrorMessage = signal<string | null>(null);
 
   protected readonly session = computed<SessionDto | null>(() => {
     const sessionId = this.route.snapshot.paramMap.get('sessionId');
@@ -42,6 +44,17 @@ export default class SessionDetailPage implements OnInit {
       this.route.snapshot.paramMap.get('programId') ??
       this.programDetail()?.program.id,
   );
+
+  protected readonly isSessionCompleted = computed(() => {
+    const detail = this.programDetail();
+    const currentSession = this.session();
+
+    if (!detail || !currentSession) {
+      return false;
+    }
+
+    return detail.progress.completedSessionIds.includes(currentSession.id);
+  });
 
   ngOnInit(): void {
     const programId = readProgramId(this.route);
@@ -65,6 +78,44 @@ export default class SessionDetailPage implements OnInit {
     const programId = readProgramId(this.route);
     if (programId) {
       await this.loadProgramDetail(programId);
+    }
+  }
+
+  protected onReloadKeydown(event: Event): void {
+    event.preventDefault();
+    void this.reloadSession();
+  }
+
+  protected onMarkKeydown(event: Event, completed: boolean): void {
+    event.preventDefault();
+    void this.markSessionCompletion(completed);
+  }
+
+  protected async markSessionCompletion(completed: boolean): Promise<void> {
+    const programId = this.programId();
+    const currentSession = this.session();
+
+    if (!programId || !currentSession || this.markingProgress()) {
+      return;
+    }
+
+    try {
+      this.markingProgress.set(true);
+      this.markErrorMessage.set(null);
+      await this.programsService.markSessionProgress(
+        programId,
+        currentSession.id,
+        completed,
+      );
+      await this.loadProgramDetail(programId);
+    } catch (error) {
+      this.markErrorMessage.set(
+        error instanceof Error
+          ? error.message
+          : 'Impossible de mettre à jour votre progression.',
+      );
+    } finally {
+      this.markingProgress.set(false);
     }
   }
 }

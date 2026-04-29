@@ -1,21 +1,27 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Get,
   Headers,
   Param,
+  Post,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import type {
+  MarkProgramSessionProgressResponseDto,
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
 } from '@kraak/contracts';
 import { extractAccessToken } from '../auth/auth.dto';
+import { validateMarkSessionProgressPayload } from './programs.dto';
 import { ProgramsService } from './programs.service';
 
 const apiErrorSchema = {
@@ -89,7 +95,13 @@ const cohortSchema = {
 
 const programListItemSchema = {
   type: 'object',
-  required: ['enrollmentId', 'enrollmentStatus', 'program', 'cohort'],
+  required: [
+    'enrollmentId',
+    'enrollmentStatus',
+    'program',
+    'cohort',
+    'progress',
+  ],
   properties: {
     enrollmentId: { type: 'string' },
     enrollmentStatus: {
@@ -98,6 +110,28 @@ const programListItemSchema = {
     },
     program: programSchema,
     cohort: cohortSchema,
+    progress: {
+      type: 'object',
+      required: [
+        'totalSessions',
+        'completedSessions',
+        'completionRate',
+        'status',
+        'completedSessionIds',
+        'updatedAt',
+      ],
+      properties: {
+        totalSessions: { type: 'integer' },
+        completedSessions: { type: 'integer' },
+        completionRate: { type: 'integer' },
+        status: {
+          type: 'string',
+          enum: ['not_started', 'in_progress', 'completed'],
+        },
+        completedSessionIds: { type: 'array', items: { type: 'string' } },
+        updatedAt: { type: 'string', format: 'date-time', nullable: true },
+      },
+    },
   },
 };
 
@@ -194,6 +228,7 @@ const programDetailSchema = {
     'enrollmentStatus',
     'program',
     'cohort',
+    'progress',
     'sessions',
     'resources',
     'announcements',
@@ -206,9 +241,32 @@ const programDetailSchema = {
     },
     program: programSchema,
     cohort: cohortSchema,
+    progress: programListItemSchema.properties.progress,
     sessions: { type: 'array', items: sessionSchema },
     resources: { type: 'array', items: resourceSchema },
     announcements: { type: 'array', items: announcementPreviewSchema },
+  },
+};
+
+const markProgressRequestSchema = {
+  type: 'object',
+  required: ['sessionId', 'completed'],
+  properties: {
+    sessionId: { type: 'string' },
+    completed: { type: 'boolean' },
+  },
+};
+
+const markProgressResponseSchema = {
+  type: 'object',
+  required: ['enrollmentId', 'enrollmentStatus', 'progress'],
+  properties: {
+    enrollmentId: { type: 'string' },
+    enrollmentStatus: {
+      type: 'string',
+      enum: ['pending', 'active', 'completed', 'cancelled'],
+    },
+    progress: programListItemSchema.properties.progress,
   },
 };
 
@@ -291,5 +349,66 @@ export class ProgramsController {
     }
 
     return this.programsService.getProgramDetail(accessToken.data, programId);
+  }
+
+  @Post(':programId/progress')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Marquer la progression minimale d’une session du programme',
+  })
+  @ApiBody({ schema: markProgressRequestSchema })
+  @ApiResponse({
+    status: 200,
+    description: 'Progression mise à jour avec succès',
+    schema: markProgressResponseSchema,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Payload invalide pour le marquage de progression',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Session invalide ou header d'autorisation manquant",
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Programme ou session introuvable pour ce participant',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la mise à jour de progression',
+    schema: apiErrorSchema,
+  })
+  async markSessionProgress(
+    @Param('programId') programId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<MarkProgramSessionProgressResponseDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const payload = validateMarkSessionProgressPayload(body);
+
+    if (!payload.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: payload.errors.join(' '),
+      });
+    }
+
+    return this.programsService.markSessionProgress(
+      accessToken.data,
+      programId,
+      payload.data,
+    );
   }
 }

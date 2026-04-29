@@ -24,7 +24,15 @@ function createListQuery(result: { data: unknown; error: unknown }) {
     in: jest.fn().mockReturnThis(),
     or: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
+    range: jest.fn().mockResolvedValue(result),
     limit: jest.fn().mockResolvedValue(result),
+  };
+}
+
+function createUpdateQuery(result: { error: unknown }) {
+  return {
+    update: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockResolvedValue(result),
   };
 }
 
@@ -88,8 +96,11 @@ describe('ProgramsService', () => {
         {
           id: 'enrollment-1',
           status: 'active',
+          completed_at: null,
           program_id: 'program-1',
           cohort_id: 'cohort-1',
+          progress_completed_session_ids: ['session-1'],
+          progress_updated_at: '2026-04-29T10:00:00.000Z',
           program: {
             id: 'program-1',
             slug: 'leadership-essentials',
@@ -117,6 +128,10 @@ describe('ProgramsService', () => {
       ],
       error: null,
     });
+    const sessionsByCohortQuery = createListQuery({
+      data: [{ id: 'session-1', cohort_id: 'cohort-1' }],
+      error: null,
+    });
 
     adminClient.from.mockImplementation((tableName: string) => {
       if (tableName === 'participant') {
@@ -125,6 +140,10 @@ describe('ProgramsService', () => {
 
       if (tableName === 'enrollment') {
         return enrollmentQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsByCohortQuery;
       }
 
       throw new Error(`Unexpected table ${tableName}`);
@@ -144,6 +163,101 @@ describe('ProgramsService', () => {
         },
       },
     ]);
+  });
+
+  // Given plus de 200 sessions visibles sur une cohorte
+  // When listPrograms est appelé
+  // Then le total de progression utilise toutes les pages de sessions
+  it("Given des sessions paginées, When listPrograms est appelé, Then la progression n'est pas tronquée", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          progress_completed_session_ids: ['session-201'],
+          progress_updated_at: '2026-04-29T10:00:00.000Z',
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: {
+            id: 'cohort-1',
+            program_id: 'program-1',
+            name: 'Cohorte Avril',
+            code: 'APR-26',
+            status: 'active',
+            start_date: '2026-04-10',
+            end_date: null,
+            capacity: 25,
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+        },
+      ],
+      error: null,
+    });
+    const firstPage = Array.from({ length: 200 }, (_, index) => ({
+      id: `session-${index + 1}`,
+      cohort_id: 'cohort-1',
+    }));
+    const pagedSessionsByCohortQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      is: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      or: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({ data: firstPage, error: null })
+        .mockResolvedValueOnce({
+          data: [{ id: 'session-201', cohort_id: 'cohort-1' }],
+          error: null,
+        }),
+      limit: jest.fn().mockResolvedValue({ data: [], error: null }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentQuery;
+      }
+
+      if (tableName === 'session') {
+        return pagedSessionsByCohortQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      {
+        enrollmentId: 'enrollment-1',
+        progress: {
+          totalSessions: 201,
+          completedSessions: 1,
+        },
+      },
+    ]);
+
+    expect(pagedSessionsByCohortQuery.range).toHaveBeenCalledTimes(2);
   });
 
   // Given un token invalide
@@ -552,5 +666,291 @@ describe('ProgramsService', () => {
         { id: 'announcement-visible-cohort' },
       ],
     });
+  });
+
+  // Given un marquage de session valide pour un participant
+  // When markSessionProgress est appelé
+  // Then la progression est mise à jour et renvoyée
+  it('Given un marquage progression valide, When markSessionProgress est appelé, Then la progression est persistée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: [
+        {
+          id: 'session-1',
+          cohort_id: 'cohort-1',
+          title: 'Atelier Vision',
+          description: null,
+          status: 'scheduled',
+          starts_at: '2026-05-02T09:00:00.000Z',
+          ends_at: '2026-05-02T11:00:00.000Z',
+          location_type: 'online',
+          location_label: null,
+          meeting_link: null,
+          trainer_user_id: null,
+          created_at: '2026-04-20T00:00:00.000Z',
+          updated_at: '2026-04-20T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const enrollmentUpdateQuery = createUpdateQuery({ error: null });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentSelectQuery
+          : enrollmentUpdateQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      enrollmentStatus: 'completed',
+      progress: {
+        totalSessions: 1,
+        completedSessions: 1,
+        completionRate: 100,
+        status: 'completed',
+        completedSessionIds: ['session-1'],
+      },
+    });
+  });
+
+  // Given une session hors du programme
+  // When markSessionProgress est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given une session hors programme, When markSessionProgress est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: [
+        {
+          id: 'session-1',
+          cohort_id: 'cohort-1',
+          title: 'Atelier Vision',
+          description: null,
+          status: 'scheduled',
+          starts_at: '2026-05-02T09:00:00.000Z',
+          ends_at: '2026-05-02T11:00:00.000Z',
+          location_type: 'online',
+          location_label: null,
+          meeting_link: null,
+          trainer_user_id: null,
+          created_at: '2026-04-20T00:00:00.000Z',
+          updated_at: '2026-04-20T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentSelectQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-unknown',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given un cohort avec plus d'une page de sessions
+  // When markSessionProgress cible une session de la deuxième page
+  // Then le marquage est accepté et persisté
+  it('Given une session en page suivante, When markSessionProgress est appelé, Then la pagination des sessions permet le marquage', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const firstPage = Array.from({ length: 200 }, (_, index) => ({
+      id: `session-${index + 1}`,
+    }));
+    const pagedSessionsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({ data: firstPage, error: null })
+        .mockResolvedValueOnce({ data: [{ id: 'session-201' }], error: null }),
+    };
+    const enrollmentUpdateQuery = createUpdateQuery({ error: null });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentSelectQuery
+          : enrollmentUpdateQuery;
+      }
+
+      if (tableName === 'session') {
+        return pagedSessionsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-201',
+        completed: true,
+      }),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      enrollmentStatus: 'active',
+      progress: {
+        totalSessions: 201,
+        completedSessions: 1,
+      },
+    });
+
+    expect(pagedSessionsQuery.range).toHaveBeenCalledTimes(2);
   });
 });

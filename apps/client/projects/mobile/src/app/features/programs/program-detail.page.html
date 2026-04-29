@@ -59,6 +59,12 @@
             <span class="font-semibold">Statut d'inscription:</span>
             {{ detail.enrollmentStatus }}
           </p>
+          <p class="mt-1">
+            <span class="font-semibold">Progression:</span>
+            {{ detail.progress.completionRate }}% ({{
+              detail.progress.completedSessions
+            }}/{{ detail.progress.totalSessions }} sessions)
+          </p>
         </div>
       </article>
 

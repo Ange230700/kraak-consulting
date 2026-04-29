@@ -18,6 +18,7 @@ COPY apps/api/package.json apps/api/
 COPY apps/client/package.json apps/client/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/domain/package.json packages/domain/
 COPY packages/tokens/package.json packages/tokens/
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
@@ -26,6 +27,7 @@ FROM deps AS build
 COPY tsconfig.base.json ./
 COPY apps/api/ apps/api/
 COPY packages/contracts/ packages/contracts/
+COPY packages/domain/ packages/domain/
 RUN pnpm --filter @kraak/api build
 RUN pnpm deploy --filter @kraak/api --prod --legacy /prod/api
 

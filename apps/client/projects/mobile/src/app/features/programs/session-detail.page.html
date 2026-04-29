@@ -15,7 +15,7 @@
         size="small"
         class="kraak-primary-button"
         (click)="reloadSession()"
-        (keydown.enter)="reloadSession()"
+        (keydown.enter)="onReloadKeydown($event)"
       >
         Réessayer
       </ion-button>
@@ -99,6 +99,48 @@
             </div>
           }
         </div>
+      </article>
+
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+      >
+        <p class="text-primary text-lg font-semibold">Progression</p>
+        <p class="text-sm leading-6 text-neutral-700">
+          @if (isSessionCompleted()) {
+            Session marquée comme terminée.
+          } @else {
+            Session non terminée.
+          }
+        </p>
+
+        @if (markErrorMessage()) {
+          <p class="text-sm leading-6 text-red-700">
+            {{ markErrorMessage() }}
+          </p>
+        }
+
+        @if (isSessionCompleted()) {
+          <ion-button
+            expand="block"
+            fill="outline"
+            class="kraak-secondary-button"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(false)"
+            (keydown.enter)="onMarkKeydown($event, false)"
+          >
+            Marquer comme non terminée
+          </ion-button>
+        } @else {
+          <ion-button
+            expand="block"
+            class="kraak-primary-button"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(true)"
+            (keydown.enter)="onMarkKeydown($event, true)"
+          >
+            Marquer comme terminée
+          </ion-button>
+        }
       </article>
 
       <div class="flex flex-col gap-2">

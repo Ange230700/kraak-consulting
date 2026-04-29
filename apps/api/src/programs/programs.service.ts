@@ -4,11 +4,19 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import {
+  applySessionProgressMark,
+  calculateProgramProgress,
+  canMarkSessionProgress,
+  canTransitionEnrollmentStatus,
+} from '@kraak/domain';
 import type {
   AudienceTypeValue,
   CohortDto,
   CohortStatusValue,
   EnrollmentStatusValue,
+  MarkProgramSessionProgressRequestDto,
+  MarkProgramSessionProgressResponseDto,
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
   ProgramAnnouncementPreviewDto,
@@ -55,8 +63,11 @@ type CohortRow = {
 type EnrollmentRow = {
   id: string;
   status: EnrollmentStatusValue;
+  completed_at: string | null;
   program_id: string;
   cohort_id: string | null;
+  progress_completed_session_ids: string[] | null;
+  progress_updated_at: string | null;
   program: ProgramRow | ProgramRow[] | null;
   cohort: CohortRow | CohortRow[] | null;
 };
@@ -104,6 +115,13 @@ type AnnouncementPreviewRow = Pick<
   'id' | 'title' | 'audience_type' | 'program_id' | 'cohort_id' | 'published_at'
 >;
 
+const enrollmentProgramSelect =
+  'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
+
+const progressUpdateErrorMessage =
+  'Impossible de mettre à jour la progression du programme.';
+const sessionProgressPageSize = 200;
+
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
     return value[0] ?? null;
@@ -128,9 +146,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('enrollment')
-      .select(
-        'id, status, program_id, cohort_id, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)',
-      )
+      .select(enrollmentProgramSelect)
       .eq('participant_id', participantId)
       .in('status', ['pending', 'active', 'completed'])
       .order('enrolled_at', { ascending: false })
@@ -143,19 +159,36 @@ export class ProgramsService {
       });
     }
 
-    return ((data as EnrollmentRow[] | null) ?? [])
+    const enrollments = (data as EnrollmentRow[] | null) ?? [];
+    const cohortIds = enrollments
+      .map((row) => normalizeRelation(row.cohort)?.id ?? null)
+      .filter((id): id is string => Boolean(id));
+    const sessionsByCohort = await this.readSessionIdsByCohort(cohortIds);
+
+    return enrollments
       .map((row) => {
         const program = normalizeRelation(row.program);
+        const cohort = normalizeRelation(row.cohort);
 
         if (!program) {
           return null;
         }
 
+        const sessionIds = cohort
+          ? (sessionsByCohort.get(cohort.id) ?? [])
+          : [];
+        const progress = calculateProgramProgress({
+          sessionIds,
+          completedSessionIds: row.progress_completed_session_ids ?? [],
+          updatedAt: row.progress_updated_at,
+        });
+
         return {
           enrollmentId: row.id,
           enrollmentStatus: row.status,
           program: this.mapProgram(program),
-          cohort: this.mapCohort(normalizeRelation(row.cohort)),
+          cohort: this.mapCohort(cohort),
+          progress,
         };
       })
       .filter((item): item is ParticipantProgramListItemDto => item !== null);
@@ -177,9 +210,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('enrollment')
-      .select(
-        'id, status, program_id, cohort_id, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)',
-      )
+      .select(enrollmentProgramSelect)
       .eq('participant_id', participantId)
       .eq('program_id', programId)
       .in('status', ['pending', 'active', 'completed'])
@@ -217,14 +248,130 @@ export class ProgramsService {
       this.readAnnouncements(program.id, cohort?.id ?? null),
     ]);
 
+    const progress = calculateProgramProgress({
+      sessionIds: sessions.map((session) => session.id),
+      completedSessionIds: enrollment.progress_completed_session_ids ?? [],
+      updatedAt: enrollment.progress_updated_at,
+    });
+
     return {
       enrollmentId: enrollment.id,
       enrollmentStatus: enrollment.status,
       program: this.mapProgram(program),
       cohort,
+      progress,
       sessions,
       resources,
       announcements,
+    };
+  }
+
+  async markSessionProgress(
+    accessToken: string,
+    programId: string,
+    payload: MarkProgramSessionProgressRequestDto,
+  ): Promise<MarkProgramSessionProgressResponseDto> {
+    const participantId = await this.resolveParticipantId(accessToken);
+
+    if (!participantId) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable pour ce participant.',
+      });
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('enrollment')
+      .select(enrollmentProgramSelect)
+      .eq('participant_id', participantId)
+      .eq('program_id', programId)
+      .in('status', ['pending', 'active', 'completed'])
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: progressUpdateErrorMessage,
+      });
+    }
+
+    const enrollment = data as EnrollmentRow | null;
+
+    if (!enrollment) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable pour ce participant.',
+      });
+    }
+
+    const cohort = normalizeRelation(enrollment.cohort);
+
+    if (!cohort) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Session introuvable pour ce programme.',
+      });
+    }
+
+    const sessionIds = await this.readVisibleSessionIdsByCohort(cohort.id);
+
+    if (!canMarkSessionProgress(sessionIds, payload.sessionId)) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Session introuvable pour ce programme.',
+      });
+    }
+
+    const nowIso = new Date().toISOString();
+    const nextCompletedSessionIds = applySessionProgressMark(
+      enrollment.progress_completed_session_ids ?? [],
+      payload.sessionId,
+      payload.completed,
+    );
+    const progress = calculateProgramProgress({
+      sessionIds,
+      completedSessionIds: nextCompletedSessionIds,
+      updatedAt: nowIso,
+    });
+
+    let nextEnrollmentStatus = enrollment.status;
+    const shouldMarkAsCompleted =
+      progress.status === 'completed' &&
+      canTransitionEnrollmentStatus(enrollment.status, 'completed');
+
+    if (shouldMarkAsCompleted) {
+      nextEnrollmentStatus = 'completed';
+    }
+
+    const updatePayload: Record<string, unknown> = {
+      progress_completed_session_ids: progress.completedSessionIds,
+      progress_updated_at: nowIso,
+    };
+
+    if (nextEnrollmentStatus !== enrollment.status) {
+      updatePayload['status'] = nextEnrollmentStatus;
+      if (nextEnrollmentStatus === 'completed') {
+        updatePayload['completed_at'] = nowIso;
+      }
+    }
+
+    const { error: updateError } = await adminClient
+      .from('enrollment')
+      .update(updatePayload)
+      .eq('id', enrollment.id);
+
+    if (updateError) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: progressUpdateErrorMessage,
+      });
+    }
+
+    return {
+      enrollmentId: enrollment.id,
+      enrollmentStatus: nextEnrollmentStatus,
+      progress,
     };
   }
 
@@ -280,6 +427,95 @@ export class ProgramsService {
     return ((data as SessionRow[] | null) ?? []).map((row) =>
       this.mapSession(row),
     );
+  }
+
+  private async readSessionIdsByCohort(
+    cohortIds: string[],
+  ): Promise<Map<string, string[]>> {
+    const uniqueCohortIds = Array.from(new Set(cohortIds));
+
+    if (uniqueCohortIds.length === 0) {
+      return new Map();
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const rows = await this.readPagedSessionRows<{
+      id: string;
+      cohort_id: string;
+    }>(
+      async (from, to) =>
+        adminClient
+          .from('session')
+          .select('id, cohort_id')
+          .in('cohort_id', uniqueCohortIds)
+          .in('status', ['scheduled', 'live', 'completed'])
+          .order('id', { ascending: true })
+          .range(from, to),
+      'Impossible de charger la progression des programmes.',
+    );
+
+    const grouped = new Map<string, string[]>();
+
+    for (const row of rows) {
+      const current = grouped.get(row.cohort_id) ?? [];
+      current.push(row.id);
+      grouped.set(row.cohort_id, current);
+    }
+
+    return grouped;
+  }
+
+  private async readVisibleSessionIdsByCohort(
+    cohortId: string,
+  ): Promise<string[]> {
+    const adminClient = this.supabaseService.getClient();
+    const rows = await this.readPagedSessionRows<{ id: string }>(
+      async (from, to) =>
+        adminClient
+          .from('session')
+          .select('id')
+          .eq('cohort_id', cohortId)
+          .in('status', ['scheduled', 'live', 'completed'])
+          .order('id', { ascending: true })
+          .range(from, to),
+      progressUpdateErrorMessage,
+    );
+
+    return rows.map((row) => row.id);
+  }
+
+  private async readPagedSessionRows<T>(
+    loadPage: (
+      from: number,
+      to: number,
+    ) => Promise<{ data: T[] | null; error: unknown }>,
+    errorMessage: string,
+  ): Promise<T[]> {
+    const rows: T[] = [];
+    let from = 0;
+
+    while (true) {
+      const to = from + sessionProgressPageSize - 1;
+      const { data, error } = await loadPage(from, to);
+
+      if (error) {
+        throw new InternalServerErrorException({
+          success: false,
+          message: errorMessage,
+        });
+      }
+
+      const batch = data ?? [];
+      rows.push(...batch);
+
+      if (batch.length < sessionProgressPageSize) {
+        break;
+      }
+
+      from += sessionProgressPageSize;
+    }
+
+    return rows;
   }
 
   private async readResources(

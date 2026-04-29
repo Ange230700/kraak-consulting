@@ -66,6 +66,12 @@ export const EnrollmentStatus = {
   CANCELLED: 'cancelled',
 } as const;
 
+export const ProgramProgressStatus = {
+  NOT_STARTED: 'not_started',
+  IN_PROGRESS: 'in_progress',
+  COMPLETED: 'completed',
+} as const;
+
 export const NotificationType = {
   ANNOUNCEMENT: 'announcement',
   SESSION_REMINDER: 'session_reminder',
@@ -112,6 +118,8 @@ export type AudienceTypeValue =
   (typeof AudienceType)[keyof typeof AudienceType];
 export type EnrollmentStatusValue =
   (typeof EnrollmentStatus)[keyof typeof EnrollmentStatus];
+export type ProgramProgressStatusValue =
+  (typeof ProgramProgressStatus)[keyof typeof ProgramProgressStatus];
 export type NotificationTypeValue =
   (typeof NotificationType)[keyof typeof NotificationType];
 export type NotificationChannelValue =
