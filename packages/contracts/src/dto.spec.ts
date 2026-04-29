@@ -5,6 +5,7 @@ import type {
   UpdateAppUserDto,
   ContactFormDto,
   ContactSubmissionResultDto,
+  UpdateSupportRequestStatusDto,
   ParticipantDto,
   CreateParticipantDto,
   UpdateParticipantDto,
@@ -98,9 +99,22 @@ describe('ContactSubmissionResultDto', () => {
     expectTypeOf<ContactSubmissionResultDto>()
       .toHaveProperty('message')
       .toBeString();
+    expectTypeOf<ContactSubmissionResultDto>()
+      .toHaveProperty('requestId')
+      .toEqualTypeOf<string | undefined>();
+    expectTypeOf<ContactSubmissionResultDto>()
+      .toHaveProperty('requestStatus')
+      .toEqualTypeOf<SupportRequestStatusValue | undefined>();
   });
 });
 
+describe('UpdateSupportRequestStatusDto', () => {
+  it('should expose the minimal status transition payload', () => {
+    expectTypeOf<UpdateSupportRequestStatusDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<SupportRequestStatusValue>();
+  });
+});
 // ---------------------------------------------------------------------------
 // Dashboard
 // ---------------------------------------------------------------------------

@@ -18,4 +18,42 @@
       Démarrer une demande
     </ion-button>
   </section>
+
+  <section
+    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
+  >
+    <p class="text-sm font-semibold text-neutral-900">Suivi de vos demandes</p>
+
+    @if (loading()) {
+      <p class="text-sm leading-6 text-neutral-700">
+        Chargement des statuts en cours...
+      </p>
+    } @else if (errorMessage()) {
+      <p
+        class="rounded-card bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700"
+      >
+        {{ errorMessage() }}
+      </p>
+    } @else if (requests().length === 0) {
+      <p class="text-sm leading-6 text-neutral-700">
+        Aucune demande de support enregistrée pour le moment.
+      </p>
+    } @else {
+      <ul class="flex flex-col gap-3">
+        @for (request of requests(); track request.id) {
+          <li class="rounded-card border-brand-blue/12 border px-4 py-3">
+            <p class="text-sm font-semibold text-neutral-900">
+              {{ request.subject }}
+            </p>
+            <p class="text-xs text-neutral-600">
+              Statut: {{ getStatusLabel(request.status) }}
+            </p>
+            <p class="text-xs text-neutral-500">
+              Mis à jour le {{ request.updatedAt | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </section>
 </kraak-page-shell>

@@ -1,4 +1,7 @@
-import { validateContactForm } from './support.dto';
+import {
+  validateContactForm,
+  validateSupportStatusUpdatePayload,
+} from './support.dto';
 
 describe('validateContactForm', () => {
   // Given un corps de requête valide
@@ -55,6 +58,30 @@ describe('validateContactForm', () => {
     expect(validateContactForm(null)).toEqual({
       valid: false,
       errors: ['Corps de requête invalide.'],
+    });
+  });
+});
+
+describe('validateSupportStatusUpdatePayload', () => {
+  it('Given un payload de statut valide, When la validation est appliquée, Then le statut normalisé est renvoyé', () => {
+    const result = validateSupportStatusUpdatePayload({
+      status: ' in_progress ',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        status: 'in_progress',
+      },
+    });
+  });
+
+  it('Given un statut invalide, When la validation est appliquée, Then une erreur explicite est renvoyée', () => {
+    const result = validateSupportStatusUpdatePayload({ status: 'pending' });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le statut de la demande de support est invalide.'],
     });
   });
 });

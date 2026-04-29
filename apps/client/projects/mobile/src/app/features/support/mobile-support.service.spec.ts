@@ -74,4 +74,34 @@ describe('MobileSupportService', () => {
       'Network error',
     );
   });
+
+  it('Given an authenticated mobile user, when listMyRequests is called, then it fetches support request statuses', async () => {
+    const service = TestBed.inject(MobileSupportService);
+
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => [
+        {
+          id: 'req-1',
+          userId: 'user-1',
+          participantId: 'participant-1',
+          subject: 'Connexion impossible',
+          message: 'Je ne peux plus accéder à mon espace.',
+          status: 'open',
+          category: 'technical',
+          assignedToUserId: null,
+          createdAt: '2026-04-29T10:00:00.000Z',
+          updatedAt: '2026-04-29T10:00:00.000Z',
+        },
+      ],
+    });
+
+    const result = await service.listMyRequests();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toContain('/support/requests');
+    expect(result).toHaveLength(1);
+    expect(result[0]?.status).toBe('open');
+  });
 });

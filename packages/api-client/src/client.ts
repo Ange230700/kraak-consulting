@@ -43,6 +43,7 @@ import type {
   MarkProgramSessionProgressResponseDto,
   ContactFormDto,
   ContactSubmissionResultDto,
+  UpdateSupportRequestStatusDto,
 } from '@kraak/contracts';
 
 // ---------------------------------------------------------------------------
@@ -110,6 +111,12 @@ export interface ContactClient {
     body: ContactFormDto,
     options?: RequestOptions,
   ): Promise<ContactSubmissionResultDto>;
+  listMine(options?: RequestOptions): Promise<SupportRequestDto[]>;
+  updateStatus(
+    requestId: string,
+    body: UpdateSupportRequestStatusDto,
+    options?: RequestOptions,
+  ): Promise<SupportRequestDto>;
 }
 
 export interface DashboardClient {
@@ -339,6 +346,22 @@ function createContactClient(config: ApiClientConfig): ContactClient {
         config,
         'POST',
         '/support/contact',
+        body,
+        options,
+      ),
+    listMine: (options?) =>
+      request<SupportRequestDto[]>(
+        config,
+        'GET',
+        '/support/requests',
+        undefined,
+        options,
+      ),
+    updateStatus: (requestId, body, options?) =>
+      request<SupportRequestDto>(
+        config,
+        'PATCH',
+        `/support/requests/${requestId}/status`,
         body,
         options,
       ),
