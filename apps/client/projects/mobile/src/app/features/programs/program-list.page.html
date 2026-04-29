@@ -1,26 +1,91 @@
 <kraak-page-shell
-  eyebrow="Accompagnement"
-  title="Programmes"
-  description="Retrouvez les parcours KRAAK et ouvrez un détail dans la stack."
+  eyebrow="Programmes"
+  title="Vos parcours"
+  description="Explorez les programmes auxquels vous êtes inscrits."
 >
-  <section
-    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Explorez les parcours actifs puis ouvrez leurs ressources ou leurs
-      sessions sans quitter l'onglet Programmes.
-    </p>
-
-    <ion-button
-      routerLink="/tabs/programmes/demo"
-      expand="block"
-      class="kraak-primary-button"
+  @if (errorMessage()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
     >
-      Ouvrir un programme exemple
-    </ion-button>
+      <p class="text-sm leading-6 text-red-700">
+        {{ errorMessage() }}
+      </p>
+      <ion-button
+        expand="block"
+        size="small"
+        class="kraak-primary-button"
+        (click)="reloadPrograms()"
+      >
+        Réessayer
+      </ion-button>
+    </section>
+  } @else if (loading()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col items-center justify-center gap-4 border p-5"
+    >
+      <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+      <p class="text-sm leading-6 text-neutral-700">
+        Chargement de vos programmes...
+      </p>
+    </section>
+  } @else if (programs().length === 0) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
+    >
+      <p class="text-sm leading-6 text-neutral-700">
+        Aucun programme n'est actuellement disponible pour vous.
+      </p>
+      <ion-button
+        routerLink="/tabs/accueil"
+        expand="block"
+        class="kraak-primary-button"
+      >
+        Retour à l'accueil
+      </ion-button>
+    </section>
+  } @else {
+    <section class="flex flex-col gap-4 px-4 py-5">
+      @for (program of programs(); track program.enrollmentId) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        >
+          <div>
+            <p class="text-primary text-lg font-semibold">
+              {{ program.program.title }}
+            </p>
+            <p
+              class="mt-1 text-xs leading-5 font-semibold tracking-wide text-neutral-700 uppercase"
+            >
+              Status: {{ program.enrollmentStatus }}
+            </p>
+          </div>
 
-    <a routerLink="/tabs/programmes/ressources" class="kraak-inline-link">
-      Voir la bibliothèque de ressources
-    </a>
-  </section>
+          <p class="text-sm leading-6 text-neutral-700">
+            {{ program.program.summary }}
+          </p>
+
+          @if (program.cohort) {
+            <div
+              class="rounded-lg bg-neutral-100/50 p-3 text-xs leading-5 text-neutral-700"
+            >
+              <p class="font-semibold">Cohorte: {{ program.cohort.name }}</p>
+              @if (program.cohort.startDate) {
+                <p class="mt-1">
+                  Début: {{ program.cohort.startDate | date: 'shortDate' }}
+                </p>
+              }
+            </div>
+          }
+
+          <ion-button
+            [routerLink]="['/tabs/programmes', program.program.id]"
+            expand="block"
+            class="kraak-primary-button"
+          >
+            Voir le détail
+          </ion-button>
+        </article>
+      }
+    </section>
+  }
 </kraak-page-shell>

@@ -1,15 +1,141 @@
 <kraak-page-shell
-  eyebrow="Session"
-  title="Détail de la session"
-  description="Consultez les informations utiles sans sortir de l'onglet Programmes."
-  backHref="/tabs/programmes/demo"
+  [title]="session()?.title ?? 'Session'"
+  eyebrow="Détail de la session"
+  [backHref]="'/tabs/programmes/' + programId()"
 >
-  <section
-    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Horaires, informations de participation et contexte de la session seront
-      affichés ici.
-    </p>
-  </section>
+  @if (errorMessage()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
+    >
+      <p class="text-sm leading-6 text-red-700">
+        {{ errorMessage() }}
+      </p>
+      <ion-button
+        expand="block"
+        size="small"
+        class="kraak-primary-button"
+        (click)="reloadSession()"
+      >
+        Réessayer
+      </ion-button>
+    </section>
+  } @else if (loading()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col items-center justify-center gap-4 border p-5"
+    >
+      <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+      <p class="text-sm leading-6 text-neutral-700">
+        Chargement de la session...
+      </p>
+    </section>
+  } @else if (session(); as sess) {
+    <section class="flex flex-col gap-5 px-4 py-5">
+      <!-- Session Header -->
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+      >
+        <div>
+          <p
+            class="text-xs leading-5 font-semibold tracking-wide text-neutral-700 uppercase"
+          >
+            Session
+          </p>
+          <p class="text-primary text-2xl font-semibold">
+            {{ sess.title }}
+          </p>
+          @if (sess.description) {
+            <p class="mt-2 text-sm leading-6 text-neutral-700">
+              {{ sess.description }}
+            </p>
+          }
+        </div>
+      </article>
+
+      <!-- Session Details -->
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+      >
+        <p class="text-primary text-lg font-semibold">Informations</p>
+        <div class="space-y-3 text-sm leading-6 text-neutral-700">
+          <div class="rounded-lg bg-neutral-100/50 p-3">
+            <p class="font-semibold">Début</p>
+            <p class="mt-1">{{ sess.startsAt | date: 'medium' }}</p>
+          </div>
+
+          <div class="rounded-lg bg-neutral-100/50 p-3">
+            <p class="font-semibold">Fin</p>
+            <p class="mt-1">{{ sess.endsAt | date: 'medium' }}</p>
+          </div>
+
+          <div class="rounded-lg bg-neutral-100/50 p-3">
+            <p class="font-semibold">Statut</p>
+            <p class="mt-1 capitalize">{{ sess.status }}</p>
+          </div>
+
+          <div class="rounded-lg bg-neutral-100/50 p-3">
+            <p class="font-semibold">Type de lieu</p>
+            <p class="mt-1 capitalize">{{ sess.locationType }}</p>
+          </div>
+
+          @if (sess.locationLabel) {
+            <div class="rounded-lg bg-neutral-100/50 p-3">
+              <p class="font-semibold">Lieu</p>
+              <p class="mt-1">{{ sess.locationLabel }}</p>
+            </div>
+          }
+
+          @if (sess.meetingLink) {
+            <div class="rounded-lg bg-neutral-100/50 p-3">
+              <p class="font-semibold">Lien de réunion</p>
+              <ion-button
+                [href]="sess.meetingLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                size="small"
+                expand="block"
+                class="kraak-primary-button mt-3"
+              >
+                Rejoindre la session
+              </ion-button>
+            </div>
+          }
+        </div>
+      </article>
+
+      <!-- Back buttons -->
+      <div class="flex flex-col gap-2">
+        <ion-button
+          [routerLink]="['/tabs/programmes', programId()]"
+          expand="block"
+          fill="outline"
+          class="kraak-secondary-button"
+        >
+          Retour au programme
+        </ion-button>
+        <ion-button
+          routerLink="/tabs/programmes"
+          expand="block"
+          fill="outline"
+          class="kraak-secondary-button"
+        >
+          Retour aux programmes
+        </ion-button>
+      </div>
+    </section>
+  } @else {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
+    >
+      <p class="text-sm leading-6 text-neutral-700">
+        La session n'a pas pu être trouvée.
+      </p>
+      <ion-button
+        [routerLink]="['/tabs/programmes', programId()]"
+        expand="block"
+        class="kraak-primary-button"
+      >
+        Retour au programme
+      </ion-button>
+    </section>
+  }
 </kraak-page-shell>

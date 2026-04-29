@@ -1,32 +1,232 @@
 <kraak-page-shell
-  eyebrow="Programme"
-  title="Détail du programme"
-  description="Consultez rapidement le contenu du programme sélectionné."
+  [title]="programDetail()?.program.title ?? 'Programme'"
+  eyebrow="Détail du programme"
   backHref="/tabs/programmes"
 >
-  <section
-    class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
-  >
-    <p class="text-sm leading-6 text-neutral-700">
-      Ce shell ouvre les contenus détaillés du programme sans quitter la
-      navigation principale.
-    </p>
-
-    <div class="mt-4 flex flex-col gap-3">
+  @if (errorMessage()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
+    >
+      <p class="text-sm leading-6 text-red-700">
+        {{ errorMessage() }}
+      </p>
       <ion-button
-        routerLink="/tabs/programmes/demo/sessions/session-ouverte"
         expand="block"
+        size="small"
         class="kraak-primary-button"
+        (click)="reloadProgram()"
       >
-        Ouvrir une session exemple
+        Réessayer
       </ion-button>
-
-      <a
-        routerLink="/tabs/programmes/ressources/guide-demarrage"
-        class="kraak-inline-link"
+    </section>
+  } @else if (loading()) {
+    <section
+      class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col items-center justify-center gap-4 border p-5"
+    >
+      <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+      <p class="text-sm leading-6 text-neutral-700">
+        Chargement du détail du programme...
+      </p>
+    </section>
+  } @else if (programDetail(); as detail) {
+    <section class="flex flex-col gap-5 px-4 py-5">
+      <!-- Programme Header -->
+      <article
+        class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
       >
-        Ouvrir une ressource liée
-      </a>
-    </div>
-  </section>
+        <div>
+          <p
+            class="text-xs leading-5 font-semibold tracking-wide text-neutral-700 uppercase"
+          >
+            Programme
+          </p>
+          <p class="text-primary text-2xl font-semibold">
+            {{ detail.program.title }}
+          </p>
+          <p class="mt-2 text-sm leading-6 text-neutral-700">
+            {{ detail.program.summary }}
+          </p>
+        </div>
+
+        <div
+          class="border-t border-neutral-200/50 pt-3 text-xs leading-5 text-neutral-700"
+        >
+          <p>
+            <span class="font-semibold">Créé le:</span>
+            {{ detail.program.createdAt | date: 'mediumDate' }}
+          </p>
+          <p class="mt-1">
+            <span class="font-semibold">Statut d'inscription:</span>
+            {{ detail.enrollmentStatus }}
+          </p>
+        </div>
+      </article>
+
+      <!-- Cohort Information -->
+      @if (detail.cohort) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        >
+          <p class="text-primary text-lg font-semibold">Cohorte</p>
+          <div class="space-y-2 text-sm leading-6 text-neutral-700">
+            <p>
+              <span class="font-semibold">Nom:</span> {{ detail.cohort.name }}
+            </p>
+            @if (detail.cohort.code) {
+              <p>
+                <span class="font-semibold">Code:</span>
+                {{ detail.cohort.code }}
+              </p>
+            }
+            <p>
+              <span class="font-semibold">Début:</span>
+              {{ detail.cohort.startDate | date: 'mediumDate' }}
+            </p>
+            @if (detail.cohort.endDate) {
+              <p>
+                <span class="font-semibold">Fin:</span>
+                {{ detail.cohort.endDate | date: 'mediumDate' }}
+              </p>
+            }
+            @if (detail.cohort.capacity) {
+              <p>
+                <span class="font-semibold">Capacité:</span>
+                {{ detail.cohort.capacity }} participants
+              </p>
+            }
+          </div>
+        </article>
+      }
+
+      <!-- Sessions -->
+      @if (detail.sessions && detail.sessions.length > 0) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        >
+          <p class="text-primary text-lg font-semibold">
+            Sessions ({{ detail.sessions.length }})
+          </p>
+          <ul class="flex flex-col gap-3">
+            @for (session of detail.sessions; track session.id) {
+              <li
+                class="flex flex-col gap-2 rounded-lg border border-neutral-200/90 p-3 text-sm"
+              >
+                <p class="font-semibold text-neutral-900">
+                  {{ session.title }}
+                </p>
+                <p class="text-xs leading-5 text-neutral-700">
+                  {{ session.startsAt | date: 'medium' }}
+                </p>
+                @if (session.locationType) {
+                  <p class="text-xs leading-5 text-neutral-700">
+                    <span class="font-semibold">Type:</span>
+                    {{ session.locationType }}
+                  </p>
+                }
+                <ion-button
+                  [routerLink]="[
+                    '/tabs/programmes',
+                    detail.program.id,
+                    'sessions',
+                    session.id,
+                  ]"
+                  size="small"
+                  expand="block"
+                  class="kraak-primary-button mt-2"
+                >
+                  Voir les détails
+                </ion-button>
+              </li>
+            }
+          </ul>
+        </article>
+      } @else {
+        <p class="px-1 text-sm leading-6 text-neutral-700">
+          Aucune session programmée pour le moment.
+        </p>
+      }
+
+      <!-- Resources -->
+      @if (detail.resources && detail.resources.length > 0) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        >
+          <p class="text-primary text-lg font-semibold">
+            Ressources ({{ detail.resources.length }})
+          </p>
+          <ul class="flex flex-col gap-3">
+            @for (resource of detail.resources; track resource.id) {
+              <li
+                class="flex flex-col gap-2 rounded-lg border border-neutral-200/90 p-3 text-sm"
+              >
+                <p class="font-semibold text-neutral-900">
+                  {{ resource.title }}
+                </p>
+                @if (resource.description) {
+                  <p class="text-xs leading-5 text-neutral-700">
+                    {{ resource.description }}
+                  </p>
+                }
+                <p class="text-xs leading-5 text-neutral-700">
+                  <span class="font-semibold">Type:</span>
+                  {{ resource.resourceType }}
+                </p>
+                @if (resource.url) {
+                  <ion-button
+                    [href]="resource.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="small"
+                    expand="block"
+                    class="kraak-primary-button mt-2"
+                  >
+                    Accéder
+                  </ion-button>
+                }
+              </li>
+            }
+          </ul>
+        </article>
+      } @else {
+        <p class="px-1 text-sm leading-6 text-neutral-700">
+          Aucune ressource disponible pour le moment.
+        </p>
+      }
+
+      <!-- Announcements -->
+      @if (detail.announcements && detail.announcements.length > 0) {
+        <article
+          class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
+        >
+          <p class="text-primary text-lg font-semibold">
+            Annonces ({{ detail.announcements.length }})
+          </p>
+          <ul class="flex flex-col gap-3">
+            @for (announcement of detail.announcements; track announcement.id) {
+              <li
+                class="flex flex-col gap-2 rounded-lg border border-neutral-200/90 p-3 text-sm"
+              >
+                <p class="font-semibold text-neutral-900">
+                  {{ announcement.title }}
+                </p>
+                <p class="text-xs leading-5 text-neutral-700">
+                  Publié: {{ announcement.publishedAt | date: 'mediumDate' }}
+                </p>
+              </li>
+            }
+          </ul>
+        </article>
+      }
+
+      <!-- Back to list -->
+      <ion-button
+        routerLink="/tabs/programmes"
+        expand="block"
+        fill="outline"
+        class="kraak-secondary-button mb-4"
+      >
+        Retour à la liste
+      </ion-button>
+    </section>
+  }
 </kraak-page-shell>
