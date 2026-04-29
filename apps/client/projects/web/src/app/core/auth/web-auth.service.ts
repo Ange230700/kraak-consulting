@@ -1,4 +1,11 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  computed,
+  Injectable,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { createApiClient } from '@kraak/api-client';
 import type {
   AuthProfileDto,
@@ -22,6 +29,7 @@ export { ApiError } from '@kraak/api-client';
   providedIn: 'root',
 })
 export class WebAuthService {
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly restoredBundle = this.readStoredBundle();
   private readonly client = createApiClient({
     baseUrl: environment.apiBaseUrl,
@@ -105,7 +113,7 @@ export class WebAuthService {
   clearSession(): void {
     this.sessionState.set(null);
     this.profileState.set(null);
-    localStorage.removeItem(WEB_AUTH_STORAGE_KEY);
+    this.getStorage()?.removeItem(WEB_AUTH_STORAGE_KEY);
   }
 
   private storeBundle(bundle: AuthSessionBundleDto): void {
@@ -115,22 +123,24 @@ export class WebAuthService {
   }
 
   private persistBundle(): void {
+    const storage = this.getStorage();
     const session = this.currentSession();
     const profile = this.currentProfile();
 
     if (!session || !profile) {
-      localStorage.removeItem(WEB_AUTH_STORAGE_KEY);
+      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
       return;
     }
 
-    localStorage.setItem(
+    storage?.setItem(
       WEB_AUTH_STORAGE_KEY,
       JSON.stringify({ session, profile }),
     );
   }
 
   private readStoredBundle(): AuthSessionBundleDto | null {
-    const rawValue = localStorage.getItem(WEB_AUTH_STORAGE_KEY);
+    const storage = this.getStorage();
+    const rawValue = storage?.getItem(WEB_AUTH_STORAGE_KEY) ?? null;
 
     if (!rawValue) {
       return null;
@@ -144,14 +154,25 @@ export class WebAuthService {
         !parsedValue.session?.refreshToken ||
         !parsedValue.profile?.appUser?.id
       ) {
-        localStorage.removeItem(WEB_AUTH_STORAGE_KEY);
+        storage?.removeItem(WEB_AUTH_STORAGE_KEY);
         return null;
       }
 
       return parsedValue;
     } catch {
-      localStorage.removeItem(WEB_AUTH_STORAGE_KEY);
+      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
       return null;
     }
+  }
+
+  private getStorage(): Storage | null {
+    if (
+      !isPlatformBrowser(this.platformId) ||
+      typeof localStorage === 'undefined'
+    ) {
+      return null;
+    }
+
+    return localStorage;
   }
 }

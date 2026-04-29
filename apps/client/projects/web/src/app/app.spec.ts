@@ -24,4 +24,19 @@ describe('App', () => {
     expect(compiled.querySelector('main')).toBeTruthy();
     expect(compiled.querySelector('kraak-footer')).toBeTruthy();
   });
+
+  it('should expose a skip link and main landmark target for keyboard users', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const skipLink = compiled.querySelector(
+      'a[href="#main-content"]',
+    ) as HTMLAnchorElement | null;
+    const main = compiled.querySelector('main#main-content');
+
+    expect(skipLink?.textContent).toContain('contenu principal');
+    expect(main).toBeTruthy();
+    expect(main?.getAttribute('tabindex')).toBe('-1');
+  });
 });
