@@ -31,13 +31,14 @@ function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
 // ---------------------------------------------------------------------------
 
 describe('createApiClient', () => {
-  it('retourne un objet avec les 11 groupes de ressources', () => {
+  it('retourne un objet avec les 12 groupes de ressources', () => {
     const client = createApiClient(baseConfig());
     const keys = Object.keys(client).sort((a, b) => a.localeCompare(b));
     expect(keys).toEqual([
       'announcements',
       'auth',
       'cohorts',
+      'dashboard',
       'enrollments',
       'notifications',
       'participants',
@@ -91,6 +92,11 @@ describe('createApiClient', () => {
     expect(typeof client.auth.refreshSession).toBe('function');
     expect(typeof client.auth.requestPasswordReset).toBe('function');
     expect(typeof client.auth.getSession).toBe('function');
+  });
+
+  it('dashboard expose getAggregate', () => {
+    const client = createApiClient(baseConfig());
+    expect(typeof client.dashboard.getAggregate).toBe('function');
   });
 });
 
@@ -252,6 +258,23 @@ describe('HTTP behaviour', () => {
     expect(url).toBe('https://api.test/auth/sign-up');
     expect(init.method).toBe('POST');
     expect(JSON.parse(init.body as string)).toEqual(body);
+  });
+
+  it('GET /dashboard appelle le endpoint aggregate', async () => {
+    fetchSpy = mockFetch(200, {
+      generatedAt: '2026-04-29T11:00:00.000Z',
+      programs: [],
+      upcomingSessions: [],
+      recentAnnouncements: [],
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.dashboard.getAggregate();
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/dashboard');
+    expect(init.method).toBe('GET');
   });
 });
 

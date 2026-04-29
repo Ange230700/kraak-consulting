@@ -36,6 +36,7 @@ import type {
   SignInRequestDto,
   SignUpRequestDto,
   SignUpResponseDto,
+  DashboardAggregateDto,
 } from '@kraak/contracts';
 
 // ---------------------------------------------------------------------------
@@ -98,12 +99,17 @@ export interface AuthClient {
   getSession(options?: RequestOptions): Promise<AuthSessionContextDto>;
 }
 
+export interface DashboardClient {
+  getAggregate(options?: RequestOptions): Promise<DashboardAggregateDto>;
+}
+
 // ---------------------------------------------------------------------------
 // ApiClient interface
 // ---------------------------------------------------------------------------
 
 export interface ApiClient {
   auth: AuthClient;
+  dashboard: DashboardClient;
   users: FullResourceClient<AppUserDto, CreateAppUserDto, UpdateAppUserDto>;
   participants: FullResourceClient<
     ParticipantDto,
@@ -298,6 +304,19 @@ function createAuthClient(config: ApiClientConfig): AuthClient {
   };
 }
 
+function createDashboardClient(config: ApiClientConfig): DashboardClient {
+  return {
+    getAggregate: (options?) =>
+      request<DashboardAggregateDto>(
+        config,
+        'GET',
+        '/dashboard',
+        undefined,
+        options,
+      ),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
@@ -305,6 +324,7 @@ function createAuthClient(config: ApiClientConfig): AuthClient {
 export function createApiClient(config: ApiClientConfig): ApiClient {
   return {
     auth: createAuthClient(config),
+    dashboard: createDashboardClient(config),
     users: createFullResourceClient(config, '/users'),
     participants: createFullResourceClient(config, '/participants'),
     programs: createFullResourceClient(config, '/programs'),
