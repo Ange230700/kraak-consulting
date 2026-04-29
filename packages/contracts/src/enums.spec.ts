@@ -11,6 +11,7 @@ import {
   ResourceTheme,
   ResourceAudience,
   AudienceType,
+  AnnouncementPriority,
   EnrollmentStatus,
   NotificationType,
   NotificationChannel,
@@ -161,6 +162,19 @@ describe('Enums', () => {
 
     it('devrait avoir exactement 4 valeurs', () => {
       expect(Object.values(AudienceType)).toHaveLength(4);
+    });
+  });
+
+  describe('AnnouncementPriority', () => {
+    it("devrait contenir les niveaux de priorité d'annonce", () => {
+      expect(AnnouncementPriority.LOW).toBe('low');
+      expect(AnnouncementPriority.NORMAL).toBe('normal');
+      expect(AnnouncementPriority.HIGH).toBe('high');
+      expect(AnnouncementPriority.CRITICAL).toBe('critical');
+    });
+
+    it('devrait avoir exactement 4 valeurs', () => {
+      expect(Object.values(AnnouncementPriority)).toHaveLength(4);
     });
   });
 

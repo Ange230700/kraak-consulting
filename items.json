@@ -1,0 +1,2708 @@
+{
+  "items": [
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nMettre en place variables d'environnement et runbook local dev\n\n## Dependencies\nSET-02\n\n## Acceptance criteria\n- [ ] Scope of SET-07 implemented\n- [ ] Dependencies satisfied (SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 70,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-07] Mettre en place variables d'environnement et runbook local dev",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/70"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgplA0Y",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P1",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-07] Mettre en place variables d'environnement et runbook local dev",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/contracts (DTO, schema validation, versioning)\n\n## Dependencies\nARC-04, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-01 implemented\n- [ ] Dependencies satisfied (ARC-04, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 71,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][LIB-01] Creer packages/contracts (DTO, schema validation, versioning)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/71"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpmozA",
+      "labels": ["status: done"],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/140"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][LIB-01] Creer packages/contracts (DTO, schema validation, versioning)",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/domain (regles metier pures MVP)\n\n## Dependencies\nARC-04, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of LIB-02 implemented\n- [ ] Dependencies satisfied (ARC-04, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 72,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][LIB-02] Creer packages/domain (regles metier pures MVP)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/72"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpmo3I",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: shared-libs",
+        "epic: LIB"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/141"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][LIB-02] Creer packages/domain (regles metier pures MVP)",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/api-client (typed client web/mobile vers API)\n\n## Dependencies\nLIB-01, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-03 implemented\n- [ ] Dependencies satisfied (LIB-01, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 73,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][LIB-03] Creer packages/api-client (typed client web/mobile vers API)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/73"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpmo60",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: shared-libs",
+        "epic: LIB"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/142"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][LIB-03] Creer packages/api-client (typed client web/mobile vers API)",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nLIB\n\n## Description\nAjouter tests unitaires libs + guideline de publication interne\n\n## Dependencies\nLIB-02, LIB-03\n\n## Acceptance criteria\n- [ ] Scope of LIB-04 implemented\n- [ ] Dependencies satisfied (LIB-02, LIB-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 74,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][LIB-04] Ajouter tests unitaires libs + guideline de publication interne",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/74"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpmo8M",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: shared-libs",
+        "epic: LIB"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][LIB-04] Ajouter tests unitaires libs + guideline de publication interne",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Contexte\nLe board GitHub Project n'est plus aligne avec le backlog MVP canonique et melange des issues legacy web-only avec la nouvelle famille [EPIC][ID] / [TASK][ID].\n\n## Objectif\nRemettre la documentation de pilotage a plat pour un travail a deux sans dupliquer les familles d'issues.\n\n## Livrables attendus\n- rework du runbook docs/runbooks/GITHUB_PROJECT_BOARD.md\n- alignement de docs/specs/BACKLOG.md\n- clarification des packs d'issues GitHub CLI / templates\n- ajout de l'artefact docs/specs/github_project_import_parallel_duo.csv\n\n## Critères d'acceptation\n- le board actif, ses champs et ses vues recommandees sont documentes\n- la source de verite backlog vs board est clarifiee\n- le flux de remise a plat du project est explicite et actionnable\n- l'artefact CSV duo est reference par la documentation\n",
+        "number": 143,
+        "repository": "Ange230700/kraak-group",
+        "title": "[DOCS] Rework du GitHub Project MVP pour le pilotage a deux",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/143"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpm5BI",
+      "labels": [
+        "documentation",
+        "status: in-progress",
+        "type: chore",
+        "priority: P1"
+      ],
+      "lane": "Shared handoff",
+      "launch blocker": "No",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/144"
+      ],
+      "priority": "medium",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[DOCS] Rework du GitHub Project MVP pour le pilotage a deux",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nARC\n\n## Description\nDocumenter ADRs et criteres anti-scope-creep\n\n## Dependencies\nARC-02, ARC-04\n\n## Acceptance criteria\n- [ ] Scope of ARC-05 implemented\n- [ ] Dependencies satisfied (ARC-02, ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 63,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ARC-05] Documenter ADRs et criteres anti-scope-creep",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/63"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpnfsI",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P1",
+        "area: architecture",
+        "epic: ARC"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Architecture validee et tracee",
+        "dueOn": "",
+        "title": "M1 - Architecture locked"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[TASK][ARC-05] Documenter ADRs et criteres anti-scope-creep",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nARC\n\n## Description\nValider architecture cible web/mobile/api avec scope MVP\n\n## Dependencies\nnone\n\n## Acceptance criteria\n- [ ] Scope of ARC-01 implemented\n- [ ] Dependencies satisfied (none)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 59,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ARC-01] Valider architecture cible web/mobile/api avec scope MVP",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/59"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgN8",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: architecture",
+        "epic: ARC"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Architecture validee et tracee",
+        "dueOn": "",
+        "title": "M1 - Architecture locked"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[TASK][ARC-01] Valider architecture cible web/mobile/api avec scope MVP",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nARC\n\n## Description\nDefinir conventions repo (naming, structure, quality gates)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-02 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 60,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ARC-02] Definir conventions repo (naming, structure, quality gates)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/60"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgOY",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: architecture",
+        "epic: ARC"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/185"
+      ],
+      "milestone": {
+        "description": "Architecture validee et tracee",
+        "dueOn": "",
+        "title": "M1 - Architecture locked"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[TASK][ARC-02] Definir conventions repo (naming, structure, quality gates)",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nARC\n\n## Description\nDefinir modeles de donnees MVP\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-04 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 62,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ARC-04] Definir modeles de donnees MVP",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/62"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgQM",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: architecture",
+        "epic: ARC"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Architecture validee et tracee",
+        "dueOn": "",
+        "title": "M1 - Architecture locked"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[TASK][ARC-04] Definir modeles de donnees MVP",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nInitialiser workspace Angular monorepo (apps/web, apps/mobile)\n\n## Dependencies\nARC-02\n\n## Acceptance criteria\n- [ ] Scope of SET-01 implemented\n- [ ] Dependencies satisfied (ARC-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 64,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-01] Initialiser workspace Angular monorepo (apps/web, apps/mobile)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/64"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgQw",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-01] Initialiser workspace Angular monorepo (apps/web, apps/mobile)",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nInitialiser apps/api NestJS et wiring de base\n\n## Dependencies\nARC-02\n\n## Acceptance criteria\n- [ ] Scope of SET-02 implemented\n- [ ] Dependencies satisfied (ARC-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 65,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-02] Initialiser apps/api NestJS et wiring de base",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/65"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgRY",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-02] Initialiser apps/api NestJS et wiring de base",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nConfigurer quality gates (lint, format, typecheck)\n\n## Dependencies\nSET-01, SET-02\n\n## Acceptance criteria\n- [ ] Scope of SET-03 implemented\n- [ ] Dependencies satisfied (SET-01, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 66,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-03] Configurer quality gates (lint, format, typecheck)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/66"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgSI",
+      "labels": [
+        "status: in-progress",
+        "type: task",
+        "priority: P0",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/186"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-03] Configurer quality gates (lint, format, typecheck)",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nConfigurer test runners unitaires + integration\n\n## Dependencies\nSET-01, SET-02\n\n## Acceptance criteria\n- [ ] Scope of SET-04 implemented\n- [ ] Dependencies satisfied (SET-01, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 67,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-04] Configurer test runners unitaires + integration",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/67"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgSs",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/127"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-04] Configurer test runners unitaires + integration",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nConfigurer Playwright E2E et smoke pipeline\n\n## Dependencies\nSET-01, SET-04\n\n## Acceptance criteria\n- [ ] Scope of SET-05 implemented\n- [ ] Dependencies satisfied (SET-01, SET-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 68,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-05] Configurer Playwright E2E et smoke pipeline",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/68"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgS4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: workspace",
+        "epic: SET"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/127"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-05] Configurer Playwright E2E et smoke pipeline",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nSET\n\n## Description\nConfigurer CI GitHub Actions multi-apps\n\n## Dependencies\nSET-03, SET-04, SET-05\n\n## Acceptance criteria\n- [ ] Scope of SET-06 implemented\n- [ ] Dependencies satisfied (SET-03, SET-04, SET-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 69,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SET-06] Configurer CI GitHub Actions multi-apps",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/69"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgTM",
+      "labels": ["epic:SET", "priority:P0", "status:done"],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/128"
+      ],
+      "milestone": {
+        "description": "Socle de dev operationnel",
+        "dueOn": "",
+        "title": "M2 - Workspace bootstrapped"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][SET-06] Configurer CI GitHub Actions multi-apps",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Pages",
+      "content": {
+        "body": "## Parent epic\nWEB\n\n## Description\nImplementer pages core (Accueil, A propos, Services, Programmes, Contact)\n\n## Dependencies\nSET-01, ARC-03\n\n## Acceptance criteria\n- [ ] Scope of WEB-01 implemented\n- [ ] Dependencies satisfied (SET-01, ARC-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 75,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][WEB-01] Implementer pages core (Accueil, A propos, Services, Programmes, Contact)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/75"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgTU",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: website",
+        "epic: WEB"
+      ],
+      "lane": "Lane A - Web public",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "web",
+      "title": "[TASK][WEB-01] Implementer pages core (Accueil, A propos, Services, Programmes, Contact)",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Pages",
+      "assignees": ["Ange230700", "Copilot"],
+      "content": {
+        "body": "## Parent epic\nWEB\n\n## Description\nIntegrer formulaires de contact et CTA conversion\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of WEB-02 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 76,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][WEB-02] Integrer formulaires de contact et CTA conversion",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/76"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgT4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: website",
+        "epic: WEB"
+      ],
+      "lane": "Lane A - Web public",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/162"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "web",
+      "title": "[TASK][WEB-02] Integrer formulaires de contact et CTA conversion",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Pages",
+      "assignees": ["Ange230700", "Copilot"],
+      "content": {
+        "body": "## Parent epic\nWEB\n\n## Description\nAjouter SEO technique (meta, sitemap, robots, Open Graph)\n\n## Dependencies\nWEB-01\n\n## Acceptance criteria\n- [ ] Scope of WEB-03 implemented\n- [ ] Dependencies satisfied (WEB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 77,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][WEB-03] Ajouter SEO technique (meta, sitemap, robots, Open Graph)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/77"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgT8",
+      "labels": [
+        "status: in-progress",
+        "type: task",
+        "priority: P0",
+        "area: website",
+        "epic: WEB"
+      ],
+      "lane": "Lane A - Web public",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/169"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "web",
+      "title": "[TASK][WEB-03] Ajouter SEO technique (meta, sitemap, robots, Open Graph)",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Pages",
+      "content": {
+        "body": "## Parent epic\nWEB\n\n## Description\nAjouter analytics web (PostHog/GA)\n\n## Dependencies\nWEB-01\n\n## Acceptance criteria\n- [ ] Scope of WEB-04 implemented\n- [ ] Dependencies satisfied (WEB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 78,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][WEB-04] Ajouter analytics web (PostHog/GA)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/78"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgUw",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P1",
+        "area: website",
+        "epic: WEB"
+      ],
+      "lane": "Lane A - Web public",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "web",
+      "title": "[TASK][WEB-04] Ajouter analytics web (PostHog/GA)",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Pages",
+      "content": {
+        "body": "## Parent epic\nWEB\n\n## Description\nOptimiser accessibilite/performance (objectif Lighthouse > 90)\n\n## Dependencies\nWEB-01, WEB-03\n\n## Acceptance criteria\n- [ ] Scope of WEB-05 implemented\n- [ ] Dependencies satisfied (WEB-01, WEB-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 79,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][WEB-05] Optimiser accessibilite/performance (objectif Lighthouse > 90)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/79"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgVE",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: website",
+        "epic: WEB"
+      ],
+      "lane": "Lane A - Web public",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "web",
+      "title": "[TASK][WEB-05] Optimiser accessibilite/performance (objectif Lighthouse > 90)",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nARC\n\n## Description\nDefinir strategie de rendu web (SEO/prerender)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-03 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 61,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ARC-03] Definir strategie de rendu web (SEO/prerender)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/61"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgWU",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: architecture",
+        "epic: ARC"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Architecture validee et tracee",
+        "dueOn": "",
+        "title": "M1 - Architecture locked"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[TASK][ARC-03] Definir strategie de rendu web (SEO/prerender)",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nMOB\n\n## Description\nInitialiser app Ionic Angular dans apps/mobile\n\n## Dependencies\nSET-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-01 implemented\n- [ ] Dependencies satisfied (SET-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 80,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][MOB-01] Initialiser app Ionic Angular dans apps/mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/80"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgXk",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: mobile-shell",
+        "epic: MOB"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Shell mobile navigable et installable",
+        "dueOn": "",
+        "title": "M3 - Mobile shell ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][MOB-01] Initialiser app Ionic Angular dans apps/mobile",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nMOB\n\n## Description\nMettre en place navigation shell (tabs/stack) et layout de base\n\n## Dependencies\nMOB-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-02 implemented\n- [ ] Dependencies satisfied (MOB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 81,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][MOB-02] Mettre en place navigation shell (tabs/stack) et layout de base",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/81"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgX0",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: mobile-shell",
+        "epic: MOB"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Shell mobile navigable et installable",
+        "dueOn": "",
+        "title": "M3 - Mobile shell ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][MOB-02] Mettre en place navigation shell (tabs/stack) et layout de base",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nMOB\n\n## Description\nIntegrer theming, design tokens et composants UI de base\n\n## Dependencies\nMOB-01, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-03 implemented\n- [ ] Dependencies satisfied (MOB-01, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 82,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][MOB-03] Integrer theming, design tokens et composants UI de base",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/82"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgYQ",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: mobile-shell",
+        "epic: MOB"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Shell mobile navigable et installable",
+        "dueOn": "",
+        "title": "M3 - Mobile shell ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][MOB-03] Integrer theming, design tokens et composants UI de base",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nMOB\n\n## Description\nConfigurer Capacitor (Android/iOS) et builds debug\n\n## Dependencies\nMOB-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-04 implemented\n- [ ] Dependencies satisfied (MOB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 83,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][MOB-04] Configurer Capacitor (Android/iOS) et builds debug",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/83"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgZk",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: mobile-shell",
+        "epic: MOB"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/198"
+      ],
+      "milestone": {
+        "description": "Shell mobile navigable et installable",
+        "dueOn": "",
+        "title": "M3 - Mobile shell ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][MOB-04] Configurer Capacitor (Android/iOS) et builds debug",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nMOB\n\n## Description\nAjouter service notifications push stub (FCM wiring initial)\n\n## Dependencies\nMOB-04, SET-02\n\n## Acceptance criteria\n- [ ] Scope of MOB-05 implemented\n- [ ] Dependencies satisfied (MOB-04, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 84,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][MOB-05] Ajouter service notifications push stub (FCM wiring initial)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/84"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgZ4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: mobile-shell",
+        "epic: MOB"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Shell mobile navigable et installable",
+        "dueOn": "",
+        "title": "M3 - Mobile shell ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][MOB-05] Ajouter service notifications push stub (FCM wiring initial)",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nAUT\n\n## Description\nConfigurer Supabase Auth (providers, policies de base)\n\n## Dependencies\nARC-04, SET-02\n\n## Acceptance criteria\n- [ ] Scope of AUT-01 implemented\n- [ ] Dependencies satisfied (ARC-04, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 85,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][AUT-01] Configurer Supabase Auth (providers, policies de base)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/85"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgaU",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: auth",
+        "epic: AUT"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Authentification stable web/mobile/api",
+        "dueOn": "",
+        "title": "M4 - Auth ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][AUT-01] Configurer Supabase Auth (providers, policies de base)",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nAUT\n\n## Description\nImplementer endpoints API auth/session (NestJS)\n\n## Dependencies\nAUT-01, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of AUT-02 implemented\n- [ ] Dependencies satisfied (AUT-01, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 86,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][AUT-02] Implementer endpoints API auth/session (NestJS)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/86"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgao",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: auth",
+        "epic: AUT"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Authentification stable web/mobile/api",
+        "dueOn": "",
+        "title": "M4 - Auth ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][AUT-02] Implementer endpoints API auth/session (NestJS)",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nAUT\n\n## Description\nImplementer ecrans login/signup/reset mobile\n\n## Dependencies\nMOB-02, AUT-02\n\n## Acceptance criteria\n- [ ] Scope of AUT-03 implemented\n- [ ] Dependencies satisfied (MOB-02, AUT-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 87,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][AUT-03] Implementer ecrans login/signup/reset mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/87"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgbY",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: auth",
+        "epic: AUT"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Authentification stable web/mobile/api",
+        "dueOn": "",
+        "title": "M4 - Auth ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][AUT-03] Implementer ecrans login/signup/reset mobile",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nAUT\n\n## Description\nImplementer garde routes protegees web/mobile\n\n## Dependencies\nAUT-02, LIB-03\n\n## Acceptance criteria\n- [ ] Scope of AUT-04 implemented\n- [ ] Dependencies satisfied (AUT-02, LIB-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 88,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][AUT-04] Implementer garde routes protegees web/mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/88"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgck",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: auth",
+        "epic: AUT"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/210",
+        "https://github.com/Ange230700/kraak-group/pull/211"
+      ],
+      "milestone": {
+        "description": "Authentification stable web/mobile/api",
+        "dueOn": "",
+        "title": "M4 - Auth ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][AUT-04] Implementer garde routes protegees web/mobile",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Parent epic\nAUT\n\n## Description\nAjouter gestion role participant/admin minimal\n\n## Dependencies\nAUT-02, ARC-04\n\n## Acceptance criteria\n- [ ] Scope of AUT-05 implemented\n- [ ] Dependencies satisfied (AUT-02, ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 89,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][AUT-05] Ajouter gestion role participant/admin minimal",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/89"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgdE",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: auth",
+        "epic: AUT"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/212"
+      ],
+      "milestone": {
+        "description": "Authentification stable web/mobile/api",
+        "dueOn": "",
+        "title": "M4 - Auth ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][AUT-05] Ajouter gestion role participant/admin minimal",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nDSH\n\n## Description\nDefinir contenu dashboard MVP (cartes, rappels, dernieres actus)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of DSH-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 90,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DSH-01] Definir contenu dashboard MVP (cartes, rappels, dernieres actus)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/90"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgdY",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: dashboard",
+        "epic: DSH"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][DSH-01] Definir contenu dashboard MVP (cartes, rappels, dernieres actus)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nDSH\n\n## Description\nExposer endpoint dashboard aggregate cote API\n\n## Dependencies\nSET-02, LIB-01, AUT-02\n\n## Acceptance criteria\n- [ ] Scope of DSH-02 implemented\n- [ ] Dependencies satisfied (SET-02, LIB-01, AUT-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 91,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DSH-02] Exposer endpoint dashboard aggregate cote API",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/91"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgd0",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: dashboard",
+        "epic: DSH"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][DSH-02] Exposer endpoint dashboard aggregate cote API",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nDSH\n\n## Description\nImplementer vue dashboard mobile\n\n## Dependencies\nMOB-02, AUT-04, DSH-02\n\n## Acceptance criteria\n- [ ] Scope of DSH-03 implemented\n- [ ] Dependencies satisfied (MOB-02, AUT-04, DSH-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 92,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DSH-03] Implementer vue dashboard mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/92"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgeY",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: dashboard",
+        "epic: DSH"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/215"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][DSH-03] Implementer vue dashboard mobile",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nDSH\n\n## Description\nImplementer vue dashboard web participant (si activee MVP)\n\n## Dependencies\nWEB-01, AUT-04, DSH-02\n\n## Acceptance criteria\n- [ ] Scope of DSH-04 implemented\n- [ ] Dependencies satisfied (WEB-01, AUT-04, DSH-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 93,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activee MVP)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/93"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgew",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: dashboard",
+        "epic: DSH"
+      ],
+      "lane": "Lane A - Web public",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "web",
+      "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activee MVP)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nPRG\n\n## Description\nDefinir modele programme/cohorte/statut progression MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of PRG-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 94,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][PRG-01] Definir modele programme/cohorte/statut progression MVP",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/94"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqggY",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: programs",
+        "epic: PRG"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/216"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][PRG-01] Definir modele programme/cohorte/statut progression MVP",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nPRG\n\n## Description\nImplementer endpoints liste/detail programmes\n\n## Dependencies\nSET-02, LIB-01, AUT-02, PRG-01\n\n## Acceptance criteria\n- [ ] Scope of PRG-02 implemented\n- [ ] Dependencies satisfied (SET-02, LIB-01, AUT-02, PRG-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 95,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][PRG-02] Implementer endpoints liste/detail programmes",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/95"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqggs",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: programs",
+        "epic: PRG"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/217"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][PRG-02] Implementer endpoints liste/detail programmes",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nPRG\n\n## Description\nImplementer ecran mobile liste + detail programme\n\n## Dependencies\nMOB-02, PRG-02\n\n## Acceptance criteria\n- [ ] Scope of PRG-03 implemented\n- [ ] Dependencies satisfied (MOB-02, PRG-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 96,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][PRG-03] Implementer ecran mobile liste + detail programme",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/96"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqghE",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: programs",
+        "epic: PRG"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/218"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][PRG-03] Implementer ecran mobile liste + detail programme",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nPRG\n\n## Description\nImplementer marquage de progression minimale\n\n## Dependencies\nPRG-02, LIB-02\n\n## Acceptance criteria\n- [ ] Scope of PRG-04 implemented\n- [ ] Dependencies satisfied (PRG-02, LIB-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 97,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][PRG-04] Implementer marquage de progression minimale",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/97"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqghQ",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: programs",
+        "epic: PRG"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/219"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][PRG-04] Implementer marquage de progression minimale",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "## Parent epic\nPRG\n\n## Description\nAjouter scenarii de test Given/When/Then programmes\n\n## Dependencies\nPRG-03, PRG-04, QAT-01\n\n## Acceptance criteria\n- [ ] Scope of PRG-05 implemented\n- [ ] Dependencies satisfied (PRG-03, PRG-04, QAT-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 98,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][PRG-05] Ajouter scenarii de test Given/When/Then programmes",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/98"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqghk",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: programs",
+        "epic: PRG"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/220"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "qa",
+      "title": "[TASK][PRG-05] Ajouter scenarii de test Given/When/Then programmes",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nRES\n\n## Description\nDefinir taxonomie ressources (type, theme, audience)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of RES-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 99,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][RES-01] Definir taxonomie ressources (type, theme, audience)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/99"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgh0",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: resources",
+        "epic: RES"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/221"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][RES-01] Definir taxonomie ressources (type, theme, audience)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nRES\n\n## Description\nImplementer endpoints ressources (liste, filtre, detail)\n\n## Dependencies\nSET-02, LIB-01, AUT-02, RES-01\n\n## Acceptance criteria\n- [ ] Scope of RES-02 implemented\n- [ ] Dependencies satisfied (SET-02, LIB-01, AUT-02, RES-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 100,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][RES-02] Implementer endpoints ressources (liste, filtre, detail)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/100"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgiA",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: resources",
+        "epic: RES"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][RES-02] Implementer endpoints ressources (liste, filtre, detail)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nRES\n\n## Description\nImplementer ecran mobile ressources (recherche/filtre)\n\n## Dependencies\nMOB-02, RES-02\n\n## Acceptance criteria\n- [ ] Scope of RES-03 implemented\n- [ ] Dependencies satisfied (MOB-02, RES-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 101,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][RES-03] Implementer ecran mobile ressources (recherche/filtre)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/101"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgiU",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: resources",
+        "epic: RES"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/223"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "[TASK][RES-03] Implementer ecran mobile ressources (recherche/filtre)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nRES\n\n## Description\nImplementer tracking consultation ressources\n\n## Dependencies\nRES-02, WEB-04\n\n## Acceptance criteria\n- [ ] Scope of RES-04 implemented\n- [ ] Dependencies satisfied (RES-02, WEB-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 102,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][RES-04] Implementer tracking consultation ressources",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/102"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgi8",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: resources",
+        "epic: RES"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][RES-04] Implementer tracking consultation ressources",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nANN\n\n## Description\nDefinir format annonce et regles de publication MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of ANN-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 103,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ANN-01] Definir format annonce et regles de publication MVP",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/103"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgkM",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: announcements",
+        "epic: ANN"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "shared",
+      "title": "[TASK][ANN-01] Definir format annonce et regles de publication MVP",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nANN\n\n## Description\nImplementer endpoints annonces (feed + detail)\n\n## Dependencies\nSET-02, LIB-01, AUT-02, ANN-01\n\n## Acceptance criteria\n- [ ] Scope of ANN-02 implemented\n- [ ] Dependencies satisfied (SET-02, LIB-01, AUT-02, ANN-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 104,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ANN-02] Implementer endpoints annonces (feed + detail)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/104"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgkc",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: announcements",
+        "epic: ANN"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "api",
+      "title": "[TASK][ANN-02] Implementer endpoints annonces (feed + detail)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nANN\n\n## Description\nImplementer flux annonces dans mobile dashboard/feed\n\n## Dependencies\nMOB-02, DSH-02, ANN-02\n\n## Acceptance criteria\n- [ ] Scope of ANN-03 implemented\n- [ ] Dependencies satisfied (MOB-02, DSH-02, ANN-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 105,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ANN-03] Implementer flux annonces dans mobile dashboard/feed",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/105"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgko",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: announcements",
+        "epic: ANN"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[TASK][ANN-03] Implementer flux annonces dans mobile dashboard/feed",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "## Parent epic\nANN\n\n## Description\nAjouter notification push pour annonce prioritaire\n\n## Dependencies\nMOB-05, ANN-02\n\n## Acceptance criteria\n- [ ] Scope of ANN-04 implemented\n- [ ] Dependencies satisfied (MOB-05, ANN-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 106,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][ANN-04] Ajouter notification push pour annonce prioritaire",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/106"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqglA",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: announcements",
+        "epic: ANN"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "mobile",
+      "title": "[TASK][ANN-04] Ajouter notification push pour annonce prioritaire",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "## Parent epic\nSUP\n\n## Description\nImplementer endpoint contact/support (API + validation)\n\n## Dependencies\nSET-02, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of SUP-01 implemented\n- [ ] Dependencies satisfied (SET-02, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 107,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SUP-01] Implementer endpoint contact/support (API + validation)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/107"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgmg",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: support",
+        "epic: SUP"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/171"
+      ],
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "[TASK][SUP-01] Implementer endpoint contact/support (API + validation)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "## Parent epic\nSUP\n\n## Description\nIntegrer formulaire support dans mobile\n\n## Dependencies\nMOB-02, SUP-01, AUT-04\n\n## Acceptance criteria\n- [ ] Scope of SUP-02 implemented\n- [ ] Dependencies satisfied (MOB-02, SUP-01, AUT-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 108,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SUP-02] Integrer formulaire support dans mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/108"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgmw",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: support",
+        "epic: SUP"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[TASK][SUP-02] Integrer formulaire support dans mobile",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "## Parent epic\nSUP\n\n## Description\nIntegrer formulaire contact site web\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of SUP-03 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 109,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SUP-03] Integrer formulaire contact site web",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/109"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgm8",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: support",
+        "epic: SUP"
+      ],
+      "lane": "Lane A - Web public",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "web",
+      "title": "[TASK][SUP-03] Integrer formulaire contact site web",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "## Parent epic\nSUP\n\n## Description\nConfigurer envoi email transactionnel (Resend ou equivalent)\n\n## Dependencies\nSUP-01\n\n## Acceptance criteria\n- [ ] Scope of SUP-04 implemented\n- [ ] Dependencies satisfied (SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 110,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SUP-04] Configurer envoi email transactionnel (Resend ou equivalent)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/110"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgnY",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: support",
+        "epic: SUP"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "api",
+      "title": "[TASK][SUP-04] Configurer envoi email transactionnel (Resend ou equivalent)",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "## Parent epic\nSUP\n\n## Description\nAjouter suivi et statut basique des demandes support\n\n## Dependencies\nSUP-01, AUT-05\n\n## Acceptance criteria\n- [ ] Scope of SUP-05 implemented\n- [ ] Dependencies satisfied (SUP-01, AUT-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 111,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][SUP-05] Ajouter suivi et statut basique des demandes support",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/111"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgnw",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: support",
+        "epic: SUP"
+      ],
+      "lane": "Lane B - Platform & participant",
+      "milestone": {
+        "description": "Parcours coeur participant utilisables",
+        "dueOn": "",
+        "title": "M5 - Core participant flows ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "api",
+      "title": "[TASK][SUP-05] Ajouter suivi et statut basique des demandes support",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nDefinir matrice de couverture (page, composant, comportement)\n\n## Dependencies\nSET-04, SET-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-01 implemented\n- [ ] Dependencies satisfied (SET-04, SET-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 112,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-01] Definir matrice de couverture (page, composant, comportement)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/112"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgoQ",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][QAT-01] Definir matrice de couverture (page, composant, comportement)",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nEcrire tests unitaires composants critiques web/mobile\n\n## Dependencies\nQAT-01, WEB-01, MOB-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-02 implemented\n- [ ] Dependencies satisfied (QAT-01, WEB-01, MOB-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 113,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-02] Ecrire tests unitaires composants critiques web/mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/113"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgo4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "qa",
+      "title": "[TASK][QAT-02] Ecrire tests unitaires composants critiques web/mobile",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nEcrire tests integration API modules critiques\n\n## Dependencies\nQAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of QAT-03 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 114,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-03] Ecrire tests integration API modules critiques",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/114"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgpM",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][QAT-03] Ecrire tests integration API modules critiques",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nEcrire E2E Given/When/Then pour parcours coeur participant\n\n## Dependencies\nQAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-04 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 115,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-04] Ecrire E2E Given/When/Then pour parcours coeur participant",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/115"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgps",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][QAT-04] Ecrire E2E Given/When/Then pour parcours coeur participant",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nRealiser campagne regression et corriger blockers\n\n## Dependencies\nQAT-02, QAT-03, QAT-04\n\n## Acceptance criteria\n- [ ] Scope of QAT-05 implemented\n- [ ] Dependencies satisfied (QAT-02, QAT-03, QAT-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 116,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-05] Realiser campagne regression et corriger blockers",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/116"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgqI",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][QAT-05] Realiser campagne regression et corriger blockers",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "## Parent epic\nQAT\n\n## Description\nRealiser checks accessibilite/performance pre-pilot\n\n## Dependencies\nQAT-05, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-06 implemented\n- [ ] Dependencies satisfied (QAT-05, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 117,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][QAT-06] Realiser checks accessibilite/performance pre-pilot",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/117"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgqo",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: qa",
+        "epic: QAT"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Couverture de test et stabilisation pre-lancement",
+        "dueOn": "",
+        "title": "M6 - QA ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[TASK][QAT-06] Realiser checks accessibilite/performance pre-pilot",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nConfigurer environnements (dev/staging/pilot)\n\n## Dependencies\nSET-07\n\n## Acceptance criteria\n- [ ] Scope of DEP-01 implemented\n- [ ] Dependencies satisfied (SET-07)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 118,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-01] Configurer environnements (dev/staging/pilot)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/118"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgrM",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/204"
+      ],
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "ops",
+      "title": "[TASK][DEP-01] Configurer environnements (dev/staging/pilot)",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline deploiement web\n\n## Dependencies\nSET-06, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of DEP-02 implemented\n- [ ] Dependencies satisfied (SET-06, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 119,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-02] Mettre en place pipeline deploiement web",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/119"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgrQ",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "ops",
+      "title": "[TASK][DEP-02] Mettre en place pipeline deploiement web",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline deploiement API\n\n## Dependencies\nSET-06, QAT-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-03 implemented\n- [ ] Dependencies satisfied (SET-06, QAT-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 120,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-03] Mettre en place pipeline deploiement API",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/120"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgro",
+      "labels": [
+        "status: done",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "ops",
+      "title": "[TASK][DEP-03] Mettre en place pipeline deploiement API",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nPreparer distribution mobile test (APK/TestFlight interne)\n\n## Dependencies\nMOB-04, QAT-04\n\n## Acceptance criteria\n- [ ] Scope of DEP-04 implemented\n- [ ] Dependencies satisfied (MOB-04, QAT-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 121,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-04] Preparer distribution mobile test (APK/TestFlight interne)",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/121"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgr4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "ops",
+      "title": "[TASK][DEP-04] Preparer distribution mobile test (APK/TestFlight interne)",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nFinaliser observabilite et alerting minimum\n\n## Dependencies\nDEP-02, DEP-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-05 implemented\n- [ ] Dependencies satisfied (DEP-02, DEP-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 122,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-05] Finaliser observabilite et alerting minimum",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/122"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgsE",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "ops",
+      "title": "[TASK][DEP-05] Finaliser observabilite et alerting minimum",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nRediger runbook incident + rollback + pilot checklist\n\n## Dependencies\nDEP-01, DEP-05, QAT-06\n\n## Acceptance criteria\n- [ ] Scope of DEP-06 implemented\n- [ ] Dependencies satisfied (DEP-01, DEP-05, QAT-06)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 123,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-06] Rediger runbook incident + rollback + pilot checklist",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/123"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgsc",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "ops",
+      "title": "[TASK][DEP-06] Rediger runbook incident + rollback + pilot checklist",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Parent epic\nDEP\n\n## Description\nExecuter go/no-go pilote et publier release pilote\n\n## Dependencies\nDEP-02, DEP-03, DEP-04, DEP-06\n\n## Acceptance criteria\n- [ ] Scope of DEP-07 implemented\n- [ ] Dependencies satisfied (DEP-02, DEP-03, DEP-04, DEP-06)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "number": 124,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-07] Executer go/no-go pilote et publier release pilote",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/124"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqgss",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P0",
+        "area: deployment",
+        "epic: DEP"
+      ],
+      "lane": "Shared handoff",
+      "milestone": {
+        "description": "Deploiement pilote et runbooks operationnels",
+        "dueOn": "",
+        "title": "M7 - Pilot release ready"
+      },
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "ops",
+      "title": "[TASK][DEP-07] Executer go/no-go pilote et publier release pilote",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "Figer les choix techniques et les contrats de base",
+        "number": 146,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][ARC] Architecture",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/146"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhaU",
+      "labels": ["epic"],
+      "lane": "Shared handoff",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "docs",
+      "title": "[EPIC][ARC] Architecture",
+      "wave": "Wave 0 - Cadrage"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "Rendre le workspace buildable, testable et automatisable",
+        "number": 147,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][SET] Workspace setup",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/147"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhao",
+      "labels": ["epic"],
+      "lane": "Shared handoff",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[EPIC][SET] Workspace setup",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "Factoriser les contrats et la logique transverse sans sur-ingenierie",
+        "number": 148,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][LIB] Shared libraries",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/148"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhbA",
+      "labels": ["epic"],
+      "lane": "Shared handoff",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[EPIC][LIB] Shared libraries",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "Fournir l ossature mobile Ionic/Capacitor prete pour les modules",
+        "number": 149,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][MOB] Mobile shell",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/149"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhbM",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[EPIC][MOB] Mobile shell",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "Offrir une authentification securisee et consistente web/mobile",
+        "number": 150,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][AUT] Auth",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/150"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhbY",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "api",
+      "title": "[EPIC][AUT] Auth",
+      "wave": "Wave 2 - Acces"
+    },
+    {
+      "area": "Pages",
+      "content": {
+        "body": "Livrer le site vitrine MVP oriente conversion",
+        "number": 151,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][WEB] Website",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/151"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhbk",
+      "labels": ["epic"],
+      "lane": "Lane A - Web public",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "web",
+      "title": "[EPIC][WEB] Website",
+      "wave": "Wave 3A - Site public"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "Proposer une page d accueil participant avec synthese utile",
+        "number": 152,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][DSH] Dashboard",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/152"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhb4",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[EPIC][DSH] Dashboard",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Frontend",
+      "content": {
+        "body": "Permettre consultation et suivi simple des programmes",
+        "number": 153,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][PRG] Programs",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/153"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhcE",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[EPIC][PRG] Programs",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "Offrir un acces simple a des ressources utiles aux participants",
+        "number": 154,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][RES] Resources",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/154"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhcU",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[EPIC][RES] Resources",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Content",
+      "content": {
+        "body": "Diffuser annonces et mises a jour importantes",
+        "number": 155,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][ANN] Announcements",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/155"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhco",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "mobile",
+      "title": "[EPIC][ANN] Announcements",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "Forms",
+      "content": {
+        "body": "Mettre en place un canal de support simple et fiable",
+        "number": 156,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][SUP] Support",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/156"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhc4",
+      "labels": ["epic"],
+      "lane": "Lane B - Platform & participant",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "api",
+      "title": "[EPIC][SUP] Support",
+      "wave": "Wave 3B - Parcours participant"
+    },
+    {
+      "area": "QA",
+      "content": {
+        "body": "Verifier la conformite fonctionnelle, qualite et robustesse du MVP",
+        "number": 157,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][QAT] QA",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/157"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhdY",
+      "labels": ["epic"],
+      "lane": "Shared handoff",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Todo",
+      "surface": "qa",
+      "title": "[EPIC][QAT] QA",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "Preparer et executer un lancement pilote maitrise",
+        "number": 158,
+        "repository": "Ange230700/kraak-group",
+        "title": "[EPIC][DEP] Deployment",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/158"
+      },
+      "coupling": "portfolio",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpqhdg",
+      "labels": ["epic"],
+      "lane": "Shared handoff",
+      "priority": "critical",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "In Progress",
+      "surface": "ops",
+      "title": "[EPIC][DEP] Deployment",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "area": "Deployment",
+      "content": {
+        "body": "## Contexte\nLe projet Vercel et le domaine public doivent etre alignes sur le nom du depot \\\\kraak-group\\\\.\n\n## Attendu\n- renommer le projet Vercel en kraak-group\n- attacher kraak-group.vercel.app au deploiement de production\n- retirer l'alias legacy client-six-indol-58.vercel.app\n- tracer le domaine public courant dans la documentation de runbook\n\n## Validation\n- verification via CLI Vercel des alias actifs\n- verification Git du changement documentaire",
+        "number": 159,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du depot",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/159"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgpq8d8",
+      "lane": "Shared handoff",
+      "launch blocker": "No",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/160"
+      ],
+      "priority": "medium",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "ops",
+      "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du depot",
+      "wave": "Wave 5 - Release"
+    },
+    {
+      "content": {
+        "body": "## Contexte\n\nLes fichiers `.env.example` et `.gitignore` du monorepo étaient centralisés à la racine, ce qui mélangeait les variables d'environnement de l'API, du client et de la racine sans séparation claire.\n\n## Changements\n\n- **`.env.example` racine** : réduit aux seules variables globales du monorepo (pas de variables API ni client)\n- **`apps/api/.env.example`** : créé avec les variables spécifiques à l'API NestJS (port, Supabase, Resend, JWT, etc.)\n- **`apps/api/.env.staging.example`** : déplacé depuis la racine vers `apps/api/`\n- **`apps/api/.gitignore`** : créé pour ignorer `.env*` localement dans l'API\n- **`apps/client/.env.example`** : créé avec les variables spécifiques au client Angular\n- **`apps/client/.gitignore`** : mis à jour pour ignorer `.env*` localement dans le client\n- **`.gitignore` racine** : nettoyé pour ne plus référencer `.env.staging.example` à la racine\n- **`docs/runbooks/ENVIRONMENT_VARIABLES.md`** : réécrit pour documenter la nouvelle structure par application\n- **`docs/runbooks/DEV_MODE.md`** : mis à jour pour pointer vers les bons chemins `.env`\n- **`docs/context/tech_stack.md`** : corrigé les références obsolètes aux fichiers `.env`\n\n## Validation\n\n- Hooks pre-commit passés (prettier, lint, commitlint)\n- Hooks pre-push passés (typecheck web/mobile/api, tests API 14/14)\n",
+        "number": 167,
+        "repository": "Ange230700/kraak-group",
+        "title": "chore(config): réorganiser les fichiers .env par application",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/167"
+      },
+      "id": "PVTI_lAHOBZPn084BUGJOzgptK8I",
+      "labels": ["chore"],
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/168"
+      ],
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "title": "chore(config): réorganiser les fichiers .env par application"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Problème\n\n1. **Chemin dist incorrect** : `start:prod` dans `apps/api/package.json` pointait vers `dist/src/main.js` au lieu de `dist/main.js`, causant un crash au démarrage en production (`Cannot find module 'dist/main'`).\n\n2. **Dépendance contracts manquante** : `@kraak/contracts` n'était pas déclaré dans les dépendances de l'API, causant des erreurs de résolution au build.\n\n3. **Artefacts compilés hors dist/** : Des fichiers `.d.ts`, `.js` et `.js.map` compilés se retrouvaient à la racine de certains packages au lieu de rester dans `dist/`, polluant le dépôt.\n\n## Correction\n\n- `apps/api/package.json` : script `start:prod` corrigé → `node dist/main.js` ; ajout de `@kraak/contracts: \"workspace:*\"`\n- `apps/api/tsconfig.build.json` : ajout de `rootDir: \"./src\"`, `paths: {}`, et `include: [\"src\"]` pour que `nest build` produise la bonne structure de sortie\n- `.gitignore` : ajout de `*.d.ts` et `*.js.map` pour empêcher le suivi des artefacts compilés hors `dist/`\n- Suppression de 15 fichiers d'artefacts stales\n\n## Validation\n\n- ✅ 374 tests unitaires / intégration passent (API Jest 13 + Web Vitest 33 + Mobile Vitest 21 + packages)\n- ✅ Typecheck réussi pour web, mobile, et api\n- ✅ Les 3 serveurs de dev démarrent correctement",
+        "number": 177,
+        "repository": "Ange230700/kraak-group",
+        "title": "fix(api): corriger le chemin dist et ajouter la dépendance contracts",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/177"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgptrso",
+      "labels": ["bug", "api"],
+      "lane": "Lane B - Platform & participant",
+      "launch blocker": "Yes",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/178"
+      ],
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "fix(api): corriger le chemin dist et ajouter la dépendance contracts",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "content": {
+        "body": "## Résumé\n\nConfiguration et documentation de la stratégie de fusion rebase-only dans le dépôt.\n\n## Changements\n\n- Configuration Git locale : `pull.rebase = true`, `merge.ff = only`\n- `AGENTS.md` : ajout de la règle rebase-only dans la section workflow Git, réécriture de l'étape 9 du flux d'exécution (rebase + ff-only merge)\n- `CONTRIBUTING.md` : ajout de la sous-section stratégie rebase, mise à jour de la section PR pour imposer rebase-and-merge uniquement\n\n## Validation\n\n- Commit `1a2b247` fusionné en fast-forward dans `main`\n- Tous les pre-push hooks passés (typecheck web/mobile/api, tests unitaires, E2E Playwright)\n\n## Statut\n\nTerminé — mergé et poussé sur `main`.",
+        "number": 183,
+        "repository": "Ange230700/kraak-group",
+        "title": "docs(repo): enforce rebase-only merge strategy",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/183"
+      },
+      "id": "PVTI_lAHOBZPn084BUGJOzgpv8Nc",
+      "labels": ["documentation"],
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "title": "docs(repo): enforce rebase-only merge strategy"
+    },
+    {
+      "content": {
+        "body": "## Contexte\n\nL'API NestJS n'avait pas de documentation interactive. Les consommateurs d'API (front, mobile, partenaires) n'avaient aucun moyen standardisé de découvrir les endpoints disponibles.\n\n## Changements\n\n- **`@nestjs/swagger` ^11.2.7** : installé comme dépendance dans `apps/api`\n- **`apps/api/src/main.ts`** : configuration SwaggerModule avec DocumentBuilder (titre « KRAAK API », description en français, version 0.1.0, tags Health + Support, servi à `/api-docs`)\n- **`apps/api/src/app.controller.ts`** : décorateurs `@ApiTags('Health')`, `@ApiOperation`, `@ApiResponse` avec schéma inline\n- **`apps/api/src/support/support.controller.ts`** : décorateurs `@ApiTags('Support')`, `@ApiOperation`, `@ApiBody` (schéma JSON 5 champs), `@ApiResponse` pour codes 201/400\n- **`AGENTS.md`** : nouvelle section « Règle De Documentation API (Obligatoire) » imposant la mise à jour Swagger à chaque modification de route/contrôleur/DTO\n- **`ARCHITECTURE.md`** : ajout de la ligne Swagger/OpenAPI sous Backend/API\n\n## Validation\n\n- Build API : `pnpm --filter @kraak/api build` ✅\n- Typecheck (web, mobile, api) : tous passés ✅\n- Tests unitaires (contracts 114, tokens 27, domain 139, api-client 27, api 13) : tous passés ✅\n- Tests E2E Playwright (9 scénarios) : tous passés ✅\n- Hooks pre-commit (prettier + lint) et pre-push (typecheck + tests) : tous passés ✅\n\n## Commit\n\n`c6d0e96` — 7 fichiers modifiés, 161 insertions",
+        "number": 184,
+        "repository": "Ange230700/kraak-group",
+        "title": "feat(api): ajouter la documentation Swagger/OpenAPI",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/184"
+      },
+      "id": "PVTI_lAHOBZPn084BUGJOzgpwdLg",
+      "labels": ["chore"],
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "title": "feat(api): ajouter la documentation Swagger/OpenAPI"
+    },
+    {
+      "content": {
+        "body": "## Contexte\n\nLe hook husky `pre-commit` exécutait `pnpm lint` (vérification seule). Les erreurs auto-corrigeables bloquaient le commit sans les corriger.\n\n## Changement\n\nRemplacement de `pnpm lint` par `pnpm lint:fix` dans `.husky/pre-commit` afin que les problèmes de lint auto-corrigeables soient corrigés automatiquement avant chaque commit.\n\n## Validation\n\n- Hook pre-commit exécuté avec succès lors du commit (format:check ✅, lint:fix ✅)\n- Pre-push CI complet passé : typecheck (web, mobile, API) ✅, tests API (jest) ✅, tests web (vitest) ✅, tests mobile (vitest) ✅\n\n## Référence\n\nPR #175",
+        "number": 176,
+        "repository": "Ange230700/kraak-group",
+        "title": "chore(repo): utiliser lint:fix dans le hook pre-commit",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/176"
+      },
+      "id": "PVTI_lAHOBZPn084BUGJOzgpyVw8",
+      "labels": ["chore"],
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "title": "chore(repo): utiliser lint:fix dans le hook pre-commit"
+    },
+    {
+      "area": "Deployment",
+      "assignees": ["Ange230700"],
+      "content": {
+        "body": "## Contexte\n\nLe déploiement sur Render échouait au démarrage lorsque la variable d'environnement Supabase n'était pas configurée (`SUPABASE_SERVICE_ROLE_KEY`). L'appel à `configService.getOrThrow()` provoquait un crash immédiat.\n\n## Changements\n\n- **Dégradation gracieuse** dans `SupabaseService` : remplacement de `getOrThrow()` par `get()` avec un logger d'avertissement. Le service démarre en mode désactivé si les variables sont absentes, et l'erreur n'est levée qu'au moment de l'appel réel à `getClient()`.\n- **Renommage** de `SUPABASE_SERVICE_ROLE_KEY` → `SUPABASE_SECRET_KEY` dans tout le dépôt (code, docs, exemples d'env, render.yaml).\n- **Tests BDD** réécrits dans `supabase.service.spec.ts` : 4 scénarios couvrant la création, la dégradation, et l'erreur explicite.\n\n## Fichiers modifiés (8)\n\n- `apps/api/src/supabase/supabase.service.ts`\n- `apps/api/src/supabase/supabase.service.spec.ts`\n- `apps/api/.env.example`\n- `apps/api/.env.staging.example`\n- `docs/context/tech_stack.md`\n- `docs/runbooks/DEV_MODE.md`\n- `docs/runbooks/ENVIRONMENT_VARIABLES.md`\n- `render.yaml`\n\n## Validation\n\n- 354 tests passants (contracts 114, tokens 27, api-client 27, domain 139, API 17, mobile 21, E2E 9)\n- Merge ff-only dans `main`, commit `1773c1e`",
+        "number": 190,
+        "repository": "Ange230700/kraak-group",
+        "title": "feat(api): démarrage gracieux sans Supabase",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/190"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgp1WNQ",
+      "labels": ["type: task", "area: api"],
+      "lane": "Shared handoff",
+      "launch blocker": "No",
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "api",
+      "title": "feat(api): démarrage gracieux sans Supabase",
+      "wave": "Wave 1 - Socle"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Contexte\nLe site web public et l'application mobile utilisent encore partiellement le branding KRAAK et des composants d'action trop neutres.\n\n## Objectif\nUtiliser les logos dans les deux interfaces, mieux exploiter la palette de marque et harmoniser les boutons et liens visibles.\n\n## Livrables attendus\n- intégration des logos KRAAK dans les shells web et mobile\n- renforcement de la palette sur les surfaces de navigation et de hero\n- harmonisation des boutons et liens de conversion sur le web\n- amélioration du shell mobile avec CTA et quick links cohérents avec la charte\n\n## Critères d'acceptation\n- [ ] les deux UI affichent les logos KRAAK pertinents\n- [ ] les boutons et liens principaux reflètent la charte KRAAK\n- [ ] les validations web/mobile pertinentes sont au vert",
+        "number": 192,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK][BRAND-01] Renforcer le branding web/mobile et harmoniser boutons et liens",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/192"
+      },
+      "coupling": "paired",
+      "id": "PVTI_lAHOBZPn084BUGJOzgp47h4",
+      "labels": [
+        "status: backlog",
+        "type: task",
+        "priority: P1",
+        "area: website",
+        "area: mobile-shell"
+      ],
+      "lane": "Shared handoff",
+      "launch blocker": "No",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/193"
+      ],
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK][BRAND-01] Renforcer le branding web/mobile et harmoniser boutons et liens",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "area": "Cross-cutting",
+      "content": {
+        "body": "## Contexte\n- `http://localhost:4200/` ne sert pas encore une icone de marque exploitable dans l'onglet navigateur.\n- `http://localhost:4300/` sert un favicon generique et ne declare pas les icones d'installation attendues pour Android/iOS.\n\n## Objectif\nAjouter le symbole KRAAK comme favicon navigateur et comme base d'icones installables pour les shells web et mobile.\n\n## Validation attendue\n- verification des liens d'icones et manifests dans les deux entry points client\n- verification des assets publics generes pour les deux projets\n- verification runtime sur le shell mobile et signalement clair de tout blocage existant cote web\r\n",
+        "number": 194,
+        "repository": "Ange230700/kraak-group",
+        "title": "[TASK] Ajouter les icones de marque pour les shells web et mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/194"
+      },
+      "coupling": "handoff",
+      "id": "PVTI_lAHOBZPn084BUGJOzgp5S0Y",
+      "lane": "Shared handoff",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "[TASK] Ajouter les icones de marque pour les shells web et mobile"
+    },
+    {
+      "area": "Cross-cutting",
+      "assignees": ["Ange230700"],
+      "content": {
+        "body": "## Contexte\nLes points d'entree web et mobile declarent encore uniquement la balise deprecated ^Gpple-mobile-web-app-capable, ce qui fait remonter un avertissement navigateur.\n\n## Objectif\nAjouter la balise standard mobile-web-app-capable dans les deux index.html clients tout en conservant la compatibilite Apple existante.\n\n## Validation attendue\n- verification du diff Git sur les deux entry points\n- verification de la presence des deux meta tags dans les fichiers web et mobile",
+        "number": 195,
+        "repository": "Ange230700/kraak-group",
+        "title": "fix(client): declarer mobile-web-app-capable sur web et mobile",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/195"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgp5lzw",
+      "lane": "Shared handoff",
+      "launch blocker": "No",
+      "priority": "medium",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "shared",
+      "title": "fix(client): declarer mobile-web-app-capable sur web et mobile",
+      "wave": "Wave 4 - Qualite"
+    },
+    {
+      "content": {
+        "body": "## Contexte\r\nLe serveur de dev mobile echoue pendant l'optimisation de dependances avec l'erreur `Could not resolve \"./client\"` remontee depuis `@kraak/api-client`.\r\n\r\n## Attendu\r\n- `pnpm dev:mobile` demarre sans erreur de prebundle\r\n- le garde-fou de configuration reste couvert par un test workspace\r\n\r\n## Validation visee\r\n- `pnpm test:workspace`\r\n- verification de demarrage de `ng serve mobile --configuration local --port 4300`\r\n",
+        "number": 206,
+        "repository": "Ange230700/kraak-group",
+        "title": "Corriger le prebundle Vite du dev server mobile avec @kraak/api-client",
+        "type": "Issue",
+        "url": "https://github.com/Ange230700/kraak-group/issues/206"
+      },
+      "coupling": "independent",
+      "id": "PVTI_lAHOBZPn084BUGJOzgqCACs",
+      "lane": "Lane B - Platform & participant",
+      "linked pull requests": [
+        "https://github.com/Ange230700/kraak-group/pull/207"
+      ],
+      "priority": "high",
+      "repository": "https://github.com/Ange230700/kraak-group",
+      "status": "Done",
+      "surface": "mobile",
+      "title": "Corriger le prebundle Vite du dev server mobile avec @kraak/api-client",
+      "wave": "Wave 1 - Socle"
+    }
+  ],
+  "totalCount": 91
+}

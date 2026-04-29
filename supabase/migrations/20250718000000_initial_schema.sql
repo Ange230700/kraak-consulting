@@ -51,6 +51,10 @@ CREATE TYPE audience_type AS ENUM (
   'all_participants', 'program', 'cohort', 'custom'
 );
 
+CREATE TYPE announcement_priority AS ENUM (
+  'low', 'normal', 'high', 'critical'
+);
+
 CREATE TYPE enrollment_status AS ENUM (
   'pending', 'active', 'completed', 'cancelled'
 );
@@ -187,6 +191,7 @@ CREATE TABLE announcement (
   id                 uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   title              text NOT NULL,
   body               text NOT NULL,
+  priority           announcement_priority NOT NULL DEFAULT 'normal',
   audience_type      audience_type NOT NULL,
   program_id         uuid REFERENCES program(id) ON DELETE CASCADE,
   cohort_id          uuid REFERENCES cohort(id) ON DELETE CASCADE,
@@ -194,7 +199,30 @@ CREATE TABLE announcement (
   published_at       timestamptz,
   created_by_user_id uuid NOT NULL REFERENCES app_user(id) ON DELETE RESTRICT,
   created_at         timestamptz NOT NULL DEFAULT now(),
-  updated_at         timestamptz NOT NULL DEFAULT now()
+  updated_at         timestamptz NOT NULL DEFAULT now(),
+
+  CONSTRAINT announcement_mvp_audience_scope CHECK (
+    (
+      audience_type = 'all_participants'
+      AND program_id IS NULL
+      AND cohort_id IS NULL
+    )
+    OR (
+      audience_type = 'program'
+      AND program_id IS NOT NULL
+      AND cohort_id IS NULL
+    )
+    OR (
+      audience_type = 'cohort'
+      AND program_id IS NOT NULL
+      AND cohort_id IS NOT NULL
+    )
+  ),
+
+  CONSTRAINT announcement_published_at_consistency CHECK (
+    (status = 'draft' AND published_at IS NULL)
+    OR (status IN ('published', 'archived') AND published_at IS NOT NULL)
+  )
 );
 
 -- 3.8 enrollment

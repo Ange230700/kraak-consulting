@@ -57,6 +57,7 @@ import type {
   ResourceThemeValue,
   ResourceAudienceValue,
   AudienceTypeValue,
+  AnnouncementPriorityValue,
   EnrollmentStatusValue,
   ProgramProgressStatusValue,
   NotificationTypeValue,
@@ -506,6 +507,9 @@ describe('AnnouncementDto', () => {
     expectTypeOf<AnnouncementDto>().toHaveProperty('title').toBeString();
     expectTypeOf<AnnouncementDto>().toHaveProperty('body').toBeString();
     expectTypeOf<AnnouncementDto>()
+      .toHaveProperty('priority')
+      .toEqualTypeOf<AnnouncementPriorityValue>();
+    expectTypeOf<AnnouncementDto>()
       .toHaveProperty('audienceType')
       .toEqualTypeOf<AudienceTypeValue>();
     expectTypeOf<AnnouncementDto>()
@@ -530,6 +534,9 @@ describe('AnnouncementDto', () => {
   it('CreateAnnouncementDto should omit server-generated fields', () => {
     expectTypeOf<CreateAnnouncementDto>().toHaveProperty('title').toBeString();
     expectTypeOf<CreateAnnouncementDto>().toHaveProperty('body').toBeString();
+    expectTypeOf<CreateAnnouncementDto>()
+      .toHaveProperty('priority')
+      .toEqualTypeOf<AnnouncementPriorityValue>();
     expectTypeOf<CreateAnnouncementDto>()
       .toHaveProperty('audienceType')
       .toEqualTypeOf<AudienceTypeValue>();

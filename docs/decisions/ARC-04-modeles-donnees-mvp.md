@@ -30,7 +30,7 @@ Les contraintes sont :
 
 ## 2 · Décision
 
-Adopter un schéma initial de **10 tables** avec **17 types enum** PostgreSQL,
+Adopter un schéma initial de **10 tables** avec **18 types enum** PostgreSQL,
 des politiques RLS par table, des index ciblés, et des triggers `updated_at`
 automatiques.
 
@@ -66,7 +66,8 @@ location_type         -- online, onsite, hybrid
 resource_type         -- link, file, video, document
 resource_theme        -- training, project_management, immigration, career
 resource_audience     -- all, young_professionals_students, organizations, international_candidates
-audience_type         -- all_participants, program, cohort
+audience_type         -- all_participants, program, cohort, custom (réservé V1.1+)
+announcement_priority -- low, normal, high, critical
 notification_type     -- system, enrollment, session, announcement, support
 notification_channel  -- in_app, email, push
 support_request_status -- open, in_progress, resolved, closed
@@ -115,7 +116,7 @@ Fichier : `supabase/migrations/20250718000000_initial_schema.sql`
 Structure de la migration :
 
 1. Extension `uuid-ossp`
-2. 17 types enum
+2. 18 types enum
 3. Fonction utilitaire `update_updated_at()`
 4. 10 tables avec clés primaires UUID, foreign keys, contraintes CHECK
 5. Index sur FK et colonnes de filtrage fréquentes
@@ -140,7 +141,7 @@ app_user ← participant (1:1, user_id FK)
 program ← cohort (1:N, program_id FK)
 cohort ← session (1:N, cohort_id FK)
 program/cohort ← resource (polymorphe via CHECK)
-program/cohort ← announcement (audience_type discriminateur)
+program/cohort ← announcement (audience_type discriminateur + priority)
 participant + program ← enrollment (N:N, contrainte UNIQUE)
 app_user ← notification (1:N, user_id FK)
 app_user ← support_request (1:N, user_id FK)
@@ -154,6 +155,9 @@ app_user ← support_request (1:N, user_id FK)
 - `resource` : `CHECK` — au moins un parent (`program_id` ou `cohort_id`)
 - `resource.resource_theme` : catégorisation métier pour filtrer les contenus
 - `resource.resource_audience` : segment de public visé pour la ressource
+- `announcement` : priorité explicite (`low|normal|high|critical`) et règles
+  de publication MVP (all_participants sans parent, program avec `program_id`
+  uniquement, cohort avec `program_id` + `cohort_id`)
 - Toutes les colonnes `id` : UUID v4 générés par `uuid_generate_v4()`
 
 ---

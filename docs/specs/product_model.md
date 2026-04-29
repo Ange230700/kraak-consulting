@@ -399,7 +399,8 @@ Champs minimums :
 - `id`
 - `title`
 - `body`
-- `audienceType` (`all-participants` | `program` | `cohort` | `custom`)
+- `priority` (`low` | `normal` | `high` | `critical`)
+- `audienceType` (`all_participants` | `program` | `cohort` | `custom`)
 - `programId` (optionnel)
 - `cohortId` (optionnel)
 - `status` (`draft` | `published` | `archived`)
@@ -411,6 +412,15 @@ Champs minimums :
 Rôle :
 
 - communication descendante visible dans l'app
+
+Règles de publication MVP :
+
+- `all_participants`: `programId = null` et `cohortId = null`
+- `program`: `programId` requis et `cohortId = null`
+- `cohort`: `programId` et `cohortId` requis
+- `custom`: réservé V1.1+ (non utilisé pour le format MVP)
+- `draft`: `publishedAt = null`
+- `published`/`archived`: `publishedAt` requis
 
 ### `Enrollment`
 
