@@ -111,12 +111,17 @@
               size="small"
               class="kraak-primary-button"
               (click)="reloadDashboard()"
-              (keydown.enter)="reloadDashboard()"
+              (keydown)="$event.stopPropagation()"
+              onKeyDown="void(0)"
             >
               Réessayer
             </ion-button>
           </div>
-        } @else if (!loading() && !hasDashboardContent) {
+        } @else if (loading()) {
+          <p class="mt-4 text-sm leading-6 text-neutral-700">
+            Chargement de votre dashboard...
+          </p>
+        } @else if (!hasDashboardContent) {
           <p class="mt-4 text-sm leading-6 text-neutral-700">
             Aucun contenu n'est disponible pour l'instant sur votre espace.
           </p>

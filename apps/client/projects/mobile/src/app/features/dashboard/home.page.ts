@@ -8,7 +8,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { ApiError, createApiClient } from '@kraak/api-client';
+import { createApiClient } from '@kraak/api-client';
 import type {
   DashboardAggregateDto,
   DashboardAnnouncementSummaryDto,
@@ -16,7 +16,10 @@ import type {
   DashboardSessionReminderDto,
 } from '@kraak/contracts';
 import { environment } from '../../../environments/environment';
-import { MobileAuthService } from '../auth/mobile-auth.service';
+import {
+  MobileAuthService,
+  resolveAuthErrorMessage,
+} from '../auth/mobile-auth.service';
 import { FeatureCardComponent } from '../../shared/ui/feature-card/feature-card.component';
 
 interface HomeHighlight {
@@ -123,21 +126,9 @@ export default class HomePage implements OnInit {
   }
 
   private resolveDashboardErrorMessage(error: unknown): string {
-    if (
-      error instanceof ApiError &&
-      error.body &&
-      typeof error.body === 'object' &&
-      'message' in error.body &&
-      typeof error.body.message === 'string' &&
-      error.body.message.trim().length > 0
-    ) {
-      return error.body.message;
-    }
-
-    if (error instanceof Error && error.message.trim().length > 0) {
-      return error.message;
-    }
-
-    return 'Impossible de charger votre dashboard pour le moment.';
+    return resolveAuthErrorMessage(
+      error,
+      'Impossible de charger votre dashboard pour le moment.',
+    );
   }
 }
