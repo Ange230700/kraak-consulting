@@ -137,5 +137,60 @@ describe('Mobile SessionDetailPage', () => {
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('API Error');
     });
+
+    it('Given a loaded session, when markSessionCompletion succeeds, then progression API is called and detail is reloaded', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      service.markSessionProgress.mockResolvedValue({
+        enrollmentId: 'enr-1',
+        enrollmentStatus: 'completed',
+        progress: {
+          totalSessions: 1,
+          completedSessions: 1,
+          completionRate: 100,
+          status: 'completed',
+          completedSessionIds: ['session-1'],
+          updatedAt: new Date().toISOString(),
+        },
+      });
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await (
+        fixture.componentInstance as unknown as {
+          markSessionCompletion: (completed: boolean) => Promise<void>;
+        }
+      ).markSessionCompletion(true);
+
+      expect(service.markSessionProgress).toHaveBeenCalledWith(
+        'prog-1',
+        'session-1',
+        true,
+      );
+      expect(service.getProgramDetail).toHaveBeenCalledTimes(2);
+    });
+
+    it('Given a loaded session, when markSessionCompletion fails, then an explicit error is shown', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      service.markSessionProgress.mockRejectedValue(
+        new Error('Impossible de mettre a jour'),
+      );
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await (
+        fixture.componentInstance as unknown as {
+          markSessionCompletion: (completed: boolean) => Promise<void>;
+        }
+      ).markSessionCompletion(true);
+
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Impossible de mettre a jour');
+    });
   });
 });

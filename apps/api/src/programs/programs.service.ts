@@ -115,6 +115,12 @@ type AnnouncementPreviewRow = Pick<
   'id' | 'title' | 'audience_type' | 'program_id' | 'cohort_id' | 'published_at'
 >;
 
+const enrollmentProgramSelect =
+  'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
+
+const progressUpdateErrorMessage =
+  'Impossible de mettre à jour la progression du programme.';
+
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
     return value[0] ?? null;
@@ -139,9 +145,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('enrollment')
-      .select(
-        'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)',
-      )
+      .select(enrollmentProgramSelect)
       .eq('participant_id', participantId)
       .in('status', ['pending', 'active', 'completed'])
       .order('enrolled_at', { ascending: false })
@@ -205,9 +209,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('enrollment')
-      .select(
-        'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)',
-      )
+      .select(enrollmentProgramSelect)
       .eq('participant_id', participantId)
       .eq('program_id', programId)
       .in('status', ['pending', 'active', 'completed'])
@@ -280,9 +282,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('enrollment')
-      .select(
-        'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)',
-      )
+      .select(enrollmentProgramSelect)
       .eq('participant_id', participantId)
       .eq('program_id', programId)
       .in('status', ['pending', 'active', 'completed'])
@@ -291,7 +291,7 @@ export class ProgramsService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de mettre à jour la progression du programme.',
+        message: progressUpdateErrorMessage,
       });
     }
 
@@ -364,7 +364,7 @@ export class ProgramsService {
     if (updateError) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de mettre à jour la progression du programme.',
+        message: progressUpdateErrorMessage,
       });
     }
 
