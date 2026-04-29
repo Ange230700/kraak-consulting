@@ -323,7 +323,7 @@ Champs minimums :
 - `summary`
 - `description`
 - `status` (`draft` | `published` | `archived`)
-- `visibility` (`private` | `participants` | `public` si besoin futur)
+- `visibility` (`private` | `unlisted` | `public`)
 - `createdAt`
 - `updatedAt`
 
@@ -339,7 +339,7 @@ Champs minimums :
 - `programId`
 - `name`
 - `code` (optionnel mais recommandé)
-- `status` (`draft` | `open` | `active` | `completed` | `archived`)
+- `status` (`planned` | `open` | `in_progress` | `completed` | `cancelled`)
 - `startDate`
 - `endDate` (optionnel)
 - `capacity` (optionnel)
@@ -418,7 +418,7 @@ Champs minimums :
 - `participantId`
 - `programId`
 - `cohortId` (optionnel selon moment d'affectation)
-- `status` (`pending` | `active` | `completed` | `cancelled`)
+- `status` (`pending` | `active` | `paused` | `completed` | `cancelled` | `refunded`)
 - `enrolledAt`
 - `completedAt` (optionnel)
 - `createdAt`

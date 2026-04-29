@@ -20,16 +20,16 @@ export const PublicationStatus = {
 
 export const ProgramVisibility = {
   PRIVATE: 'private',
-  PARTICIPANTS: 'participants',
+  UNLISTED: 'unlisted',
   PUBLIC: 'public',
 } as const;
 
 export const CohortStatus = {
-  DRAFT: 'draft',
+  PLANNED: 'planned',
   OPEN: 'open',
-  ACTIVE: 'active',
+  IN_PROGRESS: 'in_progress',
   COMPLETED: 'completed',
-  ARCHIVED: 'archived',
+  CANCELLED: 'cancelled',
 } as const;
 
 export const SessionStatus = {
@@ -62,8 +62,10 @@ export const AudienceType = {
 export const EnrollmentStatus = {
   PENDING: 'pending',
   ACTIVE: 'active',
+  PAUSED: 'paused',
   COMPLETED: 'completed',
   CANCELLED: 'cancelled',
+  REFUNDED: 'refunded',
 } as const;
 
 export const NotificationType = {

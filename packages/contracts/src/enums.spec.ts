@@ -56,9 +56,9 @@ describe('Enums', () => {
   });
 
   describe('ProgramVisibility', () => {
-    it('devrait contenir private, participants, public', () => {
+    it('devrait contenir private, unlisted, public', () => {
       expect(ProgramVisibility.PRIVATE).toBe('private');
-      expect(ProgramVisibility.PARTICIPANTS).toBe('participants');
+      expect(ProgramVisibility.UNLISTED).toBe('unlisted');
       expect(ProgramVisibility.PUBLIC).toBe('public');
     });
 
@@ -69,11 +69,11 @@ describe('Enums', () => {
 
   describe('CohortStatus', () => {
     it('devrait contenir les statuts de cohorte', () => {
-      expect(CohortStatus.DRAFT).toBe('draft');
+      expect(CohortStatus.PLANNED).toBe('planned');
       expect(CohortStatus.OPEN).toBe('open');
-      expect(CohortStatus.ACTIVE).toBe('active');
+      expect(CohortStatus.IN_PROGRESS).toBe('in_progress');
       expect(CohortStatus.COMPLETED).toBe('completed');
-      expect(CohortStatus.ARCHIVED).toBe('archived');
+      expect(CohortStatus.CANCELLED).toBe('cancelled');
     });
 
     it('devrait avoir exactement 5 valeurs', () => {
@@ -136,12 +136,14 @@ describe('Enums', () => {
     it("devrait contenir les statuts d'inscription", () => {
       expect(EnrollmentStatus.PENDING).toBe('pending');
       expect(EnrollmentStatus.ACTIVE).toBe('active');
+      expect(EnrollmentStatus.PAUSED).toBe('paused');
       expect(EnrollmentStatus.COMPLETED).toBe('completed');
       expect(EnrollmentStatus.CANCELLED).toBe('cancelled');
+      expect(EnrollmentStatus.REFUNDED).toBe('refunded');
     });
 
-    it('devrait avoir exactement 4 valeurs', () => {
-      expect(Object.values(EnrollmentStatus)).toHaveLength(4);
+    it('devrait avoir exactement 6 valeurs', () => {
+      expect(Object.values(EnrollmentStatus)).toHaveLength(6);
     });
   });
 

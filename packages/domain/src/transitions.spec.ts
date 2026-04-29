@@ -96,14 +96,17 @@ describe('getNextLifecycleStatuses', () => {
 
 // ---------------------------------------------------------------------------
 // CohortStatus transitions
-// draft → open → active → completed → archived
+// planned → open → in_progress → completed
+// planned/open/in_progress → cancelled
 // ---------------------------------------------------------------------------
 describe('canTransitionCohortStatus', () => {
   const valid: [string, string][] = [
-    [CohortStatus.DRAFT, CohortStatus.OPEN],
-    [CohortStatus.OPEN, CohortStatus.ACTIVE],
-    [CohortStatus.ACTIVE, CohortStatus.COMPLETED],
-    [CohortStatus.COMPLETED, CohortStatus.ARCHIVED],
+    [CohortStatus.PLANNED, CohortStatus.OPEN],
+    [CohortStatus.PLANNED, CohortStatus.CANCELLED],
+    [CohortStatus.OPEN, CohortStatus.IN_PROGRESS],
+    [CohortStatus.OPEN, CohortStatus.CANCELLED],
+    [CohortStatus.IN_PROGRESS, CohortStatus.COMPLETED],
+    [CohortStatus.IN_PROGRESS, CohortStatus.CANCELLED],
   ];
 
   it.each(valid)('allows %s → %s', (from, to) => {
@@ -111,11 +114,11 @@ describe('canTransitionCohortStatus', () => {
   });
 
   const invalid: [string, string][] = [
-    [CohortStatus.DRAFT, CohortStatus.ACTIVE],
-    [CohortStatus.OPEN, CohortStatus.ARCHIVED],
-    [CohortStatus.ACTIVE, CohortStatus.DRAFT],
-    [CohortStatus.ARCHIVED, CohortStatus.DRAFT],
-    [CohortStatus.COMPLETED, CohortStatus.ACTIVE],
+    [CohortStatus.PLANNED, CohortStatus.IN_PROGRESS],
+    [CohortStatus.OPEN, CohortStatus.COMPLETED],
+    [CohortStatus.IN_PROGRESS, CohortStatus.PLANNED],
+    [CohortStatus.CANCELLED, CohortStatus.PLANNED],
+    [CohortStatus.COMPLETED, CohortStatus.OPEN],
   ];
 
   it.each(invalid)('rejects %s → %s', (from, to) => {
@@ -130,32 +133,32 @@ describe('canTransitionCohortStatus', () => {
 });
 
 describe('getNextCohortStatuses', () => {
-  it('returns [open] from draft', () => {
-    expect(getNextCohortStatuses(CohortStatus.DRAFT)).toEqual([
-      CohortStatus.OPEN,
-    ]);
+  it('returns [open, cancelled] from planned', () => {
+    expect(getNextCohortStatuses(CohortStatus.PLANNED)).toEqual(
+      expect.arrayContaining([CohortStatus.OPEN, CohortStatus.CANCELLED]),
+    );
   });
 
-  it('returns [active] from open', () => {
+  it('returns [in_progress, cancelled] from open', () => {
     expect(getNextCohortStatuses(CohortStatus.OPEN)).toEqual([
-      CohortStatus.ACTIVE,
+      CohortStatus.IN_PROGRESS,
+      CohortStatus.CANCELLED,
     ]);
   });
 
-  it('returns [completed] from active', () => {
-    expect(getNextCohortStatuses(CohortStatus.ACTIVE)).toEqual([
+  it('returns [completed, cancelled] from in_progress', () => {
+    expect(getNextCohortStatuses(CohortStatus.IN_PROGRESS)).toEqual([
       CohortStatus.COMPLETED,
+      CohortStatus.CANCELLED,
     ]);
   });
 
-  it('returns [archived] from completed', () => {
-    expect(getNextCohortStatuses(CohortStatus.COMPLETED)).toEqual([
-      CohortStatus.ARCHIVED,
-    ]);
+  it('returns [] from completed', () => {
+    expect(getNextCohortStatuses(CohortStatus.COMPLETED)).toEqual([]);
   });
 
-  it('returns [] from archived', () => {
-    expect(getNextCohortStatuses(CohortStatus.ARCHIVED)).toEqual([]);
+  it('returns [] from cancelled', () => {
+    expect(getNextCohortStatuses(CohortStatus.CANCELLED)).toEqual([]);
   });
 });
 
@@ -217,14 +220,23 @@ describe('getNextSessionStatuses', () => {
 
 // ---------------------------------------------------------------------------
 // EnrollmentStatus transitions
-// pending → active → completed
-// pending → cancelled
+// pending → active → paused → active
+// pending/active/paused → cancelled
+// pending/active/paused → refunded
+// active → completed
 // ---------------------------------------------------------------------------
 describe('canTransitionEnrollmentStatus', () => {
   const valid: [string, string][] = [
     [EnrollmentStatus.PENDING, EnrollmentStatus.ACTIVE],
+    [EnrollmentStatus.ACTIVE, EnrollmentStatus.PAUSED],
+    [EnrollmentStatus.PAUSED, EnrollmentStatus.ACTIVE],
     [EnrollmentStatus.ACTIVE, EnrollmentStatus.COMPLETED],
     [EnrollmentStatus.PENDING, EnrollmentStatus.CANCELLED],
+    [EnrollmentStatus.ACTIVE, EnrollmentStatus.CANCELLED],
+    [EnrollmentStatus.PAUSED, EnrollmentStatus.CANCELLED],
+    [EnrollmentStatus.PENDING, EnrollmentStatus.REFUNDED],
+    [EnrollmentStatus.ACTIVE, EnrollmentStatus.REFUNDED],
+    [EnrollmentStatus.PAUSED, EnrollmentStatus.REFUNDED],
   ];
 
   it.each(valid)('allows %s → %s', (from, to) => {
@@ -235,7 +247,8 @@ describe('canTransitionEnrollmentStatus', () => {
     [EnrollmentStatus.ACTIVE, EnrollmentStatus.PENDING],
     [EnrollmentStatus.COMPLETED, EnrollmentStatus.ACTIVE],
     [EnrollmentStatus.CANCELLED, EnrollmentStatus.PENDING],
-    [EnrollmentStatus.ACTIVE, EnrollmentStatus.CANCELLED],
+    [EnrollmentStatus.REFUNDED, EnrollmentStatus.ACTIVE],
+    [EnrollmentStatus.PENDING, EnrollmentStatus.COMPLETED],
   ];
 
   it.each(invalid)('rejects %s → %s', (from, to) => {
@@ -250,18 +263,30 @@ describe('canTransitionEnrollmentStatus', () => {
 });
 
 describe('getNextEnrollmentStatuses', () => {
-  it('returns [active, cancelled] from pending', () => {
+  it('returns [active, cancelled, refunded] from pending', () => {
     expect(getNextEnrollmentStatuses(EnrollmentStatus.PENDING)).toEqual(
       expect.arrayContaining([
         EnrollmentStatus.ACTIVE,
         EnrollmentStatus.CANCELLED,
+        EnrollmentStatus.REFUNDED,
       ]),
     );
   });
 
-  it('returns [completed] from active', () => {
+  it('returns [paused, completed, cancelled, refunded] from active', () => {
     expect(getNextEnrollmentStatuses(EnrollmentStatus.ACTIVE)).toEqual([
+      EnrollmentStatus.PAUSED,
       EnrollmentStatus.COMPLETED,
+      EnrollmentStatus.CANCELLED,
+      EnrollmentStatus.REFUNDED,
+    ]);
+  });
+
+  it('returns [active, cancelled, refunded] from paused', () => {
+    expect(getNextEnrollmentStatuses(EnrollmentStatus.PAUSED)).toEqual([
+      EnrollmentStatus.ACTIVE,
+      EnrollmentStatus.CANCELLED,
+      EnrollmentStatus.REFUNDED,
     ]);
   });
 
@@ -271,6 +296,10 @@ describe('getNextEnrollmentStatuses', () => {
 
   it('returns [] from cancelled', () => {
     expect(getNextEnrollmentStatuses(EnrollmentStatus.CANCELLED)).toEqual([]);
+  });
+
+  it('returns [] from refunded', () => {
+    expect(getNextEnrollmentStatuses(EnrollmentStatus.REFUNDED)).toEqual([]);
   });
 });
 

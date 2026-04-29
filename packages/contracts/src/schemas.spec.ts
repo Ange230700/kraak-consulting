@@ -521,7 +521,7 @@ describe('CreateCohortSchema', () => {
     programId: 'prg-1',
     name: 'Cohorte A',
     code: null,
-    status: 'draft',
+    status: 'planned',
     startDate: '2025-06-01',
     endDate: null,
     capacity: null,
@@ -533,7 +533,7 @@ describe('CreateCohortSchema', () => {
 
   it('should reject invalid status', () => {
     expect(
-      CreateCohortSchema.safeParse({ ...valid, status: 'cancelled' }).success,
+      CreateCohortSchema.safeParse({ ...valid, status: 'archived' }).success,
     ).toBe(false);
   });
 });
@@ -765,7 +765,7 @@ describe('CreateEnrollmentSchema', () => {
 
 describe('UpdateEnrollmentSchema', () => {
   it('should accept partial data', () => {
-    expect(UpdateEnrollmentSchema.safeParse({ status: 'active' }).success).toBe(
+    expect(UpdateEnrollmentSchema.safeParse({ status: 'paused' }).success).toBe(
       true,
     );
   });
