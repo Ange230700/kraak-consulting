@@ -85,13 +85,6 @@ type AnnouncementRow = {
   published_at: string | null;
 };
 
-const dashboardVisibleEnrollmentStatuses: EnrollmentStatusValue[] = [
-  'pending',
-  'active',
-  'paused',
-  'completed',
-];
-
 @Injectable()
 export class DashboardService {
   constructor(private readonly supabaseService: SupabaseService) {}
@@ -168,7 +161,7 @@ export class DashboardService {
         'id, status, program_id, cohort_id, program:program(id, slug, title, summary), cohort:cohort(id, name, status, start_date)',
       )
       .eq('participant_id', participantId)
-      .in('status', dashboardVisibleEnrollmentStatuses)
+      .in('status', ['pending', 'active', 'completed'])
       .order('enrolled_at', { ascending: false })
       .limit(6);
 

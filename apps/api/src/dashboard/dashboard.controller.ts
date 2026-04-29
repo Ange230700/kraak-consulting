@@ -56,21 +56,14 @@ const dashboardAggregateSchema = {
           summary: { type: 'string' },
           enrollmentStatus: {
             type: 'string',
-            enum: [
-              'pending',
-              'active',
-              'paused',
-              'completed',
-              'cancelled',
-              'refunded',
-            ],
+            enum: ['pending', 'active', 'completed', 'cancelled'],
           },
           cohortId: { type: 'string', nullable: true },
           cohortName: { type: 'string', nullable: true },
           cohortStatus: {
             type: 'string',
             nullable: true,
-            enum: ['planned', 'open', 'in_progress', 'completed', 'cancelled'],
+            enum: ['draft', 'open', 'active', 'completed', 'archived'],
           },
           cohortStartDate: { type: 'string', nullable: true },
         },

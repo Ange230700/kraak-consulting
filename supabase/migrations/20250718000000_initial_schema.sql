@@ -22,10 +22,10 @@ CREATE TYPE lifecycle_status AS ENUM (
 -- Partagé par program, resource et announcement
 CREATE TYPE publication_status AS ENUM ('draft', 'published', 'archived');
 
-CREATE TYPE program_visibility AS ENUM ('private', 'unlisted', 'public');
+CREATE TYPE program_visibility AS ENUM ('private', 'participants', 'public');
 
 CREATE TYPE cohort_status AS ENUM (
-  'planned', 'open', 'in_progress', 'completed', 'cancelled'
+  'draft', 'open', 'active', 'completed', 'archived'
 );
 
 CREATE TYPE session_status AS ENUM (
@@ -41,7 +41,7 @@ CREATE TYPE audience_type AS ENUM (
 );
 
 CREATE TYPE enrollment_status AS ENUM (
-  'pending', 'active', 'paused', 'completed', 'cancelled', 'refunded'
+  'pending', 'active', 'completed', 'cancelled'
 );
 
 CREATE TYPE notification_type AS ENUM (
@@ -120,7 +120,7 @@ CREATE TABLE cohort (
   program_id uuid NOT NULL REFERENCES program(id) ON DELETE CASCADE,
   name       text NOT NULL,
   code       text,
-  status     cohort_status NOT NULL DEFAULT 'planned',
+  status     cohort_status NOT NULL DEFAULT 'draft',
   start_date date NOT NULL,
   end_date   date,
   capacity   integer,
@@ -380,7 +380,7 @@ CREATE POLICY cohort_select_enrolled ON cohort
         JOIN participant p ON p.id = e.participant_id
        WHERE e.cohort_id = cohort.id
          AND p.user_id   = auth.uid()
-         AND e.status IN ('pending', 'active', 'paused', 'completed')
+         AND e.status IN ('pending', 'active', 'completed')
     )
   );
 
@@ -400,7 +400,7 @@ CREATE POLICY session_select_enrolled ON session
         JOIN participant p ON p.id = e.participant_id
        WHERE e.cohort_id = session.cohort_id
          AND p.user_id   = auth.uid()
-         AND e.status IN ('pending', 'active', 'paused', 'completed')
+         AND e.status IN ('pending', 'active', 'completed')
     )
   );
 
@@ -416,7 +416,7 @@ CREATE POLICY resource_select_enrolled ON resource
       SELECT 1 FROM enrollment e
         JOIN participant p ON p.id = e.participant_id
        WHERE p.user_id = auth.uid()
-         AND e.status IN ('pending', 'active', 'paused', 'completed')
+         AND e.status IN ('pending', 'active', 'completed')
          AND (
            e.program_id = resource.program_id
            OR e.cohort_id = resource.cohort_id
@@ -439,7 +439,7 @@ CREATE POLICY announcement_select_published ON announcement
         SELECT 1 FROM enrollment e
           JOIN participant p ON p.id = e.participant_id
          WHERE p.user_id = auth.uid()
-           AND e.status IN ('pending', 'active', 'paused', 'completed')
+           AND e.status IN ('pending', 'active', 'completed')
            AND (
              (announcement.audience_type = 'program' AND e.program_id = announcement.program_id)
              OR (announcement.audience_type = 'cohort' AND e.cohort_id = announcement.cohort_id)

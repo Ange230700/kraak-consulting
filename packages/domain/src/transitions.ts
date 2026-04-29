@@ -46,11 +46,11 @@ const lifecycle = createTransitionHelpers<LifecycleStatusValue>({
 });
 
 const cohort = createTransitionHelpers<CohortStatusValue>({
-  [CohortStatus.PLANNED]: [CohortStatus.OPEN, CohortStatus.CANCELLED],
-  [CohortStatus.OPEN]: [CohortStatus.IN_PROGRESS, CohortStatus.CANCELLED],
-  [CohortStatus.IN_PROGRESS]: [CohortStatus.COMPLETED, CohortStatus.CANCELLED],
-  [CohortStatus.COMPLETED]: [],
-  [CohortStatus.CANCELLED]: [],
+  [CohortStatus.DRAFT]: [CohortStatus.OPEN],
+  [CohortStatus.OPEN]: [CohortStatus.ACTIVE],
+  [CohortStatus.ACTIVE]: [CohortStatus.COMPLETED],
+  [CohortStatus.COMPLETED]: [CohortStatus.ARCHIVED],
+  [CohortStatus.ARCHIVED]: [],
 });
 
 const session = createTransitionHelpers<SessionStatusValue>({
@@ -64,22 +64,10 @@ const enrollment = createTransitionHelpers<EnrollmentStatusValue>({
   [EnrollmentStatus.PENDING]: [
     EnrollmentStatus.ACTIVE,
     EnrollmentStatus.CANCELLED,
-    EnrollmentStatus.REFUNDED,
   ],
-  [EnrollmentStatus.ACTIVE]: [
-    EnrollmentStatus.PAUSED,
-    EnrollmentStatus.COMPLETED,
-    EnrollmentStatus.CANCELLED,
-    EnrollmentStatus.REFUNDED,
-  ],
-  [EnrollmentStatus.PAUSED]: [
-    EnrollmentStatus.ACTIVE,
-    EnrollmentStatus.CANCELLED,
-    EnrollmentStatus.REFUNDED,
-  ],
+  [EnrollmentStatus.ACTIVE]: [EnrollmentStatus.COMPLETED],
   [EnrollmentStatus.COMPLETED]: [],
   [EnrollmentStatus.CANCELLED]: [],
-  [EnrollmentStatus.REFUNDED]: [],
 });
 
 const supportRequest = createTransitionHelpers<SupportRequestStatusValue>({

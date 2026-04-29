@@ -42,9 +42,6 @@
     // PrimeNG (snippets)
     "nicolefloorin.primeng-snippets",
 
-    // Ionic / Capacitor
-    "ionic.ionic",
-
     // REST client / API testing
     "humao.rest-client",
 

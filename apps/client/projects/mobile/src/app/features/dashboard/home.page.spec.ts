@@ -111,7 +111,7 @@ describe('Mobile HomePage', () => {
             enrollmentStatus: 'active',
             cohortId: 'cohort-1',
             cohortName: 'Cohorte printemps',
-            cohortStatus: 'in_progress',
+            cohortStatus: 'active',
             cohortStartDate: '2026-04-20',
           },
         ],

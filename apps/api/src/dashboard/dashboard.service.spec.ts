@@ -67,12 +67,12 @@ describe('DashboardService', () => {
           title: 'Leadership Essentials',
           summary: 'Bases du leadership de service.',
           status: 'published',
-          visibility: 'unlisted',
+          visibility: 'participants',
         },
         cohort: {
           id: 'cohort-1',
           name: 'Cohorte Avril',
-          status: 'in_progress',
+          status: 'active',
           start_date: '2026-04-01',
           end_date: null,
         },
@@ -392,7 +392,7 @@ describe('DashboardService', () => {
             {
               id: 'cohort-1',
               name: 'Cohorte Avril',
-              status: 'in_progress',
+              status: 'active',
               start_date: '2026-04-01',
             },
           ],
