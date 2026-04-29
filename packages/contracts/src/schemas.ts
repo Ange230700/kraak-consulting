@@ -251,12 +251,12 @@ export const UpdateSessionSchema = CreateSessionSchema.partial();
 // ---------------------------------------------------------------------------
 const ResourceThemeValues = Object.values(ResourceTheme) as [
   ResourceThemeValue,
-  ...ResourceThemeValue[]
+  ...ResourceThemeValue[],
 ];
 
 const ResourceAudienceValues = Object.values(ResourceAudience) as [
   ResourceAudienceValue,
-  ...ResourceAudienceValue[]
+  ...ResourceAudienceValue[],
 ];
 
 const _ResourceBaseObject = z.object({
