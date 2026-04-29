@@ -140,3 +140,34 @@ export function getAnnouncementPriorityWeight(
 
   return index;
 }
+
+export interface AnnouncementForSorting {
+  priority: AnnouncementPriorityValue;
+  publishedAt: string | null;
+}
+
+/**
+ * Sort announcements by priority (descending) and then by publishedAt (descending).
+ * Higher priority announcements come first, then by most recent publication date.
+ */
+export function sortAnnouncementsByPriority<T extends AnnouncementForSorting>(
+  announcements: T[],
+): T[] {
+  return [...announcements].sort((a, b) => {
+    const priorityWeightA = getAnnouncementPriorityWeight(a.priority);
+    const priorityWeightB = getAnnouncementPriorityWeight(b.priority);
+
+    if (priorityWeightA !== priorityWeightB) {
+      return priorityWeightA - priorityWeightB;
+    }
+
+    if (!a.publishedAt || !b.publishedAt) {
+      return 0;
+    }
+
+    const dateA = new Date(a.publishedAt).getTime();
+    const dateB = new Date(b.publishedAt).getTime();
+
+    return dateB - dateA;
+  });
+}
