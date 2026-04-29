@@ -21,4 +21,20 @@ describe('HomePage', () => {
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain('potentiel');
   });
+
+  it('should prioritize and size the hero visual assets', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const heroBadgeImage = element.querySelector(
+      'img[alt="Symbole KRAAK Consulting"]',
+    ) as HTMLImageElement | null;
+
+    expect(heroBadgeImage?.getAttribute('fetchpriority')).toBe('high');
+    expect(heroBadgeImage?.getAttribute('loading')).toBe('eager');
+    expect(heroBadgeImage?.getAttribute('decoding')).toBe('async');
+    expect(heroBadgeImage?.getAttribute('width')).toBe('48');
+    expect(heroBadgeImage?.getAttribute('height')).toBe('48');
+  });
 });

@@ -34,4 +34,16 @@ describe('Navbar', () => {
     );
     expect(primaryCta).toBeTruthy();
   });
+
+  it('should provide a named navigation landmark', () => {
+    const fixture = TestBed.createComponent(Navbar);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const navigation = element.querySelector('nav');
+
+    expect(navigation?.getAttribute('aria-label')).toBe(
+      'Navigation principale',
+    );
+  });
 });

@@ -1,3 +1,4 @@
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebAuthService, WEB_AUTH_STORAGE_KEY } from './web-auth.service';
@@ -260,6 +261,22 @@ describe('WebAuthService', () => {
 
       expect(service.isAuthenticated()).toBe(false);
       expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).toBeNull();
+    });
+  });
+
+  describe('Given the service runs during prerender', () => {
+    it('when browser storage is unavailable, then initialisation falls back to an anonymous session state', () => {
+      vi.stubGlobal('localStorage', undefined as unknown as Storage);
+
+      TestBed.configureTestingModule({
+        providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+      });
+
+      const service = TestBed.inject(WebAuthService);
+
+      expect(service.isAuthenticated()).toBe(false);
+      expect(service.currentSession()).toBeNull();
+      expect(service.currentProfile()).toBeNull();
     });
   });
 });
