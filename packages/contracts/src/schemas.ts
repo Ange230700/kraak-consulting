@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  ResourceTheme,
+  ResourceAudience,
+  type ResourceThemeValue,
+  type ResourceAudienceValue,
+} from './enums';
 
 // ---------------------------------------------------------------------------
 // Contact form
@@ -243,21 +249,17 @@ export const UpdateSessionSchema = CreateSessionSchema.partial();
 // ---------------------------------------------------------------------------
 // Resource
 // ---------------------------------------------------------------------------
-const ResourceThemeValues = [
-  'training',
-  'project_management',
-  'immigration',
-  'career',
-] as const;
+const ResourceThemeValues = Object.values(ResourceTheme) as [
+  ResourceThemeValue,
+  ...ResourceThemeValue[]
+];
 
-const ResourceAudienceValues = [
-  'all',
-  'young_professionals_students',
-  'organizations',
-  'international_candidates',
-] as const;
+const ResourceAudienceValues = Object.values(ResourceAudience) as [
+  ResourceAudienceValue,
+  ...ResourceAudienceValue[]
+];
 
-export const ResourceSchema = z.object({
+const _ResourceBaseObject = z.object({
   id: z.string(),
   programId: z.string().nullable(),
   cohortId: z.string().nullable(),
@@ -274,13 +276,32 @@ export const ResourceSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const CreateResourceSchema = ResourceSchema.omit({
+const _resourceParentRequired = (data: {
+  programId: string | null;
+  cohortId: string | null;
+}) => data.programId !== null || data.cohortId !== null;
+
+const _resourceParentRequiredMessage = {
+  message: 'Au moins un parent (programId ou cohortId) est requis',
+};
+
+export const ResourceSchema = _ResourceBaseObject.refine(
+  _resourceParentRequired,
+  _resourceParentRequiredMessage,
+);
+
+const _ResourceCreateBase = _ResourceBaseObject.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const UpdateResourceSchema = CreateResourceSchema.partial();
+export const CreateResourceSchema = _ResourceCreateBase.refine(
+  _resourceParentRequired,
+  _resourceParentRequiredMessage,
+);
+
+export const UpdateResourceSchema = _ResourceCreateBase.partial();
 
 // ---------------------------------------------------------------------------
 // Announcement
