@@ -30,7 +30,7 @@ Les contraintes sont :
 
 ## 2 · Décision
 
-Adopter un schéma initial de **10 tables** avec **15 types enum** PostgreSQL,
+Adopter un schéma initial de **10 tables** avec **17 types enum** PostgreSQL,
 des politiques RLS par table, des index ciblés, et des triggers `updated_at`
 automatiques.
 
@@ -63,7 +63,9 @@ enrollment_status     -- pending, active, paused, completed, cancelled, refunded
 
 -- Types
 location_type         -- online, in_person, hybrid
-resource_type         -- document, video, link, image, other
+resource_type         -- link, file, video, document
+resource_theme        -- training, project_management, immigration, career
+resource_audience     -- all, young_professionals_students, organizations, international_candidates
 audience_type         -- all_participants, program, cohort
 notification_type     -- system, enrollment, session, announcement, support
 notification_channel  -- in_app, email, push
@@ -113,7 +115,7 @@ Fichier : `supabase/migrations/20250718000000_initial_schema.sql`
 Structure de la migration :
 
 1. Extension `uuid-ossp`
-2. 15 types enum
+2. 17 types enum
 3. Fonction utilitaire `update_updated_at()`
 4. 10 tables avec clés primaires UUID, foreign keys, contraintes CHECK
 5. Index sur FK et colonnes de filtrage fréquentes
@@ -150,6 +152,8 @@ app_user ← support_request (1:N, user_id FK)
 - `enrollment` : `UNIQUE (participant_id, program_id)` — un participant ne
   s'inscrit qu'une fois par programme
 - `resource` : `CHECK` — exactement un parent (`program_id` ou `cohort_id`)
+- `resource.resource_theme` : catégorisation métier pour filtrer les contenus
+- `resource.resource_audience` : segment de public visé pour la ressource
 - Toutes les colonnes `id` : UUID v4 générés par `uuid_generate_v4()`
 
 ---

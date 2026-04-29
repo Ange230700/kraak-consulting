@@ -638,6 +638,8 @@ describe('CreateResourceSchema', () => {
     title: 'Guide PDF',
     description: null,
     resourceType: 'document',
+    resourceTheme: 'training',
+    resourceAudience: 'young_professionals_students',
     url: null,
     filePath: '/uploads/guide.pdf',
     status: 'draft',
@@ -651,6 +653,20 @@ describe('CreateResourceSchema', () => {
   it('should reject invalid resourceType', () => {
     expect(
       CreateResourceSchema.safeParse({ ...valid, resourceType: 'audio' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('should reject invalid resourceTheme', () => {
+    expect(
+      CreateResourceSchema.safeParse({ ...valid, resourceTheme: 'finance' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('should reject invalid resourceAudience', () => {
+    expect(
+      CreateResourceSchema.safeParse({ ...valid, resourceAudience: 'parents' })
         .success,
     ).toBe(false);
   });
@@ -674,6 +690,8 @@ describe('ResourceSchema', () => {
         title: 'Guide PDF',
         description: 'Un guide utile',
         resourceType: 'file',
+        resourceTheme: 'project_management',
+        resourceAudience: 'all',
         url: null,
         filePath: '/uploads/guide.pdf',
         status: 'published',

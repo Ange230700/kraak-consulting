@@ -380,6 +380,8 @@ Champs minimums :
 - `title`
 - `description` (optionnel)
 - `resourceType` (`link` | `file` | `video` | `document`)
+- `resourceTheme` (`training` | `project_management` | `immigration` | `career`)
+- `resourceAudience` (`all` | `young_professionals_students` | `organizations` | `international_candidates`)
 - `url` ou `filePath`
 - `status` (`draft` | `published` | `archived`)
 - `publishedAt` (optionnel)

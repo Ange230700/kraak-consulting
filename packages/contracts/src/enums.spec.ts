@@ -8,6 +8,8 @@ import {
   SessionStatus,
   LocationType,
   ResourceType,
+  ResourceTheme,
+  ResourceAudience,
   AudienceType,
   EnrollmentStatus,
   NotificationType,
@@ -116,6 +118,36 @@ describe('Enums', () => {
 
     it('devrait avoir exactement 4 valeurs', () => {
       expect(Object.values(ResourceType)).toHaveLength(4);
+    });
+  });
+
+  describe('ResourceTheme', () => {
+    it('devrait contenir les themes de ressource', () => {
+      expect(ResourceTheme.TRAINING).toBe('training');
+      expect(ResourceTheme.PROJECT_MANAGEMENT).toBe('project_management');
+      expect(ResourceTheme.IMMIGRATION).toBe('immigration');
+      expect(ResourceTheme.CAREER).toBe('career');
+    });
+
+    it('devrait avoir exactement 4 valeurs', () => {
+      expect(Object.values(ResourceTheme)).toHaveLength(4);
+    });
+  });
+
+  describe('ResourceAudience', () => {
+    it('devrait contenir les cibles audience de ressource', () => {
+      expect(ResourceAudience.ALL).toBe('all');
+      expect(ResourceAudience.YOUNG_PROFESSIONALS_STUDENTS).toBe(
+        'young_professionals_students',
+      );
+      expect(ResourceAudience.ORGANIZATIONS).toBe('organizations');
+      expect(ResourceAudience.INTERNATIONAL_CANDIDATES).toBe(
+        'international_candidates',
+      );
+    });
+
+    it('devrait avoir exactement 4 valeurs', () => {
+      expect(Object.values(ResourceAudience)).toHaveLength(4);
     });
   });
 

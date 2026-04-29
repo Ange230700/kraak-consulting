@@ -7,6 +7,8 @@ import type {
   SessionStatusValue,
   LocationTypeValue,
   ResourceTypeValue,
+  ResourceThemeValue,
+  ResourceAudienceValue,
   AudienceTypeValue,
   EnrollmentStatusValue,
   ProgramProgressStatusValue,
@@ -309,6 +311,8 @@ export interface ResourceDto {
   title: string;
   description: string | null;
   resourceType: ResourceTypeValue;
+  resourceTheme: ResourceThemeValue;
+  resourceAudience: ResourceAudienceValue;
   url: string | null;
   filePath: string | null;
   status: PublicationStatusValue;

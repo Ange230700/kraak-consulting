@@ -36,6 +36,17 @@ CREATE TYPE location_type AS ENUM ('online', 'onsite', 'hybrid');
 
 CREATE TYPE resource_type AS ENUM ('link', 'file', 'video', 'document');
 
+CREATE TYPE resource_theme AS ENUM (
+  'training', 'project_management', 'immigration', 'career'
+);
+
+CREATE TYPE resource_audience AS ENUM (
+  'all',
+  'young_professionals_students',
+  'organizations',
+  'international_candidates'
+);
+
 CREATE TYPE audience_type AS ENUM (
   'all_participants', 'program', 'cohort', 'custom'
 );
@@ -157,6 +168,8 @@ CREATE TABLE resource (
   title         text NOT NULL,
   description   text,
   resource_type resource_type NOT NULL,
+  resource_theme resource_theme NOT NULL,
+  resource_audience resource_audience NOT NULL,
   url           text,
   file_path     text,
   status        publication_status NOT NULL DEFAULT 'draft',

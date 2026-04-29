@@ -243,6 +243,20 @@ export const UpdateSessionSchema = CreateSessionSchema.partial();
 // ---------------------------------------------------------------------------
 // Resource
 // ---------------------------------------------------------------------------
+const ResourceThemeValues = [
+  'training',
+  'project_management',
+  'immigration',
+  'career',
+] as const;
+
+const ResourceAudienceValues = [
+  'all',
+  'young_professionals_students',
+  'organizations',
+  'international_candidates',
+] as const;
+
 export const ResourceSchema = z.object({
   id: z.string(),
   programId: z.string().nullable(),
@@ -250,6 +264,8 @@ export const ResourceSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   resourceType: z.enum(['link', 'file', 'video', 'document']),
+  resourceTheme: z.enum(ResourceThemeValues),
+  resourceAudience: z.enum(ResourceAudienceValues),
   url: z.string().nullable(),
   filePath: z.string().nullable(),
   status: z.enum(['draft', 'published', 'archived']),
