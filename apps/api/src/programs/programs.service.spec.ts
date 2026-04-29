@@ -165,6 +165,101 @@ describe('ProgramsService', () => {
     ]);
   });
 
+  // Given plus de 200 sessions visibles sur une cohorte
+  // When listPrograms est appelé
+  // Then le total de progression utilise toutes les pages de sessions
+  it("Given des sessions paginées, When listPrograms est appelé, Then la progression n'est pas tronquée", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          progress_completed_session_ids: ['session-201'],
+          progress_updated_at: '2026-04-29T10:00:00.000Z',
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: {
+            id: 'cohort-1',
+            program_id: 'program-1',
+            name: 'Cohorte Avril',
+            code: 'APR-26',
+            status: 'active',
+            start_date: '2026-04-10',
+            end_date: null,
+            capacity: 25,
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+        },
+      ],
+      error: null,
+    });
+    const firstPage = Array.from({ length: 200 }, (_, index) => ({
+      id: `session-${index + 1}`,
+      cohort_id: 'cohort-1',
+    }));
+    const pagedSessionsByCohortQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      is: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      or: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({ data: firstPage, error: null })
+        .mockResolvedValueOnce({
+          data: [{ id: 'session-201', cohort_id: 'cohort-1' }],
+          error: null,
+        }),
+      limit: jest.fn().mockResolvedValue({ data: [], error: null }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentQuery;
+      }
+
+      if (tableName === 'session') {
+        return pagedSessionsByCohortQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      {
+        enrollmentId: 'enrollment-1',
+        progress: {
+          totalSessions: 201,
+          completedSessions: 1,
+        },
+      },
+    ]);
+
+    expect(pagedSessionsByCohortQuery.range).toHaveBeenCalledTimes(2);
+  });
+
   // Given un token invalide
   // When une liste programmes est demandée
   // Then une erreur d'authentification explicite est renvoyée
