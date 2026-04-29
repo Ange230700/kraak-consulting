@@ -224,12 +224,17 @@ export class ProgramsController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Liste des programmes accessible avec succès',
+    description: 'Liste des programmes accessibles avec succès',
     schema: { type: 'array', items: programListItemSchema },
   })
   @ApiResponse({
     status: 401,
     description: "Session invalide ou header d'autorisation manquant",
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors du chargement des programmes',
     schema: apiErrorSchema,
   })
   async listPrograms(
@@ -265,6 +270,11 @@ export class ProgramsController {
   @ApiResponse({
     status: 404,
     description: 'Programme introuvable ou non accessible pour ce participant',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors du chargement du détail programme',
     schema: apiErrorSchema,
   })
   async getProgramDetail(

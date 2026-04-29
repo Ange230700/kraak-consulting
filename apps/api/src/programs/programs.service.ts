@@ -287,33 +287,67 @@ export class ProgramsService {
     cohortId: string | null,
   ): Promise<ResourceDto[]> {
     const adminClient = this.supabaseService.getClient();
-    const relationScopedQuery = adminClient
-      .from('resource')
-      .select(
-        'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
-      )
-      .eq('status', 'published');
-
-    const query = cohortId
-      ? relationScopedQuery.or(
-          `program_id.eq.${programId},cohort_id.eq.${cohortId}`,
+    const { data: programResources, error: programResourcesError } =
+      await adminClient
+        .from('resource')
+        .select(
+          'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
         )
-      : relationScopedQuery.eq('program_id', programId);
+        .eq('status', 'published')
+        .eq('program_id', programId)
+        .is('cohort_id', null)
+        .order('published_at', { ascending: false })
+        .limit(50);
 
-    const { data, error } = await query
-      .order('published_at', { ascending: false })
-      .limit(50);
-
-    if (error) {
+    if (programResourcesError) {
       throw new InternalServerErrorException({
         success: false,
         message: 'Impossible de charger les ressources du programme.',
       });
     }
 
-    return ((data as ResourceRow[] | null) ?? []).map((row) =>
-      this.mapResource(row),
-    );
+    let cohortResources: ResourceRow[] = [];
+
+    if (cohortId) {
+      const { data, error } = await adminClient
+        .from('resource')
+        .select(
+          'id, program_id, cohort_id, title, description, resource_type, url, file_path, status, published_at, created_at, updated_at',
+        )
+        .eq('status', 'published')
+        .eq('cohort_id', cohortId)
+        .order('published_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        throw new InternalServerErrorException({
+          success: false,
+          message: 'Impossible de charger les ressources du programme.',
+        });
+      }
+
+      cohortResources = (data as ResourceRow[] | null) ?? [];
+    }
+
+    const mergedResources = [
+      ...((programResources as ResourceRow[] | null) ?? []),
+      ...cohortResources,
+    ];
+
+    const uniqueResources = Array.from(
+      new Map(mergedResources.map((row) => [row.id, row])).values(),
+    ).sort((left, right) => {
+      const leftPublishedAt = left.published_at
+        ? new Date(left.published_at).getTime()
+        : 0;
+      const rightPublishedAt = right.published_at
+        ? new Date(right.published_at).getTime()
+        : 0;
+
+      return rightPublishedAt - leftPublishedAt;
+    });
+
+    return uniqueResources.slice(0, 50).map((row) => this.mapResource(row));
   }
 
   private async readAnnouncements(
