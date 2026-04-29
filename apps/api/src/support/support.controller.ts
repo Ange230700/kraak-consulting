@@ -59,7 +59,7 @@ export class SupportController {
       },
     },
   })
-  submit(@Body() body: unknown): ContactSubmissionResultDto {
+  async submit(@Body() body: unknown): Promise<ContactSubmissionResultDto> {
     const validation = validateContactForm(body);
 
     if (!validation.valid) {
