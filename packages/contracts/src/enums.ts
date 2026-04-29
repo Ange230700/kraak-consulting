@@ -52,6 +52,20 @@ export const ResourceType = {
   DOCUMENT: 'document',
 } as const;
 
+export const ResourceTheme = {
+  TRAINING: 'training',
+  PROJECT_MANAGEMENT: 'project_management',
+  IMMIGRATION: 'immigration',
+  CAREER: 'career',
+} as const;
+
+export const ResourceAudience = {
+  ALL: 'all',
+  YOUNG_PROFESSIONALS_STUDENTS: 'young_professionals_students',
+  ORGANIZATIONS: 'organizations',
+  INTERNATIONAL_CANDIDATES: 'international_candidates',
+} as const;
+
 export const AudienceType = {
   ALL_PARTICIPANTS: 'all_participants',
   PROGRAM: 'program',
@@ -114,6 +128,10 @@ export type LocationTypeValue =
   (typeof LocationType)[keyof typeof LocationType];
 export type ResourceTypeValue =
   (typeof ResourceType)[keyof typeof ResourceType];
+export type ResourceThemeValue =
+  (typeof ResourceTheme)[keyof typeof ResourceTheme];
+export type ResourceAudienceValue =
+  (typeof ResourceAudience)[keyof typeof ResourceAudience];
 export type AudienceTypeValue =
   (typeof AudienceType)[keyof typeof AudienceType];
 export type EnrollmentStatusValue =

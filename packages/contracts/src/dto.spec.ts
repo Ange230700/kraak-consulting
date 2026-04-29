@@ -54,6 +54,8 @@ import type {
   SessionStatusValue,
   LocationTypeValue,
   ResourceTypeValue,
+  ResourceThemeValue,
+  ResourceAudienceValue,
   AudienceTypeValue,
   EnrollmentStatusValue,
   ProgramProgressStatusValue,
@@ -451,6 +453,12 @@ describe('ResourceDto', () => {
       .toHaveProperty('resourceType')
       .toEqualTypeOf<ResourceTypeValue>();
     expectTypeOf<ResourceDto>()
+      .toHaveProperty('resourceTheme')
+      .toEqualTypeOf<ResourceThemeValue>();
+    expectTypeOf<ResourceDto>()
+      .toHaveProperty('resourceAudience')
+      .toEqualTypeOf<ResourceAudienceValue>();
+    expectTypeOf<ResourceDto>()
       .toHaveProperty('url')
       .toEqualTypeOf<string | null>();
     expectTypeOf<ResourceDto>()
@@ -471,6 +479,12 @@ describe('ResourceDto', () => {
     expectTypeOf<CreateResourceDto>()
       .toHaveProperty('resourceType')
       .toEqualTypeOf<ResourceTypeValue>();
+    expectTypeOf<CreateResourceDto>()
+      .toHaveProperty('resourceTheme')
+      .toEqualTypeOf<ResourceThemeValue>();
+    expectTypeOf<CreateResourceDto>()
+      .toHaveProperty('resourceAudience')
+      .toEqualTypeOf<ResourceAudienceValue>();
     expectTypeOf<CreateResourceDto>().not.toHaveProperty('id');
     expectTypeOf<CreateResourceDto>().not.toHaveProperty('createdAt');
     expectTypeOf<CreateResourceDto>().not.toHaveProperty('updatedAt');
