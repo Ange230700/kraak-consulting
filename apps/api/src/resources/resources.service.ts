@@ -8,6 +8,11 @@ import type {
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
 
+const RESOURCE_SELECT_FIELDS =
+  'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at';
+
+const RESOURCE_SELECT_FIELDS_WITH_COUNT = `${RESOURCE_SELECT_FIELDS}, count:id.count()`;
+
 type ResourceRow = {
   id: string;
   program_id: string | null;
@@ -47,10 +52,7 @@ export class ResourcesService {
 
     let query = adminClient
       .from('resource')
-      .select(
-        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at, count:id.count()',
-        { count: 'exact' },
-      )
+      .select(RESOURCE_SELECT_FIELDS_WITH_COUNT, { count: 'exact' })
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -91,9 +93,7 @@ export class ResourcesService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('resource')
-      .select(
-        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
-      )
+      .select(RESOURCE_SELECT_FIELDS)
       .eq('id', id)
       .eq('status', 'published')
       .single();
@@ -126,9 +126,7 @@ export class ResourcesService {
     // Fetch program-level resources (cohort_id is null)
     let programQuery = adminClient
       .from('resource')
-      .select(
-        'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
-      )
+      .select(RESOURCE_SELECT_FIELDS)
       .eq('status', 'published')
       .eq('program_id', programId)
       .is('cohort_id', null);
@@ -157,9 +155,7 @@ export class ResourcesService {
     if (cohortId) {
       let cohortQuery = adminClient
         .from('resource')
-        .select(
-          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
-        )
+        .select(RESOURCE_SELECT_FIELDS)
         .eq('status', 'published')
         .eq('program_id', programId)
         .eq('cohort_id', cohortId);

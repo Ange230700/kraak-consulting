@@ -19,6 +19,70 @@ import type {
 } from '@kraak/contracts';
 import { ResourcesService } from './resources.service';
 
+const RESOURCE_THEME_ENUM = [
+  'training',
+  'project_management',
+  'immigration',
+  'career',
+];
+
+const RESOURCE_AUDIENCE_ENUM = [
+  'all',
+  'young_professionals_students',
+  'organizations',
+  'international_candidates',
+];
+
+const RESOURCE_TYPE_ENUM = ['link', 'file', 'video', 'document'];
+const PUBLICATION_STATUS_ENUM = ['draft', 'published', 'archived'];
+
+const RESOURCE_SCHEMA = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    programId: { type: 'string', nullable: true },
+    cohortId: { type: 'string', nullable: true },
+    title: { type: 'string' },
+    description: { type: 'string', nullable: true },
+    resourceType: {
+      type: 'string',
+      enum: RESOURCE_TYPE_ENUM,
+    },
+    resourceTheme: {
+      type: 'string',
+      enum: RESOURCE_THEME_ENUM,
+    },
+    resourceAudience: {
+      type: 'string',
+      enum: RESOURCE_AUDIENCE_ENUM,
+    },
+    url: { type: 'string', nullable: true },
+    filePath: { type: 'string', nullable: true },
+    status: {
+      type: 'string',
+      enum: PUBLICATION_STATUS_ENUM,
+    },
+    publishedAt: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true,
+    },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
+  },
+};
+
+const RESOURCE_LIST_SCHEMA = {
+  type: 'object',
+  properties: {
+    data: {
+      type: 'array',
+      items: RESOURCE_SCHEMA,
+    },
+    total: { type: 'number' },
+  },
+};
+
 @ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
@@ -34,18 +98,13 @@ export class ResourcesController {
   @ApiQuery({
     name: 'resourceTheme',
     required: false,
-    enum: ['training', 'project_management', 'immigration', 'career'],
+    enum: RESOURCE_THEME_ENUM,
     description: 'Filter by resource theme',
   })
   @ApiQuery({
     name: 'resourceAudience',
     required: false,
-    enum: [
-      'all',
-      'young_professionals_students',
-      'organizations',
-      'international_candidates',
-    ],
+    enum: RESOURCE_AUDIENCE_ENUM,
     description: 'Filter by resource audience',
   })
   @ApiQuery({
@@ -68,60 +127,7 @@ export class ResourcesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of published resources',
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              programId: { type: 'string', nullable: true },
-              cohortId: { type: 'string', nullable: true },
-              title: { type: 'string' },
-              description: { type: 'string', nullable: true },
-              resourceType: {
-                type: 'string',
-                enum: ['link', 'file', 'video', 'document'],
-              },
-              resourceTheme: {
-                type: 'string',
-                enum: [
-                  'training',
-                  'project_management',
-                  'immigration',
-                  'career',
-                ],
-              },
-              resourceAudience: {
-                type: 'string',
-                enum: [
-                  'all',
-                  'young_professionals_students',
-                  'organizations',
-                  'international_candidates',
-                ],
-              },
-              url: { type: 'string', nullable: true },
-              filePath: { type: 'string', nullable: true },
-              status: {
-                type: 'string',
-                enum: ['draft', 'published', 'archived'],
-              },
-              publishedAt: {
-                type: 'string',
-                format: 'date-time',
-                nullable: true,
-              },
-              createdAt: { type: 'string', format: 'date-time' },
-              updatedAt: { type: 'string', format: 'date-time' },
-            },
-          },
-        },
-        total: { type: 'number' },
-      },
-    },
+    schema: RESOURCE_LIST_SCHEMA,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -157,39 +163,7 @@ export class ResourcesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Resource details',
-    schema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string' },
-        programId: { type: 'string', nullable: true },
-        cohortId: { type: 'string', nullable: true },
-        title: { type: 'string' },
-        description: { type: 'string', nullable: true },
-        resourceType: {
-          type: 'string',
-          enum: ['link', 'file', 'video', 'document'],
-        },
-        resourceTheme: {
-          type: 'string',
-          enum: ['training', 'project_management', 'immigration', 'career'],
-        },
-        resourceAudience: {
-          type: 'string',
-          enum: [
-            'all',
-            'young_professionals_students',
-            'organizations',
-            'international_candidates',
-          ],
-        },
-        url: { type: 'string', nullable: true },
-        filePath: { type: 'string', nullable: true },
-        status: { type: 'string', enum: ['draft', 'published', 'archived'] },
-        publishedAt: { type: 'string', format: 'date-time', nullable: true },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' },
-      },
-    },
+    schema: RESOURCE_SCHEMA,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
