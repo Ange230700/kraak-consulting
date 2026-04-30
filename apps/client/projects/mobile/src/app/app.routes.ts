@@ -3,6 +3,7 @@ import {
   participantRoleChildGuard,
   participantRoleGuard,
 } from './core/auth/auth.guard';
+import { MOBILE_SHELL_CHILD_ROUTES } from './core/navigation/mobile-shell.config';
 
 export const routes: Routes = [
   {
@@ -28,69 +29,7 @@ export const routes: Routes = [
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
     children: [
-      {
-        path: 'accueil',
-        loadComponent: () => import('./features/dashboard/home.page'),
-      },
-      {
-        path: 'programmes',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./features/programs/program-list.page'),
-          },
-          {
-            path: 'ressources',
-            loadComponent: () =>
-              import('./features/resources/resource-list.page'),
-          },
-          {
-            path: 'ressources/:resourceId',
-            loadComponent: () =>
-              import('./features/resources/resource-detail.page'),
-          },
-          {
-            path: ':programId/sessions/:sessionId',
-            loadComponent: () =>
-              import('./features/programs/session-detail.page'),
-          },
-          {
-            path: ':programId',
-            loadComponent: () =>
-              import('./features/programs/program-detail.page'),
-          },
-        ],
-      },
-      {
-        path: 'annonces',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./features/announcements/announcement-list.page'),
-          },
-          {
-            path: ':announcementId',
-            loadComponent: () =>
-              import('./features/announcements/announcement-detail.page'),
-          },
-        ],
-      },
-      {
-        path: 'support',
-        children: [
-          {
-            path: '',
-            loadComponent: () => import('./features/support/support.page'),
-          },
-          {
-            path: 'demande',
-            loadComponent: () =>
-              import('./features/support/support-request.page'),
-          },
-        ],
-      },
+      ...MOBILE_SHELL_CHILD_ROUTES,
       { path: '', redirectTo: 'accueil', pathMatch: 'full' },
     ],
   },
