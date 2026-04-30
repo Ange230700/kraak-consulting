@@ -2,7 +2,10 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Page programmes - parcours vitrine', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/programmes');
+    await page.goto('/programmes', { waitUntil: 'domcontentloaded' });
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Nos programmes' }),
+    ).toBeVisible();
   });
 
   test('Given la page Programmes, When elle se charge, Then le titre principal et les trois parcours sont visibles', async ({

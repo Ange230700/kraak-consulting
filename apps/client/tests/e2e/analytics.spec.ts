@@ -7,7 +7,10 @@ test.describe('Analytics — gating GA4', () => {
   test(`Given aucun identifiant GA4 configuré, When la page d'accueil se charge, Then aucun loader gtag.js n'est injecté`, async ({
     page,
   }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(
+      page.getByRole('link', { name: 'Nous contacter' }).first(),
+    ).toBeVisible();
 
     await expect(
       page.locator('script[data-kraak-analytics="loader"]'),
@@ -28,7 +31,7 @@ test.describe('Analytics — gating GA4', () => {
       }
     });
 
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.getByRole('link', { name: 'Nous contacter' }).first().waitFor();
 
     expect(gtagRequests).toEqual([]);
