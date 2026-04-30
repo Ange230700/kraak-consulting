@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AppService } from './app.service';
+import { AppService, HealthStatus } from './app.service';
 
 @ApiTags('Health')
 @Controller()
@@ -15,10 +15,15 @@ export class AppController {
     schema: {
       properties: {
         status: { type: 'string', example: 'ok' },
+        service: { type: 'string', example: 'kraak-api' },
+        environment: { type: 'string', example: 'production' },
+        timestamp: { type: 'string', format: 'date-time' },
+        version: { type: 'string', example: '0.0.0' },
+        uptimeSeconds: { type: 'number', example: 42 },
       },
     },
   })
-  getHealth(): { status: string } {
+  getHealth(): HealthStatus {
     return this.appService.getHealth();
   }
 }
