@@ -12,6 +12,7 @@ describe('site-seo', () => {
       'a-propos',
       'services',
       'programmes',
+      'ressources',
       'contact',
     ]);
   });
@@ -28,6 +29,9 @@ describe('site-seo', () => {
     );
     expect(sitemap).toContain(
       '<loc>https://kraak-group.vercel.app/programmes</loc>',
+    );
+    expect(sitemap).toContain(
+      '<loc>https://kraak-group.vercel.app/ressources</loc>',
     );
     expect(sitemap).toContain(
       '<loc>https://kraak-group.vercel.app/contact</loc>',
