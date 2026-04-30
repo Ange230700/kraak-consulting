@@ -267,6 +267,8 @@ Milestone cible : `M6 - QA ready`
 | `QAT-05` | Réaliser campagne regression et corriger blockers             | `P0`     | `QAT-02`, `QAT-03`, `QAT-04`                               |
 | `QAT-06` | Réaliser checks accessibilité/performance pre-pilot           | `P1`     | `QAT-05`, `WEB-05`                                         |
 
+Référence QAT-01 : `docs/specs/qa_coverage_matrix.md`
+
 ---
 
 ## Epic 13 - Deployment (`DEP`)
