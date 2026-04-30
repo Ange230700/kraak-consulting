@@ -22,4 +22,20 @@ test.describe('Dashboard web participant — protection de route', () => {
 
     await expect(page).toHaveURL(/\/$/);
   });
+
+  test(`Given un visiteur non authentifié, When il tente d'accéder à /participant/dashboard, Then la vue privée n'est pas affichée`, async ({
+    page,
+  }) => {
+    await page.goto('/participant/dashboard');
+
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveTitle('KRAAK | Développez votre potentiel');
+    await expect(page.getByRole('banner')).toContainText('KRAAK');
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: /Bonjour .* vue d'ensemble/,
+      }),
+    ).toHaveCount(0);
+  });
 });
