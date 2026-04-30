@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-04-30T12:03:07.884Z",
+  "scope": "QAT-06 pre-pilot web checks",
+  "routes": [
+    {
+      "route": "/",
+      "title": "Accueil",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 1037,
+        "loadMs": 1154,
+        "firstContentfulPaintMs": 836
+      }
+    },
+    {
+      "route": "/services",
+      "title": "Services",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 390,
+        "loadMs": 415,
+        "firstContentfulPaintMs": 360
+      }
+    },
+    {
+      "route": "/programmes",
+      "title": "Programmes",
+      "axe": {
+        "critical": 0,
+        "serious": 1,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            ".rounded-card.p-6.bg-neutral-50:nth-child(1) > .text-4xl.text-accent.font-bold",
+            ".rounded-card.p-6.bg-neutral-50:nth-child(2) > .text-4xl.text-accent.font-bold",
+            ".rounded-card.p-6.bg-neutral-50:nth-child(3) > .text-4xl.text-accent.font-bold"
+          ]
+        }
+      ],
+      "performance": {
+        "domContentLoadedMs": 236,
+        "loadMs": 238,
+        "firstContentfulPaintMs": 232
+      }
+    },
+    {
+      "route": "/contact",
+      "title": "Contact",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 399,
+        "loadMs": 400,
+        "firstContentfulPaintMs": 376
+      }
+    }
+  ]
+}

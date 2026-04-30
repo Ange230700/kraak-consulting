@@ -42,6 +42,7 @@
     "typecheck": "pnpm typecheck:web && pnpm typecheck:mobile && pnpm typecheck:api",
     "test:unit": "pnpm --filter @kraak/client test",
     "test:e2e": "pnpm --filter @kraak/client e2e",
+    "check:prepilot:web": "pnpm --filter @kraak/client e2e:prepilot",
     "format": "prettier --write \"**/*.{ts,html,scss,css,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,html,scss,css,json,md}\"",
     "commit": "git-cz",
