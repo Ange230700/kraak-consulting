@@ -14,6 +14,13 @@ interface DashboardQuickLink {
   readonly href: string;
 }
 
+interface DashboardSummaryIndicator {
+  readonly id: 'programs' | 'sessions' | 'announcements';
+  readonly label: string;
+  readonly value: string;
+  readonly detail: string;
+}
+
 const QUICK_LINKS: readonly DashboardQuickLink[] = [
   {
     label: 'Voir les programmes',
@@ -63,6 +70,42 @@ export default class DashboardPage implements OnInit {
   readonly recentAnnouncements = this.selectFromAggregate(
     'recentAnnouncements',
   );
+  readonly summaryIndicators = computed<readonly DashboardSummaryIndicator[]>(
+    () => [
+      {
+        id: 'programs',
+        label: 'Programmes actifs',
+        value: `${this.programs().length}`,
+        detail: 'Parcours en cours ou récemment activés',
+      },
+      {
+        id: 'sessions',
+        label: 'Sessions à venir',
+        value: `${this.upcomingSessions().length}`,
+        detail: 'Rappels des prochains rendez-vous',
+      },
+      {
+        id: 'announcements',
+        label: 'Annonces récentes',
+        value: `${this.recentAnnouncements().length}`,
+        detail: 'Informations récentes publiées par KRAAK',
+      },
+    ],
+  );
+  readonly totalSummaryItems = computed(
+    () =>
+      this.programs().length +
+      this.upcomingSessions().length +
+      this.recentAnnouncements().length,
+  );
+  readonly nextSessionSummary = computed(() => {
+    const nextSession = this.upcomingSessions()[0];
+    if (!nextSession) {
+      return 'Aucune session planifiée pour le moment.';
+    }
+
+    return `${nextSession.title} - ${this.formatDate(nextSession.startsAt)}`;
+  });
   readonly hasDashboardContent = computed(
     () =>
       this.programs().length > 0 ||
@@ -85,5 +128,19 @@ export default class DashboardPage implements OnInit {
       setData: (value) => this.dashboardState.set(value),
       setError: (value) => this.errorMessage.set(value),
     });
+  }
+
+  private formatDate(rawDate: string): string {
+    const parsedDate = new Date(rawDate);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return rawDate;
+    }
+
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(parsedDate);
   }
 }
