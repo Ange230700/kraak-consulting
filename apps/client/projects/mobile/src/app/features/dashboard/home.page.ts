@@ -15,6 +15,7 @@ import type {
   DashboardProgramSummaryDto,
   DashboardSessionReminderDto,
 } from '@kraak/contracts';
+import { loadDashboardAggregate } from '@kraak/domain';
 import { environment } from '../../../environments/environment';
 import {
   MobileAuthService,
@@ -103,32 +104,21 @@ export default class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    void this.loadDashboardAggregate();
+    void this.loadDashboard();
   }
 
   protected async reloadDashboard(): Promise<void> {
-    await this.loadDashboardAggregate();
+    await this.loadDashboard();
   }
 
-  private async loadDashboardAggregate(): Promise<void> {
-    this.loading.set(true);
-    this.errorMessage.set(null);
-
-    try {
-      const aggregate = await this.dashboardClient.getAggregate();
-      this.dashboardState.set(aggregate);
-    } catch (error) {
-      this.dashboardState.set(null);
-      this.errorMessage.set(this.resolveDashboardErrorMessage(error));
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  private resolveDashboardErrorMessage(error: unknown): string {
-    return resolveAuthErrorMessage(
-      error,
-      'Impossible de charger votre dashboard pour le moment.',
-    );
+  private async loadDashboard(): Promise<void> {
+    await loadDashboardAggregate({
+      getAggregate: () => this.dashboardClient.getAggregate(),
+      setLoading: (value) => this.loading.set(value),
+      setData: (value) => this.dashboardState.set(value),
+      setError: (value) => this.errorMessage.set(value),
+      resolveErrorMessage: (error, fallback) =>
+        resolveAuthErrorMessage(error, fallback),
+    });
   }
 }
