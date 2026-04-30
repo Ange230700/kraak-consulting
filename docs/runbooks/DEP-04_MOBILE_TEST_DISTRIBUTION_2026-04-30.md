@@ -19,7 +19,7 @@ Preparer un circuit de distribution interne pour le pilote mobile KRAAK:
 
 Statut pour DEP-04:
 
-- MOB-04: satisfaite (scripts de build/debug mobiles disponibles et utilises)
+- MOB-04: satisfaite (scripts de build/debug mobiles disponibles et valides)
 - QAT-04: satisfaite (suite E2E coeur participant executee et verte)
 
 ## Portee DEP-04
@@ -94,20 +94,20 @@ pnpm build:mobile
 pnpm build:debug:ios
 ```
 
-1. Ouvrir le projet iOS natif:
+2. Ouvrir le projet iOS natif:
 
 ```bash
 pnpm --filter @kraak/client cap:open:ios
 ```
 
-1. Dans Xcode:
+3. Dans Xcode:
 
 - selectionner le scheme applicatif
 - incrementer `Version` / `Build`
 - `Product > Archive`
 
-1. Uploader l archive vers App Store Connect.
-1. Dans TestFlight:
+4. Uploader l archive vers App Store Connect.
+5. Dans TestFlight:
 
 - assigner le build au groupe `Internal Testing`
 - ajouter les testeurs internes

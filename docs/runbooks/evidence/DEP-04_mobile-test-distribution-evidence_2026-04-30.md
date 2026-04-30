@@ -17,6 +17,7 @@ Resultat:
 - build mobile Angular: OK
 - sync Capacitor Android: OK
 - plugin detecte: `@capacitor/push-notifications@7.0.6`
+- warning connu: budget initial mobile depasse (`703.79 kB` vs budget `600.00 kB`)
 
 Indicateurs observables:
 
@@ -42,7 +43,7 @@ Resultat:
 - tests executes: 2
 - tests passes: 2
 - echec: 0
-- duree: ~30s
+- duree: ~34s
 
 Scenario couvert:
 
