@@ -6,13 +6,18 @@ import {
 
 describe('Web routes', () => {
   const paths = routes.map((r) => r.path);
+  const marketingPaths = ['', 'a-propos', 'services', 'programmes', 'contact'];
 
   it('should define all public marketing routes', () => {
-    expect(paths).toContain('');
-    expect(paths).toContain('a-propos');
-    expect(paths).toContain('services');
-    expect(paths).toContain('programmes');
-    expect(paths).toContain('contact');
+    for (const path of marketingPaths) {
+      expect(paths).toContain(path);
+    }
+  });
+
+  it('should define public auth routes', () => {
+    expect(paths).toContain('connexion');
+    expect(paths).toContain('inscription');
+    expect(paths).toContain('mot-de-passe-oublie');
   });
 
   it('should have a wildcard fallback redirecting to home', () => {
@@ -31,8 +36,8 @@ describe('Web routes', () => {
   });
 
   it('should attach a title and SEO metadata to every public marketing route', () => {
-    const pageRoutes = routes.filter(
-      (r) => r.path !== '**' && r.path !== 'participant',
+    const pageRoutes = routes.filter((route) =>
+      marketingPaths.includes(route.path ?? ''),
     );
 
     for (const route of pageRoutes) {

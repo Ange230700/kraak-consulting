@@ -1,14 +1,15 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Parcours coeur participant - orientation web', () => {
-  test('Given un visiteur non authentifie, When il tente l acces dashboard participant, Then il est redirige vers l accueil et oriente vers des pages publiques', async ({
+  test('Given un visiteur non authentifie, When il tente l acces dashboard participant, Then il est redirige vers la connexion et oriente vers des pages publiques', async ({
     page,
   }) => {
     await page.goto('/participant/dashboard');
 
-    await expect(page).toHaveURL(/\/$/);
-    await expect(page).toHaveTitle('KRAAK | Développez votre potentiel');
-    await expect(page.getByRole('banner')).toContainText('KRAAK');
+    await expect(page).toHaveURL(/\/connexion$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Connexion' }),
+    ).toBeVisible();
 
     await page.goto('/programmes');
     await expect(

@@ -15,7 +15,7 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/connexion']);
 };
 
 export const authChildGuard: CanActivateChildFn = authGuard;
@@ -26,14 +26,14 @@ function canAccessRole(
   ...roles: UserRoleValue[]
 ): true | ReturnType<Router['createUrlTree']> {
   if (!authService.isAuthenticated()) {
-    return router.createUrlTree(['/']);
+    return router.createUrlTree(['/connexion']);
   }
 
   if (authService.hasRole(...roles)) {
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/connexion']);
 }
 
 export const participantRoleGuard: CanActivateFn = () => {
