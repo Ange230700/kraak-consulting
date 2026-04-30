@@ -29,7 +29,7 @@ type RouteReport = {
     id: string;
     impact: string | null;
     description: string;
-    nodes: Array<string>;
+    nodes: Array<Array<string>>;
   }>;
   performance: PerfSnapshot;
 };
@@ -40,8 +40,6 @@ const criticalRoutes: RouteCheck[] = [
   { route: '/programmes', title: 'Programmes' },
   { route: '/contact', title: 'Contact' },
 ];
-
-const results: RouteReport[] = [];
 
 const parseImpactSummary = (
   violations: Array<{ impact: string | null }>,
@@ -81,6 +79,8 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
   }) => {
+    const results: RouteReport[] = [];
+
     for (const routeCheck of criticalRoutes) {
       await page.goto(routeCheck.route, { waitUntil: 'load' });
 
@@ -92,7 +92,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
         id: violation.id,
         impact: violation.impact,
         description: violation.help,
-        nodes: violation.nodes.map((node) => node.target.join(' ')),
+        nodes: violation.nodes.map((node) => node.target),
       }));
 
       const perf = await page.evaluate<PerfSnapshot>(() => {
@@ -115,6 +115,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
 
       expect(perf.domContentLoadedMs).toBeGreaterThan(0);
       expect(perf.loadMs).toBeGreaterThan(0);
+      expect(axeSummary.critical + axeSummary.serious).toBe(0);
 
       results.push({
         route: routeCheck.route,

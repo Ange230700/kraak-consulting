@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T12:03:07.884Z",
+  "generatedAt": "2026-04-30T12:17:09.793Z",
   "scope": "QAT-06 pre-pilot web checks",
   "routes": [
     {
@@ -13,9 +13,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 1037,
-        "loadMs": 1154,
-        "firstContentfulPaintMs": 836
+        "domContentLoadedMs": 739,
+        "loadMs": 1252,
+        "firstContentfulPaintMs": 576
       }
     },
     {
@@ -29,9 +29,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 390,
-        "loadMs": 415,
-        "firstContentfulPaintMs": 360
+        "domContentLoadedMs": 451,
+        "loadMs": 490,
+        "firstContentfulPaintMs": 408
       }
     },
     {
@@ -39,26 +39,15 @@
       "title": "Programmes",
       "axe": {
         "critical": 0,
-        "serious": 1,
+        "serious": 0,
         "moderate": 0,
         "minor": 0
       },
-      "axeViolations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "description": "Elements must meet minimum color contrast ratio thresholds",
-          "nodes": [
-            ".rounded-card.p-6.bg-neutral-50:nth-child(1) > .text-4xl.text-accent.font-bold",
-            ".rounded-card.p-6.bg-neutral-50:nth-child(2) > .text-4xl.text-accent.font-bold",
-            ".rounded-card.p-6.bg-neutral-50:nth-child(3) > .text-4xl.text-accent.font-bold"
-          ]
-        }
-      ],
+      "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 236,
-        "loadMs": 238,
-        "firstContentfulPaintMs": 232
+        "domContentLoadedMs": 222,
+        "loadMs": 223,
+        "firstContentfulPaintMs": 212
       }
     },
     {
@@ -72,9 +61,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 399,
-        "loadMs": 400,
-        "firstContentfulPaintMs": 376
+        "domContentLoadedMs": 428,
+        "loadMs": 429,
+        "firstContentfulPaintMs": 408
       }
     }
   ]
