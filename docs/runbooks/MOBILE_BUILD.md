@@ -202,3 +202,12 @@ Le job `android-debug` du pipeline CI (`.github/workflows/ci.yml`) :
 - publie l'APK comme artefact GitHub Actions (`debug-apk`, retention 14 jours)
 
 Le debug APK est accessible dans l'onglet Actions du depot GitHub, dans le resume de chaque run CI reussi.
+
+---
+
+## Distribution interne de test (DEP-04)
+
+Pour la procedure complete de distribution mobile interne (APK Android et TestFlight iOS), voir :
+
+- `docs/runbooks/DEP-04_MOBILE_TEST_DISTRIBUTION_2026-04-30.md`
+- `docs/runbooks/evidence/DEP-04_mobile-test-distribution-evidence_2026-04-30.md`
