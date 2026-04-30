@@ -147,7 +147,18 @@ describe('Web Participant Dashboard Page', () => {
       expect(text).toContain('Annonces récentes');
       expect(text).toContain('3 éléments clés disponibles aujourd’hui.');
       expect(text).toContain('Prochaine session');
-      expect(text).toContain('Atelier CV');
+      expect(text).toContain('Atelier CV - ');
+    });
+
+    it('Given no upcoming sessions, When the page loads, Then it renders the no-session summary in next step', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(fixture, Promise.resolve(EMPTY_AGGREGATE));
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+      expect(text).toContain('Prochaine session');
+      expect(text).toContain('Aucune session planifiée pour le moment.');
     });
 
     it('Given an empty dashboard aggregate, When the page loads, Then it renders the global empty state', async () => {

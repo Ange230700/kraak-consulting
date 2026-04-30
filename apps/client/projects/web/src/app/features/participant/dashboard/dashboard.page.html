@@ -65,14 +65,18 @@
         </div>
         @if (!loading() && !errorMessage()) {
           <p class="text-sm font-medium text-slate-600">
-            {{ totalSummaryItems() }} éléments clés disponibles aujourd’hui.
+            {{ totalSummaryLabel() }}
           </p>
         }
       </div>
 
-      @if (loading() || errorMessage()) {
+      @if (loading()) {
         <p class="mt-4 text-sm leading-6 text-slate-600">
           La synthèse se met à jour avec vos dernières informations.
+        </p>
+      } @else if (errorMessage()) {
+        <p class="mt-4 text-sm leading-6 text-red-700">
+          La synthèse n'a pas pu être chargée pour le moment.
         </p>
       } @else {
         <div class="mt-5 grid gap-4 lg:grid-cols-[1.65fr_minmax(16rem,1fr)]">

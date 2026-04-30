@@ -98,6 +98,13 @@ export default class DashboardPage implements OnInit {
       this.upcomingSessions().length +
       this.recentAnnouncements().length,
   );
+  readonly totalSummaryLabel = computed(() => {
+    const itemCount = this.totalSummaryItems();
+
+    return itemCount === 1
+      ? '1 élément clé disponible aujourd’hui.'
+      : `${itemCount} éléments clés disponibles aujourd’hui.`;
+  });
   readonly nextSessionSummary = computed(() => {
     const nextSession = this.upcomingSessions()[0];
     if (!nextSession) {
@@ -140,7 +147,6 @@ export default class DashboardPage implements OnInit {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
-      timeZone: 'UTC',
     }).format(parsedDate);
   }
 }
