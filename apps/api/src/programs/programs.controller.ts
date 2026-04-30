@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   UnauthorizedException,
@@ -352,6 +354,7 @@ export class ProgramsController {
   }
 
   @Post(':programId/progress')
+  @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Marquer la progression minimale d’une session du programme',
