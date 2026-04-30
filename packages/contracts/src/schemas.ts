@@ -4,7 +4,7 @@ import {
   ResourceAudience,
   type ResourceThemeValue,
   type ResourceAudienceValue,
-} from './enums';
+} from './enums.js';
 
 // ---------------------------------------------------------------------------
 // Contact form

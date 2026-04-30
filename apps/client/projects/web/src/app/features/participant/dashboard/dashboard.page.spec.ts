@@ -196,6 +196,40 @@ describe('Web Participant Dashboard Page', () => {
         (fixture.nativeElement as HTMLElement).textContent ?? '';
       expect(refreshedText).toContain('Atelier CV');
     });
+
+    it('Given a native Error rejection, When the page loads, Then it surfaces the error message', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(fixture, Promise.reject(new Error('boom')));
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain('boom');
+    });
+
+    it('Given an ApiError without a message body, When the page loads, Then it shows the generic fallback message', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(
+        fixture,
+        Promise.reject(new ApiError(500, 'Server Error', {})),
+      );
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain(
+        'Impossible de charger votre dashboard pour le moment.',
+      );
+    });
+
+    it('Given a non-Error rejection value, When the page loads, Then it shows the generic fallback message', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(fixture, Promise.reject('oops'));
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain(
+        'Impossible de charger votre dashboard pour le moment.',
+      );
+    });
   });
 
   describe('Route Protection', () => {

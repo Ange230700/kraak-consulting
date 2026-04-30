@@ -177,6 +177,9 @@ importers:
       '@kraak/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@kraak/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@kraak/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens

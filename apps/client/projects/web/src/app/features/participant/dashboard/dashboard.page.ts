@@ -1,13 +1,9 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ApiError, createApiClient, type ApiClient } from '@kraak/api-client';
-import type {
-  DashboardAggregateDto,
-  DashboardAnnouncementSummaryDto,
-  DashboardProgramSummaryDto,
-  DashboardSessionReminderDto,
-} from '@kraak/contracts';
+import { createApiClient, type ApiClient } from '@kraak/api-client';
+import type { DashboardAggregateDto } from '@kraak/contracts';
+import { loadDashboardAggregate } from '@kraak/domain';
 
 import { environment } from '../../../../environments/environment';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
@@ -56,15 +52,17 @@ export default class DashboardPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
 
-  readonly programs = computed<readonly DashboardProgramSummaryDto[]>(
-    () => this.dashboardState()?.programs ?? [],
+  private selectFromAggregate<K extends keyof DashboardAggregateDto>(key: K) {
+    return computed(
+      () => (this.dashboardState()?.[key] ?? []) as DashboardAggregateDto[K],
+    );
+  }
+
+  readonly programs = this.selectFromAggregate('programs');
+  readonly upcomingSessions = this.selectFromAggregate('upcomingSessions');
+  readonly recentAnnouncements = this.selectFromAggregate(
+    'recentAnnouncements',
   );
-  readonly upcomingSessions = computed<readonly DashboardSessionReminderDto[]>(
-    () => this.dashboardState()?.upcomingSessions ?? [],
-  );
-  readonly recentAnnouncements = computed<
-    readonly DashboardAnnouncementSummaryDto[]
-  >(() => this.dashboardState()?.recentAnnouncements ?? []);
   readonly hasDashboardContent = computed(
     () =>
       this.programs().length > 0 ||
@@ -73,43 +71,19 @@ export default class DashboardPage implements OnInit {
   );
 
   ngOnInit(): void {
-    void this.loadDashboardAggregate();
+    void this.loadDashboard();
   }
 
   protected async reloadDashboard(): Promise<void> {
-    await this.loadDashboardAggregate();
+    await this.loadDashboard();
   }
 
-  private async loadDashboardAggregate(): Promise<void> {
-    this.loading.set(true);
-    this.errorMessage.set(null);
-
-    try {
-      const aggregate = await this.dashboardClient.getAggregate();
-      this.dashboardState.set(aggregate);
-    } catch (error) {
-      this.dashboardState.set(null);
-      this.errorMessage.set(this.resolveDashboardErrorMessage(error));
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  private resolveDashboardErrorMessage(error: unknown): string {
-    const fallback = 'Impossible de charger votre dashboard pour le moment.';
-
-    if (error instanceof ApiError) {
-      const body = error.body as { message?: unknown } | null | undefined;
-      if (body && typeof body.message === 'string' && body.message.trim()) {
-        return body.message;
-      }
-      return fallback;
-    }
-
-    if (error instanceof Error && error.message.trim()) {
-      return error.message;
-    }
-
-    return fallback;
+  private async loadDashboard(): Promise<void> {
+    await loadDashboardAggregate({
+      getAggregate: () => this.dashboardClient.getAggregate(),
+      setLoading: (value) => this.loading.set(value),
+      setData: (value) => this.dashboardState.set(value),
+      setError: (value) => this.errorMessage.set(value),
+    });
   }
 }

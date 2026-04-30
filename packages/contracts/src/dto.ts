@@ -17,7 +17,7 @@ import type {
   NotificationChannelValue,
   SupportRequestStatusValue,
   SupportCategoryValue,
-} from './enums';
+} from './enums.js';
 
 // ---------------------------------------------------------------------------
 // ContactForm
