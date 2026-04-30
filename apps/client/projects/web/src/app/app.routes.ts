@@ -51,6 +51,10 @@ export const routes: Routes = [
     () => import('./features/programs/programs.page'),
   ),
   buildMarketingRoute(
+    'ressources',
+    () => import('./features/resources/resources.page'),
+  ),
+  buildMarketingRoute(
     'contact',
     () => import('./features/contact/contact.page'),
   ),
