@@ -28,17 +28,16 @@ dans le monorepo. Ne jamais commiter de secrets dans le dépôt.
 
 Variables lues par `process.env` dans le code NestJS :
 
-| Variable                   | Description                                  | Exemple local                                 |
-| -------------------------- | -------------------------------------------- | --------------------------------------------- |
-| `NODE_ENV`                 | Environnement d'exécution                    | `local`                                       |
-| `PORT`                     | Port d'écoute de l'API                       | `3000`                                        |
-| `SUPABASE_URL`             | URL du projet Supabase                       | `http://127.0.0.1:54321`                      |
-| `SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase pour les flux auth API | —                                             |
-| `SUPABASE_SECRET_KEY`      | Clé service role (secret)                    | —                                             |
-| `RESEND_API_KEY`           | Clé API Resend (secret)                      | —                                             |
-| `CONTACT_FROM_EMAIL`       | Expéditeur des emails transactionnels        | `onboarding@resend.dev`                       |
-| `CONTACT_TO_EMAIL`         | Email destinataire des formulaires           | `contact@kraak.org`                           |
-| `CORS_ALLOWED_ORIGINS`     | Origines autorisées (virgule)                | `http://localhost:4200,http://localhost:4300` |
+- `NODE_ENV` : environnement d'exécution. Exemple local : `local`
+- `PORT` : port d'écoute de l'API. Exemple local : `3000`
+- `SUPABASE_URL` : URL du projet Supabase. Exemple local : `http://127.0.0.1:54321`
+- `SUPABASE_PUBLISHABLE_KEY` : clé publique Supabase pour les flux auth API
+- `SUPABASE_SECRET_KEY` : clé service role secrète
+- `RESEND_API_KEY` : clé API Resend secrète
+- `CONTACT_FROM_EMAIL` : expéditeur des emails transactionnels. Exemple : `onboarding@resend.dev`
+- `CONTACT_TO_EMAIL` : email destinataire des formulaires. Exemple : `contact@kraak.org`
+- `CORS_ALLOWED_ORIGINS` : origines autorisées séparées par des virgules. Exemple : `http://localhost:4200,http://localhost:4300`
+- `APP_VERSION` : identifiant de release exposé par `/health`. Exemple : `pilot-2026-04-30`
 
 Ordre de chargement côté API :
 
@@ -149,14 +148,20 @@ Variables attendues :
 | `VERCEL_PROJECT_ID` | ID projet Vercel                |
 | `RENDER_API_KEY`    | Clé API Render                  |
 
+URLs de supervision versionnées dans le dépôt :
+
+- `.github/workflows/observability.yml` vérifie la home publique du site.
+- `.github/workflows/observability.yml` vérifie l'API publique via `/health`.
+
 Ces variables sont injectées via GitHub Secrets et ne sont pas nécessaires
 en développement local.
 
 ## Déploiement — Render (`render.yaml`)
 
 Le fichier `render.yaml` déclare les variables d'environnement de production
-pour l'API : `NODE_ENV`, `PORT`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`,
-`RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`.
+pour l'API : `NODE_ENV`, `PORT`, `APP_VERSION`, `SUPABASE_URL`,
+`SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`,
+`CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`.
 
 ## Convention de gestion
 
