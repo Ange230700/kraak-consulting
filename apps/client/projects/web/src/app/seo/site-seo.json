@@ -60,6 +60,21 @@
     }
   },
   {
+    "path": "ressources",
+    "title": "Ressources | Guides, outils et repères pratiques | KRAAK",
+    "description": "Accédez à une base de ressources utiles pour préparer votre parcours, structurer vos projets et avancer avec méthode.",
+    "openGraph": {
+      "title": "Ressources KRAAK",
+      "description": "Guides, outils et repères pratiques pour la formation, la gestion de projet et l'international.",
+      "imagePath": "/open-graph/kraak-share-card.svg",
+      "imageAlt": "Carte de partage KRAAK avec son slogan et ses domaines d'accompagnement."
+    },
+    "sitemap": {
+      "changeFrequency": "weekly",
+      "priority": 0.75
+    }
+  },
+  {
     "path": "contact",
     "title": "Contact | Demande de consultation et accompagnement | KRAAK",
     "description": "Contactez KRAAK pour une demande d'accompagnement, d'information ou de consultation en formation, gestion de projet ou immigration.",

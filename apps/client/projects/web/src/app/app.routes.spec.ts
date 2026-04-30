@@ -6,7 +6,14 @@ import {
 
 describe('Web routes', () => {
   const paths = routes.map((r) => r.path);
-  const marketingPaths = ['', 'a-propos', 'services', 'programmes', 'contact'];
+  const marketingPaths = [
+    '',
+    'a-propos',
+    'services',
+    'programmes',
+    'ressources',
+    'contact',
+  ];
 
   it('should define all public marketing routes', () => {
     for (const path of marketingPaths) {
