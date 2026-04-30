@@ -14,6 +14,7 @@ import {
   megaphoneOutline,
   helpCircleOutline,
 } from 'ionicons/icons';
+import { MOBILE_PRIMARY_TABS } from '../../core/navigation/mobile-shell.config';
 
 interface MobileTabLink {
   readonly label: string;
@@ -43,30 +44,5 @@ addIcons({
   templateUrl: './tabs.layout.html',
 })
 export class TabsLayout {
-  protected readonly tabs: MobileTabLink[] = [
-    {
-      label: 'Accueil',
-      tab: 'accueil',
-      href: '/tabs/accueil',
-      icon: 'home-outline',
-    },
-    {
-      label: 'Programmes',
-      tab: 'programmes',
-      href: '/tabs/programmes',
-      icon: 'book-outline',
-    },
-    {
-      label: 'Annonces',
-      tab: 'annonces',
-      href: '/tabs/annonces',
-      icon: 'megaphone-outline',
-    },
-    {
-      label: 'Support',
-      tab: 'support',
-      href: '/tabs/support',
-      icon: 'help-circle-outline',
-    },
-  ];
+  protected readonly tabs: MobileTabLink[] = MOBILE_PRIMARY_TABS;
 }

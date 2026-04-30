@@ -4,6 +4,7 @@ import {
   participantRoleChildGuard,
   participantRoleGuard,
 } from './core/auth/auth.guard';
+import { MOBILE_SHELL_SECTIONS } from './core/navigation/mobile-shell.config';
 
 describe('Mobile routes', () => {
   const topPaths = routes.map((r) => r.path);
@@ -37,12 +38,10 @@ describe('Mobile routes', () => {
   it('Given the participant shell, when the tabs route loads, then it exposes only the four frozen MVP tabs', () => {
     const tabsRoute = routes.find((r) => r.path === 'tabs');
     const childPaths = tabsRoute?.children?.map((c) => c.path);
+    const sectionPaths = MOBILE_SHELL_SECTIONS.map((section) => section.path);
 
     expect(childPaths).not.toContain('ressources');
-    expect(childPaths).toContain('accueil');
-    expect(childPaths).toContain('programmes');
-    expect(childPaths).toContain('annonces');
-    expect(childPaths).toContain('support');
+    expect(childPaths).toEqual([...sectionPaths, '']);
   });
 
   it('Given the Programmes tab, when nested content opens, then all detail routes stay inside the stack', () => {

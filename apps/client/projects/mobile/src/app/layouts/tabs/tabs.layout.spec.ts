@@ -10,6 +10,7 @@ import {
   IonTabs,
 } from '@ionic/angular/standalone';
 import { describe, it, beforeEach, expect } from 'vitest';
+import { MOBILE_PRIMARY_TABS } from '../../core/navigation/mobile-shell.config';
 import { TabsLayout } from './tabs.layout';
 
 describe('TabsLayout', () => {
@@ -52,7 +53,7 @@ describe('TabsLayout', () => {
     const fixture = TestBed.createComponent(TabsLayout);
     fixture.detectChanges();
     const buttons = fixture.nativeElement.querySelectorAll('ion-tab-button');
-    expect(buttons.length).toBe(4);
+    expect(buttons.length).toBe(MOBILE_PRIMARY_TABS.length);
   });
 
   it('should display correct tab labels', () => {
@@ -71,11 +72,6 @@ describe('TabsLayout', () => {
     const fixture = TestBed.createComponent(TabsLayout);
     const hrefs = fixture.componentInstance['tabs'].map((tab) => tab.href);
 
-    expect(hrefs).toEqual([
-      '/tabs/accueil',
-      '/tabs/programmes',
-      '/tabs/annonces',
-      '/tabs/support',
-    ]);
+    expect(hrefs).toEqual(MOBILE_PRIMARY_TABS.map((tab) => tab.href));
   });
 });
