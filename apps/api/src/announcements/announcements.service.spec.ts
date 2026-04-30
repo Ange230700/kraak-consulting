@@ -176,6 +176,93 @@ describe('AnnouncementsService', () => {
 
       await expect(service.listAnnouncements(accessToken)).rejects.toThrow();
     });
+
+    it('Given: invalid pagination values, When: listAnnouncements called, Then: fallback pagination defaults are applied', async () => {
+      const accessToken = 'valid-token';
+      const participantId = 'participant-001';
+      const userId = 'user-001';
+
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: {
+          user: { id: userId },
+        },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: participantId },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: 'ann-001',
+              title: 'A1',
+              body: 'Body 1',
+              priority: 'high',
+              audience_type: 'all_participants',
+              program_id: null,
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T10:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T10:00:00Z',
+              updated_at: '2026-04-20T10:00:00Z',
+            },
+            {
+              id: 'ann-002',
+              title: 'A2',
+              body: 'Body 2',
+              priority: 'normal',
+              audience_type: 'all_participants',
+              program_id: null,
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T09:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T09:00:00Z',
+              updated_at: '2026-04-20T09:00:00Z',
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      const enrollmentsQuery = createAsyncQuery(
+        {
+          data: [],
+          error: null,
+        },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') {
+            return participantQuery;
+          }
+          if (table === 'announcement') {
+            return announcementsQuery;
+          }
+          if (table === 'enrollment') {
+            return enrollmentsQuery;
+          }
+        }),
+      });
+
+      const result = await service.listAnnouncements(
+        accessToken,
+        Number.NaN,
+        -5,
+      );
+
+      expect(result.total).toBe(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe('ann-001');
+    });
   });
 
   describe('getAnnouncementById', () => {

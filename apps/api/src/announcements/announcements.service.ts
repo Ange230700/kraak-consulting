@@ -52,8 +52,8 @@ export class AnnouncementsService {
     limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
     const adminClient = this.supabaseService.getClient();
-    const paginationLimit = Math.min(limit ?? 20, 100);
-    const paginationPage = Math.max(page ?? 1, 1);
+    const paginationLimit = this.resolvePaginationLimit(limit);
+    const paginationPage = this.resolvePaginationPage(page);
 
     // Get participant ID from access token
     const participantId = await this.resolveParticipantId(accessToken);
@@ -105,6 +105,26 @@ export class AnnouncementsService {
       data: paginated,
       total: sorted.length,
     };
+  }
+
+  private resolvePaginationLimit(limit?: number): number {
+    const parsedLimit = Number(limit);
+
+    if (!Number.isFinite(parsedLimit) || parsedLimit < 1) {
+      return 20;
+    }
+
+    return Math.min(Math.floor(parsedLimit), 100);
+  }
+
+  private resolvePaginationPage(page?: number): number {
+    const parsedPage = Number(page);
+
+    if (!Number.isFinite(parsedPage) || parsedPage < 1) {
+      return 1;
+    }
+
+    return Math.floor(parsedPage);
   }
 
   /**
