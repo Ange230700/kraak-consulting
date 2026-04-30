@@ -27,6 +27,21 @@ const buildMarketingRoute = (
 export const routes: Routes = [
   buildMarketingRoute('', () => import('./features/home/home.page')),
   buildMarketingRoute('a-propos', () => import('./features/about/about.page')),
+  {
+    path: 'connexion',
+    title: 'Connexion | KRAAK',
+    loadComponent: () => import('./features/auth/sign-in.page'),
+  },
+  {
+    path: 'inscription',
+    title: 'Inscription | KRAAK',
+    loadComponent: () => import('./features/auth/sign-up.page'),
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    title: 'Mot de passe oublié | KRAAK',
+    loadComponent: () => import('./features/auth/password-reset.page'),
+  },
   buildMarketingRoute(
     'services',
     () => import('./features/services/services.page'),

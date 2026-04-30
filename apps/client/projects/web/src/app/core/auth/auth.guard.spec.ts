@@ -67,13 +67,13 @@ describe('authGuard (web)', () => {
       });
     });
 
-    it('when the guard is triggered, then the user is redirected to the home page', () => {
+    it('when the guard is triggered, then the user is redirected to the sign-in page', () => {
       const result = TestBed.runInInjectionContext(() =>
         authGuard(buildRoute(), buildState()),
       );
 
       const router = TestBed.inject(Router);
-      expect(result).toEqual(router.createUrlTree(['/']));
+      expect(result).toEqual(router.createUrlTree(['/connexion']));
     });
   });
 });
@@ -114,13 +114,13 @@ describe('authChildGuard (web)', () => {
       });
     });
 
-    it('when the child guard is triggered, then the user is redirected to the home page', () => {
+    it('when the child guard is triggered, then the user is redirected to the sign-in page', () => {
       const result = TestBed.runInInjectionContext(() =>
         authChildGuard(buildRoute(), buildState()),
       );
 
       const router = TestBed.inject(Router);
-      expect(result).toEqual(router.createUrlTree(['/']));
+      expect(result).toEqual(router.createUrlTree(['/connexion']));
     });
   });
 });
@@ -161,13 +161,13 @@ describe('participantRoleGuard (web)', () => {
       });
     });
 
-    it('when the participant role guard is triggered, then the user is redirected to home', () => {
+    it('when the participant role guard is triggered, then the user is redirected to sign-in', () => {
       const result = TestBed.runInInjectionContext(() =>
         participantRoleGuard(buildRoute(), buildState()),
       );
 
       const router = TestBed.inject(Router);
-      expect(result).toEqual(router.createUrlTree(['/']));
+      expect(result).toEqual(router.createUrlTree(['/connexion']));
     });
   });
 });
@@ -228,13 +228,13 @@ describe('adminRoleGuard (web)', () => {
       });
     });
 
-    it('when the admin role guard is triggered, then the user is redirected to home', () => {
+    it('when the admin role guard is triggered, then the user is redirected to sign-in', () => {
       const result = TestBed.runInInjectionContext(() =>
         adminRoleGuard(buildRoute(), buildState()),
       );
 
       const router = TestBed.inject(Router);
-      expect(result).toEqual(router.createUrlTree(['/']));
+      expect(result).toEqual(router.createUrlTree(['/connexion']));
     });
   });
 });
