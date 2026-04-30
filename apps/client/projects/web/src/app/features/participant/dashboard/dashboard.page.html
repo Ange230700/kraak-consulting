@@ -24,13 +24,16 @@
         </div>
       </div>
 
-      <aside class="rounded-3xl bg-slate-950 p-5 text-white shadow-sm">
+      <aside
+        class="rounded-3xl bg-slate-950 p-5 text-white shadow-sm"
+        aria-labelledby="dashboard-attention-title"
+      >
         <p
           class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
         >
           Point d'attention
         </p>
-        <h2 class="mt-3 text-2xl font-semibold">
+        <h2 id="dashboard-attention-title" class="mt-3 text-2xl font-semibold">
           Rester aligné sur la prochaine étape
         </h2>
         <p class="mt-3 text-sm leading-6 text-slate-200">
@@ -38,6 +41,86 @@
           sessions et annonces récentes sont consolidés ici.
         </p>
       </aside>
+    </section>
+
+    <section
+      class="mt-8 rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-slate-200/80 sm:p-7"
+      aria-labelledby="dashboard-synthesis-title"
+    >
+      <div
+        class="flex flex-col gap-3 border-b border-slate-200/80 pb-4 sm:flex-row sm:items-end sm:justify-between"
+      >
+        <div>
+          <p
+            class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase"
+          >
+            Accueil participant
+          </p>
+          <h2
+            id="dashboard-synthesis-title"
+            class="mt-2 text-2xl font-semibold text-slate-950"
+          >
+            Synthèse utile
+          </h2>
+        </div>
+        @if (!loading() && !errorMessage()) {
+          <p class="text-sm font-medium text-slate-600">
+            {{ totalSummaryLabel() }}
+          </p>
+        }
+      </div>
+
+      @if (loading()) {
+        <p class="mt-4 text-sm leading-6 text-slate-600">
+          La synthèse se met à jour avec vos dernières informations.
+        </p>
+      } @else if (errorMessage()) {
+        <p class="mt-4 text-sm leading-6 text-red-700">
+          La synthèse n'a pas pu être chargée pour le moment.
+        </p>
+      } @else {
+        <div class="mt-5 grid gap-4 lg:grid-cols-[1.65fr_minmax(16rem,1fr)]">
+          <div class="grid gap-3 sm:grid-cols-3">
+            @for (indicator of summaryIndicators(); track indicator.id) {
+              <article
+                class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/80"
+              >
+                <p
+                  class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase"
+                >
+                  {{ indicator.label }}
+                </p>
+                <p class="mt-2 text-3xl font-semibold text-slate-950">
+                  {{ indicator.value }}
+                </p>
+                <p class="mt-2 text-xs leading-5 text-slate-600">
+                  {{ indicator.detail }}
+                </p>
+              </article>
+            }
+          </div>
+
+          <aside
+            class="rounded-2xl bg-slate-950 p-4 text-white ring-1 ring-slate-900"
+            aria-labelledby="dashboard-next-step-title"
+          >
+            <p
+              class="text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase"
+            >
+              Prochaine étape
+            </p>
+            <h3
+              id="dashboard-next-step-title"
+              class="mt-2 text-lg font-semibold"
+            >
+              Prochaine session
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-slate-200">
+              {{ nextSessionSummary() }}
+            </p>
+          </aside>
+        </div>
+      }
     </section>
 
     <section
@@ -61,13 +144,12 @@
           </h2>
         </div>
         @if (loading()) {
-          <span
+          <output
             class="text-sm font-medium tracking-[0.18em] text-slate-500 uppercase"
-            role="status"
             aria-live="polite"
           >
             Chargement…
-          </span>
+          </output>
         }
       </div>
 
