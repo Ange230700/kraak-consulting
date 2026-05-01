@@ -32,8 +32,7 @@ COPY tsconfig.base.json ./
 COPY apps/api/ apps/api/
 COPY packages/contracts/ packages/contracts/
 COPY packages/domain/ packages/domain/
-RUN pnpm --filter @kraak/contracts --filter @kraak/domain build && \
-    pnpm --filter @kraak/api build && \
+RUN pnpm --filter @kraak/api... build && \
     pnpm deploy --filter @kraak/api --prod --legacy /prod/api
 
 # --- Étape 3 : image de production minimaliste ---
