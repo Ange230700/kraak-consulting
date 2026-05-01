@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 interface NavLink {
   label: string;
@@ -9,7 +9,7 @@ interface NavLink {
 @Component({
   selector: 'kraak-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterModule],
   templateUrl: './navbar.html',
 })
 export class Navbar {
