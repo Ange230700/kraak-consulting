@@ -9,7 +9,7 @@ test.describe('Analytics — gating GA4', () => {
   }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(
-      page.getByRole('link', { name: 'Nous contacter' }).first(),
+      page.getByRole('link', { name: 'Espace participant' }).first(),
     ).toBeVisible();
 
     await expect(
@@ -32,7 +32,10 @@ test.describe('Analytics — gating GA4', () => {
     });
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.getByRole('link', { name: 'Nous contacter' }).first().waitFor();
+    await page
+      .getByRole('link', { name: 'Espace participant' })
+      .first()
+      .waitFor();
 
     expect(gtagRequests).toEqual([]);
   });

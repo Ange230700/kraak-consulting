@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
 const localWebBaseUrl = `http://localhost:${localWebPort}`;
+const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -32,7 +33,7 @@ export default defineConfig({
   webServer: {
     command: `npx ng serve web --port ${localWebPort}`,
     url: localWebBaseUrl,
-    reuseExistingServer: !process.env['CI'],
+    reuseExistingServer,
     timeout: 120_000,
   },
 });

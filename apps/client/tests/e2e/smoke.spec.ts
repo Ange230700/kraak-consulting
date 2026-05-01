@@ -23,11 +23,11 @@ test.describe(`Page d'accueil — smoke tests`, () => {
     ).toBeVisible();
   });
 
-  test(`Given la page d'accueil, When elle se charge, Then l'appel à l'action "Nous contacter" est visible`, async ({
+  test(`Given la page d'accueil, When elle se charge, Then l'appel à l'action "Espace participant" est visible`, async ({
     page,
   }) => {
     await expect(
-      page.getByRole('link', { name: 'Nous contacter' }).first(),
+      page.getByRole('link', { name: 'Espace participant' }).first(),
     ).toBeVisible();
   });
 
