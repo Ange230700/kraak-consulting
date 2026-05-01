@@ -1,52 +1,60 @@
 <!-- Hero -->
 <section
-  class="bg-brand-navy text-brand-white relative overflow-hidden py-20 text-center lg:py-28"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
 >
   <div
     aria-hidden="true"
-    class="bg-brand-cyan/30 absolute -top-10 right-[-6rem] h-44 w-44 rounded-full blur-3xl"
+    class="via-brand-navy/45 to-brand-navy/72 absolute inset-0 bg-linear-to-b from-transparent"
   ></div>
-  <div
-    aria-hidden="true"
-    class="bg-brand-gold/22 absolute bottom-[-4rem] left-[-2rem] h-40 w-40 rounded-full blur-3xl"
-  ></div>
-  <div
-    class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 lg:px-6"
-  >
-    <div
-      class="border-brand-white/14 bg-brand-white/8 mb-8 inline-flex max-w-xl items-center gap-4 rounded-full border px-4 py-3 text-left shadow-[0_18px_45px_rgb(0_0_0_/_16%)] backdrop-blur"
+
+  <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center">
+    <p
+      class="text-brand-white/78 mb-4 text-xs font-semibold tracking-[0.3em] uppercase"
     >
-      <img
-        src="/kraak_consulting_symbol_96w.png"
-        alt="Symbole KRAAK Consulting"
-        width="48"
-        height="48"
-        fetchpriority="high"
-        loading="eager"
-        decoding="async"
-        class="bg-brand-white/96 h-12 w-12 rounded-full p-2"
-      />
-      <div>
-        <p
-          class="text-brand-white/70 text-xs font-semibold tracking-[0.34em] uppercase"
-        >
-          KRAAK Consulting
-        </p>
-        <p class="text-brand-white/82 text-sm">
-          Leadership, mobilit&eacute; et impact concret pour les talents et les
-          organisations.
-        </p>
-      </div>
-    </div>
-    <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
-      D&eacute;veloppez votre potentiel.<br />Construisez votre impact.
-    </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-neutral-300">
-      KRAAK accompagne les jeunes professionnels et les organisations vers des
-      opportunit&eacute;s concr&egrave;tes, locales et internationales.
+      KRAAK Consulting
     </p>
+
+    <h1 class="text-brand-white text-4xl leading-tight font-bold md:text-5xl">
+      R&eacute;v&eacute;lez le meilleur<br />de votre trajectoire
+    </h1>
+    <p
+      class="text-brand-cyan mt-3 text-4xl leading-tight font-bold md:text-5xl"
+    >
+      professionnelle
+    </p>
+
+    <p
+      class="text-brand-white/85 mx-auto mt-6 max-w-2xl text-lg leading-relaxed"
+    >
+      Acc&eacute;l&eacute;rez vos projets de carri&egrave;re, de formation et de
+      mobilit&eacute; internationale avec un accompagnement concret, humain et
+      strat&eacute;gique.
+    </p>
+
     <div
-      class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+      class="mt-8 flex w-full max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row"
+    >
+      <input
+        pInputText
+        type="email"
+        class="border-brand-white/70 bg-brand-white/8 text-brand-white placeholder:text-brand-white/62 h-12 w-full rounded-full border px-5 sm:w-96"
+        placeholder="Votre adresse email"
+        aria-label="Votre adresse email"
+        [(ngModel)]="email"
+      />
+      <button
+        pButton
+        type="button"
+        class="h-12 w-full rounded-full sm:w-auto"
+        aria-label="Recevoir les opportunit&eacute;s KRAAK"
+      >
+        Recevoir les opportunit&eacute;s
+      </button>
+    </div>
+
+    <div
+      class="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row"
     >
       <a
         pButton

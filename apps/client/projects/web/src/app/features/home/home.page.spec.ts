@@ -19,22 +19,31 @@ describe('HomePage', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('potentiel');
+    expect(heading?.textContent).toContain('trajectoire');
   });
 
-  it('should prioritize and size the hero visual assets', () => {
+  it('should render a newsletter email input in the hero', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    const heroBadgeImage = element.querySelector(
-      'img[alt="Symbole KRAAK Consulting"]',
-    ) as HTMLImageElement | null;
+    const emailInput = element.querySelector(
+      'input[type="email"][aria-label="Votre adresse email"]',
+    ) as HTMLInputElement | null;
 
-    expect(heroBadgeImage?.getAttribute('fetchpriority')).toBe('high');
-    expect(heroBadgeImage?.getAttribute('loading')).toBe('eager');
-    expect(heroBadgeImage?.getAttribute('decoding')).toBe('async');
-    expect(heroBadgeImage?.getAttribute('width')).toBe('48');
-    expect(heroBadgeImage?.getAttribute('height')).toBe('48');
+    expect(emailInput).toBeTruthy();
+    expect(emailInput?.placeholder).toBe('Votre adresse email');
+  });
+
+  it('should expose a dark hero background style object', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    const component = fixture.componentInstance;
+
+    expect(component.heroBackgroundStyle.background).toContain(
+      'bw-hero-bg.jpg',
+    );
+    expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
+      'normal, multiply, normal',
+    );
   });
 });
