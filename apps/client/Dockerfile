@@ -62,9 +62,9 @@ ENV NODE_ENV=production \
     HOST=0.0.0.0
 
 # Runtime SSR (express) + sortie Angular
-COPY --from=build --chown=angular:nodejs /prod/web/node_modules ./node_modules
-COPY --from=build --chown=angular:nodejs /prod/web/package.json ./package.json
-COPY --from=build --chown=angular:nodejs /app/apps/client/dist ./dist
+COPY --from=build --chown=angular:nodejs --chmod=0555 /prod/web/node_modules ./node_modules
+COPY --from=build --chown=angular:nodejs --chmod=0444 /prod/web/package.json ./package.json
+COPY --from=build --chown=angular:nodejs --chmod=0555 /app/apps/client/dist ./dist
 
 USER angular
 EXPOSE 4000

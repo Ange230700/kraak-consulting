@@ -57,7 +57,7 @@ ENV NODE_ENV=production \
 # Copies avec ownership correct dès la création
 COPY --from=build --chown=nestjs:nodejs --chmod=0555 /prod/api/node_modules ./node_modules
 COPY --from=build --chown=nestjs:nodejs --chmod=0444 /prod/api/package.json ./package.json
-COPY --from=build --chown=nestjs:nodejs /app/apps/api/dist ./dist
+COPY --from=build --chown=nestjs:nodejs --chmod=0555 /app/apps/api/dist ./dist
 
 USER nestjs
 EXPOSE 3000
