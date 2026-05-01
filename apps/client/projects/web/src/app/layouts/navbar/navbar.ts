@@ -14,7 +14,6 @@ interface NavLink {
 })
 export class Navbar {
   protected readonly links: NavLink[] = [
-    { label: 'Accueil', path: '/' },
     { label: 'À propos', path: '/a-propos' },
     { label: 'Services', path: '/services' },
     { label: 'Programmes', path: '/programmes' },
