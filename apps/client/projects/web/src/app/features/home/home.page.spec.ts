@@ -19,7 +19,7 @@ describe('HomePage', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('trajectoire');
+    expect(heading?.textContent).toContain('potentiel');
   });
 
   it('should render a newsletter email input in the hero', () => {
@@ -43,7 +43,7 @@ describe('HomePage', () => {
       'bw-hero-bg.jpg',
     );
     expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
-      'normal, multiply, normal',
+      'normal, multiply, lighten, normal',
     );
   });
 });
