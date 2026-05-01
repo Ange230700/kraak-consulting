@@ -130,11 +130,7 @@
         class="kraak-primary-button"
         [disabled]="submitting()"
       >
-        {{
-          submitting()
-            ? 'Cr&eacute;ation en cours...'
-            : 'Cr&eacute;er un compte'
-        }}
+        {{ submitting() ? 'Création en cours...' : 'Créer un compte' }}
       </ion-button>
     </form>
 
