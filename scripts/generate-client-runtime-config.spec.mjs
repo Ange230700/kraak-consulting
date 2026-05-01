@@ -149,7 +149,7 @@ runTest(
         [
           'export CLIENT_API_BASE_URL="https://quoted.example"',
           "export SUPABASE_URL='https://quoted.supabase.co'",
-          'SUPABASE_PUBLISHABLE_KEY="line-1\\nline-2"',
+          String.raw`SUPABASE_PUBLISHABLE_KEY="line-1\nline-2"`,
           '',
         ].join('\n'),
       );
