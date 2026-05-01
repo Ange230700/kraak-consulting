@@ -37,15 +37,18 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 
 export const seoPages = siteSeoDefinitions as SeoPageDefinition[];
 
+const SLASH_CHAR_CODE = '/'.charCodeAt(0);
+
 const trimLeadingSlashes = (str: string): string => {
   let start = 0;
-  while (start < str.length && str.charCodeAt(start) === 47) start++;
+  while (start < str.length && str.charCodeAt(start) === SLASH_CHAR_CODE)
+    start++;
   return start === 0 ? str : str.slice(start);
 };
 
 const trimTrailingSlashes = (str: string): string => {
   let end = str.length;
-  while (end > 0 && str.charCodeAt(end - 1) === 47) end--;
+  while (end > 0 && str.charCodeAt(end - 1) === SLASH_CHAR_CODE) end--;
   return end === str.length ? str : str.slice(0, end);
 };
 
