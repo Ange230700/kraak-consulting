@@ -117,6 +117,7 @@ tard, il devra être justifié dans une décision complémentaire.
 
 - framework : **Angular**
 - couche UI : **PrimeNG**
+- bibliothèque d'icônes : **PrimeIcons** (`primeicons`) — les emojis **ne doivent pas** être utilisés comme icônes UI ; utiliser exclusivement les classes `pi pi-*` (voir <https://primeng.org/icons>)
 - usage : site vitrine/marketing KRAAK
 - priorité : SEO, clarté éditoriale, conversion, accessibilité de base,
   performance de base
