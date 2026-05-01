@@ -54,10 +54,10 @@ ENV NODE_ENV=production \
   HOST=0.0.0.0 \
   NODE_OPTIONS="--enable-source-maps"
 
-# Copies avec ownership correct dès la création
-COPY --from=build --chown=nestjs:nodejs --chmod=0555 /prod/api/node_modules ./node_modules
-COPY --from=build --chown=nestjs:nodejs --chmod=0444 /prod/api/package.json ./package.json
-COPY --from=build --chown=nestjs:nodejs --chmod=0555 /app/apps/api/dist ./dist
+# Copies immuables: propriétaire root + permissions non-écriture
+COPY --from=build --chown=root:root --chmod=0555 /prod/api/node_modules ./node_modules
+COPY --from=build --chown=root:root --chmod=0444 /prod/api/package.json ./package.json
+COPY --from=build --chown=root:root --chmod=0555 /app/apps/api/dist ./dist
 
 USER nestjs
 EXPOSE 3000

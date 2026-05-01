@@ -40,9 +40,7 @@ function isBenignResizeObserverError(error: unknown): boolean {
 
     const errorLike = current as Record<string, unknown>;
 
-    pending.push(errorLike['message']);
-    pending.push(errorLike['cause']);
-    pending.push(errorLike['error']);
+    pending.push(errorLike['message'], errorLike['cause'], errorLike['error']);
   }
 
   return false;

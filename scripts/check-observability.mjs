@@ -5,7 +5,7 @@ const DEFAULT_TIMEOUT_MS = 10_000;
 function trimTrailingSlash(value) {
   let end = value.length;
 
-  while (end > 0 && value.charCodeAt(end - 1) === 47) {
+  while (end > 0 && value.codePointAt(end - 1) === 47) {
     end -= 1;
   }
 
@@ -64,7 +64,7 @@ export async function checkTarget(target, options = {}) {
 
   if (!contentType.toLowerCase().includes(target.expectedContentType)) {
     throw new Error(
-      `${target.name} a retourne le content-type \"${contentType || 'inconnu'}\" au lieu de \"${target.expectedContentType}\".`,
+      `${target.name} a retourne le content-type "${contentType || 'inconnu'}" au lieu de "${target.expectedContentType}".`,
     );
   }
 
@@ -106,8 +106,7 @@ function formatSummary(results) {
       const details = [`${result.name}: ${result.status}`, result.url];
 
       if (result.name === 'api-health' && result.payload) {
-        details.push(`env=${result.payload.environment}`);
-        details.push(`version=${result.payload.version}`);
+        details.push(`env=${result.payload.environment}`, `version=${result.payload.version}`);
       }
 
       return `- ${details.join(' | ')}`;
@@ -125,8 +124,10 @@ async function main() {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
+  try {
+    await main();
+  } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
-  });
+  }
 }

@@ -50,7 +50,7 @@ export class AnalyticsService {
   }
 
   isEnabled(): boolean {
-    return Boolean(this.measurementId && this.measurementId.trim());
+    return Boolean(this.measurementId?.trim());
   }
 
   trackEvent(name: string, params: Record<string, unknown> = {}): void {
@@ -109,7 +109,7 @@ export class AnalyticsService {
     const ownerWindow = this.document.defaultView as
       | (Window & GtagWindow)
       | null;
-    return (ownerWindow ?? (globalThis as GtagWindow)) as GtagWindow;
+    return (ownerWindow ?? globalThis) as GtagWindow;
   }
 }
 
