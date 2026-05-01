@@ -1,5 +1,5 @@
 <kraak-page-shell
-  eyebrow="Références"
+  eyebrow="R&eacute;f&eacute;rences"
   title="Ressources"
   description="Recherchez et filtrez les contenus utiles selon votre besoin."
   backHref="/tabs/programmes"
@@ -28,14 +28,14 @@
           <span
             class="text-xs font-semibold tracking-wide text-neutral-700 uppercase"
           >
-            Thème
+            Th&egrave;me
           </span>
           <select
             [value]="selectedTheme()"
             (change)="onThemeChange($event)"
             class="focus:border-brand-blue rounded-xl border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none"
           >
-            <option value="">Tous les thèmes</option>
+            <option value="">Tous les th&egrave;mes</option>
             @for (option of resourceThemeOptions; track option.value) {
               <option [value]="option.value">{{ option.label }}</option>
             }
@@ -75,7 +75,7 @@
           (click)="reloadResources()"
           (keydown.enter)="reloadResources()"
         >
-          Réessayer
+          R&eacute;essayer
         </ion-button>
       </article>
     } @else if (loading()) {
@@ -92,7 +92,7 @@
         class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
       >
         <p class="text-sm leading-6 text-neutral-700">
-          Aucune ressource ne correspond à vos critères.
+          Aucune ressource ne correspond &agrave; vos crit&egrave;res.
         </p>
       </article>
     } @else {
@@ -135,7 +135,7 @@
             expand="block"
             class="kraak-primary-button"
           >
-            Voir le détail
+            Voir le d&eacute;tail
           </ion-button>
         </article>
       }

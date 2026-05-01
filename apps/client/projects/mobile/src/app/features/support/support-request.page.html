@@ -1,7 +1,7 @@
 <kraak-page-shell
   eyebrow="Support"
   title="Nouvelle demande"
-  description="Décrivez votre besoin et notre équipe vous répondra dans les plus brefs délais."
+  description="D&eacute;crivez votre besoin et notre &eacute;quipe vous r&eacute;pondra dans les plus brefs d&eacute;lais."
   backHref="/tabs/support"
 >
   <section
@@ -31,7 +31,7 @@
         />
         @if (form.controls.name.touched && form.controls.name.invalid) {
           <p class="text-sm leading-6 text-rose-700">
-            Le nom est requis (2 à 80 caractères).
+            Le nom est requis (2 &agrave; 80 caract&egrave;res).
           </p>
         }
       </div>
@@ -59,13 +59,13 @@
         }
       </div>
 
-      <!-- Catégorie -->
+      <!-- Cat&eacute;gorie -->
       <div class="flex flex-col gap-2">
         <label
           for="support-category"
           class="text-sm font-semibold text-neutral-900"
         >
-          Catégorie
+          Cat&eacute;gorie
         </label>
         <select
           id="support-category"
@@ -90,12 +90,12 @@
           id="support-subject"
           type="text"
           formControlName="subject"
-          placeholder="Résumez votre demande en quelques mots"
+          placeholder="R&eacute;sumez votre demande en quelques mots"
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
         @if (form.controls.subject.touched && form.controls.subject.invalid) {
           <p class="text-sm leading-6 text-rose-700">
-            L'objet est requis (3 à 120 caractères).
+            L'objet est requis (3 &agrave; 120 caract&egrave;res).
           </p>
         }
       </div>
@@ -112,12 +112,12 @@
           id="support-message"
           formControlName="message"
           rows="5"
-          placeholder="Décrivez votre demande en détail…"
+          placeholder="D&eacute;crivez votre demande en d&eacute;tail&hellip;"
           class="rounded-card border-brand-blue/12 focus:border-brand-blue resize-none border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         ></textarea>
         @if (form.controls.message.touched && form.controls.message.invalid) {
           <p class="text-sm leading-6 text-rose-700">
-            Le message est requis (10 à 2 000 caractères).
+            Le message est requis (10 &agrave; 2 000 caract&egrave;res).
           </p>
         }
       </div>

@@ -1,7 +1,7 @@
 <kraak-page-shell
   eyebrow="Flux participant"
   title="Annonces"
-  description="Gardez un oeil sur les informations à relayer rapidement."
+  description="Gardez un oeil sur les informations &agrave; relayer rapidement."
 >
   @if (errorMessage()) {
     <section
@@ -62,7 +62,8 @@
             <span
               class="rounded-full bg-neutral-100 px-2 py-1 text-xs font-semibold text-neutral-700"
             >
-              Publié le {{ announcement.publishedAt | date: 'mediumDate' }}
+              Publi&eacute; le
+              {{ announcement.publishedAt | date: 'mediumDate' }}
             </span>
           }
         </div>
@@ -81,7 +82,7 @@
           expand="block"
           class="kraak-primary-button"
         >
-          Lire le détail
+          Lire le d&eacute;tail
         </ion-button>
       </section>
     }

@@ -1,12 +1,12 @@
-<!-- En-tête de la page contact -->
+<!-- En-t&ecirc;te de la page contact -->
 <section class="bg-brand-navy text-brand-white py-20 text-center">
   <div class="mx-auto max-w-4xl px-4 lg:px-6">
     <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
       Contactez-nous
     </h1>
     <p class="mx-auto mt-6 max-w-2xl text-lg text-neutral-300">
-      Une question, un projet, une demande d'accompagnement ? Écrivez-nous et
-      nous vous répondrons rapidement.
+      Une question, un projet, une demande d'accompagnement ?
+      &Eacute;crivez-nous et nous vous r&eacute;pondrons rapidement.
     </p>
   </div>
 </section>
@@ -17,7 +17,7 @@
     @if (success()) {
       <p-message
         severity="success"
-        text="Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
+        text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
         [closable]="false"
         styleClass="w-full mb-6"
       />
@@ -63,7 +63,7 @@
               @if (name.errors?.['required']) {
                 Le nom est requis.
               } @else if (name.errors?.['minlength']) {
-                Le nom doit contenir au moins 2 caractères.
+                Le nom doit contenir au moins 2 caract&egrave;res.
               }
             </p>
           }
@@ -137,7 +137,7 @@
             pTextarea
             id="message"
             rows="6"
-            placeholder="Décrivez votre besoin ou votre question..."
+            placeholder="D&eacute;crivez votre besoin ou votre question..."
             formControlName="message"
             class="w-full"
             [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
@@ -156,7 +156,7 @@
               @if (message.errors?.['required']) {
                 Le message est requis.
               } @else if (message.errors?.['minlength']) {
-                Le message doit contenir au moins 10 caractères.
+                Le message doit contenir au moins 10 caract&egrave;res.
               }
             </p>
           }
@@ -179,10 +179,12 @@
   </div>
 </section>
 
-<!-- Coordonnées -->
+<!-- Coordonn&eacute;es -->
 <section class="bg-neutral-50 py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos coordonnées</h2>
+    <h2 class="text-center text-3xl font-bold lg:text-4xl">
+      Nos coordonn&eacute;es
+    </h2>
     <div class="mt-10 grid gap-8 md:grid-cols-3">
       <div class="text-center">
         <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
@@ -198,14 +200,14 @@
         <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">Zone d'intervention</h3>
         <p class="mt-1 text-neutral-700">
-          Afrique &amp; international — accompagnement à distance et en
-          présentiel.
+          Afrique &amp; international &mdash; accompagnement &agrave; distance
+          et en pr&eacute;sentiel.
         </p>
       </div>
       <div class="text-center">
         <i class="pi pi-link text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">Réseaux sociaux</h3>
-        <p class="mt-1 text-neutral-700">Liens à venir</p>
+        <h3 class="mt-2 text-lg font-bold">R&eacute;seaux sociaux</h3>
+        <p class="mt-1 text-neutral-700">Liens &agrave; venir</p>
       </div>
     </div>
   </div>
@@ -213,6 +215,6 @@
 
 <!-- CTA -->
 <kraak-cta-banner
-  heading="Besoin d'un accompagnement personnalisé ?"
-  body="Notre équipe est à votre écoute pour répondre à toutes vos questions et vous guider dans votre projet."
+  heading="Besoin d'un accompagnement personnalis&eacute; ?"
+  body="Notre &eacute;quipe est &agrave; votre &eacute;coute pour r&eacute;pondre &agrave; toutes vos questions et vous guider dans votre projet."
 />
