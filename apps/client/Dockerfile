@@ -12,10 +12,10 @@
 # --- Base commune : Node 24 Alpine + pnpm ---
 FROM node:24-alpine AS base
 ENV PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH" \
-    CI=true
+  PATH="/pnpm:$PATH" \
+  CI=true
 RUN apk update && apk upgrade --no-cache && \
-    corepack enable && corepack prepare pnpm@10.23.0 --activate
+  corepack enable && corepack prepare pnpm@10.23.0 --activate
 WORKDIR /app
 
 # --- Étape 1 : installation des dépendances ---
@@ -28,7 +28,7 @@ COPY packages/contracts/package.json packages/contracts/
 COPY packages/domain/package.json packages/domain/
 COPY packages/tokens/package.json packages/tokens/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --ignore-scripts
+  pnpm install --frozen-lockfile --ignore-scripts
 
 # --- Étape 2 : build Angular (SSR + browser) ---
 FROM deps AS build
@@ -42,29 +42,29 @@ COPY packages/contracts/ packages/contracts/
 COPY packages/domain/ packages/domain/
 COPY packages/tokens/ packages/tokens/
 RUN pnpm --filter @kraak/client build:web && \
-    pnpm deploy --filter @kraak/client --prod --legacy /prod/web
+  pnpm deploy --filter @kraak/client --prod --legacy /prod/web
 
 # --- Étape 3 : image de production (serveur SSR) ---
 FROM node:24-alpine AS production
 
 LABEL org.opencontainers.image.title="kraak-web" \
-      org.opencontainers.image.description="Site KRAAK (Angular SSR)" \
-      org.opencontainers.image.source="https://github.com/Ange230700/kraak-group"
+  org.opencontainers.image.description="Site KRAAK (Angular SSR)" \
+  org.opencontainers.image.source="https://github.com/Ange230700/kraak-group"
 
 RUN apk update && apk upgrade --no-cache && \
-    apk add --no-cache tini wget && \
-    addgroup -g 1001 -S nodejs && \
-    adduser -S angular -u 1001 -G nodejs
+  apk add --no-cache tini wget && \
+  addgroup -g 1001 -S nodejs && \
+  adduser -S angular -u 1001 -G nodejs
 
 WORKDIR /app
 ENV NODE_ENV=production \
-    PORT=4000 \
-    HOST=0.0.0.0
+  PORT=4000 \
+  HOST=0.0.0.0
 
-# Runtime SSR (express) + sortie Angular
-COPY --from=build --chown=angular:nodejs --chmod=0555 /prod/web/node_modules ./node_modules
-COPY --from=build --chown=angular:nodejs --chmod=0444 /prod/web/package.json ./package.json
-COPY --from=build --chown=angular:nodejs --chmod=0555 /app/apps/client/dist ./dist
+# Runtime SSR (express) + sortie Angular: propriétaire root + permissions non-écriture
+COPY --from=build --chown=root:root --chmod=0555 /prod/web/node_modules ./node_modules
+COPY --from=build --chown=root:root --chmod=0444 /prod/web/package.json ./package.json
+COPY --from=build --chown=root:root --chmod=0555 /app/apps/client/dist ./dist
 
 USER angular
 EXPOSE 4000
