@@ -31,12 +31,14 @@
       parcours professionnel ambitieux, localement et &agrave; l'international.
     </p>
 
-    <div
+    <form
       class="mt-8 flex w-full max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row"
+      (ngSubmit)="onHeroNotifySubmit()"
     >
       <input
         pInputText
         type="email"
+        name="heroEmail"
         class="border-brand-white/70 bg-brand-white/8 text-brand-white placeholder:text-brand-white/62 h-12 w-full rounded-full border px-5 sm:w-96"
         placeholder="Votre adresse email"
         aria-label="Votre adresse email"
@@ -44,13 +46,13 @@
       />
       <button
         pButton
-        type="button"
+        type="submit"
         class="h-12 w-full rounded-full sm:w-auto"
         aria-label="M'avertir des opportunit&eacute;s"
       >
         M'avertir
       </button>
-    </div>
+    </form>
 
     <div
       class="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row"

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
+import { vi } from 'vitest';
 import HomePage from './home.page';
 
 describe('HomePage', () => {
@@ -45,5 +46,23 @@ describe('HomePage', () => {
     expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
       'normal, multiply, lighten, normal',
     );
+  });
+
+  it('should navigate to contact when the hero notify form is submitted', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    const component = fixture.componentInstance;
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.email = 'contact@example.com';
+    component.onHeroNotifySubmit();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/contact'], {
+      queryParams: {
+        email: 'contact@example.com',
+        source: 'home_hero_notify',
+      },
+      queryParamsHandling: 'merge',
+    });
   });
 });
