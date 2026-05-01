@@ -48,7 +48,44 @@ function isObjectPayload(body: unknown): body is Record<string, unknown> {
 }
 
 function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!email) {
+    return false;
+  }
+
+  for (const character of email) {
+    if (character.trim().length === 0) {
+      return false;
+    }
+  }
+
+  const atIndex = email.indexOf('@');
+
+  if (atIndex <= 0 || atIndex !== email.lastIndexOf('@')) {
+    return false;
+  }
+
+  const localPart = email.slice(0, atIndex);
+  const domainPart = email.slice(atIndex + 1);
+
+  if (!localPart || !domainPart) {
+    return false;
+  }
+
+  if (domainPart.startsWith('.') || domainPart.endsWith('.')) {
+    return false;
+  }
+
+  const dotIndex = domainPart.indexOf('.');
+
+  if (dotIndex <= 0 || dotIndex === domainPart.length - 1) {
+    return false;
+  }
+
+  if (domainPart.includes('..')) {
+    return false;
+  }
+
+  return true;
 }
 
 function isValidRedirectTarget(value: string): boolean {

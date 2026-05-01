@@ -24,7 +24,7 @@ const defaultSiteUrl = 'https://kraak-group.vercel.app';
 const trimTrailingSlashes = (value) => {
   let end = value.length;
 
-  while (end > 0 && value.codePointAt(end - 1) === 47) {
+  while (end > 0 && value.charCodeAt(end - 1) === 47) {
     end -= 1;
   }
 
@@ -38,11 +38,11 @@ const trimSlashes = (value) => {
   let start = 0;
   let end = value.length;
 
-  while (start < end && value.codePointAt(start) === 47) {
+  while (start < end && value.charCodeAt(start) === 47) {
     start += 1;
   }
 
-  while (end > start && value.codePointAt(end - 1) === 47) {
+  while (end > start && value.charCodeAt(end - 1) === 47) {
     end -= 1;
   }
 
