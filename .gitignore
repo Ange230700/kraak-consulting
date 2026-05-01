@@ -69,3 +69,6 @@ tmp/
 apps/client/projects/mobile/public/assets/runtime-config.js
 apps/client/projects/web/public/assets/runtime-config.js
 apps/client/android/
+
+.vercel
+.env*.local
