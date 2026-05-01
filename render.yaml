@@ -3,7 +3,7 @@
 
 services:
   - type: web
-    name: kraak-api
+    name: kraak-api-staging
     runtime: docker
     dockerfilePath: apps/api/Dockerfile
     dockerContext: .
