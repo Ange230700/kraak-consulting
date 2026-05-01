@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 import PasswordResetPage from './password-reset.page';
@@ -22,6 +23,7 @@ describe('Web PasswordResetPage', () => {
       providers: [
         provideRouter([]),
         { provide: WebAuthService, useValue: authService },
+        MessageService,
       ],
     }).compileComponents();
   });

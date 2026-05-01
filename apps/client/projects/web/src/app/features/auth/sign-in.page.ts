@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Message } from 'primeng/message';
 import {
   WebAuthService,
   resolveAuthErrorMessage,
@@ -19,7 +20,7 @@ interface SignInFormModel {
 @Component({
   selector: 'kraak-web-sign-in-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Message],
   templateUrl: './sign-in.page.html',
 })
 export default class SignInPage {

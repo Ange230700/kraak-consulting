@@ -6,6 +6,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { Message } from 'primeng/message';
 import {
   WebAuthService,
   resolveAuthErrorMessage,
@@ -21,11 +23,12 @@ interface SignUpFormModel {
 @Component({
   selector: 'kraak-web-sign-up-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Message],
   templateUrl: './sign-up.page.html',
 })
 export default class SignUpPage {
   private readonly authService = inject(WebAuthService);
+  private readonly messageService = inject(MessageService);
   private readonly router = inject(Router);
 
   readonly form = new FormGroup<SignUpFormModel>({
@@ -80,6 +83,12 @@ export default class SignUpPage {
       }
 
       this.successMessage.set(response.message);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Inscription',
+        detail: response.message,
+        life: 6000,
+      });
     } catch (error) {
       this.errorMessage.set(
         resolveAuthErrorMessage(

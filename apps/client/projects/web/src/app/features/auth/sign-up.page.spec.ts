@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 import SignUpPage from './sign-up.page';
@@ -26,6 +27,7 @@ describe('Web SignUpPage', () => {
       providers: [
         provideRouter([]),
         { provide: WebAuthService, useValue: authService },
+        MessageService,
       ],
     }).compileComponents();
 

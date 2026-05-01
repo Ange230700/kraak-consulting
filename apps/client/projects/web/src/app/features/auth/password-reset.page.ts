@@ -6,6 +6,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { Message } from 'primeng/message';
 import {
   WebAuthService,
   resolveAuthErrorMessage,
@@ -18,11 +20,12 @@ interface PasswordResetFormModel {
 @Component({
   selector: 'kraak-web-password-reset-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Message],
   templateUrl: './password-reset.page.html',
 })
 export default class PasswordResetPage {
   private readonly authService = inject(WebAuthService);
+  private readonly messageService = inject(MessageService);
 
   readonly form = new FormGroup<PasswordResetFormModel>({
     email: new FormControl('', {
@@ -53,6 +56,12 @@ export default class PasswordResetPage {
       });
 
       this.successMessage.set(response.message);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Réinitialisation',
+        detail: response.message,
+        life: 6000,
+      });
     } catch (error) {
       this.errorMessage.set(
         resolveAuthErrorMessage(

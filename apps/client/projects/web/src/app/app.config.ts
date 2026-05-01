@@ -11,6 +11,7 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
@@ -45,6 +46,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    MessageService,
     {
       provide: TitleStrategy,
       useClass: SeoTitleStrategy,
