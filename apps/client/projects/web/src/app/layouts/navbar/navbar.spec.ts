@@ -33,6 +33,8 @@ describe('Navbar', () => {
       'kraak_consulting_logo_192w.png',
     );
     expect(primaryCta).toBeTruthy();
+    expect(element.textContent).not.toContain('Accueil');
+    expect(element.textContent).toContain('À propos');
   });
 
   it('should provide a named navigation landmark', () => {
