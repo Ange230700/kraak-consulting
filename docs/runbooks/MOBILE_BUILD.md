@@ -17,6 +17,70 @@ Ce runbook decrit comment generer les projets natifs Android et iOS, lancer un b
 
 ---
 
+## Configuration locale persistante
+
+Pour que les builds Android fonctionnent sans specifier manuellement les chemins a chaque fois :
+
+### Android SDK (`local.properties`)
+
+Le fichier `apps/client/android/local.properties` est automatiquement genere a partir de votre installation locale d'Android Studio. Il ne doit pas etre commite.
+
+Verification manuelle (si le build Gradle echoue sur "SDK location not found") :
+
+```bash
+# Verifier que le fichier existe
+cat apps/client/android/local.properties
+
+# Ou le recreer manuellement sur Windows
+echo "sdk.dir=C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Android\\Sdk" > apps/client/android/local.properties
+
+# Sur macOS/Linux
+echo "sdk.dir=$HOME/Library/Android/Sdk" > apps/client/android/local.properties
+```
+
+### JAVA_HOME et variables d'environnement
+
+Si le build Gradle echoue sur "Unsupported class file major version" ou "Unknown Java version", le JDK actif est incompatible. Deux approches :
+
+#### Option 1 : Configuration shell permanente (recommande)
+
+Ajouter au profil shell (`.bashrc`, `.zshrc`, ou profil PowerShell) :
+
+**Bash/Zsh** (~/.bashrc ou ~/.zshrc) :
+
+```bash
+export JAVA_HOME="$HOME/.jdks/openjdk-21" # ou le chemin vers votre JDK 21
+export ANDROID_HOME="$HOME/Library/Android/Sdk" # macOS
+# export ANDROID_HOME="$HOME/AppData/Local/Android/Sdk" # Windows
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+**PowerShell** ($PROFILE) :
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+$env:ANDROID_HOME = "C:\Users\$env:USERNAME\AppData\Local\Android\Sdk"
+$env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
+```
+
+#### Option 2 : Via helper script (siege)
+
+Pour une approche isolee (une seule session) :
+
+```bash
+# Bash/Zsh
+eval $(node scripts/setup-android-env.mjs --shell)
+
+# PowerShell
+node scripts/setup-android-env.mjs | Out-String | Invoke-Expression
+
+# Ou executer directement une commande avec les envvars configures
+node scripts/setup-android-env.mjs --run "pnpm build:debug:android"
+```
+
+---
+
 ## Generation des projets natifs
 
 Les dossiers `android/` et `ios/` ne sont pas generes automatiquement.
