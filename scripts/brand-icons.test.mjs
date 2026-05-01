@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
@@ -49,7 +49,10 @@ const appConfigs = [
 
 const requiredLinks = [
   'href="favicon.ico"',
+  'href="favicon-32x32.png"',
+  'href="favicon-16x16.png"',
   'rel="apple-touch-icon"',
+  'sizes="180x180"',
   'href="apple-touch-icon.png"',
   'rel="manifest"',
   'href="site.webmanifest"',
@@ -57,11 +60,15 @@ const requiredLinks = [
 
 const requiredAssets = [
   'favicon.ico',
+  'favicon-32x32.png',
+  'favicon-16x16.png',
   'apple-touch-icon.png',
   'icon-192x192.png',
   'icon-512x512.png',
   'site.webmanifest',
 ];
+
+const requiredManifestIconSizes = ['192x192', '512x512'];
 
 function assertMatch(content, fragment) {
   assert.match(
@@ -83,6 +90,39 @@ for (const appConfig of appConfigs) {
       existsSync(assetPath),
       true,
       `Expected ${appConfig.label} asset to exist: ${assetName}`,
+    );
+
+    assert.ok(
+      statSync(assetPath).size > 0,
+      `Expected ${appConfig.label} asset to be non-empty: ${assetName}`,
+    );
+  }
+
+  const manifestPath = path.join(appConfig.publicDir, 'site.webmanifest');
+  const manifestContent = readFileSync(manifestPath, 'utf8');
+  const manifest = JSON.parse(manifestContent);
+
+  assert.equal(manifest.name, 'KRAAK', `Expected ${appConfig.label} manifest name to be KRAAK`);
+  assert.equal(manifest.short_name, 'KRAAK', `Expected ${appConfig.label} manifest short_name to be KRAAK`);
+  assert.equal(manifest.lang, 'fr', `Expected ${appConfig.label} manifest lang to be fr`);
+  assert.equal(
+    manifest.theme_color,
+    '#122b4a',
+    `Expected ${appConfig.label} manifest theme_color to match brand color`,
+  );
+  assert.equal(
+    manifest.background_color,
+    '#122b4a',
+    `Expected ${appConfig.label} manifest background_color to match brand color`,
+  );
+
+  const manifestIconSizes = new Set((manifest.icons ?? []).map((icon) => icon.sizes));
+
+  for (const expectedSize of requiredManifestIconSizes) {
+    assert.equal(
+      manifestIconSizes.has(expectedSize),
+      true,
+      `Expected ${appConfig.label} manifest to include icon size: ${expectedSize}`,
     );
   }
 }
