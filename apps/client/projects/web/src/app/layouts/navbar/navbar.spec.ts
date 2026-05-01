@@ -20,7 +20,7 @@ describe('Navbar', () => {
       'img[alt="Logo KRAAK Consulting"]',
     ) as HTMLImageElement | null;
     const primaryCta = element.querySelector(
-      'a[aria-label="Nous contacter"]',
+      'a[aria-label="Espace participant"]',
     ) as HTMLAnchorElement | null;
     const menuToggle = element.querySelector(
       'button[aria-label="Menu de navigation"]',
@@ -28,7 +28,7 @@ describe('Navbar', () => {
 
     expect(element.querySelectorAll('.p-button').length).toBe(0);
     expect(menuToggle).toBeTruthy();
-    expect(element.textContent).toContain('Nous contacter');
+    expect(element.textContent).toContain('Espace participant');
     expect(brandImage?.getAttribute('src')).toContain(
       'kraak_consulting_logo_192w.png',
     );

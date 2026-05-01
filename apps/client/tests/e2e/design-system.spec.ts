@@ -23,7 +23,7 @@ test.describe(`Design system web — smoke styling`, () => {
     page,
   }) => {
     const primaryCta = page
-      .getByRole('link', { name: 'Nous contacter' })
+      .getByRole('link', { name: 'Espace participant' })
       .first();
 
     await expect(primaryCta).toBeVisible();
