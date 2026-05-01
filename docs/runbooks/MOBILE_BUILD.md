@@ -125,13 +125,13 @@ pnpm --filter @kraak/client cap:copy
 
 Le mobile inclut un service de base `MobilePushNotificationsService` pour le wiring FCM initial.
 
-> **Important : plugin natif desactive temporairement.**
+> **Important : plugin natif désactivé temporairement.**
 >
-> Tant que le projet Firebase Cloud Messaging de KRAAK n'est pas provisionne (pas de `apps/client/android/app/google-services.json`, pas de plugin Gradle `com.google.gms.google-services` applique), le plugin `@capacitor/push-notifications` est explicitement exclu du build natif Android via `android.includePlugins: []` dans `apps/client/capacitor.config.ts`.
+> Tant que le projet Firebase Cloud Messaging de KRAAK n'est pas provisionné (pas de `apps/client/android/app/google-services.json`, pas de plugin Gradle `com.google.gms.google-services` appliqué), le plugin `@capacitor/push-notifications` est explicitement exclu du build natif Android via `android.includePlugins: []` dans `apps/client/capacitor.config.ts`.
 >
-> Sans cette exclusion, Android tente d'instancier `FirebaseMessagingService` au demarrage, echoue avec `Default FirebaseApp is not initialized`, et fait planter l'APK avant le rendu de la WebView (dialogue systeme « KRAAK closed because this app has a bug »).
+> Sans cette exclusion, Android tente d'instancier `FirebaseMessagingService` au démarrage, échoue avec `Default FirebaseApp is not initialized`, et fait planter l'APK avant le rendu de la WebView (dialogue système « KRAAK closed because this app has a bug »).
 >
-> Quand Firebase sera configure, retirer `includePlugins: []` (ou y reintroduire `@capacitor/push-notifications`), commiter `google-services.json`, ajouter le plugin Gradle, puis re-executer `pnpm cap:sync`. Le test de garde `scripts/verify-capacitor-android-plugins.test.mjs` se desactive automatiquement des qu'il detecte la presence de `google-services.json`.
+> Quand Firebase sera configuré, retirer `includePlugins: []` (ou y réintroduire `@capacitor/push-notifications`), commiter `google-services.json`, ajouter le plugin Gradle, puis ré-exécuter `pnpm cap:sync`. Le test de garde `scripts/verify-capacitor-android-plugins.test.mjs` se désactive automatiquement dès qu'il détecte la présence de `google-services.json`.
 
 Objectif du stub MVP :
 
