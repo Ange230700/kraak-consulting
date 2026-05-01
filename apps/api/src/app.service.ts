@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 
 export interface HealthStatus {
   status: 'ok';
@@ -12,10 +12,13 @@ export interface HealthStatus {
 @Injectable()
 export class AppService {
   constructor(
-    private readonly getNow: () => Date = () => new Date(),
+    @Optional() private readonly getNow: () => Date = () => new Date(),
+    @Optional()
     private readonly getUptimeSeconds: () => number = () =>
       Math.floor(process.uptime()),
+    @Optional()
     private readonly environment = process.env['NODE_ENV'] ?? 'development',
+    @Optional()
     private readonly version = process.env['APP_VERSION'] ??
       process.env['npm_package_version'] ??
       '0.0.0',
