@@ -1,6 +1,6 @@
 <kraak-page-shell
   [title]="session()?.title ?? 'Session'"
-  eyebrow="Détail de la session"
+  eyebrow="D&eacute;tail de la session"
   [backHref]="'/tabs/programmes/' + programId()"
 >
   @if (errorMessage()) {
@@ -17,7 +17,7 @@
         (click)="reloadSession()"
         (keydown.enter)="onReloadKeydown($event)"
       >
-        Réessayer
+        R&eacute;essayer
       </ion-button>
     </section>
   } @else if (loading()) {
@@ -57,7 +57,7 @@
         <p class="text-primary text-lg font-semibold">Informations</p>
         <div class="space-y-3 text-sm leading-6 text-neutral-700">
           <div class="rounded-lg bg-neutral-100/50 p-3">
-            <p class="font-semibold">Début</p>
+            <p class="font-semibold">D&eacute;but</p>
             <p class="mt-1">{{ sess.startsAt | date: 'medium' }}</p>
           </div>
 
@@ -85,7 +85,7 @@
 
           @if (sess.meetingLink) {
             <div class="rounded-lg bg-neutral-100/50 p-3">
-              <p class="font-semibold">Lien de réunion</p>
+              <p class="font-semibold">Lien de r&eacute;union</p>
               <ion-button
                 [href]="sess.meetingLink"
                 target="_blank"
@@ -107,9 +107,9 @@
         <p class="text-primary text-lg font-semibold">Progression</p>
         <p class="text-sm leading-6 text-neutral-700">
           @if (isSessionCompleted()) {
-            Session marquée comme terminée.
+            Session marqu&eacute;e comme termin&eacute;e.
           } @else {
-            Session non terminée.
+            Session non termin&eacute;e.
           }
         </p>
 
@@ -128,7 +128,7 @@
             (click)="markSessionCompletion(false)"
             (keydown.enter)="onMarkKeydown($event, false)"
           >
-            Marquer comme non terminée
+            Marquer comme non termin&eacute;e
           </ion-button>
         } @else {
           <ion-button
@@ -138,7 +138,7 @@
             (click)="markSessionCompletion(true)"
             (keydown.enter)="onMarkKeydown($event, true)"
           >
-            Marquer comme terminée
+            Marquer comme termin&eacute;e
           </ion-button>
         }
       </article>
@@ -167,7 +167,7 @@
       class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
     >
       <p class="text-sm leading-6 text-neutral-700">
-        La session n'a pas pu être trouvée.
+        La session n'a pas pu &ecirc;tre trouv&eacute;e.
       </p>
       <ion-button
         [routerLink]="['/tabs/programmes', programId()]"

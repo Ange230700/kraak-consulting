@@ -1,6 +1,6 @@
 <kraak-page-shell
   [title]="pageTitle()"
-  eyebrow="Détail du programme"
+  eyebrow="D&eacute;tail du programme"
   backHref="/tabs/programmes"
 >
   @if (errorMessage()) {
@@ -17,7 +17,7 @@
         (click)="reloadProgram()"
         (keydown.enter)="reloadProgram()"
       >
-        Réessayer
+        R&eacute;essayer
       </ion-button>
     </section>
   } @else if (loading()) {
@@ -26,7 +26,7 @@
     >
       <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
       <p class="text-sm leading-6 text-neutral-700">
-        Chargement du détail du programme...
+        Chargement du d&eacute;tail du programme...
       </p>
     </section>
   } @else if (programDetail(); as detail) {
@@ -52,7 +52,7 @@
           class="border-t border-neutral-200/50 pt-3 text-xs leading-5 text-neutral-700"
         >
           <p>
-            <span class="font-semibold">Créé le:</span>
+            <span class="font-semibold">Cr&eacute;&eacute; le:</span>
             {{ detail.program.createdAt | date: 'mediumDate' }}
           </p>
           <p class="mt-1">
@@ -84,7 +84,7 @@
               </p>
             }
             <p>
-              <span class="font-semibold">Début:</span>
+              <span class="font-semibold">D&eacute;but:</span>
               {{ detail.cohort.startDate | date: 'mediumDate' }}
             </p>
             @if (detail.cohort.endDate) {
@@ -95,7 +95,7 @@
             }
             @if (detail.cohort.capacity) {
               <p>
-                <span class="font-semibold">Capacité:</span>
+                <span class="font-semibold">Capacit&eacute;:</span>
                 {{ detail.cohort.capacity }} participants
               </p>
             }
@@ -138,7 +138,7 @@
                   expand="block"
                   class="kraak-primary-button mt-2"
                 >
-                  Voir les détails
+                  Voir les d&eacute;tails
                 </ion-button>
               </li>
             }
@@ -146,7 +146,7 @@
         </article>
       } @else {
         <p class="px-1 text-sm leading-6 text-neutral-700">
-          Aucune session programmée pour le moment.
+          Aucune session programm&eacute;e pour le moment.
         </p>
       }
 
@@ -183,7 +183,7 @@
                     expand="block"
                     class="kraak-primary-button mt-2"
                   >
-                    Accéder
+                    Acc&eacute;der
                   </ion-button>
                 }
               </li>
@@ -212,7 +212,8 @@
                   {{ announcement.title }}
                 </p>
                 <p class="text-xs leading-5 text-neutral-700">
-                  Publié: {{ announcement.publishedAt | date: 'mediumDate' }}
+                  Publi&eacute;:
+                  {{ announcement.publishedAt | date: 'mediumDate' }}
                 </p>
               </li>
             }
@@ -226,7 +227,7 @@
         fill="outline"
         class="kraak-secondary-button mb-4"
       >
-        Retour à la liste
+        Retour &agrave; la liste
       </ion-button>
     </section>
   }

@@ -1,7 +1,7 @@
 <kraak-page-shell
   eyebrow="Programmes"
   title="Vos parcours"
-  description="Explorez les programmes auxquels vous êtes inscrits."
+  description="Explorez les programmes auxquels vous &ecirc;tes inscrits."
 >
   @if (errorMessage()) {
     <section
@@ -17,7 +17,7 @@
         (click)="reloadPrograms()"
         (keydown.enter)="reloadPrograms()"
       >
-        Réessayer
+        R&eacute;essayer
       </ion-button>
     </section>
   } @else if (loading()) {
@@ -41,7 +41,7 @@
         expand="block"
         class="kraak-primary-button"
       >
-        Retour à l'accueil
+        Retour &agrave; l'accueil
       </ion-button>
     </section>
   } @else {
@@ -78,7 +78,8 @@
               <p class="font-semibold">Cohorte: {{ program.cohort.name }}</p>
               @if (program.cohort.startDate) {
                 <p class="mt-1">
-                  Début: {{ program.cohort.startDate | date: 'shortDate' }}
+                  D&eacute;but:
+                  {{ program.cohort.startDate | date: 'shortDate' }}
                 </p>
               }
             </div>
@@ -89,7 +90,7 @@
             expand="block"
             class="kraak-primary-button"
           >
-            Voir le détail
+            Voir le d&eacute;tail
           </ion-button>
         </article>
       }
