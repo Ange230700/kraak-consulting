@@ -10,10 +10,11 @@ Ce répertoire centralise les décisions d'architecture formelles du projet KRAA
 
 ## Index
 
-| ID       | Titre                                    | Statut   | Date       |
-| -------- | ---------------------------------------- | -------- | ---------- |
-| `ARC-01` | Architecture cible MVP                   | Acceptée | 2025-07-18 |
-| `ARC-02` | Conventions dépôt et workflow Git        | Acceptée | 2025-07-18 |
-| `ARC-03` | Stratégie SEO et prerendering            | Acceptée | 2025-07-18 |
-| `ARC-04` | Modèles de données MVP                   | Acceptée | 2025-07-18 |
-| `ARC-05` | Critères anti-scope-creep et cadrage ADR | Acceptée | 2025-07-18 |
+| ID       | Titre                                               | Statut   | Date       |
+| -------- | --------------------------------------------------- | -------- | ---------- |
+| `ARC-01` | Architecture cible MVP                              | Acceptée | 2025-07-18 |
+| `ARC-02` | Conventions dépôt et workflow Git                   | Acceptée | 2025-07-18 |
+| `ARC-03` | Stratégie SEO et prerendering                       | Acceptée | 2025-07-18 |
+| `ARC-04` | Modèles de données MVP                              | Acceptée | 2025-07-18 |
+| `ARC-05` | Critères anti-scope-creep et cadrage ADR            | Acceptée | 2025-07-18 |
+| `ARC-06` | Gating natif notifications push mobile sur Firebase | Acceptée | 2026-04-10 |
