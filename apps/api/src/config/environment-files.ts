@@ -1,3 +1,7 @@
+const envFileAliases: Record<string, string> = {
+  production: 'prod',
+};
+
 export function resolveApiEnvFilePaths(nodeEnv: string | undefined): string[] {
   const normalizedEnvironment = nodeEnv?.trim().toLowerCase() || 'local';
 
@@ -5,5 +9,8 @@ export function resolveApiEnvFilePaths(nodeEnv: string | undefined): string[] {
     return ['.env'];
   }
 
-  return [`.env.${normalizedEnvironment}`, '.env'];
+  const envFileEnvironment =
+    envFileAliases[normalizedEnvironment] ?? normalizedEnvironment;
+
+  return [`.env.${envFileEnvironment}`, '.env'];
 }

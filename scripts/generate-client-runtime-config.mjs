@@ -12,8 +12,22 @@ const repoRoot = path.resolve(__dirname, '..');
 const clientRoot = path.join(repoRoot, 'apps', 'client');
 const supportedEnvironments = new Set(['local', 'staging', 'production']);
 const outputPaths = [
-  path.join(clientRoot, 'projects', 'mobile', 'public', 'assets', 'runtime-config.js'),
-  path.join(clientRoot, 'projects', 'web', 'public', 'assets', 'runtime-config.js'),
+  path.join(
+    clientRoot,
+    'projects',
+    'mobile',
+    'public',
+    'assets',
+    'runtime-config.js',
+  ),
+  path.join(
+    clientRoot,
+    'projects',
+    'web',
+    'public',
+    'assets',
+    'runtime-config.js',
+  ),
 ];
 
 function stripWrappingQuotes(value) {
@@ -60,15 +74,27 @@ function parseEnvFile(filePath) {
 
 function parseEnvironmentName(argv) {
   const envFlagIndex = argv.indexOf('--env');
-  const environmentName = envFlagIndex === -1 ? 'local' : argv[envFlagIndex + 1] ?? 'local';
+  const environmentName =
+    envFlagIndex === -1 ? 'local' : (argv[envFlagIndex + 1] ?? 'local');
 
   if (!supportedEnvironments.has(environmentName)) {
     throw new Error(
-      `Environnement invalide "${environmentName}". Valeurs attendues: local, staging, production.`
+      `Environnement invalide "${environmentName}". Valeurs attendues: local, staging, production.`,
     );
   }
 
   return environmentName;
+}
+
+function resolveEnvFileName(environmentName) {
+  if (environmentName === 'local') {
+    return '.env';
+  }
+
+  const envFileEnvironment =
+    environmentName === 'production' ? 'prod' : environmentName;
+
+  return `.env.${envFileEnvironment}`;
 }
 
 function readRuntimeVariable(key, fileVariables, processEnv) {
@@ -85,12 +111,24 @@ export function loadClientRuntimeConfig(
   environmentName,
   { clientRootPath = clientRoot, processEnv = process.env } = {},
 ) {
-  const envFileName = environmentName === 'local' ? '.env' : `.env.${environmentName}`;
+  const envFileName = resolveEnvFileName(environmentName);
   const envPath = path.join(clientRootPath, envFileName);
   const fileVariables = existsSync(envPath) ? parseEnvFile(envPath) : {};
-  const apiBaseUrl = readRuntimeVariable('CLIENT_API_BASE_URL', fileVariables, processEnv);
-  const supabaseUrl = readRuntimeVariable('SUPABASE_URL', fileVariables, processEnv);
-  const supabasePublishableKey = readRuntimeVariable('SUPABASE_PUBLISHABLE_KEY', fileVariables, processEnv);
+  const apiBaseUrl = readRuntimeVariable(
+    'CLIENT_API_BASE_URL',
+    fileVariables,
+    processEnv,
+  );
+  const supabaseUrl = readRuntimeVariable(
+    'SUPABASE_URL',
+    fileVariables,
+    processEnv,
+  );
+  const supabasePublishableKey = readRuntimeVariable(
+    'SUPABASE_PUBLISHABLE_KEY',
+    fileVariables,
+    processEnv,
+  );
 
   if (!apiBaseUrl && (!supabaseUrl || !supabasePublishableKey)) {
     return {};
@@ -129,7 +167,7 @@ export function generateClientRuntimeConfig(argv = process.argv.slice(2)) {
   console.log(
     `[client-runtime-config] ${environmentName}: ${
       runtimeConfig.apiBaseUrl ?? 'fallback vers environment.*.ts'
-    }`
+    }`,
   );
 
   return runtimeConfig;

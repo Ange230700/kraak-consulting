@@ -11,9 +11,11 @@ dans le monorepo. Ne jamais commiter de secrets dans le dépôt.
 | `apps/api/.env`                 | Variables backend local effectivement lues          |
 | `apps/api/.env.staging.example` | Modèle backend staging (copier vers `.env.staging`) |
 | `apps/api/.env.staging`         | Variables backend staging effectivement lues        |
+| `apps/api/.env.prod`            | Variables backend production pour test local        |
 | `apps/client/.env.example`      | Modèle client local / staging                       |
 | `apps/client/.env`              | Runtime-config client local + scripts / E2E         |
 | `apps/client/.env.staging`      | Runtime-config client staging                       |
+| `apps/client/.env.prod`         | Runtime-config client production pour build local   |
 | `supabase/.env.staging`         | Références Supabase staging                         |
 | `.env.example` (racine)         | Variables CI/CD uniquement                          |
 
@@ -41,11 +43,11 @@ Variables lues par `process.env` dans le code NestJS :
 Ordre de chargement côté API :
 
 1. Si `NODE_ENV=local` (ou non défini) : seul `.env` est chargé.
-2. Sinon : `.env.${NODE_ENV}` (par exemple `.env.staging`, `.env.production`)
-   est chargé en priorité, avec `.env` comme fallback pour les variables non
-   spécifiées.
+2. Sinon : `.env.${NODE_ENV}` est chargé en priorité, avec `.env` comme
+   fallback pour les variables non spécifiées. Cas particulier :
+   `NODE_ENV=production` est résolu vers `.env.prod`, comme `NODE_ENV=prod`.
 
-Les fichiers `.env.staging` et `.env.production` ne doivent **jamais** être
+Les fichiers `.env.staging` et `.env.prod` ne doivent **jamais** être
 versionnés : en staging et en production, les variables sont injectées par
 l'hébergeur (Render, Vercel, GitHub Secrets).
 
@@ -110,6 +112,7 @@ Scripts utiles :
 - `pnpm build:web:local` et `pnpm build:mobile:local` génèrent un runtime-config local
 - `pnpm build:web:staging` et `pnpm build:mobile:staging` génèrent un runtime-config staging
 - `pnpm build:web` et `pnpm build:mobile` génèrent un runtime-config `production`
+  à partir de `apps/client/.env.prod` quand ce fichier existe
 
 Variable optionnelle utile côté build :
 

@@ -25,7 +25,9 @@ function runTest(name, fn) {
 runTest(
   'le runtime client peut lire les variables locales depuis apps/client/.env quand le fichier existe',
   () => {
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
 
     try {
       const envFilePath = path.join(tempRoot, '.env');
@@ -58,7 +60,9 @@ runTest(
 runTest(
   'le runtime client peut lire les variables staging depuis process.env quand aucun fichier .env n est disponible',
   () => {
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
 
     try {
       const runtimeConfig = loadClientRuntimeConfig('staging', {
@@ -74,7 +78,8 @@ runTest(
       assert.deepEqual(runtimeConfig, {
         apiBaseUrl: 'https://kraak-api-staging.onrender.com/',
         supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
-        supabasePublishableKey: 'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
+        supabasePublishableKey:
+          'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -85,7 +90,9 @@ runTest(
 runTest(
   'le runtime client renvoie une configuration vide en production quand aucune variable publique n est fournie',
   () => {
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
 
     try {
       const runtimeConfig = loadClientRuntimeConfig('production', {
@@ -101,9 +108,46 @@ runTest(
 );
 
 runTest(
+  'le runtime client lit les variables production depuis .env.prod quand le fichier existe',
+  () => {
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
+
+    try {
+      const envFilePath = path.join(tempRoot, '.env.prod');
+      writeFileSync(
+        envFilePath,
+        [
+          'CLIENT_API_BASE_URL=https://api.kraak.example',
+          'SUPABASE_URL=https://kraak.supabase.co',
+          'SUPABASE_PUBLISHABLE_KEY=production-publishable-key',
+          '',
+        ].join('\n'),
+      );
+
+      const runtimeConfig = loadClientRuntimeConfig('production', {
+        clientRootPath: tempRoot,
+        processEnv: {},
+      });
+
+      assert.deepEqual(runtimeConfig, {
+        apiBaseUrl: 'https://api.kraak.example',
+        supabaseUrl: 'https://kraak.supabase.co',
+        supabasePublishableKey: 'production-publishable-key',
+      });
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
+  },
+);
+
+runTest(
   'le runtime client priorise les variables du fichier .env sur celles de process.env',
   () => {
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
 
     try {
       const envFilePath = path.join(tempRoot, '.env.staging');
@@ -140,7 +184,9 @@ runTest(
 runTest(
   'le runtime client supporte la syntaxe export, les guillemets et les sauts de ligne echappes depuis le fichier env',
   () => {
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
 
     try {
       const envFilePath = path.join(tempRoot, '.env');
