@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-interface FooterLinkGroup {
-  title: string;
-  links: { label: string; path: string }[];
+interface FooterLink {
+  label: string;
+  path: string;
+}
+
+interface FooterSocialLink {
+  label: string;
+  href: string;
+  icon: string;
 }
 
 @Component({
@@ -15,31 +21,39 @@ interface FooterLinkGroup {
 export class Footer {
   protected readonly currentYear = new Date().getFullYear();
 
-  protected readonly linkGroups: FooterLinkGroup[] = [
+  protected readonly navigationLinks: FooterLink[] = [
+    { label: 'À propos', path: '/a-propos' },
+    { label: 'Actualités', path: '/ressources' },
+    { label: 'Services', path: '/services' },
+    { label: 'Programmes', path: '/programmes' },
+    { label: 'Contact', path: '/contact' },
+  ];
+
+  protected readonly socialLinks: FooterSocialLink[] = [
     {
-      title: 'Navigation',
-      links: [
-        { label: 'Accueil', path: '/' },
-        { label: 'À propos', path: '/a-propos' },
-        { label: 'Services', path: '/services' },
-        { label: 'Programmes', path: '/programmes' },
-        { label: 'Contact', path: '/contact' },
-      ],
+      label: 'Facebook',
+      href: 'https://www.facebook.com/',
+      icon: 'pi-facebook',
     },
     {
-      title: 'Services',
-      links: [
-        { label: 'Formation', path: '/services' },
-        { label: 'Gestion de projet', path: '/services' },
-        { label: 'Conseil en immigration', path: '/services' },
-      ],
+      label: 'Instagram',
+      href: 'https://www.instagram.com/',
+      icon: 'pi-instagram',
     },
     {
-      title: 'Réseaux sociaux',
-      links: [
-        { label: 'Nous écrire', path: '/contact' },
-        { label: 'Ressources', path: '/ressources' },
-      ],
+      label: 'WhatsApp',
+      href: 'https://wa.me/',
+      icon: 'pi-whatsapp',
     },
+    {
+      label: 'TikTok',
+      href: 'https://www.tiktok.com/',
+      icon: 'pi-tiktok',
+    },
+  ];
+
+  protected readonly policyLinks: FooterLink[] = [
+    { label: 'Politique de confidentialité', path: '/confidentialite' },
+    { label: 'Conditions d’utilisation', path: '/conditions' },
   ];
 }

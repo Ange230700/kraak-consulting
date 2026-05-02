@@ -1,63 +1,85 @@
-<footer class="border-brand-blue/10 bg-brand-white mt-16 border-t">
-  <div
-    class="mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1.3fr_1.7fr] lg:px-6"
-  >
-    <div class="space-y-4">
-      <div class="flex items-center gap-4">
-        <div
-          class="bg-brand-navy shadow-card inline-flex h-16 w-16 items-center justify-center rounded-3xl"
-        >
-          <img
-            src="/kraak_consulting_symbol_96w.png"
-            alt="Symbole KRAAK Consulting"
-            width="40"
-            height="40"
-            loading="lazy"
-            decoding="async"
-            class="h-10 w-10"
-          />
-        </div>
-        <div>
-          <span
-            class="text-primary block text-xl font-semibold tracking-[0.18em]"
-            >KRAAK</span
-          >
-          <p class="text-secondary text-sm font-medium">
-            Formation, projets et mobilit&eacute; internationale.
-          </p>
-        </div>
-      </div>
-      <p class="max-w-md text-sm leading-7 text-neutral-700">
-        KRAAK Consulting &mdash; Expertise internationale au service de votre
-        croissance.
-      </p>
+<footer
+  class="from-brand-white to-brand-cream mt-16 bg-gradient-to-b px-6 py-16 md:px-12 lg:px-20"
+>
+  <div class="flex flex-col items-center gap-8">
+    <div class="w-full max-w-5xl">
+      <div class="bg-brand-blue/20 h-px w-full"></div>
     </div>
-    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      @for (group of linkGroups; track group.title) {
-        <div class="space-y-3">
-          <h3
-            class="text-primary text-sm font-semibold tracking-[0.14em] uppercase"
-          >
-            {{ group.title }}
-          </h3>
-          <ul class="space-y-2">
-            @for (link of group.links; track link.path + link.label) {
-              <li>
-                <a [routerLink]="link.path" class="kr-link-muted text-sm">
-                  {{ link.label }}
-                </a>
-              </li>
-            }
-          </ul>
-        </div>
+
+    <a
+      routerLink="/"
+      class="group flex items-center gap-3 rounded-full px-4 py-2 transition-colors hover:bg-white"
+      aria-label="Retour à l'accueil KRAAK"
+    >
+      <div
+        class="bg-brand-navy shadow-card inline-flex h-12 w-12 items-center justify-center rounded-2xl"
+      >
+        <img
+          src="/kraak_consulting_symbol_96w.png"
+          alt="Symbole KRAAK Consulting"
+          width="28"
+          height="28"
+          loading="lazy"
+          decoding="async"
+          class="h-7 w-7"
+        />
+      </div>
+      <div>
+        <span
+          class="text-primary block text-base font-semibold tracking-[0.18em]"
+          >KRAAK</span
+        >
+        <p class="text-secondary text-xs font-medium">
+          Impact local, vision internationale.
+        </p>
+      </div>
+    </a>
+
+    <nav
+      class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 px-2"
+      aria-label="Liens du pied de page"
+    >
+      @for (link of navigationLinks; track link.path + link.label) {
+        <a
+          [routerLink]="link.path"
+          class="text-secondary hover:text-primary text-sm leading-tight transition-colors"
+        >
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+
+    <div
+      class="flex items-center justify-center gap-4"
+      aria-label="Réseaux sociaux"
+    >
+      @for (social of socialLinks; track social.label) {
+        <a
+          [href]="social.href"
+          target="_blank"
+          rel="noreferrer"
+          class="border-brand-blue/20 hover:border-brand-blue/35 text-secondary hover:text-primary bg-brand-white hover:bg-brand-cream/80 flex h-[36px] w-[36px] items-center justify-center rounded-full border p-2 transition-colors"
+          [attr.aria-label]="social.label"
+          [attr.title]="social.label"
+        >
+          <i [class]="'pi ' + social.icon + ' text-sm'"></i>
+        </a>
       }
     </div>
-  </div>
-  <div class="border-brand-blue/10 bg-brand-navy border-t">
-    <div class="mx-auto w-full max-w-6xl px-4 py-4 lg:px-6">
-      <p class="text-brand-white/72 text-xs">
-        &copy; {{ currentYear }} KRAAK. Tous droits r&eacute;serv&eacute;s.
-      </p>
+
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      @for (link of policyLinks; track link.path + link.label) {
+        <a
+          [routerLink]="link.path"
+          class="text-secondary hover:text-primary text-xs leading-tight transition-colors"
+        >
+          {{ link.label }}
+        </a>
+      }
     </div>
+
+    <p class="text-secondary text-xs">
+      &copy; {{ currentYear }} KRAAK. Tous droits r&eacute;serv&eacute;s.
+    </p>
   </div>
 </footer>
