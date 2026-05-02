@@ -10,37 +10,13 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-neutral-50 py-16 lg:py-20">
   <div
-    class="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[0.8fr_1.2fr] lg:px-6"
+    class="mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:px-6"
   >
-    <div>
-      <p
-        class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase"
-      >
-        Demande d'accompagnement
-      </p>
-      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Donnez-nous les bons rep&egrave;res pour vous orienter.
-      </h2>
-      <ul class="mt-6 space-y-3 text-neutral-700">
-        <li class="flex gap-3">
-          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
-          Formation, emploi, leadership ou langues professionnelles.
-        </li>
-        <li class="flex gap-3">
-          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
-          Projet, startup, partenariat ou besoin d'entreprise.
-        </li>
-        <li class="flex gap-3">
-          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
-          &Eacute;tudes, immigration, travail ou int&eacute;gration
-          internationale.
-        </li>
-      </ul>
-    </div>
-
-    <div>
+    <div
+      class="border-brand-blue/10 bg-brand-white rounded-3xl border p-6 shadow-sm lg:p-8"
+    >
       @if (success()) {
         <p-message
           severity="success"
@@ -66,10 +42,13 @@
           [formGroup]="form"
           (ngSubmit)="onSubmit()"
           novalidate
-          class="space-y-6"
+          class="space-y-5"
         >
           <div>
-            <label for="name" class="mb-1 block text-sm font-medium">
+            <label
+              for="name"
+              class="mb-2 block text-sm font-semibold text-neutral-800"
+            >
               Nom complet <span class="text-red-500" aria-hidden="true">*</span>
             </label>
             <input
@@ -78,7 +57,7 @@
               type="text"
               placeholder="Votre nom"
               formControlName="name"
-              class="w-full"
+              class="h-11 w-full"
               [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
               aria-required="true"
               [attr.aria-invalid]="isInvalid(name)"
@@ -96,7 +75,10 @@
           </div>
 
           <div>
-            <label for="email" class="mb-1 block text-sm font-medium">
+            <label
+              for="email"
+              class="mb-2 block text-sm font-semibold text-neutral-800"
+            >
               Adresse e-mail
               <span class="text-red-500" aria-hidden="true">*</span>
             </label>
@@ -106,7 +88,7 @@
               type="email"
               placeholder="votre.email@exemple.com"
               formControlName="email"
-              class="w-full"
+              class="h-11 w-full"
               [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
               aria-required="true"
               [attr.aria-invalid]="isInvalid(email)"
@@ -128,7 +110,10 @@
           </div>
 
           <div>
-            <label for="subject" class="mb-1 block text-sm font-medium">
+            <label
+              for="subject"
+              class="mb-2 block text-sm font-semibold text-neutral-800"
+            >
               Objectif <span class="text-red-500" aria-hidden="true">*</span>
             </label>
             <input
@@ -137,7 +122,7 @@
               type="text"
               placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
               formControlName="subject"
-              class="w-full"
+              class="h-11 w-full"
               [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
               aria-required="true"
               [attr.aria-invalid]="isInvalid(subject)"
@@ -156,9 +141,12 @@
             }
           </div>
 
-          <div class="grid gap-6 sm:grid-cols-2">
+          <div class="grid gap-5 sm:grid-cols-2">
             <div>
-              <label for="country" class="mb-1 block text-sm font-medium">
+              <label
+                for="country"
+                class="mb-2 block text-sm font-semibold text-neutral-800"
+              >
                 Pays <span class="text-red-500" aria-hidden="true">*</span>
               </label>
               <input
@@ -167,7 +155,7 @@
                 type="text"
                 placeholder="Votre pays de r&eacute;sidence"
                 formControlName="country"
-                class="w-full"
+                class="h-11 w-full"
                 [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
                 aria-required="true"
                 [attr.aria-invalid]="isInvalid(country)"
@@ -187,7 +175,10 @@
             </div>
 
             <div>
-              <label for="serviceType" class="mb-1 block text-sm font-medium">
+              <label
+                for="serviceType"
+                class="mb-2 block text-sm font-semibold text-neutral-800"
+              >
                 Type de service
                 <span class="text-red-500" aria-hidden="true">*</span>
               </label>
@@ -207,7 +198,10 @@
           </div>
 
           <div>
-            <label for="message" class="mb-1 block text-sm font-medium">
+            <label
+              for="message"
+              class="mb-2 block text-sm font-semibold text-neutral-800"
+            >
               Message <span class="text-red-500" aria-hidden="true">*</span>
             </label>
             <textarea
@@ -239,7 +233,7 @@
             }
           </div>
 
-          <div class="text-center">
+          <div class="pt-1">
             <button
               pButton
               type="submit"
@@ -248,11 +242,84 @@
               aria-label="Envoyer ma demande"
               [loading]="loading()"
               [disabled]="loading()"
-              class="kr-button-primary"
+              class="kr-button-primary w-full sm:w-auto"
             ></button>
           </div>
         </form>
       }
+    </div>
+
+    <div class="bg-brand-navy text-brand-white overflow-hidden rounded-3xl">
+      <div class="bg-brand-blue/30 p-6 lg:p-8">
+        <p
+          class="text-brand-cyan text-xs font-semibold tracking-[0.18em] uppercase"
+        >
+          Demande d'accompagnement
+        </p>
+        <h2
+          class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
+        >
+          Donnez-nous les bons rep&egrave;res pour vous orienter.
+        </h2>
+        <p class="text-brand-white mt-4 text-sm leading-6">
+          Partagez votre contexte et votre priorit&eacute; du moment. Notre
+          &eacute;quipe vous recontacte avec une orientation claire et des
+          prochaines &eacute;tapes actionnables.
+        </p>
+      </div>
+
+      <div class="space-y-8 p-6 lg:p-8">
+        <ul class="text-brand-white space-y-4 text-sm leading-6">
+          <li class="flex gap-3">
+            <i
+              class="pi pi-check-circle text-brand-cyan mt-1"
+              aria-hidden="true"
+            ></i>
+            Formation, emploi, leadership ou langues professionnelles.
+          </li>
+          <li class="flex gap-3">
+            <i
+              class="pi pi-check-circle text-brand-cyan mt-1"
+              aria-hidden="true"
+            ></i>
+            Projet, startup, partenariat ou besoin d'entreprise.
+          </li>
+          <li class="flex gap-3">
+            <i
+              class="pi pi-check-circle text-brand-cyan mt-1"
+              aria-hidden="true"
+            ></i>
+            &Eacute;tudes, immigration, travail ou int&eacute;gration
+            internationale.
+          </li>
+        </ul>
+
+        <div class="bg-brand-white/15 h-px"></div>
+
+        <address class="not-italic">
+          <ul class="text-brand-white space-y-3 text-sm">
+            <li class="flex items-center gap-3">
+              <i class="pi pi-envelope text-brand-cyan" aria-hidden="true"></i>
+              <a
+                href="mailto:contact@kraak-consulting.com"
+                class="text-brand-white hover:underline"
+                >contact&#64;kraak-consulting.com</a
+              >
+            </li>
+            <li class="flex items-center gap-3">
+              <i
+                class="pi pi-map-marker text-brand-cyan"
+                aria-hidden="true"
+              ></i>
+              <span>Afrique &amp; international</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="pi pi-comments text-brand-cyan" aria-hidden="true"></i>
+              <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
+            </li>
+          </ul>
+        </address>
+      </div>
     </div>
   </div>
 </section>
