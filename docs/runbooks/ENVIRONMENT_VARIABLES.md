@@ -128,6 +128,14 @@ Le fichier `supabase/.env.staging` sert de référence claire pour l'environneme
 staging manipulé dans le dépôt. En local, les variables Supabase nécessaires
 sont déclarées directement dans `apps/api/.env` et `apps/client/.env`.
 
+> **Production** : la prod utilise un projet Supabase **distinct** de staging
+> (cf. `docs/decisions/ARC-07-prod-release-tag-based.md`). Le `SUPABASE_PROJECT_REF`
+> prod n'est jamais commité ; il vit uniquement dans le GitHub Environment
+> `production` (`SUPABASE_PROD_PROJECT_REF`, `SUPABASE_ACCESS_TOKEN`,
+> `SUPABASE_PROD_DB_PASSWORD`) et est consommé par le workflow
+> `.github/workflows/release-prod.yml` lors des migrations prod. Voir
+> `docs/runbooks/RELEASE_PROD.md`.
+
 La configuration Auth email/password versionnée du MVP ne vit pas dans ces
 fichiers `.env` mais dans `supabase/config.toml`, avec ses templates email
 locaux dans `supabase/templates/auth/`. Voir aussi
