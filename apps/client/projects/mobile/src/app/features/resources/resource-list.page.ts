@@ -18,7 +18,7 @@ const RESOURCE_THEME_OPTIONS: readonly {
   { value: 'training', label: 'Formation' },
   { value: 'project_management', label: 'Gestion de projet' },
   { value: 'immigration', label: 'Immigration' },
-  { value: 'career', label: 'Carrière' },
+  { value: 'career', label: 'Carri\u00E8re' },
 ];
 
 const RESOURCE_AUDIENCE_OPTIONS: readonly {
@@ -28,7 +28,7 @@ const RESOURCE_AUDIENCE_OPTIONS: readonly {
   { value: 'all', label: 'Tous' },
   {
     value: 'young_professionals_students',
-    label: 'Jeunes pros et étudiants',
+    label: 'Jeunes pros et \u00E9tudiants',
   },
   { value: 'organizations', label: 'Organisations' },
   { value: 'international_candidates', label: 'Candidats internationaux' },
@@ -37,7 +37,7 @@ const RESOURCE_AUDIENCE_OPTIONS: readonly {
 const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
   link: 'Lien',
   file: 'Fichier',
-  video: 'Vidéo',
+  video: 'Vid\u00E9o',
   document: 'Document',
 };
 

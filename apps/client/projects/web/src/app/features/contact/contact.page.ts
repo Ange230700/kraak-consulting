@@ -55,7 +55,11 @@ export default class ContactPage {
       value: 'project',
       category: 'other',
     },
-    { label: 'Études & immigration', value: 'immigration', category: 'other' },
+    {
+      label: '\u00C9tudes & immigration',
+      value: 'immigration',
+      category: 'other',
+    },
     { label: 'Solution entreprise', value: 'business', category: 'other' },
     { label: 'Programme KRAAK', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
@@ -141,7 +145,7 @@ export default class ContactPage {
       return rawErrors;
     }
 
-    return ['Une erreur est survenue. Veuillez réessayer plus tard.'];
+    return ['Une erreur est survenue. Veuillez r\u00E9essayer plus tard.'];
   }
 
   private buildPayload(): ContactFormDto {

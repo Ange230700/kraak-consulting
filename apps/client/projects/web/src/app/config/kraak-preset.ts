@@ -10,7 +10,7 @@ import {
   NEUTRAL,
 } from '@kraak/tokens';
 
-// Palettes générées à partir des jetons de marque KRAAK
+// Palettes g\u00E9n\u00E9r\u00E9es \u00E0 partir des jetons de marque KRAAK
 const navy = palette(BRAND_NAVY);
 const blue = palette(BRAND_BLUE);
 const cyan = palette(BRAND_CYAN);
@@ -32,7 +32,7 @@ export const KraakPreset = definePreset(Aura, {
     gold,
   },
   semantic: {
-    // Palette primaire → navy
+    // Palette primaire \u2192 navy
     primary: {
       50: '{navy.50}',
       100: '{navy.100}',

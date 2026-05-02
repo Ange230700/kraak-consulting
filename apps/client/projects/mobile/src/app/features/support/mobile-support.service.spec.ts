@@ -37,8 +37,9 @@ describe('MobileSupportService', () => {
     const payload: ContactFormDto = {
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Problème de connexion',
-      message: 'Je ne parviens pas à accéder à mon espace participant.',
+      subject: 'Probl\u00E8me de connexion',
+      message:
+        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
       category: 'technical',
     };
 
@@ -47,7 +48,7 @@ describe('MobileSupportService', () => {
       status: 200,
       json: async () => ({
         success: true,
-        message: 'Votre demande a bien été reçue.',
+        message: 'Votre demande a bien \u00E9t\u00E9 re\u00E7ue.',
       }),
     });
 
@@ -87,7 +88,7 @@ describe('MobileSupportService', () => {
           userId: 'user-1',
           participantId: 'participant-1',
           subject: 'Connexion impossible',
-          message: 'Je ne peux plus accéder à mon espace.',
+          message: 'Je ne peux plus acc\u00E9der \u00E0 mon espace.',
           status: 'open',
           category: 'technical',
           assignedToUserId: null,

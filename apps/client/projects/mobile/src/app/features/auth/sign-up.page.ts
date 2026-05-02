@@ -96,7 +96,7 @@ export default class SignUpPage {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          'Impossible de créer votre compte pour le moment.',
+          'Impossible de cr\u00E9er votre compte pour le moment.',
         ),
       );
     } finally {

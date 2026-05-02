@@ -29,7 +29,7 @@ const QUICK_LINKS: readonly DashboardQuickLink[] = [
     href: '/programmes',
   },
   {
-    label: "Contacter l'équipe",
+    label: "Contacter l'\u00E9quipe",
     detail: 'Poser une question ou signaler un besoin de suivi.',
     href: '/contact',
   },
@@ -76,19 +76,19 @@ export default class DashboardPage implements OnInit {
         id: 'programs',
         label: 'Programmes actifs',
         value: `${this.programs().length}`,
-        detail: 'Parcours en cours ou récemment activés',
+        detail: 'Parcours en cours ou r\u00E9cemment activ\u00E9s',
       },
       {
         id: 'sessions',
-        label: 'Sessions à venir',
+        label: 'Sessions \u00E0 venir',
         value: `${this.upcomingSessions().length}`,
         detail: 'Rappels des prochains rendez-vous',
       },
       {
         id: 'announcements',
-        label: 'Annonces récentes',
+        label: 'Annonces r\u00E9centes',
         value: `${this.recentAnnouncements().length}`,
-        detail: 'Informations récentes publiées par KRAAK',
+        detail: 'Informations r\u00E9centes publi\u00E9es par KRAAK',
       },
     ],
   );
@@ -102,13 +102,13 @@ export default class DashboardPage implements OnInit {
     const itemCount = this.totalSummaryItems();
 
     return itemCount === 1
-      ? '1 élément clé disponible aujourd’hui.'
-      : `${itemCount} éléments clés disponibles aujourd’hui.`;
+      ? '1 \u00E9l\u00E9ment cl\u00E9 disponible aujourd\u2019hui.'
+      : `${itemCount} \u00E9l\u00E9ments cl\u00E9s disponibles aujourd\u2019hui.`;
   });
   readonly nextSessionSummary = computed(() => {
     const nextSession = this.upcomingSessions()[0];
     if (!nextSession) {
-      return 'Aucune session planifiée pour le moment.';
+      return 'Aucune session planifi\u00E9e pour le moment.';
     }
 
     return `${nextSession.title} - ${this.formatDate(nextSession.startsAt)}`;

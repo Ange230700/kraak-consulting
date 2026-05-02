@@ -18,7 +18,7 @@ describe('Mobile SupportRequestPage', () => {
     supportService.submitContactForm.mockReset();
     supportService.submitContactForm.mockResolvedValue({
       success: true,
-      message: 'Votre demande a bien été reçue.',
+      message: 'Votre demande a bien \u00E9t\u00E9 re\u00E7ue.',
     });
 
     await TestBed.configureTestingModule({
@@ -66,8 +66,9 @@ describe('Mobile SupportRequestPage', () => {
     fixture.componentInstance.form.setValue({
       name: '  Alice Dupont  ',
       email: '  alice@kraak.org  ',
-      subject: 'Problème de connexion',
-      message: 'Je ne parviens pas à accéder à mon espace participant.',
+      subject: 'Probl\u00E8me de connexion',
+      message:
+        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
       category: 'technical',
     });
 
@@ -76,8 +77,9 @@ describe('Mobile SupportRequestPage', () => {
     expect(supportService.submitContactForm).toHaveBeenCalledWith({
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Problème de connexion',
-      message: 'Je ne parviens pas à accéder à mon espace participant.',
+      subject: 'Probl\u00E8me de connexion',
+      message:
+        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
       category: 'technical',
     });
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/tabs/support');
@@ -115,7 +117,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(400, 'Bad Request', {
-        errors: ['Le message doit contenir au moins 10 caractères.'],
+        errors: ['Le message doit contenir au moins 10 caract\u00E8res.'],
       }),
     );
 
@@ -130,7 +132,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Le message doit contenir au moins 10 caractères.',
+      'Le message doit contenir au moins 10 caract\u00E8res.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });

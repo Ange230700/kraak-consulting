@@ -79,7 +79,7 @@ describe('Mobile AnnouncementListPage', () => {
       'Nouvelle information utile pour tous les participants.',
     );
 
-    expect(element.textContent).toContain('Lire le détail');
+    expect(element.textContent).toContain('Lire le d\u00E9tail');
   });
 
   it('Given an API error, when page loads, then it shows an actionable error state', async () => {

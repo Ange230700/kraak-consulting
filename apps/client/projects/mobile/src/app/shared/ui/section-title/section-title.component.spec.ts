@@ -11,16 +11,19 @@ describe('SectionTitleComponent', () => {
 
   it('Given une section title When on renseigne les inputs Then il affiche le contenu', () => {
     const fixture = TestBed.createComponent(SectionTitleComponent);
-    fixture.componentRef.setInput('overline', 'Découvrir');
+    fixture.componentRef.setInput('overline', 'D\u00E9couvrir');
     fixture.componentRef.setInput('title', 'Bienvenue sur KRAAK');
-    fixture.componentRef.setInput('subtitle', 'Un accompagnement structuré.');
+    fixture.componentRef.setInput(
+      'subtitle',
+      'Un accompagnement structur\u00E9.',
+    );
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
 
-    expect(text).toContain('Découvrir');
+    expect(text).toContain('D\u00E9couvrir');
     expect(text).toContain('Bienvenue sur KRAAK');
-    expect(text).toContain('Un accompagnement structuré.');
+    expect(text).toContain('Un accompagnement structur\u00E9.');
 
     const overline = fixture.nativeElement.querySelector('p.kraak-overline');
     const title = fixture.nativeElement.querySelector('h2.kraak-section-title');

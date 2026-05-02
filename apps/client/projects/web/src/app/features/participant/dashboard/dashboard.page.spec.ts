@@ -38,7 +38,7 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       enrollmentId: 'enr-1',
       programId: 'program-1',
       slug: 'integration',
-      title: "Parcours d'intégration",
+      title: "Parcours d'int\u00E9gration",
       summary: 'Suivi individuel et collectif',
       enrollmentStatus: 'active',
       cohortId: 'cohort-1',
@@ -61,14 +61,14 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       cohortName: 'Cohorte printemps',
       programId: 'program-1',
       programSlug: 'integration',
-      programTitle: "Parcours d'intégration",
+      programTitle: "Parcours d'int\u00E9gration",
     },
   ],
   recentAnnouncements: [
     {
       id: 'announcement-1',
       title: 'Rappel documents',
-      body: 'Pensez à vérifier vos pièces justificatives.',
+      body: 'Pensez \u00E0 v\u00E9rifier vos pi\u00E8ces justificatives.',
       audienceType: 'all_participants',
       programId: null,
       cohortId: null,
@@ -124,8 +124,8 @@ describe('Web Participant Dashboard Page', () => {
       );
 
       expect(text).toContain('Mon dashboard');
-      expect(text).toContain('Synthèse utile');
-      expect(text).toContain("Parcours d'intégration");
+      expect(text).toContain('Synth\u00E8se utile');
+      expect(text).toContain("Parcours d'int\u00E9gration");
       expect(text).toContain('Atelier CV');
       expect(text).toContain('Rappel documents');
       expect(text).toContain('Cohorte printemps');
@@ -141,11 +141,13 @@ describe('Web Participant Dashboard Page', () => {
 
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
-      expect(text).toContain('Synthèse utile');
+      expect(text).toContain('Synth\u00E8se utile');
       expect(text).toContain('Programmes actifs');
-      expect(text).toContain('Sessions à venir');
-      expect(text).toContain('Annonces récentes');
-      expect(text).toContain('3 éléments clés disponibles aujourd’hui.');
+      expect(text).toContain('Sessions \u00E0 venir');
+      expect(text).toContain('Annonces r\u00E9centes');
+      expect(text).toContain(
+        '3 \u00E9l\u00E9ments cl\u00E9s disponibles aujourd\u2019hui.',
+      );
       expect(text).toContain('Prochaine session');
       expect(text).toContain('Atelier CV - ');
     });
@@ -158,7 +160,7 @@ describe('Web Participant Dashboard Page', () => {
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
       expect(text).toContain('Prochaine session');
-      expect(text).toContain('Aucune session planifiée pour le moment.');
+      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
     });
 
     it('Given an empty dashboard aggregate, When the page loads, Then it renders the global empty state', async () => {
@@ -191,7 +193,7 @@ describe('Web Participant Dashboard Page', () => {
       const retryButton = element.querySelector(
         'button[type="button"]',
       ) as HTMLButtonElement | null;
-      expect(retryButton?.textContent?.trim()).toBe('Réessayer');
+      expect(retryButton?.textContent?.trim()).toBe('R\u00E9essayer');
     });
 
     it('Given the retry button is clicked after an error, When the next call resolves, Then the dashboard renders fresh content', async () => {

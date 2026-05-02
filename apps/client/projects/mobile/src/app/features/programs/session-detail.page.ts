@@ -112,7 +112,7 @@ export default class SessionDetailPage implements OnInit {
       this.markErrorMessage.set(
         error instanceof Error
           ? error.message
-          : 'Impossible de mettre à jour votre progression.',
+          : 'Impossible de mettre \u00E0 jour votre progression.',
       );
     } finally {
       this.markingProgress.set(false);

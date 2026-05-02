@@ -44,7 +44,7 @@ export default class AnnouncementListPage implements OnInit {
       case 'critical':
         return 'Critique';
       case 'high':
-        return 'Elevée';
+        return 'Elev\u00E9e';
       case 'normal':
         return 'Normale';
       case 'low':

@@ -27,9 +27,11 @@ describe('AboutPage', () => {
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Développement des compétences');
+    expect(content).toContain('D\u00E9veloppement des comp\u00E9tences');
     expect(content).toContain('Structuration des projets');
-    expect(content).toContain('Accès aux opportunités internationales');
+    expect(content).toContain(
+      'Acc\u00E8s aux opportunit\u00E9s internationales',
+    );
     expect(content).toContain('Ouverture internationale');
   });
 });

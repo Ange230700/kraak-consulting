@@ -43,7 +43,7 @@ describe('Mobile SupportPage', () => {
         userId: 'user-1',
         participantId: 'participant-1',
         subject: 'Connexion impossible',
-        message: 'Je ne peux plus accéder à mon espace.',
+        message: 'Je ne peux plus acc\u00E9der \u00E0 mon espace.',
         status: 'in_progress',
         category: 'technical',
         assignedToUserId: null,

@@ -4,8 +4,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 /**
- * Identifiant de mesure GA4 (`G-XXXXXXX`) injecté à la racine de l'application.
- * Quand la valeur est vide, l'analytics est complètement désactivée.
+ * Identifiant de mesure GA4 (`G-XXXXXXX`) inject\u00E9 \u00E0 la racine de l'application.
+ * Quand la valeur est vide, l'analytics est compl\u00E8tement d\u00E9sactiv\u00E9e.
  */
 export const GA4_MEASUREMENT_ID = new InjectionToken<string>(
   'KRAAK_GA4_MEASUREMENT_ID',
@@ -31,8 +31,8 @@ export class AnalyticsService {
   private initialized = false;
 
   /**
-   * Active GA4 si un identifiant est configuré et si l'on s'exécute côté
-   * navigateur. À appeler une fois au démarrage de l'application.
+   * Active GA4 si un identifiant est configur\u00E9 et si l'on s'ex\u00E9cute c\u00F4t\u00E9
+   * navigateur. \u00C0 appeler une fois au d\u00E9marrage de l'application.
    */
   initialize(): void {
     if (this.initialized) {

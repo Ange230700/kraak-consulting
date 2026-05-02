@@ -14,7 +14,7 @@ describe('Mobile SignUpPage', () => {
     authService.signUp.mockReset();
     authService.signUp.mockResolvedValue({
       message:
-        'Votre compte a été créé. Vérifiez votre email pour confirmer votre accès.',
+        'Votre compte a \u00E9t\u00E9 cr\u00E9\u00E9. V\u00E9rifiez votre email pour confirmer votre acc\u00E8s.',
       requiresEmailConfirmation: true,
       session: null,
       profile: null,
@@ -41,7 +41,7 @@ describe('Mobile SignUpPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
-    expect(element.textContent).toContain('Créer un compte');
+    expect(element.textContent).toContain('Cr\u00E9er un compte');
     expect(element.textContent).toContain('Se connecter');
   });
 
@@ -67,7 +67,7 @@ describe('Mobile SignUpPage', () => {
       redirectTo: 'kraak://auth/callback',
     });
     expect(fixture.componentInstance.successMessage()).toContain(
-      'Vérifiez votre email',
+      'V\u00E9rifiez votre email',
     );
   });
 });

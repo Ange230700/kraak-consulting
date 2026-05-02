@@ -30,7 +30,9 @@ export default class AnnouncementDetailPage implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly pageTitle = computed(() => {
     const title = this.announcement()?.title;
-    return title && title.trim().length > 0 ? title : "Détail de l'annonce";
+    return title && title.trim().length > 0
+      ? title
+      : "D\u00E9tail de l'annonce";
   });
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export default class AnnouncementDetailPage implements OnInit {
       case 'critical':
         return 'Critique';
       case 'high':
-        return 'Elevée';
+        return 'Elev\u00E9e';
       case 'normal':
         return 'Normale';
       case 'low':

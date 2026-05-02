@@ -16,7 +16,7 @@ describe('KraakErrorHandler', () => {
   });
 
   // Given un faux positif ResizeObserver du navigateur
-  // When le handler global le reçoit
+  // When le handler global le re\u00E7oit
   // Then il ne doit pas le journaliser comme une erreur applicative
   it("devrait ignorer le faux positif 'ResizeObserver loop completed with undelivered notifications.'", () => {
     const error = new Error(
@@ -35,8 +35,8 @@ describe('KraakErrorHandler', () => {
   });
 
   // Given une vraie erreur applicative
-  // When le handler global la reçoit
-  // Then il doit conserver le comportement d'erreur par défaut
+  // When le handler global la re\u00E7oit
+  // Then il doit conserver le comportement d'erreur par d\u00E9faut
   it('devrait journaliser les autres erreurs', () => {
     handler.handleError(new Error('Erreur critique'));
 

@@ -34,7 +34,7 @@ describe('Navbar', () => {
     );
     expect(primaryCta).toBeTruthy();
     expect(element.textContent).not.toContain('Accueil');
-    expect(element.textContent).toContain('À propos');
+    expect(element.textContent).toContain('\u00C0 propos');
   });
 
   it('should provide a named navigation landmark', () => {
