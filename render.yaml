@@ -1,5 +1,12 @@
 # Configuration Render — déploiement de l'API NestJS via Docker
 # Documentation : https://docs.render.com/blueprint-spec
+#
+# Deux services distincts :
+#   - kraak-api-staging : auto-deploy sur push main (preview-like)
+#   - kraak-api-prod    : autoDeploy: false ; déclenché uniquement par le
+#                         workflow .github/workflows/release-prod.yml sur tag
+#                         SemVer. Voir docs/decisions/ARC-07-prod-release-tag-based.md
+#                         et docs/runbooks/RELEASE_PROD.md.
 
 services:
   - type: web
@@ -9,6 +16,8 @@ services:
     dockerContext: .
     plan: free
     healthCheckPath: /health
+    autoDeploy: true
+    branch: main
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,6 +28,39 @@ services:
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CONTACT_FROM_EMAIL
+        sync: false
+      - key: CONTACT_TO_EMAIL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: kraak-api-prod
+    runtime: docker
+    dockerfilePath: apps/api/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /health
+    # Production : aucun déploiement automatique. Le workflow GitHub
+    # release-prod.yml déclenche manuellement les déploiements via l'API Render
+    # à chaque tag SemVer approuvé dans l'environnement GitHub `production`.
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '3000'
+      - key: APP_VERSION
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
         sync: false
       - key: RESEND_API_KEY
         sync: false
