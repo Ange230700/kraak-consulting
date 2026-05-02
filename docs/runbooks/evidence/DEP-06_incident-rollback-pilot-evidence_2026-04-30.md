@@ -20,7 +20,7 @@ Evidence:
     - Render: https://dashboard.render.com > kraak-api > Environment
 - Deployment URLs stable and documented:
   - Web (pilot): `https://kraak-group.vercel.app`
-  - API (pilot): `https://kraak-api.onrender.com`
+  - API (pilot): `https://kraak-api-staging.onrender.com`
   - Supabase: Configured in environment files
 
 ### DEP-05: Observabilité et alerting minimum

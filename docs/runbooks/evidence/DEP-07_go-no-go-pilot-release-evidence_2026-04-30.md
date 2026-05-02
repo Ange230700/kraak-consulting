@@ -25,7 +25,7 @@ Issue: #124
 
 **Statut** : ✅ Satisfaite
 
-- API pilote accessible : `https://kraak-api.onrender.com`
+- API pilote accessible : `https://kraak-api-staging.onrender.com`
 - `GET /health` opérationnel avec payload enrichi
 - `render.yaml` configure `healthCheckPath: /health`
 - Validation unitaire : 2 suites, 4 tests passés
@@ -74,7 +74,7 @@ Issue: #124
 
 ```bash
 KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app \
-KRAAK_OBSERVABILITY_API_URL=https://kraak-api.onrender.com \
+KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 ```
 

@@ -53,7 +53,7 @@ Les incidents sont détectés via :
 
 1. **Workflow `Observability`** (toutes les 15 minutes)
    - vérification `GET https://kraak-group.vercel.app` (web home)
-   - vérification `GET https://kraak-api.onrender.com/health` (API health)
+   - vérification `GET https://kraak-api-staging.onrender.com/health` (API health)
    - en cas d'échec, issue GitHub `[ALERT][DEP-05] Observability check failure`
    - chaque échec crée un commentaire horodate
 
@@ -76,7 +76,7 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
    curl -v https://kraak-group.vercel.app
 
    # API
-   curl -v https://kraak-api.onrender.com/health
+   curl -v https://kraak-api-staging.onrender.com/health
    ```
 
 2. **Vérifier les logs déploiement** :
@@ -118,7 +118,7 @@ curl -i https://kraak-group.vercel.app
 
 ```bash
 # 1. Vérifier le statut du service
-curl -v https://kraak-api.onrender.com/health
+curl -v https://kraak-api-staging.onrender.com/health
 
 # 2. Accéder aux logs
 # Via dashboard: https://dashboard.render.com > Web Services > kraak-api > Logs
@@ -175,7 +175,7 @@ Action 2 : Vérifier les variables d'environnement
 Action 3 : Redémarrer le service depuis Render UI
 - URL: https://dashboard.render.com > kraak-api > Settings > Restart
 - Attendre ~30s pour démarrage du conteneur
-- Vérifier: curl https://kraak-api.onrender.com/health
+- Vérifier: curl https://kraak-api-staging.onrender.com/health
 
 Action 4 : Si le problème persiste
 - Procéder à un ROLLBACK (voir section 2)
@@ -311,7 +311,7 @@ git push origin fix/rollback-from-<tag>
 6. Confirmer
 7. Attendre le build Docker (~2-3 minutes)
 8. Attendre le démarrage du service (~30s)
-9. Vérifier : `curl https://kraak-api.onrender.com/health`
+9. Vérifier : `curl https://kraak-api-staging.onrender.com/health`
 
 **Durée** : ~5 minutes  
 **Risque** : bas (même source Git, rebuilding Docker)
@@ -326,7 +326,7 @@ git push origin fix/rollback-from-<tag>
 6. Créer une PR, reviewer, merger vers `main`
 7. Render détecte le push et redéploie automatiquement
 8. Attendre le build Docker (~2-3 minutes) + démarrage (~30s)
-9. Vérifier : `curl https://kraak-api.onrender.com/health`
+9. Vérifier : `curl https://kraak-api-staging.onrender.com/health`
 
 **Durée** : ~10 minutes (incluant build + démarrage)  
 **Risque** : très bas (tracé Git clair, process supervisé)
@@ -343,7 +343,7 @@ git push origin fix/rollback-from-<tag>
 # 2. Attendre ~30s
 
 # 3. Vérifier
-curl https://kraak-api.onrender.com/health
+curl https://kraak-api-staging.onrender.com/health
 
 # Utile pour :
 # - Nettoyer les connexions Supabase
@@ -358,7 +358,7 @@ Si web ET API doivent être rollbackés ensemble :
 ```
 1. Commencer par l'API (moins visible, prioritaire)
    - Rollback API suivant méthode 2.2.B
-   - Attendre vérification: curl https://kraak-api.onrender.com/health
+   - Attendre vérification: curl https://kraak-api-staging.onrender.com/health
 
 2. Puis rollback web (plus visible)
    - Rollback web suivant méthode 2.1.B
@@ -393,7 +393,7 @@ Si web ET API doivent être rollbackés ensemble :
 #### Infrastructure & Déploiement
 
 - [ ] Web déployée et accessible : `curl -I https://kraak-group.vercel.app` → HTTP 200
-- [ ] API déployée et accessible : `curl https://kraak-api.onrender.com/health` → `{ "status": "ok", ... }`
+- [ ] API déployée et accessible : `curl https://kraak-api-staging.onrender.com/health` → `{ "status": "ok", ... }`
 - [ ] Supabase production-pilot configuré et connecté
 - [ ] Variables d'environnement validées sur tous les services
   - Vercel: https://vercel.com/dashboard/kraak-group > Settings > Environment Variables
@@ -508,11 +508,11 @@ Tester manuellement chaque flux principal via https://kraak-group.vercel.app :
 curl -I https://kraak-group.vercel.app
 
 # 2. API sanity check
-curl https://kraak-api.onrender.com/health | jq .
+curl https://kraak-api-staging.onrender.com/health | jq .
 
 # 3. Observability check
 KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app \
-KRAAK_OBSERVABILITY_API_URL=https://kraak-api.onrender.com \
+KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 
 # 4. Latest deployments ok?

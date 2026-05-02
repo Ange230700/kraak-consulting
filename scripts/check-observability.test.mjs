@@ -18,7 +18,7 @@ test('Given les URLs web et API, When on construit les checks, Then la home web 
   assert.deepEqual(
     createObservabilityTargets({
       webUrl: 'https://kraak-group.vercel.app/',
-      apiUrl: 'https://kraak-api.onrender.com/',
+      apiUrl: 'https://kraak-api-staging.onrender.com/',
     }),
     [
       {
@@ -29,7 +29,7 @@ test('Given les URLs web et API, When on construit les checks, Then la home web 
       },
       {
         name: 'api-health',
-        url: 'https://kraak-api.onrender.com/health',
+        url: 'https://kraak-api-staging.onrender.com/health',
         expectedStatus: 200,
         expectedContentType: 'application/json',
       },
@@ -41,7 +41,7 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
   const result = await checkTarget(
     {
       name: 'api-health',
-      url: 'https://kraak-api.onrender.com/health',
+      url: 'https://kraak-api-staging.onrender.com/health',
       expectedStatus: 200,
       expectedContentType: 'application/json',
     },

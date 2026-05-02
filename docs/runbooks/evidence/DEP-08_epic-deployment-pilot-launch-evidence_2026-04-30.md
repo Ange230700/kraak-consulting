@@ -48,7 +48,7 @@ Resultat:
 Commande:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api.onrender.com pnpm check:observability
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability
 ```
 
 Resultat:
@@ -60,7 +60,7 @@ Resultat:
 Commande:
 
 ```bash
-curl -sS -o /tmp/api_health.json -w "%{http_code}\n" https://kraak-api.onrender.com/health
+curl -sS -o /tmp/api_health.json -w "%{http_code}\n" https://kraak-api-staging.onrender.com/health
 cat /tmp/api_health.json
 ```
 
