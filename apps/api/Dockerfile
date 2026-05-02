@@ -49,7 +49,7 @@ RUN apk update && apk upgrade --no-cache && \
   adduser -S nestjs -u 1001 -G nodejs
 
 WORKDIR /app
-ENV NODE_ENV=prod \
+ENV NODE_ENV=production \
   PORT=3000 \
   HOST=0.0.0.0 \
   NODE_OPTIONS="--enable-source-maps"
