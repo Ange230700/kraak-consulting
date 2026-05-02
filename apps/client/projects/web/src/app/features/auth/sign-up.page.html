@@ -23,7 +23,10 @@
             <span
               class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/30"
             >
-              <i class="pi pi-compass text-base text-white"></i>
+              <i
+                class="pi pi-compass text-base text-white"
+                aria-hidden="true"
+              ></i>
             </span>
             <div>
               <p
@@ -38,17 +41,15 @@
           </div>
 
           <div class="relative z-10 mt-12 flex flex-col gap-8">
-            <h2
-              class="max-w-sm text-3xl leading-tight font-semibold text-white"
-            >
+            <p class="max-w-sm text-3xl leading-tight font-semibold text-white">
               Rejoignez KRAAK et lancez votre parcours d&apos;accompagnement.
-            </h2>
+            </p>
             <div class="space-y-5 text-sm leading-6 text-slate-100/90">
               <div class="flex items-start gap-3">
                 <span
                   class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
                 >
-                  <i class="pi pi-star text-xs"></i>
+                  <i class="pi pi-star text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
                   Acc&eacute;dez &agrave; vos programmes de formation, de
@@ -59,7 +60,7 @@
                 <span
                   class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
                 >
-                  <i class="pi pi-users text-xs"></i>
+                  <i class="pi pi-users text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
                   B&eacute;n&eacute;ficiez d&apos;un suivi personnalis&eacute;
@@ -71,7 +72,7 @@
                 <span
                   class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
                 >
-                  <i class="pi pi-shield text-xs"></i>
+                  <i class="pi pi-shield text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
                   Vos donn&eacute;es personnelles sont prot&eacute;g&eacute;es
@@ -89,7 +90,7 @@
             Espace participant
           </p>
           <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-            Cr&eacute;er un compte
+            Créer un compte
           </h1>
           <p class="mt-3 max-w-lg text-sm leading-6 text-slate-600">
             Ouvrez votre espace KRAAK pour suivre vos programmes et vos
@@ -206,11 +207,7 @@
               class="btn btn-primary mt-1"
               [disabled]="submitting()"
             >
-              {{
-                submitting()
-                  ? 'Cr&eacute;ation en cours...'
-                  : 'Cr&eacute;er mon compte'
-              }}
+              {{ submitting() ? 'Création en cours...' : 'Créer mon compte' }}
             </button>
           </form>
 
