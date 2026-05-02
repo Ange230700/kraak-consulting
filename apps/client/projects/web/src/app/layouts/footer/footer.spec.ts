@@ -3,6 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import { Footer } from './footer';
 
+const expectedFacebookUrl = 'https://www.facebook.com/kraakconsulting/';
+
 describe('Footer', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,11 +32,15 @@ describe('Footer', () => {
     const socialButtons = ['Facebook', 'Instagram', 'WhatsApp', 'TikTok'].map(
       (name) => element.querySelector(`a[aria-label="${name}"]`),
     );
+    const facebookLink = element.querySelector(
+      'a[aria-label="Facebook"]',
+    ) as HTMLAnchorElement | null;
 
     expect(brandImage?.getAttribute('src')).toContain(
       'kraak_consulting_symbol_96w.png',
     );
     expect(footerLinks.length).toBeGreaterThan(0);
-    expect(socialButtons.every((button) => button)).toBe(true);
+    expect(socialButtons.every(Boolean)).toBe(true);
+    expect(facebookLink?.href).toBe(expectedFacebookUrl);
   });
 });
