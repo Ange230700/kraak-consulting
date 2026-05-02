@@ -41,6 +41,6 @@ describe('Footer', () => {
     );
     expect(footerLinks.length).toBeGreaterThan(0);
     expect(socialButtons.every(Boolean)).toBe(true);
-    expect(facebookLink?.href).toBe(expectedFacebookUrl);
+    expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);
   });
 });
