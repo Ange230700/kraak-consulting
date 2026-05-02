@@ -20,10 +20,11 @@ describe('resolveApiEnvFilePaths', () => {
     expect(resolveApiEnvFilePaths('staging')).toEqual(['.env.staging', '.env']);
   });
 
-  it('Given NODE_ENV is production, When env files are resolved, Then .env.production is loaded before the local fallback', () => {
-    expect(resolveApiEnvFilePaths('production')).toEqual([
-      '.env.production',
-      '.env',
-    ]);
+  it('Given NODE_ENV is production, When env files are resolved, Then .env.prod is loaded before the local fallback', () => {
+    expect(resolveApiEnvFilePaths('production')).toEqual(['.env.prod', '.env']);
+  });
+
+  it('Given NODE_ENV is prod, When env files are resolved, Then .env.prod is loaded before the local fallback', () => {
+    expect(resolveApiEnvFilePaths('prod')).toEqual(['.env.prod', '.env']);
   });
 });

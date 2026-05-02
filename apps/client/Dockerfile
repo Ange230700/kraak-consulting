@@ -32,8 +32,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 
 # --- Étape 2 : build Angular (SSR + browser) ---
 FROM deps AS build
-ARG BUILD_ENV=production
-ENV NODE_ENV=production
+ARG BUILD_ENV=prod
+ENV NODE_ENV=prod
 COPY tsconfig.base.json ./
 COPY scripts/ scripts/
 COPY apps/client/ apps/client/
@@ -57,7 +57,7 @@ RUN apk update && apk upgrade --no-cache && \
   adduser -S angular -u 1001 -G nodejs
 
 WORKDIR /app
-ENV NODE_ENV=production \
+ENV NODE_ENV=prod \
   PORT=4000 \
   HOST=0.0.0.0
 
