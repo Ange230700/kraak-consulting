@@ -7,14 +7,13 @@ dans le monorepo. Ne jamais commiter de secrets dans le dépôt.
 
 | Fichier                         | Contenu                                             |
 | ------------------------------- | --------------------------------------------------- |
-| `apps/api/.env.example`         | Modèle backend local (copier vers `.env.local`)     |
-| `apps/api/.env.local`           | Variables backend local effectivement lues          |
+| `apps/api/.env.example`         | Modèle backend local (copier vers `.env`)           |
+| `apps/api/.env`                 | Variables backend local effectivement lues          |
 | `apps/api/.env.staging.example` | Modèle backend staging (copier vers `.env.staging`) |
 | `apps/api/.env.staging`         | Variables backend staging effectivement lues        |
 | `apps/client/.env.example`      | Modèle client local / staging                       |
-| `apps/client/.env.local`        | Runtime-config client local + scripts / E2E         |
+| `apps/client/.env`              | Runtime-config client local + scripts / E2E         |
 | `apps/client/.env.staging`      | Runtime-config client staging                       |
-| `supabase/.env.local`           | Références Supabase locales                         |
 | `supabase/.env.staging`         | Références Supabase staging                         |
 | `.env.example` (racine)         | Variables CI/CD uniquement                          |
 
@@ -41,13 +40,18 @@ Variables lues par `process.env` dans le code NestJS :
 
 Ordre de chargement côté API :
 
-1. `.env.local` si `NODE_ENV=local`
-2. `.env.${NODE_ENV}` pour les autres environnements (`staging`, `production`, ...)
-3. `.env` comme fallback legacy
+1. Si `NODE_ENV=local` (ou non défini) : seul `.env` est chargé.
+2. Sinon : `.env.${NODE_ENV}` (par exemple `.env.staging`, `.env.production`)
+   est chargé en priorité, avec `.env` comme fallback pour les variables non
+   spécifiées.
+
+Les fichiers `.env.staging` et `.env.production` ne doivent **jamais** être
+versionnés : en staging et en production, les variables sont injectées par
+l'hébergeur (Render, Vercel, GitHub Secrets).
 
 Scripts utiles côté `apps/api/package.json` :
 
-- `pnpm start:local` charge explicitement `.env.local`
+- `pnpm start:local` charge explicitement `.env` (`NODE_ENV=local`)
 - `pnpm start:dev` reste un alias vers `start:local`
 - `pnpm start:staging` lance NestJS avec `NODE_ENV=staging`
 - `pnpm start:prod` s'appuie sur les variables injectées par l'hébergeur
@@ -117,8 +121,9 @@ Variable optionnelle utile côté build :
 
 ## Supabase — `supabase/`
 
-Les fichiers `supabase/.env.local` et `supabase/.env.staging` servent de
-référence claire pour les deux environnements manipulés dans le dépôt.
+Le fichier `supabase/.env.staging` sert de référence claire pour l'environnement
+staging manipulé dans le dépôt. En local, les variables Supabase nécessaires
+sont déclarées directement dans `apps/api/.env` et `apps/client/.env`.
 
 La configuration Auth email/password versionnée du MVP ne vit pas dans ces
 fichiers `.env` mais dans `supabase/config.toml`, avec ses templates email

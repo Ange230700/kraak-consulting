@@ -23,12 +23,12 @@ function runTest(name, fn) {
 }
 
 runTest(
-  'le runtime client peut lire les variables locales depuis apps/client/.env.local quand le fichier existe',
+  'le runtime client peut lire les variables locales depuis apps/client/.env quand le fichier existe',
   () => {
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
 
     try {
-      const envFilePath = path.join(tempRoot, '.env.local');
+      const envFilePath = path.join(tempRoot, '.env');
       writeFileSync(
         envFilePath,
         [
@@ -143,7 +143,7 @@ runTest(
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'kraak-client-runtime-config-'));
 
     try {
-      const envFilePath = path.join(tempRoot, '.env.local');
+      const envFilePath = path.join(tempRoot, '.env');
       writeFileSync(
         envFilePath,
         [

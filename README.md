@@ -28,14 +28,13 @@ pnpm install
 
 ```bash
 # API locale
-cp apps/api/.env.example apps/api/.env.local
+cp apps/api/.env.example apps/api/.env
 
 # Client local (runtime-config, scripts, E2E)
-cp apps/client/.env.example apps/client/.env.local
+cp apps/client/.env.example apps/client/.env
 ```
 
-Remplir les valeurs manquantes et compléter aussi `supabase/.env.local` si vous
-travaillez avec Supabase en local — voir
+Remplir les valeurs manquantes — voir
 [`docs/runbooks/ENVIRONMENT_VARIABLES.md`](docs/runbooks/ENVIRONMENT_VARIABLES.md).
 
 Le provider email/password local et les templates email du MVP sont versionnés

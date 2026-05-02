@@ -11,29 +11,28 @@ Avant de lancer quoi que ce soit :
 1. **Node.js 24+** installé (`node -v` pour vérifier)
 2. **pnpm 10+** activé (`pnpm -v` pour vérifier)
 3. Dépendances installées : `pnpm install` à la racine
-4. Fichiers `.env.local` configurés (voir ci-dessous)
+4. Fichiers `.env` configurés (voir ci-dessous)
 
 ### Configurer les variables d'environnement
 
 ```bash
 # Backend
-cp apps/api/.env.example apps/api/.env.local
+cp apps/api/.env.example apps/api/.env
 
 # Client (optionnel, utile pour Playwright / scripts)
-cp apps/client/.env.example apps/client/.env.local
+cp apps/client/.env.example apps/client/.env
 ```
 
-Compléter aussi `supabase/.env.local` si vous utilisez un projet Supabase local.
 Voir [`ENVIRONMENT_VARIABLES.md`](ENVIRONMENT_VARIABLES.md) pour la référence complète.
 La configuration Auth locale versionnée pour le MVP est décrite dans
 [`SUPABASE_AUTH_SETUP.md`](SUPABASE_AUTH_SETUP.md).
 
 **Variables minimales pour développer en local :**
 
-| Variable              | Fichier               | Exemple                        |
-| --------------------- | --------------------- | ------------------------------ |
-| `SUPABASE_URL`        | `apps/api/.env.local` | `http://127.0.0.1:54321`       |
-| `SUPABASE_SECRET_KEY` | `apps/api/.env.local` | clé fournie par Supabase local |
+| Variable              | Fichier         | Exemple                        |
+| --------------------- | --------------- | ------------------------------ |
+| `SUPABASE_URL`        | `apps/api/.env` | `http://127.0.0.1:54321`       |
+| `SUPABASE_SECRET_KEY` | `apps/api/.env` | clé fournie par Supabase local |
 
 ---
 
@@ -236,9 +235,8 @@ pnpm lint:api
 
 ### Les variables d'environnement ne sont pas reconnues
 
-- Vérifier que `apps/api/.env.local`, `apps/client/.env.local` et, si besoin,
-  `supabase/.env.local` existent bien
-- Redémarrer le serveur de développement après avoir modifié un fichier `.env.local`
+- Vérifier que `apps/api/.env` et `apps/client/.env` existent bien
+- Redémarrer le serveur de développement après avoir modifié un fichier `.env`
 
 ### Vite échoue avec `EPERM ... .angular/cache ... deps_temp`
 

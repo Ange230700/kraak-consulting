@@ -85,7 +85,8 @@ export function loadClientRuntimeConfig(
   environmentName,
   { clientRootPath = clientRoot, processEnv = process.env } = {},
 ) {
-  const envPath = path.join(clientRootPath, `.env.${environmentName}`);
+  const envFileName = environmentName === 'local' ? '.env' : `.env.${environmentName}`;
+  const envPath = path.join(clientRootPath, envFileName);
   const fileVariables = existsSync(envPath) ? parseEnvFile(envPath) : {};
   const apiBaseUrl = readRuntimeVariable('CLIENT_API_BASE_URL', fileVariables, processEnv);
   const supabaseUrl = readRuntimeVariable('SUPABASE_URL', fileVariables, processEnv);

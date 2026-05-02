@@ -287,7 +287,7 @@ flowchart TD
 
 ## 8. Variables d’environnement recommandées
 
-### Variables client (`apps/client/.env.local` / `.env.staging`)
+### Variables client (`apps/client/.env` / `.env.staging`)
 
 - `CLIENT_API_BASE_URL` — URL de l'API consommée par le client
 - `SUPABASE_URL` — URL publique du projet Supabase côté client
@@ -297,7 +297,7 @@ flowchart TD
 > Angular utilise des fichiers `environment.ts` compilés à la build, pas des
 > variables `.env` à l'exécution.
 
-### Variables back-end (`apps/api/.env.local` / `.env.staging`)
+### Variables back-end (`apps/api/.env` / `.env.staging`)
 
 - `NODE_ENV`
 - `PORT`
@@ -310,7 +310,7 @@ flowchart TD
 Les mêmes variables s'appliquent en staging (`apps/api/.env.staging`) avec des
 valeurs adaptées.
 
-### Variables Supabase (`supabase/.env.local` / `.env.staging`)
+### Variables Supabase (`supabase/.env.staging`)
 
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
