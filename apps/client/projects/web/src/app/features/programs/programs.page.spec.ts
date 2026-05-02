@@ -21,12 +21,12 @@ describe('ProgramsPage', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     expect(page.querySelector('h1')?.textContent).toContain(
-      'Des programmes conçus pour transformer des trajectoires',
+      'Des programmes con\u00E7us pour transformer des trajectoires',
     );
     expect(page.textContent).toContain('Ateliers leadership jeunesse');
     expect(page.textContent).toContain('Engagement communautaire');
-    expect(page.textContent).toContain('Programmes pour étudiants');
-    expect(page.textContent).toContain('Conférences et forums');
+    expect(page.textContent).toContain('Programmes pour \u00E9tudiants');
+    expect(page.textContent).toContain('Conf\u00E9rences et forums');
   });
 
   it('Given the registration process section, when the Programs page is rendered, then the four expected steps are displayed in order', () => {
@@ -38,7 +38,7 @@ describe('ProgramsPage', () => {
     const candidatureIndex = content.indexOf('Candidature');
     const entretienIndex = content.indexOf('Entretien');
     const inscriptionIndex = content.indexOf('Inscription');
-    const demarrageIndex = content.indexOf('Démarrage');
+    const demarrageIndex = content.indexOf('D\u00E9marrage');
 
     expect(candidatureIndex).toBeGreaterThan(-1);
     expect(entretienIndex).toBeGreaterThan(candidatureIndex);

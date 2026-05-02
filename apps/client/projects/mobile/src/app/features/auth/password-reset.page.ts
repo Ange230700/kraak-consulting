@@ -61,7 +61,7 @@ export default class PasswordResetPage {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          "Impossible d'envoyer l'email de réinitialisation pour le moment.",
+          "Impossible d'envoyer l'email de r\u00E9initialisation pour le moment.",
         ),
       );
     } finally {

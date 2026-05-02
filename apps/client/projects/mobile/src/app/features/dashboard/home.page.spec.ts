@@ -202,6 +202,6 @@ describe('Mobile HomePage', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Service indisponible');
-    expect(text).toContain('Réessayer');
+    expect(text).toContain('R\u00E9essayer');
   });
 });

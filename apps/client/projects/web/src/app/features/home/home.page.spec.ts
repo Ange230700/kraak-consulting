@@ -19,7 +19,9 @@ describe('HomePage', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Développez vos compétences');
+    expect(heading?.textContent).toContain(
+      'D\u00E9veloppez vos comp\u00E9tences',
+    );
   });
 
   it('should render the primary consulting calls to action', () => {
@@ -27,8 +29,8 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('Réserver une consultation');
-    expect(element.textContent).toContain('Découvrir nos programmes');
+    expect(element.textContent).toContain('R\u00E9server une consultation');
+    expect(element.textContent).toContain('D\u00E9couvrir nos programmes');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -51,9 +53,9 @@ describe('HomePage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain(
-      'Formations en anglais et français professionnel',
+      'Formations en anglais et fran\u00E7ais professionnel',
     );
-    expect(content).toContain('Création, gestion et suivi de projets');
-    expect(content).toContain('Immigration Canada et États-Unis');
+    expect(content).toContain('Cr\u00E9ation, gestion et suivi de projets');
+    expect(content).toContain('Immigration Canada et \u00C9tats-Unis');
   });
 });

@@ -58,7 +58,7 @@ export default class PasswordResetPage {
       this.successMessage.set(response.message);
       this.messageService.add({
         severity: 'success',
-        summary: 'Réinitialisation',
+        summary: 'R\u00E9initialisation',
         detail: response.message,
         life: 6000,
       });

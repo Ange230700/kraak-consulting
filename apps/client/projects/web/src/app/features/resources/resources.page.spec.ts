@@ -25,7 +25,7 @@ describe('ResourcesPage', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.textContent).toContain(
-      'Ressources pour clarifier votre prochaine étape',
+      'Ressources pour clarifier votre prochaine \u00E9tape',
     );
     expect(element.textContent).toContain('Formation');
     expect(element.textContent).toContain('Projet');

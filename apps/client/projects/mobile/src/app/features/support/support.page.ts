@@ -30,8 +30,8 @@ export default class SupportPage implements OnInit {
     const labels: Record<SupportRequestStatusValue, string> = {
       open: 'Ouverte',
       in_progress: 'En cours',
-      resolved: 'Résolue',
-      closed: 'Clôturée',
+      resolved: 'R\u00E9solue',
+      closed: 'Cl\u00F4tur\u00E9e',
     };
 
     return labels[status];

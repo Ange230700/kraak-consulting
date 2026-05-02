@@ -44,8 +44,8 @@ describe('Mobile SignInPage', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
     expect(element.textContent).toContain('Se connecter');
-    expect(element.textContent).toContain('Créer un compte');
-    expect(element.textContent).toContain('Mot de passe oublié');
+    expect(element.textContent).toContain('Cr\u00E9er un compte');
+    expect(element.textContent).toContain('Mot de passe oubli\u00E9');
   });
 
   it('Given valid credentials, when the form is submitted, then the auth service is called and the app navigates to the shell', async () => {

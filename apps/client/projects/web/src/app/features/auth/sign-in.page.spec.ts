@@ -42,8 +42,8 @@ describe('Web SignInPage', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
     expect(element.textContent).toContain('Connexion');
-    expect(element.textContent).toContain('Creer un compte');
-    expect(element.textContent).toContain('Mot de passe oublie');
+    expect(element.textContent).toContain('Cr\u00E9er un compte');
+    expect(element.textContent).toContain('Mot de passe oubli\u00E9');
   });
 
   it('Given valid credentials, when the form is submitted, then the auth service is called and the app navigates to the participant dashboard', async () => {

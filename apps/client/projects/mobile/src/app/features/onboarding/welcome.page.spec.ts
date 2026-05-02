@@ -20,7 +20,7 @@ describe('Mobile WelcomePage', () => {
     const text = fixture.nativeElement.textContent;
 
     expect(text).toContain('Bienvenue dans votre espace participant');
-    expect(text).toContain('Démarrer');
+    expect(text).toContain('D\u00E9marrer');
     expect(text).toContain('Se connecter');
   });
 });

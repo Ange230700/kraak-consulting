@@ -62,7 +62,7 @@ export default class ResourceDetailPage implements OnInit {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          'Erreur lors du chargement du détail de la ressource.',
+          'Erreur lors du chargement du d\u00E9tail de la ressource.',
         ),
       );
       this.resource.set(null);

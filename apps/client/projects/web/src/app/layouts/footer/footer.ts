@@ -22,8 +22,8 @@ export class Footer {
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly navigationLinks: FooterLink[] = [
-    { label: 'À propos', path: '/a-propos' },
-    { label: 'Actualités', path: '/ressources' },
+    { label: '\u00C0 propos', path: '/a-propos' },
+    { label: 'Actualit\u00E9s', path: '/ressources' },
     { label: 'Services', path: '/services' },
     { label: 'Programmes', path: '/programmes' },
     { label: 'Contact', path: '/contact' },
@@ -53,7 +53,7 @@ export class Footer {
   ];
 
   protected readonly policyLinks: FooterLink[] = [
-    { label: 'Politique de confidentialité', path: '/a-propos' },
-    { label: 'Conditions d’utilisation', path: '/contact' },
+    { label: 'Politique de confidentialit\u00E9', path: '/a-propos' },
+    { label: 'Conditions d\u2019utilisation', path: '/contact' },
   ];
 }

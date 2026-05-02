@@ -64,21 +64,21 @@ export default class HomePage implements OnInit {
       tag: 'Programmes',
       title: 'Avancez avec un cadre clair.',
       description:
-        'Retrouvez vos parcours actifs, leurs prochaines étapes et les détails utiles.',
+        'Retrouvez vos parcours actifs, leurs prochaines \u00E9tapes et les d\u00E9tails utiles.',
       tone: 'primary',
     },
     {
       tag: 'Annonces',
-      title: 'Restez aligné avec les mises à jour importantes.',
+      title: 'Restez align\u00E9 avec les mises \u00E0 jour importantes.',
       description:
-        'Gardez un oeil sur les informations clés à relayer rapidement.',
+        'Gardez un oeil sur les informations cl\u00E9s \u00E0 relayer rapidement.',
       tone: 'accent',
     },
     {
       tag: 'Support',
       title: "Demandez de l'aide sans quitter votre parcours.",
       description:
-        "Accédez aux bons points de contact quand vous avez besoin d'un relais.",
+        "Acc\u00E9dez aux bons points de contact quand vous avez besoin d'un relais.",
       tone: 'primary',
     },
   ];

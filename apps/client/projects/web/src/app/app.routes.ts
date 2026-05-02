@@ -39,7 +39,7 @@ export const routes: Routes = [
   },
   {
     path: 'mot-de-passe-oublie',
-    title: 'Mot de passe oublié | KRAAK',
+    title: 'Mot de passe oubli\u00E9 | KRAAK',
     loadComponent: () => import('./features/auth/password-reset.page'),
   },
   buildMarketingRoute(
