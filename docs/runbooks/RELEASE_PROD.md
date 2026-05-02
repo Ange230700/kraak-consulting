@@ -30,15 +30,28 @@ Dans `Settings → Environments → New environment` :
 - Secrets de l'environnement (jamais ailleurs) :
   - `RENDER_API_KEY`
   - `RENDER_PROD_SERVICE_ID`
+  - `PROD_API_HEALTH_URL` (URL absolue vers `/health` du service prod)
   - `VERCEL_TOKEN`
   - `VERCEL_PROD_PROJECT_ID`
   - `VERCEL_ORG_ID`
-  - `SUPABASE_PROD_PROJECT_REF` (utilisé pour les migrations prod)
+  - `PROD_WEB_URL` (URL absolue de la home web prod)
+  - `SUPABASE_ACCESS_TOKEN` (token CLI Supabase pour `link` + `db push`)
+  - `SUPABASE_PROD_PROJECT_REF` (ref du projet Supabase prod, distinct de staging)
+  - `SUPABASE_PROD_DB_PASSWORD` (mot de passe Postgres pour `db push`)
+
+L'absence d'un seul de ces secrets fera échouer le workflow `release-prod` lors
+des étapes migration ou smoke test.
 
 ### 2. Branch protection sur `main`
 
 - Required pull request reviews avant merge (≥ 1)
-- Required status checks : `lint`, `unit`, `build`, `e2e-web`
+- Required status checks (noms exacts tels que définis dans
+  `.github/workflows/ci.yml`) :
+  - `Format & Lint`
+  - `Build`
+  - `Tests unitaires`
+  - `Tests E2E`
+  - `Workspace Checks`
 - Linear history (rebase only — déjà aligné avec le workflow Git du repo)
 - Restrict who can push : mainteneurs uniquement
 
