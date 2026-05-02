@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
 import {
   WebAuthService,
@@ -23,7 +24,7 @@ interface SignUpFormModel {
 @Component({
   selector: 'kraak-web-sign-up-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Message],
+  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
   templateUrl: './sign-up.page.html',
 })
 export default class SignUpPage {

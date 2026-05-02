@@ -203,20 +203,33 @@
             }
 
             <button
+              pButton
               type="submit"
-              class="btn btn-primary mt-1"
+              size="large"
+              [label]="
+                submitting() ? 'Création en cours...' : 'Créer mon compte'
+              "
+              [loading]="submitting()"
               [disabled]="submitting()"
-            >
-              {{ submitting() ? 'Création en cours...' : 'Créer mon compte' }}
-            </button>
+              [attr.aria-label]="
+                submitting() ? 'Création en cours...' : 'Créer mon compte'
+              "
+              class="kr-button-primary mt-1 w-full"
+            ></button>
           </form>
 
-          <div
-            class="mt-7 flex flex-col gap-2 border-t border-slate-200 pt-5 text-sm font-semibold"
-          >
-            <a routerLink="/connexion" class="text-brand-blue hover:underline">
-              D&eacute;j&agrave; un compte&nbsp;? Se connecter
-            </a>
+          <div class="mt-7 flex flex-col gap-2 border-t border-slate-200 pt-5">
+            <p class="text-sm font-semibold text-slate-600">
+              D&eacute;j&agrave; un compte&nbsp;?
+            </p>
+            <a
+              pButton
+              routerLink="/connexion"
+              size="large"
+              label="Se connecter"
+              aria-label="Se connecter"
+              class="kr-button-primary w-full"
+            ></a>
           </div>
         </div>
       </div>
