@@ -1,97 +1,185 @@
-<main class="min-h-screen bg-slate-50 py-12 sm:py-16">
-  <div class="mx-auto w-full max-w-xl px-4 sm:px-6">
+<main
+  class="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(15,23,42,0.08),transparent_45%),linear-gradient(165deg,#f8fafc_0%,#eef6ff_45%,#fff8ee_100%)] px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16"
+>
+  <div class="mx-auto w-full max-w-6xl">
     <section
-      class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+      class="overflow-hidden rounded-3xl border border-slate-200/70 bg-white/90 shadow-2xl shadow-slate-900/10 backdrop-blur-sm"
     >
-      <p
-        class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
-      >
-        Espace participant
-      </p>
-      <h1 class="mt-3 text-3xl font-semibold text-slate-950">Connexion</h1>
-      <p class="mt-3 text-sm leading-6 text-slate-600">
-        Connectez-vous pour retrouver votre dashboard, vos programmes et vos
-        annonces.
-      </p>
-
-      <form
-        [formGroup]="form"
-        (ngSubmit)="submit()"
-        class="mt-6 flex flex-col gap-4"
-        novalidate
-      >
-        <div class="flex flex-col gap-2">
-          <label
-            for="web-sign-in-email"
-            class="text-sm font-semibold text-slate-900"
-          >
-            Adresse email
-          </label>
-          <input
-            id="web-sign-in-email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="vous@kraak.org"
-            class="focus:border-brand-blue min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-          />
-          @if (form.controls.email.touched && form.controls.email.invalid) {
-            <p class="text-sm leading-6 text-rose-700">
-              Saisissez une adresse email valide.
-            </p>
-          }
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label
-            for="web-sign-in-password"
-            class="text-sm font-semibold text-slate-900"
-          >
-            Mot de passe
-          </label>
-          <input
-            id="web-sign-in-password"
-            type="password"
-            formControlName="password"
-            autocomplete="current-password"
-            placeholder="Minimum 8 caracteres"
-            class="focus:border-brand-blue min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-          />
-          @if (
-            form.controls.password.touched && form.controls.password.invalid
-          ) {
-            <p class="text-sm leading-6 text-rose-700">
-              Votre mot de passe doit contenir au moins 8 caracteres.
-            </p>
-          }
-        </div>
-
-        @if (errorMessage()) {
-          <p-message
-            severity="error"
-            [text]="errorMessage()!"
-            [closable]="false"
-            styleClass="w-full"
-          />
-        }
-
-        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-          {{ submitting() ? 'Connexion en cours...' : 'Se connecter' }}
-        </button>
-      </form>
-
-      <div
-        class="mt-5 flex flex-col gap-2 border-t border-slate-200 pt-4 text-sm font-semibold"
-      >
-        <a routerLink="/inscription" class="text-brand-blue hover:underline">
-          Creer un compte
-        </a>
-        <a
-          routerLink="/mot-de-passe-oublie"
-          class="text-brand-blue hover:underline"
+      <div class="grid lg:grid-cols-2">
+        <aside
+          class="relative hidden overflow-hidden bg-slate-900 px-10 py-14 text-slate-50 lg:flex lg:flex-col lg:justify-between"
         >
-          Mot de passe oublie
-        </a>
+          <div
+            class="absolute inset-0 bg-[linear-gradient(160deg,rgba(14,116,144,0.85)_0%,rgba(15,23,42,0.92)_55%,rgba(12,74,110,0.88)_100%)]"
+          ></div>
+          <div
+            class="absolute -top-20 -left-24 h-72 w-72 rounded-full bg-cyan-300/25 blur-3xl"
+          ></div>
+          <div
+            class="absolute right-0 -bottom-28 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl"
+          ></div>
+
+          <div class="relative z-10 flex items-center gap-3">
+            <span
+              class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/30"
+            >
+              <i class="pi pi-compass text-base text-white"></i>
+            </span>
+            <div>
+              <p
+                class="text-xs font-semibold tracking-[0.22em] text-white/75 uppercase"
+              >
+                Espace participant
+              </p>
+              <p class="text-lg leading-tight font-semibold text-white">
+                KRAAK
+              </p>
+            </div>
+          </div>
+
+          <div class="relative z-10 mt-12 flex flex-col gap-8">
+            <h2 class="max-w-sm text-3xl leading-tight font-semibold">
+              Retrouver vos programmes, vos annonces et votre progression.
+            </h2>
+            <div class="space-y-5 text-sm leading-6 text-slate-100/90">
+              <div class="flex items-start gap-3">
+                <span
+                  class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
+                >
+                  <i class="pi pi-calendar text-xs"></i>
+                </span>
+                <p>
+                  Visualisez vos prochaines sessions et les jalons importants en
+                  un seul endroit.
+                </p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span
+                  class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
+                >
+                  <i class="pi pi-send text-xs"></i>
+                </span>
+                <p>
+                  Recevez les mises a jour de l'equipe KRAAK en temps reel via
+                  votre dashboard.
+                </p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span
+                  class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30"
+                >
+                  <i class="pi pi-shield text-xs"></i>
+                </span>
+                <p>
+                  Vos acces et vos informations restent proteges avec nos
+                  standards de securite.
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+          <p
+            class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase lg:hidden"
+          >
+            Espace participant
+          </p>
+          <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Connexion
+          </h1>
+          <p class="mt-3 max-w-lg text-sm leading-6 text-slate-600">
+            Connectez-vous pour retrouver votre dashboard, vos programmes et vos
+            annonces.
+          </p>
+
+          <form
+            [formGroup]="form"
+            (ngSubmit)="submit()"
+            class="mt-8 flex flex-col gap-5"
+            novalidate
+          >
+            <div class="flex flex-col gap-2">
+              <label
+                for="web-sign-in-email"
+                class="text-sm font-semibold text-slate-900"
+              >
+                Adresse email
+              </label>
+              <input
+                id="web-sign-in-email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="vous@kraak.org"
+                class="focus:border-brand-blue focus:ring-brand-blue/20 min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition-shadow outline-none focus:ring-4"
+              />
+              @if (form.controls.email.touched && form.controls.email.invalid) {
+                <p class="text-sm leading-6 text-rose-700">
+                  Saisissez une adresse email valide.
+                </p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label
+                for="web-sign-in-password"
+                class="text-sm font-semibold text-slate-900"
+              >
+                Mot de passe
+              </label>
+              <input
+                id="web-sign-in-password"
+                type="password"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="Minimum 8 caracteres"
+                class="focus:border-brand-blue focus:ring-brand-blue/20 min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition-shadow outline-none focus:ring-4"
+              />
+              @if (
+                form.controls.password.touched && form.controls.password.invalid
+              ) {
+                <p class="text-sm leading-6 text-rose-700">
+                  Votre mot de passe doit contenir au moins 8 caracteres.
+                </p>
+              }
+            </div>
+
+            @if (errorMessage()) {
+              <p-message
+                severity="error"
+                [text]="errorMessage()!"
+                [closable]="false"
+                styleClass="w-full"
+              />
+            }
+
+            <button
+              type="submit"
+              class="btn btn-primary mt-1"
+              [disabled]="submitting()"
+            >
+              {{ submitting() ? 'Connexion en cours...' : 'Se connecter' }}
+            </button>
+          </form>
+
+          <div
+            class="mt-7 flex flex-col gap-2 border-t border-slate-200 pt-5 text-sm font-semibold"
+          >
+            <a
+              routerLink="/inscription"
+              class="text-brand-blue hover:underline"
+            >
+              Creer un compte
+            </a>
+            <a
+              routerLink="/mot-de-passe-oublie"
+              class="text-brand-blue hover:underline"
+            >
+              Mot de passe oublie
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </div>
