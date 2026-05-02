@@ -23,20 +23,32 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  # Versions CLI épinglées : reproductibilité de la release et des rollbacks.
+  # Toute mise à jour doit faire l'objet d'une PR dédiée.
+  SUPABASE_CLI_VERSION: '1.200.3'
+  VERCEL_CLI_VERSION: '37.14.0'
+
 jobs:
   # ──────────────────────────────────────────────
-  # Vérification : doit être un tag v*
+  # Validation : tag SemVer + commit accessible depuis main
   # ──────────────────────────────────────────────
   validate-tag:
     name: Valider la référence
     runs-on: ubuntu-latest
     outputs:
       ref: ${{ steps.resolve.outputs.ref }}
+      sha: ${{ steps.resolve.outputs.sha }}
     steps:
-      - name: Résoudre la référence cible
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Résoudre la référence cible et vérifier l'accessibilité depuis main
         id: resolve
         shell: bash
         run: |
+          set -euo pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             tag="${{ inputs.tag }}"
           else
@@ -46,7 +58,23 @@ jobs:
             echo "::error::Tag '$tag' n'est pas un tag SemVer valide (format v*.*.*)."
             exit 1
           fi
+
+          # Le tag doit exister localement
+          if ! git rev-parse --verify "refs/tags/$tag" >/dev/null 2>&1; then
+            git fetch origin "refs/tags/$tag:refs/tags/$tag"
+          fi
+          sha="$(git rev-list -n 1 "refs/tags/$tag")"
+
+          # Le commit du tag doit être accessible depuis origin/main
+          # (empêche un tag sur une branche non revue de promouvoir en prod).
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::Le commit $sha (tag $tag) n'est pas accessible depuis origin/main. Toute release prod doit pointer un commit déjà mergé sur main."
+            exit 1
+          fi
+
           echo "ref=$tag" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
   # ──────────────────────────────────────────────
   # Build + tests rejoués sur le commit du tag
@@ -58,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.validate-tag.outputs.ref }}
+          ref: ${{ needs.validate-tag.outputs.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -84,8 +112,12 @@ jobs:
       - name: Build mobile (production)
         run: pnpm build:mobile
 
+      - name: Build Docker image API (sanity)
+        run: docker build -f apps/api/Dockerfile -t kraak-api:${{ needs.validate-tag.outputs.ref }} .
+
   # ──────────────────────────────────────────────
   # Migrations Supabase prod (si présentes)
+  # Bloquée par build-and-test : pas de migration sur tag avec build cassé.
   # ──────────────────────────────────────────────
   supabase-migrate:
     name: Migrations Supabase prod
@@ -95,7 +127,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.validate-tag.outputs.ref }}
+          ref: ${{ needs.validate-tag.outputs.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -111,14 +143,14 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROD_PROJECT_REF }}
         run: |
-          pnpm dlx supabase@latest link --project-ref "$SUPABASE_PROJECT_REF"
+          pnpm dlx "supabase@${SUPABASE_CLI_VERSION}" link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Appliquer les migrations
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
         run: |
-          pnpm dlx supabase@latest db push
+          pnpm dlx "supabase@${SUPABASE_CLI_VERSION}" db push
 
   # ──────────────────────────────────────────────
   # Déploiement Render (API prod)
@@ -129,31 +161,91 @@ jobs:
     needs: [validate-tag, supabase-migrate]
     environment: production
     steps:
-      - name: Déclencher le déploiement Render
+      - name: Mettre à jour APP_VERSION sur le service prod
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_PROD_SERVICE_ID }}
           TAG: ${{ needs.validate-tag.outputs.ref }}
         run: |
-          curl -fSs -X POST \
+          set -euo pipefail
+          curl -fSs -X PUT \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "{\"clearCache\":\"do_not_clear\"}" \
-            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys"
+            -d "[{\"key\":\"APP_VERSION\",\"value\":\"$TAG\"}]" \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars" \
+            > /dev/null
+          echo "APP_VERSION mis à jour sur le service Render prod."
 
-      - name: Smoke test /health (API prod)
+      - name: Déclencher le déploiement Render (commit épinglé)
+        id: render-deploy
         env:
-          PROD_API_HEALTH_URL: ${{ secrets.PROD_API_HEALTH_URL }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_PROD_SERVICE_ID }}
+          SHA: ${{ needs.validate-tag.outputs.sha }}
         run: |
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            if curl -fSs "$PROD_API_HEALTH_URL" | grep -q '"status"'; then
-              echo "API prod OK"
-              exit 0
-            fi
-            echo "Tentative $i échouée, nouvelle tentative dans 15s…"
+          set -euo pipefail
+          response="$(curl -fSs -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"clearCache\":\"do_not_clear\",\"commitId\":\"$SHA\"}" \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys")"
+          deploy_id="$(echo "$response" | jq -r '.id')"
+          if [[ -z "$deploy_id" || "$deploy_id" == "null" ]]; then
+            echo "::error::Render n'a pas retourné d'ID de déploiement"
+            echo "$response"
+            exit 1
+          fi
+          echo "deploy_id=$deploy_id" >> "$GITHUB_OUTPUT"
+          echo "Déploiement Render créé : $deploy_id"
+
+      - name: Attendre que le déploiement Render soit live
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_PROD_SERVICE_ID }}
+          DEPLOY_ID: ${{ steps.render-deploy.outputs.deploy_id }}
+        run: |
+          set -euo pipefail
+          # Polling jusqu'à 20 min ; statuts terminaux Render :
+          # live, deactivated, build_failed, update_failed, canceled, pre_deploy_failed
+          for i in $(seq 1 80); do
+            status="$(curl -fSs \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys/$DEPLOY_ID" \
+              | jq -r '.status')"
+            echo "[$i] status=$status"
+            case "$status" in
+              live)
+                echo "Déploiement Render terminé avec succès."
+                exit 0
+                ;;
+              build_failed|update_failed|canceled|pre_deploy_failed|deactivated)
+                echo "::error::Déploiement Render en échec : $status"
+                exit 1
+                ;;
+            esac
             sleep 15
           done
-          echo "::error::Smoke test API prod en échec"
+          echo "::error::Timeout en attendant le déploiement Render"
+          exit 1
+
+      - name: Smoke test /health (API prod) avec vérification de version
+        env:
+          PROD_API_HEALTH_URL: ${{ secrets.PROD_API_HEALTH_URL }}
+          EXPECTED_VERSION: ${{ needs.validate-tag.outputs.ref }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            body="$(curl -fSs "$PROD_API_HEALTH_URL" || true)"
+            status="$(echo "$body" | jq -r '.status // empty')"
+            version="$(echo "$body" | jq -r '.version // empty')"
+            echo "[$i] status=$status version=$version (attendu=$EXPECTED_VERSION)"
+            if [[ "$status" == "ok" && "$version" == "$EXPECTED_VERSION" ]]; then
+              echo "API prod OK et version correcte"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::Smoke test API prod en échec (status ou version incorrects)"
           exit 1
 
   # ──────────────────────────────────────────────
@@ -167,7 +259,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.validate-tag.outputs.ref }}
+          ref: ${{ needs.validate-tag.outputs.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -184,30 +276,32 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
         run: |
-          pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+          pnpm dlx "vercel@${VERCEL_CLI_VERSION}" pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build artefact Vercel prod
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
+          pnpm dlx "vercel@${VERCEL_CLI_VERSION}" build --prod --token="$VERCEL_TOKEN"
 
       - name: Déployer sur Vercel prod
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+          pnpm dlx "vercel@${VERCEL_CLI_VERSION}" deploy --prebuilt --prod --token="$VERCEL_TOKEN"
 
       - name: Smoke test web prod
         env:
           PROD_WEB_URL: ${{ secrets.PROD_WEB_URL }}
         run: |
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            if curl -fSs -o /dev/null -w "%{http_code}" "$PROD_WEB_URL" | grep -qE '^(200|301|302)$'; then
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            code="$(curl -fSs -o /dev/null -w "%{http_code}" "$PROD_WEB_URL" || true)"
+            echo "[$i] http=$code"
+            if [[ "$code" =~ ^(200|301|302)$ ]]; then
               echo "Web prod OK"
               exit 0
             fi
-            echo "Tentative $i échouée, nouvelle tentative dans 15s…"
             sleep 15
           done
           echo "::error::Smoke test web prod en échec"
@@ -225,7 +319,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.validate-tag.outputs.ref }}
+          ref: ${{ needs.validate-tag.outputs.sha }}
           fetch-depth: 0
 
       - name: Créer ou mettre à jour la release
