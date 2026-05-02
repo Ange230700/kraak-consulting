@@ -32,7 +32,7 @@ export class Footer {
   protected readonly socialLinks: FooterSocialLink[] = [
     {
       label: 'Facebook',
-      href: 'https://www.facebook.com/profile.php?id=61588664064530',
+      href: 'https://www.facebook.com/kraakconsulting/',
       icon: 'pi-facebook',
     },
     {
