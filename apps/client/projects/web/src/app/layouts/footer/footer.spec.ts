@@ -26,11 +26,15 @@ describe('Footer', () => {
     const brandImage = element.querySelector(
       'img[alt="Symbole KRAAK Consulting"]',
     ) as HTMLImageElement | null;
-    const footerLinks = element.querySelectorAll('a.kr-link-muted');
+    const footerLinks = element.querySelectorAll('nav a');
+    const socialButtons = ['Facebook', 'Instagram', 'WhatsApp', 'TikTok'].map(
+      (name) => element.querySelector(`a[aria-label="${name}"]`),
+    );
 
     expect(brandImage?.getAttribute('src')).toContain(
       'kraak_consulting_symbol_96w.png',
     );
     expect(footerLinks.length).toBeGreaterThan(0);
+    expect(socialButtons.every((button) => button)).toBe(true);
   });
 });
