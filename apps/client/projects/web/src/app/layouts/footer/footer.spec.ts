@@ -29,16 +29,14 @@ describe('Footer', () => {
       'img[alt="Symbole KRAAK Consulting"]',
     ) as HTMLImageElement | null;
     const footerLinks = element.querySelectorAll('nav a');
-    const socialButtons = ['Facebook', 'Instagram', 'WhatsApp', 'TikTok'].map(
-      (name) => element.querySelector(`a[aria-label="${name}"]`),
+    const socialButtons = ['Facebook', 'Instagram', 'WhatsApp'].map((name) =>
+      element.querySelector(`a[aria-label="${name}"]`),
     );
     const facebookLink = element.querySelector(
       'a[aria-label="Facebook"]',
     ) as HTMLAnchorElement | null;
 
-    expect(brandImage?.getAttribute('src')).toContain(
-      'kraak_consulting_symbol_96w.png',
-    );
+    expect(brandImage?.getAttribute('src')).toContain('kraak-symbol.png');
     expect(footerLinks.length).toBeGreaterThan(0);
     expect(socialButtons.every(Boolean)).toBe(true);
     expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);

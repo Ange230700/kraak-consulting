@@ -119,7 +119,7 @@ Ce site utilise des cookies pour analyser le trafic.
 
 ## 6. Coordonnées 📞
 
-- Email : contact@kraak-consulting.com
+- Email : kraakconsulting@gmail.com
 - Téléphone : à définir
 - WhatsApp : à définir
 - Zone : Afrique / international

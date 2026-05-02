@@ -45,11 +45,6 @@ export class Footer {
       href: 'https://wa.me/2250502741818',
       icon: 'pi-whatsapp',
     },
-    {
-      label: 'TikTok',
-      href: 'https://www.tiktok.com/',
-      icon: 'pi-tiktok',
-    },
   ];
 
   protected readonly policyLinks: FooterLink[] = [

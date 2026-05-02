@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
 import {
   WebAuthService,
@@ -20,7 +21,7 @@ interface PasswordResetFormModel {
 @Component({
   selector: 'kraak-web-password-reset-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Message],
+  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
   templateUrl: './password-reset.page.html',
 })
 export default class PasswordResetPage {

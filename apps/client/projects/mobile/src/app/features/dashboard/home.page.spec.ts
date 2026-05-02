@@ -88,9 +88,7 @@ describe('Mobile HomePage', () => {
     ) as HTMLImageElement | null;
     const actions = element.querySelectorAll('ion-button');
 
-    expect(brandImage?.getAttribute('src')).toContain(
-      'kraak_consulting_logo_192w.png',
-    );
+    expect(brandImage?.getAttribute('src')).toContain('kraak-logo.png');
     expect(actions.length).toBe(2);
     expect(element.textContent).toContain('Voir les ressources utiles');
   });

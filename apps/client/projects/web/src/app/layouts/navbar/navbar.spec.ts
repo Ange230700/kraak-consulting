@@ -29,9 +29,7 @@ describe('Navbar', () => {
     expect(element.querySelectorAll('.p-button').length).toBe(0);
     expect(menuToggle).toBeTruthy();
     expect(element.textContent).toContain('Espace participant');
-    expect(brandImage?.getAttribute('src')).toContain(
-      'kraak_consulting_logo_192w.png',
-    );
+    expect(brandImage?.getAttribute('src')).toContain('kraak-logo.png');
     expect(primaryCta).toBeTruthy();
     expect(element.textContent).not.toContain('Accueil');
     expect(element.textContent).toContain('\u00C0 propos');

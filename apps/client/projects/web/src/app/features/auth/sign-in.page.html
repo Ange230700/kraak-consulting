@@ -159,14 +159,15 @@
             <button
               pButton
               type="submit"
+              size="large"
+              [label]="submitting() ? 'Connexion en cours...' : 'Se connecter'"
+              [loading]="submitting()"
               [disabled]="submitting()"
               [attr.aria-label]="
                 submitting() ? 'Connexion en cours...' : 'Se connecter'
               "
               class="kr-button-primary mt-1 w-full"
-            >
-              {{ submitting() ? 'Connexion en cours...' : 'Se connecter' }}
-            </button>
+            ></button>
           </form>
 
           <div
