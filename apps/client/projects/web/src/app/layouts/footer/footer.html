@@ -54,7 +54,7 @@
       }
     </nav>
 
-    <div
+    <nav
       class="flex items-center justify-center gap-4"
       aria-label="Réseaux sociaux"
     >
@@ -62,7 +62,7 @@
         <a
           [href]="social.href"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           class="border-brand-blue/20 hover:border-brand-blue/35 text-secondary hover:text-primary bg-brand-white hover:bg-brand-cream/80 flex h-[36px] w-[36px] items-center justify-center rounded-full border p-2 transition-colors"
           [attr.aria-label]="social.label"
           [attr.title]="social.label"
@@ -70,7 +70,7 @@
           <i [class]="'pi ' + social.icon + ' text-sm'"></i>
         </a>
       }
-    </div>
+    </nav>
 
     <div class="flex flex-wrap items-center justify-center gap-4">
       @for (link of policyLinks; track link.path + link.label) {
