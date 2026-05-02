@@ -37,7 +37,9 @@ test.describe(`Page contact — comportement formulaire`, () => {
 
     const nameField = page.getByRole('textbox', { name: 'Nom complet' });
     const emailField = page.getByRole('textbox', { name: 'Adresse e-mail' });
-    const subjectField = page.getByRole('textbox', { name: 'Objet' });
+    const subjectField = page.getByRole('textbox', { name: 'Objectif' });
+    const countryField = page.getByRole('textbox', { name: 'Pays' });
+    const serviceField = page.getByLabel('Type de service');
     const messageField = page.getByRole('textbox', { name: 'Message' });
 
     // Remplir, vérifier, soumettre et valider le succès dans un seul bloc
@@ -48,7 +50,9 @@ test.describe(`Page contact — comportement formulaire`, () => {
     await expect(async () => {
       await nameField.fill('Alice Dupont');
       await emailField.fill('alice@exemple.com');
-      await subjectField.fill('Demande de renseignements');
+      await subjectField.fill('Évaluer un projet de formation');
+      await countryField.fill('Canada');
+      await serviceField.selectOption('formation');
       await messageField.fill(
         'Bonjour, je souhaite discuter de vos programmes de formation.',
       );
@@ -57,15 +61,17 @@ test.describe(`Page contact — comportement formulaire`, () => {
       await expect(emailField).toHaveValue('alice@exemple.com', {
         timeout: 500,
       });
-      await expect(subjectField).toHaveValue('Demande de renseignements', {
+      await expect(subjectField).toHaveValue('Évaluer un projet de formation', {
         timeout: 500,
       });
+      await expect(countryField).toHaveValue('Canada', { timeout: 500 });
+      await expect(serviceField).toHaveValue('formation', { timeout: 500 });
       await expect(messageField).toHaveValue(
         'Bonjour, je souhaite discuter de vos programmes de formation.',
         { timeout: 500 },
       );
 
-      await page.getByRole('button', { name: 'Envoyer le message' }).click();
+      await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
 
       await expect(
         page.getByText(

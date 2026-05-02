@@ -13,12 +13,15 @@ test.describe('Parcours coeur participant - orientation web', () => {
 
     await page.goto('/programmes');
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Nos programmes' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Des programmes conçus pour transformer des trajectoires.',
+      }),
     ).toBeVisible();
 
     await page.goto('/contact');
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Contactez-nous' }),
+      page.getByRole('heading', { level: 1, name: 'Parlons de votre projet.' }),
     ).toBeVisible();
   });
 
@@ -46,13 +49,17 @@ test.describe('Parcours coeur participant - orientation web', () => {
 
     const nameField = page.getByRole('textbox', { name: 'Nom complet' });
     const emailField = page.getByRole('textbox', { name: 'Adresse e-mail' });
-    const subjectField = page.getByRole('textbox', { name: 'Objet' });
+    const subjectField = page.getByRole('textbox', { name: 'Objectif' });
+    const countryField = page.getByRole('textbox', { name: 'Pays' });
+    const serviceField = page.getByLabel('Type de service');
     const messageField = page.getByRole('textbox', { name: 'Message' });
 
     await expect(async () => {
       await nameField.fill('Aline Kouassi');
       await emailField.fill('aline@exemple.com');
       await subjectField.fill("Demande d'accompagnement");
+      await countryField.fill('Bénin');
+      await serviceField.selectOption('immigration');
       await messageField.fill(
         'Bonjour, je souhaite etre guidee sur les prochaines etapes.',
       );
@@ -64,12 +71,14 @@ test.describe('Parcours coeur participant - orientation web', () => {
       await expect(subjectField).toHaveValue("Demande d'accompagnement", {
         timeout: 500,
       });
+      await expect(countryField).toHaveValue('Bénin', { timeout: 500 });
+      await expect(serviceField).toHaveValue('immigration', { timeout: 500 });
       await expect(messageField).toHaveValue(
         'Bonjour, je souhaite etre guidee sur les prochaines etapes.',
         { timeout: 500 },
       );
 
-      await page.getByRole('button', { name: 'Envoyer le message' }).click();
+      await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
 
       await expect(
         page.getByText(

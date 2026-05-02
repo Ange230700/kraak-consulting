@@ -6,7 +6,7 @@ test.describe('Page ressources - parcours vitrine', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Ressources utiles pour avancer avec méthode',
+        name: 'Ressources pour clarifier votre prochaine étape',
       }),
     ).toBeVisible();
   });
@@ -17,18 +17,19 @@ test.describe('Page ressources - parcours vitrine', () => {
     await expect(
       page.getByRole('heading', { name: 'Formation' }),
     ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Projet' })).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Gestion de projet' }),
+      page.getByRole('heading', { name: 'Immigration' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'International' }),
+      page.getByRole('heading', { name: 'Entreprise' }),
     ).toBeVisible();
   });
 
   test('Given la page Ressources, When un visiteur veut un accompagnement ciblé, Then le CTA principal mène vers la page contact', async ({
     page,
   }) => {
-    const cta = page.getByRole('link', { name: "Parler à l'équipe KRAAK" });
+    const cta = page.getByRole('link', { name: 'Demander une orientation' });
 
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute('href', '/contact');

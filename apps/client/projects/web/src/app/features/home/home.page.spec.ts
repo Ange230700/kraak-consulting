@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
-import { vi } from 'vitest';
+import { provideRouter } from '@angular/router';
 import HomePage from './home.page';
 
 describe('HomePage', () => {
@@ -16,24 +15,21 @@ describe('HomePage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the welcome heading', () => {
+  it('should render the consulting hero promise', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('potentiel');
+    expect(heading?.textContent).toContain('Développez vos compétences');
   });
 
-  it('should render a newsletter email input in the hero', () => {
+  it('should render the primary consulting calls to action', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    const emailInput = element.querySelector(
-      'input[type="email"][aria-label="Votre adresse email"]',
-    ) as HTMLInputElement | null;
-
-    expect(emailInput).toBeTruthy();
-    expect(emailInput?.placeholder).toBe('Votre adresse email');
+    expect(element.textContent).toContain('Réserver une consultation');
+    expect(element.textContent).toContain('Découvrir nos programmes');
+    expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
   it('should expose a dark hero background style object', () => {
@@ -48,21 +44,16 @@ describe('HomePage', () => {
     );
   });
 
-  it('should navigate to contact when the hero notify form is submitted', async () => {
+  it('should render the key solutions without repeating one service label only', () => {
     const fixture = TestBed.createComponent(HomePage);
-    const component = fixture.componentInstance;
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    fixture.detectChanges();
 
-    component.email = 'contact@example.com';
-    component.onHeroNotifySubmit();
+    const content = fixture.nativeElement.textContent as string;
 
-    expect(navigateSpy).toHaveBeenCalledWith(['/contact'], {
-      queryParams: {
-        email: 'contact@example.com',
-        source: 'home_hero_notify',
-      },
-      queryParamsHandling: 'merge',
-    });
+    expect(content).toContain(
+      'Formations en anglais et français professionnel',
+    );
+    expect(content).toContain('Création, gestion et suivi de projets');
+    expect(content).toContain('Immigration Canada et États-Unis');
   });
 });

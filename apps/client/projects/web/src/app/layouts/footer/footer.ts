@@ -23,6 +23,7 @@ export class Footer {
         { label: 'À propos', path: '/a-propos' },
         { label: 'Services', path: '/services' },
         { label: 'Programmes', path: '/programmes' },
+        { label: 'Contact', path: '/contact' },
       ],
     },
     {
@@ -34,7 +35,7 @@ export class Footer {
       ],
     },
     {
-      title: 'Contact',
+      title: 'Réseaux sociaux',
       links: [
         { label: 'Nous écrire', path: '/contact' },
         { label: 'Ressources', path: '/ressources' },

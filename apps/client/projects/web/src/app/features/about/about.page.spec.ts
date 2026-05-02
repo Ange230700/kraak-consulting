@@ -19,8 +19,17 @@ describe('AboutPage', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain(
-      'Former une génération prête à agir',
-    );
+    expect(heading?.textContent).toContain('Former. Structurer. Transformer.');
+  });
+
+  it('should render the three intervention levels and values', () => {
+    const fixture = TestBed.createComponent(AboutPage);
+    fixture.detectChanges();
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Développement des compétences');
+    expect(content).toContain('Structuration des projets');
+    expect(content).toContain('Accès aux opportunités internationales');
+    expect(content).toContain('Ouverture internationale');
   });
 });

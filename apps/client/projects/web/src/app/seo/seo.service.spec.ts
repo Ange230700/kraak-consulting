@@ -51,9 +51,11 @@ describe('SeoService', () => {
 
     expect(title.getTitle()).toContain('Contact');
     expect(meta.getTag('name="description"')?.content).toContain(
-      "demande d'accompagnement",
+      'étudiant, professionnel, entrepreneur ou entreprise',
     );
-    expect(meta.getTag('property="og:title"')?.content).toContain('Contact');
+    expect(meta.getTag('property="og:title"')?.content).toContain(
+      'Parlons de votre projet',
+    );
     expect(meta.getTag('property="og:url"')?.content).toBe(
       'http://localhost:4200/contact',
     );

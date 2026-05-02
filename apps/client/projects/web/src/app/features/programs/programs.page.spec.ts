@@ -20,10 +20,13 @@ describe('ProgramsPage', () => {
     fixture.detectChanges();
     const page = fixture.nativeElement as HTMLElement;
 
-    expect(page.querySelector('h1')?.textContent).toContain('Nos programmes');
-    expect(page.textContent).toContain('Leadership & Management');
-    expect(page.textContent).toContain('Gestion de projet appliquée');
-    expect(page.textContent).toContain("Préparation à l'international");
+    expect(page.querySelector('h1')?.textContent).toContain(
+      'Des programmes conçus pour transformer des trajectoires',
+    );
+    expect(page.textContent).toContain('Ateliers leadership jeunesse');
+    expect(page.textContent).toContain('Engagement communautaire');
+    expect(page.textContent).toContain('Programmes pour étudiants');
+    expect(page.textContent).toContain('Conférences et forums');
   });
 
   it('Given the registration process section, when the Programs page is rendered, then the four expected steps are displayed in order', () => {
@@ -53,6 +56,6 @@ describe('ProgramsPage', () => {
     ) as HTMLAnchorElement | null;
 
     expect(registrationLink).toBeTruthy();
-    expect(registrationLink?.textContent).toContain("S'inscrire maintenant");
+    expect(registrationLink?.textContent).toContain('Rejoindre un programme');
   });
 });
