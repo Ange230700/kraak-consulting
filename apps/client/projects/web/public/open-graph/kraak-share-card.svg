@@ -3,14 +3,15 @@
   <rect x="72" y="72" width="1056" height="486" rx="36" fill="#16244F" />
   <rect x="116" y="116" width="968" height="398" rx="28" fill="#F4F0E6" />
   <rect x="116" y="438" width="968" height="76" rx="20" fill="#D97706" fill-opacity="0.14" />
-  <text x="156" y="230" fill="#101A3A" font-family="Poppins, Arial, sans-serif" font-size="92" font-weight="700">KRAAK</text>
+  <text x="156" y="230" fill="#101A3A" font-family="Poppins, Arial, sans-serif" font-size="92"
+    font-weight="700">KRAAK</text>
   <text x="156" y="318" fill="#101A3A" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="500">
-    Développez votre potentiel. Construisez votre impact.
+    Développez vos compétences. Lancez vos projets.
   </text>
   <text x="156" y="392" fill="#334155" font-family="Poppins, Arial, sans-serif" font-size="28" font-weight="400">
-    Formation | Gestion de projet | Conseil en immigration
+    Formation | Gestion de projets | Immigration
   </text>
   <text x="156" y="486" fill="#9A3412" font-family="IBM Plex Mono, monospace" font-size="24" font-weight="500">
-    Accompagner l'ambition. Former le leadership. Ouvrir les chemins.
+    Expertise internationale au service de votre croissance.
   </text>
 </svg>

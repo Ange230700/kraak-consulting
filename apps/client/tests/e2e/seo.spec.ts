@@ -9,7 +9,7 @@ test.describe(`SEO technique du site vitrine`, () => {
     await expect(page).toHaveTitle(/Services/);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /solutions concr/i,
+      /formation, gestion de projets, immigration et solutions entreprises/i,
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
@@ -37,7 +37,7 @@ test.describe(`SEO technique du site vitrine`, () => {
     await expect(page).toHaveTitle(/Contact/);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /demande d'accompagnement/i,
+      /étudiant, professionnel, entrepreneur ou entreprise/i,
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
@@ -45,7 +45,7 @@ test.describe(`SEO technique du site vitrine`, () => {
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       'content',
-      /Contact/i,
+      /Parlons de votre projet/i,
     );
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
       'content',

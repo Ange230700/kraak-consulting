@@ -1,185 +1,262 @@
-<!-- En-t&ecirc;te de la page contact -->
 <section class="bg-brand-navy text-brand-white py-20 text-center">
   <div class="mx-auto max-w-4xl px-4 lg:px-6">
     <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
-      Contactez-nous
+      Parlons de votre projet.
     </h1>
     <p class="mx-auto mt-6 max-w-2xl text-lg text-neutral-300">
-      Une question, un projet, une demande d'accompagnement ?
-      &Eacute;crivez-nous et nous vous r&eacute;pondrons rapidement.
+      Que vous soyez &eacute;tudiant, professionnel, entrepreneur ou entreprise,
+      nous avons une solution adapt&eacute;e &agrave; votre objectif.
     </p>
   </div>
 </section>
 
-<!-- Formulaire de contact -->
 <section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-2xl px-4 lg:px-6">
-    @if (success()) {
-      <p-message
-        severity="success"
-        text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
-        [closable]="false"
-        styleClass="w-full mb-6"
-      />
-    } @else {
-      @if (apiErrors().length > 0) {
-        <div class="mb-6">
-          @for (err of apiErrors(); track err) {
-            <p-message
-              severity="error"
-              [text]="err"
-              [closable]="false"
-              styleClass="w-full mb-2"
-            />
-          }
-        </div>
-      }
-
-      <form
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-        novalidate
-        class="space-y-6"
+  <div
+    class="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[0.8fr_1.2fr] lg:px-6"
+  >
+    <div>
+      <p
+        class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        <!-- Nom -->
-        <div>
-          <label for="name" class="mb-1 block text-sm font-medium">
-            Nom complet <span class="text-red-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            pInputText
-            id="name"
-            type="text"
-            placeholder="Votre nom"
-            formControlName="name"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid(name)"
-            [attr.aria-describedby]="isInvalid(name) ? 'name-error' : null"
-          />
-          @if (isInvalid(name)) {
-            <p id="name-error" class="mt-1 text-sm text-red-600" role="alert">
-              @if (name.errors?.['required']) {
-                Le nom est requis.
-              } @else if (name.errors?.['minlength']) {
-                Le nom doit contenir au moins 2 caract&egrave;res.
+        Demande d'accompagnement
+      </p>
+      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        Donnez-nous les bons rep&egrave;res pour vous orienter.
+      </h2>
+      <ul class="mt-6 space-y-3 text-neutral-700">
+        <li class="flex gap-3">
+          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
+          Formation, emploi, leadership ou langues professionnelles.
+        </li>
+        <li class="flex gap-3">
+          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
+          Projet, startup, partenariat ou besoin d'entreprise.
+        </li>
+        <li class="flex gap-3">
+          <i class="pi pi-check text-accent mt-1" aria-hidden="true"></i>
+          &Eacute;tudes, immigration, travail ou int&eacute;gration
+          internationale.
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      @if (success()) {
+        <p-message
+          severity="success"
+          text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
+          [closable]="false"
+          styleClass="w-full mb-6"
+        />
+      } @else {
+        @if (apiErrors().length > 0) {
+          <div class="mb-6">
+            @for (err of apiErrors(); track err) {
+              <p-message
+                severity="error"
+                [text]="err"
+                [closable]="false"
+                styleClass="w-full mb-2"
+              />
+            }
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          novalidate
+          class="space-y-6"
+        >
+          <div>
+            <label for="name" class="mb-1 block text-sm font-medium">
+              Nom complet <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="name"
+              type="text"
+              placeholder="Votre nom"
+              formControlName="name"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
+              aria-required="true"
+              [attr.aria-invalid]="isInvalid(name)"
+              [attr.aria-describedby]="isInvalid(name) ? 'name-error' : null"
+            />
+            @if (isInvalid(name)) {
+              <p id="name-error" class="mt-1 text-sm text-red-600" role="alert">
+                @if (name.errors?.['required']) {
+                  Le nom est requis.
+                } @else if (name.errors?.['minlength']) {
+                  Le nom doit contenir au moins 2 caract&egrave;res.
+                }
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="email" class="mb-1 block text-sm font-medium">
+              Adresse e-mail
+              <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              placeholder="votre.email@exemple.com"
+              formControlName="email"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
+              aria-required="true"
+              [attr.aria-invalid]="isInvalid(email)"
+              [attr.aria-describedby]="isInvalid(email) ? 'email-error' : null"
+            />
+            @if (isInvalid(email)) {
+              <p
+                id="email-error"
+                class="mt-1 text-sm text-red-600"
+                role="alert"
+              >
+                @if (email.errors?.['required']) {
+                  L'adresse e-mail est requise.
+                } @else if (email.errors?.['email']) {
+                  Veuillez saisir une adresse e-mail valide.
+                }
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="subject" class="mb-1 block text-sm font-medium">
+              Objectif <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="subject"
+              type="text"
+              placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
+              formControlName="subject"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
+              aria-required="true"
+              [attr.aria-invalid]="isInvalid(subject)"
+              [attr.aria-describedby]="
+                isInvalid(subject) ? 'subject-error' : null
+              "
+            />
+            @if (isInvalid(subject)) {
+              <p
+                id="subject-error"
+                class="mt-1 text-sm text-red-600"
+                role="alert"
+              >
+                L'objectif est requis.
+              </p>
+            }
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="country" class="mb-1 block text-sm font-medium">
+                Pays <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <input
+                pInputText
+                id="country"
+                type="text"
+                placeholder="Votre pays de r&eacute;sidence"
+                formControlName="country"
+                class="w-full"
+                [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
+                aria-required="true"
+                [attr.aria-invalid]="isInvalid(country)"
+                [attr.aria-describedby]="
+                  isInvalid(country) ? 'country-error' : null
+                "
+              />
+              @if (isInvalid(country)) {
+                <p
+                  id="country-error"
+                  class="mt-1 text-sm text-red-600"
+                  role="alert"
+                >
+                  Le pays est requis.
+                </p>
               }
-            </p>
-          }
-        </div>
+            </div>
 
-        <!-- E-mail -->
-        <div>
-          <label for="email" class="mb-1 block text-sm font-medium">
-            Adresse e-mail
-            <span class="text-red-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            pInputText
-            id="email"
-            type="email"
-            placeholder="votre.email@exemple.com"
-            formControlName="email"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid(email)"
-            [attr.aria-describedby]="isInvalid(email) ? 'email-error' : null"
-          />
-          @if (isInvalid(email)) {
-            <p id="email-error" class="mt-1 text-sm text-red-600" role="alert">
-              @if (email.errors?.['required']) {
-                L'adresse e-mail est requise.
-              } @else if (email.errors?.['email']) {
-                Veuillez saisir une adresse e-mail valide.
-              }
-            </p>
-          }
-        </div>
+            <div>
+              <label for="serviceType" class="mb-1 block text-sm font-medium">
+                Type de service
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="serviceType"
+                formControlName="serviceType"
+                class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm text-neutral-800 transition outline-none focus:ring-2"
+                [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(serviceType) }"
+                aria-required="true"
+                [attr.aria-invalid]="isInvalid(serviceType)"
+              >
+                @for (option of serviceOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
 
-        <!-- Objet -->
-        <div>
-          <label for="subject" class="mb-1 block text-sm font-medium">
-            Objet <span class="text-red-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            pInputText
-            id="subject"
-            type="text"
-            placeholder="Sujet de votre message"
-            formControlName="subject"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid(subject)"
-            [attr.aria-describedby]="
-              isInvalid(subject) ? 'subject-error' : null
-            "
-          />
-          @if (isInvalid(subject)) {
-            <p
-              id="subject-error"
-              class="mt-1 text-sm text-red-600"
-              role="alert"
-            >
-              L'objet est requis.
-            </p>
-          }
-        </div>
+          <div>
+            <label for="message" class="mb-1 block text-sm font-medium">
+              Message <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
+            <textarea
+              pTextarea
+              id="message"
+              rows="6"
+              placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
+              formControlName="message"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
+              aria-required="true"
+              [attr.aria-invalid]="isInvalid(message)"
+              [attr.aria-describedby]="
+                isInvalid(message) ? 'message-error' : null
+              "
+            ></textarea>
+            @if (isInvalid(message)) {
+              <p
+                id="message-error"
+                class="mt-1 text-sm text-red-600"
+                role="alert"
+              >
+                @if (message.errors?.['required']) {
+                  Le message est requis.
+                } @else if (message.errors?.['minlength']) {
+                  Le message doit contenir au moins 10 caract&egrave;res.
+                }
+              </p>
+            }
+          </div>
 
-        <!-- Message -->
-        <div>
-          <label for="message" class="mb-1 block text-sm font-medium">
-            Message <span class="text-red-500" aria-hidden="true">*</span>
-          </label>
-          <textarea
-            pTextarea
-            id="message"
-            rows="6"
-            placeholder="D&eacute;crivez votre besoin ou votre question..."
-            formControlName="message"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid(message)"
-            [attr.aria-describedby]="
-              isInvalid(message) ? 'message-error' : null
-            "
-          ></textarea>
-          @if (isInvalid(message)) {
-            <p
-              id="message-error"
-              class="mt-1 text-sm text-red-600"
-              role="alert"
-            >
-              @if (message.errors?.['required']) {
-                Le message est requis.
-              } @else if (message.errors?.['minlength']) {
-                Le message doit contenir au moins 10 caract&egrave;res.
-              }
-            </p>
-          }
-        </div>
-
-        <div class="text-center">
-          <button
-            pButton
-            type="submit"
-            label="Envoyer le message"
-            size="large"
-            aria-label="Envoyer le message"
-            [loading]="loading()"
-            [disabled]="loading()"
-            class="kr-button-primary"
-          ></button>
-        </div>
-      </form>
-    }
+          <div class="text-center">
+            <button
+              pButton
+              type="submit"
+              label="Envoyer ma demande"
+              size="large"
+              aria-label="Envoyer ma demande"
+              [loading]="loading()"
+              [disabled]="loading()"
+              class="kr-button-primary"
+            ></button>
+          </div>
+        </form>
+      }
+    </div>
   </div>
 </section>
 
-<!-- Coordonn&eacute;es -->
 <section class="bg-neutral-50 py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
@@ -206,15 +283,16 @@
       </div>
       <div class="text-center">
         <i class="pi pi-link text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">R&eacute;seaux sociaux</h3>
-        <p class="mt-1 text-neutral-700">Liens &agrave; venir</p>
+        <h3 class="mt-2 text-lg font-bold">WhatsApp</h3>
+        <p class="mt-1 text-neutral-700">
+          Le canal officiel sera ajout&eacute; apr&egrave;s confirmation.
+        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
 <kraak-cta-banner
-  heading="Besoin d'un accompagnement personnalis&eacute; ?"
-  body="Notre &eacute;quipe est &agrave; votre &eacute;coute pour r&eacute;pondre &agrave; toutes vos questions et vous guider dans votre projet."
+  heading="Vous savez o&ugrave; vous voulez aller."
+  body="Nous vous aidons &agrave; choisir le chemin le plus clair pour y arriver."
 />

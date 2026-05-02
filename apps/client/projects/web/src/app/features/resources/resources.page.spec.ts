@@ -25,10 +25,11 @@ describe('ResourcesPage', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.textContent).toContain(
-      'Ressources utiles pour avancer avec méthode',
+      'Ressources pour clarifier votre prochaine étape',
     );
     expect(element.textContent).toContain('Formation');
-    expect(element.textContent).toContain('Gestion de projet');
-    expect(element.textContent).toContain('International');
+    expect(element.textContent).toContain('Projet');
+    expect(element.textContent).toContain('Immigration');
+    expect(element.textContent).toContain('Entreprise');
   });
 });

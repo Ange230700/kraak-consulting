@@ -1,15 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import type { ContactFormDto } from '@kraak/contracts';
 
 import { environment } from '../../../environments/environment';
 
-export interface ContactPayload {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+export type ContactPayload = ContactFormDto;
 
 export interface ContactResponse {
   success: boolean;

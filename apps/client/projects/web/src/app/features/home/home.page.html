@@ -1,4 +1,3 @@
-<!-- Hero -->
 <section
   class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
   [ngStyle]="heroBackgroundStyle"
@@ -16,260 +15,230 @@
     </p>
 
     <h1 class="text-brand-white text-4xl leading-tight font-bold md:text-5xl">
-      R&eacute;v&eacute;lez votre potentiel
+      D&eacute;veloppez vos comp&eacute;tences.
     </h1>
     <p
-      class="text-brand-cyan mt-3 text-4xl leading-tight font-bold md:text-5xl"
+      class="text-brand-cyan mt-3 text-3xl leading-tight font-bold md:text-5xl"
     >
-      dans chaque opportunit&eacute;
+      Lancez vos projets. Acc&eacute;dez aux opportunit&eacute;s
+      internationales.
     </p>
 
     <p
       class="text-brand-white/85 mx-auto mt-6 max-w-2xl text-lg leading-relaxed"
     >
-      Recevez nos conseils, formations et opportunit&eacute;s pour construire un
-      parcours professionnel ambitieux, localement et &agrave; l'international.
+      KRAAK Consulting accompagne &eacute;tudiants, professionnels, entreprises
+      et diaspora avec des solutions concr&egrave;tes en formation, gestion de
+      projets et immigration.
     </p>
 
-    <form
-      class="mt-8 flex w-full max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row"
-      (ngSubmit)="onHeroNotifySubmit()"
-    >
-      <input
-        pInputText
-        type="email"
-        name="heroEmail"
-        class="border-brand-white/70 bg-brand-white/8 text-brand-white placeholder:text-brand-white/62 h-12 w-full rounded-full border px-5 sm:w-96"
-        placeholder="Votre adresse email"
-        aria-label="Votre adresse email"
-        [(ngModel)]="email"
-      />
-      <button
-        pButton
-        type="submit"
-        class="h-12 w-full rounded-full sm:w-auto"
-        aria-label="M'avertir des opportunit&eacute;s"
-      >
-        M'avertir
-      </button>
-    </form>
-
     <div
-      class="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row"
+      class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
     >
       <a
         pButton
         routerLink="/contact"
-        label="Demander une consultation"
+        label="R&eacute;server une consultation"
+        icon="pi pi-calendar"
         size="large"
-        aria-label="Demander une consultation"
+        aria-label="R&eacute;server une consultation"
         class="kr-button-primary"
       ></a>
       <a
         pButton
-        routerLink="/services"
-        label="Voir nos services"
-        aria-label="Voir nos services"
+        routerLink="/programmes"
+        label="D&eacute;couvrir nos programmes"
+        icon="pi pi-compass"
+        aria-label="D&eacute;couvrir nos programmes"
         class="kr-button-ghost"
       ></a>
     </div>
   </div>
 </section>
 
-<!-- Mission -->
 <section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">Notre mission</h2>
-    <p class="mx-auto mt-6 max-w-3xl text-center text-lg text-neutral-700">
-      Nous identifions, formons et accompagnons des talents pour leur permettre
-      de s'int&eacute;grer strat&eacute;giquement dans des environnements
-      professionnels exigeants.
+  <div class="mx-auto max-w-5xl px-4 text-center lg:px-6">
+    <p class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase">
+      Vous avez un objectif
+    </p>
+    <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+      Nous cheminons avec vous et vous aidons &agrave; l'atteindre.
+    </h2>
+    <p class="mx-auto mt-6 max-w-3xl text-lg text-neutral-700">
+      KRAAK Consulting est un cabinet &agrave; expertise internationale qui
+      forme, accompagne et propulse des individus et des organisations vers des
+      r&eacute;sultats concrets : emploi, projets r&eacute;ussis,
+      mobilit&eacute; internationale.
     </p>
   </div>
 </section>
 
-<!-- Domaines d'expertise -->
 <section class="bg-neutral-50 py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Nos domaines d'expertise
+      Nos 3 p&ocirc;les
     </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Formation -->
-      <div class="rounded-card bg-brand-white shadow-card p-6">
+    <div class="mt-10 grid gap-8 md:grid-cols-3">
+      <article class="rounded-card bg-brand-white shadow-card p-6">
         <div
           class="bg-brand-cyan/10 text-accent mb-4 flex h-12 w-12 items-center justify-center rounded-full"
         >
           <i class="pi pi-graduation-cap text-2xl" aria-hidden="true"></i>
         </div>
         <h3 class="text-xl font-bold">Formation</h3>
-        <p class="text-secondary mt-2 text-sm font-medium">
-          D&eacute;veloppement de comp&eacute;tences techniques et linguistiques
-        </p>
         <p class="mt-3 text-neutral-700">
-          Programmes de formation en d&eacute;veloppement personnel,
-          communication professionnelle et langues (anglais/fran&ccedil;ais),
-          adapt&eacute;s aux exigences du march&eacute;.
+          Renforcez vos comp&eacute;tences techniques et interpersonnelles pour
+          devenir comp&eacute;titif sur le march&eacute; du travail et le monde
+          des affaires.
         </p>
-      </div>
+        <a
+          routerLink="/services"
+          class="kr-link mt-5 inline-flex font-semibold"
+        >
+          Voir les formations
+        </a>
+      </article>
 
-      <!-- Gestion de projet -->
-      <div class="rounded-card bg-brand-white shadow-card p-6">
+      <article class="rounded-card bg-brand-white shadow-card p-6">
         <div
           class="bg-brand-blue/10 text-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-full"
         >
-          <i class="pi pi-list text-2xl" aria-hidden="true"></i>
+          <i class="pi pi-chart-bar text-2xl" aria-hidden="true"></i>
         </div>
-        <h3 class="text-xl font-bold">Gestion de projet</h3>
-        <p class="text-secondary mt-2 text-sm font-medium">
-          Accompagnement strat&eacute;gique des organisations
-        </p>
+        <h3 class="text-xl font-bold">Recherche &amp; Gestion de projets</h3>
         <p class="mt-3 text-neutral-700">
-          Support en structuration de projets, identification de talents,
-          recrutement et d&eacute;veloppement de partenariats.
+          Transformez vos id&eacute;es en projets structur&eacute;s, rentables
+          et durables, avec une m&eacute;thode claire et un suivi utile.
         </p>
-      </div>
+        <a
+          routerLink="/services"
+          class="kr-link mt-5 inline-flex font-semibold"
+        >
+          Lancer mon projet
+        </a>
+      </article>
 
-      <!-- Conseil en immigration -->
-      <div class="rounded-card bg-brand-white shadow-card p-6">
+      <article class="rounded-card bg-brand-white shadow-card p-6">
         <div
           class="bg-brand-gold/10 text-highlight mb-4 flex h-12 w-12 items-center justify-center rounded-full"
         >
           <i class="pi pi-globe text-2xl" aria-hidden="true"></i>
         </div>
-        <h3 class="text-xl font-bold">Conseil en immigration</h3>
-        <p class="text-secondary mt-2 text-sm font-medium">
-          Orientation vers des opportunit&eacute;s internationales
-        </p>
+        <h3 class="text-xl font-bold">&Eacute;tudes &amp; Immigration</h3>
         <p class="mt-3 text-neutral-700">
-          Conseil strat&eacute;gique pour &eacute;tudes, travail et
-          mobilit&eacute; internationale.
+          Construisez votre avenir &agrave; l'international avec un
+          accompagnement fiable, strat&eacute;gique et conforme.
         </p>
-      </div>
+        <a routerLink="/contact" class="kr-link mt-5 inline-flex font-semibold">
+          &Eacute;valuer mon profil
+        </a>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- Pourquoi KRAAK -->
 <section class="bg-brand-white py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Pourquoi choisir KRAAK ?
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-2">
-      <div class="flex gap-4">
-        <i class="pi pi-check text-accent mt-1 text-2xl" aria-hidden="true"></i>
-        <div>
-          <h3 class="text-lg font-bold">
-            Approche centr&eacute;e sur l'impact
-          </h3>
-          <p class="mt-1 text-neutral-700">
-            Chaque programme cible des r&eacute;sultats concrets et mesurables.
-          </p>
-        </div>
+    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+      <div>
+        <p
+          class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase"
+        >
+          Solutions cl&eacute;s
+        </p>
+        <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+          Des points d'entr&eacute;e concrets selon votre trajectoire.
+        </h2>
       </div>
-      <div class="flex gap-4">
-        <i class="pi pi-check text-accent mt-1 text-2xl" aria-hidden="true"></i>
-        <div>
-          <h3 class="text-lg font-bold">Accompagnement personnalis&eacute;</h3>
-          <p class="mt-1 text-neutral-700">
-            Un suivi adapt&eacute; aux besoins et au profil de chaque
-            participant.
-          </p>
-        </div>
-      </div>
-      <div class="flex gap-4">
-        <i class="pi pi-check text-accent mt-1 text-2xl" aria-hidden="true"></i>
-        <div>
-          <h3 class="text-lg font-bold">R&eacute;seau international</h3>
-          <p class="mt-1 text-neutral-700">
-            Acc&egrave;s &agrave; des opportunit&eacute;s locales et
-            internationales gr&acirc;ce &agrave; un r&eacute;seau &eacute;tendu
-            de partenaires.
-          </p>
-        </div>
-      </div>
-      <div class="flex gap-4">
-        <i class="pi pi-check text-accent mt-1 text-2xl" aria-hidden="true"></i>
-        <div>
-          <h3 class="text-lg font-bold">Expertise reconnue</h3>
-          <p class="mt-1 text-neutral-700">
-            Une &eacute;quipe engag&eacute;e avec une vision claire du
-            d&eacute;veloppement professionnel en Afrique et &agrave;
-            l'international.
-          </p>
-        </div>
-      </div>
+      <ul class="grid gap-3 sm:grid-cols-2">
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          Formations en anglais et fran&ccedil;ais professionnel
+        </li>
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          D&eacute;veloppement personnel et professionnel
+        </li>
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          Formations en leadership professionnel
+        </li>
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          Accompagnement &agrave; l'emploi
+        </li>
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          Cr&eacute;ation, gestion et suivi de projets
+        </li>
+        <li class="rounded-card bg-neutral-50 p-4 text-neutral-800">
+          Immigration Canada et &Eacute;tats-Unis
+        </li>
+        <li
+          class="rounded-card bg-neutral-50 p-4 text-neutral-800 sm:col-span-2"
+        >
+          Int&eacute;gration socio&eacute;conomique et professionnelle
+        </li>
+      </ul>
     </div>
   </div>
 </section>
 
-<!-- R&eacute;sultats & impact -->
 <section class="bg-neutral-50 py-16">
-  <div class="mx-auto max-w-6xl px-4 text-center lg:px-6">
-    <h2 class="text-3xl font-bold lg:text-4xl">Nos r&eacute;sultats</h2>
-    <p class="mx-auto mt-4 max-w-2xl text-neutral-700">
-      KRAAK s'engage &agrave; produire un impact r&eacute;el et mesurable
-      aupr&egrave;s de ses participants et partenaires.
-    </p>
-    <div class="mt-10 grid gap-8 sm:grid-cols-3">
-      <div>
-        <p class="text-secondary text-4xl font-bold">&mdash;</p>
-        <p class="mt-2 text-neutral-700">Participants accompagn&eacute;s</p>
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <h2 class="text-center text-3xl font-bold lg:text-4xl">
+      Pourquoi choisir KRAAK
+    </h2>
+    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+      <div class="rounded-card bg-brand-white p-5 text-center shadow-sm">
+        <i class="pi pi-verified text-accent text-2xl" aria-hidden="true"></i>
+        <p class="mt-3 font-semibold">
+          Expertise reconnue &agrave; l'international
+        </p>
       </div>
-      <div>
-        <p class="text-secondary text-4xl font-bold">&mdash;</p>
-        <p class="mt-2 text-neutral-700">Partenaires actifs</p>
+      <div class="rounded-card bg-brand-white p-5 text-center shadow-sm">
+        <i class="pi pi-user text-accent text-2xl" aria-hidden="true"></i>
+        <p class="mt-3 font-semibold">Accompagnement personnalis&eacute;</p>
       </div>
-      <div>
-        <p class="text-secondary text-4xl font-bold">&mdash;</p>
-        <p class="mt-2 text-neutral-700">Pays couverts</p>
+      <div class="rounded-card bg-brand-white p-5 text-center shadow-sm">
+        <i class="pi pi-chart-line text-accent text-2xl" aria-hidden="true"></i>
+        <p class="mt-3 font-semibold">
+          R&eacute;sultats concrets et mesurables
+        </p>
+      </div>
+      <div class="rounded-card bg-brand-white p-5 text-center shadow-sm">
+        <i class="pi pi-sitemap text-accent text-2xl" aria-hidden="true"></i>
+        <p class="mt-3 font-semibold">
+          R&eacute;seau de partenaires strat&eacute;giques
+        </p>
+      </div>
+      <div
+        class="rounded-card bg-brand-white p-5 text-center shadow-sm md:col-span-2 lg:col-span-1"
+      >
+        <i class="pi pi-heart text-accent text-2xl" aria-hidden="true"></i>
+        <p class="mt-3 font-semibold">
+          Programmes accessibles, gratuits et premium
+        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- T&eacute;moignages (placeholder) -->
 <section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 text-center lg:px-6">
-    <h2 class="text-3xl font-bold lg:text-4xl">Ce qu'ils en disent</h2>
+  <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
+    <p class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase">
+      T&eacute;moignages
+    </p>
+    <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+      Ils ne cherchaient pas juste une solution. Ils voulaient un
+      r&eacute;sultat.
+    </h2>
     <p class="mx-auto mt-4 max-w-2xl text-neutral-700">
-      Les t&eacute;moignages de nos participants seront bient&ocirc;t
-      disponibles.
+      Un espace sera ouvert aux retours clients et aux preuves sociales
+      d&egrave;s que les prochains t&eacute;moignages seront valid&eacute;s.
     </p>
   </div>
 </section>
 
-<!-- CTA principal -->
 <kraak-cta-banner
-  heading="Pr&ecirc;t &agrave; passer &agrave; l'action ?"
-  body="Prenez contact avec notre &eacute;quipe pour explorer vos opportunit&eacute;s."
-  ctaLabel="Demander une consultation"
+  heading="Vous savez o&ugrave; vous voulez aller."
+  body="Nous savons comment vous y amener, avec une consultation claire et une premi&egrave;re orientation utile."
+  ctaLabel="Prendre rendez-vous maintenant"
   ctaLink="/contact"
   ctaContext="home_main_cta"
 />
-
-<!-- Teaser contact -->
-<section class="bg-neutral-50 py-12">
-  <div
-    class="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 text-center lg:flex-row lg:justify-between lg:px-6 lg:text-left"
-  >
-    <div>
-      <h3 class="text-xl font-bold">Une question ?</h3>
-      <p class="mt-1 text-neutral-700">
-        &Eacute;crivez-nous &agrave;
-        <a href="mailto:contact@kraak-consulting.com" class="kr-link">
-          contact&#64;kraak-consulting.com
-        </a>
-      </p>
-    </div>
-    <a
-      pButton
-      routerLink="/contact"
-      label="Nous contacter"
-      severity="secondary"
-      aria-label="Nous contacter"
-      class="kr-button-secondary"
-    ></a>
-  </div>
-</section>

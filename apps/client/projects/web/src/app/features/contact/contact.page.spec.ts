@@ -39,11 +39,11 @@ describe('ContactPage', () => {
   // Given la page de contact est affichée
   // When le contenu est rendu
   // Then le titre principal doit être visible
-  it('devrait afficher le titre principal "Contactez-nous"', () => {
+  it('devrait afficher le titre principal "Parlons de votre projet"', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Contactez-nous');
+    expect(heading?.textContent).toContain('Parlons de votre projet');
   });
 
   // Given le formulaire de contact est affiché
@@ -57,6 +57,8 @@ describe('ContactPage', () => {
     expect(fixture.nativeElement.querySelector('#name')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('#email')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('#subject')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#country')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#serviceType')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('#message')).toBeTruthy();
   });
 
@@ -93,7 +95,9 @@ describe('ContactPage', () => {
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
-      subject: 'Renseignements',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
       message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
     });
 
@@ -119,7 +123,9 @@ describe('ContactPage', () => {
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
-      subject: 'Renseignements',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
       message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
     });
 
@@ -129,6 +135,14 @@ describe('ContactPage', () => {
       req.url.endsWith('/contact'),
     );
     expect(request.request.method).toBe('POST');
+    expect(request.request.body).toMatchObject({
+      category: 'program',
+      subject: 'Obtenir un accompagnement',
+    });
+    expect(request.request.body.message).toContain('Pays : Côte d’Ivoire');
+    expect(request.request.body.message).toContain(
+      'Type de service : Formation',
+    );
     request.flush({
       success: true,
       message: 'Votre message a bien été reçu.',
@@ -153,7 +167,9 @@ describe('ContactPage', () => {
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
-      subject: 'Renseignements',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
       message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
     });
     component.onSubmit();
@@ -167,7 +183,9 @@ describe('ContactPage', () => {
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
-      subject: 'Renseignements',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
       message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
     });
     component.onSubmit();
@@ -190,7 +208,9 @@ describe('ContactPage', () => {
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
-      subject: 'Renseignements',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
       message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
     });
 

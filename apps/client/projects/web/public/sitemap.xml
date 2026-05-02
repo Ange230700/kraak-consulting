@@ -21,6 +21,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://kraak-group.vercel.app/ressources</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://kraak-group.vercel.app/contact</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
