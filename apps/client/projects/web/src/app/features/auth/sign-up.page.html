@@ -211,7 +211,9 @@
               "
               [loading]="submitting()"
               [disabled]="submitting()"
-              aria-label="Créer mon compte"
+              [attr.aria-label]="
+                submitting() ? 'Création en cours...' : 'Créer mon compte'
+              "
               class="kr-button-primary mt-1 w-full"
             ></button>
           </form>
