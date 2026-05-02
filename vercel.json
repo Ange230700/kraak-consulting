@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm -r --filter \"./packages/**\" build && pnpm --filter @kraak/client run build",
-  "outputDirectory": "apps/client/dist/web",
+  "outputDirectory": "apps/client/dist/web/browser",
   "framework": null
 }
