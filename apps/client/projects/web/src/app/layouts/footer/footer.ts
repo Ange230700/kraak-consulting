@@ -32,24 +32,24 @@ export class Footer {
   protected readonly socialLinks: FooterSocialLink[] = [
     {
       label: 'Facebook',
-      href: 'https://www.facebook.com/',
+      href: 'https://www.facebook.com/profile.php?id=61588664064530',
       icon: 'pi-facebook',
     },
     {
       label: 'Instagram',
-      href: 'https://www.instagram.com/',
+      href: 'https://www.instagram.com/kraakconsulting/',
       icon: 'pi-instagram',
     },
     {
       label: 'WhatsApp',
-      href: 'https://wa.me/',
+      href: 'https://wa.me/2250502741818',
       icon: 'pi-whatsapp',
     },
-    {
-      label: 'TikTok',
-      href: 'https://www.tiktok.com/',
-      icon: 'pi-tiktok',
-    },
+    // {
+    //   label: 'TikTok',
+    //   href: 'https://www.tiktok.com/',
+    //   icon: 'pi-tiktok',
+    // },
   ];
 
   protected readonly policyLinks: FooterLink[] = [
