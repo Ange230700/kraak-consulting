@@ -142,7 +142,7 @@ Variables attendues :
 
 - Domaine public principal : `https://kraak-group.vercel.app`
 - Domaine staging actuel : `https://client-six-indol-58.vercel.app`
-- API staging actuelle : `https://kraak-api.onrender.com`
+- API staging actuelle : `https://kraak-api-staging.onrender.com`
 
 ## CI/CD — `.env.example` (racine)
 

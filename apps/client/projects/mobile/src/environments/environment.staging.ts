@@ -2,7 +2,7 @@ export const environment = {
   environmentName: 'staging',
   production: true,
   siteUrl: 'https://client-six-indol-58.vercel.app',
-  apiBaseUrl: 'https://kraak-api.onrender.com',
+  apiBaseUrl: 'https://kraak-api-staging.onrender.com',
   pushNotificationsEnabled: true,
   pushNotificationsProvider: 'fcm',
   supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',

@@ -60,7 +60,7 @@ Preuves :
 
 Preuves :
 
-- API KRAAK déployée et accessible : `https://kraak-api.onrender.com`
+- API KRAAK déployée et accessible : `https://kraak-api-staging.onrender.com`
 - `GET /health` renvoie un payload enrichi :
   ```json
   {
@@ -137,7 +137,7 @@ Preuves :
 **Périmètre du pilote** :
 
 - Surface web : `https://kraak-group.vercel.app` (routes `/`, `/services`, `/programmes`, `/contact`)
-- Surface API : `https://kraak-api.onrender.com` (endpoints de contact, health)
+- Surface API : `https://kraak-api-staging.onrender.com` (endpoints de contact, health)
 - Surface mobile : APK debug disponible pour distribution interne (TestFlight iOS en préparation)
 
 **Conditions du pilote** :
@@ -197,7 +197,7 @@ Fonctionnalités opérationnelles :
 - analytics (Google Analytics via `gtag`)
 - accessibilité : zéro violation `critical` ou `serious`
 
-#### API — `https://kraak-api.onrender.com`
+#### API — `https://kraak-api-staging.onrender.com`
 
 Endpoints actifs :
 

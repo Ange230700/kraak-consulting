@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KRAAK_OBSERVABILITY_WEB_URL: https://kraak-group.vercel.app
-      KRAAK_OBSERVABILITY_API_URL: https://kraak-api.onrender.com
+      KRAAK_OBSERVABILITY_API_URL: https://kraak-api-staging.onrender.com
       ALERT_ISSUE_TITLE: '[ALERT][DEP-05] Observability check failure'
     steps:
       - uses: actions/checkout@v4

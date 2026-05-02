@@ -28,8 +28,8 @@ Verification realisee via GitHub CLI sur les issues `[TASK][DEP-*]`.
 1. `pnpm lint`
 2. `pnpm typecheck`
 3. `pnpm test:workspace`
-4. `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api.onrender.com pnpm check:observability`
-5. `curl -sS -o /tmp/api_health.json -w "%{http_code}\\n" https://kraak-api.onrender.com/health`
+4. `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability`
+5. `curl -sS -o /tmp/api_health.json -w "%{http_code}\\n" https://kraak-api-staging.onrender.com/health`
 
 ## Resultats
 
@@ -41,7 +41,7 @@ Verification realisee via GitHub CLI sur les issues `[TASK][DEP-*]`.
 
 ### Reverifications runtime pilote
 
-- API pilot (`https://kraak-api.onrender.com/health`): HTTP 200, payload observe `{"status":"ok"}`
+- API pilot (`https://kraak-api-staging.onrender.com/health`): HTTP 200, payload observe `{"status":"ok"}`
 - Web pilot (`https://kraak-group.vercel.app/`): HTTP 401 pendant le check d observabilite
 
 ## Decision de lancement maitrise
