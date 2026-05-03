@@ -76,12 +76,9 @@ function buildProtectionPayload({ contexts, enforceAdmins }) {
       contexts,
     },
     enforce_admins: enforceAdmins,
-    required_pull_request_reviews: {
-      dismiss_stale_reviews: false,
-      require_code_owner_reviews: false,
-      require_last_push_approval: false,
-      required_approving_review_count: 0,
-    },
+    // `null` désactive complètement l'exigence de review (sinon
+    // mergeStateStatus reste BLOCKED même avec required_approving_review_count=0).
+    required_pull_request_reviews: null,
     restrictions: null,
     required_linear_history: true,
     allow_force_pushes: false,
