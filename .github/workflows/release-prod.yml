@@ -27,7 +27,7 @@ env:
   # Versions CLI épinglées : reproductibilité de la release et des rollbacks.
   # Toute mise à jour doit faire l'objet d'une PR dédiée.
   SUPABASE_CLI_VERSION: '1.200.3'
-  VERCEL_CLI_VERSION: '37.14.0'
+  VERCEL_CLI_VERSION: '53.1.0'
 
 jobs:
   # ──────────────────────────────────────────────
