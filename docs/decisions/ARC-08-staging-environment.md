@@ -1,8 +1,15 @@
 # ARC-08 — Environnement de staging stable et branche longue `staging`
 
+> ⚠️ **Mise à jour 2026-05-03** : les sections « 2.1 Exception à ARC-02 »
+> et « 2.2 Flux complet de promotion » sont **remplacées par
+> [ARC-09](./ARC-09-inversion-main-staging.md)**. Dans le modèle actuel,
+> `staging` est la branche d'intégration (toutes les PR la ciblent) et
+> `main` n'avance que par PR de release depuis `staging`. Le reste de cette
+> ADR (motivations, choix Render/Vercel/Supabase, runbook) reste applicable.
+
 | Champ           | Valeur                                                                               |
 | --------------- | ------------------------------------------------------------------------------------ |
-| **Statut**      | Acceptée                                                                             |
+| **Statut**      | Acceptée (partiellement remplacée par ARC-09)                                        |
 | **Date**        | 2026-05-03                                                                           |
 | **Auteurs**     | Équipe KRAAK                                                                         |
 | **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag)                                 |

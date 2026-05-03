@@ -254,13 +254,14 @@ Comportement obligatoire pour les assistants :
   validation, de fusion, de push, ou de nettoyage de branche, sauf si
   l’utilisateur remplace explicitement ce workflow.
 - Règle de récupération des changements en suspens : si des fichiers modifiés ou
-  non suivis se trouvent sur `main` sans pouvoir y être commités directement
-  (protection de branche ou politique de PR), ne jamais forcer ni contourner les
-  contrôles. Appliquer systématiquement la séquence suivante :
+  non suivis se trouvent sur `staging` (ou pire sur `main`) sans pouvoir y être
+  commités directement (protection de branche ou politique de PR), ne jamais
+  forcer ni contourner les contrôles. Appliquer systématiquement la séquence
+  suivante :
   1. `git stash -u` pour mettre les changements de côté, y compris les fichiers non suivis.
-  2. Créer une branche courte appropriée (`git checkout -b <type>/<sujet>`).
+  2. Créer une branche courte appropriée **depuis `staging`** (`git checkout staging && git checkout -b <type>/<sujet>`).
   3. `git stash pop` pour restaurer les changements sur cette branche.
-  4. Suivre le protocole normal : commit, push, PR, merge, nettoyage de branche.
+  4. Suivre le protocole normal : commit, push, PR vers `staging`, merge, nettoyage de branche.
 
 ### Jalons Git / GitHub À Respecter
 
@@ -288,7 +289,7 @@ Quand l’accès aux GitHub Projects est disponible :
 - garder l’item du projet aligné avec l’état réel du travail
 - déplacer l’item en `In Progress` quand le codage commence
 - déplacer l’item en `Done` seulement après validation et merge / push vers
-  `main`
+  `staging` (et après release `staging → main → tag` quand la tâche concerne la prod)
 - si le travail est partiel ou bloqué, le laisser en `In Progress` et indiquer
   pourquoi
 - ne pas réécrire en masse des éléments de backlog non liés sauf demande
@@ -300,7 +301,7 @@ Cycle de vie obligatoire par tâche :
 2. Convertir l’item brouillon en issue GitHub ouverte quand l’implémentation
    commence.
 3. Garder l’issue ouverte tant que le travail est en cours.
-4. Fermer l’issue seulement après validation et merge / push vers `main`.
+4. Fermer l’issue seulement après validation et merge / push vers `staging`.
 5. Mettre à jour le champ personnalisé `Statut` avec cette progression exacte :
    `A faire` -> `En cours` -> `Termine`.
 6. Garder le champ natif `Status` aligné en parallèle :

@@ -1,14 +1,16 @@
-# CLI_TOOLS — Outils en ligne de commande Vercel, Render et Supabase
+# CLI_TOOLS — Outils en ligne de commande Vercel, Render, Supabase et GitHub
 
 > Référence opérationnelle pour installer, authentifier et utiliser les CLI
-> Vercel, Render et Supabase sur un poste de développement (Windows / macOS /
-> Linux). Conçu pour permettre à un mainteneur (ou à un agent IA) d'inspecter
-> et d'opérer la stack de déploiement sans passer par les dashboards web.
+> Vercel, Render, Supabase et GitHub (`gh`) sur un poste de développement
+> (Windows / macOS / Linux). Conçu pour permettre à un mainteneur (ou à un
+> agent IA) d'inspecter et d'opérer la stack de déploiement et le dépôt
+> GitHub sans passer par les dashboards web.
 
 Voir aussi : [`STAGING_PROMOTION`](STAGING_PROMOTION.md),
 [`RELEASE_PROD`](RELEASE_PROD.md),
 [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md),
 [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environment.md),
+[`ARC-09-inversion-main-staging`](../decisions/ARC-09-inversion-main-staging.md),
 [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md).
 
 ---
@@ -20,6 +22,7 @@ Voir aussi : [`STAGING_PROMOTION`](STAGING_PROMOTION.md),
 | `vercel`   | 53.x             | Inspection / déclenchement déploiements web Vercel                                       |
 | `render`   | 2.16.x           | Inspection services Render (`kraak-api-staging`, `kraak-api-prod`)                       |
 | `supabase` | 2.90.x           | Migrations SQL, génération de types, gestion des projets `kraak-staging` et `kraak-prod` |
+| `gh`       | 2.88.x           | Issues, PR, GitHub Projects, branch protection, `gh api` arbitraire                      |
 
 Mettre à jour régulièrement (Supabase notifie spontanément les nouvelles
 versions au lancement).
@@ -236,3 +239,93 @@ est prêt.
   secrets ou variable d'env locale.
 - ❌ Utiliser `render login` interactif dans un script CI → préférer
   `RENDER_API_KEY`.
+- ❌ Modifier les règles de branch protection via l'UI GitHub → utiliser le
+  script `scripts/github/update-branch-protection.mjs` pour rester
+  reproductible (cf. ARC-09).
+
+---
+
+## 8 · GitHub CLI (`gh`)
+
+### 8.1 Installation
+
+| OS      | Commande                                                           |
+| ------- | ------------------------------------------------------------------ |
+| Windows | `winget install --id GitHub.cli` (PowerShell admin)                |
+| macOS   | `brew install gh`                                                  |
+| Linux   | Voir <https://github.com/cli/cli/blob/trunk/docs/install_linux.md> |
+
+Vérification : `gh --version` doit afficher au moins `2.88.x`.
+
+### 8.2 Authentification
+
+Mode interactif (poste de dev) :
+
+```bash
+gh auth login           # choisir GitHub.com, HTTPS, Login with browser
+gh auth status          # vérifier compte, scopes et active account
+```
+
+Scopes minimaux requis pour ce dépôt :
+
+- `repo` — lecture / écriture du code, des PR et des branches
+- `workflow` — relancer des runs CI / éditer `.github/workflows`
+- `read:org` — lire les équipes et permissions
+- `project` — lire / écrire les GitHub Projects (cycle de vie obligatoire
+  défini dans `AGENTS.md`)
+- `gist` — facultatif
+
+Mode non-interactif (CI ou agent) :
+
+```bash
+echo "$GITHUB_TOKEN" | gh auth login --with-token
+```
+
+### 8.3 Configuration locale du dépôt
+
+Une seule fois après clone :
+
+```bash
+gh repo set-default Ange230700/kraak-consulting
+```
+
+Si le `git remote` pointe encore vers l'ancienne URL `kraak-group.git`
+(observable via le warning « This repository moved » au push), le mettre à
+jour :
+
+```bash
+git remote set-url origin https://github.com/Ange230700/kraak-consulting.git
+```
+
+### 8.4 Commandes utiles
+
+```bash
+# Issues
+gh issue list --state open
+gh issue create --title "..." --body "..." --label "..."
+gh issue close <num> --comment "..."
+
+# Pull requests
+gh pr create --base staging --head feat/x --title "..." --body-file pr_body.txt
+gh pr view <num> --json state,mergeable,mergeStateStatus,statusCheckRollup
+gh pr merge <num> --rebase --delete-branch
+gh pr checks <num>
+
+# Branch protection (lecture)
+gh api repos/Ange230700/kraak-consulting/branches/main/protection
+gh api repos/Ange230700/kraak-consulting/branches/staging/protection
+
+# Branch protection (écriture — TOUJOURS via le script ARC-09)
+node scripts/github/update-branch-protection.mjs --dry-run
+node scripts/github/update-branch-protection.mjs
+
+# GitHub Projects (cycle de vie obligatoire AGENTS.md)
+gh project item-list <project-number> --owner Ange230700
+gh project item-edit --id <item-id> --field-id <field-id> --single-select-option-id <opt-id>
+```
+
+### 8.5 Convention de cible des PR (ARC-09)
+
+- Branches courtes (`feat/*`, `fix/*`, `chore/*`, …) → PR vers **`staging`**.
+- Release prod → PR `staging → main`, puis tag SemVer sur `main` (ARC-07).
+- Aucune PR ne doit cibler `main` directement, sauf release.
