@@ -75,17 +75,17 @@ non par l'UI GitHub) pour rester reproductible.
 
 #### `staging` (intégration)
 
-| Option                             |                      Valeur                       | Justification                                                        |
-| ---------------------------------- | :-----------------------------------------------: | -------------------------------------------------------------------- |
-| `lock_branch`                      |                      `false`                      | Branche d'écriture via PR.                                           |
-| `required_linear_history`          |                      `true`                       | Rebase only (cohérent avec ARC-02 résiduel).                         |
-| `allow_force_pushes`               |                      `false`                      | Préserve l'historique partagé.                                       |
-| `allow_deletions`                  |                      `false`                      | Branche permanente.                                                  |
-| `required_conversation_resolution` |                      `true`                       | Pas de merge avec discussion ouverte.                                |
-| `required_pull_request_reviews`    |                     0 review                      | Solo dev ; 1 review obligatoire dès qu'un second mainteneur rejoint. |
-| `enforce_admins`                   |                      `false`                      | Permet un override admin documenté en cas d'incident.                |
-| `required_status_checks.strict`    |                      `true`                       | La PR doit être à jour avec `staging`.                               |
-| `required_status_checks.contexts`  | CI complète + `Vercel – kraak-consulting-staging` | La staging Preview est obligatoire.                                  |
+| Option                             |                  Valeur                   | Justification                                                          |
+| ---------------------------------- | :---------------------------------------: | ---------------------------------------------------------------------- |
+| `lock_branch`                      |                  `false`                  | Branche d'écriture via PR.                                             |
+| `required_linear_history`          |                  `true`                   | Rebase only (cohérent avec ARC-02 résiduel).                           |
+| `allow_force_pushes`               |                  `false`                  | Préserve l'historique partagé.                                         |
+| `allow_deletions`                  |                  `false`                  | Branche permanente.                                                    |
+| `required_conversation_resolution` |                  `true`                   | Pas de merge avec discussion ouverte.                                  |
+| `required_pull_request_reviews`    |                 0 review                  | Solo dev ; 1 review obligatoire dès qu'un second mainteneur rejoint.   |
+| `enforce_admins`                   |                  `false`                  | Permet un override admin documenté en cas d'incident.                  |
+| `required_status_checks.strict`    |                  `true`                   | La PR doit être à jour avec `staging`.                                 |
+| `required_status_checks.contexts`  | CI complète + `Vercel – kraak-consulting` | La staging Preview est obligatoire (cf. ARC-11, projet Vercel unique). |
 
 #### `main` (release)
 

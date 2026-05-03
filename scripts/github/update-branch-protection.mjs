@@ -58,7 +58,7 @@ const COMMON_CHECKS_STAGING = [
   "Tests unitaires",
   "Tests E2E",
   "Android Debug APK",
-  "Vercel – kraak-consulting-staging",
+  "Vercel – kraak-consulting",
 ];
 
 const COMMON_CHECKS_MAIN = [

@@ -24,7 +24,7 @@ L'équipe souhaite **mettre en production le site vitrine immédiatement**, sans
 attendre la stabilisation de l'espace participant, tout en continuant à itérer
 sur ce dernier sur l'environnement de **staging** (cf. ARC-08).
 
-Les deux projets Vercel (`kraak-consulting` prod, `kraak-consulting-staging`)
+Le projet Vercel unique `kraak-consulting` (cf. ARC-11)
 partagent **le même artefact de build** : la sélection ne peut donc pas se
 faire au build-time. Une bascule **runtime** est requise.
 
@@ -54,12 +54,17 @@ encapsule la lecture et le défaut sécurisé `false`.
 
 ### 2.3 Configuration par environnement
 
-| Environnement             | Projet Vercel              | Valeur du flag    |
-| ------------------------- | -------------------------- | ----------------- |
-| Production                | `kraak-consulting`         | `false`           |
-| Preview                   | `kraak-consulting`         | `false`           |
-| Staging (prod et preview) | `kraak-consulting-staging` | `true`            |
-| Local dev                 | `apps/client/.env`         | `true` recommandé |
+Toutes les valeurs sont configurées sur le projet Vercel unique
+`kraak-consulting` (cf. ARC-11), avec un override par branche pour le
+déploiement Preview de `staging` :
+
+| Environnement Vercel                 | `gitBranch` | Valeur du flag    |
+| ------------------------------------ | ----------- | ----------------- |
+| `production` (branche `main`)        | —           | `false`           |
+| `preview` (override branche staging) | `staging`   | `true`            |
+| `preview` (autres branches/PR)       | —           | `false`           |
+| `development` (`vercel dev`)         | —           | `true`            |
+| Local dev (`apps/client/.env`)       | —           | `true` recommandé |
 
 ### 2.4 Implémentation
 
@@ -101,7 +106,8 @@ Le flag est **temporaire**. Il sera retiré dès que :
 
 La suppression consistera à : retirer le flag de `runtime-config`, dégrader
 `buildRoutes` en `routes` constant unique, retirer le `@if` dans la navbar,
-nettoyer les `.env*`, supprimer la variable Vercel sur les deux projets.
+nettoyer les `.env*`, supprimer la variable Vercel (les 4 entrées du projet
+unique `kraak-consulting`).
 
 ---
 
