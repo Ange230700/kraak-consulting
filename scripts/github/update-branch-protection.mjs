@@ -58,7 +58,10 @@ const COMMON_CHECKS_STAGING = [
   "Tests unitaires",
   "Tests E2E",
   "Android Debug APK",
-  "Vercel – kraak-consulting",
+  // Note : "Vercel – kraak-consulting" n'est pas requis car le `ignoreCommand`
+  // de vercel.json skippe les builds hors `staging` ; le check n'est donc
+  // jamais publié sur les PR head SHAs et bloquerait tout merge. Le déploiement
+  // staging réel a lieu après merge sur la branche `staging` (cf. ARC-11).
 ];
 
 const COMMON_CHECKS_MAIN = [
@@ -72,7 +75,10 @@ const COMMON_CHECKS_MAIN = [
 function buildProtectionPayload({ contexts, enforceAdmins }) {
   return {
     required_status_checks: {
-      strict: true,
+      // `strict: false` évite d'imposer un rebase systématique avant chaque
+      // merge dans un workflow solo dev MVP ; les status checks CI restent
+      // obligatoires.
+      strict: false,
       contexts,
     },
     enforce_admins: enforceAdmins,
@@ -84,7 +90,9 @@ function buildProtectionPayload({ contexts, enforceAdmins }) {
     allow_force_pushes: false,
     allow_deletions: false,
     block_creations: false,
-    required_conversation_resolution: true,
+    // Threads de PR non résolus : peu pertinent en solo dev, génère de la
+    // friction sans bénéfice concret.
+    required_conversation_resolution: false,
     lock_branch: false,
     allow_fork_syncing: false,
   };
