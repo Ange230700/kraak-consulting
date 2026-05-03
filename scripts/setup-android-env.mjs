@@ -64,6 +64,12 @@ if (isShell || !runCommand) {
     ANDROID_SDK_ROOT: androidHome,
   });
 } else if (runCommand) {
+  // Validate that runCommand is a non-empty string before execution
+  if (typeof runCommand !== 'string' || runCommand.trim().length === 0) {
+    console.error('[android-env] Error: --run requires a non-empty command string.');
+    process.exit(1);
+  }
+
   // Run the command with environment variables set
   try {
     const env = {
