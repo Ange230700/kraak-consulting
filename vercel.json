@@ -3,5 +3,6 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm -r --filter \"./packages/**\" build && pnpm --filter @kraak/client run build",
   "outputDirectory": "apps/client/dist/web/browser",
-  "framework": null
+  "framework": null,
+  "ignoreCommand": "[ \"$VERCEL_ENV\" = \"production\" ] && exit 0 || exit 1"
 }
