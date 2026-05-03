@@ -6,9 +6,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [staging, main]
   pull_request:
-    branches: [main]
+    branches: [staging, main]
 
 concurrency:
   group: ci-${{ github.ref }}
