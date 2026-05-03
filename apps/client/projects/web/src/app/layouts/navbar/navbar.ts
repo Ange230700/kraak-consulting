@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { isParticipantAreaEnabled } from '../../core/runtime/runtime-config';
+
 interface NavLink {
   label: string;
   path: string;
@@ -21,6 +23,7 @@ export class Navbar {
   ];
 
   protected readonly mobileMenuOpen = signal(false);
+  protected readonly participantAreaEnabled = isParticipantAreaEnabled();
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update((v) => !v);

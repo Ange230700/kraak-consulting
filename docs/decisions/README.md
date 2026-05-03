@@ -21,3 +21,4 @@ Ce répertoire centralise les décisions d'architecture formelles du projet KRAA
 | `ARC-07` | Stratégie de release production basée sur les tags   | Acceptée                                      | 2026-05-02 |
 | `ARC-08` | Environnement staging et branche longue `staging`    | Acceptée (partiellement remplacée par ARC-09) | 2026-05-03 |
 | `ARC-09` | Inversion `main` ↔ `staging` (staging = intégration) | Acceptée                                      | 2026-05-03 |
+| `ARC-10` | Feature flag espace participant                      | Acceptée                                      | 2026-05-01 |

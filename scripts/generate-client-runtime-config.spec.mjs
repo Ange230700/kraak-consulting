@@ -50,6 +50,7 @@ runTest(
         apiBaseUrl: 'http://localhost:3000',
         supabaseUrl: 'http://127.0.0.1:54321',
         supabasePublishableKey: 'local-publishable-key',
+        enableParticipantArea: false,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -80,6 +81,7 @@ runTest(
         supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
         supabasePublishableKey:
           'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
+        enableParticipantArea: false,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -88,7 +90,7 @@ runTest(
 );
 
 runTest(
-  'le runtime client renvoie une configuration vide en production quand aucune variable publique n est fournie',
+  'le runtime client renvoie uniquement le flag participant en production quand aucune variable publique n est fournie',
   () => {
     const tempRoot = mkdtempSync(
       path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
@@ -100,7 +102,7 @@ runTest(
         processEnv: {},
       });
 
-      assert.deepEqual(runtimeConfig, {});
+      assert.deepEqual(runtimeConfig, { enableParticipantArea: false });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
     }
@@ -135,6 +137,7 @@ runTest(
         apiBaseUrl: 'https://api.kraak.example',
         supabaseUrl: 'https://kraak.supabase.co',
         supabasePublishableKey: 'production-publishable-key',
+        enableParticipantArea: false,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -174,6 +177,7 @@ runTest(
         apiBaseUrl: 'https://from-file.example',
         supabaseUrl: 'https://from-file.supabase.co',
         supabasePublishableKey: 'from-file-key',
+        enableParticipantArea: false,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -209,7 +213,93 @@ runTest(
         apiBaseUrl: 'https://quoted.example',
         supabaseUrl: 'https://quoted.supabase.co',
         supabasePublishableKey: 'line-1\nline-2',
+        enableParticipantArea: false,
       });
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
+  },
+);
+
+runTest(
+  'le runtime client expose enableParticipantArea quand CLIENT_FEATURE_PARTICIPANT_AREA vaut "true"',
+  () => {
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
+
+    try {
+      const envFilePath = path.join(tempRoot, '.env.staging');
+      writeFileSync(
+        envFilePath,
+        [
+          'CLIENT_API_BASE_URL=https://api.staging.example',
+          'SUPABASE_URL=https://staging.supabase.co',
+          'SUPABASE_PUBLISHABLE_KEY=staging-key',
+          'CLIENT_FEATURE_PARTICIPANT_AREA=true',
+          '',
+        ].join('\n'),
+      );
+
+      const runtimeConfig = loadClientRuntimeConfig('staging', {
+        clientRootPath: tempRoot,
+        processEnv: {},
+      });
+
+      assert.equal(runtimeConfig.enableParticipantArea, true);
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
+  },
+);
+
+runTest(
+  'le runtime client expose enableParticipantArea=false par defaut quand la variable est absente',
+  () => {
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
+
+    try {
+      const envFilePath = path.join(tempRoot, '.env.prod');
+      writeFileSync(
+        envFilePath,
+        [
+          'CLIENT_API_BASE_URL=https://api.prod.example',
+          'SUPABASE_URL=https://prod.supabase.co',
+          'SUPABASE_PUBLISHABLE_KEY=prod-key',
+          '',
+        ].join('\n'),
+      );
+
+      const runtimeConfig = loadClientRuntimeConfig('production', {
+        clientRootPath: tempRoot,
+        processEnv: {},
+      });
+
+      assert.equal(runtimeConfig.enableParticipantArea, false);
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
+  },
+);
+
+runTest(
+  'le runtime client expose enableParticipantArea=false quand la variable vaut une valeur autre que "true"',
+  () => {
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
+
+    try {
+      const runtimeConfig = loadClientRuntimeConfig('production', {
+        clientRootPath: tempRoot,
+        processEnv: {
+          CLIENT_FEATURE_PARTICIPANT_AREA: 'false',
+        },
+      });
+
+      assert.equal(runtimeConfig.enableParticipantArea, false);
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
     }
@@ -223,6 +313,7 @@ runTest(
       apiBaseUrl: 'https://api.example',
       supabaseUrl: 'https://supabase.example',
       supabasePublishableKey: 'public-key',
+      enableParticipantArea: false,
     });
 
     assert.equal(
@@ -232,7 +323,8 @@ runTest(
         '{',
         '  "apiBaseUrl": "https://api.example",',
         '  "supabaseUrl": "https://supabase.example",',
-        '  "supabasePublishableKey": "public-key"',
+        '  "supabasePublishableKey": "public-key",',
+        '  "enableParticipantArea": false',
         '}',
         ');',
         '',

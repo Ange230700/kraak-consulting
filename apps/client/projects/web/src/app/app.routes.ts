@@ -1,12 +1,16 @@
-import { Route, Routes } from '@angular/router';
+import { CanMatchFn, Route, Routes } from '@angular/router';
 
 import {
   participantRoleGuard,
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
+import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
 import { findSeoPageByPath } from './seo/site-seo';
 
-const buildMarketingRoute = (
+export const participantAreaCanMatch: CanMatchFn = () =>
+  isParticipantAreaEnabled();
+
+export const buildMarketingRoute = (
   path: string,
   loadComponent: Route['loadComponent'],
 ): Route => {
@@ -24,24 +28,9 @@ const buildMarketingRoute = (
   };
 };
 
-export const routes: Routes = [
+const marketingRoutes: Routes = [
   buildMarketingRoute('', () => import('./features/home/home.page')),
   buildMarketingRoute('a-propos', () => import('./features/about/about.page')),
-  {
-    path: 'connexion',
-    title: 'Connexion | KRAAK',
-    loadComponent: () => import('./features/auth/sign-in.page'),
-  },
-  {
-    path: 'inscription',
-    title: 'Inscription | KRAAK',
-    loadComponent: () => import('./features/auth/sign-up.page'),
-  },
-  {
-    path: 'mot-de-passe-oublie',
-    title: 'Mot de passe oubli\u00E9 | KRAAK',
-    loadComponent: () => import('./features/auth/password-reset.page'),
-  },
   buildMarketingRoute(
     'services',
     () => import('./features/services/services.page'),
@@ -58,8 +47,30 @@ export const routes: Routes = [
     'contact',
     () => import('./features/contact/contact.page'),
   ),
+];
+
+const participantAreaRoutes: Routes = [
+  {
+    path: 'connexion',
+    title: 'Connexion | KRAAK',
+    canMatch: [participantAreaCanMatch],
+    loadComponent: () => import('./features/auth/sign-in.page'),
+  },
+  {
+    path: 'inscription',
+    title: 'Inscription | KRAAK',
+    canMatch: [participantAreaCanMatch],
+    loadComponent: () => import('./features/auth/sign-up.page'),
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    title: 'Mot de passe oubli\u00E9 | KRAAK',
+    canMatch: [participantAreaCanMatch],
+    loadComponent: () => import('./features/auth/password-reset.page'),
+  },
   {
     path: 'participant',
+    canMatch: [participantAreaCanMatch],
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
     children: [
@@ -75,8 +86,17 @@ export const routes: Routes = [
       },
     ],
   },
-  {
-    path: '**',
-    redirectTo: '',
-  },
 ];
+
+export function buildRoutes(): Routes {
+  return [
+    ...marketingRoutes,
+    ...participantAreaRoutes,
+    {
+      path: '**',
+      redirectTo: '',
+    },
+  ];
+}
+
+export const routes: Routes = buildRoutes();

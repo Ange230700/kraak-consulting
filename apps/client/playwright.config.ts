@@ -31,9 +31,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npx ng serve web --port ${localWebPort}`,
+    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && npx ng serve web --port ${localWebPort}`,
     url: localWebBaseUrl,
     reuseExistingServer,
     timeout: 120_000,
+    env: {
+      CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
+    },
   },
 });

@@ -129,9 +129,15 @@ export function loadClientRuntimeConfig(
     fileVariables,
     processEnv,
   );
+  const enableParticipantArea =
+    readRuntimeVariable(
+      'CLIENT_FEATURE_PARTICIPANT_AREA',
+      fileVariables,
+      processEnv,
+    ) === 'true';
 
   if (!apiBaseUrl && (!supabaseUrl || !supabasePublishableKey)) {
-    return {};
+    return { enableParticipantArea };
   }
 
   return {
@@ -142,6 +148,7 @@ export function loadClientRuntimeConfig(
           supabasePublishableKey,
         }
       : {}),
+    enableParticipantArea,
   };
 }
 
