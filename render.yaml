@@ -2,7 +2,11 @@
 # Documentation : https://docs.render.com/blueprint-spec
 #
 # Deux services distincts :
-#   - kraak-api-staging : auto-deploy sur push main (preview-like)
+#   - kraak-api-staging : auto-deploy sur push de la branche longue `staging`.
+#                         La promotion `main -> staging` se fait par
+#                         fast-forward manuel. Voir
+#                         docs/decisions/ARC-08-staging-environment.md et
+#                         docs/runbooks/STAGING_PROMOTION.md.
 #   - kraak-api-prod    : autoDeploy: false ; déclenché uniquement par le
 #                         workflow .github/workflows/release-prod.yml sur tag
 #                         SemVer. Voir docs/decisions/ARC-07-prod-release-tag-based.md
@@ -17,7 +21,7 @@ services:
     plan: free
     healthCheckPath: /health
     autoDeploy: true
-    branch: main
+    branch: staging
     envVars:
       - key: NODE_ENV
         value: production

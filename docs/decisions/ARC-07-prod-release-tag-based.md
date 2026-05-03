@@ -31,6 +31,10 @@ isolation totale des secrets et des projets de plateforme.
 ### Principes directeurs
 
 1. **Push sur `main` ⇒ staging uniquement.** Aucun service prod ne suit `main`.
+   > Précisé par [ARC-08](./ARC-08-staging-environment.md) : depuis le
+   > 2026-05-03, le déclencheur staging est la branche longue `staging`,
+   > avancée par fast-forward depuis `main`. `main` ne déploie plus
+   > directement.
 2. **Tag `v*.*.*` ⇒ prod.** Le seul déclencheur de prod est la création d'un
    tag SemVer (`v1.0.0`, `v1.1.0-rc.1`, etc.).
 3. **Approbation humaine obligatoire.** Le déploiement prod passe par un

@@ -9,8 +9,11 @@ Voir aussi : [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-
 
 ## Principes
 
-- **Tag SemVer = seul déclencheur prod.** Un push sur `main` ne déploie que
-  staging.
+- **Tag SemVer = seul déclencheur prod.** Un push sur `main` ne déploie rien
+  automatiquement ; le déclencheur staging est la branche longue `staging`,
+  avancée par fast-forward depuis `main` (cf.
+  [`ARC-08`](../decisions/ARC-08-staging-environment.md) et
+  [`STAGING_PROMOTION`](STAGING_PROMOTION.md)).
 - **Approbation humaine obligatoire** via le GitHub Environment `production`.
 - **Aucun secret prod** dans le repo, ni en local. Tout passe par GitHub
   Secrets, Render Env, Vercel Env.

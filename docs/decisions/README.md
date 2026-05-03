@@ -18,3 +18,5 @@ Ce répertoire centralise les décisions d'architecture formelles du projet KRAA
 | `ARC-04` | Modèles de données MVP                              | Acceptée | 2025-07-18 |
 | `ARC-05` | Critères anti-scope-creep et cadrage ADR            | Acceptée | 2025-07-18 |
 | `ARC-06` | Gating natif notifications push mobile sur Firebase | Acceptée | 2026-04-10 |
+| `ARC-07` | Stratégie de release production basée sur les tags  | Acceptée | 2026-05-02 |
+| `ARC-08` | Environnement staging et branche longue `staging`   | Acceptée | 2026-05-03 |
