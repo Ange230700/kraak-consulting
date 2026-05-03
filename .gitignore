@@ -46,6 +46,10 @@ playwright/.cache/
 vercel_deps.json
 vercel_events.json
 
+# Supabase CLI (artefacts locaux)
+supabase/.temp/
+supabase/.branches/
+
 # Logs
 *.log
 npm-debug.log*
