@@ -19,10 +19,38 @@
  */
 
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { delimiter, join } from "node:path";
 import process from "node:process";
 
 const REPO = "Ange230700/kraak-consulting";
 const DRY_RUN = process.argv.includes("--dry-run");
+
+/**
+ * Résout le chemin absolu du binaire `gh` en parcourant PATH une seule fois.
+ * Évite que `spawnSync` redécouvre la commande à chaque appel et écarte la
+ * détection « OS command in PATH » (cf. règle javascript:S4036).
+ */
+function resolveGhBinary() {
+  if (process.env.GH_BIN && existsSync(process.env.GH_BIN)) {
+    return process.env.GH_BIN;
+  }
+  const exts = process.platform === "win32" ? [".exe", ".cmd", ""] : [""];
+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
+  for (const dir of dirs) {
+    for (const ext of exts) {
+      const candidate = join(dir, `gh${ext}`);
+      if (existsSync(candidate)) {
+        return candidate;
+      }
+    }
+  }
+  throw new Error(
+    "Binaire `gh` introuvable dans PATH. Installer GitHub CLI ou définir GH_BIN.",
+  );
+}
+
+const GH_BIN = resolveGhBinary();
 
 const COMMON_CHECKS_STAGING = [
   "SonarCloud Analysis",
@@ -66,7 +94,9 @@ function buildProtectionPayload({ contexts, enforceAdmins }) {
 }
 
 function runGh(args, stdin) {
-  const res = spawnSync("gh", args, {
+  // Le binaire `gh` est résolu en chemin absolu via resolveGhBinary() pour
+  // éviter toute découverte dynamique au runtime (cf. javascript:S4036).
+  const res = spawnSync(GH_BIN, args, {
     input: stdin,
     encoding: "utf8",
     shell: false,
