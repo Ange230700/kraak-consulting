@@ -109,7 +109,7 @@ describe('SupportService', () => {
       return undefined;
     });
 
-    sendMock.mockResolvedValue({ id: 'email_123' });
+    sendMock.mockResolvedValue({ data: { id: 'email_123' }, error: null });
 
     await expect(
       service.submitContact({
@@ -133,6 +133,38 @@ describe('SupportService', () => {
       replyTo: 'alice@exemple.com',
       subject: '[KRAAK][Autre] Renseignements',
       text: expect.stringContaining('Nouvelle demande de contact KRAAK'),
+    });
+  });
+
+  it("Given Resend retourne un objet d'erreur, When submitContact est appelé, Then une exception est levée plutôt que de renvoyer un faux succès", async () => {
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      if (key === 'CONTACT_FROM_EMAIL') return 'noreply@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockResolvedValue({
+      data: null,
+      error: {
+        statusCode: 403,
+        name: 'validation_error',
+        message: 'You can only send testing emails to your own email address.',
+      },
+    });
+
+    await expect(
+      service.submitContact({
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Renseignements',
+        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+        category: 'other',
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        success: false,
+      },
     });
   });
 

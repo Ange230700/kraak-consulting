@@ -302,14 +302,40 @@ export class SupportService {
     const categoryLabel = this.getCategoryLabel(dto.category);
 
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: fromEmail,
         to: toEmail,
         replyTo: dto.email,
         subject: `[KRAAK][${categoryLabel}] ${dto.subject}`,
         text: this.buildPlainTextBody(dto, categoryLabel),
       });
+
+      // Le SDK Resend ne lève pas d'exception sur erreur API ;
+      // il retourne `{ data, error }`. Sans ce contrôle, un envoi
+      // refusé (clé invalide, domaine non vérifié, destinataire
+      // interdit en mode sandbox, etc.) serait silencieusement
+      // ignoré et l'utilisateur verrait quand même un succès.
+      if (result.error) {
+        this.logger.error(
+          "Echec de l'envoi d'email transactionnel (Resend a retourné une erreur)",
+          JSON.stringify(result.error),
+        );
+
+        throw new InternalServerErrorException({
+          success: false,
+          message:
+            "Votre demande a été reçue, mais l'envoi de notification a échoué. Veuillez réessayer.",
+        });
+      }
+
+      this.logger.log(
+        `Email transactionnel envoyé via Resend (id=${result.data?.id ?? 'inconnu'}) vers ${toEmail}`,
+      );
     } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+
       this.logger.error(
         "Echec de l'envoi d'email transactionnel",
         error instanceof Error ? error.stack : undefined,
