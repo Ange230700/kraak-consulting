@@ -17,12 +17,22 @@ export function isParticipantAreaEnabled(): boolean {
   return getRuntimeConfig().enableParticipantArea === true;
 }
 
+function stripTrailingSlashes(value: string): string {
+  let endIndex = value.length;
+
+  while (endIndex > 0 && value.codePointAt(endIndex - 1) === 47) {
+    endIndex -= 1;
+  }
+
+  return value.slice(0, endIndex);
+}
+
 export function resolveApiBaseUrl(fallback = ''): string {
   const runtimeApiBaseUrl = getRuntimeConfig().apiBaseUrl?.trim();
 
   if (runtimeApiBaseUrl) {
-    return runtimeApiBaseUrl.replace(/\/+$/u, '');
+    return stripTrailingSlashes(runtimeApiBaseUrl);
   }
 
-  return fallback.replace(/\/+$/u, '');
+  return stripTrailingSlashes(fallback);
 }
