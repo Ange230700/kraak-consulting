@@ -74,12 +74,12 @@ Alias utiles à la racine :
 
 Variables utilisées par le runtime-config et les scripts :
 
-| Variable                   | Description                                   | Exemple local            |
-| -------------------------- | --------------------------------------------- | ------------------------ |
-| `CLIENT_API_BASE_URL`      | URL publique de l'API consommée par le client | `http://localhost:3000`  |
-| `SUPABASE_URL`             | URL publique du projet Supabase côté client   | `http://127.0.0.1:54321` |
-| `SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase côté client             | —                        |
-| `KRAAK_WEB_PORT`           | Port du serveur Angular pour scripts / E2E    | `4200`                   |
+| Variable                   | Description                                                                                                                      | Exemple local            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `CLIENT_API_BASE_URL`      | URL publique de l'API consommée par le client (doit être non vide en prod, sinon le client poste en same-origin et reçoit `405`) | `http://localhost:3000`  |
+| `SUPABASE_URL`             | URL publique du projet Supabase côté client                                                                                      | `http://127.0.0.1:54321` |
+| `SUPABASE_PUBLISHABLE_KEY` | Clé publique Supabase côté client                                                                                                | —                        |
+| `KRAAK_WEB_PORT`           | Port du serveur Angular pour scripts / E2E                                                                                       | `4200`                   |
 
 Les environnements Angular sont définis dans :
 
