@@ -33,6 +33,8 @@ services:
         sync: false
       - key: SUPABASE_SECRET_KEY
         sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: CONTACT_FROM_EMAIL
@@ -40,6 +42,8 @@ services:
       - key: CONTACT_TO_EMAIL
         sync: false
       - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CORS_ALLOWED_ORIGIN_PATTERNS
         sync: false
 
   - type: web
@@ -64,8 +68,6 @@ services:
         sync: false
       - key: SUPABASE_SECRET_KEY
         sync: false
-      - key: SUPABASE_PUBLISHABLE_KEY
-        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: CONTACT_FROM_EMAIL
@@ -73,4 +75,6 @@ services:
       - key: CONTACT_TO_EMAIL
         sync: false
       - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CORS_ALLOWED_ORIGIN_PATTERNS
         sync: false

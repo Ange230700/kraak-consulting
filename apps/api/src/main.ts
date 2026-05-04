@@ -1,18 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { buildCorsOptions } from './cors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const corsOrigins = process.env['CORS_ALLOWED_ORIGINS'];
-  if (corsOrigins) {
-    app.enableCors({
-      origin: corsOrigins.split(',').map((o) => o.trim()),
-    });
-  } else {
-    app.enableCors();
-  }
+  app.enableCors(
+    buildCorsOptions({
+      CORS_ALLOWED_ORIGINS: process.env['CORS_ALLOWED_ORIGINS'],
+      CORS_ALLOWED_ORIGIN_PATTERNS: process.env['CORS_ALLOWED_ORIGIN_PATTERNS'],
+    }),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('KRAAK API')
