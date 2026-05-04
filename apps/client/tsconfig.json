@@ -10,7 +10,8 @@
     "paths": {
       "@kraak/web/*": ["./projects/web/src/*"],
       "@kraak/mobile/*": ["./projects/mobile/src/*"],
-      "@kraak/tokens": ["../../packages/tokens/src/index.ts"]
+      "@kraak/tokens": ["../../packages/tokens/src/index.ts"],
+      "@kraak/api-client": ["../../packages/api-client/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
