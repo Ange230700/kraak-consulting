@@ -17,7 +17,7 @@ Issue: #124
 
 **Statut** : ✅ Satisfaite
 
-- Site pilote accessible : `https://kraak-group.vercel.app`
+- Site pilote accessible : `https://kraak-consulting.vercel.app`
 - Déploiements automatiques Vercel actifs sur `main`
 - Routes critiques HTTP 200 validées par QAT-06
 
@@ -73,7 +73,7 @@ Issue: #124
 ### Vérification observabilité
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 ```

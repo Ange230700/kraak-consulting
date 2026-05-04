@@ -45,8 +45,8 @@ Pour un projet Supabase staging ou production, répliquer au minimum dans le Das
 
 URLs minimales à autoriser :
 
-- `https://kraak-group.vercel.app/auth/callback`
-- `https://kraak-group.vercel.app/auth/reset`
+- `https://kraak-consulting.vercel.app/auth/callback`
+- `https://kraak-consulting.vercel.app/auth/reset`
 - `https://client-six-indol-58.vercel.app/auth/callback`
 - `https://client-six-indol-58.vercel.app/auth/reset`
 - `http://localhost:4200/auth/callback`

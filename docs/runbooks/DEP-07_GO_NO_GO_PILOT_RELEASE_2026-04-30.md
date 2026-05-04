@@ -45,7 +45,7 @@ Cette tâche ne couvre pas :
 
 Preuves :
 
-- site vitrine KRAAK déployé et accessible : `https://kraak-group.vercel.app`
+- site vitrine KRAAK déployé et accessible : `https://kraak-consulting.vercel.app`
 - pipeline CI/CD Vercel actif (déploiements automatiques sur `main`)
 - toutes les routes critiques répondent avec HTTP 200 :
   - `/` (Accueil)
@@ -136,7 +136,7 @@ Preuves :
 
 **Périmètre du pilote** :
 
-- Surface web : `https://kraak-group.vercel.app` (routes `/`, `/services`, `/programmes`, `/contact`)
+- Surface web : `https://kraak-consulting.vercel.app` (routes `/`, `/services`, `/programmes`, `/contact`)
 - Surface API : `https://kraak-api-staging.onrender.com` (endpoints de contact, health)
 - Surface mobile : APK debug disponible pour distribution interne (TestFlight iOS en préparation)
 
@@ -175,7 +175,7 @@ git push origin pilot-2026-04-30
 
 ### 4.2 Périmètre de la release pilote
 
-#### Web — `https://kraak-group.vercel.app`
+#### Web — `https://kraak-consulting.vercel.app`
 
 Pages déployées :
 

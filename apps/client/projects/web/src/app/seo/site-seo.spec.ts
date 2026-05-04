@@ -18,33 +18,35 @@ describe('site-seo', () => {
   });
 
   it('should build an XML sitemap with absolute URLs for every public page', () => {
-    const sitemap = buildSitemapXml('https://kraak-group.vercel.app');
+    const sitemap = buildSitemapXml('https://kraak-consulting.vercel.app');
 
-    expect(sitemap).toContain('<loc>https://kraak-group.vercel.app/</loc>');
     expect(sitemap).toContain(
-      '<loc>https://kraak-group.vercel.app/a-propos</loc>',
+      '<loc>https://kraak-consulting.vercel.app/</loc>',
     );
     expect(sitemap).toContain(
-      '<loc>https://kraak-group.vercel.app/services</loc>',
+      '<loc>https://kraak-consulting.vercel.app/a-propos</loc>',
     );
     expect(sitemap).toContain(
-      '<loc>https://kraak-group.vercel.app/programmes</loc>',
+      '<loc>https://kraak-consulting.vercel.app/services</loc>',
     );
     expect(sitemap).toContain(
-      '<loc>https://kraak-group.vercel.app/ressources</loc>',
+      '<loc>https://kraak-consulting.vercel.app/programmes</loc>',
     );
     expect(sitemap).toContain(
-      '<loc>https://kraak-group.vercel.app/contact</loc>',
+      '<loc>https://kraak-consulting.vercel.app/ressources</loc>',
+    );
+    expect(sitemap).toContain(
+      '<loc>https://kraak-consulting.vercel.app/contact</loc>',
     );
   });
 
   it('should build robots.txt pointing crawlers to the sitemap', () => {
-    const robots = buildRobotsTxt('https://kraak-group.vercel.app');
+    const robots = buildRobotsTxt('https://kraak-consulting.vercel.app');
 
     expect(robots).toContain('User-agent: *');
     expect(robots).toContain('Allow: /');
     expect(robots).toContain(
-      'Sitemap: https://kraak-group.vercel.app/sitemap.xml',
+      'Sitemap: https://kraak-consulting.vercel.app/sitemap.xml',
     );
   });
 
