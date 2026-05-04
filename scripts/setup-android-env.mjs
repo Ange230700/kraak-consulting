@@ -31,54 +31,75 @@ const androidHome = isWindows
   ? String.raw`C:\Users\USER\AppData\Local\Android\Sdk`
   : process.env.ANDROID_HOME || `${process.env.HOME}/Android/Sdk`;
 
+function handleEscapedChar(char, state) {
+  state.current += char;
+  state.escaped = false;
+}
+
+function handleBackslash(state) {
+  state.escaped = true;
+}
+
+function handleQuote(char, state) {
+  if (char === "'" && !state.inDoubleQuote) {
+    state.inSingleQuote = !state.inSingleQuote;
+  } else if (char === '"' && !state.inSingleQuote) {
+    state.inDoubleQuote = !state.inDoubleQuote;
+  }
+}
+
+function handleWhitespace(state, tokens) {
+  if (state.current.length > 0) {
+    tokens.push(state.current);
+    state.current = '';
+  }
+}
+
+function isWhitespace(char) {
+  return !this.inSingleQuote && !this.inDoubleQuote && /\s/u.test(char);
+}
+
 function splitCommandTokens(input) {
   const tokens = [];
-  let current = '';
-  let inSingleQuote = false;
-  let inDoubleQuote = false;
-  let escaped = false;
+  const state = {
+    current: '',
+    inSingleQuote: false,
+    inDoubleQuote: false,
+    escaped: false,
+  };
 
   for (const char of input) {
-    if (escaped) {
-      current += char;
-      escaped = false;
+    if (state.escaped) {
+      handleEscapedChar(char, state);
       continue;
     }
 
     if (char === '\\') {
-      escaped = true;
+      handleBackslash(state);
       continue;
     }
 
-    if (char === "'" && !inDoubleQuote) {
-      inSingleQuote = !inSingleQuote;
+    if (char === "'" || char === '"') {
+      handleQuote(char, state);
       continue;
     }
 
-    if (char === '"' && !inSingleQuote) {
-      inDoubleQuote = !inDoubleQuote;
+    if (!state.inSingleQuote && !state.inDoubleQuote && /\s/u.test(char)) {
+      handleWhitespace(state, tokens);
       continue;
     }
 
-    if (!inSingleQuote && !inDoubleQuote && /\s/u.test(char)) {
-      if (current.length > 0) {
-        tokens.push(current);
-        current = '';
-      }
-      continue;
-    }
-
-    current += char;
+    state.current += char;
   }
 
-  if (escaped || inSingleQuote || inDoubleQuote) {
+  if (state.escaped || state.inSingleQuote || state.inDoubleQuote) {
     throw new Error(
       '[android-env] Error: commande invalide. Vérifiez les guillemets et échappements.',
     );
   }
 
-  if (current.length > 0) {
-    tokens.push(current);
+  if (state.current.length > 0) {
+    tokens.push(state.current);
   }
 
   return tokens;
