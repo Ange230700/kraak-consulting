@@ -40,7 +40,7 @@ export function buildCorsOptions(env: CorsEnv): CorsOptions {
   const patterns = compilePatterns(env.CORS_ALLOWED_ORIGIN_PATTERNS);
 
   if (exactOrigins.length === 0 && patterns.length === 0) {
-    return { credentials: true, origin: true };
+    return { origin: true };
   }
 
   const allowedSet = new Set(exactOrigins);

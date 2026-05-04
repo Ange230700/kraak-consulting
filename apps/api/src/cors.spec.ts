@@ -15,7 +15,7 @@ describe('buildCorsOptions', () => {
       const options = buildCorsOptions({});
 
       expect(options.origin).toBe(true);
-      expect(options.credentials).toBe(true);
+      expect(options.credentials).toBeUndefined();
     });
   });
 
