@@ -55,10 +55,6 @@ function handleWhitespace(state, tokens) {
   }
 }
 
-function isWhitespace(char) {
-  return !this.inSingleQuote && !this.inDoubleQuote && /\s/u.test(char);
-}
-
 function splitCommandTokens(input) {
   const tokens = [];
   const state = {
