@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { ContactFormDto } from '@kraak/contracts';
 
+import { resolveApiBaseUrl } from '../../core/runtime/runtime-config';
 import { environment } from '../../../environments/environment';
 
 export type ContactPayload = ContactFormDto;
@@ -15,7 +16,7 @@ export interface ContactResponse {
 @Injectable({ providedIn: 'root' })
 export class ContactService {
   private readonly http = inject(HttpClient);
-  private readonly endpoint = `${environment.apiBaseUrl}/contact`;
+  private readonly endpoint = `${resolveApiBaseUrl(environment.apiBaseUrl)}/contact`;
 
   submit(payload: ContactPayload): Observable<ContactResponse> {
     return this.http.post<ContactResponse>(this.endpoint, payload);
