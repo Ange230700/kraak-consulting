@@ -6,6 +6,7 @@ import type { DashboardAggregateDto } from '@kraak/contracts';
 import { loadDashboardAggregate } from '@kraak/domain';
 
 import { environment } from '../../../../environments/environment';
+import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
 
 interface DashboardQuickLink {
@@ -45,7 +46,7 @@ export default class DashboardPage implements OnInit {
   private readonly authService = inject(WebAuthService);
   protected dashboardClient: Pick<ApiClient['dashboard'], 'getAggregate'> =
     createApiClient({
-      baseUrl: environment.apiBaseUrl,
+      baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
       getAuthToken: () =>
         this.authService.currentSession()?.accessToken ?? null,
     }).dashboard;
