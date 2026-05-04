@@ -37,7 +37,8 @@ Variables lues par `process.env` dans le code NestJS :
 - `RESEND_API_KEY` : clé API Resend secrète
 - `CONTACT_FROM_EMAIL` : expéditeur des emails transactionnels. Exemple : `onboarding@resend.dev`
 - `CONTACT_TO_EMAIL` : email destinataire des formulaires. Exemple : `contact@kraak.org`
-- `CORS_ALLOWED_ORIGINS` : origines autorisées séparées par des virgules. Exemple : `http://localhost:4200,http://localhost:4300`
+- `CORS_ALLOWED_ORIGINS` : origines autorisées exactes séparées par des virgules. Exemple : `http://localhost:4200,http://localhost:4300`
+- `CORS_ALLOWED_ORIGIN_PATTERNS` : optionnel. Expressions régulières séparées par des virgules pour autoriser des familles d'origines, typiquement les déploiements de prévisualisation Vercel (URL changeant à chaque commit). Exemple : `^https://kraak-consulting(-[a-z0-9]+)?-ange230700s-projects\.vercel\.app$`
 - `APP_VERSION` : identifiant de release exposé par `/health`. Exemple : `pilot-2026-04-30`
 
 Ordre de chargement côté API :
@@ -177,7 +178,7 @@ en développement local.
 Le fichier `render.yaml` déclare les variables d'environnement de production
 pour l'API : `NODE_ENV`, `PORT`, `APP_VERSION`, `SUPABASE_URL`,
 `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`,
-`CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`.
+`CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`, `CORS_ALLOWED_ORIGIN_PATTERNS`.
 
 ## Convention de gestion
 
