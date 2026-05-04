@@ -16,3 +16,13 @@ export function getRuntimeConfig(): KraakRuntimeConfig {
 export function isParticipantAreaEnabled(): boolean {
   return getRuntimeConfig().enableParticipantArea === true;
 }
+
+export function resolveApiBaseUrl(fallback = ''): string {
+  const runtimeApiBaseUrl = getRuntimeConfig().apiBaseUrl?.trim();
+
+  if (runtimeApiBaseUrl) {
+    return runtimeApiBaseUrl.replace(/\/+$/u, '');
+  }
+
+  return fallback.replace(/\/+$/u, '');
+}
