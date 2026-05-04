@@ -14,10 +14,10 @@
  *   node scripts/setup-android-env.mjs --run "pnpm build:debug:android"
  */
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
-import os from 'os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+import os from 'node:os';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isWindows = os.platform() === 'win32';
@@ -26,20 +26,16 @@ const runCommand = process.argv[process.argv.indexOf('--run') + 1];
 
 // Configure paths
 const javaHome = isWindows
-  ? 'C:\\Program Files\\Java\\jdk-21'
+  ? String.raw`C:\Program Files\Java\jdk-21`
   : process.env.JAVA_HOME || '/usr/lib/jvm/java-21-openjdk';
 
 const androidHome = isWindows
-  ? 'C:\\Users\\USER\\AppData\\Local\\Android\\Sdk'
+  ? String.raw`C:\Users\USER\AppData\Local\Android\Sdk`
   : process.env.ANDROID_HOME || `${process.env.HOME}/Android/Sdk`;
 
 // Check if paths exist
-try {
-  // We won't throw here, just set them anyway
-  // The build system will fail with clear messaging if paths don't exist
-} catch (e) {
-  // Silently continue
-}
+// We won't throw here, just set them anyway
+// The build system will fail with clear messaging if paths don't exist
 
 // Output shell-compatible export statements
 if (isShell || !runCommand) {
@@ -66,7 +62,9 @@ if (isShell || !runCommand) {
 } else if (runCommand) {
   // Validate that runCommand is a non-empty string before execution
   if (typeof runCommand !== 'string' || runCommand.trim().length === 0) {
-    console.error('[android-env] Error: --run requires a non-empty command string.');
+    console.error(
+      '[android-env] Error: --run requires a non-empty command string.',
+    );
     process.exit(1);
   }
 
