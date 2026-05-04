@@ -17,10 +17,9 @@ function compilePatterns(value: string | undefined): RegExp[] {
   return parseList(value).map((pattern) => {
     try {
       return new RegExp(pattern);
-    } catch (cause) {
+    } catch {
       throw new Error(
         `CORS_ALLOWED_ORIGIN_PATTERNS contient une expression régulière invalide : "${pattern}"`,
-        { cause: cause instanceof Error ? cause : undefined },
       );
     }
   });
