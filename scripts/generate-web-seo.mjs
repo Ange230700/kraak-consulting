@@ -19,7 +19,7 @@ const seoSourcePath = join(
   'site-seo.json',
 );
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
-const defaultSiteUrl = 'https://kraak-group.vercel.app';
+const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
 
 const trimTrailingSlashes = (value) => {
   let end = value.length;

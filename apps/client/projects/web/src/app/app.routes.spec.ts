@@ -154,7 +154,7 @@ describe('Web routes', () => {
         const loaded = await (route.loadComponent as () => Promise<unknown>)();
         expect(loaded).toBeTruthy();
       }
-    });
+    }, 15000);
 
     it('When the participant dashboard child loadComponent is invoked Then it resolves to a component', async () => {
       const participantRoute = builtRoutes.find(

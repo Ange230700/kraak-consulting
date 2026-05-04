@@ -52,7 +52,7 @@ Cette tâche ne couvre pas :
 Les incidents sont détectés via :
 
 1. **Workflow `Observability`** (toutes les 15 minutes)
-   - vérification `GET https://kraak-group.vercel.app` (web home)
+   - vérification `GET https://kraak-consulting.vercel.app` (web home)
    - vérification `GET https://kraak-api-staging.onrender.com/health` (API health)
    - en cas d'échec, issue GitHub `[ALERT][DEP-05] Observability check failure`
    - chaque échec crée un commentaire horodate
@@ -73,7 +73,7 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
    ```bash
    # Web
-   curl -v https://kraak-group.vercel.app
+   curl -v https://kraak-consulting.vercel.app
 
    # API
    curl -v https://kraak-api-staging.onrender.com/health
@@ -111,7 +111,7 @@ curl -s https://api.vercel.com/v6/deployments?teamId=TEAM_ID \
 # Via dashboard: https://vercel.com/dashboard/kraak-group > Deployments > Recent
 
 # 3. Vérifier health via headers HTTP
-curl -i https://kraak-group.vercel.app
+curl -i https://kraak-consulting.vercel.app
 ```
 
 **API (Render)**
@@ -153,7 +153,7 @@ Action 1 : Vérifier le dernier déploiement web
 Action 2 : Redéployer depuis main manuellement
 - Pousser un petit commit de "bump" (ex: changement inoffensif)
 - Ou utiliser Vercel UI > Deployments > Redeploy
-- Attendre ~60s et vérifier avec: curl -v https://kraak-group.vercel.app
+- Attendre ~60s et vérifier avec: curl -v https://kraak-consulting.vercel.app
 
 Action 3 : Si le problème persiste
 - Procéder à un ROLLBACK (voir section 2)
@@ -257,7 +257,7 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 6. Sélectionner **Promote to Production**
 7. Confirmer
 8. Attendre ~60 secondes
-9. Vérifier : `curl -v https://kraak-group.vercel.app`
+9. Vérifier : `curl -v https://kraak-consulting.vercel.app`
 
 **Durée** : ~2 minutes  
 **Risque** : bas (même artefact, juste serveur mis à jour)
@@ -272,7 +272,7 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 6. Créer une PR, reviewer, merger vers `main`
 7. Vercel redéploie automatiquement
 8. Attendre ~60 secondes
-9. Vérifier : `curl -v https://kraak-group.vercel.app`
+9. Vérifier : `curl -v https://kraak-consulting.vercel.app`
 
 **Durée** : ~5 minutes (incluant build)  
 **Risque** : très bas (tracé Git clair)
@@ -362,7 +362,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 2. Puis rollback web (plus visible)
    - Rollback web suivant méthode 2.1.B
-   - Attendre vérification: curl https://kraak-group.vercel.app
+   - Attendre vérification: curl https://kraak-consulting.vercel.app
 
 3. Post-rollback
    - Documenter l'incident
@@ -392,7 +392,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 #### Infrastructure & Déploiement
 
-- [ ] Web déployée et accessible : `curl -I https://kraak-group.vercel.app` → HTTP 200
+- [ ] Web déployée et accessible : `curl -I https://kraak-consulting.vercel.app` → HTTP 200
 - [ ] API déployée et accessible : `curl https://kraak-api-staging.onrender.com/health` → `{ "status": "ok", ... }`
 - [ ] Supabase production-pilot configuré et connecté
 - [ ] Variables d'environnement validées sur tous les services
@@ -426,7 +426,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 #### Parcours Utilisateur Critiques
 
-Tester manuellement chaque flux principal via https://kraak-group.vercel.app :
+Tester manuellement chaque flux principal via https://kraak-consulting.vercel.app :
 
 - [ ] **Page d'accueil** `/`
   - [ ] Charge en < 2s
@@ -465,10 +465,10 @@ Tester manuellement chaque flux principal via https://kraak-group.vercel.app :
 
 - [ ] HTTPS obligatoire
   - Vérifier que tous les endpoints sont HTTPS
-  - Test: `curl -I https://kraak-group.vercel.app` → `strict-transport-security` header
+  - Test: `curl -I https://kraak-consulting.vercel.app` → `strict-transport-security` header
 
 - [ ] Content-Security-Policy configurée (si applicable)
-  - Vérifier headers: `curl -i https://kraak-group.vercel.app | grep -i "content-security"`
+  - Vérifier headers: `curl -i https://kraak-consulting.vercel.app | grep -i "content-security"`
 
 #### Données & Base de Données
 
@@ -505,13 +505,13 @@ Tester manuellement chaque flux principal via https://kraak-group.vercel.app :
 
 ```bash
 # 1. Web sanity check
-curl -I https://kraak-group.vercel.app
+curl -I https://kraak-consulting.vercel.app
 
 # 2. API sanity check
 curl https://kraak-api-staging.onrender.com/health | jq .
 
 # 3. Observability check
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 

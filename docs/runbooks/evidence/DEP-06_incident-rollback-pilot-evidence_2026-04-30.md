@@ -19,7 +19,7 @@ Evidence:
     - Vercel: https://vercel.com/dashboard/kraak-group (Environment Variables)
     - Render: https://dashboard.render.com > kraak-api > Environment
 - Deployment URLs stable and documented:
-  - Web (pilot): `https://kraak-group.vercel.app`
+  - Web (pilot): `https://kraak-consulting.vercel.app`
   - API (pilot): `https://kraak-api-staging.onrender.com`
   - Supabase: Configured in environment files
 

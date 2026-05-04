@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kraak-group.vercel.app/</loc>
+    <loc>https://kraak-consulting.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kraak-group.vercel.app/a-propos</loc>
+    <loc>https://kraak-consulting.vercel.app/a-propos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-group.vercel.app/services</loc>
+    <loc>https://kraak-consulting.vercel.app/services</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kraak-group.vercel.app/programmes</loc>
+    <loc>https://kraak-consulting.vercel.app/programmes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-group.vercel.app/ressources</loc>
+    <loc>https://kraak-consulting.vercel.app/ressources</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-group.vercel.app/contact</loc>
+    <loc>https://kraak-consulting.vercel.app/contact</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

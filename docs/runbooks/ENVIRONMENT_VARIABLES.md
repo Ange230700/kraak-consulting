@@ -152,7 +152,7 @@ Variables attendues :
 
 ## Domaines publics documentés
 
-- Domaine public principal : `https://kraak-group.vercel.app`
+- Domaine public principal : `https://kraak-consulting.vercel.app`
 - Domaine staging actuel : `https://client-six-indol-58.vercel.app`
 - API staging actuelle : `https://kraak-api-staging.onrender.com`
 

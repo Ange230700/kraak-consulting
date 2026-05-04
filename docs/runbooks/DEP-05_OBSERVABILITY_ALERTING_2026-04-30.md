@@ -17,7 +17,7 @@ ajouter d infrastructure externe supplementaire:
 
 - DEP-02: satisfaite
   - le site public est deja deployee via Vercel
-  - URL publique documentee: `https://kraak-group.vercel.app`
+  - URL publique documentee: `https://kraak-consulting.vercel.app`
 - DEP-03: satisfaite
   - l API est deja deployee via Render
   - endpoint de sante declare dans `render.yaml` via `healthCheckPath: /health`
@@ -73,7 +73,7 @@ Comportement:
 
 Valeurs versionnees actuellement dans le workflow:
 
-- `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app`
+- `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app`
 - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com`
 
 ## Exploitation manuelle
@@ -81,7 +81,7 @@ Valeurs versionnees actuellement dans le workflow:
 Commande locale ou CI:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-group.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 ```
