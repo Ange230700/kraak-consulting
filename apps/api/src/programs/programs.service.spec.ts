@@ -859,6 +859,711 @@ describe('ProgramsService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
+  // Given un enrollment avec cohort en tableau (retour Supabase)
+  // When listPrograms est appelé
+  // Then normalizeRelation extrait le premier élément du tableau
+  it('Given un cohort en tableau dans enrollment, When listPrograms est appelé, Then normalizeRelation extrait le premier élément', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const cohortObj = {
+      id: 'cohort-1',
+      program_id: 'program-1',
+      name: 'Cohorte Avril',
+      code: 'APR-26',
+      status: 'active',
+      start_date: '2026-04-10',
+      end_date: null,
+      capacity: 25,
+      created_at: '2026-04-01T00:00:00.000Z',
+      updated_at: '2026-04-01T00:00:00.000Z',
+    };
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          progress_completed_session_ids: [],
+          progress_updated_at: null,
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: [cohortObj],
+        },
+      ],
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: [{ id: 'session-1', cohort_id: 'cohort-1' }],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      if (tableName === 'session') return sessionsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      { enrollmentId: 'enrollment-1', cohort: { id: 'cohort-1' } },
+    ]);
+  });
+
+  // Given un enrollment dont le programme est null
+  // When listPrograms est appelé
+  // Then l'enrollment sans programme est filtré de la liste
+  it("Given un enrollment sans programme, When listPrograms est appelé, Then l'enrollment sans programme est filtré", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-null-program',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: null,
+          progress_completed_session_ids: [],
+          progress_updated_at: null,
+          program: null,
+          cohort: null,
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toEqual([]);
+  });
+
+  // Given des enrollments sans cohorte
+  // When listPrograms est appelé
+  // Then readSessionIdsByCohort reçoit un tableau vide et renvoie une Map vide
+  it('Given des enrollments sans cohorte, When listPrograms est appelé, Then les programmes sans sessions sont renvoyés', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: null,
+          progress_completed_session_ids: [],
+          progress_updated_at: null,
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: null,
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      { enrollmentId: 'enrollment-1', cohort: null },
+    ]);
+  });
+
+  // Given une erreur DB sur le participant dans resolveParticipantId
+  // When listPrograms est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur participant dans resolveParticipantId, When listPrograms est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'participant db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  // Given un utilisateur authentifié sans participant lié
+  // When getProgramDetail est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given un utilisateur sans participant, When getProgramDetail est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given un enrollment avec programme null
+  // When getProgramDetail est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given un enrollment avec programme null, When getProgramDetail est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: null,
+        cohort: null,
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given une erreur DB sur enrollment dans getProgramDetail
+  // When getProgramDetail est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur enrollment, When getProgramDetail est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'enrollment db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given une erreur DB sur sessions dans getProgramDetail
+  // When getProgramDetail est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur session, When getProgramDetail est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: null,
+      error: { message: 'session db error' },
+    });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'session') return sessionsQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given une erreur DB sur annonces dans getProgramDetail
+  // When getProgramDetail est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur announcement, When getProgramDetail est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: null,
+      },
+      error: null,
+    });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({
+      data: null,
+      error: { message: 'announcement db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given plusieurs ressources dont une sans published_at
+  // When getProgramDetail est appelé
+  // Then les ressources sont triées et la ressource sans date est gérée
+  it('Given plusieurs ressources, When getProgramDetail est appelé, Then les ressources sont triées par date de publication', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: null,
+      },
+      error: null,
+    });
+    const resourcesQuery = createListQuery({
+      data: [
+        {
+          id: 'resource-newer',
+          program_id: 'program-1',
+          cohort_id: null,
+          title: 'Guide récent',
+          description: null,
+          resource_type: 'document',
+          resource_theme: null,
+          resource_audience: null,
+          url: null,
+          file_path: '/resources/guide-recent.pdf',
+          status: 'published',
+          published_at: '2026-04-22T00:00:00.000Z',
+          created_at: '2026-04-21T00:00:00.000Z',
+          updated_at: '2026-04-21T00:00:00.000Z',
+        },
+        {
+          id: 'resource-no-date',
+          program_id: 'program-1',
+          cohort_id: null,
+          title: 'Guide sans date',
+          description: null,
+          resource_type: 'document',
+          resource_theme: null,
+          resource_audience: null,
+          url: null,
+          file_path: '/resources/guide-old.pdf',
+          status: 'published',
+          published_at: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const announcementsQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    const result = await service.getProgramDetail('access-token', 'program-1');
+    expect(result.resources).toHaveLength(2);
+    expect(result.resources[0].id).toBe('resource-newer');
+  });
+
+  // Given un utilisateur sans participant
+  // When markSessionProgress est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given un utilisateur sans participant, When markSessionProgress est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given un enrollment introuvable pour markSessionProgress
+  // When markSessionProgress est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given un enrollment introuvable pour markSessionProgress, When markSessionProgress est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given une erreur DB sur enrollment dans markSessionProgress
+  // When markSessionProgress est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur enrollment dans markSessionProgress, When markSessionProgress est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'enrollment db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given un enrollment sans cohorte
+  // When markSessionProgress est appelé
+  // Then une NotFoundException est renvoyée
+  it('Given un enrollment sans cohorte pour markSessionProgress, When markSessionProgress est appelé, Then une NotFoundException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: null,
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  // Given une erreur sur la pagination des sessions dans markSessionProgress
+  // When markSessionProgress est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur sur la pagination des sessions, When markSessionProgress est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const pagedSessionsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: null,
+          error: { message: 'session range error' },
+        }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentSelectQuery;
+      if (tableName === 'session') return pagedSessionsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given une erreur de mise à jour DB dans markSessionProgress
+  // When markSessionProgress est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur de mise à jour DB, When markSessionProgress est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const pagedSessionsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest
+        .fn()
+        .mockResolvedValueOnce({ data: [{ id: 'session-1' }], error: null }),
+    };
+    const enrollmentUpdateQuery = createUpdateQuery({
+      error: { message: 'update error' },
+    });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentSelectQuery
+          : enrollmentUpdateQuery;
+      }
+      if (tableName === 'session') return pagedSessionsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
   // Given un cohort avec plus d'une page de sessions
   // When markSessionProgress cible une session de la deuxième page
   // Then le marquage est accepté et persisté
