@@ -284,6 +284,103 @@ describe('HTTP behaviour', () => {
     expect(init.method).toBe('GET');
   });
 
+  it('POST /auth/refresh-session envoie le refresh token', async () => {
+    fetchSpy = mockFetch(200, { session: {}, profile: {} });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.auth.refreshSession({ refreshToken: 'tok_refresh' });
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/auth/session/refresh');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({
+      refreshToken: 'tok_refresh',
+    });
+  });
+
+  it('POST /auth/password-reset envoie le payload de réinitialisation', async () => {
+    fetchSpy = mockFetch(200, { message: 'ok' });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.auth.requestPasswordReset({ email: 'user@example.com' });
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/auth/password-reset');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({
+      email: 'user@example.com',
+    });
+  });
+
+  it('GET /support/requests liste les demandes du participant', async () => {
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.contact.listMine();
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/support/requests');
+    expect(init.method).toBe('GET');
+  });
+
+  it('POST /support/contact soumet le formulaire de contact', async () => {
+    fetchSpy = mockFetch(200, { message: 'ok' });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.contact.submit({
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      email: 'alice@example.com',
+      subject: 'question',
+      message: 'Bonjour',
+    });
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/support/contact');
+    expect(init.method).toBe('POST');
+  });
+
+  it('PATCH /support/requests/:id/status met à jour le statut de la demande', async () => {
+    fetchSpy = mockFetch(200, { id: 'req-1', status: 'resolved' });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.contact.updateStatus('req-1', { status: 'resolved' });
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/support/requests/req-1/status');
+    expect(init.method).toBe('PATCH');
+    expect(JSON.parse(init.body as string)).toEqual({ status: 'resolved' });
+  });
+
+  it('GET /programs liste les programmes du participant', async () => {
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.participantPrograms.list();
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/programs');
+    expect(init.method).toBe('GET');
+  });
+
+  it('GET /programs/:id retourne le détail d un programme pour le participant', async () => {
+    fetchSpy = mockFetch(200, { id: 'prog-1', title: 'Leadership' });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.participantPrograms.getById('prog-1');
+
+    const [url, init] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://api.test/programs/prog-1');
+    expect(init.method).toBe('GET');
+  });
+
   it('POST /programs/:id/progress envoie le marquage progression minimal', async () => {
     fetchSpy = mockFetch(200, {
       enrollmentId: 'enr-1',

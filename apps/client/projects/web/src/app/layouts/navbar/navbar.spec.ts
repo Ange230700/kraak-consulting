@@ -101,5 +101,43 @@ describe('Navbar', () => {
       );
       expect(primaryCta).toBeNull();
     });
+
+    it('When toggleMobileMenu is called Then mobileMenuOpen toggles', () => {
+      const fixture = TestBed.createComponent(Navbar);
+      fixture.detectChanges();
+
+      const component = fixture.componentInstance as unknown as {
+        mobileMenuOpen: () => boolean;
+        toggleMobileMenu: () => void;
+        closeMobileMenu: () => void;
+      };
+
+      expect(component.mobileMenuOpen()).toBe(false);
+      component.toggleMobileMenu();
+      fixture.detectChanges();
+      expect(component.mobileMenuOpen()).toBe(true);
+      component.toggleMobileMenu();
+      fixture.detectChanges();
+      expect(component.mobileMenuOpen()).toBe(false);
+    });
+
+    it('When closeMobileMenu is called Then mobileMenuOpen is false', () => {
+      const fixture = TestBed.createComponent(Navbar);
+      fixture.detectChanges();
+
+      const component = fixture.componentInstance as unknown as {
+        mobileMenuOpen: () => boolean;
+        toggleMobileMenu: () => void;
+        closeMobileMenu: () => void;
+      };
+
+      component.toggleMobileMenu();
+      fixture.detectChanges();
+      expect(component.mobileMenuOpen()).toBe(true);
+
+      component.closeMobileMenu();
+      fixture.detectChanges();
+      expect(component.mobileMenuOpen()).toBe(false);
+    });
   });
 });
