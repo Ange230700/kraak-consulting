@@ -5,6 +5,14 @@
     "outDir": "../../out-tsc/web",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../../../../packages/api-client/src/**/*.ts",
+    "../../../../packages/tokens/src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "../../../../packages/api-client/src/**/*.spec.ts",
+    "../../../../packages/tokens/src/**/*.spec.ts"
+  ]
 }
