@@ -279,4 +279,297 @@ describe('WebAuthService', () => {
       expect(service.currentProfile()).toBeNull();
     });
   });
+
+  describe('Given a successful sign-up with session', () => {
+    it('when the API returns a session and profile, then the bundle is stored and isAuthenticated becomes true', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+          requiresEmailConfirmation: false,
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const result = await service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+      });
+
+      expect(service.isAuthenticated()).toBe(true);
+      expect(result.session?.accessToken).toBe('access-token');
+    });
+
+    it('when the API returns no session, then isAuthenticated stays false', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: null,
+          profile: null,
+          requiresEmailConfirmation: true,
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+      });
+
+      expect(service.isAuthenticated()).toBe(false);
+    });
+  });
+
+  describe('Given refreshSession', () => {
+    it('when currentSession is null, then refreshSession returns null without calling the API', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const result = await service.refreshSession();
+
+      expect(result).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when a session exists, then refreshSession calls the API and updates the bundle', async () => {
+      // First sign in
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'old-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      // Then refresh
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'new-token',
+            refreshToken: 'new-refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-29T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signIn({ email: 'alice@example.com', password: 'pass' });
+      expect(service.currentSession()?.accessToken).toBe('old-token');
+
+      const bundle = await service.refreshSession();
+      expect(bundle?.session.accessToken).toBe('new-token');
+      expect(service.currentSession()?.accessToken).toBe('new-token');
+    });
+  });
+
+  describe('Given requestPasswordReset', () => {
+    it('when called, then the API receives the request and returns the response', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, message: 'Email envoyé.' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const result = await service.requestPasswordReset({
+        email: 'alice@example.com',
+      });
+      expect(result).toMatchObject({ success: true });
+    });
+  });
+
+  describe('Given getSession', () => {
+    it('when currentSession is null, then getSession returns null without calling the API', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const result = await service.getSession();
+      expect(result).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when a session exists, then getSession calls the API and updates profileState', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'updated@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-29T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signIn({ email: 'alice@example.com', password: 'pass' });
+      const ctx = await service.getSession();
+      expect(ctx?.profile.appUser.email).toBe('updated@example.com');
+    });
+  });
+
+  describe('Given a stored session with missing required fields', () => {
+    it('when session.accessToken is missing, then the bundle is cleared and isAuthenticated is false', () => {
+      localStorage.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: { refreshToken: 'r', expiresAt: 'e', tokenType: 'bearer' },
+          profile: { appUser: { id: 'user-1' }, participant: null },
+        }),
+      );
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      expect(service.isAuthenticated()).toBe(false);
+      expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).toBeNull();
+    });
+
+    it('when profile.appUser.id is missing, then the bundle is cleared and isAuthenticated is false', () => {
+      localStorage.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: {
+            accessToken: 'a',
+            refreshToken: 'r',
+            expiresAt: 'e',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: { email: 'alice@example.com' },
+            participant: null,
+          },
+        }),
+      );
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      expect(service.isAuthenticated()).toBe(false);
+      expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).toBeNull();
+    });
+  });
 });

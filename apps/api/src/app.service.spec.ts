@@ -43,3 +43,15 @@ describe('AppService', () => {
     });
   });
 });
+
+describe('AppService — default constructor', () => {
+  it('Given le service instancié avec ses valeurs par défaut, When getHealth est appelé, Then environment et version ont des valeurs de secours', () => {
+    const service = new AppService();
+    const result = service.getHealth();
+    expect(result.status).toBe('ok');
+    expect(result.service).toBe('kraak-api');
+    expect(result.environment).toBeDefined();
+    expect(result.version).toBeDefined();
+    expect(typeof result.uptimeSeconds).toBe('number');
+  });
+});

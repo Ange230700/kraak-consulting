@@ -1,4 +1,9 @@
-import { UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseService } from '../supabase/supabase.service';
 import { AuthService } from './auth.service';
@@ -300,5 +305,351 @@ describe('AuthService', () => {
         participant: null,
       },
     });
+  });
+
+  // Given un signup avec email déjà utilisé
+  // When signUp est appelé
+  // Then une BadRequestException avec le message 'already' est renvoyée
+  it("Given un signup avec email déjà utilisé, When signUp est appelé, Then une BadRequestException avec message 'already' est renvoyée", async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'User already registered' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Un compte existe déjà pour cette adresse email.',
+      },
+    });
+  });
+
+  // Given un signup avec mot de passe trop faible
+  // When signUp est appelé
+  // Then une BadRequestException avec message 'password' est renvoyée
+  it("Given un signup avec mot de passe trop faible, When signUp est appelé, Then une BadRequestException avec message 'password' est renvoyée", async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Password too weak' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Le mot de passe ne respecte pas les exigences minimales.',
+      },
+    });
+  });
+
+  // Given un signup avec erreur Supabase générique
+  // When signUp est appelé
+  // Then une BadRequestException avec message générique est renvoyée
+  it('Given un signup avec erreur générique, When signUp est appelé, Then une BadRequestException avec message générique est renvoyée', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Unknown error occurred' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Impossible de créer le compte avec ces informations.',
+      },
+    });
+  });
+
+  // Given un signup sans confirmation email requise (session présente)
+  // When signUp est appelé
+  // Then la session et le profil sont inclus dans la réponse
+  it('Given un signup sans confirmation email, When signUp est appelé, Then la session et le profil sont inclus dans la réponse', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: 1_776_172_800,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    const result = await service.signUp({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      phone: null,
+      preferredContactChannel: null,
+      redirectTo: null,
+    });
+
+    expect(result.requiresEmailConfirmation).toBe(false);
+    expect(result.session).not.toBeNull();
+    expect(result.session?.accessToken).toBe('access-token');
+    expect(result.profile).not.toBeNull();
+  });
+
+  // Given un profil avec participant présent
+  // When signIn est appelé
+  // Then le bundle inclut les données participant
+  it('Given un profil avec participant présent, When signIn est appelé, Then le bundle inclut les données participant', async () => {
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: 1_776_172_800,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    mockProfile({
+      participant: {
+        id: 'participant-1',
+        user_id: 'user-1',
+        lifecycle_status: 'active',
+        reference_code: 'REF-001',
+        country: 'France',
+        city: 'Paris',
+        notes: null,
+        created_at: '2026-04-14T12:00:00.000Z',
+        updated_at: '2026-04-14T12:00:00.000Z',
+      },
+    });
+
+    const result = await service.signIn({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    expect(result.profile.participant).toEqual({
+      id: 'participant-1',
+      userId: 'user-1',
+      lifecycleStatus: 'active',
+      referenceCode: 'REF-001',
+      country: 'France',
+      city: 'Paris',
+      notes: null,
+      createdAt: '2026-04-14T12:00:00.000Z',
+      updatedAt: '2026-04-14T12:00:00.000Z',
+    });
+  });
+
+  // Given une session sans expires_at
+  // When signIn est appelé
+  // Then expiresAt est calculé depuis expires_in
+  it('Given une session sans expires_at, When signIn est appelé, Then expiresAt est calculé depuis expires_in', async () => {
+    const now = Date.now();
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: null,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    const result = await service.signIn({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    const expiresAt = new Date(result.session.expiresAt).getTime();
+    expect(expiresAt).toBeGreaterThanOrEqual(now + 3600 * 1000 - 2000);
+    expect(expiresAt).toBeLessThanOrEqual(now + 3600 * 1000 + 2000);
+  });
+
+  // Given un refresh token invalide
+  // When refreshSession est appelé
+  // Then une UnauthorizedException explicite est renvoyée
+  it('Given un refresh token invalide, When refreshSession est appelé, Then une UnauthorizedException explicite est renvoyée', async () => {
+    authClient.auth.refreshSession.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Token expired' },
+    });
+
+    await expect(
+      service.refreshSession({ refreshToken: 'invalid-token' }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  // Given une erreur Supabase lors du reset
+  // When requestPasswordReset est appelé
+  // Then une BadRequestException explicite est renvoyée
+  it('Given une erreur Supabase lors du reset, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({
+      data: null,
+      error: { message: 'Email rate limit exceeded' },
+    });
+
+    await expect(
+      service.requestPasswordReset({
+        email: 'alice@example.com',
+        redirectTo: null,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  // Given un access token expiré
+  // When getSession est appelé
+  // Then une UnauthorizedException explicite est renvoyée
+  it('Given un access token expiré, When getSession est appelé, Then une UnauthorizedException explicite est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValue({
+      data: { user: null },
+      error: { message: 'Token expired' },
+    });
+
+    await expect(service.getSession('expired-token')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  // Given une erreur DB lors du chargement de app_user
+  // When signIn est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur app_user, When signIn est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: 1_776_172_800,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return createSingleRowQuery({
+          data: null,
+          error: { message: 'DB error' },
+        });
+      }
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.signIn({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given une erreur DB lors du chargement de participant
+  // When signIn est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given une erreur DB sur participant, When signIn est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: 1_776_172_800,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return createSingleRowQuery({
+          data: {
+            id: 'user-1',
+            email: 'alice@example.com',
+            role: 'participant',
+            first_name: 'Alice',
+            last_name: 'Dupont',
+            phone: null,
+            preferred_contact_channel: null,
+            is_active: true,
+            created_at: '2026-04-14T12:00:00.000Z',
+            updated_at: '2026-04-14T12:00:00.000Z',
+          },
+          error: null,
+        });
+      }
+      if (tableName === 'participant') {
+        return createSingleRowQuery({
+          data: null,
+          error: { message: 'DB error' },
+        });
+      }
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.signIn({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given un app_user introuvable
+  // When getSession est appelé
+  // Then une NotFoundException est renvoyée (profil requis absent)
+  it('Given un app_user introuvable, When getSession est appelé, Then une NotFoundException est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return createSingleRowQuery({ data: null, error: null });
+      }
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 });
