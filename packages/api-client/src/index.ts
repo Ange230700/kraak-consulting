@@ -1,4 +1,5 @@
 export { createApiClient, ApiError } from './client.js';
+export { resolveAuthErrorMessage } from './resolve-auth-error.js';
 export type {
   ApiClient,
   AuthClient,

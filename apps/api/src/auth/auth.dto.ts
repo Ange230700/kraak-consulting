@@ -4,6 +4,12 @@ import type {
   SignInRequestDto,
   SignUpRequestDto,
 } from '@kraak/contracts';
+import {
+  isObjectPayload,
+  isValidEmail,
+  readTrimmedString,
+  validateEmail,
+} from '../shared/dto-validation.utils';
 
 type ValidationSuccess<T> = {
   valid: true;
@@ -27,10 +33,6 @@ type AccessTokenFailure = {
 
 type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
 
-function readTrimmedString(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
 function readOptionalString(value: unknown, maxLength?: number): string | null {
   const normalized = readTrimmedString(value);
 
@@ -43,63 +45,12 @@ function readOptionalString(value: unknown, maxLength?: number): string | null {
     : normalized;
 }
 
-function isObjectPayload(body: unknown): body is Record<string, unknown> {
-  return Boolean(body) && typeof body === 'object' && !Array.isArray(body);
-}
-
-function isValidEmail(email: string): boolean {
-  if (!email) {
-    return false;
-  }
-
-  for (const character of email) {
-    if (character.trim().length === 0) {
-      return false;
-    }
-  }
-
-  const atIndex = email.indexOf('@');
-
-  if (atIndex <= 0 || atIndex !== email.lastIndexOf('@')) {
-    return false;
-  }
-
-  const localPart = email.slice(0, atIndex);
-  const domainPart = email.slice(atIndex + 1);
-
-  if (!localPart || !domainPart) {
-    return false;
-  }
-
-  if (domainPart.startsWith('.') || domainPart.endsWith('.')) {
-    return false;
-  }
-
-  const dotIndex = domainPart.indexOf('.');
-
-  if (dotIndex <= 0 || dotIndex === domainPart.length - 1) {
-    return false;
-  }
-
-  if (domainPart.includes('..')) {
-    return false;
-  }
-
-  return true;
-}
-
 function isValidRedirectTarget(value: string): boolean {
   try {
     new URL(value);
     return true;
   } catch {
     return false;
-  }
-}
-
-function validateEmail(email: string, errors: string[]): void {
-  if (!email || !isValidEmail(email)) {
-    errors.push("L'adresse e-mail est invalide.");
   }
 }
 

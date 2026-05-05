@@ -13,6 +13,7 @@ import {
   WebAuthService,
   resolveAuthErrorMessage,
 } from '../../core/auth/web-auth.service';
+import { normalizeRequiredText, normalizeTextControl } from './auth-form.utils';
 
 interface PasswordResetFormModel {
   email: FormControl<string>;
@@ -74,12 +75,4 @@ export default class PasswordResetPage {
       this.submitting.set(false);
     }
   }
-}
-
-function normalizeRequiredText(value: string): string {
-  return value.trim();
-}
-
-function normalizeTextControl(control: FormControl<string>): void {
-  control.setValue(normalizeRequiredText(control.getRawValue()));
 }

@@ -1,12 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type {
-  ResourceAudienceValue,
-  ResourceDto,
-  ResourceThemeValue,
-  PublicationStatusValue,
-  ResourceTypeValue,
-} from '@kraak/contracts';
+import type { ResourceDto } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
+import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
 
 const RESOURCE_SELECT_FIELDS =
   'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at';
@@ -15,23 +10,6 @@ const RESOURCE_TRACKING_SELECT_FIELDS =
   'id, consultation_count, last_consulted_at';
 
 const RESOURCE_SELECT_FIELDS_WITH_COUNT = `${RESOURCE_SELECT_FIELDS}, count:id.count()`;
-
-type ResourceRow = {
-  id: string;
-  program_id: string | null;
-  cohort_id: string | null;
-  title: string;
-  description: string | null;
-  resource_type: ResourceTypeValue;
-  resource_theme: ResourceThemeValue;
-  resource_audience: ResourceAudienceValue;
-  url: string | null;
-  file_path: string | null;
-  status: PublicationStatusValue;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
 
 type ResourceTrackingRow = {
   id: string;
@@ -248,21 +226,6 @@ export class ResourcesService {
   }
 
   private mapResource(row: ResourceRow): ResourceDto {
-    return {
-      id: row.id,
-      programId: row.program_id,
-      cohortId: row.cohort_id,
-      title: row.title,
-      description: row.description,
-      resourceType: row.resource_type,
-      resourceTheme: row.resource_theme,
-      resourceAudience: row.resource_audience,
-      url: row.url,
-      filePath: row.file_path,
-      status: row.status,
-      publishedAt: row.published_at,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
+    return mapResource(row);
   }
 }

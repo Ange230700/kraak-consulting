@@ -104,14 +104,14 @@ export default class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    void this.loadDashboard();
+    void this.loadHomeDashboard();
   }
 
   protected async reloadDashboard(): Promise<void> {
-    await this.loadDashboard();
+    await this.loadHomeDashboard();
   }
 
-  private async loadDashboard(): Promise<void> {
+  private async loadHomeDashboard(): Promise<void> {
     await loadDashboardAggregate({
       getAggregate: () => this.dashboardClient.getAggregate(),
       setLoading: (value) => this.loading.set(value),
