@@ -754,7 +754,6 @@ describe('AuthService', () => {
       },
     });
   });
-
   // Given un signIn Supabase qui renvoie un user présent mais session null sans erreur
   // When signIn est appelé
   // Then une UnauthorizedException est renvoyée (branche !data.session couverte)
