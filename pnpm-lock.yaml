@@ -174,6 +174,12 @@ importers:
       '@capacitor/push-notifications':
         specifier: ^7.0.3
         version: 7.0.6(@capacitor/core@7.6.1)
+      '@fontsource/ibm-plex-mono':
+        specifier: ^5.2.7
+        version: 5.2.7
+      '@fontsource/poppins':
+        specifier: ^5.2.7
+        version: 5.2.7
       '@ionic/angular':
         specifier: ^8.6.0
         version: 8.8.3(9511f469f4e6826adaab558be69e3456)
@@ -1283,6 +1289,12 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@fontsource/ibm-plex-mono@5.2.7':
+    resolution: {integrity: sha512-MKAb8qV+CaiMQn2B0dIi1OV3565NYzp3WN5b4oT6LTkk+F0jR6j0ZN+5BKJiIhffDC3rtBULsYZE65+0018z9w==}
+
+  '@fontsource/poppins@5.2.7':
+    resolution: {integrity: sha512-6uQyPmseo4FgI97WIhA4yWRlNaoLk4vSDK/PyRwdqqZb5zAEuc+Kunt8JTMcsHYUEGYBtN15SNkMajMdqUSUmg==}
 
   '@gar/promise-retry@1.0.3':
     resolution: {integrity: sha512-GmzA9ckNokPypTg10pgpeHNQe7ph+iIKKmhKu3Ob9ANkswreCx7R3cKmY781K8QK3AqVL3xVh9A42JvIAbkkSA==}
@@ -7328,6 +7340,10 @@ snapshots:
   '@exodus/bytes@1.15.0(@noble/hashes@1.8.0)':
     optionalDependencies:
       '@noble/hashes': 1.8.0
+
+  '@fontsource/ibm-plex-mono@5.2.7': {}
+
+  '@fontsource/poppins@5.2.7': {}
 
   '@gar/promise-retry@1.0.3': {}
 
