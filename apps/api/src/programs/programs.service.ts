@@ -125,6 +125,9 @@ const enrollmentProgramSelect =
 const progressUpdateErrorMessage =
   'Impossible de mettre à jour la progression du programme.';
 const sessionProgressPageSize = 200;
+const programNotFoundMessage = 'Programme introuvable pour ce participant.';
+const resourcesReadErrorMessage =
+  'Impossible de charger les ressources du programme.';
 
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
@@ -207,32 +210,20 @@ export class ProgramsService {
     if (!participantId) {
       throw new NotFoundException({
         success: false,
-        message: 'Programme introuvable pour ce participant.',
+        message: programNotFoundMessage,
       });
     }
 
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('enrollment')
-      .select(enrollmentProgramSelect)
-      .eq('participant_id', participantId)
-      .eq('program_id', programId)
-      .in('status', ['pending', 'active', 'completed'])
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de charger le programme demandé.',
-      });
-    }
-
-    const enrollment = data as EnrollmentRow | null;
+    const enrollment = await this.readEnrollmentByProgram(
+      participantId,
+      programId,
+      'Impossible de charger le programme demandé.',
+    );
 
     if (!enrollment) {
       throw new NotFoundException({
         success: false,
-        message: 'Programme introuvable pour ce participant.',
+        message: programNotFoundMessage,
       });
     }
 
@@ -241,7 +232,7 @@ export class ProgramsService {
     if (!program) {
       throw new NotFoundException({
         success: false,
-        message: 'Programme introuvable pour ce participant.',
+        message: programNotFoundMessage,
       });
     }
 
@@ -280,35 +271,24 @@ export class ProgramsService {
     if (!participantId) {
       throw new NotFoundException({
         success: false,
-        message: 'Programme introuvable pour ce participant.',
+        message: programNotFoundMessage,
       });
     }
 
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('enrollment')
-      .select(enrollmentProgramSelect)
-      .eq('participant_id', participantId)
-      .eq('program_id', programId)
-      .in('status', ['pending', 'active', 'completed'])
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: progressUpdateErrorMessage,
-      });
-    }
-
-    const enrollment = data as EnrollmentRow | null;
+    const enrollment = await this.readEnrollmentByProgram(
+      participantId,
+      programId,
+      progressUpdateErrorMessage,
+    );
 
     if (!enrollment) {
       throw new NotFoundException({
         success: false,
-        message: 'Programme introuvable pour ce participant.',
+        message: programNotFoundMessage,
       });
     }
 
+    const adminClient = this.supabaseService.getClient();
     const cohort = normalizeRelation(enrollment.cohort);
 
     if (!cohort) {
@@ -526,54 +506,15 @@ export class ProgramsService {
     programId: string,
     cohortId: string | null,
   ): Promise<ResourceDto[]> {
-    const adminClient = this.supabaseService.getClient();
-    const { data: programResources, error: programResourcesError } =
-      await adminClient
-        .from('resource')
-        .select(
-          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
-        )
-        .eq('status', 'published')
-        .eq('program_id', programId)
-        .is('cohort_id', null)
-        .order('published_at', { ascending: false })
-        .limit(50);
-
-    if (programResourcesError) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de charger les ressources du programme.',
-      });
-    }
+    const programResources = await this.readPublishedResources(programId, null);
 
     let cohortResources: ResourceRow[] = [];
 
     if (cohortId) {
-      const { data, error } = await adminClient
-        .from('resource')
-        .select(
-          'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at',
-        )
-        .eq('status', 'published')
-        .eq('program_id', programId)
-        .eq('cohort_id', cohortId)
-        .order('published_at', { ascending: false })
-        .limit(50);
-
-      if (error) {
-        throw new InternalServerErrorException({
-          success: false,
-          message: 'Impossible de charger les ressources du programme.',
-        });
-      }
-
-      cohortResources = (data as ResourceRow[] | null) ?? [];
+      cohortResources = await this.readPublishedResources(programId, cohortId);
     }
 
-    const mergedResources = [
-      ...((programResources as ResourceRow[] | null) ?? []),
-      ...cohortResources,
-    ];
+    const mergedResources = [...programResources, ...cohortResources];
 
     const uniqueResources = Array.from(
       new Map(mergedResources.map((row) => [row.id, row])).values(),
@@ -630,6 +571,66 @@ export class ProgramsService {
         audienceType: row.audience_type,
         publishedAt: row.published_at,
       }));
+  }
+
+  private async readEnrollmentByProgram(
+    participantId: string,
+    programId: string,
+    errorMessage: string,
+  ): Promise<EnrollmentRow | null> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('enrollment')
+      .select(enrollmentProgramSelect)
+      .eq('participant_id', participantId)
+      .eq('program_id', programId)
+      .in('status', ['pending', 'active', 'completed'])
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: errorMessage,
+      });
+    }
+
+    return data as EnrollmentRow | null;
+  }
+
+  private async readPublishedResources(
+    programId: string,
+    cohortId: string | null,
+  ): Promise<ResourceRow[]> {
+    const adminClient = this.supabaseService.getClient();
+    const resourceSelect =
+      'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at';
+
+    const { data, error } = cohortId
+      ? await adminClient
+          .from('resource')
+          .select(resourceSelect)
+          .eq('status', 'published')
+          .eq('program_id', programId)
+          .eq('cohort_id', cohortId)
+          .order('published_at', { ascending: false })
+          .limit(50)
+      : await adminClient
+          .from('resource')
+          .select(resourceSelect)
+          .eq('status', 'published')
+          .eq('program_id', programId)
+          .is('cohort_id', null)
+          .order('published_at', { ascending: false })
+          .limit(50);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: resourcesReadErrorMessage,
+      });
+    }
+
+    return (data as ResourceRow[] | null) ?? [];
   }
 
   private isVisibleAnnouncement(
