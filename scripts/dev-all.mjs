@@ -244,13 +244,13 @@ async function startService(service) {
     `${service.color}[${service.name}]${reset} démarrage sur ${preferred}\n`,
   );
 
-  // SECURITY: service.command must remain hardcoded/trusted.
-  // Do not pass user-controlled values here while shell: true is enabled.
+  // SECURITY: service.command est entièrement hardcodé dans le tableau services.
+  // shell: false empêche toute interpolation de commande non contrôlée.
   const child = spawn(args[0], args.slice(1), {
     cwd: service.cwd,
     env,
     stdio: ['inherit', 'pipe', 'pipe'],
-    shell: true,
+    shell: false,
   });
 
   children.add(child);
