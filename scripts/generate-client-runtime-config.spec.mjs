@@ -1,28 +1,17 @@
 // scripts\generate-client-runtime-config.spec.mjs
 
-/* global console */
-
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import test from 'node:test';
 
 import {
   loadClientRuntimeConfig,
   serializeRuntimeConfig,
 } from './generate-client-runtime-config.mjs';
 
-function runTest(name, fn) {
-  try {
-    fn();
-    console.log(`ok - ${name}`);
-  } catch (error) {
-    console.error(`not ok - ${name}`);
-    throw error;
-  }
-}
-
-runTest(
+test(
   'le runtime client peut lire les variables locales depuis apps/client/.env quand le fichier existe',
   () => {
     const tempRoot = mkdtempSync(
@@ -58,7 +47,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client peut lire les variables staging depuis process.env quand aucun fichier .env n est disponible',
   () => {
     const tempRoot = mkdtempSync(
@@ -89,7 +78,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client renvoie uniquement le flag participant en production quand aucune variable publique n est fournie',
   () => {
     const tempRoot = mkdtempSync(
@@ -109,7 +98,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client lit les variables production depuis .env.prod quand le fichier existe',
   () => {
     const tempRoot = mkdtempSync(
@@ -145,7 +134,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client priorise les variables du fichier .env sur celles de process.env',
   () => {
     const tempRoot = mkdtempSync(
@@ -185,7 +174,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client supporte la syntaxe export, les guillemets et les sauts de ligne echappes depuis le fichier env',
   () => {
     const tempRoot = mkdtempSync(
@@ -221,7 +210,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client expose enableParticipantArea quand CLIENT_FEATURE_PARTICIPANT_AREA vaut "true"',
   () => {
     const tempRoot = mkdtempSync(
@@ -253,7 +242,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client expose enableParticipantArea=false par defaut quand la variable est absente',
   () => {
     const tempRoot = mkdtempSync(
@@ -284,7 +273,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'le runtime client expose enableParticipantArea=false quand la variable vaut une valeur autre que "true"',
   () => {
     const tempRoot = mkdtempSync(
@@ -306,7 +295,7 @@ runTest(
   },
 );
 
-runTest(
+test(
   'la serialisation du runtime produit un script executable qui fige la configuration',
   () => {
     const serialized = serializeRuntimeConfig({

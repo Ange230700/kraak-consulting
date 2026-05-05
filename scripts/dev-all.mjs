@@ -18,29 +18,20 @@ function isViteCacheLockLine(line) {
   }
 
   const normalizedLine = line.toLowerCase().replaceAll('\\', '/');
+  const angularCacheMarker = '.angular/cache';
 
-  const epermIndex = normalizedLine.indexOf(
-    'eperm: operation not permitted, rename ',
-  );
-
-  if (epermIndex === -1) {
+  if (!normalizedLine.includes('eperm: operation not permitted, rename ')) {
     return false;
   }
 
-  const angularCacheIndex = normalizedLine.indexOf(
-    '.angular/cache',
-    epermIndex,
-  );
-
-  if (angularCacheIndex === -1) {
+  const angularCacheIndex = normalizedLine.indexOf(angularCacheMarker);
+  if (angularCacheIndex < 0) {
     return false;
   }
 
-  return (
-    normalizedLine.indexOf(
-      '/vite/deps_temp_',
-      angularCacheIndex + '.angular/cache'.length,
-    ) !== -1
+  return normalizedLine.includes(
+    '/vite/deps_temp_',
+    angularCacheIndex + angularCacheMarker.length,
   );
 }
 
