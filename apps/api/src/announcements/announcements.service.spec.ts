@@ -2044,4 +2044,185 @@ describe('AnnouncementsService', () => {
       ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
+
+  describe('listAnnouncements — cas limites', () => {
+    it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur est levée', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: null },
+        error: new Error('Invalid'),
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn(),
+      });
+
+      await expect(service.listAnnouncements('bad-token')).rejects.toThrow(
+        'Could not resolve participant ID from access token',
+      );
+    });
+
+    it('Given: une erreur DB sur announcements, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: { message: 'DB failure' } },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementsQuery;
+        }),
+      });
+
+      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+        'Failed to list announcements',
+      );
+    });
+
+    it('Given: une erreur DB sur enrollments, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        { data: [], error: null },
+        { withOrder: true },
+      );
+
+      const enrollmentsQuery = createAsyncQuery(
+        { data: null, error: { message: 'enrollment DB error' } },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementsQuery;
+          if (table === 'enrollment') return enrollmentsQuery;
+        }),
+      });
+
+      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+        'Failed to get enrollments',
+      );
+    });
+  });
+
+  describe('getAnnouncementById — audience program et cohort', () => {
+    it('Given: annonce de type program avec participant inscrit, When: getAnnouncementById appelé, Then: retourne annonce', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: {
+          id: 'ann-002',
+          title: 'Program Specific',
+          body: 'Body',
+          priority: 'normal',
+          audience_type: 'program',
+          program_id: 'prog-001',
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-04-20T11:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T11:00:00Z',
+          updated_at: '2026-04-20T11:00:00Z',
+        },
+        error: null,
+      });
+
+      const enrollmentQuery = createAsyncQuery(
+        { data: [{ id: 'enr-1' }], error: null },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementQuery;
+          if (table === 'enrollment') return enrollmentQuery;
+        }),
+      });
+
+      const result = await service.getAnnouncementById(
+        'ann-002',
+        'valid-token',
+      );
+      expect(result.id).toBe('ann-002');
+      expect(result.audienceType).toBe('program');
+    });
+
+    it('Given: annonce de type cohort avec participant inscrit, When: getAnnouncementById appelé, Then: retourne annonce', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: {
+          id: 'ann-003',
+          title: 'Cohort Announcement',
+          body: 'Body',
+          priority: 'normal',
+          audience_type: 'cohort',
+          program_id: null,
+          cohort_id: 'cohort-001',
+          status: 'published',
+          published_at: '2026-04-20T11:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T11:00:00Z',
+          updated_at: '2026-04-20T11:00:00Z',
+        },
+        error: null,
+      });
+
+      const enrollmentQuery = createAsyncQuery(
+        { data: [{ id: 'enr-2' }], error: null },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementQuery;
+          if (table === 'enrollment') return enrollmentQuery;
+        }),
+      });
+
+      const result = await service.getAnnouncementById(
+        'ann-003',
+        'valid-token',
+      );
+      expect(result.id).toBe('ann-003');
+      expect(result.audienceType).toBe('cohort');
+    });
+  });
 });
