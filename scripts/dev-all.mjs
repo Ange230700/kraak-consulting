@@ -2,6 +2,7 @@ import net from 'node:net';
 import { spawn } from 'node:child_process';
 import { readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const portInUsePattern = /Port \d+ is already in use/i;
 const addressInUsePattern = /EADDRINUSE|address already in use/i;
@@ -197,6 +198,27 @@ function shutdown(exitCode = 0) {
   }, 2000);
 }
 
+export function resolveSpawnCommand(command, args, platform = process.platform) {
+  if (platform !== 'win32') {
+    return {
+      command,
+      args,
+    };
+  }
+
+  if (!/\.(cmd|bat)$/i.test(command)) {
+    return {
+      command,
+      args,
+    };
+  }
+
+  return {
+    command: process.env.ComSpec ?? 'cmd.exe',
+    args: ['/d', '/s', '/c', command, ...args],
+  };
+}
+
 async function startService(service) {
   const allowPortFallback = service.allowPortFallback ?? true;
   const cacheRecoveryAttempts = service.cacheRecoveryAttempts ?? 0;
@@ -244,9 +266,11 @@ async function startService(service) {
     `${service.color}[${service.name}]${reset} démarrage sur ${preferred}\n`,
   );
 
+  const spawnCommand = resolveSpawnCommand(args[0], args.slice(1));
+
   // SECURITY: service.command est entièrement hardcodé dans le tableau services.
-  // shell: false empêche toute interpolation de commande non contrôlée.
-  const child = spawn(args[0], args.slice(1), {
+  // Les scripts .cmd/.bat Windows sont lancés via cmd.exe tout en conservant shell: false.
+  const child = spawn(spawnCommand.command, spawnCommand.args, {
     cwd: service.cwd,
     env,
     stdio: ['inherit', 'pipe', 'pipe'],
@@ -348,11 +372,17 @@ async function startService(service) {
 process.on('SIGINT', () => shutdown(0));
 process.on('SIGTERM', () => shutdown(0));
 
-try {
-  for (const service of services) {
-    await startService(service);
+async function main() {
+  try {
+    for (const service of services) {
+      await startService(service);
+    }
+  } catch (error) {
+    console.error(error);
+    shutdown(1);
   }
-} catch (error) {
-  console.error(error);
-  shutdown(1);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
 }
