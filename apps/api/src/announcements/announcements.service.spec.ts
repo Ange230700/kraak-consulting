@@ -615,4 +615,262 @@ describe('AnnouncementsService', () => {
       expect(result.audienceType).toBe('cohort');
     });
   });
+
+  describe('getAnnouncementById — branches non couvertes', () => {
+    it('Given: auth réussit mais participant introuvable, When: getAnnouncementById appelé, Then: lève une erreur de résolution participant', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Test',
+          body: 'Body',
+          priority: 'normal',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-04-20T11:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T11:00:00Z',
+          updated_at: '2026-04-20T11:00:00Z',
+        },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'announcement') return announcementQuery;
+          if (table === 'participant') return participantQuery;
+        }),
+      });
+
+      await expect(
+        service.getAnnouncementById('ann-001', 'valid-token'),
+      ).rejects.toThrow('Could not resolve participant ID from access token');
+    });
+
+    it("Given: annonce inexistante (data null, pas d'erreur), When: getAnnouncementById appelé, Then: lève une NotFoundException", async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'announcement') return announcementQuery;
+        }),
+      });
+
+      await expect(
+        service.getAnnouncementById('non-existent', 'valid-token'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('Given: annonce visible type all_participants, erreur enrollment dans isAnnouncementVisibleToParticipant, When: getAnnouncementById appelé, Then: lève une erreur', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: {
+          id: 'ann-004',
+          title: 'Program Announcement',
+          body: 'Body',
+          priority: 'normal',
+          audience_type: 'program',
+          program_id: 'prog-001',
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-04-20T11:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T11:00:00Z',
+          updated_at: '2026-04-20T11:00:00Z',
+        },
+        error: null,
+      });
+
+      const enrollmentQuery = createAsyncQuery(
+        { data: null, error: { message: 'DB error' } },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementQuery;
+          if (table === 'enrollment') return enrollmentQuery;
+        }),
+      });
+
+      await expect(
+        service.getAnnouncementById('ann-004', 'valid-token'),
+      ).rejects.toThrow('Failed to verify announcement access');
+    });
+
+    it('Given: annonce avec audience_type non supporté dans filterAnnouncementsByScope, When: listAnnouncements appelé, Then: annonce exclue du résultat', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: 'ann-unsupported',
+              title: 'Custom Announcement',
+              body: 'Body',
+              priority: 'normal',
+              audience_type: 'custom',
+              program_id: null,
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T11:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T11:00:00Z',
+              updated_at: '2026-04-20T11:00:00Z',
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      const enrollmentsQuery = createAsyncQuery(
+        { data: [], error: null },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementsQuery;
+          if (table === 'enrollment') return enrollmentsQuery;
+        }),
+      });
+
+      const result = await service.listAnnouncements('valid-token');
+      expect(result.data).toHaveLength(0);
+    });
+
+    it('Given: participant inscrit au programme, annonce de type program, When: listAnnouncements appelé, Then: annonce visible incluse dans le résultat', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: 'ann-prog-001',
+              title: 'Programme Announcement',
+              body: 'Announcement for program participants',
+              priority: 'normal',
+              audience_type: 'program',
+              program_id: 'prog-001',
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T11:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T11:00:00Z',
+              updated_at: '2026-04-20T11:00:00Z',
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      const enrollmentsQuery = createAsyncQuery(
+        {
+          data: [{ program_id: 'prog-001', cohort_id: null }],
+          error: null,
+        },
+        { withIn: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') return participantQuery;
+          if (table === 'announcement') return announcementsQuery;
+          if (table === 'enrollment') return enrollmentsQuery;
+        }),
+      });
+
+      const result = await service.listAnnouncements('valid-token');
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]?.id).toBe('ann-prog-001');
+    });
+    it('Given: annonce avec audience_type non supporté dans isAnnouncementVisibleToParticipant, When: getAnnouncementById appelé, Then: lève une NotFoundException', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementQuery = createAsyncQuery({
+        data: {
+          id: 'ann-custom',
+          title: 'Custom Type',
+          body: 'Body',
+          priority: 'normal',
+          audience_type: 'custom',
+          program_id: null,
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-04-20T11:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T11:00:00Z',
+          updated_at: '2026-04-20T11:00:00Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'announcement') return announcementQuery;
+          if (table === 'participant') return participantQuery;
+        }),
+      });
+
+      await expect(
+        service.getAnnouncementById('ann-custom', 'valid-token'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
 });
