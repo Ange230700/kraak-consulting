@@ -1665,10 +1665,6 @@ describe('ProgramsService', () => {
         data: null,
         error: { message: 'session range error' },
       }),
-      range: jest.fn().mockResolvedValueOnce({
-        data: null,
-        error: { message: 'session range error' },
-      }),
     };
 
     adminClient.from.mockImplementation((tableName: string) => {
