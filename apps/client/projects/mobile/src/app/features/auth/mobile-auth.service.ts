@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { ApiError, createApiClient } from '@kraak/api-client';
+import { createApiClient } from '@kraak/api-client';
 import type {
   AuthProfileDto,
   AuthSessionBundleDto,
@@ -159,38 +159,4 @@ export class MobileAuthService {
   }
 }
 
-export function resolveAuthErrorMessage(
-  error: unknown,
-  fallbackMessage: string,
-): string {
-  if (
-    error instanceof ApiError &&
-    error.body &&
-    typeof error.body === 'object'
-  ) {
-    if (
-      'message' in error.body &&
-      typeof error.body.message === 'string' &&
-      error.body.message.trim().length > 0
-    ) {
-      return error.body.message;
-    }
-
-    if ('errors' in error.body && Array.isArray(error.body.errors)) {
-      const firstError = error.body.errors.find(
-        (value): value is string =>
-          typeof value === 'string' && value.trim().length > 0,
-      );
-
-      if (firstError) {
-        return firstError;
-      }
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return fallbackMessage;
-}
+export { resolveAuthErrorMessage } from '@kraak/api-client';
