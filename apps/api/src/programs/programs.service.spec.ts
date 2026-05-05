@@ -1464,12 +1464,10 @@ describe('ProgramsService', () => {
       eq: jest.fn().mockReturnThis(),
       in: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
-      range: jest
-        .fn()
-        .mockResolvedValueOnce({
-          data: null,
-          error: { message: 'session range error' },
-        }),
+      range: jest.fn().mockResolvedValueOnce({
+        data: null,
+        error: { message: 'session range error' },
+      }),
     };
 
     adminClient.from.mockImplementation((tableName: string) => {
