@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { ResourceDto } from '@kraak/contracts';
+import type {
+  ResourceAudienceValue,
+  ResourceDto,
+  ResourceThemeValue,
+} from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
 
