@@ -219,4 +219,67 @@ describe('AuthController', () => {
       message: "Le header d'autorisation Bearer est requis.",
     });
   });
+
+  // Given un payload signIn invalide (email malformé)
+  // When POST /auth/sign-in est appelé
+  // Then une BadRequestException explicite est renvoyée
+  it('Given un payload signIn invalide, When signIn est appelé, Then une BadRequestException explicite est renvoyée', async () => {
+    let thrownError: unknown;
+    try {
+      await controller.signIn({ email: 'pas-un-email', password: 'x' });
+    } catch (error) {
+      thrownError = error;
+    }
+    expect(thrownError).toBeInstanceOf(BadRequestException);
+  });
+
+  // Given un payload refreshSession valide
+  // When POST /auth/session/refresh est appelé
+  // Then le service reçoit le refresh token normalisé
+  it('Given un payload refreshSession valide, When refreshSession est appelé, Then le service reçoit le refresh token normalisé', async () => {
+    await controller.refreshSession({ refreshToken: '  refresh-token  ' });
+    expect(authService.refreshSession).toHaveBeenCalledWith({
+      refreshToken: 'refresh-token',
+    });
+  });
+
+  // Given un payload refreshSession invalide
+  // When POST /auth/session/refresh est appelé
+  // Then une BadRequestException est renvoyée
+  it('Given un payload refreshSession invalide, When refreshSession est appelé, Then une BadRequestException est renvoyée', async () => {
+    let thrownError: unknown;
+    try {
+      await controller.refreshSession({});
+    } catch (error) {
+      thrownError = error;
+    }
+    expect(thrownError).toBeInstanceOf(BadRequestException);
+  });
+
+  // Given un payload passwordReset valide
+  // When POST /auth/password-reset est appelé
+  // Then le service reçoit le payload normalisé
+  it('Given un payload passwordReset valide, When requestPasswordReset est appelé, Then le service reçoit le payload normalisé', async () => {
+    await controller.requestPasswordReset({
+      email: '  alice@example.com  ',
+      redirectTo: 'kraak://auth/reset',
+    });
+    expect(authService.requestPasswordReset).toHaveBeenCalledWith({
+      email: 'alice@example.com',
+      redirectTo: 'kraak://auth/reset',
+    });
+  });
+
+  // Given un payload passwordReset invalide (email malformé)
+  // When POST /auth/password-reset est appelé
+  // Then une BadRequestException est renvoyée
+  it('Given un payload passwordReset invalide, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+    let thrownError: unknown;
+    try {
+      await controller.requestPasswordReset({ email: 'pas-un-email' });
+    } catch (error) {
+      thrownError = error;
+    }
+    expect(thrownError).toBeInstanceOf(BadRequestException);
+  });
 });

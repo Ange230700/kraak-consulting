@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ForbiddenException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { SupportService } from './support.service';
 
@@ -314,5 +319,324 @@ describe('SupportService', () => {
         'access-token',
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un admin authentifié, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    let eqCalled = false;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          { data: [], error: null },
+          {
+            onEq: () => {
+              eqCalled = true;
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+    expect(eqCalled).toBe(false);
+    expect(results).toEqual([]);
+  });
+
+  it('Given une erreur DB sur support_request, When listSupportRequests est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain({ data: null, error: { message: 'DB error' } });
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.listSupportRequests('access-token'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur de lecture DB, When updateSupportRequestStatus est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: null,
+                error: { message: 'read error' },
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.updateSupportRequestStatus(
+        'req-1',
+        { status: 'in_progress' },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une demande introuvable, When updateSupportRequestStatus est appelé, Then une NotFoundException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              maybeSingle: jest
+                .fn()
+                .mockResolvedValue({ data: null, error: null }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.updateSupportRequestStatus(
+        'req-1',
+        { status: 'in_progress' },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une transition de statut invalide (closed → open), When updateSupportRequestStatus est appelé, Then une ForbiddenException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-1',
+                  user_id: 'u',
+                  participant_id: null,
+                  subject: 's',
+                  message: 'm',
+                  status: 'closed',
+                  category: 'other',
+                  assigned_to_user_id: null,
+                  created_at: '2026-01-01T00:00:00.000Z',
+                  updated_at: '2026-01-01T00:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.updateSupportRequestStatus(
+        'req-1',
+        { status: 'open' },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given la même transition de statut (open → open), When updateSupportRequestStatus est appelé, Then la mise à jour est effectuée sans erreur', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    const updatedRow = {
+      id: 'req-1',
+      user_id: 'admin-1',
+      participant_id: null,
+      subject: 's',
+      message: 'm',
+      status: 'open',
+      category: 'other',
+      assigned_to_user_id: null,
+      created_at: '2026-01-01T00:00:00.000Z',
+      updated_at: '2026-01-01T00:00:00.000Z',
+    };
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              maybeSingle: jest
+                .fn()
+                .mockResolvedValue({ data: updatedRow, error: null }),
+            })),
+          })),
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: updatedRow, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.updateSupportRequestStatus(
+      'req-1',
+      { status: 'open' },
+      'access-token',
+    );
+    expect(result.status).toBe('open');
+  });
+
+  it('Given RESEND_API_KEY absent, When submitContact est appelé, Then un avertissement est loggué et la fonction retourne sans envoyer', async () => {
+    configService.get.mockReturnValue(undefined);
+
+    const result = await service.submitContact({
+      name: 'Bob',
+      email: 'bob@example.com',
+      subject: 'Test',
+      message: 'Message test',
+      category: 'other',
+    });
+
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+  });
+
+  it('Given Resend lève une exception réseau, When submitContact est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockRejectedValue(new Error('Network error'));
+
+    await expect(
+      service.submitContact({
+        name: 'Alice',
+        email: 'alice@example.com',
+        subject: 'Test',
+        message: 'Message',
+        category: 'other',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it("Given une erreur d'authentification, When resolveSessionUser est appelé, Then une UnauthorizedException est levée", async () => {
+    authGetUserMock.mockResolvedValue({
+      data: { user: null },
+      error: { message: 'Invalid token' },
+    });
+
+    fromMock.mockReturnValue(createQueryChain({ data: null, error: null }));
+
+    await expect(
+      service.listSupportRequests('bad-token'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un app_user introuvable après auth, When resolveSessionUser est appelé, Then une UnauthorizedException est levée', async () => {
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-x' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({ data: null, error: null });
+      }
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.listSupportRequests('access-token'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });
