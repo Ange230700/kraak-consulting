@@ -12,7 +12,6 @@ const RESOURCE_SELECT_FIELDS =
 
 const RESOURCE_TRACKING_SELECT_FIELDS =
   'id, consultation_count, last_consulted_at';
-
 type ResourceTrackingRow = {
   id: string;
   consultation_count: number;
