@@ -639,4 +639,177 @@ describe('SupportService', () => {
       service.listSupportRequests('access-token'),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
+
+  it('Given une mise à jour retourne data null sans erreur, When updateSupportRequestStatus est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-1',
+                  user_id: 'admin-1',
+                  participant_id: null,
+                  subject: 's',
+                  message: 'm',
+                  status: 'open',
+                  category: 'other',
+                  assigned_to_user_id: null,
+                  created_at: '2026-01-01T00:00:00.000Z',
+                  updated_at: '2026-01-01T00:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: null, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.updateSupportRequestStatus(
+        'req-1',
+        { status: 'in_progress' },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un participant introuvable lors de la création, When submitContact avec session est appelé, Then la demande est créée avec participant_id null', async () => {
+    configService.get.mockReturnValue(undefined);
+
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-2' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-2', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({ data: null, error: null });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(() => ({
+            select: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-2',
+                  user_id: 'user-2',
+                  participant_id: null,
+                  subject: 'Sujet',
+                  message: 'Message test',
+                  status: 'open',
+                  category: 'other',
+                  assigned_to_user_id: null,
+                  created_at: '2026-04-29T10:00:00.000Z',
+                  updated_at: '2026-04-29T10:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.submitContact(
+        {
+          name: 'Bob',
+          email: 'bob@example.com',
+          subject: 'Sujet',
+          message: 'Message test',
+          category: 'other',
+        },
+        'access-token',
+      ),
+    ).resolves.toMatchObject({ success: true, requestId: 'req-2' });
+  });
+
+  it('Given insert support_request retourne data null sans erreur, When submitContact avec session est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-3' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-3', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({
+          data: { id: 'participant-3' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(() => ({
+            select: jest.fn(() => ({
+              maybeSingle: jest
+                .fn()
+                .mockResolvedValue({ data: null, error: null }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.submitContact(
+        {
+          name: 'Carol',
+          email: 'carol@example.com',
+          subject: 'Sujet',
+          message: 'Message test',
+          category: 'other',
+        },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
 });

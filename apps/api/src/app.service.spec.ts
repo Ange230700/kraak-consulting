@@ -55,3 +55,44 @@ describe('AppService — default constructor', () => {
     expect(typeof result.uptimeSeconds).toBe('number');
   });
 });
+
+describe('AppService — version env var fallback', () => {
+  const original = {
+    APP_VERSION: process.env['APP_VERSION'],
+    npm_package_version: process.env['npm_package_version'],
+  };
+
+  afterEach(() => {
+    if (original.APP_VERSION === undefined) {
+      delete process.env['APP_VERSION'];
+    } else {
+      process.env['APP_VERSION'] = original.APP_VERSION;
+    }
+    if (original.npm_package_version === undefined) {
+      delete process.env['npm_package_version'];
+    } else {
+      process.env['npm_package_version'] = original.npm_package_version;
+    }
+  });
+
+  it('Given APP_VERSION défini, When getHealth est appelé, Then version utilise APP_VERSION', () => {
+    process.env['APP_VERSION'] = '1.2.3';
+    delete process.env['npm_package_version'];
+    const service = new AppService();
+    expect(service.getHealth().version).toBe('1.2.3');
+  });
+
+  it('Given APP_VERSION absent et npm_package_version défini, When getHealth est appelé, Then version utilise npm_package_version', () => {
+    delete process.env['APP_VERSION'];
+    process.env['npm_package_version'] = '2.0.0';
+    const service = new AppService();
+    expect(service.getHealth().version).toBe('2.0.0');
+  });
+
+  it('Given les deux variables absentes, When getHealth est appelé, Then version vaut 0.0.0', () => {
+    delete process.env['APP_VERSION'];
+    delete process.env['npm_package_version'];
+    const service = new AppService();
+    expect(service.getHealth().version).toBe('0.0.0');
+  });
+});

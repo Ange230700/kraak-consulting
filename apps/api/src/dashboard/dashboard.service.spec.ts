@@ -369,6 +369,94 @@ describe('DashboardService', () => {
     });
   });
 
+  // Given un enrollment avec program et cohort null (relations absentes)
+  // When l'agrégat dashboard est demandé
+  // Then les branches nulles dans le mapping et le saut de readUpcomingSessions sont couverts
+  it('Given enrollment avec relations nulles et cohort_id null, When getAggregate est appelé, Then les branches null du mapping sont couvertes', async () => {
+    mockDashboardQueries({
+      enrollmentData: [
+        {
+          id: 'enrollment-null-relations',
+          status: 'active',
+          program_id: 'program-null',
+          cohort_id: null,
+          program: null,
+          cohort: null,
+        },
+      ],
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.programs).toEqual([]);
+    expect(result.upcomingSessions).toEqual([]);
+  });
+
+  // Given un enrollment avec program sous forme de tableau vide
+  // When l'agrégat est demandé
+  // Then normalizeRelation gère le tableau vide (retourne null)
+  it('Given enrollment avec program tableau vide, When getAggregate est appelé, Then normalizeRelation gère value[0] ?? null', async () => {
+    mockDashboardQueries({
+      enrollmentData: [
+        {
+          id: 'enrollment-empty-program',
+          status: 'active',
+          program_id: 'program-empty',
+          cohort_id: 'cohort-1',
+          program: [],
+          cohort: [
+            {
+              id: 'cohort-1',
+              name: 'Cohorte X',
+              status: 'active',
+              start_date: '2026-05-01',
+            },
+          ],
+        },
+      ],
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.programs).toEqual([]);
+  });
+
+  // Given une session avec cohort null
+  // When l'agrégat est demandé
+  // Then les branches nulles du mapping de sessions sont couvertes
+  it('Given session avec cohort null, When getAggregate est appelé, Then les branches null de session sont couvertes', async () => {
+    mockDashboardQueries({
+      sessionData: [
+        {
+          id: 'session-null-cohort',
+          cohort_id: 'cohort-1',
+          title: 'Session sans cohorte',
+          status: 'scheduled',
+          starts_at: '2026-04-30T09:00:00.000Z',
+          ends_at: '2026-04-30T11:00:00.000Z',
+          location_type: 'online',
+          location_label: null,
+          meeting_link: null,
+          cohort: null,
+        },
+      ],
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.upcomingSessions).toEqual([]);
+  });
+
+  // Given announcementData null sans erreur
+  // When l'agrégat est demandé
+  // Then recentAnnouncements est une liste vide
+  it('Given announcementData null sans erreur, When getAggregate est appelé, Then recentAnnouncements vaut []', async () => {
+    mockDashboardQueries({
+      announcementData: null,
+      announcementError: null,
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.recentAnnouncements).toEqual([]);
+  });
+
   // Given des relations imbriquées renvoyées sous forme de tableau
   // When l'agrégat dashboard est demandé
   // Then le service normalise les relations et conserve les données utiles

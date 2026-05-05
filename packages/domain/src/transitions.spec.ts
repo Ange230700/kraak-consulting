@@ -59,6 +59,12 @@ describe('canTransitionLifecycle', () => {
       expect(canTransitionLifecycle(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionLifecycle called, Then returns false', () => {
+    expect(
+      canTransitionLifecycle('unknown_status', LifecycleStatus.REGISTERED),
+    ).toBe(false);
+  });
 });
 
 describe('getNextLifecycleStatuses', () => {
@@ -91,6 +97,10 @@ describe('getNextLifecycleStatuses', () => {
 
   it('returns [] from completed', () => {
     expect(getNextLifecycleStatuses(LifecycleStatus.COMPLETED)).toEqual([]);
+  });
+
+  it('Given unknown status, When getNextLifecycleStatuses called, Then returns empty array', () => {
+    expect(getNextLifecycleStatuses('unknown_status')).toEqual([]);
   });
 });
 
@@ -127,6 +137,12 @@ describe('canTransitionCohortStatus', () => {
       expect(canTransitionCohortStatus(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionCohortStatus called, Then returns false', () => {
+    expect(canTransitionCohortStatus('unknown_status', CohortStatus.OPEN)).toBe(
+      false,
+    );
+  });
 });
 
 describe('getNextCohortStatuses', () => {
@@ -156,6 +172,10 @@ describe('getNextCohortStatuses', () => {
 
   it('returns [] from archived', () => {
     expect(getNextCohortStatuses(CohortStatus.ARCHIVED)).toEqual([]);
+  });
+
+  it('Given unknown status, When getNextCohortStatuses called, Then returns empty array', () => {
+    expect(getNextCohortStatuses('unknown_status')).toEqual([]);
   });
 });
 
@@ -191,6 +211,12 @@ describe('canTransitionSessionStatus', () => {
       expect(canTransitionSessionStatus(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionSessionStatus called, Then returns false', () => {
+    expect(
+      canTransitionSessionStatus('unknown_status', SessionStatus.LIVE),
+    ).toBe(false);
+  });
 });
 
 describe('getNextSessionStatuses', () => {
@@ -212,6 +238,10 @@ describe('getNextSessionStatuses', () => {
 
   it('returns [] from cancelled', () => {
     expect(getNextSessionStatuses(SessionStatus.CANCELLED)).toEqual([]);
+  });
+
+  it('Given unknown status, When getNextSessionStatuses called, Then returns empty array', () => {
+    expect(getNextSessionStatuses('unknown_status')).toEqual([]);
   });
 });
 
@@ -247,6 +277,12 @@ describe('canTransitionEnrollmentStatus', () => {
       expect(canTransitionEnrollmentStatus(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionEnrollmentStatus called, Then returns false', () => {
+    expect(
+      canTransitionEnrollmentStatus('unknown_status', EnrollmentStatus.ACTIVE),
+    ).toBe(false);
+  });
 });
 
 describe('getNextEnrollmentStatuses', () => {
@@ -271,6 +307,10 @@ describe('getNextEnrollmentStatuses', () => {
 
   it('returns [] from cancelled', () => {
     expect(getNextEnrollmentStatuses(EnrollmentStatus.CANCELLED)).toEqual([]);
+  });
+
+  it('Given unknown status, When getNextEnrollmentStatuses called, Then returns empty array', () => {
+    expect(getNextEnrollmentStatuses('unknown_status')).toEqual([]);
   });
 });
 
@@ -306,6 +346,15 @@ describe('canTransitionSupportRequestStatus', () => {
       expect(canTransitionSupportRequestStatus(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionSupportRequestStatus called, Then returns false', () => {
+    expect(
+      canTransitionSupportRequestStatus(
+        'unknown_status',
+        SupportRequestStatus.IN_PROGRESS,
+      ),
+    ).toBe(false);
+  });
 });
 
 describe('getNextSupportRequestStatuses', () => {
@@ -331,6 +380,10 @@ describe('getNextSupportRequestStatuses', () => {
     expect(getNextSupportRequestStatuses(SupportRequestStatus.CLOSED)).toEqual(
       [],
     );
+  });
+
+  it('Given unknown status, When getNextSupportRequestStatuses called, Then returns empty array', () => {
+    expect(getNextSupportRequestStatuses('unknown_status')).toEqual([]);
   });
 });
 
@@ -364,6 +417,15 @@ describe('canTransitionPublicationStatus', () => {
       expect(canTransitionPublicationStatus(s, s)).toBe(false);
     }
   });
+
+  it('Given unknown status, When canTransitionPublicationStatus called, Then returns false', () => {
+    expect(
+      canTransitionPublicationStatus(
+        'unknown_status',
+        PublicationStatus.PUBLISHED,
+      ),
+    ).toBe(false);
+  });
 });
 
 describe('getNextPublicationStatuses', () => {
@@ -381,5 +443,9 @@ describe('getNextPublicationStatuses', () => {
 
   it('returns [] from archived', () => {
     expect(getNextPublicationStatuses(PublicationStatus.ARCHIVED)).toEqual([]);
+  });
+
+  it('Given unknown status, When getNextPublicationStatuses called, Then returns empty array', () => {
+    expect(getNextPublicationStatuses('unknown_status')).toEqual([]);
   });
 });
