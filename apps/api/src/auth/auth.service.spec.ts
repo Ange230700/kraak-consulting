@@ -652,4 +652,47 @@ describe('AuthService', () => {
       NotFoundException,
     );
   });
+
+  // Given un signIn Supabase qui renvoie un user null sans erreur
+  // When signIn est appelé
+  // Then une UnauthorizedException est renvoyée (branche !data.user couverte)
+  it('Given un signIn avec user null et error null, When signIn est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: { user: null, session: null },
+      error: null,
+    });
+
+    await expect(
+      service.signIn({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  // Given un signUp où Supabase ne renvoie pas d'erreur mais user est null
+  // When signUp est appelé
+  // Then une BadRequestException avec message générique est renvoyée
+  it('Given un signup avec user null et error null, When signUp est appelé, Then une BadRequestException avec message générique est renvoyée', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: null,
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Impossible de créer le compte avec ces informations.',
+      },
+    });
+  });
 });
