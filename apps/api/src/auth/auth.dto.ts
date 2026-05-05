@@ -6,7 +6,6 @@ import type {
 } from '@kraak/contracts';
 import {
   isObjectPayload,
-  isValidEmail,
   readTrimmedString,
   validateEmail,
 } from '../shared/dto-validation.utils';
