@@ -4,7 +4,6 @@ import type {
   UpdateSupportRequestStatusDto,
 } from '@kraak/contracts';
 import {
-  isValidEmail,
   readTrimmedString,
   validateEmail,
 } from '../shared/dto-validation.utils';
