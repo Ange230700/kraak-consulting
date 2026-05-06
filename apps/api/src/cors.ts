@@ -5,6 +5,15 @@ type CorsEnv = {
   CORS_ALLOWED_ORIGIN_PATTERNS?: string;
 };
 
+function isTrustedSecureLocalhostOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    return url.protocol === 'https:' && url.hostname === 'localhost';
+  } catch {
+    return false;
+  }
+}
+
 function parseList(value: string | undefined): string[] {
   if (!value) return [];
   return value
@@ -55,6 +64,12 @@ export function buildCorsOptions(env: CorsEnv): CorsOptions {
       }
 
       if (allowedSet.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      // Autorise le runtime webview mobile (Capacitor) qui envoie https://localhost.
+      if (isTrustedSecureLocalhostOrigin(origin)) {
         callback(null, true);
         return;
       }
