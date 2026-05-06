@@ -120,25 +120,37 @@ export function parseRunCommand(input) {
 }
 
 function runWithoutShell(command, args, env) {
-  let result = spawnSync(command, args, {
-    env,
-    shell: false,
-    stdio: 'inherit',
-  });
+  if (isWindows) {
+    const commandWithExtension = path.extname(command)
+      ? command
+      : `${command}.cmd`;
 
-  if (
-    isWindows &&
-    result.error?.code === 'ENOENT' &&
-    !path.extname(command)
-  ) {
-    result = spawnSync(`${command}.cmd`, args, {
+    const quoteWindowsArg = (value) => {
+      if (value.length === 0) {
+        return '""';
+      }
+
+      if (!/[\s"&|<>^]/u.test(value)) {
+        return value;
+      }
+
+      return `"${value.replaceAll(/(["^])/gu, '^$1')}"`;
+    };
+
+    const commandLine = [commandWithExtension, ...args.map(quoteWindowsArg)].join(' ');
+
+    return spawnSync(commandLine, {
       env,
-      shell: false,
+      shell: true,
       stdio: 'inherit',
     });
   }
 
-  return result;
+  return spawnSync(command, args, {
+    env,
+    shell: false,
+    stdio: 'inherit',
+  });
 }
 
 export function runCommandWithAndroidEnv(

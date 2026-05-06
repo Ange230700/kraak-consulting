@@ -31,7 +31,7 @@
     "cap:copy": "cap copy",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios",
-    "build:debug:android": "pnpm build:mobile && node ../../scripts/ensure-capacitor-platform.mjs android && cap sync android",
+    "build:debug:android": "pnpm build:mobile:staging && node ../../scripts/ensure-capacitor-platform.mjs android && cap sync android",
     "build:debug:ios": "pnpm build:mobile && node ../../scripts/ensure-capacitor-platform.mjs ios && cap sync ios",
     "watch": "ng build --watch --configuration local",
     "test": "ng test --watch=false",
