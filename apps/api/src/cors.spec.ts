@@ -104,6 +104,35 @@ describe('buildCorsOptions', () => {
     });
   });
 
+  describe('Given a restrictive allow-list', () => {
+    const env = {
+      CORS_ALLOWED_ORIGINS: 'https://kraak.app',
+      CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://preview-[a-z0-9-]+\.vercel\.app$`,
+    };
+
+    it('When Origin is secure localhost Then it is allowed for mobile webview runtime', async () => {
+      const options = buildCorsOptions(env);
+      const result = await callOrigin(
+        options.origin as OriginFn,
+        'https://localhost',
+      );
+
+      expect(result.err).toBeNull();
+      expect(result.allow).toBe(true);
+    });
+
+    it('When Origin is non-secure localhost Then it is still rejected unless explicitly configured', async () => {
+      const options = buildCorsOptions(env);
+      const result = await callOrigin(
+        options.origin as OriginFn,
+        'http://localhost',
+      );
+
+      expect(result.err).toBeInstanceOf(Error);
+      expect(result.allow).toBeFalsy();
+    });
+  });
+
   describe('Given an invalid regex pattern', () => {
     it('When called Then it throws a descriptive error', () => {
       expect(() =>
