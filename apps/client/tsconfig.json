@@ -12,6 +12,7 @@
       "@kraak/mobile/*": ["./projects/mobile/src/*"],
       "@kraak/tokens": ["../../packages/tokens/src/index.ts"],
       "@kraak/api-client": ["../../packages/api-client/src/index.ts"],
+      "@kraak/contracts": ["../../packages/contracts/src/index.ts"],
       "@kraak/domain": ["../../packages/domain/src/index.ts"]
     }
   },
