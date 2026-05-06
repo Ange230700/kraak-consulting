@@ -14,8 +14,8 @@ export const environment = {
   environmentName: 'production',
   production: true,
   siteUrl: runtimeSiteUrl,
-  apiBaseUrl: '',
-  supabaseUrl: '',
-  supabasePublishableKey: '',
+  apiBaseUrl: 'https://kraak-api-prod.onrender.com',
+  supabaseUrl: 'https://pwuivkqnmjpxxpppmnvu.supabase.co',
+  supabasePublishableKey: 'sb_publishable_GucCTbOp6G0qJYbblIXPAQ_HztMaJ-r',
   ga4Id: runtimeGa4Id,
 };

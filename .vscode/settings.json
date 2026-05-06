@@ -1,4 +1,6 @@
 {
+  "js/ts.tsdk.path": "apps/client/node_modules/typescript/lib",
+  "angular.experimental.ivy": true,
   "cSpell.words": [
     "deeplink",
     "eperm",
