@@ -1656,4 +1656,250 @@ describe('ProgramsService', () => {
 
     expect(pagedSessionsQuery.range).toHaveBeenCalledTimes(2);
   });
+
+  // Given un enrollment avec program en tableau vide (normalizeRelation — tableau vide)
+  // When listPrograms est appelé
+  // Then l'enrollment avec programme vide est filtré de la liste
+  it("Given un enrollment avec program en tableau vide, When listPrograms est appelé, Then l'enrollment est filtré", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-empty-program-array',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: null,
+          progress_completed_session_ids: [],
+          progress_updated_at: null,
+          program: [],
+          cohort: null,
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toEqual([]);
+  });
+
+  // Given une annonce de type cohort quand l'enrollment n'a pas de cohorte
+  // When getProgramDetail est appelé
+  // Then l'annonce cohort est filtrée (cohortId est null)
+  it("Given une annonce cohort quand cohortId est null, When getProgramDetail est appelé, Then l'annonce cohort est filtrée", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: null,
+      },
+      error: null,
+    });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({
+      data: [
+        {
+          id: 'announcement-cohort-orphan',
+          title: 'Annonce cohorte orpheline',
+          audience_type: 'cohort',
+          published_at: '2026-04-25T00:00:00.000Z',
+          program_id: null,
+          cohort_id: 'cohort-other',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    const result = await service.getProgramDetail('access-token', 'program-1');
+    expect(result.announcements).toHaveLength(0);
+  });
+
+  // Given une annonce de type cohort avec une cohorte différente de l'enrollment
+  // When getProgramDetail est appelé
+  // Then l'annonce cohort non correspondante est filtrée
+  it("Given une annonce cohort avec cohorte différente, When getProgramDetail est appelé, Then l'annonce est filtrée", async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({ data: [], error: null });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({
+      data: [
+        {
+          id: 'announcement-wrong-cohort',
+          title: 'Annonce mauvaise cohorte',
+          audience_type: 'cohort',
+          published_at: '2026-04-25T00:00:00.000Z',
+          program_id: null,
+          cohort_id: 'cohort-2',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'session') return sessionsQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    const result = await service.getProgramDetail('access-token', 'program-1');
+    expect(result.announcements).toHaveLength(0);
+  });
+
+  // Given un enrollment avec progress_completed_session_ids null
+  // When markSessionProgress est appelé
+  // Then la progression est calculée depuis une liste vide
+  it('Given progress_completed_session_ids null, When markSessionProgress est appelé, Then la progression est calculée depuis zéro', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentSelectQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: null,
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const pagedSessionsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest.fn().mockResolvedValueOnce({
+        data: [{ id: 'session-1' }, { id: 'session-2' }],
+        error: null,
+      }),
+    };
+    const enrollmentUpdateQuery = createUpdateQuery({ error: null });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentSelectQuery
+          : enrollmentUpdateQuery;
+      }
+      if (tableName === 'session') return pagedSessionsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.markSessionProgress('access-token', 'program-1', {
+        sessionId: 'session-1',
+        completed: true,
+      }),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      enrollmentStatus: 'active',
+      progress: {
+        totalSessions: 2,
+        completedSessions: 1,
+      },
+    });
+  });
 });
