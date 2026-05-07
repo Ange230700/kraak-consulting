@@ -152,4 +152,54 @@ describe('Mobile ResourceDetailPage', () => {
     expect(element.textContent).toContain('Guide detail');
     expect(element.textContent).not.toContain('Tracking unavailable');
   });
+
+  it('Given no resourceId in route params, when the component initializes, then errorMessage is set and resource is null', async () => {
+    service.getResourceById.mockResolvedValue(mockResource);
+    paramMapSubject.next(convertToParamMap({}));
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(
+      (
+        fixture.componentInstance as unknown as {
+          errorMessage: () => string | null;
+        }
+      ).errorMessage(),
+    ).toBe('Identifiant de ressource manquant.');
+    expect(
+      (
+        fixture.componentInstance as unknown as { loading: () => boolean }
+      ).loading(),
+    ).toBe(false);
+    expect(
+      (
+        fixture.componentInstance as unknown as { resource: () => unknown }
+      ).resource(),
+    ).toBeNull();
+  });
+
+  it('Given currentResourceId is null, when reloadResource is called, then errorMessage is set', async () => {
+    service.getResourceById.mockResolvedValue(mockResource);
+    paramMapSubject.next(convertToParamMap({}));
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+
+    expect(
+      (
+        fixture.componentInstance as unknown as {
+          errorMessage: () => string | null;
+        }
+      ).errorMessage(),
+    ).toBe('Identifiant de ressource manquant.');
+  });
 });

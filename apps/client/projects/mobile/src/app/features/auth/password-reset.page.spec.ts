@@ -59,4 +59,42 @@ describe('Mobile PasswordResetPage', () => {
       'email de r\u00E9initialisation',
     );
   });
+
+  it('Given an empty email, when submit is called, then the email validation error is rendered', async () => {
+    const fixture = TestBed.createComponent(PasswordResetPage);
+    fixture.detectChanges();
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Saisissez une adresse email valide pour continuer.',
+    );
+  });
+
+  it('Given requestPasswordReset throws, when submit is called, then the error message is rendered', async () => {
+    authService.requestPasswordReset.mockRejectedValue(
+      new Error('Service indisponible'),
+    );
+    const fixture = TestBed.createComponent(PasswordResetPage);
+    fixture.componentInstance.form.setValue({ email: 'alice@example.com' });
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Service indisponible');
+  });
+
+  it('Given a valid email, when submit succeeds, then the success message is rendered in the template', async () => {
+    const fixture = TestBed.createComponent(PasswordResetPage);
+    fixture.componentInstance.form.setValue({ email: 'alice@example.com' });
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('email de r\u00E9initialisation');
+  });
 });
