@@ -1,26 +1,40 @@
 import {
   ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
+  inject,
+  Injector,
   provideAppInitializer,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 
 import { routes } from './app.routes';
-import { provideMobilePushNotificationsInitialization } from './core/mobile-push-notifications.service';
+
+function scheduleAfterFirstRender(task: () => void): void {
+  if (
+    globalThis.window !== undefined &&
+    'requestIdleCallback' in globalThis.window
+  ) {
+    globalThis.window.requestIdleCallback(() => task());
+    return;
+  }
+
+  setTimeout(task, 0);
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideIonicAngular(),
     provideAppInitializer(() => {
-      const initializeMobilePushNotifications =
-        provideMobilePushNotificationsInitialization();
+      const injector = inject(Injector);
 
-      void Promise.resolve(initializeMobilePushNotifications()).catch(
-        () => undefined,
-      );
+      scheduleAfterFirstRender(() => {
+        void import('./core/mobile-push-notifications.service')
+          .then(({ MobilePushNotificationsService }) =>
+            injector.get(MobilePushNotificationsService).initialize(),
+          )
+          .catch(() => undefined);
+      });
     }),
   ],
 };
