@@ -695,4 +695,21 @@ describe('AuthService', () => {
       },
     });
   });
+
+  // Given un signIn Supabase qui renvoie un user présent mais session null sans erreur
+  // When signIn est appelé
+  // Then une UnauthorizedException est renvoyée (branche !data.session couverte)
+  it('Given un signIn avec user présent et session null, When signIn est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    authClient.auth.signInWithPassword.mockResolvedValue({
+      data: { user: { id: 'user-1' }, session: null },
+      error: null,
+    });
+
+    await expect(
+      service.signIn({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
 });

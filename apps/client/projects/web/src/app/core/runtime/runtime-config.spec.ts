@@ -49,6 +49,16 @@ describe('Runtime config helpers', () => {
         'https://api.kraak.example',
       );
     });
+
+    it('When resolveApiBaseUrl receives a runtime value without trailing slash Then it returns it unchanged', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = {
+        apiBaseUrl: 'https://api.kraak.example',
+      };
+
+      expect(resolveApiBaseUrl('https://fallback.example/')).toBe(
+        'https://api.kraak.example',
+      );
+    });
   });
 
   describe('Given the runtime config has no apiBaseUrl', () => {
@@ -62,6 +72,14 @@ describe('Runtime config helpers', () => {
     it('When resolveApiBaseUrl is called without fallback Then it returns an empty string', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
       expect(resolveApiBaseUrl()).toBe('');
+    });
+
+    it('When resolveApiBaseUrl receives a runtime apiBaseUrl with only spaces Then it falls back to fallback', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { apiBaseUrl: '   ' };
+
+      expect(resolveApiBaseUrl('https://fallback.example/')).toBe(
+        'https://fallback.example',
+      );
     });
   });
 });

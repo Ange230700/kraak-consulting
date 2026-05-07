@@ -71,6 +71,32 @@ describe('SupportController', () => {
     );
   });
 
+  // Given une demande valide avec session
+  // When le client soumet le formulaire avec un header Authorization Bearer
+  // Then le token extrait est transmis au service pour un suivi authentifié
+  it('Given une demande valide avec Authorization Bearer, When POST est appelé, Then le token est transmis au service', async () => {
+    await controller.submit(
+      {
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Demande de renseignements',
+        message: 'Bonjour, je souhaite en savoir plus sur vos services.',
+      },
+      'Bearer access-token-123',
+    );
+
+    expect(supportService.submitContact).toHaveBeenCalledWith(
+      {
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Demande de renseignements',
+        message: 'Bonjour, je souhaite en savoir plus sur vos services.',
+        category: 'other',
+      },
+      'access-token-123',
+    );
+  });
+
   // Given un payload invalide
   // When le client soumet le formulaire
   // Then l'API renvoie des erreurs utilisateur explicites

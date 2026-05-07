@@ -96,3 +96,21 @@ describe('AppService — version env var fallback', () => {
     expect(service.getHealth().version).toBe('0.0.0');
   });
 });
+
+describe('AppService — NODE_ENV fallback', () => {
+  const originalNodeEnv = process.env['NODE_ENV'];
+
+  afterEach(() => {
+    if (originalNodeEnv === undefined) {
+      delete process.env['NODE_ENV'];
+    } else {
+      process.env['NODE_ENV'] = originalNodeEnv;
+    }
+  });
+
+  it('Given NODE_ENV absent, When getHealth est appelé, Then environment vaut "development"', () => {
+    delete process.env['NODE_ENV'];
+    const service = new AppService();
+    expect(service.getHealth().environment).toBe('development');
+  });
+});

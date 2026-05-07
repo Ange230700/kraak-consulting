@@ -323,3 +323,29 @@ it('Given "Bearer   " (token uniquement whitespace), When le token est extrait, 
     error: "Le header d'autorisation Bearer est requis.",
   });
 });
+
+// --- Branches manquantes : password non-string ---
+
+it('Given un password non-string (number) dans signIn, When la validation est appliquée, Then password vaut chaîne vide et une erreur longueur est renvoyée', () => {
+  const result = validateSignInPayload({
+    email: 'alice@example.com',
+    password: 12345678,
+  });
+  expect(result.valid).toBe(false);
+  expect((result as { valid: false; errors: string[] }).errors).toContain(
+    'Le mot de passe doit contenir au moins 8 caractères.',
+  );
+});
+
+it('Given un password non-string (number) dans signUp, When la validation est appliquée, Then password vaut chaîne vide et une erreur longueur est renvoyée', () => {
+  const result = validateSignUpPayload({
+    email: 'alice@example.com',
+    password: 12345678,
+    firstName: 'Alice',
+    lastName: 'Dupont',
+  });
+  expect(result.valid).toBe(false);
+  expect((result as { valid: false; errors: string[] }).errors).toContain(
+    'Le mot de passe doit contenir au moins 8 caractères.',
+  );
+});

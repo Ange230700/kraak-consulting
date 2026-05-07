@@ -79,4 +79,27 @@ describe('SeoService', () => {
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe('http://localhost:4200/');
   });
+
+  // Given the canonical link already exists in the document head
+  // When applyPageSeo is called again for a different page
+  // Then the existing canonical link href is updated without creating a new element
+  it('Given a canonical link already exists, when applyPageSeo is called again, then the href is updated in place', () => {
+    const service = TestBed.inject(SeoService);
+    const contactPage = findSeoPageByPath('contact');
+    const homePage = findSeoPageByPath('');
+
+    expect(contactPage).toBeDefined();
+    expect(homePage).toBeDefined();
+
+    service.applyPageSeo(contactPage!, 'http://localhost:4200');
+    expect(
+      document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe('http://localhost:4200/contact');
+
+    service.applyPageSeo(homePage!, 'http://localhost:4200/');
+    expect(document.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+    expect(
+      document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+    ).toBe('http://localhost:4200/');
+  });
 });

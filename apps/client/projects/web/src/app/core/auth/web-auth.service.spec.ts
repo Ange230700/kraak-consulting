@@ -250,6 +250,43 @@ describe('WebAuthService', () => {
 
       expect(service.isAuthenticated()).toBe(false);
     });
+
+    it('when a valid stored bundle exists, then it is restored and authentication is true', () => {
+      localStorage.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: {
+            accessToken: 'stored-access-token',
+            refreshToken: 'stored-refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      );
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      expect(service.isAuthenticated()).toBe(true);
+      expect(service.currentSession()?.accessToken).toBe('stored-access-token');
+      expect(service.currentProfile()?.appUser.id).toBe('user-1');
+    });
   });
 
   describe('Given a stored session with a corrupted payload', () => {
@@ -529,6 +566,54 @@ describe('WebAuthService', () => {
       const ctx = await service.getSession();
       expect(ctx?.profile.appUser.email).toBe('updated@example.com');
     });
+
+    it('when getSession returns a null profile, then persisted storage is removed', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ profile: null }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await service.signIn({ email: 'alice@example.com', password: 'pass' });
+      expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).not.toBeNull();
+
+      await service.getSession();
+
+      expect(service.isAuthenticated()).toBe(false);
+      expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).toBeNull();
+    });
   });
 
   describe('Given a stored session with missing required fields', () => {
@@ -570,6 +655,63 @@ describe('WebAuthService', () => {
 
       expect(service.isAuthenticated()).toBe(false);
       expect(localStorage.getItem(WEB_AUTH_STORAGE_KEY)).toBeNull();
+    });
+  });
+
+  describe('Given browser storage access throws unexpectedly', () => {
+    it('when localStorage getter throws in browser mode, then the service falls back to null storage', () => {
+      const originalDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'localStorage',
+      );
+
+      Object.defineProperty(globalThis, 'localStorage', {
+        configurable: true,
+        get: () => {
+          throw new Error('Storage unavailable');
+        },
+      });
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        });
+        const service = TestBed.inject(WebAuthService);
+        expect(service.isAuthenticated()).toBe(false);
+      } finally {
+        if (originalDescriptor) {
+          Object.defineProperty(globalThis, 'localStorage', originalDescriptor);
+        }
+      }
+    });
+  });
+
+  describe('Given a malformed runtime profile shape', () => {
+    it('when appUser.role is missing, then currentRole safely falls back to null', () => {
+      localStorage.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: {
+            accessToken: 'stored-access-token',
+            refreshToken: 'stored-refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+            },
+            participant: null,
+          },
+        }),
+      );
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      expect(service.currentRole()).toBeNull();
     });
   });
 });
