@@ -171,11 +171,9 @@ describe('Mobile SessionDetailPage', () => {
       expect(service.getProgramDetail).toHaveBeenCalledTimes(2);
     });
 
-    it('Given a loaded session, when markSessionCompletion fails, then an explicit error is shown', async () => {
+    it('Given a loaded session, when markSessionCompletion fails with non-Error rejection, then generic error is shown', async () => {
       service.getProgramDetail.mockResolvedValue(mockProgramDetail);
-      service.markSessionProgress.mockRejectedValue(
-        new Error('Impossible de mettre a jour'),
-      );
+      service.markSessionProgress.mockRejectedValue('string rejection');
 
       const fixture = TestBed.createComponent(SessionDetailPage);
       fixture.detectChanges();
@@ -190,7 +188,99 @@ describe('Mobile SessionDetailPage', () => {
       fixture.detectChanges();
 
       const element = fixture.nativeElement as HTMLElement;
-      expect(element.textContent).toContain('Impossible de mettre a jour');
+      expect(element.textContent).toContain(
+        'Impossible de mettre \u00E0 jour votre progression.',
+      );
+    });
+
+    it('Given markingProgress is true, when markSessionCompletion is called, then the service is not called again', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      (
+        fixture.componentInstance as unknown as {
+          markingProgress: { set: (v: boolean) => void };
+        }
+      ).markingProgress.set(true);
+
+      await (
+        fixture.componentInstance as unknown as {
+          markSessionCompletion: (completed: boolean) => Promise<void>;
+        }
+      ).markSessionCompletion(true);
+
+      expect(service.markSessionProgress).not.toHaveBeenCalled();
+    });
+
+    it('Given a keydown event on reload, when onReloadKeydown is called, then session is reloaded', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      (
+        fixture.componentInstance as unknown as {
+          onReloadKeydown: (event: Event) => void;
+        }
+      ).onReloadKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+      await fixture.whenStable();
+
+      expect(service.getProgramDetail).toHaveBeenCalledTimes(2);
+    });
+
+    it('Given a keydown event on mark, when onMarkKeydown is called, then markSessionCompletion is triggered', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      service.markSessionProgress.mockResolvedValue({
+        enrollmentId: 'enr-1',
+        enrollmentStatus: 'completed',
+        progress: {
+          totalSessions: 1,
+          completedSessions: 1,
+          completionRate: 100,
+          status: 'completed',
+          completedSessionIds: ['session-1'],
+          updatedAt: new Date().toISOString(),
+        },
+      });
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      (
+        fixture.componentInstance as unknown as {
+          onMarkKeydown: (event: Event, completed: boolean) => void;
+        }
+      ).onMarkKeydown(new KeyboardEvent('keydown', { key: 'Enter' }), true);
+      await fixture.whenStable();
+
+      expect(service.markSessionProgress).toHaveBeenCalledWith(
+        'prog-1',
+        'session-1',
+        true,
+      );
+    });
+  });
+
+  describe('On load without programId', () => {
+    it('Given no programId in route, when reloadSession is called, then service is not called', async () => {
+      activatedRoute.snapshot.paramMap.get.mockImplementation(() => null);
+
+      const fixture = TestBed.createComponent(SessionDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await (
+        fixture.componentInstance as unknown as {
+          reloadSession: () => Promise<void>;
+        }
+      ).reloadSession();
+
+      expect(service.getProgramDetail).not.toHaveBeenCalled();
     });
   });
 });
