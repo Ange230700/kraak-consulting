@@ -100,4 +100,132 @@ describe('Mobile AnnouncementDetailPage', () => {
     expect(element.textContent).toContain('Erreur detail annonce test');
     expect(element.textContent).toContain('Recharger cette annonce');
   });
+
+  it('Given a loaded announcement, when reloadAnnouncement is called, then the API is called again', async () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    const getByIdMock = vi.fn().mockResolvedValue({
+      id: 'ann-001',
+      title: 'Titre',
+      body: 'Corps.',
+      priority: 'high',
+      audienceType: 'all_participants',
+      programId: null,
+      cohortId: null,
+      status: 'published',
+      publishedAt: '2026-04-29T10:00:00.000Z',
+      createdByUserId: 'user-1',
+      createdAt: '2026-04-29T09:30:00.000Z',
+      updatedAt: '2026-04-29T09:45:00.000Z',
+    } satisfies AnnouncementDto);
+    const component = fixture.componentInstance as unknown as {
+      announcementsClient: { getById: (id: string) => Promise<unknown> };
+      reloadAnnouncement: () => Promise<void>;
+    };
+    component.announcementsClient = { getById: getByIdMock };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await component.reloadAnnouncement();
+
+    expect(getByIdMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('Given a component instance, when getPriorityLabel is called with high, then it returns Elevée', () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+    };
+    expect(component.getPriorityLabel('high')).toBe('Elev\u00E9e');
+  });
+
+  it('Given a component instance, when getPriorityLabel is called with normal, then it returns Normale', () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+    };
+    expect(component.getPriorityLabel('normal')).toBe('Normale');
+  });
+
+  it('Given a component instance, when getPriorityLabel is called with low, then it returns Faible', () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+    };
+    expect(component.getPriorityLabel('low')).toBe('Faible');
+  });
+
+  it('Given an announcement with empty title, when page renders, then pageTitle falls back to default', async () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    configureAnnouncementsClient(
+      fixture,
+      Promise.resolve({
+        id: 'ann-001',
+        title: '',
+        body: 'Corps.',
+        priority: 'low',
+        audienceType: 'all_participants',
+        programId: null,
+        cohortId: null,
+        status: 'published',
+        publishedAt: '2026-04-29T10:00:00.000Z',
+        createdByUserId: 'user-1',
+        createdAt: '2026-04-29T09:30:00.000Z',
+        updatedAt: '2026-04-29T09:45:00.000Z',
+      } satisfies AnnouncementDto),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      pageTitle: (() => string) | string;
+    };
+    const title =
+      typeof component.pageTitle === 'function'
+        ? component.pageTitle()
+        : component.pageTitle;
+    expect(title).toBe("D\u00E9tail de l'annonce");
+  });
+});
+
+describe('Mobile AnnouncementDetailPage — no announcementId', () => {
+  beforeEach(async () => {
+    vi.restoreAllMocks();
+
+    await TestBed.configureTestingModule({
+      imports: [AnnouncementDetailPage],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({}),
+            },
+          },
+        },
+      ],
+    }).compileComponents();
+  });
+
+  it('Given no announcementId in route, when page loads, then "Annonce introuvable." error is shown', async () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Annonce introuvable.');
+  });
 });
