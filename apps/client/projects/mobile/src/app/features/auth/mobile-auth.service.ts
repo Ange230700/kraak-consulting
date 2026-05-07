@@ -23,10 +23,15 @@ export const MOBILE_AUTH_STORAGE_KEY = 'kraak.mobile.session';
 })
 export class MobileAuthService {
   private readonly restoredBundle = this.readStoredBundle();
-  private readonly client = createApiClient({
-    baseUrl: environment.apiBaseUrl,
-    getAuthToken: () => this.currentSession()?.accessToken ?? null,
-  });
+  private _client: ReturnType<typeof createApiClient> | null = null;
+  private get client(): ReturnType<typeof createApiClient> {
+    this._client ??= createApiClient({
+      baseUrl: environment.apiBaseUrl,
+      getAuthToken: () => this.currentSession()?.accessToken ?? null,
+    });
+    return this._client;
+  }
+
   private readonly sessionState = signal<AuthSessionTokensDto | null>(
     this.restoredBundle?.session ?? null,
   );
