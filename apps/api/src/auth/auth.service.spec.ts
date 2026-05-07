@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   InternalServerErrorException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -12,6 +11,7 @@ function createSingleRowQuery(result: { data: unknown; error: unknown }) {
   return {
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
+    upsert: jest.fn().mockResolvedValue({ error: null }),
     maybeSingle: jest.fn().mockResolvedValue(result),
   };
 }
@@ -632,24 +632,115 @@ describe('AuthService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  // Given un app_user introuvable
+  // Given un app_user introuvable mais un utilisateur auth valide
   // When getSession est appelé
-  // Then une NotFoundException est renvoyée (profil requis absent)
-  it('Given un app_user introuvable, When getSession est appelé, Then une NotFoundException est renvoyée', async () => {
+  // Then le profil est auto-provisionné puis renvoyé
+  it('Given un app_user introuvable, When getSession est appelé, Then le profil est auto-provisionné', async () => {
     authClient.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-1' } },
+      data: {
+        user: {
+          id: 'user-1',
+          email: 'alice@example.com',
+          user_metadata: {
+            first_name: 'Alice',
+            last_name: 'Dupont',
+            role: 'participant',
+          },
+        },
+      },
       error: null,
     });
 
+    const missingThenFoundAppUserQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: null }),
+      maybeSingle: jest
+        .fn()
+        .mockResolvedValueOnce({ data: null, error: null })
+        .mockResolvedValueOnce({
+          data: {
+            id: 'user-1',
+            email: 'alice@example.com',
+            role: 'participant',
+            first_name: 'Alice',
+            last_name: 'Dupont',
+            phone: null,
+            preferred_contact_channel: null,
+            is_active: true,
+            created_at: '2026-04-14T12:00:00.000Z',
+            updated_at: '2026-04-14T12:00:00.000Z',
+          },
+          error: null,
+        }),
+    };
+
     adminClient.from.mockImplementation((tableName: string) => {
       if (tableName === 'app_user') {
+        return missingThenFoundAppUserQuery;
+      }
+
+      if (tableName === 'participant') {
         return createSingleRowQuery({ data: null, error: null });
       }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).resolves.toMatchObject({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          email: 'alice@example.com',
+        },
+        participant: null,
+      },
+    });
+
+    expect(missingThenFoundAppUserQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'user-1',
+        email: 'alice@example.com',
+        first_name: 'Alice',
+        last_name: 'Dupont',
+        role: 'participant',
+      }),
+      { onConflict: 'id' },
+    );
+  });
+
+  // Given un app_user introuvable et un provisionnement impossible
+  // When getSession est appelé
+  // Then une InternalServerErrorException est renvoyée
+  it('Given un app_user introuvable et un upsert en échec, When getSession est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-1',
+          email: 'alice@example.com',
+          user_metadata: {},
+        },
+      },
+      error: null,
+    });
+
+    const failingProvisionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: { message: 'forbidden' } }),
+      maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return failingProvisionQuery;
+      }
+
       throw new Error(`Unexpected table ${tableName}`);
     });
 
     await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
-      NotFoundException,
+      InternalServerErrorException,
     );
   });
 
