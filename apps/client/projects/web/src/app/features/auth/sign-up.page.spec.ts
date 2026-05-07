@@ -2,8 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { environment } from '../../../environments/environment';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 import SignUpPage from './sign-up.page';
+import { resolveWebRedirectUrl } from './auth-form.utils';
 
 describe('Web SignUpPage', () => {
   const authService = {
@@ -58,6 +60,7 @@ describe('Web SignUpPage', () => {
       lastName: 'Dupont',
       email: 'alice@example.com',
       password: 'motdepasse-securise',
+      redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
     });
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
     expect(fixture.componentInstance.successMessage()).toBe(

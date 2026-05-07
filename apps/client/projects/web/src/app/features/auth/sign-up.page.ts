@@ -9,11 +9,16 @@ import { Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { environment } from '../../../environments/environment';
 import {
   WebAuthService,
   resolveAuthErrorMessage,
 } from '../../core/auth/web-auth.service';
-import { normalizeRequiredText, normalizeTextControl } from './auth-form.utils';
+import {
+  normalizeRequiredText,
+  normalizeTextControl,
+  resolveWebRedirectUrl,
+} from './auth-form.utils';
 
 interface SignUpFormModel {
   firstName: FormControl<string>;
@@ -77,6 +82,7 @@ export default class SignUpPage {
         lastName: normalizeRequiredText(lastName),
         email: normalizeRequiredText(email),
         password,
+        redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
       });
 
       if (response.session && response.profile) {

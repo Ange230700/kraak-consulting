@@ -9,11 +9,16 @@ import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { environment } from '../../../environments/environment';
 import {
   WebAuthService,
   resolveAuthErrorMessage,
 } from '../../core/auth/web-auth.service';
-import { normalizeRequiredText, normalizeTextControl } from './auth-form.utils';
+import {
+  normalizeRequiredText,
+  normalizeTextControl,
+  resolveWebRedirectUrl,
+} from './auth-form.utils';
 
 interface PasswordResetFormModel {
   email: FormControl<string>;
@@ -55,6 +60,10 @@ export default class PasswordResetPage {
       const { email } = this.form.getRawValue();
       const response = await this.authService.requestPasswordReset({
         email: normalizeRequiredText(email),
+        redirectTo: resolveWebRedirectUrl(
+          '/mot-de-passe-oublie',
+          environment.siteUrl,
+        ),
       });
 
       this.successMessage.set(response.message);
