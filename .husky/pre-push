@@ -1,6 +1,24 @@
 command -v pnpm >/dev/null 2>&1 || exit 0
+set -e
+
 pnpm exec validate-branch-name
-pnpm typecheck
-pnpm format:check
-pnpm lint
+
+# Les controles statiques sont independants: on les lance en parallele
+# pour reduire le temps mur du hook sans baisser le niveau de verification.
+pnpm typecheck &
+typecheck_pid=$!
+
+pnpm format:check &
+format_pid=$!
+
+pnpm lint &
+lint_pid=$!
+
+status=0
+wait "$typecheck_pid" || status=$?
+wait "$format_pid" || status=$?
+wait "$lint_pid" || status=$?
+
+[ "$status" -eq 0 ] || exit "$status"
+
 pnpm test
