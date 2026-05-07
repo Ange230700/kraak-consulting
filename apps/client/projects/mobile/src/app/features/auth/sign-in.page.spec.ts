@@ -63,4 +63,35 @@ describe('Mobile SignInPage', () => {
     });
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/tabs/accueil');
   });
+
+  it('Given an empty form, when submit is called, then validation errors are rendered', async () => {
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.detectChanges();
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Saisissez une adresse email valide.',
+    );
+    expect(element.textContent).toContain(
+      'Votre mot de passe doit contenir au moins 8 caract\u00E8res.',
+    );
+  });
+
+  it('Given signIn throws an error, when submit is called, then the error message is rendered', async () => {
+    authService.signIn.mockRejectedValue(new Error('Identifiants incorrects'));
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.form.setValue({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Identifiants incorrects');
+  });
 });
