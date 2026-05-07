@@ -136,4 +136,168 @@ describe('Mobile SupportRequestPage', () => {
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
+
+  it('Given a valid form that is already submitting, when submit is called again, then the service is not called a second time', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+    fixture.componentInstance.submitting.set(true);
+
+    await fixture.componentInstance.submit();
+
+    expect(supportService.submitContactForm).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with a body message string, when submit is called, then the body message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(422, 'Unprocessable Entity', {
+        message:
+          'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+      }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with a body errors string, when submit is called, then the errors string is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(400, 'Bad Request', {
+        errors: 'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+      }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with a body errors object, when submit is called, then field errors are joined and shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(422, 'Unprocessable Entity', {
+        errors: {
+          email: ['Format d\u2019adresse e-mail invalide.'],
+          name: 'Le nom est trop court.',
+        },
+      }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toContain(
+      'Format d\u2019adresse e-mail invalide.',
+    );
+    expect(fixture.componentInstance.errorMessage()).toContain(
+      'Le nom est trop court.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given a non-object error (null), when submit is called, then the generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(null);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez r\u00E9essayer ult\u00E9rieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with an errors object containing non-string non-array values, when submit is called, then only valid string messages are shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(422, 'Unprocessable Entity', {
+        errors: {
+          metadata: { nested: 'ignoré' },
+          name: 'Le nom est trop court.',
+        },
+      }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toContain(
+      'Le nom est trop court.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with an empty errors object, when submit is called, then the HTTP status message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    supportService.submitContactForm.mockRejectedValue(
+      new ApiError(422, 'Unprocessable Entity', { errors: {} }),
+    );
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      '422 Unprocessable Entity',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
 });
