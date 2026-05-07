@@ -108,4 +108,83 @@ describe('Mobile ResourceListPage', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Erreur API test');
   });
+
+  it('Given a loaded page, when reloadResources is called, then the API is called again', async () => {
+    service.listResources.mockResolvedValue({ data: [], total: 0 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResources: () => Promise<void>;
+      }
+    ).reloadResources();
+
+    expect(service.listResources).toHaveBeenCalledTimes(2);
+  });
+
+  it('Given a theme select, when onThemeChange is called, then service is called with the theme filter', async () => {
+    service.listResources.mockResolvedValue({ data: [], total: 0 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const event = { target: { value: 'training' } } as unknown as Event;
+
+    await (
+      fixture.componentInstance as unknown as {
+        onThemeChange: (event: Event) => Promise<void>;
+      }
+    ).onThemeChange(event);
+
+    expect(service.listResources).toHaveBeenCalledWith(
+      expect.objectContaining({ resourceTheme: 'training' }),
+    );
+  });
+
+  it('Given an audience select, when onAudienceChange is called, then service is called with the audience filter', async () => {
+    service.listResources.mockResolvedValue({ data: [], total: 0 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const event = { target: { value: 'organizations' } } as unknown as Event;
+
+    await (
+      fixture.componentInstance as unknown as {
+        onAudienceChange: (event: Event) => Promise<void>;
+      }
+    ).onAudienceChange(event);
+
+    expect(service.listResources).toHaveBeenCalledWith(
+      expect.objectContaining({ resourceAudience: 'organizations' }),
+    );
+  });
+
+  it('Given an unknown theme value, when getResourceThemeLabel is called, then it returns the raw value', () => {
+    service.listResources.mockResolvedValue({ data: [], total: 0 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      getResourceThemeLabel: (theme: string) => string;
+    };
+    expect(component.getResourceThemeLabel('unknown_theme' as never)).toBe(
+      'unknown_theme',
+    );
+  });
+
+  it('Given an unknown audience value, when getResourceAudienceLabel is called, then it returns the raw value', () => {
+    service.listResources.mockResolvedValue({ data: [], total: 0 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      getResourceAudienceLabel: (audience: string) => string;
+    };
+    expect(
+      component.getResourceAudienceLabel('unknown_audience' as never),
+    ).toBe('unknown_audience');
+  });
 });
