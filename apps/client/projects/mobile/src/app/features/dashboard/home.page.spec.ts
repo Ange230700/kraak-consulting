@@ -321,4 +321,14 @@ describe('Mobile HomePage', () => {
       'Service temporairement indisponible',
     );
   });
+
+  it('Given dashboardState is null, when getters are read before ngOnInit, then they return empty collections', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    // Do NOT call detectChanges — ngOnInit has not run, dashboardState is null
+
+    expect(fixture.componentInstance.programs).toEqual([]);
+    expect(fixture.componentInstance.upcomingSessions).toEqual([]);
+    expect(fixture.componentInstance.recentAnnouncements).toEqual([]);
+    expect(fixture.componentInstance.hasDashboardContent).toBe(false);
+  });
 });

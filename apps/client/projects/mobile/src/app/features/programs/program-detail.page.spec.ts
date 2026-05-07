@@ -2,7 +2,12 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ParticipantProgramDetailDto } from '@kraak/contracts';
+import type {
+  ParticipantProgramDetailDto,
+  ProgramAnnouncementPreviewDto,
+  ResourceDto,
+  SessionDto,
+} from '@kraak/contracts';
 import { MobileProgramsService } from './mobile-programs.service';
 import ProgramDetailPage from './program-detail.page';
 
@@ -113,6 +118,152 @@ describe('Mobile ProgramDetailPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('API Error');
+    });
+  });
+
+  describe('Rich content', () => {
+    const mockSession: SessionDto = {
+      id: 'session-1',
+      cohortId: 'cohort-1',
+      title: 'Session de d\u00E9marrage',
+      description: null,
+      status: 'scheduled',
+      startsAt: new Date('2026-06-01T10:00:00Z').toISOString(),
+      endsAt: new Date('2026-06-01T12:00:00Z').toISOString(),
+      locationType: 'onsite',
+      locationLabel: 'Abidjan',
+      meetingLink: null,
+      trainerUserId: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const mockSessionNoLocationType: SessionDto = {
+      ...mockSession,
+      id: 'session-2',
+      title: 'Session en ligne',
+      locationType: null as unknown as SessionDto['locationType'],
+    };
+
+    const mockResourceWithContent: ResourceDto = {
+      id: 'resource-1',
+      programId: 'prog-1',
+      cohortId: null,
+      title: 'Guide de formation',
+      description: 'Un guide complet',
+      resourceType: 'document',
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      url: 'https://example.com/guide.pdf',
+      filePath: null,
+      status: 'published',
+      publishedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const mockResourceNoContent: ResourceDto = {
+      ...mockResourceWithContent,
+      id: 'resource-2',
+      title: 'Document annexe',
+      description: null,
+      url: null,
+    };
+
+    const mockAnnouncement: ProgramAnnouncementPreviewDto = {
+      id: 'ann-1',
+      title: 'Bienvenue dans le programme',
+      audienceType: 'all_participants',
+      publishedAt: new Date('2026-05-01').toISOString(),
+    };
+
+    it('Given a program with sessions, resources and announcements, when the page loads, then all sections are displayed', async () => {
+      service.getProgramDetail.mockResolvedValue({
+        ...mockProgramDetail,
+        cohort: {
+          ...mockProgramDetail.cohort!,
+          endDate: new Date('2026-12-31').toISOString(),
+        },
+        sessions: [mockSession, mockSessionNoLocationType],
+        resources: [mockResourceWithContent, mockResourceNoContent],
+        announcements: [mockAnnouncement],
+      } satisfies ParticipantProgramDetailDto);
+
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Sessions (2)');
+      expect(element.textContent).toContain('Session de d\u00E9marrage');
+      expect(element.textContent).toContain('Ressources (2)');
+      expect(element.textContent).toContain('Guide de formation');
+      expect(element.textContent).toContain('Un guide complet');
+      expect(element.textContent).toContain('Annonces (1)');
+      expect(element.textContent).toContain('Bienvenue dans le programme');
+    });
+
+    it('Given a program with a null cohort, when the page loads, then the cohort section is not displayed', async () => {
+      service.getProgramDetail.mockResolvedValue({
+        ...mockProgramDetail,
+        cohort: null,
+        sessions: [],
+        resources: [],
+        announcements: [],
+      } satisfies ParticipantProgramDetailDto);
+
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).not.toContain('Cohorte');
+    });
+
+    it('Given a loaded program, when reloadProgram is called, then the service is called again', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      await (
+        fixture.componentInstance as unknown as {
+          reloadProgram: () => Promise<void>;
+        }
+      ).reloadProgram();
+
+      expect(service.getProgramDetail).toHaveBeenCalledTimes(2);
+    });
+
+    it('Given no programId in route, when reloadProgram is called, then the service is not called again', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      activatedRoute.snapshot.paramMap.get = vi.fn().mockReturnValue(null);
+      await (
+        fixture.componentInstance as unknown as {
+          reloadProgram: () => Promise<void>;
+        }
+      ).reloadProgram();
+
+      expect(service.getProgramDetail).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given programDetail is null before load, when pageTitle is read, then it returns the default title', () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+
+      const title = (
+        fixture.componentInstance as unknown as {
+          pageTitle: () => string;
+        }
+      ).pageTitle();
+
+      expect(title).toBe('Programme');
     });
   });
 });
