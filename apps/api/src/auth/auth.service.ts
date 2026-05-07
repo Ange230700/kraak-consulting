@@ -54,6 +54,12 @@ type SessionPayload = {
   token_type: string;
 };
 
+type AuthUserPayload = {
+  id: string;
+  email?: string | null;
+  user_metadata?: Record<string, unknown> | null;
+};
+
 @Injectable()
 export class AuthService {
   constructor(private readonly supabaseService: SupabaseService) {}
@@ -73,7 +79,7 @@ export class AuthService {
     }
 
     return this.buildSessionBundle(
-      data.user.id,
+      data.user as AuthUserPayload,
       data.session as SessionPayload,
     );
   }
@@ -132,7 +138,7 @@ export class AuthService {
     }
 
     return this.buildSessionBundle(
-      data.user.id,
+      data.user as AuthUserPayload,
       data.session as SessionPayload,
     );
   }
@@ -171,17 +177,17 @@ export class AuthService {
     }
 
     return {
-      profile: await this.readRequiredProfile(data.user.id),
+      profile: await this.readRequiredProfile(data.user as AuthUserPayload),
     };
   }
 
   private async buildSessionBundle(
-    userId: string,
+    authUser: AuthUserPayload,
     session: SessionPayload,
   ): Promise<AuthSessionBundleDto> {
     return {
       session: this.mapSession(session),
-      profile: await this.readRequiredProfile(userId),
+      profile: await this.readRequiredProfile(authUser),
     };
   }
 
@@ -199,8 +205,19 @@ export class AuthService {
     };
   }
 
-  private async readRequiredProfile(userId: string): Promise<AuthProfileDto> {
-    const profile = await this.readOptionalProfile(userId);
+  private async readRequiredProfile(
+    authUser: AuthUserPayload,
+  ): Promise<AuthProfileDto> {
+    const profile = await this.readOptionalProfile(authUser.id);
+
+    if (!profile) {
+      await this.provisionMissingProfile(authUser);
+      const provisionedProfile = await this.readOptionalProfile(authUser.id);
+
+      if (provisionedProfile) {
+        return provisionedProfile;
+      }
+    }
 
     if (!profile) {
       throw new NotFoundException({
@@ -210,6 +227,69 @@ export class AuthService {
     }
 
     return profile;
+  }
+
+  private async provisionMissingProfile(
+    authUser: AuthUserPayload,
+  ): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const metadata =
+      authUser.user_metadata && typeof authUser.user_metadata === 'object'
+        ? authUser.user_metadata
+        : {};
+    const role = this.normalizeRole(metadata['role']);
+    const email = this.readOptionalMetadataText(authUser.email) ?? authUser.id;
+    const firstName =
+      this.readOptionalMetadataText(metadata['first_name']) ??
+      email.split('@')[0] ??
+      'Participant';
+    const lastName =
+      this.readOptionalMetadataText(metadata['last_name']) ?? 'Participant';
+
+    const { error } = await adminClient.from('app_user').upsert(
+      {
+        id: authUser.id,
+        email,
+        role,
+        first_name: firstName,
+        last_name: lastName,
+        phone: this.readOptionalMetadataText(metadata['phone']),
+        preferred_contact_channel: this.readOptionalMetadataText(
+          metadata['preferred_contact_channel'],
+        ),
+      },
+      { onConflict: 'id' },
+    );
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Le profil utilisateur n'a pas pu être provisionné.",
+      });
+    }
+  }
+
+  private normalizeRole(value: unknown): AppUserDto['role'] {
+    const normalized = this.readOptionalMetadataText(value)?.toLowerCase();
+
+    if (
+      normalized === 'participant' ||
+      normalized === 'admin' ||
+      normalized === 'trainer'
+    ) {
+      return normalized;
+    }
+
+    return 'participant';
+  }
+
+  private readOptionalMetadataText(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const normalized = value.trim();
+    return normalized.length > 0 ? normalized : null;
   }
 
   private async readOptionalProfile(
