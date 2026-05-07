@@ -38,6 +38,7 @@ describe('TabsLayout', () => {
 
   it('should create', () => {
     const fixture = TestBed.createComponent(TabsLayout);
+    fixture.detectChanges();
     expect(fixture.componentInstance).toBeTruthy();
   });
 
@@ -70,8 +71,28 @@ describe('TabsLayout', () => {
 
   it('should bind each tab button to an explicit mobile route', () => {
     const fixture = TestBed.createComponent(TabsLayout);
+    fixture.detectChanges();
     const hrefs = fixture.componentInstance['tabs'].map((tab) => tab.href);
 
     expect(hrefs).toEqual(MOBILE_PRIMARY_TABS.map((tab) => tab.href));
+  });
+
+  it('Given no tabs are configured, when the tabs layout renders, then no tab buttons are displayed', () => {
+    const fixture = TestBed.createComponent(TabsLayout);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (fixture.componentInstance as any).tabs = [];
+    fixture.detectChanges();
+
+    const buttons = fixture.nativeElement.querySelectorAll('ion-tab-button');
+    expect(buttons.length).toBe(0);
+  });
+
+  it('Given each tab, when the component data is inspected, then icon names match the shell config', () => {
+    const fixture = TestBed.createComponent(TabsLayout);
+    fixture.detectChanges();
+
+    const icons = fixture.componentInstance['tabs'].map((tab) => tab.icon);
+    const expected = MOBILE_PRIMARY_TABS.map((t) => t.icon);
+    expect(icons).toEqual(expected);
   });
 });
