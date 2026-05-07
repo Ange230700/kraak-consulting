@@ -31,6 +31,26 @@ const EMPTY_AGGREGATE: DashboardAggregateDto = {
   recentAnnouncements: [],
 };
 
+const MINIMAL_PROGRAM_AGGREGATE: DashboardAggregateDto = {
+  generatedAt: '2026-04-29T11:00:00.000Z',
+  programs: [
+    {
+      enrollmentId: 'enr-min',
+      programId: 'program-min',
+      slug: 'minimal',
+      title: 'Programme minimal',
+      summary: '',
+      enrollmentStatus: 'active',
+      cohortId: null,
+      cohortName: null,
+      cohortStatus: 'active',
+      cohortStartDate: '2026-04-20',
+    },
+  ],
+  upcomingSessions: [],
+  recentAnnouncements: [],
+};
+
 const POPULATED_AGGREGATE: DashboardAggregateDto = {
   generatedAt: '2026-04-29T11:00:00.000Z',
   programs: [
@@ -259,6 +279,78 @@ describe('Web Participant Dashboard Page', () => {
       expect(text).toContain(
         'Impossible de charger votre dashboard pour le moment.',
       );
+    });
+
+    it('Given exactly one item in aggregate, When the page loads, Then totalSummaryLabel uses singular form', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(
+        fixture,
+        Promise.resolve({
+          ...EMPTY_AGGREGATE,
+          upcomingSessions: [POPULATED_AGGREGATE.upcomingSessions[0]],
+        }),
+      );
+      await flush(fixture);
+
+      expect(fixture.componentInstance.totalSummaryLabel()).toBe(
+        '1 \u00E9l\u00E9ment cl\u00E9 disponible aujourd\u2019hui.',
+      );
+    });
+
+    it('Given a session with an invalid startsAt date, When the page loads, Then nextSessionSummary falls back to raw date string', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(
+        fixture,
+        Promise.resolve({
+          ...EMPTY_AGGREGATE,
+          upcomingSessions: [
+            {
+              ...POPULATED_AGGREGATE.upcomingSessions[0],
+              startsAt: 'invalid-date',
+            },
+          ],
+        }),
+      );
+      await flush(fixture);
+
+      expect(fixture.componentInstance.nextSessionSummary()).toBe(
+        'Atelier CV - invalid-date',
+      );
+    });
+
+    it('Given a populated aggregate loaded, When computed signals are read directly, Then programs returns the loaded data', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(fixture, Promise.resolve(POPULATED_AGGREGATE));
+      await flush(fixture);
+
+      const programs = fixture.componentInstance.programs();
+      expect(programs).toHaveLength(1);
+      expect(programs[0].title).toBe("Parcours d'int\u00E9gration");
+    });
+
+    it('Given a program without summary or cohortName, When the page loads, Then those optional fields are not rendered', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(
+        fixture,
+        Promise.resolve(MINIMAL_PROGRAM_AGGREGATE),
+      );
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain('Programme minimal');
+      expect(text).not.toContain('Suivi individuel et collectif');
+    });
+
+    it('Given programs exist but no upcoming sessions, When the page loads, Then sessions card shows no-session message', async () => {
+      const fixture = TestBed.createComponent(DashboardPage);
+      configureDashboardClient(
+        fixture,
+        Promise.resolve(MINIMAL_PROGRAM_AGGREGATE),
+      );
+      await flush(fixture);
+
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
     });
   });
 

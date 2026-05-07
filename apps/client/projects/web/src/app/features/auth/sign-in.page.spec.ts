@@ -61,4 +61,65 @@ describe('Web SignInPage', () => {
     });
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/participant/dashboard');
   });
+
+  // Given an invalid form
+  // When submit is called
+  // Then the auth service is not called and the function returns early
+  it('Given an invalid form, when submit is called, then the auth service is not called', async () => {
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.form.setValue({ email: '', password: '' });
+
+    await fixture.componentInstance.submit();
+
+    expect(authService.signIn).not.toHaveBeenCalled();
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  // Given signIn throws an error
+  // When submit is called with valid credentials
+  // Then the error message is set
+  it('Given signIn throws an error, when submit is called, then the error message is set', async () => {
+    authService.signIn.mockRejectedValue(new Error('Erreur réseau'));
+
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.form.setValue({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    await fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.errorMessage()).not.toBeNull();
+    expect(fixture.componentInstance.submitting()).toBe(false);
+  });
+
+  // Given a valid form and signIn is in progress
+  // When the template is rendered while submitting
+  // Then the button label shows the in-progress text
+  it('Given signIn is in progress, when the template is rendered, then the button shows the in-progress label', () => {
+    let resolveSignIn!: () => void;
+    authService.signIn.mockReturnValue(
+      new Promise<void>((res) => {
+        resolveSignIn = res;
+      }),
+    );
+
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.form.setValue({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    void fixture.componentInstance.submit();
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+    expect(fixture.componentInstance.submitting()).toBe(true);
+    expect(button.textContent).toContain('Connexion en cours');
+
+    resolveSignIn();
+  });
 });

@@ -192,6 +192,27 @@ describe('participantRoleChildGuard (web)', () => {
   });
 });
 
+describe('participantRoleGuard unauthenticated (web)', () => {
+  it('Given an unauthenticated user, when the participant role guard is triggered, then the user is redirected to sign-in', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: '', component: DummyComponent }]),
+        {
+          provide: WebAuthService,
+          useValue: mockAuthService(false),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      participantRoleGuard(buildRoute(), buildState()),
+    );
+
+    const router = TestBed.inject(Router);
+    expect(result).toEqual(router.createUrlTree(['/connexion']));
+  });
+});
+
 describe('adminRoleGuard (web)', () => {
   describe('Given an authenticated admin user', () => {
     beforeEach(() => {

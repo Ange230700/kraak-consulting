@@ -105,4 +105,42 @@ describe('Web SignUpPage', () => {
 
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/participant/dashboard');
   });
+
+  // Given an invalid form
+  // When submit is called
+  // Then the auth service is not called
+  it('Given an invalid form, when submit is called, then the auth service is not called', async () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    fixture.componentInstance.form.setValue({
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(authService.signUp).not.toHaveBeenCalled();
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  // Given signUp throws an error
+  // When submit is called with valid data
+  // Then the error message is set
+  it('Given signUp throws an error, when submit is called, then the error message is set', async () => {
+    authService.signUp.mockRejectedValue(new Error('Erreur réseau'));
+
+    const fixture = TestBed.createComponent(SignUpPage);
+    fixture.componentInstance.form.setValue({
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).not.toBeNull();
+    expect(fixture.componentInstance.submitting()).toBe(false);
+  });
 });

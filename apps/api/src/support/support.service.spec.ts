@@ -141,6 +141,58 @@ describe('SupportService', () => {
     });
   });
 
+  it("Given Resend renvoie un succès sans id d'email, When submitContact est appelé, Then la réponse reste positive et le log utilise l'identifiant inconnu", async () => {
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      if (key === 'CONTACT_FROM_EMAIL') return 'noreply@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockResolvedValue({ data: {}, error: null });
+    const loggerLogSpy = jest.spyOn((service as any).logger, 'log');
+
+    await expect(
+      service.submitContact({
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Renseignements',
+        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+        category: 'other',
+      }),
+    ).resolves.toMatchObject({ success: true });
+
+    expect(loggerLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('id=inconnu'),
+    );
+  });
+
+  it("Given Resend renvoie data null sans erreur, When submitContact est appelé, Then la réponse reste positive et le log utilise l'identifiant inconnu", async () => {
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      if (key === 'CONTACT_FROM_EMAIL') return 'noreply@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockResolvedValue({ data: null, error: null });
+    const loggerLogSpy = jest.spyOn((service as any).logger, 'log');
+
+    await expect(
+      service.submitContact({
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Renseignements',
+        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+        category: 'other',
+      }),
+    ).resolves.toMatchObject({ success: true });
+
+    expect(loggerLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('id=inconnu'),
+    );
+  });
+
   it("Given Resend retourne un objet d'erreur, When submitContact est appelé, Then une exception est levée plutôt que de renvoyer un faux succès", async () => {
     configService.get.mockImplementation((key: string) => {
       if (key === 'RESEND_API_KEY') return 're_test_key';
@@ -355,6 +407,33 @@ describe('SupportService', () => {
     const results = await service.listSupportRequests('access-token');
     expect(eqCalled).toBe(false);
     expect(results).toEqual([]);
+  });
+
+  it('Given la requête support_request renvoie data null sans erreur, When listSupportRequests est appelé, Then la liste renvoyée est vide', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain({ data: null, error: null });
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(service.listSupportRequests('access-token')).resolves.toEqual(
+      [],
+    );
   });
 
   it('Given une erreur DB sur support_request, When listSupportRequests est appelé, Then une InternalServerErrorException est levée', async () => {
@@ -609,6 +688,33 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
+  it('Given Resend rejette avec une valeur non-Error, When submitContact est appelé, Then une InternalServerErrorException est levée et le stack loggué est undefined', async () => {
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      if (key === 'CONTACT_FROM_EMAIL') return 'noreply@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockRejectedValue('network-down');
+    const loggerErrorSpy = jest.spyOn((service as any).logger, 'error');
+
+    await expect(
+      service.submitContact({
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Renseignements',
+        message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+        category: 'other',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+
+    expect(loggerErrorSpy).toHaveBeenCalledWith(
+      "Echec de l'envoi d'email transactionnel",
+      undefined,
+    );
+  });
+
   it("Given une erreur d'authentification, When resolveSessionUser est appelé, Then une UnauthorizedException est levée", async () => {
     authGetUserMock.mockResolvedValue({
       data: { user: null },
@@ -759,6 +865,116 @@ describe('SupportService', () => {
         'access-token',
       ),
     ).resolves.toMatchObject({ success: true, requestId: 'req-2' });
+  });
+
+  it('Given un enregistrement participant malformé sans id, When submitContact avec session est appelé, Then la demande est créée avec participant_id null', async () => {
+    configService.get.mockReturnValue(undefined);
+
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-2' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-2', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({
+          data: {} as { id?: string | null },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(() => ({
+            select: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-2b',
+                  user_id: 'user-2',
+                  participant_id: null,
+                  subject: 'Sujet',
+                  message: 'Message test',
+                  status: 'open',
+                  category: 'other',
+                  assigned_to_user_id: null,
+                  created_at: '2026-04-29T10:00:00.000Z',
+                  updated_at: '2026-04-29T10:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.submitContact(
+        {
+          name: 'Bob',
+          email: 'bob@example.com',
+          subject: 'Sujet',
+          message: 'Message test',
+          category: 'other',
+        },
+        'access-token',
+      ),
+    ).resolves.toMatchObject({ success: true, requestId: 'req-2b' });
+  });
+
+  it('Given une erreur DB lors de la résolution du participant, When submitContact avec session est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-4' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-4', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({
+          data: null,
+          error: { message: 'participant lookup failed' },
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.submitContact(
+        {
+          name: 'Dora',
+          email: 'dora@example.com',
+          subject: 'Sujet',
+          message: 'Message test',
+          category: 'other',
+        },
+        'access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
   it('Given insert support_request retourne data null sans erreur, When submitContact avec session est appelé, Then une InternalServerErrorException est levée', async () => {

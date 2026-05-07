@@ -84,6 +84,21 @@ describe('AnnouncementsController', () => {
       );
     });
 
+    it('Given: valid authorization header without pagination params, When: listAnnouncements called, Then: undefined page and limit are forwarded', async () => {
+      const authHeader = 'Bearer valid-token';
+      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
+        mockListResponse,
+      );
+
+      await controller.listAnnouncements(authHeader);
+
+      expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
+        'valid-token',
+        undefined,
+        undefined,
+      );
+    });
+
     it('Given: missing authorization header, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
       await expect(controller.listAnnouncements(undefined)).rejects.toThrow(
         UnauthorizedException,
@@ -146,6 +161,14 @@ describe('AnnouncementsController', () => {
 
       await expect(
         controller.getAnnouncementById(announcementId, undefined),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('Given: authorization argument omitted, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
+      const announcementId = 'ann-001';
+
+      await expect(
+        controller.getAnnouncementById(announcementId),
       ).rejects.toThrow(UnauthorizedException);
     });
 

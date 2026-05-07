@@ -59,4 +59,40 @@ describe('CtaBanner', () => {
       },
     );
   });
+
+  // Given ctaLabel or ctaLink is empty
+  // When the CTA click handler is triggered
+  // Then no analytics event is tracked
+  it('Given an empty ctaLabel, when onCtaClick is called, then no analytics event is tracked', () => {
+    const fixture = TestBed.createComponent(CtaBanner);
+    fixture.componentRef.setInput('ctaLabel', '');
+    fixture.componentRef.setInput('ctaLink', '/contact');
+    fixture.detectChanges();
+
+    fixture.componentInstance.onCtaClick();
+
+    expect(analyticsService.trackEvent).not.toHaveBeenCalled();
+  });
+
+  // Given ctaContext is empty
+  // When the CTA click handler is triggered
+  // Then the tracking payload uses 'unknown' as context
+  it('Given an empty ctaContext, when onCtaClick is called, then the tracking payload uses unknown as context', () => {
+    const fixture = TestBed.createComponent(CtaBanner);
+    fixture.componentRef.setInput('ctaLabel', 'Nous contacter');
+    fixture.componentRef.setInput('ctaLink', '/contact');
+    fixture.componentRef.setInput('ctaContext', '');
+    fixture.detectChanges();
+
+    fixture.componentInstance.onCtaClick();
+
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'conversion_cta_click',
+      {
+        cta_context: 'unknown',
+        cta_label: 'Nous contacter',
+        cta_link: '/contact',
+      },
+    );
+  });
 });

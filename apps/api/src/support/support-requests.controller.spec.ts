@@ -76,6 +76,12 @@ describe('SupportRequestsController', () => {
     );
   });
 
+  it('Given un argument authorization omis, When la liste est demandee, Then une UnauthorizedException est renvoyee', async () => {
+    await expect(controller.list()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
   it('Given un payload de statut valide, When updateStatus est appele, Then le service est invoque avec token et payload normalise', async () => {
     await controller.updateStatus(
       'req-1',
@@ -98,5 +104,17 @@ describe('SupportRequestsController', () => {
         'Bearer access-token',
       ),
     ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header absent, When updateStatus est appele, Then une UnauthorizedException est renvoyee', async () => {
+    await expect(
+      controller.updateStatus('req-1', { status: 'in_progress' }, undefined),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un argument authorization omis, When updateStatus est appele, Then une UnauthorizedException est renvoyee', async () => {
+    await expect(
+      controller.updateStatus('req-1', { status: 'in_progress' }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });
