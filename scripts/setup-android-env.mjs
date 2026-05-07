@@ -125,23 +125,12 @@ function runWithoutShell(command, args, env) {
       ? command
       : `${command}.cmd`;
 
-    const quoteWindowsArg = (value) => {
-      if (value.length === 0) {
-        return '""';
-      }
-
-      if (!/[\s"&|<>^]/u.test(value)) {
-        return value;
-      }
-
-      return `"${value.replaceAll(/(["^])/gu, '^$1')}"`;
-    };
-
-    const commandLine = [commandWithExtension, ...args.map(quoteWindowsArg)].join(' ');
-
-    return spawnSync(commandLine, {
+    // SECURITY: command provient uniquement de parseRunCommand (tokens hardcodés).
+    // Les scripts .cmd/.bat Windows sont lancés via cmd.exe avec shell: false.
+    const comSpec = process.env.ComSpec ?? 'cmd.exe';
+    return spawnSync(comSpec, ['/d', '/s', '/c', commandWithExtension, ...args], {
       env,
-      shell: true,
+      shell: false,
       stdio: 'inherit',
     });
   }
