@@ -202,4 +202,123 @@ describe('Mobile HomePage', () => {
     expect(text).toContain('Service indisponible');
     expect(text).toContain('R\u00E9essayer');
   });
+
+  it('Given only upcoming sessions in the aggregate, when the page loads, then hasDashboardContent is true and empty program state is shown', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    configureDashboardClient(
+      fixture,
+      Promise.resolve({
+        generatedAt: '2026-04-29T11:00:00.000Z',
+        programs: [],
+        upcomingSessions: [
+          {
+            id: 'session-1',
+            title: 'Atelier CV',
+            status: 'scheduled',
+            startsAt: '2026-05-02T16:00:00.000Z',
+            endsAt: '2026-05-02T18:00:00.000Z',
+            locationType: 'online',
+            locationLabel: null,
+            meetingLink: null,
+            cohortId: 'cohort-1',
+            cohortName: 'Cohorte printemps',
+            programId: 'program-1',
+            programSlug: 'integration',
+            programTitle: "Parcours d'integration",
+          },
+        ],
+        recentAnnouncements: [],
+      }),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Mon dashboard');
+    expect(text).toContain('Atelier CV');
+    expect(text).toContain('Aucun programme actif');
+    expect(text).not.toContain(
+      "Aucun contenu n'est disponible pour l'instant sur votre espace.",
+    );
+  });
+
+  it('Given only recent announcements in the aggregate, when the page loads, then hasDashboardContent is true and empty session state is shown', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    configureDashboardClient(
+      fixture,
+      Promise.resolve({
+        generatedAt: '2026-04-29T11:00:00.000Z',
+        programs: [],
+        upcomingSessions: [],
+        recentAnnouncements: [
+          {
+            id: 'announcement-1',
+            title: 'Rappel documents',
+            body: 'Pensez à vérifier vos pièces.',
+            audienceType: 'all_participants',
+            programId: null,
+            cohortId: null,
+            publishedAt: '2026-04-28T11:00:00.000Z',
+          },
+        ],
+      }),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Mon dashboard');
+    expect(text).toContain('Rappel documents');
+    expect(text).toContain('Aucune session');
+    expect(text).not.toContain(
+      "Aucun contenu n'est disponible pour l'instant sur votre espace.",
+    );
+  });
+
+  it('Given an error state, when the user retries, then the dashboard reloads successfully', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    configureDashboardClient(
+      fixture,
+      Promise.reject(
+        new ApiError(503, 'Service Unavailable', {
+          message: 'Service temporairement indisponible',
+        }),
+      ),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const textAfterError =
+      (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(textAfterError).toContain('Service temporairement indisponible');
+
+    // Re-configure with a successful response and trigger reload
+    configureDashboardClient(
+      fixture,
+      Promise.resolve({
+        generatedAt: '2026-04-29T11:00:00.000Z',
+        programs: [],
+        upcomingSessions: [],
+        recentAnnouncements: [],
+      }),
+    );
+
+    const component = fixture.componentInstance as unknown as {
+      reloadDashboard: () => Promise<void>;
+    };
+    await component.reloadDashboard();
+    fixture.detectChanges();
+
+    const textAfterReload =
+      (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(textAfterReload).not.toContain(
+      'Service temporairement indisponible',
+    );
+  });
 });
