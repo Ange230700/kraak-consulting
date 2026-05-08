@@ -47,6 +47,14 @@ const marketingRoutes: Routes = [
     'contact',
     () => import('./features/contact/contact.page'),
   ),
+  buildMarketingRoute(
+    'mentions-legales',
+    () => import('./features/legal/mentions-legales.page'),
+  ),
+  buildMarketingRoute(
+    'politique-de-confidentialite',
+    () => import('./features/legal/politique-de-confidentialite.page'),
+  ),
 ];
 
 const participantAreaRoutes: Routes = [
