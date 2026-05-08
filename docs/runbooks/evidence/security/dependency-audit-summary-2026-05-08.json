@@ -1,0 +1,232 @@
+{
+  "generatedAt": "2026-05-08T08:14:53.454Z",
+  "tool": "pnpm audit",
+  "scope": "workspace dependency audit",
+  "results": {
+    "all": {
+      "exitCode": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 1,
+          "moderate": 8,
+          "high": 6,
+          "critical": 0
+        },
+        "dependencies": 1308,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 1308
+      },
+      "advisories": [
+        {
+          "id": 1115806,
+          "severity": "high",
+          "module": "lodash",
+          "title": "lodash vulnerable to Code Injection via `_.template` imports key names",
+          "recommendation": "Upgrade to version 4.18.0 or later",
+          "patchedVersions": ">=4.18.0",
+          "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc",
+          "cves": ["CVE-2026-4800"],
+          "paths": [".>commitizen>lodash"]
+        },
+        {
+          "id": 1116960,
+          "severity": "high",
+          "module": "@xmldom/xmldom",
+          "title": "xmldom: Uncontrolled recursion in XML serialization leads to DoS",
+          "recommendation": "Upgrade to version 0.8.13 or later",
+          "patchedVersions": ">=0.8.13",
+          "url": "https://github.com/advisories/GHSA-2v35-w6hq-6mfw",
+          "cves": ["CVE-2026-41673"],
+          "paths": ["apps__client>@capacitor/cli>plist>@xmldom/xmldom"]
+        },
+        {
+          "id": 1116963,
+          "severity": "high",
+          "module": "@xmldom/xmldom",
+          "title": "xmldom has XML injection through unvalidated DocumentType serialization",
+          "recommendation": "Upgrade to version 0.8.13 or later",
+          "patchedVersions": ">=0.8.13",
+          "url": "https://github.com/advisories/GHSA-f6ww-3ggp-fr8h",
+          "cves": ["CVE-2026-41674"],
+          "paths": ["apps__client>@capacitor/cli>plist>@xmldom/xmldom"]
+        },
+        {
+          "id": 1116966,
+          "severity": "high",
+          "module": "@xmldom/xmldom",
+          "title": "xmldom has XML node injection through unvalidated processing instruction serialization",
+          "recommendation": "Upgrade to version 0.8.13 or later",
+          "patchedVersions": ">=0.8.13",
+          "url": "https://github.com/advisories/GHSA-x6wf-f3px-wcqx",
+          "cves": ["CVE-2026-41675"],
+          "paths": ["apps__client>@capacitor/cli>plist>@xmldom/xmldom"]
+        },
+        {
+          "id": 1116969,
+          "severity": "high",
+          "module": "@xmldom/xmldom",
+          "title": "xmldom has XML node injection through unvalidated comment serialization",
+          "recommendation": "Upgrade to version 0.8.13 or later",
+          "patchedVersions": ">=0.8.13",
+          "url": "https://github.com/advisories/GHSA-j759-j44w-7fr8",
+          "cves": ["CVE-2026-41672"],
+          "paths": ["apps__client>@capacitor/cli>plist>@xmldom/xmldom"]
+        },
+        {
+          "id": 1117154,
+          "severity": "high",
+          "module": "@angular/platform-server",
+          "title": "Angular: SSRF via protocol-relative and backslash URLs in Angular Platform-Server",
+          "recommendation": "Upgrade to version 21.2.9 or later",
+          "patchedVersions": ">=21.2.9",
+          "url": "https://github.com/advisories/GHSA-45q2-gjvg-7973",
+          "cves": ["CVE-2026-41423"],
+          "paths": ["apps__client>@angular/platform-server"]
+        },
+        {
+          "id": 1112455,
+          "severity": "moderate",
+          "module": "lodash",
+          "title": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+          "recommendation": "Upgrade to version 4.17.23 or later",
+          "patchedVersions": ">=4.17.23",
+          "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+          "cves": ["CVE-2025-13465"],
+          "paths": [".>commitizen>lodash"]
+        },
+        {
+          "id": 1115810,
+          "severity": "moderate",
+          "module": "lodash",
+          "title": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+          "recommendation": "Upgrade to version 4.18.0 or later",
+          "patchedVersions": ">=4.18.0",
+          "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh",
+          "cves": ["CVE-2026-2950"],
+          "paths": [".>commitizen>lodash"]
+        },
+        {
+          "id": 1116669,
+          "severity": "moderate",
+          "module": "hono",
+          "title": "hono Improperly Handles JSX Attribute Names Allows HTML Injection in hono/jsx SSR",
+          "recommendation": "Upgrade to version 4.12.14 or later",
+          "patchedVersions": ">=4.12.14",
+          "url": "https://github.com/advisories/GHSA-458j-xx4x-4375",
+          "cves": [],
+          "paths": ["apps__client>@angular/cli>@modelcontextprotocol/sdk>hono"]
+        },
+        {
+          "id": 1117015,
+          "severity": "moderate",
+          "module": "postcss",
+          "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+          "recommendation": "Upgrade to version 8.5.10 or later",
+          "patchedVersions": ">=8.5.10",
+          "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+          "cves": ["CVE-2026-41305"],
+          "paths": ["apps__client>postcss"]
+        },
+        {
+          "id": 1117683,
+          "severity": "moderate",
+          "module": "ip-address",
+          "title": "ip-address has XSS in Address6 HTML-emitting methods",
+          "recommendation": "Upgrade to version 10.1.1 or later",
+          "patchedVersions": ">=10.1.1",
+          "url": "https://github.com/advisories/GHSA-v2v4-37r5-5v8g",
+          "cves": ["CVE-2026-42338"],
+          "paths": [
+            "apps__client>@angular/cli>@modelcontextprotocol/sdk>express-rate-limit>ip-address"
+          ]
+        },
+        {
+          "id": 1117763,
+          "severity": "moderate",
+          "module": "hono",
+          "title": "Hono: bodyLimit() can be bypassed for chunked / unknown-length requests",
+          "recommendation": "Upgrade to version 4.12.16 or later",
+          "patchedVersions": ">=4.12.16",
+          "url": "https://github.com/advisories/GHSA-9vqf-7f2p-gf9v",
+          "cves": ["CVE-2026-44456"],
+          "paths": ["apps__client>@angular/cli>@modelcontextprotocol/sdk>hono"]
+        },
+        {
+          "id": 1117764,
+          "severity": "moderate",
+          "module": "hono",
+          "title": "hono/jsx has Unvalidated JSX Tag Names that May Allow HTML Injection",
+          "recommendation": "Upgrade to version 4.12.16 or later",
+          "patchedVersions": ">=4.12.16",
+          "url": "https://github.com/advisories/GHSA-69xw-7hcm-h432",
+          "cves": ["CVE-2026-44455"],
+          "paths": ["apps__client>@angular/cli>@modelcontextprotocol/sdk>hono"]
+        },
+        {
+          "id": 1117767,
+          "severity": "moderate",
+          "module": "@angular/ssr",
+          "title": "Angular SSR has Open Redirect and Request Steering via Encoded X-Forwarded-Prefix",
+          "recommendation": "Upgrade to version 21.2.9 or later",
+          "patchedVersions": ">=21.2.9",
+          "url": "https://github.com/advisories/GHSA-69xr-m8h6-h664",
+          "cves": ["CVE-2026-44437"],
+          "paths": ["apps__client>@angular/ssr"]
+        },
+        {
+          "id": 1109537,
+          "severity": "low",
+          "module": "tmp",
+          "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+          "recommendation": "Upgrade to version 0.2.4 or later",
+          "patchedVersions": ">=0.2.4",
+          "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+          "cves": ["CVE-2025-54798"],
+          "paths": [".>commitizen>inquirer>external-editor>tmp"]
+        }
+      ]
+    },
+    "prod": {
+      "exitCode": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 1,
+          "high": 1,
+          "critical": 0
+        },
+        "dependencies": 192,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 192
+      },
+      "advisories": [
+        {
+          "id": 1117154,
+          "severity": "high",
+          "module": "@angular/platform-server",
+          "title": "Angular: SSRF via protocol-relative and backslash URLs in Angular Platform-Server",
+          "recommendation": "Upgrade to version 21.2.9 or later",
+          "patchedVersions": ">=21.2.9",
+          "url": "https://github.com/advisories/GHSA-45q2-gjvg-7973",
+          "cves": ["CVE-2026-41423"],
+          "paths": ["apps__client>@angular/platform-server"]
+        },
+        {
+          "id": 1117767,
+          "severity": "moderate",
+          "module": "@angular/ssr",
+          "title": "Angular SSR has Open Redirect and Request Steering via Encoded X-Forwarded-Prefix",
+          "recommendation": "Upgrade to version 21.2.9 or later",
+          "patchedVersions": ">=21.2.9",
+          "url": "https://github.com/advisories/GHSA-69xr-m8h6-h664",
+          "cves": ["CVE-2026-44437"],
+          "paths": ["apps__client>@angular/ssr"]
+        }
+      ]
+    }
+  }
+}

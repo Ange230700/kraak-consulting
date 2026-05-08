@@ -1,0 +1,112 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "@angular/platform-server",
+      "resolves": [
+        {
+          "id": 1117154,
+          "path": "apps__client>@angular/platform-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@angular/ssr",
+      "resolves": [
+        {
+          "id": 1117767,
+          "path": "apps__client>@angular/ssr",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1117154": {
+      "findings": [
+        {
+          "version": "21.2.8",
+          "paths": ["apps__client>@angular/platform-server"]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/angular/angular/security/advisories/GHSA-45q2-gjvg-7973\n- https://github.com/angular/angular/pull/68194\n- https://github.com/advisories/GHSA-45q2-gjvg-7973",
+      "created": "2026-04-16T22:36:01.000Z",
+      "id": 1117154,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nA [Server-Side Request Forgery (SSRF)](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/SSRF) vulnerability exists in `@angular/platform-server` due to improper handling of URLs during Server-Side Rendering (SSR).\n\nWhen an attacker sends a request such as `GET /\\evil.com/ HTTP/1.1` the server engine (Express, etc.) passes the URL string to Angular’s rendering functions.\n\nBecause the URL parser normalizes the backslash to a forward slash for HTTP/HTTPS schemes, the internal state of the application is hijacked to believe the current origin is `evil.com`. This misinterpretation tricks the application into treating the attacker’s domain as the local origin. Consequently, any relative `HttpClient` requests or `PlatformLocation.hostname` references are redirected to the attacker controlled server, potentially exposing internal APIs or metadata services.\n\n**Affected APIs:**\n- `renderModule`\n- `renderApplication`\n- `CommonEngine` (from `@angular/ssr`)\n\n**Non-Affected APIs:**\n- `AngularAppEngine` (from `@angular/ssr`)\n- `AngularNodeAppEngine` (from `@angular/ssr`)\n\n### Attack Preconditions\n- The server has outbound network access.\n- The application uses Angular SSR via the affected APIs.\n- A pathname is passed as URL to the rendering method  (e.g. using `req.url`).\n- The server-side code performs HTTP requests using `HttpClient` with relative URLs or uses `PlatformLocation.hostname` to build URLs. \n\n\n### Patches\n- 22.0.0-next.8\n- 21.2.9\n- 20.3.19\n- 19.2.21\n\n### Workarounds\nDevelopers should implement a middleware to sanitize the request URL before it reaches Angular. This involves stripping or normalizing leading slashes:\n\n```js\napp.use((req, res, next) => {\n  // Sanitize the URL to ensure it starts with a single forward slash\n  if (req.url.startsWith('//') || req.url.startsWith('/\\\\') || req.url.startsWith('\\\\')) {\n     req.url = '/' + req.url.replace(/^[/\\\\]+/, '');\n  }\n  next();\n});\n\n```\n### References\n- [Fix](https://github.com/angular/angular/pull/68194)",
+      "reported_by": null,
+      "title": "Angular: SSRF via protocol-relative and backslash URLs in Angular Platform-Server",
+      "metadata": null,
+      "cves": ["CVE-2026-41423"],
+      "access": "public",
+      "severity": "high",
+      "module_name": "@angular/platform-server",
+      "vulnerable_versions": ">=21.0.0-next.0 <21.2.9",
+      "github_advisory_id": "GHSA-45q2-gjvg-7973",
+      "recommendation": "Upgrade to version 21.2.9 or later",
+      "patched_versions": ">=21.2.9",
+      "updated": "2026-04-27T16:19:20.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": ["CWE-918"],
+      "url": "https://github.com/advisories/GHSA-45q2-gjvg-7973"
+    },
+    "1117767": {
+      "findings": [
+        {
+          "version": "21.2.7",
+          "paths": ["apps__client>@angular/ssr"]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/angular/angular-cli/security/advisories/GHSA-69xr-m8h6-h664\n- https://github.com/angular/angular-cli/pull/33031\n- https://angular.dev/best-practices/security#configuring-trusted-proxy-headers\n- https://github.com/advisories/GHSA-69xr-m8h6-h664",
+      "created": "2026-05-06T23:42:10.000Z",
+      "id": 1117767,
+      "npm_advisory_id": null,
+      "overview": "### Description\nA vulnerability exists in the `X-Forwarded-Prefix` header processing logic within Angular SSR. The internal validation mechanism fails to properly account for URL-encoded characters, specifically dots (`%2e%2e`). This allows an attacker to bypass security filters by injecting encoded path traversal sequences that are later decoded and utilized by the application logic.\nWhen an Angular SSR application is configured to trust proxy headers and is deployed behind a proxy that forwards the `X-Forwarded-Prefix` header without prior sanitization, an attacker can provide a payload such as `/%2e%2e/evil`.\n\nThe vulnerability manifests in two ways:\n- Open Redirect: The application processes a redirect (e.g., router `redirectTo`). The decoded traversal payload manipulates the Location header, forcing the browser to an unintended path or external domain.\n- Server-Side Request Steering: The manipulated prefix is used as the base path for server-side `HttpClient` requests. This causes the server to make requests to unintended internal paths or external endpoints.\n\n### Attack Preconditions\n- The application must use Angular SSR.\n- The application must perform internal redirects or use relative URLs in server-side `HttpClient` requests.\n- The upstream infrastructure (Reverse Proxy/CDN) must pass the `X-Forwarded-Prefix` header to the SSR process without stripping or sanitizing it.\n\n### Workarounds\nUntil the patch is applied, developers should manually sanitize the `X-Forwarded-Prefix` header in their `server.ts`. The workaround involves decoding the component to catch encoded traversal attempts before normalization:\n\n\n```ts\napp.use((req, res, next) => {\n  let prefix = req.headers['x-forwarded-prefix'];\n  if (Array.isArray(prefix)) prefix = prefix[0];\n\n  if (prefix) {\n    try {\n      // Decode the prefix to catch encoded characters like %2e (dots)\n      const decodedPrefix = decodeURIComponent(prefix);\n      \n      // Sanitize: remove traversal attempts and ensure a safe leading slash\n      req.headers['x-forwarded-prefix'] = decodedPrefix\n        .replace(/\\.\\./g, '')       // Remove any dot-dot sequences\n        .replace(/^[/\\\\]+/, '/');   // Ensure it starts with exactly one slash\n    } catch (e) {\n      // If decoding fails, remove the potentially malicious header entirely\n      delete req.headers['x-forwarded-prefix'];\n    }\n  }\n  next();\n});\n```\n### Configuring Trusted Proxy Headers\nBy default, Angular ignores all X-Forwarded-* headers. If your application is behind a trusted reverse proxy (like a load balancer) that sets these headers, you can configure Angular to trust them.\nYou can configure trustProxyHeaders when initializing the application engine:\n\n```ts\nconst appEngine = new AngularAppEngine({\n  // Trust specific headers\n  trustProxyHeaders: ['x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-prefix'], \n});\n\nconst nodeAppEngine = new AngularNodeAppEngine({\n  // Trust all X-Forwarded-* headers\n  trustProxyHeaders: true, \n});\n```\n\n### Patches\n- 22.0.0-next.7\n- 21.2.9\n- 20.3.25\n- 19.2.25\n\n### Resources\n\n- https://github.com/angular/angular-cli/pull/33031\n- https://angular.dev/best-practices/security#configuring-trusted-proxy-headers",
+      "reported_by": null,
+      "title": "Angular SSR has Open Redirect and Request Steering via Encoded X-Forwarded-Prefix",
+      "metadata": null,
+      "cves": ["CVE-2026-44437"],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "@angular/ssr",
+      "vulnerable_versions": ">=21.0.0-next.0 <21.2.9",
+      "github_advisory_id": "GHSA-69xr-m8h6-h664",
+      "recommendation": "Upgrade to version 21.2.9 or later",
+      "patched_versions": ">=21.2.9",
+      "updated": "2026-05-06T23:42:14.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": ["CWE-22", "CWE-601"],
+      "url": "https://github.com/advisories/GHSA-69xr-m8h6-h664"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 1,
+      "critical": 0
+    },
+    "dependencies": 192,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 192
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-05-08T09:15:43.530Z",
+  "tool": "pnpm audit",
+  "scope": "workspace dependency audit (post-fix)",
+  "results": {
+    "all": {
+      "exitCode": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 1,
+          "moderate": 1,
+          "high": 0,
+          "critical": 0
+        },
+        "dependencies": 1322,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 1322
+      },
+      "advisories": [
+        {
+          "id": 1117015,
+          "severity": "moderate",
+          "module": "postcss",
+          "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+          "recommendation": "Upgrade to version 8.5.10 or later",
+          "patchedVersions": ">=8.5.10",
+          "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+          "cves": ["CVE-2026-41305"],
+          "paths": ["apps__client>postcss"]
+        },
+        {
+          "id": 1109537,
+          "severity": "low",
+          "module": "tmp",
+          "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+          "recommendation": "Upgrade to version 0.2.4 or later",
+          "patchedVersions": ">=0.2.4",
+          "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+          "cves": ["CVE-2025-54798"],
+          "paths": [".>commitizen>inquirer>external-editor>tmp"]
+        }
+      ]
+    },
+    "prod": {
+      "exitCode": 0,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "dependencies": 192,
+        "devDependencies": 0,
+        "optionalDependencies": 0,
+        "totalDependencies": 192
+      },
+      "advisories": []
+    }
+  }
+}
