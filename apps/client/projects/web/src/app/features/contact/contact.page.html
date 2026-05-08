@@ -1,9 +1,14 @@
-<section class="bg-brand-navy text-brand-white py-20 text-center">
-  <div class="mx-auto max-w-4xl px-4 lg:px-6">
+<section
+  class="bg-brand-navy text-brand-white py-20 text-center"
+  [style.background-color]="'var(--kr-brand-navy)'"
+>
+  <div
+    class="bg-brand-navy mx-auto max-w-4xl rounded-3xl border border-white/10 px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/24%)] lg:px-8"
+  >
     <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
       Parlons de votre projet.
     </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-neutral-300">
+    <p class="text-brand-white/90 mx-auto mt-6 max-w-2xl text-lg">
       Que vous soyez &eacute;tudiant, professionnel, entrepreneur ou entreprise,
       nous avons une solution adapt&eacute;e &agrave; votre objectif.
     </p>
@@ -21,7 +26,7 @@
         loading="lazy"
         class="h-60 w-full object-cover"
       />
-      <figcaption class="p-4 text-center text-sm text-neutral-700">
+      <figcaption class="text-brand-navy p-4 text-center text-sm">
         Un parcours simple pour clarifier votre besoin et activer la bonne
         solution.
       </figcaption>
@@ -66,7 +71,7 @@
           <div>
             <label
               for="name"
-              class="mb-2 block text-sm font-semibold text-neutral-800"
+              class="text-brand-navy mb-2 block text-sm font-semibold"
             >
               Nom complet <span class="text-red-500" aria-hidden="true">*</span>
             </label>
@@ -96,7 +101,7 @@
           <div>
             <label
               for="email"
-              class="mb-2 block text-sm font-semibold text-neutral-800"
+              class="text-brand-navy mb-2 block text-sm font-semibold"
             >
               Adresse e-mail
               <span class="text-red-500" aria-hidden="true">*</span>
@@ -131,7 +136,7 @@
           <div>
             <label
               for="subject"
-              class="mb-2 block text-sm font-semibold text-neutral-800"
+              class="text-brand-navy mb-2 block text-sm font-semibold"
             >
               Objectif <span class="text-red-500" aria-hidden="true">*</span>
             </label>
@@ -164,7 +169,7 @@
             <div>
               <label
                 for="country"
-                class="mb-2 block text-sm font-semibold text-neutral-800"
+                class="text-brand-navy mb-2 block text-sm font-semibold"
               >
                 Pays <span class="text-red-500" aria-hidden="true">*</span>
               </label>
@@ -196,7 +201,7 @@
             <div>
               <label
                 for="serviceType"
-                class="mb-2 block text-sm font-semibold text-neutral-800"
+                class="text-brand-navy mb-2 block text-sm font-semibold"
               >
                 Type de service
                 <span class="text-red-500" aria-hidden="true">*</span>
@@ -204,7 +209,7 @@
               <select
                 id="serviceType"
                 formControlName="serviceType"
-                class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm text-neutral-800 transition outline-none focus:ring-2"
+                class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white text-brand-navy h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm transition outline-none focus:ring-2"
                 [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(serviceType) }"
                 aria-required="true"
                 [attr.aria-invalid]="isInvalid(serviceType)"
@@ -219,7 +224,7 @@
           <div>
             <label
               for="message"
-              class="mb-2 block text-sm font-semibold text-neutral-800"
+              class="text-brand-navy mb-2 block text-sm font-semibold"
             >
               Message <span class="text-red-500" aria-hidden="true">*</span>
             </label>
