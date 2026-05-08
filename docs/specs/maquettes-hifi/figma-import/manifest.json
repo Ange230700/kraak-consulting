@@ -1,0 +1,16 @@
+{
+  "project": "kraak-hifi-mvp",
+  "description": "Frames SVG importables dans Figma + tokens design",
+  "pages": [
+    { "name": "Accueil", "file": "accueil-frame.svg", "size": "1440x2400" },
+    { "name": "A propos", "file": "a-propos-frame.svg", "size": "1440x2200" },
+    { "name": "Services", "file": "services-frame.svg", "size": "1440x2300" },
+    {
+      "name": "Programmes",
+      "file": "programmes-frame.svg",
+      "size": "1440x2300"
+    },
+    { "name": "Contact", "file": "contact-frame.svg", "size": "1440x2200" }
+  ],
+  "tokens": "design-tokens.json"
+}
