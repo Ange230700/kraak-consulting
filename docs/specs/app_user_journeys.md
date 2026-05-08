@@ -125,6 +125,53 @@ Règle MVP :
 - ne pas ajouter d'onglet `Profil` dédié tant que le besoin n'est pas confirmé
 - ne pas introduire de menu hamburger principal
 
+### Carte de navigation complète
+
+```mermaid
+flowchart TD
+    start(["Ouverture de l'app"])
+    auth{"Session\nvalide ?"}
+    signin["Écran Sign in"]
+    onboarding{"Onboarding\nrequis ?"}
+    first_access["Premier accès\nonboarding"]
+
+    subgraph tabs["Navigation par onglets — post-connexion"]
+        home["Accueil\n(onglet 1)"]
+        programs["Programmes\n(onglet 2)"]
+        announcements["Annonces\n(onglet 3)"]
+        support["Support\n(onglet 4)"]
+    end
+
+    program_detail["Détail programme"]
+    session_detail["Détail session"]
+    resource_detail["Détail ressource"]
+    announcement_detail["Détail annonce"]
+    support_form["Formulaire support"]
+    logout(["Log out"])
+
+    start --> auth
+    auth -- "non" --> signin
+    signin -- "succès" --> onboarding
+    auth -- "oui" --> onboarding
+    onboarding -- "oui" --> first_access
+    first_access --> home
+    onboarding -- "non" --> home
+
+    home --> program_detail
+    home --> session_detail
+    home --> announcement_detail
+    programs --> program_detail
+    program_detail --> session_detail
+    program_detail --> resource_detail
+    announcements --> announcement_detail
+    support --> support_form
+
+    home -. "Log out" .-> logout
+    programs -. "Log out" .-> logout
+    announcements -. "Log out" .-> logout
+    support -. "Log out" .-> logout
+```
+
 ---
 
 ## 5. Parcours Détaillés Et Critères D'Acceptation
