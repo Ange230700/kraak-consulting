@@ -17,6 +17,8 @@ describe('site-seo', () => {
       'programmes',
       'ressources',
       'contact',
+      'mentions-legales',
+      'politique-de-confidentialite',
     ]);
   });
 

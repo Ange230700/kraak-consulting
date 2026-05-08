@@ -48,7 +48,10 @@ export class Footer {
   ];
 
   protected readonly policyLinks: FooterLink[] = [
-    { label: 'Politique de confidentialit\u00E9', path: '/a-propos' },
-    { label: 'Conditions d\u2019utilisation', path: '/contact' },
+    { label: 'Mentions l\u00E9gales', path: '/mentions-legales' },
+    {
+      label: 'Politique de confidentialit\u00E9',
+      path: '/politique-de-confidentialite',
+    },
   ];
 }
