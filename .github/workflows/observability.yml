@@ -11,12 +11,29 @@ permissions:
 
 jobs:
   uptime-check:
-    name: Uptime Check
+    name: Uptime Check (${{ matrix.environment }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - environment: staging
+            # Pas d'URL web staging stable (les previews Vercel changent a chaque commit
+            # et le branch alias a la protection SSO activee). On utilise la meme home
+            # production pour le check web ; la valeur distincte de ce job est le check
+            # de l'API staging.
+            web_url: https://kraak-consulting.vercel.app
+            api_url: https://kraak-api-staging.onrender.com
+            alert_issue_title: '[ALERT][DEP-05][staging] Observability check failure'
+          - environment: production
+            web_url: https://kraak-consulting.vercel.app
+            api_url: https://kraak-api-prod.onrender.com
+            alert_issue_title: '[ALERT][DEP-05][production] Observability check failure'
     env:
-      KRAAK_OBSERVABILITY_WEB_URL: https://kraak-consulting.vercel.app
-      KRAAK_OBSERVABILITY_API_URL: https://kraak-api-staging.onrender.com
-      ALERT_ISSUE_TITLE: '[ALERT][DEP-05] Observability check failure'
+      KRAAK_OBSERVABILITY_ENVIRONMENT: ${{ matrix.environment }}
+      KRAAK_OBSERVABILITY_WEB_URL: ${{ matrix.web_url }}
+      KRAAK_OBSERVABILITY_API_URL: ${{ matrix.api_url }}
+      ALERT_ISSUE_TITLE: ${{ matrix.alert_issue_title }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +50,7 @@ jobs:
       - name: Publish workflow summary
         if: always()
         run: |
-          echo '## Observability' >> "$GITHUB_STEP_SUMMARY"
+          echo "## Observability (${KRAAK_OBSERVABILITY_ENVIRONMENT})" >> "$GITHUB_STEP_SUMMARY"
           echo "- Web: $KRAAK_OBSERVABILITY_WEB_URL" >> "$GITHUB_STEP_SUMMARY"
           echo "- API: $KRAAK_OBSERVABILITY_API_URL/health" >> "$GITHUB_STEP_SUMMARY"
           echo "- Result: ${{ steps.observability.outcome }}" >> "$GITHUB_STEP_SUMMARY"
@@ -50,6 +67,7 @@ jobs:
               '## Incident',
               '',
               '- Workflow: `Observability`',
+              `- Environnement: ${process.env.KRAAK_OBSERVABILITY_ENVIRONMENT}`,
               `- Run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
               `- Web cible: ${process.env.KRAAK_OBSERVABILITY_WEB_URL}`,
               `- API cible: ${process.env.KRAAK_OBSERVABILITY_API_URL}/health`,
