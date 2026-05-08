@@ -66,19 +66,33 @@ Fichier: `.github/workflows/observability.yml`
 
 Comportement:
 
-1. toutes les 15 minutes, le workflow verifie la home web et `GET /health`
-2. en cas d echec, il ouvre une issue unique `[ALERT][DEP-05] Observability check failure`
-3. si l issue existe deja, il ajoute simplement un commentaire horodate
-4. quand les checks repassent au vert, le workflow commente puis ferme l issue
+1. toutes les 15 minutes, le workflow execute deux checks (staging puis production)
+2. pour chaque environnement, le workflow verifie la home web et `GET /health`
+3. en cas d echec, il ouvre (ou met a jour) une issue dediee a l environnement
+4. quand les checks repassent au vert, le workflow commente puis ferme l issue dediee
 
 Valeurs versionnees actuellement dans le workflow:
 
-- `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app`
-- `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com`
+- staging
+  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app` (aucune URL web staging stable ; les previews Vercel changent a chaque commit et le branch alias a SSO)
+  - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com`
+  - issue: `[ALERT][DEP-05][staging] Observability check failure`
+- production
+  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app`
+  - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com`
+  - issue: `[ALERT][DEP-05][production] Observability check failure`
 
 ## Exploitation manuelle
 
 Commande locale ou CI:
+
+```bash
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
+KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com \
+pnpm check:observability
+```
+
+Commande pour la cible staging:
 
 ```bash
 KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
