@@ -57,6 +57,32 @@ isolation totale des secrets et des projets de plateforme.
 | Branch protection  | `main` protégée (review + status checks) ; tags `v*` créés depuis `main` uniquement  |
 | Runbook            | `docs/runbooks/RELEASE_PROD.md` documente la procédure tag → review → deploy → smoke |
 
+### Pipeline de release production
+
+```mermaid
+flowchart LR
+    dev["Branche courte\nfeat/* / fix/*"]
+    staging_br(["staging\nintégration"])
+    staging_deploy["Staging\nRender + Vercel\n+ Supabase staging"]
+    main_br(["main\nrelease"])
+    tag["git tag v*.*.*\nSemVer"]
+    wf["Workflow\nrelease-prod.yml"]
+    gh_env{{"GitHub Environment\nproduction\napprobation requise"}}
+    render_prod[("Render\nkraak-api-prod")]
+    vercel_prod[("Vercel\nsite web prod")]
+    supa_prod[("Supabase\nkraak-prod")]
+
+    dev -- "PR → merge" --> staging_br
+    staging_br -- "déploiement auto" --> staging_deploy
+    staging_br -- "PR release" --> main_br
+    main_br -- "créer le tag" --> tag
+    tag -- "déclenche" --> wf
+    wf -- "review humaine" --> gh_env
+    gh_env -- "approuvé" --> render_prod
+    gh_env -- "approuvé" --> vercel_prod
+    gh_env -- "approuvé" --> supa_prod
+```
+
 ### Séparation des projets Supabase
 
 Le projet Supabase actuel est rattaché à l'environnement **staging**. La prod

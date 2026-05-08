@@ -147,6 +147,135 @@ app_user ← notification (1:N, user_id FK)
 app_user ← support_request (1:N, user_id FK)
 ```
 
+### 4.3bis Diagramme entité-relation (ERD)
+
+```mermaid
+erDiagram
+    AUTH_USERS {
+        uuid id PK
+    }
+    APP_USER {
+        uuid id PK
+        user_role role
+        string email
+        string full_name
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    PARTICIPANT {
+        uuid id PK
+        uuid user_id FK
+        lifecycle_status status
+        string location
+        string reference_code
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    PROGRAM {
+        uuid id PK
+        string slug
+        publication_status status
+        program_visibility visibility
+        string title
+        text description
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    COHORT {
+        uuid id PK
+        uuid program_id FK
+        cohort_status status
+        int capacity
+        date start_date
+        date end_date
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    SESSION {
+        uuid id PK
+        uuid cohort_id FK
+        uuid trainer_id FK
+        session_status status
+        location_type location_type
+        string location
+        timestamptz scheduled_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    RESOURCE {
+        uuid id PK
+        uuid program_id FK
+        uuid cohort_id FK
+        resource_type type
+        resource_theme theme
+        resource_audience audience
+        string title
+        string url
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    ANNOUNCEMENT {
+        uuid id PK
+        uuid program_id FK
+        uuid cohort_id FK
+        audience_type audience
+        announcement_priority priority
+        string title
+        text body
+        timestamptz published_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    ENROLLMENT {
+        uuid id PK
+        uuid participant_id FK
+        uuid program_id FK
+        uuid cohort_id FK
+        enrollment_status status
+        timestamptz enrolled_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    NOTIFICATION {
+        uuid id PK
+        uuid user_id FK
+        notification_type type
+        notification_channel channel
+        string title
+        text body
+        bool read
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    SUPPORT_REQUEST {
+        uuid id PK
+        uuid user_id FK
+        uuid assigned_to FK
+        support_request_status status
+        support_category category
+        string subject
+        text body
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    AUTH_USERS ||--|| APP_USER : "id partagé"
+    APP_USER ||--o| PARTICIPANT : "user_id"
+    APP_USER ||--o{ SESSION : "trainer_id"
+    APP_USER ||--o{ NOTIFICATION : "user_id"
+    APP_USER ||--o{ SUPPORT_REQUEST : "user_id"
+    APP_USER ||--o{ SUPPORT_REQUEST : "assigned_to"
+    PROGRAM ||--o{ COHORT : "program_id"
+    COHORT ||--o{ SESSION : "cohort_id"
+    PROGRAM ||--o{ RESOURCE : "program_id"
+    COHORT ||--o{ RESOURCE : "cohort_id"
+    PROGRAM ||--o{ ANNOUNCEMENT : "program_id"
+    COHORT ||--o{ ANNOUNCEMENT : "cohort_id"
+    PARTICIPANT ||--o{ ENROLLMENT : "participant_id"
+    PROGRAM ||--o{ ENROLLMENT : "program_id"
+    COHORT ||--o{ ENROLLMENT : "cohort_id"
+```
+
 ### 4.4 Contraintes notables
 
 - `cohort.capacity` : `CHECK (capacity > 0)`
