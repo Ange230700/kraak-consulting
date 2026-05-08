@@ -1,0 +1,253 @@
+
+> @kraak/client@0.0.0 test:web C:\Users\USER\kraak-consulting\apps\client
+> ng test web --watch=false
+
+Using Vitest configuration file: C:\Users\USER\kraak-consulting\apps\client\projects\web\vitest.config.ts
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m                                         [2m | [22m[1mNames[22m                                                    [2m | [22m [1mRaw size[22m
+[32mstyles.css[39m                                                  [2m | [22m[2mstyles[22m                                                   [2m | [22m [36m94.85 kB[39m[2m | [22m
+[32mchunk-TC67IB6A.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m41.79 kB[39m[2m | [22m
+[32mchunk-HDWQHVGW.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m39.18 kB[39m[2m | [22m
+[32mchunk-GBMJEXBG.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m28.58 kB[39m[2m | [22m
+[32mchunk-IU7NG5QW.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m26.16 kB[39m[2m | [22m
+[32mchunk-RZGQE2LS.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m25.38 kB[39m[2m | [22m
+[32mspec-app-core-auth-web-auth.service.js[39m                      [2m | [22m[2mspec-app-core-auth-web-auth.service[22m                      [2m | [22m [36m22.51 kB[39m[2m | [22m
+[32mchunk-FTBDWNJ7.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m19.64 kB[39m[2m | [22m
+[32mchunk-BHQAGMSJ.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m14.42 kB[39m[2m | [22m
+[32mchunk-QL2XNOHN.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m13.76 kB[39m[2m | [22m
+[32mchunk-4T7RJDMQ.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m12.77 kB[39m[2m | [22m
+[32mspec-app-features-participant-dashboard-dashboard.page.js[39m   [2m | [22m[2mspec-app-features-participant-dashboard-dashboard.page[22m   [2m | [22m [36m12.61 kB[39m[2m | [22m
+[32mchunk-K4TCTMB5.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m12.05 kB[39m[2m | [22m
+[32mchunk-U2CQECPH.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m11.94 kB[39m[2m | [22m
+[32mchunk-WCHXJZFA.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m10.64 kB[39m[2m | [22m
+[32mchunk-KF3VODA4.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m [36m10.07 kB[39m[2m | [22m
+[32mchunk-CBH4MNWQ.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m9.88 kB[39m[2m | [22m
+[32mspec-app-features-contact-contact.page.js[39m                   [2m | [22m[2mspec-app-features-contact-contact.page[22m                   [2m | [22m  [36m8.62 kB[39m[2m | [22m
+[32mchunk-TNXLB6F3.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m8.44 kB[39m[2m | [22m
+[32mspec-app-core-auth-auth.guard.js[39m                            [2m | [22m[2mspec-app-core-auth-auth.guard[22m                            [2m | [22m  [36m8.42 kB[39m[2m | [22m
+[32mspec-app-shared-card-card.js[39m                                [2m | [22m[2mspec-app-shared-card-card[22m                                [2m | [22m  [36m7.92 kB[39m[2m | [22m
+[32mchunk-BU22URIG.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m7.84 kB[39m[2m | [22m
+[32mspec-app-app.routes.js[39m                                      [2m | [22m[2mspec-app-app.routes[22m                                      [2m | [22m  [36m7.59 kB[39m[2m | [22m
+[32mspec-app-shared-testimonials-testimonials.js[39m                [2m | [22m[2mspec-app-shared-testimonials-testimonials[22m                [2m | [22m  [36m7.49 kB[39m[2m | [22m
+[32mspec-app-core-ml-ml-runtime.service.js[39m                      [2m | [22m[2mspec-app-core-ml-ml-runtime.service[22m                      [2m | [22m  [36m7.18 kB[39m[2m | [22m
+[32mspec-app-seo-seo.service.js[39m                                 [2m | [22m[2mspec-app-seo-seo.service[22m                                 [2m | [22m  [36m6.50 kB[39m[2m | [22m
+[32mchunk-KHXZP2NP.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m6.31 kB[39m[2m | [22m
+[32mspec-app-core-animations-gsap-animations.service.js[39m         [2m | [22m[2mspec-app-core-animations-gsap-animations.service[22m         [2m | [22m  [36m6.13 kB[39m[2m | [22m
+[32mspec-app-shared-section-section.js[39m                          [2m | [22m[2mspec-app-shared-section-section[22m                          [2m | [22m  [36m5.78 kB[39m[2m | [22m
+[32mchunk-3OXTAYTD.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m5.01 kB[39m[2m | [22m
+[32mspec-app-features-auth-sign-up.page.js[39m                      [2m | [22m[2mspec-app-features-auth-sign-up.page[22m                      [2m | [22m  [36m4.95 kB[39m[2m | [22m
+[32mspec-app-shared-faq-accordion-faq-accordion.js[39m              [2m | [22m[2mspec-app-shared-faq-accordion-faq-accordion[22m              [2m | [22m  [36m4.88 kB[39m[2m | [22m
+[32mchunk-RSTWSNOR.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m4.75 kB[39m[2m | [22m
+[32mspec-app-features-auth-sign-in.page.js[39m                      [2m | [22m[2mspec-app-features-auth-sign-in.page[22m                      [2m | [22m  [36m4.45 kB[39m[2m | [22m
+[32mspec-app-layouts-navbar-navbar.js[39m                           [2m | [22m[2mspec-app-layouts-navbar-navbar[22m                           [2m | [22m  [36m4.44 kB[39m[2m | [22m
+[32mspec-app-core-analytics-analytics.service.js[39m                [2m | [22m[2mspec-app-core-analytics-analytics.service[22m                [2m | [22m  [36m4.19 kB[39m[2m | [22m
+[32mspec-app-app.js[39m                                             [2m | [22m[2mspec-app-app[22m                                             [2m | [22m  [36m3.56 kB[39m[2m | [22m
+[32mchunk-I643A5R5.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m3.36 kB[39m[2m | [22m
+[32mspec-app-core-runtime-runtime-config.js[39m                     [2m | [22m[2mspec-app-core-runtime-runtime-config[22m                     [2m | [22m  [36m3.13 kB[39m[2m | [22m
+[32mspec-app-shared-cta-banner-cta-banner.js[39m                    [2m | [22m[2mspec-app-shared-cta-banner-cta-banner[22m                    [2m | [22m  [36m3.04 kB[39m[2m | [22m
+[32mspec-app-features-programs-programs.page.js[39m                 [2m | [22m[2mspec-app-features-programs-programs.page[22m                 [2m | [22m  [36m2.77 kB[39m[2m | [22m
+[32mspec-app-seo-site-seo.js[39m                                    [2m | [22m[2mspec-app-seo-site-seo[22m                                    [2m | [22m  [36m2.77 kB[39m[2m | [22m
+[32mspec-app-shared-badge-badge.js[39m                              [2m | [22m[2mspec-app-shared-badge-badge[22m                              [2m | [22m  [36m2.40 kB[39m[2m | [22m
+[32mspec-app-features-auth-password-reset.page.js[39m               [2m | [22m[2mspec-app-features-auth-password-reset.page[22m               [2m | [22m  [36m2.36 kB[39m[2m | [22m
+[32mspec-app-features-home-home.page.js[39m                         [2m | [22m[2mspec-app-features-home-home.page[22m                         [2m | [22m  [36m2.28 kB[39m[2m | [22m
+[32mspec-app-core-error-handler-kraak-error-handler.js[39m          [2m | [22m[2mspec-app-core-error-handler-kraak-error-handler[22m          [2m | [22m  [36m2.26 kB[39m[2m | [22m
+[32mspec-app-features-legal-politique-de-confidentialite.page.js[39m[2m | [22m[2mspec-app-features-legal-politique-de-confidentialite.page[22m[2m | [22m  [36m1.73 kB[39m[2m | [22m
+[32mspec-app-features-legal-mentions-legales.page.js[39m            [2m | [22m[2mspec-app-features-legal-mentions-legales.page[22m            [2m | [22m  [36m1.63 kB[39m[2m | [22m
+[32mspec-app-features-services-services.page.js[39m                 [2m | [22m[2mspec-app-features-services-services.page[22m                 [2m | [22m  [36m1.58 kB[39m[2m | [22m
+[32mspec-app-layouts-footer-footer.js[39m                           [2m | [22m[2mspec-app-layouts-footer-footer[22m                           [2m | [22m  [36m1.53 kB[39m[2m | [22m
+[32mspec-app-features-about-about.page.js[39m                       [2m | [22m[2mspec-app-features-about-about.page[22m                       [2m | [22m  [36m1.50 kB[39m[2m | [22m
+[32mspec-app-features-resources-resources.page.js[39m               [2m | [22m[2mspec-app-features-resources-resources.page[22m               [2m | [22m  [36m1.34 kB[39m[2m | [22m
+[32mchunk-N6WIZF7Z.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m  [36m1.31 kB[39m[2m | [22m
+[32minit-testbed.js[39m                                             [2m | [22m[2minit-testbed[22m                                             [2m | [22m  [36m1.21 kB[39m[2m | [22m
+[32mvitest-mock-patch.js[39m                                        [2m | [22m[2mvitest-mock-patch[22m                                        [2m | [22m[36m969 bytes[39m[2m | [22m
+[32mchunk-IRAYDD35.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m[36m797 bytes[39m[2m | [22m
+[32mchunk-2IKP2NNV.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m[36m781 bytes[39m[2m | [22m
+[32mchunk-VLEAADXF.js[39m                                           [2m | [22m[2m-[22m                                                        [2m | [22m[36m567 bytes[39m[2m | [22m
+
+[1m [22m                                                           [2m | [22m[1mInitial total[22m                                            [2m | [22m[1m569.96 kB[22m
+
+[1mLazy chunk files[22m                                            [2m | [22m[1mNames[22m                                                    [2m | [22m [1mRaw size[22m
+[32mchunk-575VU4FJ.js[39m                                           [2m | [22m[2mcontact-page[22m                                             [2m | [22m[36m313 bytes[39m[2m | [22m
+[32mchunk-3MIUHVOM.js[39m                                           [2m | [22m[2mpassword-reset-page[22m                                      [2m | [22m[36m295 bytes[39m[2m | [22m
+[32mchunk-FEDPLXQL.js[39m                                           [2m | [22m[2msign-in-page[22m                                             [2m | [22m[36m281 bytes[39m[2m | [22m
+[32mchunk-OMZAKDQ7.js[39m                                           [2m | [22m[2msign-up-page[22m                                             [2m | [22m[36m281 bytes[39m[2m | [22m
+[32mchunk-EFP2NC2I.js[39m                                           [2m | [22m[2mpolitique-de-confidentialite-page[22m                        [2m | [22m[36m261 bytes[39m[2m | [22m
+[32mchunk-CCLSHU3R.js[39m                                           [2m | [22m[2mdashboard-page[22m                                           [2m | [22m[36m257 bytes[39m[2m | [22m
+[32mchunk-4MFUCMFK.js[39m                                           [2m | [22m[2mresources-page[22m                                           [2m | [22m[36m257 bytes[39m[2m | [22m
+[32mchunk-ZZXEQSPH.js[39m                                           [2m | [22m[2mservices-page[22m                                            [2m | [22m[36m255 bytes[39m[2m | [22m
+[32mchunk-CE66B5I7.js[39m                                           [2m | [22m[2mprograms-page[22m                                            [2m | [22m[36m255 bytes[39m[2m | [22m
+[32mchunk-GMZXIC42.js[39m                                           [2m | [22m[2mabout-page[22m                                               [2m | [22m[36m249 bytes[39m[2m | [22m
+[32mchunk-NCN4OMHX.js[39m                                           [2m | [22m[2mhome-page[22m                                                [2m | [22m[36m247 bytes[39m[2m | [22m
+[32mchunk-AMQATDYC.js[39m                                           [2m | [22m[2mmentions-legales-page[22m                                    [2m | [22m[36m239 bytes[39m[2m | [22m
+
+Application bundle generation complete. [5.969 seconds] - 2026-05-08T20:47:40.021Z
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.4 [39m[90mC:/Users/USER/kraak-consulting/apps/client[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/animations/gsap-animations.service.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 2344[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle selector when figures exist [33m 948[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle section animations [33m 342[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/legal/mentions-legales.page.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1061[2mms[22m[39m
+       [33m[2m✓[22m[39m When displayed, Then it shows the main heading [33m 725[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/app.routes.spec.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 4427[2mms[22m[39m
+       [33m[2m✓[22m[39m When each marketing route loadComponent is invoked Then it resolves to a component [33m 4298[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/auth/sign-in.page.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1433[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 336[2mms[22m[39m
+     [33m[2m✓[22m[39m Given the web auth flow, when the page renders, then the login form and auth links are visible [33m 603[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/auth/sign-up.page.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 322[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/faq-accordion/faq-accordion.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 779[2mms[22m[39m
+     [33m[2m✓[22m[39m Given une liste d items, When le composant est rendu, Then chaque question est présente [33m 524[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/participant/dashboard/dashboard.page.spec.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 2567[2mms[22m[39m
+       [33m[2m✓[22m[39m should create the component [33m 325[2mms[22m[39m
+       [33m[2m✓[22m[39m Given a dashboard API error, When the page loads, Then it shows an actionable error message and a retry button [33m 510[2mms[22m[39m
+       [33m[2m✓[22m[39m Given a non-Error rejection value, When the page loads, Then it shows the generic fallback message [33m 373[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/layouts/navbar/navbar.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 407[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/cta-banner/cta-banner.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 617[2mms[22m[39m
+     [33m[2m✓[22m[39m Given an empty ctaContext, when onCtaClick is called, then the tracking payload uses unknown as context [33m 349[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/seo/seo.service.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 134[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/card/card.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 173[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/auth/web-auth.service.spec.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 145[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/badge/badge.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/legal/politique-de-confidentialite.page.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1635[2mms[22m[39m
+       [33m[2m✓[22m[39m When displayed, Then it shows the main heading [33m 1114[2mms[22m[39m
+       [33m[2m✓[22m[39m When displayed, Then it includes the RGPD rights section [33m 350[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/app.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 678[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the app shell with navbar, main, and footer [33m 315[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/auth/auth.guard.spec.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 121[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/analytics/analytics.service.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/testimonials/testimonials.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/shared/section/section.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/runtime/runtime-config.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/seo/site-seo.spec.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/ml/ml-runtime.service.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/layouts/footer/footer.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 174[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/core/error-handler/kraak-error-handler.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/resources/resources.page.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 5539[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 3322[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the main heading and the three resource pillars [33m 2210[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/auth/password-reset.page.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 93[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/about/about.page.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 5736[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 338[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the heading [33m 3926[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the three intervention levels and values [33m 1468[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/programs/programs.page.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 6423[2mms[22m[39m
+     [33m[2m✓[22m[39m Given the Programs page route, when the component initializes, then the page instance is created [33m 320[2mms[22m[39m
+     [33m[2m✓[22m[39m Given the Programs page, when the view is rendered, then the heading and key program cards are visible [33m 3160[2mms[22m[39m
+     [33m[2m✓[22m[39m Given the registration process section, when the Programs page is rendered, then the four expected steps are displayed in order [33m 1781[2mms[22m[39m
+     [33m[2m✓[22m[39m Given the Programs page CTA, when a visitor reaches the end of the page, then the registration call-to-action points to contact [33m 1156[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/services/services.page.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 6884[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [32m 300[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the heading [33m 4759[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the four consulting service families [33m 1820[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/home/home.page.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 8131[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 434[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the consulting hero promise [33m 4115[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the primary consulting calls to action [33m 2014[2mms[22m[39m
+     [33m[2m✓[22m[39m should render the key solutions without repeating one service label only [33m 1537[2mms[22m[39m
+ [32m✓[39m [30m[46m web [49m[39m projects/web/src/app/features/contact/contact.page.spec.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 9820[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait afficher le titre principal "Parlons de votre projet" [33m 2957[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait afficher le formulaire avec les champs requis [33m 1781[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait marquer le formulaire comme invalide si les champs sont vides à la soumission [33m 1013[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait valider le formulaire avec des données correctes [33m 877[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait afficher un succès après une soumission réussie [33m 923[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait réinitialiser success à false au début d'une nouvelle soumission [33m 819[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait afficher les erreurs API renvoyées par le backend [33m 537[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait afficher le message générique si la réponse erreur ne contient pas de tableau errors [33m 569[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m      Tests [22m [1m[32m195 passed[39m[22m[90m (195)[39m
+[2m   Start at [22m 20:47:41
+[2m   Duration [22m 30.45s[2m (transform 4.21s, setup 19.08s, import 39.54s, tests 59.90s, environment 97.48s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    95.7 |    89.45 |   89.81 |   95.61 |                   
+ app               |     100 |      100 |     100 |     100 |                   
+  app.html         |     100 |      100 |     100 |     100 |                   
+  app.routes.ts    |     100 |      100 |     100 |     100 |                   
+  app.ts           |     100 |      100 |     100 |     100 |                   
+ ...core/analytics |   95.65 |    83.33 |     100 |   95.34 |                   
+  ...cs.service.ts |   95.65 |    83.33 |     100 |   95.34 | 58,70             
+ ...ore/animations |   74.38 |     65.3 |   77.77 |    73.5 |                   
+  ...ns.service.ts |   74.38 |     65.3 |   77.77 |    73.5 | ...17,424,439,480 
+ app/core/auth     |     100 |      100 |     100 |     100 |                   
+  auth.guard.ts    |     100 |      100 |     100 |     100 |                   
+  ...th.service.ts |     100 |      100 |     100 |     100 |                   
+ .../error-handler |   95.23 |    91.66 |     100 |   95.23 |                   
+  ...or-handler.ts |   95.23 |    91.66 |     100 |   95.23 | 36                
+ app/core/ml       |   93.87 |    77.77 |     100 |   93.47 |                   
+  ...me.service.ts |   93.47 |    77.77 |     100 |   93.02 | 71,77,89          
+  tfjs-config.ts   |     100 |      100 |     100 |     100 |                   
+ app/core/runtime  |     100 |      100 |     100 |     100 |                   
+  ...ime-config.ts |     100 |      100 |     100 |     100 |                   
+ ...features/about |     100 |      100 |     100 |     100 |                   
+  about.page.html  |     100 |      100 |     100 |     100 |                   
+  about.page.ts    |     100 |      100 |     100 |     100 |                   
+ app/features/auth |   84.48 |    68.42 |   76.92 |   85.23 |                   
+  ...form.utils.ts |     100 |    66.66 |     100 |     100 | 16-27             
+  ...set.page.html |      60 |        0 |       0 |   63.63 | 19,39-42,46-58,68 
+  ...reset.page.ts |      92 |    88.23 |     100 |   90.47 | 52,78             
+  ...-in.page.html |   90.78 |      100 |       0 |   91.89 | 120-122,144-146   
+  sign-in.page.ts  |     100 |      100 |     100 |     100 |                   
+  ...-up.page.html |   76.34 |        0 |       0 |   77.77 | ...92,196-208,218 
+  sign-up.page.ts  |     100 |    95.23 |     100 |     100 | 36                
+ ...atures/contact |   97.86 |    98.21 |      95 |   97.91 |                   
+  ...act.page.html |   97.09 |      100 |       0 |   97.08 | 62,90,125,249     
+  contact.page.ts  |     100 |    96.77 |     100 |     100 | 214               
+  ...ct.service.ts |     100 |      100 |     100 |     100 |                   
+ app/features/home |     100 |      100 |     100 |     100 |                   
+  home.page.html   |     100 |      100 |     100 |     100 |                   
+  home.page.ts     |     100 |      100 |     100 |     100 |                   
+ ...features/legal |     100 |      100 |     100 |     100 |                   
+  ...les.page.html |     100 |      100 |     100 |     100 |                   
+  ...gales.page.ts |     100 |      100 |     100 |     100 |                   
+  ...ite.page.html |     100 |      100 |     100 |     100 |                   
+  ...alite.page.ts |     100 |      100 |     100 |     100 |                   
+ ...pant/dashboard |   99.57 |    94.64 |   94.44 |   99.53 |                   
+  ...ard.page.html |     100 |      100 |     100 |     100 |                   
+  ...board.page.ts |   98.14 |    91.66 |   94.11 |      98 | 54                
+ ...tures/programs |     100 |      100 |     100 |     100 |                   
+  ...ams.page.html |     100 |      100 |     100 |     100 |                   
+  programs.page.ts |     100 |      100 |     100 |     100 |                   
+ ...ures/resources |     100 |      100 |     100 |     100 |                   
+  ...ces.page.html |     100 |      100 |     100 |     100 |                   
+  ...urces.page.ts |     100 |      100 |     100 |     100 |                   
+ ...tures/services |     100 |      100 |     100 |     100 |                   
+  ...ces.page.html |     100 |      100 |     100 |     100 |                   
+  services.page.ts |     100 |      100 |     100 |     100 |                   
+ ...layouts/footer |     100 |      100 |     100 |     100 |                   
+  footer.html      |     100 |      100 |     100 |     100 |                   
+  footer.ts        |     100 |      100 |     100 |     100 |                   
+ ...layouts/navbar |   86.36 |      100 |      50 |   93.75 |                   
+  navbar.html      |   81.81 |      100 |       0 |    92.3 | 40,56             
+  navbar.ts        |     100 |      100 |     100 |     100 |                   
+ app/seo           |     100 |      100 |     100 |     100 |                   
+  seo.service.ts   |     100 |      100 |     100 |     100 |                   
+  site-seo.json    |     100 |      100 |     100 |     100 |                   
+  site-seo.ts      |     100 |      100 |     100 |     100 |                   
+ app/shared/badge  |     100 |      100 |     100 |     100 |                   
+  badge.html       |     100 |      100 |     100 |     100 |                   
+  badge.ts         |     100 |      100 |     100 |     100 |                   
+ app/shared/card   |     100 |      100 |     100 |     100 |                   
+  card.html        |     100 |      100 |     100 |     100 |                   
+  card.ts          |     100 |      100 |     100 |     100 |                   
+ ...red/cta-banner |   94.11 |      100 |      75 |   96.55 |                   
+  cta-banner.html  |   89.47 |      100 |       0 |   94.44 | 32                
+  cta-banner.ts    |     100 |      100 |     100 |     100 |                   
+ .../faq-accordion |     100 |      100 |     100 |     100 |                   
+  ...ccordion.html |     100 |      100 |     100 |     100 |                   
+  faq-accordion.ts |     100 |      100 |     100 |     100 |                   
+ ...shared/section |     100 |       95 |     100 |     100 |                   
+  section.html     |     100 |       75 |     100 |     100 | 3                 
+  section.ts       |     100 |      100 |     100 |     100 |                   
+ ...d/testimonials |     100 |      100 |     100 |     100 |                   
+  ...imonials.html |     100 |      100 |     100 |     100 |                   
+  testimonials.ts  |     100 |      100 |     100 |     100 |                   
+ environments      |     100 |       80 |     100 |     100 |                   
+  ...ment.local.ts |     100 |       80 |     100 |     100 | 3                 
+-------------------|---------|----------|---------|---------|-------------------

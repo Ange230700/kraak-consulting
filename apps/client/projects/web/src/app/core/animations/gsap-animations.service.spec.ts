@@ -109,4 +109,178 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
     });
   });
+
+  describe('initializeButtonTransitions', () => {
+    it('should handle button animations', () => {
+      // Arrange: Create button
+      const button = document.createElement('button');
+      document.body.appendChild(button);
+
+      // Act: Initialize button animations
+      service.initializeButtonTransitions();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(button);
+    });
+  });
+
+  describe('initializeFormFieldAnimations', () => {
+    it('should handle form field animations', () => {
+      // Arrange: Create input
+      const input = document.createElement('input');
+      document.body.appendChild(input);
+
+      // Act: Initialize form field animations
+      service.initializeFormFieldAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(input);
+    });
+  });
+
+  describe('initializeListItemAnimations', () => {
+    it('should handle list item animations', () => {
+      // Arrange: Create list items
+      const li = document.createElement('li');
+      document.body.appendChild(li);
+
+      // Act: Initialize list animations
+      service.initializeListItemAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(li);
+    });
+  });
+
+  describe('initializeTextRevealAnimations', () => {
+    it('should handle text reveal animations', () => {
+      // Arrange: Create paragraph
+      const p = document.createElement('p');
+      p.textContent = 'Test text';
+      document.body.appendChild(p);
+
+      // Act: Initialize text animations
+      service.initializeTextRevealAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(p);
+    });
+  });
+
+  describe('initializeIconAnimations', () => {
+    it('should handle icon animations', () => {
+      // Arrange: Create SVG icon
+      const svg = document.createElement('svg');
+      document.body.appendChild(svg);
+
+      // Act: Initialize icon animations
+      service.initializeIconAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(svg);
+    });
+  });
+
+  describe('createPageTransition', () => {
+    it('should create a page transition promise', async () => {
+      // Act & Assert
+      const promise = service.createPageTransition();
+      await expect(promise).resolves.toBeUndefined();
+    });
+  });
+
+  describe('animatePageIn', () => {
+    it('should animate page entrance', () => {
+      // Act: Animate page in
+      service.animatePageIn();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+    });
+  });
+
+  describe('initializeSectionAnimations', () => {
+    it('should handle section animations', () => {
+      // Arrange: Create section
+      const section = document.createElement('section');
+      document.body.appendChild(section);
+
+      // Act: Initialize section animations
+      service.initializeSectionAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(section);
+    });
+  });
+
+  describe('initializeBadgeAnimations', () => {
+    it('should handle badge animations', () => {
+      // Arrange: Create badge
+      const badge = document.createElement('span');
+      badge.classList.add('badge');
+      document.body.appendChild(badge);
+
+      // Act: Initialize badge animations
+      service.initializeBadgeAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(badge);
+    });
+  });
+
+  describe('initializeMouseFollowAnimations', () => {
+    it('should handle mouse follow animations', () => {
+      // Arrange: Create interactive element
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+
+      // Act: Initialize mouse follow animations
+      service.initializeMouseFollowAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(link);
+    });
+  });
+
+  describe('initializeImageParallaxAnimations', () => {
+    it('should handle image parallax animations', () => {
+      // Arrange: Create image
+      const img = document.createElement('img');
+      img.src = 'test.jpg';
+      document.body.appendChild(img);
+
+      // Act: Initialize image animations
+      service.initializeImageParallaxAnimations();
+
+      // Assert: Service executes without error
+      expect(service).toBeTruthy();
+
+      // Cleanup
+      document.body.removeChild(img);
+    });
+  });
 });
