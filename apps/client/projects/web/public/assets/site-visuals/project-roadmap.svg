@@ -1,0 +1,30 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bg" x1="88" y1="64" x2="1080" y2="740" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#17305C" />
+            <stop offset="1" stop-color="#0B1F3B" />
+        </linearGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#bg)" />
+    <circle cx="988" cy="120" r="150" fill="#0DC2E8" fill-opacity="0.2" />
+    <circle cx="160" cy="720" r="220" fill="#D4A62F" fill-opacity="0.14" />
+    <rect x="180" y="170" width="840" height="460" rx="34" fill="#F8FCFF" />
+    <path d="M270 470C350 430 380 280 500 310C620 340 640 530 760 510C860 492 900 390 960 350" stroke="#0DC2E8"
+        stroke-width="14" stroke-linecap="round" />
+    <circle cx="270" cy="470" r="22" fill="#D4A62F" />
+    <circle cx="500" cy="310" r="22" fill="#D4A62F" />
+    <circle cx="760" cy="510" r="22" fill="#D4A62F" />
+    <circle cx="960" cy="350" r="22" fill="#D4A62F" />
+    <rect x="246" y="236" width="170" height="58" rx="14" fill="#E7F4FC" />
+    <rect x="448" y="236" width="170" height="58" rx="14" fill="#E7F4FC" />
+    <rect x="650" y="236" width="170" height="58" rx="14" fill="#E7F4FC" />
+    <rect x="852" y="236" width="132" height="58" rx="14" fill="#0B1F3B" />
+    <text x="279" y="272" fill="#2A496D" font-family="Segoe UI, Arial, sans-serif" font-size="24"
+        font-weight="600">Analyse</text>
+    <text x="490" y="272" fill="#2A496D" font-family="Segoe UI, Arial, sans-serif" font-size="24"
+        font-weight="600">Pilotage</text>
+    <text x="698" y="272" fill="#2A496D" font-family="Segoe UI, Arial, sans-serif" font-size="24"
+        font-weight="600">Suivi</text>
+    <text x="879" y="272" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="24"
+        font-weight="600">Impact</text>
+</svg>
