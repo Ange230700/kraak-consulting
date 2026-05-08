@@ -19,6 +19,11 @@ export class GsapAnimationsService {
    * Chaque figure se révèle au scroll avec un effet de fade-in + slide-up
    */
   initializeFigureAnimations(selector = 'figure.reveal-on-scroll'): void {
+    // Ensure we're in the browser environment (not SSR)
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     this.ngZone.runOutsideAngular(() => {
       const figures = document.querySelectorAll(selector);
 
@@ -45,6 +50,11 @@ export class GsapAnimationsService {
    * Animation de scale + shadow légère au survol
    */
   initializeInteractiveCardAnimations(selector = 'article'): void {
+    // Ensure we're in the browser environment (not SSR)
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     this.ngZone.runOutsideAngular(() => {
       const cards = document.querySelectorAll(selector);
 
@@ -75,6 +85,11 @@ export class GsapAnimationsService {
    * Effet de fade-in progressif pour les sections principales
    */
   initializePageEntranceAnimations(): void {
+    // Ensure we're in the browser environment (not SSR)
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     this.ngZone.runOutsideAngular(() => {
       // Hero section entrance
       gsap.from('section:first-child', {
@@ -102,6 +117,11 @@ export class GsapAnimationsService {
    * Nettoie les animations GSAP et ScrollTrigger (important pour eviter les memory leaks)
    */
   killAllAnimations(): void {
+    // Ensure we're in the browser environment (not SSR)
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     gsap.killTweensOf('*');
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
   }
