@@ -11,6 +11,8 @@ describe('Web PasswordResetPage', () => {
   const authService = {
     requestPasswordReset: vi.fn(),
   };
+  let messageService: MessageService;
+  let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     authService.requestPasswordReset.mockReset();
@@ -28,6 +30,9 @@ describe('Web PasswordResetPage', () => {
         MessageService,
       ],
     }).compileComponents();
+
+    messageService = TestBed.inject(MessageService);
+    messageServiceAddSpy = vi.spyOn(messageService, 'add');
   });
 
   it('should create', () => {
@@ -51,5 +56,12 @@ describe('Web PasswordResetPage', () => {
       ),
     });
     expect(fixture.componentInstance.successMessage()).toContain('email');
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'R\u00E9initialisation',
+      }),
+    );
   });
 });

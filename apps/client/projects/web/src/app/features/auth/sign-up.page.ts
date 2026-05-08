@@ -92,6 +92,7 @@ export default class SignUpPage {
 
       this.successMessage.set(response.message);
       this.messageService.add({
+        key: 'app-feedback',
         severity: 'success',
         summary: 'Inscription',
         detail: response.message,

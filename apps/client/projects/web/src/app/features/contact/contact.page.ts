@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -31,6 +32,9 @@ interface ServiceOption {
   category: ContactFormDto['category'];
 }
 
+const GENERIC_CONTACT_ERROR_MESSAGE =
+  'Une erreur est survenue. Veuillez r\u00E9essayer plus tard.';
+
 @Component({
   selector: 'kraak-contact-page',
   standalone: true,
@@ -47,6 +51,7 @@ interface ServiceOption {
 })
 export default class ContactPage {
   private readonly contactService = inject(ContactService);
+  private readonly messageService = inject(MessageService);
 
   protected readonly serviceOptions: ServiceOption[] = [
     { label: 'Formation', value: 'formation', category: 'program' },
@@ -124,12 +129,34 @@ export default class ContactPage {
       next: () => {
         this.loading.set(false);
         this.success.set(true);
+        this.messageService.add({
+          key: 'app-feedback',
+          severity: 'success',
+          summary: 'Contact',
+          detail:
+            'Votre message a bien ete envoye. Notre equipe revient vers vous rapidement.',
+          life: 6000,
+        });
         this.form.reset();
         this.submitted.set(false);
       },
       error: (errorResponse: HttpErrorResponse) => {
         this.loading.set(false);
-        this.apiErrors.set(this.extractApiErrors(errorResponse));
+        const extractedErrors = this.extractApiErrors(errorResponse);
+        this.apiErrors.set(extractedErrors);
+
+        if (
+          extractedErrors.length === 1 &&
+          extractedErrors[0] === GENERIC_CONTACT_ERROR_MESSAGE
+        ) {
+          this.messageService.add({
+            key: 'app-feedback',
+            severity: 'error',
+            summary: 'Contact',
+            detail: GENERIC_CONTACT_ERROR_MESSAGE,
+            life: 7000,
+          });
+        }
       },
     });
   }
@@ -145,7 +172,7 @@ export default class ContactPage {
       return rawErrors;
     }
 
-    return ['Une erreur est survenue. Veuillez r\u00E9essayer plus tard.'];
+    return [GENERIC_CONTACT_ERROR_MESSAGE];
   }
 
   private buildPayload(): ContactFormDto {

@@ -77,10 +77,12 @@
           informations.
         </p>
       } @else if (errorMessage()) {
-        <p class="mt-4 text-sm leading-6 text-red-700">
-          La synth&egrave;se n'a pas pu &ecirc;tre charg&eacute;e pour le
-          moment.
-        </p>
+        <p-message
+          severity="warn"
+          text="La synthese n'a pas pu etre chargee pour le moment."
+          [closable]="false"
+          styleClass="mt-4 w-full"
+        />
       } @else {
         <div class="mt-5 grid gap-4 lg:grid-cols-[1.65fr_minmax(16rem,1fr)]">
           <div class="grid gap-3 sm:grid-cols-3">
@@ -157,13 +159,13 @@
       </div>
 
       @if (errorMessage()) {
-        <div
-          class="mt-6 space-y-3 rounded-[1.25rem] border border-red-200 bg-red-50 p-4"
-          role="alert"
-        >
-          <p class="text-sm leading-6 text-red-700">
-            {{ errorMessage() }}
-          </p>
+        <div class="mt-6 space-y-3">
+          <p-message
+            severity="error"
+            [text]="errorMessage()!"
+            [closable]="false"
+            styleClass="w-full"
+          />
           <button
             type="button"
             class="btn btn-primary"

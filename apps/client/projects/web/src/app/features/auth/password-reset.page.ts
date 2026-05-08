@@ -68,6 +68,7 @@ export default class PasswordResetPage {
 
       this.successMessage.set(response.message);
       this.messageService.add({
+        key: 'app-feedback',
         severity: 'success',
         summary: 'R\u00E9initialisation',
         detail: response.message,
