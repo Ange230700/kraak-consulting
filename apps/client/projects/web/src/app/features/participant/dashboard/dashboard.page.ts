@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { createApiClient, type ApiClient } from '@kraak/api-client';
 import type { DashboardAggregateDto } from '@kraak/contracts';
 import { loadDashboardAggregate } from '@kraak/domain';
+import { MessageService } from 'primeng/api';
+import { Message } from 'primeng/message';
 
 import { environment } from '../../../../environments/environment';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
@@ -39,11 +41,12 @@ const QUICK_LINKS: readonly DashboardQuickLink[] = [
 @Component({
   selector: 'kraak-web-participant-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Message],
   templateUrl: './dashboard.page.html',
 })
 export default class DashboardPage implements OnInit {
   private readonly authService = inject(WebAuthService);
+  private readonly messageService = inject(MessageService);
   protected dashboardClient: Pick<ApiClient['dashboard'], 'getAggregate'> =
     createApiClient({
       baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
@@ -59,6 +62,7 @@ export default class DashboardPage implements OnInit {
   );
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  private readonly hasRecoveredFromError = signal(false);
 
   private selectFromAggregate<K extends keyof DashboardAggregateDto>(key: K) {
     return computed(
@@ -136,6 +140,30 @@ export default class DashboardPage implements OnInit {
       setData: (value) => this.dashboardState.set(value),
       setError: (value) => this.errorMessage.set(value),
     });
+
+    const currentError = this.errorMessage();
+    if (currentError) {
+      this.messageService.add({
+        key: 'app-feedback',
+        severity: 'error',
+        summary: 'Dashboard',
+        detail: currentError,
+        life: 7000,
+      });
+      this.hasRecoveredFromError.set(true);
+      return;
+    }
+
+    if (this.hasRecoveredFromError()) {
+      this.messageService.add({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Dashboard',
+        detail: 'Les donnees ont ete rechargees avec succes.',
+        life: 4500,
+      });
+      this.hasRecoveredFromError.set(false);
+    }
   }
 
   private formatDate(rawDate: string): string {

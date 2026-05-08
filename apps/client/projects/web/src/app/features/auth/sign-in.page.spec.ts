@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 import SignInPage from './sign-in.page';
@@ -11,6 +12,8 @@ describe('Web SignInPage', () => {
 
   let router: Router;
   let navigateByUrlSpy: ReturnType<typeof vi.spyOn>;
+  let messageService: MessageService;
+  let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     authService.signIn.mockReset();
@@ -21,13 +24,16 @@ describe('Web SignInPage', () => {
       providers: [
         provideRouter([]),
         { provide: WebAuthService, useValue: authService },
+        MessageService,
       ],
     }).compileComponents();
 
     router = TestBed.inject(Router);
+    messageService = TestBed.inject(MessageService);
     navigateByUrlSpy = vi
       .spyOn(router, 'navigateByUrl')
       .mockResolvedValue(true);
+    messageServiceAddSpy = vi.spyOn(messageService, 'add');
   });
 
   it('should create', () => {
@@ -59,6 +65,13 @@ describe('Web SignInPage', () => {
       email: 'alice@example.com',
       password: 'motdepasse-securise',
     });
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Connexion',
+      }),
+    );
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/participant/dashboard');
   });
 
