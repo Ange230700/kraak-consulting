@@ -21,6 +21,8 @@ import {
   AnalyticsService,
   GA4_MEASUREMENT_ID,
 } from './core/analytics/analytics.service';
+import { MlRuntimeService } from './core/ml/ml-runtime.service';
+import { TFJS_CONFIG } from './core/ml/tfjs-config';
 import { environment } from '../environments/environment';
 import { SeoTitleStrategy } from './seo/seo-title.strategy';
 
@@ -52,8 +54,15 @@ export const appConfig: ApplicationConfig = {
       useClass: SeoTitleStrategy,
     },
     { provide: GA4_MEASUREMENT_ID, useValue: environment.ga4Id },
+    {
+      provide: TFJS_CONFIG,
+      useValue: {
+        backend: environment.tfjsBackend,
+      },
+    },
     provideAppInitializer(() => {
       inject(AnalyticsService).initialize();
     }),
+    provideAppInitializer(() => inject(MlRuntimeService).initOnce()),
   ],
 };
