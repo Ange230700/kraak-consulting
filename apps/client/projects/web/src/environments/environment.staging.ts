@@ -7,4 +7,5 @@ export const environment = {
   supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
   supabasePublishableKey: 'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
   ga4Id: '',
+  tfjsBackend: 'cpu' as const,
 };
