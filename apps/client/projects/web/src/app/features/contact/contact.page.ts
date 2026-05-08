@@ -72,8 +72,12 @@ export default class ContactPage implements OnInit, OnDestroy {
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
   ngOnInit(): void {
+    this.gsapService.animatePageIn();
     this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
     this.gsapService.initializeInteractiveCardAnimations('article');
+    this.gsapService.initializeButtonTransitions();
+    this.gsapService.initializeFormFieldAnimations();
+    this.gsapService.initializeSectionAnimations();
   }
 
   ngOnDestroy(): void {
