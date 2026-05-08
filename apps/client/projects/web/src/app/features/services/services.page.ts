@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 @Component({
   selector: 'kraak-services-page',
@@ -9,4 +10,15 @@ import { CtaBanner } from '../../shared/cta-banner/cta-banner';
   imports: [RouterLink, CtaBanner],
   templateUrl: './services.page.html',
 })
-export default class ServicesPage {}
+export default class ServicesPage implements OnInit, OnDestroy {
+  private readonly gsapService = inject(GsapAnimationsService);
+
+  ngOnInit(): void {
+    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
+    this.gsapService.initializeInteractiveCardAnimations('article');
+  }
+
+  ngOnDestroy(): void {
+    this.gsapService.killAllAnimations();
+  }
+}

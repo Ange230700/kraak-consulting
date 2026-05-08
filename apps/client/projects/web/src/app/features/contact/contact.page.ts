@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -17,6 +17,7 @@ import type { ContactFormDto } from '@kraak/contracts';
 
 import { CtaBanner } from '../../shared/cta-banner/cta-banner';
 import { ContactService } from './contact.service';
+import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 type ServiceType =
   | 'formation'
@@ -49,9 +50,10 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
   ],
   templateUrl: './contact.page.html',
 })
-export default class ContactPage {
+export default class ContactPage implements OnInit, OnDestroy {
   private readonly contactService = inject(ContactService);
   private readonly messageService = inject(MessageService);
+  private readonly gsapService = inject(GsapAnimationsService);
 
   protected readonly serviceOptions: ServiceOption[] = [
     { label: 'Formation', value: 'formation', category: 'program' },
@@ -69,7 +71,14 @@ export default class ContactPage {
     { label: 'Programme KRAAK', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
+  ngOnInit(): void {
+    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
+    this.gsapService.initializeInteractiveCardAnimations('article');
+  }
 
+  ngOnDestroy(): void {
+    this.gsapService.killAllAnimations();
+  }
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2)]),
     email: new FormControl('', [Validators.required, Validators.email]),
