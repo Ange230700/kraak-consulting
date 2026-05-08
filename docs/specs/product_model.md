@@ -122,6 +122,23 @@ Cas typiques :
 - `active` -> `inactive`
 - `inactive` -> `active`
 
+```mermaid
+stateDiagram-v2
+    [*] --> invited : identification par KRAAK
+    invited --> registered : activation du compte
+    registered --> active : démarrage du parcours
+    active --> completed : fin de programme
+    active --> inactive : pause / abandon / suspension
+    inactive --> active : reprise
+    completed --> [*]
+
+    note right of inactive
+        Cas typiques : pause,
+        abandon, suspension,
+        fin sans activité
+    end note
+```
+
 Règle :
 
 - le statut de cycle de vie participant est piloté par l'équipe KRAAK ; il n'est

@@ -67,6 +67,25 @@ feat/* ──► PR ──► staging ──► déploiement staging (Render + V
             PR « release » ──► main ──► tag v*.*.* ──► prod (ARC-07)
 ```
 
+```mermaid
+gitGraph LR:
+   commit id: "init"
+   branch staging
+   checkout staging
+   branch "feat/home"
+   checkout "feat/home"
+   commit id: "feat: page accueil"
+   checkout staging
+   merge "feat/home" id: "merge feat/home"
+   branch "fix/contact"
+   checkout "fix/contact"
+   commit id: "fix: formulaire contact"
+   checkout staging
+   merge "fix/contact" id: "merge fix/contact"
+   checkout main
+   merge staging id: "PR release → main" tag: "v1.0.0"
+```
+
 ### 2.3 Protections de branche (appliquées par script)
 
 Le script `scripts/github/update-branch-protection.mjs` applique les règles
