@@ -153,7 +153,7 @@ jobs:
         run: pnpm -r --filter "./packages/**" build
 
       - name: Installer les navigateurs Playwright
-        run: pnpm --filter @kraak/client exec playwright install --with-deps chromium
+        run: pnpm --filter @kraak/client exec playwright install --with-deps chromium firefox webkit
 
       - name: Exécuter les tests E2E
         run: pnpm test:e2e
