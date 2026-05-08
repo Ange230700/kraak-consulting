@@ -18,4 +18,5 @@ export const environment = {
   supabaseUrl: 'https://pwuivkqnmjpxxpppmnvu.supabase.co',
   supabasePublishableKey: 'sb_publishable_GucCTbOp6G0qJYbblIXPAQ_HztMaJ-r',
   ga4Id: runtimeGa4Id,
+  tfjsBackend: 'wasm' as const,
 };
