@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maquettes Hi-Fi - KRAAK MVP</title>
+    <title>Maquettes Hi-Fi KRAAK + package Figma</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page">
-      <nav class="nav">
-        <div class="brand">KRAAK / Hi-Fi</div>
+    <nav class="nav">
+      <div class="nav-inner container">
+        <div class="brand">KRAAK / HI-FI</div>
         <div class="links">
           <a href="accueil.html">Accueil</a>
           <a href="a-propos.html">A propos</a>
@@ -23,46 +23,125 @@
           <a href="programmes.html">Programmes</a>
           <a href="contact.html">Contact</a>
         </div>
-        <a class="btn" href="contact.html">Nous contacter</a>
-      </nav>
+        <a class="btn" href="contact.html">Demarrer</a>
+      </div>
+    </nav>
 
-      <header class="hero">
-        <div class="container">
-          <div class="eyebrow">Lot maquettes haute fidelite</div>
-          <h1>5 ecrans MVP complets, sans Figma</h1>
-          <p>
-            Ces maquettes sont exploitables immediatement dans le navigateur.
-            Elles reprennent les wireframes lo-fi et le style guide KRAAK.
-          </p>
-        </div>
-      </header>
+    <header class="hero">
+      <div class="container">
+        <div class="eyebrow">Lot maquettes haute fidelite</div>
+        <h1>5 pages MVP + livrables design/Figma</h1>
+        <p>
+          Package complet avec pages hi-fi consultables dans le navigateur,
+          design tokens, et SVG importables directement dans Figma.
+        </p>
+      </div>
+    </header>
 
-      <section class="section">
-        <div class="container">
-          <div class="mockup-grid">
-            <a class="mockup-link" href="accueil.html">
-              <h3>01 - Accueil</h3>
-              <p>Hero, domaines, preuves, temoignages, CTA final.</p>
-            </a>
-            <a class="mockup-link" href="a-propos.html">
-              <h3>02 - A propos</h3>
-              <p>Histoire, mission, valeurs, leadership, chiffres.</p>
-            </a>
-            <a class="mockup-link" href="services.html">
-              <h3>03 - Services</h3>
-              <p>3 poles, process, FAQ, conversion.</p>
-            </a>
-            <a class="mockup-link" href="programmes.html">
-              <h3>04 - Programmes</h3>
-              <p>Cartes programmes, inscription, benefices.</p>
-            </a>
-            <a class="mockup-link" href="contact.html">
-              <h3>05 - Contact</h3>
-              <p>Formulaire detaille, infos directes, confirmation.</p>
-            </a>
-          </div>
+    <section class="section">
+      <div class="container">
+        <h2 class="h2">Pages maquette</h2>
+        <div class="mockup-grid">
+          <a class="mockup-link" href="accueil.html">
+            <h3>01 - Accueil</h3>
+            <p>Hero, preuves, domaines de service, conversion.</p>
+          </a>
+          <a class="mockup-link" href="a-propos.html">
+            <h3>02 - A propos</h3>
+            <p>Storytelling, mission, valeurs, chiffres.</p>
+          </a>
+          <a class="mockup-link" href="services.html">
+            <h3>03 - Services</h3>
+            <p>Offres detaillees, process, FAQ.</p>
+          </a>
+          <a class="mockup-link" href="programmes.html">
+            <h3>04 - Programmes</h3>
+            <p>Programmes, parcours, benefices.</p>
+          </a>
+          <a class="mockup-link" href="contact.html">
+            <h3>05 - Contact</h3>
+            <p>Formulaire, coordonnees, confirmation.</p>
+          </a>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="h2">Fichiers design et Figma</h2>
+        <div class="grid-2">
+          <article class="panel">
+            <h3>Design tokens</h3>
+            <p>Palette, typo, rayons, espacements et elevations.</p>
+            <table class="token-table">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Valeur</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="swatch" style="background: #10233f"></span
+                    >kr.navy
+                  </td>
+                  <td>#10233F</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="swatch" style="background: #0f6cad"></span
+                    >kr.blue
+                  </td>
+                  <td>#0F6CAD</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="swatch" style="background: #35bfd7"></span
+                    >kr.cyan
+                  </td>
+                  <td>#35BFD7</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="swatch" style="background: #f0c433"></span
+                    >kr.gold
+                  </td>
+                  <td>#F0C433</td>
+                </tr>
+                <tr>
+                  <td>Typography</td>
+                  <td>Poppins 400/500/600/700</td>
+                </tr>
+                <tr>
+                  <td>Radius</td>
+                  <td>14 / 22</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="panel">
+            <h3>Assets importables Figma</h3>
+            <ul class="list">
+              <li>figma-import/accueil-frame.svg</li>
+              <li>figma-import/a-propos-frame.svg</li>
+              <li>figma-import/services-frame.svg</li>
+              <li>figma-import/programmes-frame.svg</li>
+              <li>figma-import/contact-frame.svg</li>
+              <li>figma-import/design-tokens.json</li>
+              <li>figma-import/manifest.json</li>
+            </ul>
+            <p style="margin-top: 12px; color: #5e6b7f">
+              Dans Figma: File > Place image puis selectionner les SVG. Les
+              couches restent editables pour retravailler la maquette.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">KRAAK - Pack Hi-Fi + Figma import</div>
+    </footer>
   </body>
 </html>

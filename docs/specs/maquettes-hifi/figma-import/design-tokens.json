@@ -1,0 +1,41 @@
+{
+  "color": {
+    "kr.navy": "#10233F",
+    "kr.blue": "#0F6CAD",
+    "kr.cyan": "#35BFD7",
+    "kr.gold": "#F0C433",
+    "kr.ink": "#152235",
+    "kr.soft": "#5E6B7F",
+    "kr.page": "#F4F7FB",
+    "kr.card": "#FFFFFF"
+  },
+  "typography": {
+    "family": "Poppins",
+    "weights": [400, 500, 600, 700],
+    "scale": {
+      "display": 56,
+      "h1": 42,
+      "h2": 32,
+      "h3": 24,
+      "body": 16,
+      "caption": 14
+    }
+  },
+  "radius": {
+    "md": 14,
+    "lg": 22,
+    "pill": 999
+  },
+  "spacing": {
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 64
+  },
+  "effects": {
+    "softShadow": "0 18px 44px rgba(16,35,63,0.10)",
+    "strongShadow": "0 18px 36px rgba(10,39,70,0.22)"
+  }
+}

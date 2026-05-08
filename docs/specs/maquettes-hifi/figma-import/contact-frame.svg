@@ -1,0 +1,16 @@
+<svg width="1440" height="2200" viewBox="0 0 1440 2200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1440" height="2200" fill="#F4F7FB"/>
+  <rect width="1440" height="430" fill="url(#hero)"/>
+  <rect x="120" y="500" width="792" height="740" rx="22" fill="#FFFFFF" stroke="#DCE5EF"/>
+  <rect x="936" y="500" width="384" height="740" rx="22" fill="#FFFFFF" stroke="#DCE5EF"/>
+  <rect x="120" y="1310" width="1200" height="220" rx="22" fill="#FFFFFF" stroke="#DCE5EF"/>
+  <text x="120" y="125" fill="#D3EEFF" font-size="14" font-family="Poppins" font-weight="700">PAGE 05</text>
+  <text x="120" y="195" fill="white" font-size="56" font-family="Poppins" font-weight="700">Contact - KRAAK</text>
+  <defs>
+    <linearGradient id="hero" x1="0" y1="0" x2="1440" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10233F"/>
+      <stop offset="0.6" stop-color="#0F6CAD"/>
+      <stop offset="1" stop-color="#35BFD7"/>
+    </linearGradient>
+  </defs>
+</svg>
