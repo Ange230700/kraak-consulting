@@ -5,11 +5,15 @@ import {
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { vi } from 'vitest';
 
 import ContactPage from './contact.page';
 
 describe('ContactPage', () => {
   let httpTestingController: HttpTestingController;
+  let messageService: MessageService;
+  let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -18,10 +22,13 @@ describe('ContactPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
+        MessageService,
       ],
     }).compileComponents();
 
     httpTestingController = TestBed.inject(HttpTestingController);
+    messageService = TestBed.inject(MessageService);
+    messageServiceAddSpy = vi.spyOn(messageService, 'add');
   });
 
   afterEach(() => {
@@ -155,6 +162,13 @@ describe('ContactPage', () => {
     expect(component.success()).toBe(true);
     expect(component.apiErrors()).toEqual([]);
     expect(component.loading()).toBe(false);
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Contact',
+      }),
+    );
   });
 
   // Given un succ\u00E8s pr\u00E9c\u00E9dent
@@ -271,5 +285,12 @@ describe('ContactPage', () => {
     expect(component.apiErrors()).toEqual([
       'Une erreur est survenue. Veuillez réessayer plus tard.',
     ]);
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'error',
+        summary: 'Contact',
+      }),
+    );
   });
 });

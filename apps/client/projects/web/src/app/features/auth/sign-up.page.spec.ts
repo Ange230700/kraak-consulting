@@ -14,6 +14,8 @@ describe('Web SignUpPage', () => {
 
   let router: Router;
   let navigateByUrlSpy: ReturnType<typeof vi.spyOn>;
+  let messageService: MessageService;
+  let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     authService.signUp.mockReset();
@@ -34,9 +36,11 @@ describe('Web SignUpPage', () => {
     }).compileComponents();
 
     router = TestBed.inject(Router);
+    messageService = TestBed.inject(MessageService);
     navigateByUrlSpy = vi
       .spyOn(router, 'navigateByUrl')
       .mockResolvedValue(true);
+    messageServiceAddSpy = vi.spyOn(messageService, 'add');
   });
 
   it('should create', () => {
@@ -65,6 +69,13 @@ describe('Web SignUpPage', () => {
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
     expect(fixture.componentInstance.successMessage()).toBe(
       'Votre compte a ete cree.',
+    );
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Inscription',
+      }),
     );
   });
 
