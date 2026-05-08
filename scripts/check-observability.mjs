@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-const DEFAULT_TIMEOUT_MS = 10_000;
+const DEFAULT_TIMEOUT_MS = 30_000; // Render free tier cold start can take up to 30s
 
 function trimTrailingSlash(value) {
   let end = value.length;
