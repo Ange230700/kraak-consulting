@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
 import {
@@ -27,6 +28,7 @@ interface SignInFormModel {
 })
 export default class SignInPage {
   private readonly authService = inject(WebAuthService);
+  private readonly messageService = inject(MessageService);
   private readonly router = inject(Router);
 
   readonly form = new FormGroup<SignInFormModel>({
@@ -61,6 +63,13 @@ export default class SignInPage {
         password,
       });
 
+      this.messageService.add({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Connexion',
+        detail: 'Connexion reussie. Redirection vers votre dashboard.',
+        life: 4500,
+      });
       await this.router.navigateByUrl('/participant/dashboard');
     } catch (error) {
       this.errorMessage.set(
