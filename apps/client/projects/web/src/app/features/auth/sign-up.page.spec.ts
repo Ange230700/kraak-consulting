@@ -77,6 +77,13 @@ describe('Web SignUpPage', () => {
         summary: 'Inscription',
       }),
     );
+    expect(messageServiceAddSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: 'Inscription',
+      }),
+    );
   });
 
   it('Given a signup response with an active session, when submit resolves, then the app navigates to the participant dashboard', async () => {
