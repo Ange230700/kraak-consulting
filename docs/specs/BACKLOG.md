@@ -338,3 +338,143 @@ Milestone cible : `M7 - Pilot release ready`
 - TDD obligatoire : `RED -> GREEN -> REFACTOR` sur chaque feature/bug.
 - E2E obligatoires sur parcours critiques avec formulation Given/When/Then.
 - Politique de langue du depot : code en anglais, documentation/messages en français.
+
+---
+
+## Phase V1.1 — Hors MVP
+
+> Ajouté après clôture du MVP (124 issues, toutes Done). Planifié sur GitHub Project #6.
+> Mise à jour : mai 2026
+
+### Cadre V1.1
+
+Ce bloc couvre la phase post-MVP du produit KRAAK. Les 7 epics et 31 tâches V1.1
+sont planifiés sur le même board (Project #6) avec les milestones M8, M9 et M10.
+
+Nouvelles options Wave à ajouter manuellement dans les settings GitHub Project :
+
+- `Wave 6 - Monétisation` → PAY + DOC + CMS basique
+- `Wave 7 - Apprentissage` → LMS + progression avancée + certification + CRM
+- `Wave 8 - Release V1.1` → QA2 + migrations DB + déploiement
+
+---
+
+### Milestones V1.1
+
+| Milestone                      | Numéro GitHub | Périmètre                                 |
+| ------------------------------ | ------------- | ----------------------------------------- |
+| M8 - Paiement en ligne         | #14           | Stripe checkout, abonnements, factures    |
+| M9 - Apprentissage (LMS + DOC) | #15           | LMS complet, documents participants, CMS  |
+| M10 - Release V1.1             | #16           | CRM, QA2, migrations DB, déploiement V1.1 |
+
+---
+
+### Epics V1.1
+
+#### [EPIC][PAY] Paiement en ligne — #329 — M8 — P0
+
+Intégration Stripe : checkout, abonnements, factures et reçus automatiques.
+
+| ID     | Issue                                                         | Surface | Priorité |
+| ------ | ------------------------------------------------------------- | ------- | -------- |
+| PAY-01 | #336 Integrer Stripe (providers, webhooks, cles API)          | api     | P0       |
+| PAY-02 | #337 Implementer checkout sessions (paiement unique)          | api     | P0       |
+| PAY-03 | #338 Implementer abonnements et plans recurrents              | api     | P0       |
+| PAY-04 | #339 Integrer UI paiement web (checkout et confirmation)      | web     | P0       |
+| PAY-05 | #340 Integrer UI paiement mobile (checkout Stripe mobile)     | mobile  | P0       |
+| PAY-06 | #341 Generer factures et recus automatiques (Stripe + Resend) | api     | P1       |
+
+---
+
+#### [EPIC][LMS] Apprentissage et certification — #330 — M9 — P0
+
+LMS léger : cours, modules, leçons, quiz, progression avancée, attestation PDF.
+
+| ID     | Issue                                                                 | Surface | Priorité |
+| ------ | --------------------------------------------------------------------- | ------- | -------- |
+| LMS-01 | #342 Definir modele cours/module/lecon/quiz                           | shared  | P0       |
+| LMS-02 | #343 Implementer endpoints contenu cours (liste, detail, progression) | api     | P0       |
+| LMS-03 | #344 Implementer lecteur de contenu mobile                            | mobile  | P0       |
+| LMS-04 | #345 Implementer suivi de progression avance                          | api     | P0       |
+| LMS-05 | #346 Implementer logique de certification (attestation PDF)           | api     | P0       |
+| LMS-06 | #347 Implementer espace apprenant web                                 | web     | P1       |
+
+---
+
+#### [EPIC][DOC] Documents participants — #331 — M9 — P1
+
+Upload/download sécurisé de documents via Supabase Storage avec RLS.
+
+| ID     | Issue                                                         | Surface | Priorité |
+| ------ | ------------------------------------------------------------- | ------- | -------- |
+| DOC-01 | #348 Definir modele document (type, visibilite, proprietaire) | shared  | P1       |
+| DOC-02 | #349 Implementer endpoints upload/download (Supabase Storage) | api     | P1       |
+| DOC-03 | #350 Implementer espace documents mobile                      | mobile  | P1       |
+| DOC-04 | #351 Implementer espace documents web                         | web     | P1       |
+
+---
+
+#### [EPIC][CMS] Gestion de contenu admin — #332 — M9 — P1
+
+Interface éditoriale admin : articles, catégories, tags, blog public web.
+
+| ID     | Issue                                                           | Surface | Priorité |
+| ------ | --------------------------------------------------------------- | ------- | -------- |
+| CMS-01 | #352 Definir modele editorial (article, categorie, tag, auteur) | shared  | P1       |
+| CMS-02 | #353 Implementer endpoints admin publication (CRUD articles)    | api     | P1       |
+| CMS-03 | #354 Implementer blog/actualites web (liste, detail)            | web     | P1       |
+| CMS-04 | #355 Implementer dashboard admin gestion programmes et contenus | web     | P1       |
+
+---
+
+#### [EPIC][CRM] Relation client et marketing — #333 — M10 — P2
+
+Enrichissement profil, vue admin participants, scoring, séquences email.
+
+| ID     | Issue                                                                 | Surface | Priorité |
+| ------ | --------------------------------------------------------------------- | ------- | -------- |
+| CRM-01 | #356 Enrichir profil participant (competences, objectifs, historique) | api     | P2       |
+| CRM-02 | #357 Implementer vue admin participants                               | web     | P2       |
+| CRM-03 | #358 Implementer scoring et segmentation basique                      | api     | P2       |
+| CRM-04 | #359 Configurer sequences email marketing (Resend)                    | api     | P2       |
+
+---
+
+#### [EPIC][QA2] Qualité et couverture V1.1 — #334 — M10 — P0
+
+Matrice couverture, tests unitaires, E2E et campagne régression V1.1.
+
+| ID     | Issue                                                    | Surface | Priorité |
+| ------ | -------------------------------------------------------- | ------- | -------- |
+| QA2-01 | #360 Definir matrice couverture V1.1                     | shared  | P0       |
+| QA2-02 | #361 Ecrire tests unitaires composants et services V1.1  | shared  | P0       |
+| QA2-03 | #362 Ecrire tests E2E parcours paiement et apprentissage | qa      | P0       |
+| QA2-04 | #363 Campagne regression V1.1 et correction des blockers | qa      | P0       |
+
+---
+
+#### [EPIC][DEP2] Déploiement V1.1 — #335 — M10 — P0
+
+Migrations DB, variables d'environnement V1.1, tag et déploiement staging/prod.
+
+| ID      | Issue                                                                 | Surface | Priorité |
+| ------- | --------------------------------------------------------------------- | ------- | -------- |
+| DEP2-01 | #364 Migrer schema DB V1.1 (Supabase migrations)                      | shared  | P0       |
+| DEP2-02 | #365 Configurer variables d'environnement V1.1 (Stripe, Storage, LMS) | ops     | P0       |
+| DEP2-03 | #366 Executer release tag V1.1 et deploiement staging/prod            | ops     | P0       |
+
+---
+
+### Definition Of Done Par Milestone V1.1
+
+- `M8 - Paiement en ligne` : flux paiement Stripe fonctionnel end-to-end (web + mobile), webhooks sécurisés, factures générées.
+- `M9 - Apprentissage (LMS + DOC)` : LMS opérationnel (cours, progression, certification), documents uploadables/téléchargeables, CMS admin fonctionnel.
+- `M10 - Release V1.1` : CRM basique disponible, couverture QA2 atteinte, migrations appliquées en prod, tag V1.1 poussé.
+
+---
+
+### Sequence Recommandée V1.1
+
+1. `M8` : clore `PAY-*` (Stripe avant tout le reste).
+2. `M9` : clore `LMS-*`, `DOC-*`, `CMS-*` en parallèle (handoff API → UI).
+3. `M10` : clore `CRM-*`, puis `QA2-*`, puis `DEP2-*`.
