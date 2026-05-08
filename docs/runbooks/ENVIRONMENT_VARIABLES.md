@@ -153,8 +153,9 @@ Variables attendues :
 ## Domaines publics documentés
 
 - Domaine public principal : `https://kraak-consulting.vercel.app`
-- Domaine staging actuel : `https://client-six-indol-58.vercel.app`
+- Domaine staging : pas d'URL stable (previews Vercel changent par commit ; branch alias protégé par SSO)
 - API staging actuelle : `https://kraak-api-staging.onrender.com`
+- API production actuelle : `https://kraak-api-prod.onrender.com`
 
 ## CI/CD — `.env.example` (racine)
 
@@ -167,8 +168,8 @@ Variables attendues :
 
 URLs de supervision versionnées dans le dépôt :
 
-- `.github/workflows/observability.yml` vérifie la home publique du site.
-- `.github/workflows/observability.yml` vérifie l'API publique via `/health`.
+- `.github/workflows/observability.yml` vérifie les homes web staging et production.
+- `.github/workflows/observability.yml` vérifie les APIs staging et production via `/health`.
 
 Ces variables sont injectées via GitHub Secrets et ne sont pas nécessaires
 en développement local.
