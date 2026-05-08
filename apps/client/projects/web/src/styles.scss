@@ -9,9 +9,74 @@
 /* Importation globale des icônes PrimeNG */
 @import 'primeicons/primeicons.css';
 
-/* Animations GSAP — scroll-triggered reveals et interactive transitions */
+/* ===== ANIMATIONS GSAP ===== */
+/* Animations scroll-triggered et transitions interactives via service GSAP */
 .reveal-on-scroll {
   /* Les animations sont gérées par GSAP/ScrollTrigger via le service */
+}
+
+/* Utilitaires de transition pour les éléments interactifs */
+button,
+a,
+[pButton],
+input,
+textarea {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transitions de couleur fluides */
+button:not(:disabled),
+a:not(.no-transition),
+[pButton]:not(:disabled) {
+  transition:
+    background-color 0.3s ease-out,
+    color 0.3s ease-out,
+    box-shadow 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+/* Amélioration du focus visuel avec transitions */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[pButton]:focus-visible {
+  outline: 2px solid var(--p-primary-400);
+  outline-offset: 2px;
+  transition: all 0.2s ease-out;
+}
+
+/* Transitions pour les images */
+img {
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+/* Transitions pour les listes */
+li,
+.list-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transitions pour les articles et cartes */
+article,
+.card {
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transitions pour les sections */
+section {
+  transition: opacity 0.4s ease-out;
+}
+
+/* Transitions pour les paragraphes */
+p {
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
 }
 
 /* Support des préférences d'accessibilité pour les animations */
@@ -21,4 +86,40 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  button,
+  a,
+  [pButton],
+  input,
+  textarea,
+  img,
+  li,
+  .list-item,
+  article,
+  .card,
+  section,
+  p {
+    transition: none !important;
+  }
+}
+
+/* ===== UTILITAIRES DE TRANSITION MANUEL ===== */
+/* Classe pour désactiver les transitions si nécessaire */
+.no-transition {
+  transition: none !important;
+}
+
+/* Classe pour les transitions rapides */
+.transition-fast {
+  transition-duration: 0.15s !important;
+}
+
+/* Classe pour les transitions normales */
+.transition-normal {
+  transition-duration: 0.3s !important;
+}
+
+/* Classe pour les transitions lentes */
+.transition-slow {
+  transition-duration: 0.5s !important;
 }

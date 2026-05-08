@@ -14,8 +14,12 @@ export default class ServicesPage implements OnInit, OnDestroy {
   private readonly gsapService = inject(GsapAnimationsService);
 
   ngOnInit(): void {
+    this.gsapService.animatePageIn();
     this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
     this.gsapService.initializeInteractiveCardAnimations('article');
+    this.gsapService.initializeButtonTransitions();
+    this.gsapService.initializeSectionAnimations();
+    this.gsapService.initializeIconAnimations();
   }
 
   ngOnDestroy(): void {
