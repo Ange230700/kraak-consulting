@@ -70,6 +70,7 @@
     "@primeuix/themes": "^2.0.3",
     "@stencil/core": "^4.43.3",
     "express": "^5.1.0",
+    "gsap": "^3.15.0",
     "ionicons": "^7.4.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.5",
