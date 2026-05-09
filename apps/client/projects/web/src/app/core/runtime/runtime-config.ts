@@ -1,3 +1,5 @@
+import { environment } from '../../../environments/environment';
+
 interface KraakRuntimeConfig {
   readonly apiBaseUrl?: string;
   readonly supabaseUrl?: string;
@@ -15,6 +17,14 @@ export function getRuntimeConfig(): KraakRuntimeConfig {
 
 export function isParticipantAreaEnabled(): boolean {
   return getRuntimeConfig().enableParticipantArea === true;
+}
+
+export function isProductionEnvironment(): boolean {
+  return environment.environmentName === 'production';
+}
+
+export function canShowPreviewContent(): boolean {
+  return !isProductionEnvironment();
 }
 
 function stripTrailingSlashes(value: string): string {

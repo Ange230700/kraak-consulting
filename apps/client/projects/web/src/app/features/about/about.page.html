@@ -157,7 +157,9 @@
   </div>
 </section>
 
-<kraak-team-grid />
+@if (canShowPreviewContent()) {
+  <kraak-team-grid />
+}
 
 <kraak-cta-banner
   heading="Parlons de l'impact que vous voulez construire."
