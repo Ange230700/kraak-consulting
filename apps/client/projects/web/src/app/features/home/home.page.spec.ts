@@ -1,12 +1,38 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import HomePage from './home.page';
+import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+
+const gsapAnimationsServiceMock: Pick<
+  GsapAnimationsService,
+  | 'animatePageIn'
+  | 'initializeFigureAnimations'
+  | 'initializeInteractiveCardAnimations'
+  | 'initializeButtonTransitions'
+  | 'initializeSectionAnimations'
+  | 'initializeIconAnimations'
+  | 'killAllAnimations'
+> = {
+  animatePageIn: () => undefined,
+  initializeFigureAnimations: () => undefined,
+  initializeInteractiveCardAnimations: () => undefined,
+  initializeButtonTransitions: () => undefined,
+  initializeSectionAnimations: () => undefined,
+  initializeIconAnimations: () => undefined,
+  killAllAnimations: () => undefined,
+};
 
 describe('HomePage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePage],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: GsapAnimationsService,
+          useValue: gsapAnimationsServiceMock,
+        },
+      ],
     }).compileComponents();
   });
 
@@ -52,11 +78,9 @@ describe('HomePage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain(
-      'Formations en anglais et fran\u00E7ais professionnel',
-    );
-    expect(content).toContain('Cr\u00E9ation, gestion et suivi de projets');
-    expect(content).toContain('Immigration Canada et \u00C9tats-Unis');
+    expect(content).toContain('Programmes ciblés en français et anglais');
+    expect(content).toContain('Parcours Simples & Clairs');
+    expect(content).toContain('Mobilité Internationale');
   });
 
   it('should render home-specific FAQ section', () => {
