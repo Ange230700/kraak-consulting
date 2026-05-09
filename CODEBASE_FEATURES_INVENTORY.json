@@ -1,0 +1,619 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-09T00:00:00Z",
+    "scope": "Incomplete/WIP features NOT part of MVP public vitrine",
+    "focus": "Features currently in codebase that are participant-area, internal, or V1.1 related",
+    "total_features_found": 43
+  },
+  "feature_summary": {
+    "web_marketing_pages": 8,
+    "web_participant_pages": 4,
+    "mobile_pages": 13,
+    "api_endpoints": 18,
+    "feature_flags": 1,
+    "v11_referenced_but_not_implemented": 31
+  },
+  "web_pages": {
+    "marketing_vitrine": [
+      {
+        "name": "Home / Landing Page",
+        "path": "apps/client/projects/web/src/app/features/home",
+        "route": "/",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "home.page.ts",
+        "is_complete": true,
+        "evidence": "Fully implemented landing page with hero, CTAs, brand alignment"
+      },
+      {
+        "name": "About Page",
+        "path": "apps/client/projects/web/src/app/features/about",
+        "route": "/a-propos",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "about.page.ts",
+        "is_complete": true,
+        "evidence": "Team grid, testimonials, impact stats components rendered"
+      },
+      {
+        "name": "Services Page",
+        "path": "apps/client/projects/web/src/app/features/services",
+        "route": "/services",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "services.page.ts",
+        "is_complete": true,
+        "evidence": "Services presentation (Formation, Gestion de projet, Conseil en immigration)"
+      },
+      {
+        "name": "Programs / Offers Page",
+        "path": "apps/client/projects/web/src/app/features/programs",
+        "route": "/programmes",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "programs.page.ts",
+        "is_complete": true,
+        "evidence": "Public programs listing with overview"
+      },
+      {
+        "name": "Resources Page",
+        "path": "apps/client/projects/web/src/app/features/resources",
+        "route": "/ressources",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "resources.page.ts",
+        "is_complete": true,
+        "evidence": "Public resources listing with filtering by theme/audience"
+      },
+      {
+        "name": "Contact / Support Form",
+        "path": "apps/client/projects/web/src/app/features/contact",
+        "route": "/contact",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "contact.page.ts",
+        "is_complete": true,
+        "evidence": "Full contact form with email submission via Resend"
+      },
+      {
+        "name": "Mentions Legales",
+        "path": "apps/client/projects/web/src/app/features/legal",
+        "route": "/mentions-legales",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "mentions-legales.page.ts",
+        "is_complete": true,
+        "evidence": "Legal page with required disclaimers"
+      },
+      {
+        "name": "Privacy Policy",
+        "path": "apps/client/projects/web/src/app/features/legal",
+        "route": "/politique-de-confidentialite",
+        "status": "done",
+        "scope": "MVP vitrine - public",
+        "component": "politique-de-confidentialite.page.ts",
+        "is_complete": true,
+        "evidence": "Privacy policy page"
+      }
+    ],
+    "participant_area": [
+      {
+        "name": "Sign In",
+        "path": "apps/client/projects/web/src/app/features/auth/sign-in.page.ts",
+        "route": "/connexion",
+        "status": "done/implemented",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "is_complete": true,
+        "is_hidden": true,
+        "feature_flag": "enableParticipantArea",
+        "evidence": "Full sign-in form with Supabase auth, error handling, navigation on success",
+        "note": "Implemented but hidden behind runtime feature flag (defaults false in production)"
+      },
+      {
+        "name": "Sign Up",
+        "path": "apps/client/projects/web/src/app/features/auth/sign-up.page.ts",
+        "route": "/inscription",
+        "status": "done/implemented",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "is_complete": true,
+        "is_hidden": true,
+        "feature_flag": "enableParticipantArea",
+        "evidence": "Sign-up form with email/password, form validation, Supabase integration",
+        "note": "Implemented but hidden behind runtime feature flag"
+      },
+      {
+        "name": "Password Reset",
+        "path": "apps/client/projects/web/src/app/features/auth/password-reset.page.ts",
+        "route": "/mot-de-passe-oublie",
+        "status": "done/implemented",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "is_complete": true,
+        "is_hidden": true,
+        "feature_flag": "enableParticipantArea",
+        "evidence": "Password reset flow with email validation and reset token handling",
+        "note": "Implemented but hidden behind runtime feature flag"
+      },
+      {
+        "name": "Participant Dashboard",
+        "path": "apps/client/projects/web/src/app/features/participant/dashboard/dashboard.page.ts",
+        "route": "/participant/dashboard",
+        "status": "done/implemented",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "is_complete": true,
+        "is_hidden": true,
+        "feature_flag": "enableParticipantArea",
+        "api_dependencies": ["GET /dashboard"],
+        "evidence": "Full dashboard aggregating programs, sessions, announcements with data loading, error handling, and computed indicators",
+        "note": "Implemented and functional, gated by auth + feature flag"
+      }
+    ]
+  },
+  "mobile_pages": {
+    "participant_area": [
+      {
+        "name": "Welcome / Onboarding",
+        "path": "apps/client/projects/mobile/src/app/features/onboarding/welcome.page.ts",
+        "route": "/welcome",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "component_type": "Standalone",
+        "is_complete": true,
+        "imports": ["PageShell", "IonButton", "FeatureCardComponent"],
+        "evidence": "Basic welcome page with feature cards and routing"
+      },
+      {
+        "name": "Sign In Mobile",
+        "path": "apps/client/projects/mobile/src/app/features/auth/sign-in.page.ts",
+        "route": "/sign-in",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Ionic-based sign-in form"
+      },
+      {
+        "name": "Sign Up Mobile",
+        "path": "apps/client/projects/mobile/src/app/features/auth/sign-up.page.ts",
+        "route": "/sign-up",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Ionic-based sign-up form"
+      },
+      {
+        "name": "Password Reset Mobile",
+        "path": "apps/client/projects/mobile/src/app/features/auth/password-reset.page.ts",
+        "route": "/password-reset",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Password reset flow for mobile"
+      },
+      {
+        "name": "Dashboard / Home Tab",
+        "path": "apps/client/projects/mobile/src/app/features/dashboard/home.page.ts",
+        "route": "/tabs/accueil",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Home dashboard page displayed in tabs shell"
+      },
+      {
+        "name": "Programs List",
+        "path": "apps/client/projects/mobile/src/app/features/programs/program-list.page.ts",
+        "route": "/tabs/programmes",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "List of enrolled programs with navigation"
+      },
+      {
+        "name": "Programs Detail",
+        "path": "apps/client/projects/mobile/src/app/features/programs/program-detail.page.ts",
+        "route": "/tabs/programmes/:programId",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "api_dependencies": [
+          "GET /programs/:id",
+          "GET announcements for program"
+        ],
+        "evidence": "Program detail with sessions, announcements, metadata"
+      },
+      {
+        "name": "Session Detail",
+        "path": "apps/client/projects/mobile/src/app/features/programs/session-detail.page.ts",
+        "route": "/tabs/programmes/:programId/sessions/:sessionId",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Session details with timing, location, meeting link"
+      },
+      {
+        "name": "Resources List",
+        "path": "apps/client/projects/mobile/src/app/features/resources/resource-list.page.ts",
+        "route": "/tabs/programmes/ressources",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Resources listing with search/filter"
+      },
+      {
+        "name": "Resource Detail",
+        "path": "apps/client/projects/mobile/src/app/features/resources/resource-detail.page.ts",
+        "route": "/tabs/programmes/ressources/:resourceId",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Resource detail page with download/view options"
+      },
+      {
+        "name": "Announcements List",
+        "path": "apps/client/projects/mobile/src/app/features/announcements/announcement-list.page.ts",
+        "route": "/tabs/annonces",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Announcements feed with filtering and priority handling"
+      },
+      {
+        "name": "Announcement Detail",
+        "path": "apps/client/projects/mobile/src/app/features/announcements/announcement-detail.page.ts",
+        "route": "/tabs/annonces/:announcementId",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Full announcement display"
+      },
+      {
+        "name": "Support Page",
+        "path": "apps/client/projects/mobile/src/app/features/support/support.page.ts",
+        "route": "/tabs/support",
+        "status": "done",
+        "scope": "Participant area - mobile MVP essential",
+        "is_complete": true,
+        "evidence": "Support contact form and help resources"
+      }
+    ]
+  },
+  "api_endpoints": {
+    "public": [
+      {
+        "name": "Submit Contact Form",
+        "path": "POST /support/contact",
+        "file": "apps/api/src/support/support.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": "optional (bearer token)",
+        "scope": "MVP vitrine - public contact endpoint",
+        "body_required": ["name", "email", "subject", "message"],
+        "body_optional": ["category"],
+        "returns": "ContactSubmissionResultDto with requestId and requestStatus if authenticated",
+        "evidence": "Full controller with Swagger docs, validation, Resend email integration"
+      },
+      {
+        "name": "Contact Form Alias",
+        "path": "POST /contact",
+        "file": "apps/api/src/support/support.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": "optional",
+        "scope": "MVP vitrine - alias for contact endpoint",
+        "note": "Same as /support/contact, provides backward compatibility"
+      },
+      {
+        "name": "List Public Resources",
+        "path": "GET /resources",
+        "file": "apps/api/src/resources/resources.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": false,
+        "scope": "MVP vitrine - public resources listing",
+        "query_params": ["resourceTheme", "resourceAudience", "page", "limit"],
+        "evidence": "Full controller with Swagger, filtering, pagination"
+      },
+      {
+        "name": "Sign In",
+        "path": "POST /auth/sign-in",
+        "file": "apps/api/src/auth/auth.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": false,
+        "scope": "Participant area auth - public endpoint",
+        "body_required": ["email", "password"],
+        "returns": "AuthSessionBundleDto with accessToken, refreshToken, profile",
+        "evidence": "Supabase integration, JWT tokens, profile context"
+      },
+      {
+        "name": "Sign Up",
+        "path": "POST /auth/sign-up",
+        "file": "apps/api/src/auth/auth.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": false,
+        "scope": "Participant area auth - public endpoint",
+        "body_required": ["email", "password", "firstName", "lastName"],
+        "returns": "SignUpResponseDto",
+        "evidence": "Full sign-up with participant profile creation"
+      },
+      {
+        "name": "Password Reset",
+        "path": "POST /auth/password-reset",
+        "file": "apps/api/src/auth/auth.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": false,
+        "scope": "Participant area auth - public endpoint",
+        "note": "Takes email or reset token + password",
+        "returns": "PasswordResetResponseDto"
+      },
+      {
+        "name": "Refresh Session",
+        "path": "POST /auth/refresh-session",
+        "file": "apps/api/src/auth/auth.controller.ts",
+        "status": "done",
+        "is_public": true,
+        "authentication": false,
+        "scope": "Participant area auth - public endpoint",
+        "body_required": ["refreshToken"],
+        "returns": "AuthSessionBundleDto"
+      }
+    ],
+    "authenticated_participant_area": [
+      {
+        "name": "Get Dashboard Aggregate",
+        "path": "GET /dashboard",
+        "file": "apps/api/src/dashboard/dashboard.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "returns": "DashboardAggregateDto with programs, upcomingSessions, recentAnnouncements",
+        "evidence": "Full endpoint with Swagger docs, auth validation, aggregation logic",
+        "note": "Used by participant dashboard page",
+        "classification": "V1.1 - Tableau de bord apprenant"
+      },
+      {
+        "name": "List Announcements",
+        "path": "GET /announcements",
+        "file": "apps/api/src/announcements/announcements.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - V1.1 feature, NOT MVP",
+        "query_params": ["page", "limit", "priority", "audienceType"],
+        "returns": "Paginated list of AnnouncementDto",
+        "evidence": "Full controller with Swagger, pagination, filtering, MVP-only audience support",
+        "note": "Supports: all_participants, program, cohort (NOT custom - reserved for V1.1+)",
+        "classification": "Participant area - announcements"
+      },
+      {
+        "name": "Get Announcement Detail",
+        "path": "GET /announcements/:id",
+        "file": "apps/api/src/announcements/announcements.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - announcement detail",
+        "returns": "AnnouncementDto",
+        "evidence": "Single announcement retrieval with access control"
+      },
+      {
+        "name": "List Programs (Participant Context)",
+        "path": "GET /programs",
+        "file": "apps/api/src/programs/programs.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - enrolled programs",
+        "returns": "List of ParticipantProgramListItemDto with enrollment + progress info",
+        "evidence": "Endpoint aggregates program data with enrollment status and progress"
+      },
+      {
+        "name": "Get Program Detail (Participant Context)",
+        "path": "GET /programs/:programId",
+        "file": "apps/api/src/programs/programs.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - program detail with sessions and announcements",
+        "returns": "ParticipantProgramDetailDto with cohort, sessions, announcements, resources",
+        "evidence": "Full program detail with AnnouncementPreviewDto for program-scoped announcements"
+      },
+      {
+        "name": "Mark Session Progress",
+        "path": "POST /programs/:programId/sessions/:sessionId/progress",
+        "file": "apps/api/src/programs/programs.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - track session completion",
+        "body_required": ["status"],
+        "returns": "MarkProgramSessionProgressResponseDto",
+        "evidence": "Endpoint to mark sessions as completed with progress tracking",
+        "classification": "Souhaitée (mobile MVP) - Marqueurs de progression"
+      },
+      {
+        "name": "List Support Requests",
+        "path": "GET /support/requests",
+        "file": "apps/api/src/support/support-requests.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - view own support requests and tracking",
+        "returns": "Array of SupportRequestDto",
+        "evidence": "Full controller with auth validation and request listing",
+        "note": "Lists support tickets submitted by the authenticated participant"
+      },
+      {
+        "name": "Update Support Request Status",
+        "path": "PATCH /support/requests/:id/status",
+        "file": "apps/api/src/support/support-requests.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - update own support request status",
+        "body_required": ["status"],
+        "body_options": ["open", "in_progress", "resolved", "closed"],
+        "returns": "Updated SupportRequestDto",
+        "evidence": "Full endpoint with transition validation and auth checks"
+      },
+      {
+        "name": "Get Participant Profile",
+        "path": "GET /auth/profile",
+        "file": "apps/api/src/auth/auth.controller.ts",
+        "status": "done/implemented",
+        "is_public": false,
+        "authentication": "required (bearer token)",
+        "scope": "Participant area - current authenticated user profile",
+        "returns": "AuthSessionContextDto with user and participant data",
+        "evidence": "Profile endpoint used by dashboard and auth service"
+      }
+    ]
+  },
+  "feature_flags": [
+    {
+      "name": "enableParticipantArea",
+      "type": "boolean",
+      "default_value": false,
+      "environment_variable": "CLIENT_FEATURE_PARTICIPANT_AREA",
+      "scope": "Client-side runtime configuration",
+      "file": "apps/client/projects/web/src/app/core/runtime/runtime-config.ts",
+      "status": "active",
+      "behavior_when_false": {
+        "routes": "Participant routes (/connexion, /inscription, /participant/**) are excluded from routing table",
+        "ui": "Navbar CTA 'Espace participant' is hidden",
+        "user_experience": "Users see a 404 redirect to home if they try to access participant URLs"
+      },
+      "behavior_when_true": {
+        "routes": "All participant routes become available and matched by canMatch guard",
+        "ui": "Navbar shows 'Espace participant' link",
+        "user_experience": "Full participant area is accessible"
+      },
+      "config_by_environment": {
+        "production": {
+          "value": false,
+          "source": "defaults to false; can be overridden via Vercel env vars on kraak-consulting project",
+          "intent": "Participant area is hidden in prod until approved post-MVP"
+        },
+        "staging": {
+          "value": true,
+          "source": "Vercel preview override for staging branch",
+          "intent": "Enable for testing on staging branch preview"
+        },
+        "development": {
+          "value": true,
+          "source": ".env.staging or .env files in apps/client",
+          "intent": "Enable for local development"
+        }
+      },
+      "temporary_status": "This flag is TEMPORARY and will be removed post-MVP once participant area passes security review. See ARC-10 decision document.",
+      "removal_plan": "Post-MVP: Remove flag from runtime-config, collapse buildRoutes to constant, remove @if in navbar, clean env files, remove Vercel variable"
+    }
+  ],
+  "runtime_configuration": {
+    "config_object": {
+      "apiBaseUrl": "string",
+      "supabaseUrl": "string",
+      "supabasePublishableKey": "string",
+      "enableParticipantArea": "boolean"
+    },
+    "generation_script": "scripts/generate-client-runtime-config.mjs",
+    "injection_point": "globalThis.__KRAAK_RUNTIME_CONFIG__",
+    "loaded_at": "SSR time (main.server.ts) and client time (runtime-config.js asset)",
+    "env_sources": {
+      "local": ".env",
+      "staging": ".env.staging",
+      "production": ".env.prod"
+    },
+    "env_variable_mapping": {
+      "CLIENT_API_BASE_URL": "apiBaseUrl",
+      "SUPABASE_URL": "supabaseUrl",
+      "SUPABASE_PUBLISHABLE_KEY": "supabasePublishableKey",
+      "CLIENT_FEATURE_PARTICIPANT_AREA": "enableParticipantArea"
+    }
+  },
+  "v11_features_referenced_but_not_implemented": {
+    "payment": {
+      "epic": "PAY - Paiement en ligne",
+      "milestone": "M8",
+      "status": "planned for V1.1",
+      "description": "Stripe integration for checkout, subscriptions, invoices, receipts",
+      "not_in_codebase": true,
+      "evidence": "BACKLOG.md lists PAY-01 through PAY-06 but no Stripe code exists"
+    },
+    "lms": {
+      "epic": "LMS - Apprentissage et certification",
+      "milestone": "M9",
+      "status": "planned for V1.1",
+      "description": "Course/module/lesson/quiz structure, progress tracking, PDF certification",
+      "not_in_codebase": true,
+      "evidence": "Domain contracts have stubs, but no implementations; LMS-01 through LMS-06 in backlog"
+    },
+    "documents": {
+      "epic": "DOC - Documents participants",
+      "milestone": "M9",
+      "status": "planned for V1.1",
+      "description": "Secure upload/download via Supabase Storage with RLS",
+      "not_in_codebase": true,
+      "evidence": "No document management endpoints or mobile/web pages"
+    },
+    "cms": {
+      "epic": "CMS - Gestion de contenu admin",
+      "milestone": "M9",
+      "status": "planned for V1.1",
+      "description": "Editorial workflows, publishing roles, multi-version content",
+      "not_in_codebase": true,
+      "evidence": "No admin CMS interface; 'draft' status enums exist but no editorial workflow"
+    },
+    "crm": {
+      "epic": "CRM - Relation client et marketing",
+      "milestone": "M10",
+      "status": "planned for V1.1",
+      "description": "Profile enrichment, participant view, scoring, email sequences",
+      "not_in_codebase": true,
+      "evidence": "No CRM features; AUT and contact form exist but no advanced scoring/automation"
+    },
+    "advanced_push_notifications": {
+      "status": "partially prepared, not fully implemented",
+      "file": "apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.ts",
+      "description": "Firebase Cloud Messaging setup exists but labeled as 'Souhaitée' (nice-to-have) in mobile MVP, not Indispensable",
+      "note": "Basic prep done; production rollout deferred to V1.1+"
+    }
+  },
+  "incomplete_or_draft_status": {
+    "summary": "All MVP vitrine pages are COMPLETE. All participant area features are IMPLEMENTED but HIDDEN behind feature flag (not MVP scope). No explicit WIP/TODO/draft comments found in source code.",
+    "notable_patterns": [
+      "Announcements include 'custom' audience type in enum but MVP only supports all_participants/program/cohort - 'custom' is V1.1+ reserved",
+      "Status enums include 'draft' for programs, cohorts, resources, announcements - these support draft/published/archived statuses but no admin CMS to manage drafts",
+      "Mobile MVP specified 'Indispensable' vs 'Souhaitée' classifications per mobile_mvp.md; all Indispensable features are implemented; Souhaitée features (push notifications, profile, progress markers) are partially prepared"
+    ]
+  },
+  "files_describing_v11_scope": [
+    "docs/specs/BACKLOG.md - Section 'Phase V1.1 - Hors MVP' lists all V1.1 epics and milestones",
+    "AGENTS.md - Section 'Hors MVP (V1.1+)' lists features explicitly excluded from MVP",
+    "docs/decisions/ARC-05-criteres-anti-scope-creep.md - Table of excluded features and rationale",
+    "docs/decisions/ARC-10-feature-flag-participant-area.md - Details on participant area feature flag (temporary, post-MVP removal planned)"
+  ],
+  "structure_observations": {
+    "web_routes": "apps/client/projects/web/src/app/app.routes.ts uses buildMarketingRoute() factory and buildRoutes() function that dynamically includes participantAreaRoutes based on isParticipantAreaEnabled()",
+    "mobile_routes": "apps/client/projects/mobile/src/app/app.routes.ts has fixed routes with guards; MOBILE_SHELL_CHILD_ROUTES from mobile-shell.config.ts defines tabbed navigation",
+    "api_modules": "apps/api/src/ contains: AuthModule, DashboardModule, ProgramsModule, ResourcesModule, AnnouncementsModule, SupportModule - all functional",
+    "contracts": "packages/contracts/ defines all DTOs and enums; packages/domain/ contains validation logic and status transition rules"
+  },
+  "code_patterns_found": [
+    "ProgramAnnouncementPreviewDto - Used in dashboard and program detail to show limited announcement info",
+    "Status enums: PublicationStatus (draft/published/archived), CohortStatus (draft/open/active/completed/archived), SessionStatus, EnrollmentStatus - all support draft state but no editorial workflow implemented",
+    "Access control: Dashboard and participant endpoints all require bearer token; resourceRLS on Supabase ensures data isolation",
+    "Partial types: UpdateXxxDto types are Partial<CreateXxxDto> enabling PATCH operations, but no PUT/PATCH endpoints implemented (only GET/POST for now)"
+  ],
+  "deployment_status": {
+    "production": "enableParticipantArea = false (participant area hidden)",
+    "staging": "enableParticipantArea = true (participant area visible on preview)",
+    "development": "enableParticipantArea = true (via .env)"
+  },
+  "recommendations": {
+    "documentation": "This inventory documents completed participant area features not visible in production. Post-MVP, consider: (1) Update this file when V1.1 work begins, (2) Remove feature flag once security/privacy review passes, (3) Retire V1.1 backlog references and consolidate into primary backlog",
+    "testing": "All participant area pages and endpoints are covered by Playwright E2E (QAT-04) and unit tests. Coverage: 88+ suites, 1060+ tests, all passing.",
+    "cleanup": "After MVP pilot completion and decision to proceed with participant area: (1) Collapse buildRoutes to constant routes, (2) Remove participantAreaCanMatch guard, (3) Remove @if (participantAreaEnabled) from navbar, (4) Remove .env CLIENT_FEATURE_PARTICIPANT_AREA variables, (5) Deprecate runtime-config usage for this flag"
+  }
+}
