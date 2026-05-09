@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import {
@@ -15,7 +15,16 @@ import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
 import type { ContactFormDto } from '@kraak/contracts';
 
+import {
+  HERO_BACKGROUND_STYLE,
+  KRAAK_SOCIAL_LINKS,
+  type SocialLink,
+} from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import {
+  FaqAccordion,
+  type FaqItem,
+} from '../../shared/faq-accordion/faq-accordion';
 import { ContactService } from './contact.service';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
@@ -42,15 +51,30 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
   imports: [
     ReactiveFormsModule,
     NgClass,
+    NgStyle,
     ButtonDirective,
     InputText,
     Textarea,
     Message,
+    FaqAccordion,
     CtaBanner,
   ],
   templateUrl: './contact.page.html',
+  styles: [
+    `
+      .kr-perf-section {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 900px;
+      }
+    `,
+  ],
 })
 export default class ContactPage implements OnInit, OnDestroy {
+  protected readonly contactVisualUrl =
+    'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/contact/map-4.jpg';
+
+  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+
   private readonly contactService = inject(ContactService);
   private readonly messageService = inject(MessageService);
   private readonly gsapService = inject(GsapAnimationsService);
@@ -71,6 +95,32 @@ export default class ContactPage implements OnInit, OnDestroy {
     { label: 'Programme KRAAK', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
+
+  protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
+
+  protected readonly faqItems: FaqItem[] = [
+    {
+      question: 'Comment obtenir un accompagnement personnalisé avec KRAAK ?',
+      answer:
+        'Remplissez le formulaire de contact avec votre objectif principal. Notre équipe analyse votre besoin et vous propose une orientation claire sous 48h ouvrées.',
+    },
+    {
+      question: 'Quels types de services propose KRAAK ?',
+      answer:
+        "Nous intervenons sur la formation, la gestion de projets, les programmes de développement et l'accompagnement en études et immigration.",
+    },
+    {
+      question: 'Puis-je être accompagné à distance depuis un autre pays ?',
+      answer:
+        'Oui. KRAAK accompagne des publics en Afrique et à l international via des formats à distance et des échanges planifiés selon votre disponibilité.',
+    },
+    {
+      question: 'Combien de temps faut-il pour recevoir une première réponse ?',
+      answer:
+        'Après soumission de votre demande, nous revenons généralement vers vous sous 48h ouvrées avec une proposition de prochaine étape.',
+    },
+  ];
+
   ngOnInit(): void {
     this.gsapService.animatePageIn();
     this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');

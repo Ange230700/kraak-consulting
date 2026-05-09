@@ -1,15 +1,19 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { NgStyle } from '@angular/common';
 
+import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 @Component({
   selector: 'kraak-programs-page',
   standalone: true,
-  imports: [CtaBanner],
+  imports: [NgStyle, CtaBanner],
   templateUrl: './programs.page.html',
 })
 export default class ProgramsPage implements OnInit, OnDestroy {
+  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+
   private readonly gsapService = inject(GsapAnimationsService);
 
   ngOnInit(): void {

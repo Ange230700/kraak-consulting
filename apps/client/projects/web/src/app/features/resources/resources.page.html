@@ -1,9 +1,17 @@
-<section class="bg-brand-navy text-brand-white py-20 text-center">
-  <div class="mx-auto max-w-4xl px-4 lg:px-6">
+<section
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
+>
+  <div
+    aria-hidden="true"
+    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl px-4 lg:px-6">
     <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
       Ressources pour clarifier votre prochaine &eacute;tape
     </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-neutral-300">
+    <p class="text-brand-white/90 mx-auto mt-6 max-w-2xl text-lg">
       Des rep&egrave;res courts pour mieux choisir entre formation, projet,
       immigration, programme ou solution entreprise.
     </p>

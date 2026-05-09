@@ -36,4 +36,15 @@ describe('ServicesPage', () => {
       'Des \u00E9quipes performantes construisent des organisations solides',
     );
   });
+
+  it('should render service-specific FAQ section', () => {
+    const fixture = TestBed.createComponent(ServicesPage);
+    fixture.detectChanges();
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain(
+      'Comment choisir le service le plus adapt\u00E9 \u00E0 mon objectif ?',
+    );
+  });
 });
