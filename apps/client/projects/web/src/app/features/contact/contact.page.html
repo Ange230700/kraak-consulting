@@ -1,21 +1,29 @@
 <section
-  class="bg-brand-navy text-brand-white py-20 text-center"
-  [style.background-color]="'var(--kr-brand-navy)'"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
 >
   <div
-    class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
-  >
-    <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
-      Parlons de votre projet.
-    </h1>
-    <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
-      Que vous soyez &eacute;tudiant, professionnel, entrepreneur ou entreprise,
-      nous avons une solution adapt&eacute;e &agrave; votre objectif.
-    </p>
+    aria-hidden="true"
+    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl px-6">
+    <div
+      class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
+    >
+      <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
+        Parlons de votre projet.
+      </h1>
+      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
+        Que vous soyez &eacute;tudiant, professionnel, entrepreneur ou
+        entreprise, nous avons une solution adapt&eacute;e &agrave; votre
+        objectif.
+      </p>
+    </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-10">
+<section class="kr-perf-section bg-brand-white py-10">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <figure
       class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
@@ -23,7 +31,9 @@
       <img
         src="/assets/site-visuals/consultation-flow.svg"
         alt="Illustration du parcours de consultation KRAAK"
-        loading="lazy"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
         class="h-60 w-full object-cover"
       />
       <figcaption class="text-brand-navy p-4 text-center text-sm">
@@ -34,321 +44,365 @@
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16 lg:py-20">
-  <div
-    class="mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:px-6"
-  >
+<section class="kr-perf-section bg-neutral-50 py-16 lg:py-20">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div
-      class="border-brand-blue/10 bg-brand-white rounded-3xl border p-6 shadow-sm lg:p-8"
+      class="border-brand-blue/15 bg-brand-white overflow-hidden rounded-3xl border shadow-[0_24px_60px_rgb(18_43_74/12%)]"
     >
-      @if (success()) {
-        <p-message
-          severity="success"
-          text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
-          [closable]="false"
-          styleClass="w-full mb-6"
-        />
-      } @else {
-        @if (apiErrors().length > 0) {
-          <div class="mb-6">
-            @for (err of apiErrors(); track err) {
-              <p-message
-                severity="error"
-                [text]="err"
-                [closable]="false"
-                styleClass="w-full mb-2"
-              />
-            }
-          </div>
-        }
-
-        <form
-          [formGroup]="form"
-          (ngSubmit)="onSubmit()"
-          novalidate
-          class="space-y-5"
+      <div class="flex flex-col lg:min-h-184 lg:flex-row">
+        <aside
+          class="bg-brand-navy relative order-2 min-h-96 flex-1 lg:order-1 lg:min-h-full"
+          aria-label="Informations de contact KRAAK"
         >
-          <div>
-            <label
-              for="name"
-              class="text-brand-navy mb-2 block text-sm font-semibold"
-            >
-              Nom complet <span class="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              pInputText
-              id="name"
-              type="text"
-              placeholder="Votre nom"
-              formControlName="name"
-              class="h-11 w-full"
-              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid(name)"
-              [attr.aria-describedby]="isInvalid(name) ? 'name-error' : null"
-            />
-            @if (isInvalid(name)) {
-              <p id="name-error" class="mt-1 text-sm text-red-600" role="alert">
-                @if (name.errors?.['required']) {
-                  Le nom est requis.
-                } @else if (name.errors?.['minlength']) {
-                  Le nom doit contenir au moins 2 caract&egrave;res.
-                }
-              </p>
-            }
-          </div>
+          <img
+            [src]="contactVisualUrl"
+            alt="Carte et ancrage international KRAAK"
+            class="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+          />
 
-          <div>
-            <label
-              for="email"
-              class="text-brand-navy mb-2 block text-sm font-semibold"
-            >
-              Adresse e-mail
-              <span class="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              pInputText
-              id="email"
-              type="email"
-              placeholder="votre.email@exemple.com"
-              formControlName="email"
-              class="h-11 w-full"
-              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid(email)"
-              [attr.aria-describedby]="isInvalid(email) ? 'email-error' : null"
-            />
-            @if (isInvalid(email)) {
-              <p
-                id="email-error"
-                class="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                @if (email.errors?.['required']) {
-                  L'adresse e-mail est requise.
-                } @else if (email.errors?.['email']) {
-                  Veuillez saisir une adresse e-mail valide.
-                }
-              </p>
-            }
-          </div>
+          <div
+            class="via-brand-navy/30 to-brand-navy/92 absolute inset-0 bg-linear-to-b from-transparent"
+          ></div>
 
-          <div>
-            <label
-              for="subject"
-              class="text-brand-navy mb-2 block text-sm font-semibold"
-            >
-              Objectif <span class="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              pInputText
-              id="subject"
-              type="text"
-              placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
-              formControlName="subject"
-              class="h-11 w-full"
-              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid(subject)"
-              [attr.aria-describedby]="
-                isInvalid(subject) ? 'subject-error' : null
-              "
-            />
-            @if (isInvalid(subject)) {
-              <p
-                id="subject-error"
-                class="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                L'objectif est requis.
-              </p>
-            }
-          </div>
-
-          <div class="grid gap-5 sm:grid-cols-2">
+          <div
+            class="relative z-10 flex h-full flex-col justify-end gap-6 p-6 lg:p-10"
+          >
             <div>
-              <label
-                for="country"
-                class="text-brand-navy mb-2 block text-sm font-semibold"
+              <p
+                class="text-brand-cyan text-xs font-semibold tracking-[0.18em] uppercase"
               >
-                Pays <span class="text-red-500" aria-hidden="true">*</span>
-              </label>
-              <input
-                pInputText
-                id="country"
-                type="text"
-                placeholder="Votre pays de r&eacute;sidence"
-                formControlName="country"
-                class="h-11 w-full"
-                [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
-                aria-required="true"
-                [attr.aria-invalid]="isInvalid(country)"
-                [attr.aria-describedby]="
-                  isInvalid(country) ? 'country-error' : null
-                "
-              />
-              @if (isInvalid(country)) {
-                <p
-                  id="country-error"
-                  class="mt-1 text-sm text-red-600"
-                  role="alert"
+                Contact KRAAK
+              </p>
+              <h2
+                class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
+              >
+                Donnez-nous les bons rep&egrave;res pour vous orienter.
+              </h2>
+              <p class="text-brand-white mt-4 text-sm leading-6">
+                Formation, projets, leadership, mobilit&eacute; internationale :
+                d&eacute;crivez votre priorit&eacute; et nous revenons vers vous
+                avec un plan d'action clair.
+              </p>
+            </div>
+
+            <address class="not-italic">
+              <ul class="text-brand-white space-y-3 text-sm leading-6">
+                <li class="flex items-center gap-3">
+                  <i
+                    class="pi pi-envelope text-brand-cyan"
+                    aria-hidden="true"
+                  ></i>
+                  <a
+                    href="mailto:kraakconsulting@gmail.com"
+                    class="hover:text-brand-cyan transition-colors"
+                  >
+                    kraakconsulting&#64;gmail.com
+                  </a>
+                </li>
+                <li class="flex items-center gap-3">
+                  <i
+                    class="pi pi-map-marker text-brand-cyan"
+                    aria-hidden="true"
+                  ></i>
+                  <span>Afrique &amp; international</span>
+                </li>
+                <li class="flex items-center gap-3">
+                  <i class="pi pi-clock text-brand-cyan" aria-hidden="true"></i>
+                  <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
+                </li>
+              </ul>
+            </address>
+
+            <nav
+              class="flex items-center gap-3"
+              aria-label="R&eacute;seaux sociaux KRAAK"
+            >
+              @for (social of socialLinks; track social.label) {
+                <a
+                  [href]="social.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="border-brand-white/35 hover:border-brand-cyan hover:text-brand-cyan text-brand-white bg-brand-white/10 flex h-10 w-10 items-center justify-center rounded-full border transition-all hover:-translate-y-px"
+                  [attr.aria-label]="social.label"
+                  [attr.title]="social.label"
                 >
-                  Le pays est requis.
-                </p>
+                  <i
+                    [class]="'pi ' + social.icon + ' text-sm'"
+                    aria-hidden="true"
+                  ></i>
+                </a>
               }
-            </div>
-
-            <div>
-              <label
-                for="serviceType"
-                class="text-brand-navy mb-2 block text-sm font-semibold"
-              >
-                Type de service
-                <span class="text-red-500" aria-hidden="true">*</span>
-              </label>
-              <select
-                id="serviceType"
-                formControlName="serviceType"
-                class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white text-brand-navy h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm transition outline-none focus:ring-2"
-                [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(serviceType) }"
-                aria-required="true"
-                [attr.aria-invalid]="isInvalid(serviceType)"
-              >
-                @for (option of serviceOptions; track option.value) {
-                  <option [value]="option.value">{{ option.label }}</option>
-                }
-              </select>
-            </div>
+            </nav>
           </div>
+        </aside>
 
-          <div>
-            <label
-              for="message"
-              class="text-brand-navy mb-2 block text-sm font-semibold"
+        <div class="order-1 flex-1 p-6 lg:order-2 lg:p-10">
+          <div class="mb-8 space-y-3">
+            <h2
+              class="text-brand-navy text-3xl leading-tight font-bold lg:text-4xl"
             >
-              Message <span class="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <textarea
-              pTextarea
-              id="message"
-              rows="6"
-              placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
-              formControlName="message"
-              class="w-full"
-              [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid(message)"
-              [attr.aria-describedby]="
-                isInvalid(message) ? 'message-error' : null
-              "
-            ></textarea>
-            @if (isInvalid(message)) {
-              <p
-                id="message-error"
-                class="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                @if (message.errors?.['required']) {
-                  Le message est requis.
-                } @else if (message.errors?.['minlength']) {
-                  Le message doit contenir au moins 10 caract&egrave;res.
+              Contactez-nous
+            </h2>
+            <p class="text-brand-gray text-base leading-relaxed">
+              Partagez votre besoin et votre contexte. Notre &eacute;quipe vous
+              accompagne avec une orientation concr&egrave;te et adapt&eacute;e.
+            </p>
+          </div>
+
+          @if (success()) {
+            <p-message
+              severity="success"
+              text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
+              [closable]="false"
+              styleClass="w-full mb-6"
+            />
+          } @else {
+            @if (apiErrors().length > 0) {
+              <div class="mb-6">
+                @for (err of apiErrors(); track err) {
+                  <p-message
+                    severity="error"
+                    [text]="err"
+                    [closable]="false"
+                    styleClass="w-full mb-2"
+                  />
                 }
-              </p>
+              </div>
             }
-          </div>
 
-          <div class="pt-1">
-            <button
-              pButton
-              type="submit"
-              label="Envoyer ma demande"
-              size="large"
-              aria-label="Envoyer ma demande"
-              [loading]="loading()"
-              [disabled]="loading()"
-              class="kr-button-primary w-full sm:w-auto"
-            ></button>
-          </div>
-        </form>
-      }
-    </div>
+            <form
+              [formGroup]="form"
+              (ngSubmit)="onSubmit()"
+              novalidate
+              class="space-y-5"
+            >
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="name"
+                    class="text-brand-navy mb-2 block text-sm font-semibold"
+                  >
+                    Nom complet
+                    <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    pInputText
+                    id="name"
+                    type="text"
+                    placeholder="Votre nom"
+                    formControlName="name"
+                    class="h-11 w-full"
+                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
+                    aria-required="true"
+                    [attr.aria-invalid]="isInvalid(name)"
+                    [attr.aria-describedby]="
+                      isInvalid(name) ? 'name-error' : null
+                    "
+                  />
+                  @if (isInvalid(name)) {
+                    <p
+                      id="name-error"
+                      class="mt-1 text-sm text-red-600"
+                      role="alert"
+                    >
+                      @if (name.errors?.['required']) {
+                        Le nom est requis.
+                      } @else if (name.errors?.['minlength']) {
+                        Le nom doit contenir au moins 2 caract&egrave;res.
+                      }
+                    </p>
+                  }
+                </div>
 
-    <div class="bg-brand-navy text-brand-white overflow-hidden rounded-3xl">
-      <div class="bg-brand-blue/30 p-6 lg:p-8">
-        <p
-          class="text-brand-cyan text-xs font-semibold tracking-[0.18em] uppercase"
-        >
-          Demande d'accompagnement
-        </p>
-        <h2
-          class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
-        >
-          Donnez-nous les bons rep&egrave;res pour vous orienter.
-        </h2>
-        <p class="text-brand-white mt-4 text-sm leading-6">
-          Partagez votre contexte et votre priorit&eacute; du moment. Notre
-          &eacute;quipe vous recontacte avec une orientation claire et des
-          prochaines &eacute;tapes actionnables.
-        </p>
-      </div>
+                <div>
+                  <label
+                    for="email"
+                    class="text-brand-navy mb-2 block text-sm font-semibold"
+                  >
+                    Adresse e-mail
+                    <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    pInputText
+                    id="email"
+                    type="email"
+                    placeholder="votre.email@exemple.com"
+                    formControlName="email"
+                    class="h-11 w-full"
+                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
+                    aria-required="true"
+                    [attr.aria-invalid]="isInvalid(email)"
+                    [attr.aria-describedby]="
+                      isInvalid(email) ? 'email-error' : null
+                    "
+                  />
+                  @if (isInvalid(email)) {
+                    <p
+                      id="email-error"
+                      class="mt-1 text-sm text-red-600"
+                      role="alert"
+                    >
+                      @if (email.errors?.['required']) {
+                        L'adresse e-mail est requise.
+                      } @else if (email.errors?.['email']) {
+                        Veuillez saisir une adresse e-mail valide.
+                      }
+                    </p>
+                  }
+                </div>
+              </div>
 
-      <div class="space-y-8 p-6 lg:p-8">
-        <ul class="text-brand-white space-y-4 text-sm leading-6">
-          <li class="flex gap-3">
-            <i
-              class="pi pi-check-circle text-brand-cyan mt-1"
-              aria-hidden="true"
-            ></i>
-            Formation, emploi, leadership ou langues professionnelles.
-          </li>
-          <li class="flex gap-3">
-            <i
-              class="pi pi-check-circle text-brand-cyan mt-1"
-              aria-hidden="true"
-            ></i>
-            Projet, startup, partenariat ou besoin d'entreprise.
-          </li>
-          <li class="flex gap-3">
-            <i
-              class="pi pi-check-circle text-brand-cyan mt-1"
-              aria-hidden="true"
-            ></i>
-            &Eacute;tudes, immigration, travail ou int&eacute;gration
-            internationale.
-          </li>
-        </ul>
+              <div>
+                <label
+                  for="subject"
+                  class="text-brand-navy mb-2 block text-sm font-semibold"
+                >
+                  Objectif
+                  <span class="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <input
+                  pInputText
+                  id="subject"
+                  type="text"
+                  placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
+                  formControlName="subject"
+                  class="h-11 w-full"
+                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
+                  aria-required="true"
+                  [attr.aria-invalid]="isInvalid(subject)"
+                  [attr.aria-describedby]="
+                    isInvalid(subject) ? 'subject-error' : null
+                  "
+                />
+                @if (isInvalid(subject)) {
+                  <p
+                    id="subject-error"
+                    class="mt-1 text-sm text-red-600"
+                    role="alert"
+                  >
+                    L'objectif est requis.
+                  </p>
+                }
+              </div>
 
-        <div class="bg-brand-white/15 h-px"></div>
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="country"
+                    class="text-brand-navy mb-2 block text-sm font-semibold"
+                  >
+                    Pays <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    pInputText
+                    id="country"
+                    type="text"
+                    placeholder="Votre pays de r&eacute;sidence"
+                    formControlName="country"
+                    class="h-11 w-full"
+                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
+                    aria-required="true"
+                    [attr.aria-invalid]="isInvalid(country)"
+                    [attr.aria-describedby]="
+                      isInvalid(country) ? 'country-error' : null
+                    "
+                  />
+                  @if (isInvalid(country)) {
+                    <p
+                      id="country-error"
+                      class="mt-1 text-sm text-red-600"
+                      role="alert"
+                    >
+                      Le pays est requis.
+                    </p>
+                  }
+                </div>
 
-        <address class="not-italic">
-          <ul class="text-brand-white space-y-3 text-sm">
-            <li class="flex items-center gap-3">
-              <i class="pi pi-envelope text-brand-cyan" aria-hidden="true"></i>
-              <a
-                href="mailto:kraakconsulting@gmail.com"
-                class="text-brand-white hover:underline"
-                >kraakconsulting&#64;gmail.com</a
-              >
-            </li>
-            <li class="flex items-center gap-3">
-              <i
-                class="pi pi-map-marker text-brand-cyan"
-                aria-hidden="true"
-              ></i>
-              <span>Afrique &amp; international</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="pi pi-comments text-brand-cyan" aria-hidden="true"></i>
-              <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
-            </li>
-          </ul>
-        </address>
+                <div>
+                  <label
+                    for="serviceType"
+                    class="text-brand-navy mb-2 block text-sm font-semibold"
+                  >
+                    Type de service
+                    <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <select
+                    id="serviceType"
+                    formControlName="serviceType"
+                    class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white text-brand-navy h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm transition outline-none focus:ring-2"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty': isInvalid(serviceType),
+                    }"
+                    aria-required="true"
+                    [attr.aria-invalid]="isInvalid(serviceType)"
+                  >
+                    @for (option of serviceOptions; track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  for="message"
+                  class="text-brand-navy mb-2 block text-sm font-semibold"
+                >
+                  Message <span class="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  pTextarea
+                  id="message"
+                  rows="6"
+                  placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
+                  formControlName="message"
+                  class="w-full"
+                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
+                  aria-required="true"
+                  [attr.aria-invalid]="isInvalid(message)"
+                  [attr.aria-describedby]="
+                    isInvalid(message) ? 'message-error' : null
+                  "
+                ></textarea>
+                @if (isInvalid(message)) {
+                  <p
+                    id="message-error"
+                    class="mt-1 text-sm text-red-600"
+                    role="alert"
+                  >
+                    @if (message.errors?.['required']) {
+                      Le message est requis.
+                    } @else if (message.errors?.['minlength']) {
+                      Le message doit contenir au moins 10 caract&egrave;res.
+                    }
+                  </p>
+                }
+              </div>
+
+              <div class="pt-1">
+                <button
+                  pButton
+                  type="submit"
+                  label="Envoyer ma demande"
+                  size="large"
+                  aria-label="Envoyer ma demande"
+                  [loading]="loading()"
+                  [disabled]="loading()"
+                  class="kr-button-primary w-full sm:w-auto"
+                ></button>
+              </div>
+            </form>
+          }
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16">
+<section class="kr-perf-section bg-neutral-50 py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
       Nos coordonn&eacute;es
@@ -370,6 +424,12 @@
         </p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="kr-perf-section bg-neutral-50 pb-6 lg:pb-10">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <kraak-faq-accordion [items]="faqItems" />
   </div>
 </section>
 
