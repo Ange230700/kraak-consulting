@@ -1,0 +1,42 @@
+<section
+  class="gap-3 bg-neutral-50 px-6 py-20 md:px-12 lg:px-20"
+  style="--fade-start-color: rgb(248, 248, 248)"
+>
+  <div class="flex flex-col gap-4">
+    <h2
+      class="m-0 mb-4 text-center text-xl leading-tight font-normal text-neutral-700 dark:text-neutral-200"
+    >
+      Partenaires et clients de confiance
+    </h2>
+    <div class="relative overflow-hidden">
+      <!-- Fade gradient left -->
+      <div
+        class="fade-gradient-left pointer-events-none absolute top-0 left-0 z-10 h-full w-[30%]"
+      ></div>
+      <!-- Fade gradient right -->
+      <div
+        class="fade-gradient-right pointer-events-none absolute top-0 right-0 z-10 h-full w-[30%]"
+      ></div>
+
+      <!-- Scrolling container -->
+      <div class="animate-scroll flex gap-8" [style.--scroll-duration]="'20s'">
+        <div class="flex min-w-max gap-8">
+          @for (partner of duplicatedPartners; track $index) {
+            <div class="flex min-h-20 items-center justify-center gap-4 px-10">
+              <div
+                class="h-10 w-10"
+                [innerHTML]="partner.logo"
+                aria-hidden="true"
+              ></div>
+              <div
+                class="text-xl leading-tight font-semibold whitespace-nowrap text-neutral-700 dark:text-neutral-200"
+              >
+                {{ partner.name }}
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

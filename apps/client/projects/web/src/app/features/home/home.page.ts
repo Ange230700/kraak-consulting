@@ -11,6 +11,8 @@ import {
 } from '../../shared/faq-accordion/faq-accordion';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { Testimonials } from '../../shared/testimonials/testimonials';
+import { FadingPartners } from '../../shared/fading-partners/fading-partners';
+import { ImpactStats } from '../../shared/impact-stats/impact-stats';
 
 @Component({
   selector: 'kraak-home-page',
@@ -22,6 +24,8 @@ import { Testimonials } from '../../shared/testimonials/testimonials';
     FaqAccordion,
     CtaBanner,
     Testimonials,
+    FadingPartners,
+    ImpactStats,
   ],
   templateUrl: './home.page.html',
   styles: [
