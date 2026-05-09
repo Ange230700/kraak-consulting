@@ -13,6 +13,7 @@ import { GsapAnimationsService } from '../../core/animations/gsap-animations.ser
 import { Testimonials } from '../../shared/testimonials/testimonials';
 import { FadingPartners } from '../../shared/fading-partners/fading-partners';
 import { ImpactStats } from '../../shared/impact-stats/impact-stats';
+import { canShowPreviewContent } from '../../core/runtime/runtime-config';
 
 @Component({
   selector: 'kraak-home-page',
@@ -39,6 +40,7 @@ import { ImpactStats } from '../../shared/impact-stats/impact-stats';
 })
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly canShowPreviewContent = canShowPreviewContent;
 
   protected readonly faqItems: FaqItem[] = [
     {

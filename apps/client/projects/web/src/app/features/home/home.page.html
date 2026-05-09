@@ -370,28 +370,36 @@
   </div>
 </section>
 
-<kraak-fading-partners />
+@if (canShowPreviewContent()) {
+  <kraak-fading-partners />
+}
 
-<kraak-impact-stats />
+@if (canShowPreviewContent()) {
+  <kraak-impact-stats />
+}
 
-<section class="kr-perf-section bg-brand-white py-16">
-  <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
-    <p class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase">
-      T&eacute;moignages
-    </p>
-    <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-      Ils ne cherchaient pas juste une solution. Ils voulaient un
-      r&eacute;sultat.
-    </h2>
-    <p class="text-brand-navy mx-auto mt-4 max-w-2xl">
-      Un espace sera ouvert aux retours clients et aux preuves sociales
-      d&egrave;s que les prochains t&eacute;moignages seront valid&eacute;s.
-    </p>
-  </div>
-  <div class="mx-auto mt-10 max-w-6xl px-4 lg:px-6">
-    <kraak-testimonials />
-  </div>
-</section>
+@if (canShowPreviewContent()) {
+  <section class="kr-perf-section bg-brand-white py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
+      <p
+        class="text-secondary text-sm font-semibold tracking-[0.18em] uppercase"
+      >
+        T&eacute;moignages
+      </p>
+      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        Ils ne cherchaient pas juste une solution. Ils voulaient un
+        r&eacute;sultat.
+      </h2>
+      <p class="text-brand-navy mx-auto mt-4 max-w-2xl">
+        Un espace sera ouvert aux retours clients et aux preuves sociales
+        d&egrave;s que les prochains t&eacute;moignages seront valid&eacute;s.
+      </p>
+    </div>
+    <div class="mx-auto mt-10 max-w-6xl px-4 lg:px-6">
+      <kraak-testimonials />
+    </div>
+  </section>
+}
 
 <section class="kr-perf-section bg-neutral-50 pb-6 lg:pb-10">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
