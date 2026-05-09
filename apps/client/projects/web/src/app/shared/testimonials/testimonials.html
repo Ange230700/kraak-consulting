@@ -1,32 +1,109 @@
-<div>
-  @if (items.length > 0) {
-    <div class="grid gap-6 lg:grid-cols-3">
-      @for (item of items; track item.author) {
-        <blockquote
-          class="bg-brand-white shadow-card rounded-(--kr-radius-card) p-6"
-        >
-          <p class="text-base leading-7 text-neutral-800">
-            &laquo; {{ item.quote }} &raquo;
-          </p>
-          <footer class="mt-6 flex flex-col gap-1">
-            <strong class="text-primary text-sm font-semibold">{{
-              item.author
-            }}</strong>
-            @if (item.role) {
-              <span class="text-sm text-neutral-600">{{ item.role }}</span>
-            }
-          </footer>
-        </blockquote>
-      }
-    </div>
-  } @else if (placeholder) {
+@if (testimonials().length > 0) {
+  <section
+    class="from-brand-white relative isolate overflow-hidden rounded-(--kr-radius-card) border border-neutral-200 bg-linear-to-b via-neutral-50 to-neutral-100 px-4 py-12 sm:px-6 lg:px-8"
+  >
     <div
-      class="rounded-(--kr-radius-card) border border-dashed border-neutral-300 bg-neutral-50 p-6 text-center"
-    >
-      <p class="text-sm leading-7 text-neutral-600">
-        T&eacute;moignages &agrave; venir - nos participants partagent
-        bient&ocirc;t leurs exp&eacute;riences.
+      class="bg-secondary/10 pointer-events-none absolute -top-24 -left-16 h-52 w-52 rounded-full blur-3xl"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="bg-accent/20 pointer-events-none absolute -right-16 -bottom-20 h-56 w-56 rounded-full blur-3xl"
+      aria-hidden="true"
+    ></div>
+
+    @if (isPreviewMode()) {
+      <p
+        class="border-secondary/20 bg-brand-white text-secondary mx-auto mb-8 inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase"
+      >
+        Pr&eacute;visualisation du format t&eacute;moignages
       </p>
+    }
+
+    <div
+      class="relative mx-auto flex w-full max-w-6xl items-center justify-center gap-3 sm:gap-6 lg:gap-12"
+    >
+      <button
+        class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
+        type="button"
+        aria-label="Voir le t&eacute;moignage pr&eacute;c&eacute;dent"
+        (click)="prevCard()"
+      >
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <section
+        class="relative h-96 w-full max-w-4xl md:h-112"
+        aria-label="Carrousel de t&eacute;moignages"
+      >
+        @for (card of visibleCards(); track card.id; let index = $index) {
+          <article
+            class="absolute top-0 left-0 w-full transition-all duration-500 ease-out"
+            [ngClass]="getCardClasses(index)"
+            [ngStyle]="getCardStyles(index)"
+          >
+            <div
+              class="bg-brand-white rounded-(--kr-radius-card) border border-neutral-200 p-8 shadow-[0px_12px_32px_0px_rgba(17,24,39,0.12)]"
+            >
+              <p class="text-lg leading-relaxed text-neutral-700">
+                &laquo; {{ card.comment }} &raquo;
+              </p>
+              <div class="mt-8 flex items-center gap-4">
+                <div
+                  class="h-16 w-16 overflow-hidden rounded-full border border-neutral-200"
+                >
+                  <img
+                    class="h-full w-full object-cover"
+                    [src]="card.avatar"
+                    [alt]="card.name"
+                    loading="lazy"
+                  />
+                </div>
+                <div>
+                  <h3 class="text-primary text-base font-semibold">
+                    {{ card.name }}
+                  </h3>
+                  <p class="text-sm text-neutral-600">{{ card.job }}</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+
+      <button
+        class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
+        type="button"
+        aria-label="Voir le t&eacute;moignage suivant"
+        (click)="nextCard()"
+      >
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
     </div>
-  }
-</div>
+  </section>
+}
