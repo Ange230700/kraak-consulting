@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { Footer } from './footer';
 
 const expectedFacebookUrl = 'https://www.facebook.com/kraakconsulting/';
+const expectedTiktokUrl = 'https://www.tiktok.com/@kraakconsulting';
 
 describe('Footer', () => {
   beforeEach(async () => {
@@ -29,16 +30,20 @@ describe('Footer', () => {
       'img[alt="Symbole KRAAK Consulting"]',
     ) as HTMLImageElement | null;
     const footerLinks = element.querySelectorAll('nav a');
-    const socialButtons = ['Facebook', 'Instagram', 'WhatsApp'].map((name) =>
-      element.querySelector(`a[aria-label="${name}"]`),
+    const socialButtons = ['Facebook', 'Instagram', 'WhatsApp', 'TikTok'].map(
+      (name) => element.querySelector(`a[aria-label="${name}"]`),
     );
     const facebookLink = element.querySelector(
       'a[aria-label="Facebook"]',
+    ) as HTMLAnchorElement | null;
+    const tiktokLink = element.querySelector(
+      'a[aria-label="TikTok"]',
     ) as HTMLAnchorElement | null;
 
     expect(brandImage?.getAttribute('src')).toContain('kraak-symbol.png');
     expect(footerLinks.length).toBeGreaterThan(0);
     expect(socialButtons.every(Boolean)).toBe(true);
     expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);
+    expect(tiktokLink?.getAttribute('href')).toBe(expectedTiktokUrl);
   });
 });

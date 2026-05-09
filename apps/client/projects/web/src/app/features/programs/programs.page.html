@@ -1,18 +1,25 @@
 <section
-  class="bg-brand-navy text-brand-white py-20 text-center"
-  [style.background-color]="'var(--kr-brand-navy)'"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
 >
   <div
-    class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
-  >
-    <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
-      Des programmes con&ccedil;us pour transformer des trajectoires.
-    </h1>
-    <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
-      KRAAK rassemble des formats courts et structurants pour aider les jeunes,
-      les &eacute;tudiants, les professionnels et les communaut&eacute;s
-      &agrave; avancer avec plus de clart&eacute;.
-    </p>
+    aria-hidden="true"
+    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl px-6">
+    <div
+      class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
+    >
+      <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
+        Des programmes con&ccedil;us pour transformer des trajectoires.
+      </h1>
+      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
+        KRAAK rassemble des formats courts et structurants pour aider les
+        jeunes, les &eacute;tudiants, les professionnels et les
+        communaut&eacute;s &agrave; avancer avec plus de clart&eacute;.
+      </p>
+    </div>
   </div>
 </section>
 
