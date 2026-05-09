@@ -22,6 +22,14 @@ export function isParticipantAreaEnabled(): boolean {
   );
 }
 
+export function isProductionEnvironment(): boolean {
+  return environment.environmentName === 'production';
+}
+
+export function canShowPreviewContent(): boolean {
+  return !isProductionEnvironment();
+}
+
 function stripTrailingSlashes(value: string): string {
   let endIndex = value.length;
 
