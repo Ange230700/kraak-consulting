@@ -5,6 +5,7 @@ import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner';
 import { TeamGrid } from '../../shared/team-grid/team-grid';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { canShowPreviewContent } from '../../core/runtime/runtime-config';
 
 @Component({
   selector: 'kraak-about-page',
@@ -14,6 +15,7 @@ import { GsapAnimationsService } from '../../core/animations/gsap-animations.ser
 })
 export default class AboutPage implements OnInit, OnDestroy {
   protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly canShowPreviewContent = canShowPreviewContent;
 
   private readonly gsapService = inject(GsapAnimationsService);
 
