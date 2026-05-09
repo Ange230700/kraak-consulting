@@ -31,7 +31,6 @@ export class GsapAnimationsService {
 
       figures.forEach((figure, index) => {
         gsap.from(figure, {
-          opacity: 0,
           y: 30,
           duration: 0.8,
           ease: 'power3.out',
@@ -95,14 +94,13 @@ export class GsapAnimationsService {
     this.ngZone.runOutsideAngular(() => {
       // Hero section entrance
       gsap.from('section:first-child', {
-        opacity: 0,
         duration: 1,
         ease: 'power3.out',
+        y: 12,
       });
 
       // Main headings progressive reveal
       gsap.from('h1, h2', {
-        opacity: 0,
         y: 20,
         duration: 0.8,
         ease: 'power3.out',
@@ -219,7 +217,6 @@ export class GsapAnimationsService {
 
       items.forEach((item, index) => {
         gsap.from(item, {
-          opacity: 0,
           x: -20,
           duration: 0.6,
           ease: 'power3.out',
@@ -248,7 +245,6 @@ export class GsapAnimationsService {
 
       texts.forEach((text) => {
         gsap.from(text, {
-          opacity: 0,
           y: 10,
           duration: 0.7,
           ease: 'power2.out',
@@ -356,7 +352,6 @@ export class GsapAnimationsService {
 
       sections.forEach((section) => {
         gsap.from(section, {
-          opacity: 0,
           y: 40,
           duration: 0.8,
           ease: 'power3.out',
@@ -385,7 +380,6 @@ export class GsapAnimationsService {
       badges.forEach((badge) => {
         gsap.from(badge, {
           scale: 0.8,
-          opacity: 0,
           duration: 0.5,
           ease: 'elastic.out(1, 0.5)',
         });
@@ -448,7 +442,6 @@ export class GsapAnimationsService {
 
       images.forEach((img) => {
         gsap.from(img, {
-          opacity: 0,
           scale: 0.95,
           duration: 0.8,
           ease: 'power2.out',
