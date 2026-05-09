@@ -10,11 +10,19 @@ import {
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { Testimonials } from '../../shared/testimonials/testimonials';
 
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, ButtonDirective, FaqAccordion, CtaBanner],
+  imports: [
+    NgStyle,
+    RouterLink,
+    ButtonDirective,
+    FaqAccordion,
+    CtaBanner,
+    Testimonials,
+  ],
   templateUrl: './home.page.html',
   styles: [
     `
