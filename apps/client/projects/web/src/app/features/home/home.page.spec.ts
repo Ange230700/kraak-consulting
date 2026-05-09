@@ -111,4 +111,16 @@ describe('HomePage', () => {
     expect(content).toContain('Exp\u00e9rience internationale');
     expect(content).toContain('Accompagnement structur\u00e9');
   });
+
+  it('should render home-specific FAQ section', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain(
+      'Je ne sais pas par o\u00F9 commencer, quelle est la premi\u00E8re \u00E9tape ?',
+    );
+  });
 });
