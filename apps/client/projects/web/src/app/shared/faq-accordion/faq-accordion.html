@@ -1,12 +1,58 @@
-<div class="bg-brand-white shadow-card rounded-(--kr-radius-card) p-2">
-  <p-accordion [multiple]="true">
-    @for (item of items; track item.question) {
-      <p-accordion-panel>
-        <p-accordion-header>{{ item.question }}</p-accordion-header>
-        <p-accordion-content>
-          <p class="text-sm leading-7 text-neutral-700">{{ item.answer }}</p>
-        </p-accordion-content>
-      </p-accordion-panel>
-    }
-  </p-accordion>
-</div>
+<section
+  class="relative overflow-hidden rounded-3xl px-6 py-12 lg:px-10 lg:py-16"
+>
+  <div class="absolute inset-0 z-0">
+    <img
+      class="relative z-0 h-full w-full object-cover"
+      [src]="backgroundImageUrl"
+      alt="Arrière-plan de la section questions fréquentes"
+      loading="lazy"
+      decoding="async"
+      fetchpriority="low"
+    />
+    <div class="bg-brand-navy/55 absolute inset-0 z-10 backdrop-blur-2xl"></div>
+  </div>
+
+  <div class="relative z-20 flex flex-col items-center gap-10">
+    <div class="flex max-w-2xl flex-col items-center gap-4 text-center">
+      <h2
+        class="text-brand-white text-3xl leading-tight font-semibold lg:text-4xl"
+      >
+        Questions fréquentes
+      </h2>
+      <p class="text-brand-white/80 text-base leading-relaxed">
+        Retrouvez ici les réponses rapides aux questions les plus posées sur nos
+        parcours, nos modalités d'accompagnement et nos délais de réponse.
+      </p>
+    </div>
+
+    <div class="kr-glass-faq w-full max-w-3xl">
+      <p-accordion
+        [multiple]="true"
+        styleClass="rounded-2xl overflow-hidden"
+        expandIcon="pi pi-plus"
+        collapseIcon="pi pi-minus"
+      >
+        @for (item of items; track item.question; let index = $index) {
+          <p-accordion-panel
+            [value]="index"
+            class="border-brand-white/15 border-b last:border-b-0"
+          >
+            <p-accordion-header
+              class="bg-brand-white/12 px-6 py-5 text-lg leading-tight font-medium text-white"
+            >
+              {{ item.question }}
+            </p-accordion-header>
+            <p-accordion-content class="bg-black/15">
+              <div class="px-6 pt-2 pb-6">
+                <p class="text-base leading-relaxed text-white/85">
+                  {{ item.answer }}
+                </p>
+              </div>
+            </p-accordion-content>
+          </p-accordion-panel>
+        }
+      </p-accordion>
+    </div>
+  </div>
+</section>

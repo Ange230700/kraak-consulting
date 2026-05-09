@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import {
+  KRAAK_SOCIAL_LINKS,
+  type SocialLink,
+} from '../../shared/brand/brand-constants';
+
 interface FooterLink {
   label: string;
   path: string;
-}
-
-interface FooterSocialLink {
-  label: string;
-  href: string;
-  icon: string;
 }
 
 @Component({
@@ -29,23 +28,7 @@ export class Footer {
     { label: 'Contact', path: '/contact' },
   ];
 
-  protected readonly socialLinks: FooterSocialLink[] = [
-    {
-      label: 'Facebook',
-      href: 'https://www.facebook.com/kraakconsulting/',
-      icon: 'pi-facebook',
-    },
-    {
-      label: 'Instagram',
-      href: 'https://www.instagram.com/kraakconsulting/',
-      icon: 'pi-instagram',
-    },
-    {
-      label: 'WhatsApp',
-      href: 'https://wa.me/2250502741818',
-      icon: 'pi-whatsapp',
-    },
-  ];
+  protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
 
   protected readonly policyLinks: FooterLink[] = [
     { label: 'Mentions l\u00E9gales', path: '/mentions-legales' },
