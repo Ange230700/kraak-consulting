@@ -5,10 +5,11 @@ import { filter } from 'rxjs';
 
 import { Footer } from './layouts/footer/footer';
 import { Navbar } from './layouts/navbar/navbar';
+import { ScrollToTop } from './shared/scroll-to-top/scroll-to-top';
 
 @Component({
   selector: 'kraak-root',
-  imports: [RouterOutlet, Navbar, Footer, Toast],
+  imports: [RouterOutlet, Navbar, Footer, Toast, ScrollToTop],
   templateUrl: './app.html',
 })
 export class App implements OnInit {
