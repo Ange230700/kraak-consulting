@@ -1,14 +1,14 @@
-# DEP-08 - Epic Deployment: lancement pilote maitrise
+# DEP-08 - Epic Deployment: lancement pilote maîtrisé
 
 Date: 2026-04-30
 Issue: #158
-Scope: cloture epic DEP (preparation + execution pilote + verification de controle)
+Scope: clôture epic DEP (préparation + exécution pilote + vérification de contrôle)
 
 ## Objectif
 
-Consolider la cloture de l epic Deployment en validant les prerequis DEP-01 a DEP-08,
-en rejouant les controles techniques critiques, et en statuant de maniere explicite
-sur la capacite de lancement pilote maitrise.
+Consolider la clôture de l'epic Deployment en validant les prérequis DEP-01 à DEP-08,
+en rejouant les contrôles techniques critiques, et en statuant de manière explicite
+sur la capacité de lancement pilote maîtrisé.
 
 ## Etat des taches DEP
 
@@ -21,9 +21,9 @@ sur la capacite de lancement pilote maitrise.
 - DEP-07: CLOSED
 - DEP-08: CLOSED
 
-Verification realisee via GitHub CLI sur les issues `[TASK][DEP-*]`.
+Vérification réalisée via GitHub CLI sur les issues `[TASK][DEP-*]`.
 
-## Commandes executees (reverification)
+## Commandes exécutées (revérification)
 
 1. `pnpm lint`
 2. `pnpm typecheck`
@@ -31,42 +31,42 @@ Verification realisee via GitHub CLI sur les issues `[TASK][DEP-*]`.
 4. `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability`
 5. `curl -sS -o /tmp/api_health.json -w "%{http_code}\\n" https://kraak-api-staging.onrender.com/health`
 
-## Resultats
+## Résultats
 
-### Qualite statique et robustesse scripts
+### Qualité statique et robustesse scripts
 
 - `pnpm lint`: passe
 - `pnpm typecheck`: passe
 - `pnpm test:workspace`: passe (15 tests, 15 passes)
 
-### Reverifications runtime pilote
+### Revérifications runtime pilote
 
-- API pilot (`https://kraak-api-staging.onrender.com/health`): HTTP 200, payload observe `{"status":"ok"}`
-- Web pilot (`https://kraak-consulting.vercel.app/`): HTTP 401 pendant le check d observabilite
+- API pilot (`https://kraak-api-staging.onrender.com/health`): HTTP 200, payload observé `{"status":"ok"}`
+- Web pilot (`https://kraak-consulting.vercel.app/`): HTTP 401 pendant le check d'observabilité
 
-## Decision de lancement maitrise
+## Décision de lancement maîtrisé
 
-Decision: GO conditionnel avec action immediate de deblocage web.
+Décision : GO conditionnel avec action immédiate de déblocage web.
 
 Justification:
 
-1. Le socle qualite local est vert (lint, typecheck, tests scripts).
-2. Les dependances DEP sont toutes cloturees cote backlog.
-3. Un ecart d exposition runtime est present sur la home web (401), ce qui doit etre traite avant execution pilote public sans friction.
+1. Le socle qualité local est vert (lint, typecheck, tests scripts).
+2. Les dépendances DEP sont toutes clôturées côté backlog.
+3. Un écart d'exposition runtime est présent sur la home web (401), ce qui doit être traité avant exécution pilote public sans friction.
 
-## Actions de deblocage obligatoires
+## Actions de déblocage obligatoires
 
-1. Verifier la configuration de protection du projet Vercel (Deployment Protection / Password / Trusted Access).
-2. Restaurer un acces HTTP 200 public pour les routes critiques pilote (`/`, `/services`, `/programmes`, `/contact`).
-3. Rejouer `pnpm check:observability` avec URLs pilote en variables d environnement.
+1. Vérifier la configuration de protection du projet Vercel (Deployment Protection / Password / Trusted Access).
+2. Restaurer un accès HTTP 200 public pour les routes critiques pilote (`/`, `/services`, `/programmes`, `/contact`).
+3. Rejouer `pnpm check:observability` avec URLs pilote en variables d'environnement.
 4. Archiver la preuve de recheck dans `docs/runbooks/evidence/`.
 
 ## Blocages PR et contraintes de review
 
-- Controle initial: aucune PR ouverte detectee pour l issue #158 au demarrage de cette execution.
-- Traitement attendu pour cloture complete: ouvrir une PR de cloture EPIC DEP, laisser tourner les checks, traiter quality gate et contrainte de review obligatoire, puis merger et supprimer la branche.
+- Contrôle initial : aucune PR ouverte détectée pour l'issue #158 au démarrage de cette exécution.
+- Traitement attendu pour clôture complète : ouvrir une PR de clôture EPIC DEP, laisser tourner les checks, traiter quality gate et contrainte de review obligatoire, puis merger et supprimer la branche.
 
-## References
+## Références
 
 - `docs/runbooks/DEP-04_MOBILE_TEST_DISTRIBUTION_2026-04-30.md`
 - `docs/runbooks/DEP-05_OBSERVABILITY_ALERTING_2026-04-30.md`

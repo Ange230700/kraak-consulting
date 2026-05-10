@@ -62,11 +62,11 @@ const notFoundSeo: SeoPageDefinition = {
   path: '**',
   title: 'Page introuvable | KRAAK Consulting',
   description:
-    "La page demandee est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+    "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
   openGraph: {
     title: 'Page introuvable | KRAAK Consulting',
     description:
-      "La page demandee est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+      "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
     imagePath: '/open-graph/kraak-share-card.svg',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },

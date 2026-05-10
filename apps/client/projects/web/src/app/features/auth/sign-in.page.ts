@@ -67,7 +67,7 @@ export default class SignInPage {
         key: 'app-feedback',
         severity: 'success',
         summary: 'Connexion',
-        detail: 'Connexion reussie. Redirection vers votre dashboard.',
+        detail: 'Connexion réussie. Redirection vers votre dashboard.',
         life: 4500,
       });
       await this.router.navigateByUrl('/participant/dashboard');

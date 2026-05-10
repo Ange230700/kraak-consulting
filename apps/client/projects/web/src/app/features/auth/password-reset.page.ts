@@ -78,7 +78,7 @@ export default class PasswordResetPage {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          "Impossible d'envoyer l'email de reinitialisation.",
+          "Impossible d'envoyer l'email de réinitialisation.",
         ),
       );
     } finally {

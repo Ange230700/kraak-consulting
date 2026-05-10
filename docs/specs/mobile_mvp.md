@@ -32,8 +32,8 @@ Les participants doivent pouvoir :
 1. Se connecter
 2. Voir leurs programmes suivis
 3. Consulter le planning et les informations de session
-4. Acceder aux ressources de formation
-5. Recevoir des annonces/mises a jour
+4. Accéder aux ressources de formation
+5. Recevoir des annonces/mises à jour
 6. Contacter le support, le formateur ou KRAAK
 
 ## 4. Critères de succès (préparation pilote)
@@ -96,14 +96,14 @@ Ces fonctionnalités sont requises pour lancer un pilote Android reel.
 3. Planning et sessions
 
 - Liste des sessions a venir (date/heure, titre, lieu/lien)
-- Page detail session (description + formateur + infos de participation)
+- Page détail session (description + formateur + infos de participation)
 - Mapping de résultat : consulter le planning/sessions
 
 4. Ressources de formation (lecture/téléchargement)
 
 - Liste des ressources par programme/module
-- Ouvrir le detail d'une ressource et acceder au lien/fichier
-- Mapping de résultat : acceder aux ressources de formation
+- Ouvrir le détail d'une ressource et accèder au lien/fichier
+- Mapping de résultat : accèder aux ressources de formation
 
 5. Annonces (base)
 
