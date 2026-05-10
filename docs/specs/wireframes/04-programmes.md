@@ -19,7 +19,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 2. PAGE HERO — bannière interne
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║   < Fond : dégradé navy ou image overlay >                  ║
@@ -40,7 +40,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 3. INTRODUCTION PROGRAMMES
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Nos programmes
 
@@ -61,7 +61,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 4. LISTE DES PROGRAMMES — cartes
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  ┌───────────────────────────────────┐                       ║
@@ -103,7 +103,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 5. PROCESSUS D'INSCRIPTION — étapes
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Comment s'inscrire ?
 
@@ -131,7 +131,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 6. RÉSULTATS ATTENDUS
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Ce que vous obtenez                                        ║
 ║                                                              ║
@@ -154,7 +154,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 7. TÉMOIGNAGES — section réassurance (placeholder)
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Ils ont suivi nos programmes
 
@@ -180,7 +180,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 8. FAQ PROGRAMMES (optionnel MVP)
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Questions sur nos programmes                               ║
 ║                                                              ║
@@ -201,7 +201,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 9. CTA PRINCIPAL
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Trouvez le programme qui vous correspond                   ║
 ║                                                              ║

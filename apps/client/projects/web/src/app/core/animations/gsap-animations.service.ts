@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 })
 export class GsapAnimationsService {
   private readonly ngZone = inject(NgZone);
-  private activeAnimations = new Map<HTMLElement, gsap.core.Tween>();
+  private readonly activeAnimations = new Map<HTMLElement, gsap.core.Tween>();
 
   /**
    * Initialise les animations scroll-triggered pour les blocs visuels (figures)
