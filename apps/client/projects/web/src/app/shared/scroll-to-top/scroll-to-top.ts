@@ -23,7 +23,7 @@ export class ScrollToTop implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Only set up scroll listener in browser environment
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
+    if (globalThis.window === undefined || document === undefined) {
       return;
     }
 
@@ -32,7 +32,7 @@ export class ScrollToTop implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.scrollListener && typeof window !== 'undefined') {
+    if (this.scrollListener && globalThis.window !== undefined) {
       window.removeEventListener('scroll', this.scrollListener);
     }
   }
@@ -43,7 +43,7 @@ export class ScrollToTop implements OnInit, OnDestroy {
   }
 
   scrollToTop(): void {
-    if (typeof window === 'undefined') {
+    if (globalThis.window === undefined) {
       return;
     }
 
