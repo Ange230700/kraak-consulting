@@ -153,6 +153,9 @@ jobs:
         run: pnpm -r --filter "./packages/**" build
 
       - name: Installer les navigateurs Playwright
+        # Note: playwright install exécute une commande officielle Playwright (non pnpm install),
+        # donc --ignore-scripts ne s'applique pas. Les dépendances système (--with-deps)
+        # proviennent de distributions officielles et ne représentent pas un risque de sécurité.
         run: pnpm --filter @kraak/client exec playwright install --with-deps chromium firefox webkit
 
       - name: Exécuter les tests E2E
