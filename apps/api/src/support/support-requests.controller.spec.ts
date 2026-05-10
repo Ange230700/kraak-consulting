@@ -58,7 +58,7 @@ describe('SupportRequestsController', () => {
     );
   });
 
-  it('devrait etre defini', () => {
+  it('devrait être défini', () => {
     expect(controller).toBeDefined();
   });
 

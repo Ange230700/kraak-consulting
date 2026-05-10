@@ -46,10 +46,10 @@ Resultat attendu:
 
 ## Couverture DEP-02 / DEP-03 verifiee
 
-- DEP-02: deploiement web alimente le endpoint surveille `https://kraak-consulting.vercel.app`
-- DEP-03: deploiement API expose `/health` et `render.yaml` reference `healthCheckPath: /health`
+- DEP-02: déploiement web alimente le endpoint surveillé `https://kraak-consulting.vercel.app`
+- DEP-03: déploiement API expose `/health` et `render.yaml` référence `healthCheckPath: /health`
 
 ## Preuve structurelle ajoutee
 
 - workflow GitHub planifie: `.github/workflows/observability.yml`
-- runbook operationnel: `docs/runbooks/DEP-05_OBSERVABILITY_ALERTING_2026-04-30.md`
+- runbook opérationnel: `docs/runbooks/DEP-05_OBSERVABILITY_ALERTING_2026-04-30.md`

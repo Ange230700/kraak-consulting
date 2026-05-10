@@ -37,7 +37,7 @@ Cette tâche couvre :
 Cette tâche ne couvre pas :
 
 - paging temps réel ou systèmes d'escalade complexes
-- automatisation de rollback (procédures manuelles retenues pour la securite)
+- automatisation de rollback (procédures manuelles retenues pour la sécurité)
 - orchestration multi-région ou failover automatique
 - SLA ou contrats de niveau de service
 
@@ -142,7 +142,7 @@ curl -v https://kraak-api-staging.onrender.com/health
 
 ### 1.3 Mitigation immédiate
 
-#### Scenario A : Web indisponible, API OK
+#### Scénario A : Web indisponible, API OK
 
 ```
 Action 1 : Vérifier le dernier déploiement web
@@ -159,7 +159,7 @@ Action 3 : Si le problème persiste
 - Procéder à un ROLLBACK (voir section 2)
 ```
 
-#### Scenario B : API indisponible, Web OK (error 500/timeout)
+#### Scénario B : API indisponible, Web OK (error 500/timeout)
 
 ```
 Action 1 : Vérifier les logs Render
@@ -181,7 +181,7 @@ Action 4 : Si le problème persiste
 - Procéder à un ROLLBACK (voir section 2)
 ```
 
-#### Scenario C : Lenteur généralisée (API/Web lents)
+#### Scénario C : Lenteur généralisée (API/Web lents)
 
 ```
 Action 1 : Vérifier les ressources Render
@@ -203,7 +203,7 @@ Action 4 : Redémarrer le service API
 - Attendre 30s et vérifier la latence
 ```
 
-#### Scenario D : Erreurs spécifiques par route (ex: `/programs` en 500, `/` en 200)
+#### Scénario D : Erreurs spécifiques par route (ex: `/programs` en 500, `/` en 200)
 
 ```
 Action 1 : Identifier la route défaillante depuis les logs Web
@@ -549,7 +549,7 @@ pnpm check:observability
 
 - [ ] Workflow `Observability` tournant et alertes correctes
 - [ ] Formulaire de contact reçoit les soumissions
-- [ ] Logs accessible pour diagnostic
+- [ ] Logs accessibles pour diagnostic
 - [ ] Incident response team en attente
 
 ---

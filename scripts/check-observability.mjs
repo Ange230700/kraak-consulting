@@ -14,7 +14,7 @@ function trimTrailingSlash(value) {
 
 export function normalizePublicUrl(value, name) {
   if (!value || value.trim().length === 0) {
-    throw new Error(`La variable ${name} est requise pour executer les checks d observabilite.`);
+    throw new Error(`La variable ${name} est requise pour exécuter les checks d'observabilité.`);
   }
 
   return trimTrailingSlash(value.trim());
@@ -64,13 +64,13 @@ export async function checkTarget(target, options = {}) {
 
   if (!contentType.toLowerCase().includes(target.expectedContentType)) {
     throw new Error(
-      `${target.name} a retourne le content-type "${contentType || 'inconnu'}" au lieu de "${target.expectedContentType}".`,
+      `${target.name} a retourné le content-type "${contentType || 'inconnu'}" au lieu de "${target.expectedContentType}".`,
     );
   }
 
   if (!result.ok) {
     throw new Error(
-      `${target.name} a retourne le statut HTTP ${response.status} au lieu de ${target.expectedStatus}.`,
+      `${target.name} a retourné le statut HTTP ${response.status} au lieu de ${target.expectedStatus}.`,
     );
   }
 
@@ -79,7 +79,7 @@ export async function checkTarget(target, options = {}) {
 
     if (payload.status !== 'ok' || payload.service !== 'kraak-api') {
       throw new Error(
-        'api-health a retourne un payload invalide: status=ok et service=kraak-api sont requis.',
+        'api-health a retourné un payload invalide: status=ok et service=kraak-api sont requis.',
       );
     }
 
@@ -119,7 +119,7 @@ async function main() {
   const apiUrl = process.env['KRAAK_OBSERVABILITY_API_URL'];
   const results = await runObservabilityChecks({ webUrl, apiUrl });
 
-  console.log('Checks d observabilite passes avec succes:');
+  console.log("Checks d'observabilité passés avec succès:");
   console.log(formatSummary(results));
 }
 

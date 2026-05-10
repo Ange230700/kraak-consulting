@@ -19,7 +19,7 @@ describe('Web PasswordResetPage', () => {
     authService.requestPasswordReset.mockResolvedValue({
       success: true,
       message:
-        'Si cette adresse existe, un email de reinitialisation vient d etre envoye.',
+        "Si cette adresse existe, un email de réinitialisation vient d'être envoyé.",
     });
 
     await TestBed.configureTestingModule({

@@ -61,7 +61,7 @@ test.describe('Parcours coeur participant - orientation web', () => {
       await countryField.fill('Bénin');
       await serviceField.selectOption('immigration');
       await messageField.fill(
-        'Bonjour, je souhaite etre guidee sur les prochaines etapes.',
+        'Bonjour, je souhaite être guidée sur les prochaines étapes.',
       );
 
       await expect(nameField).toHaveValue('Aline Kouassi', { timeout: 500 });
@@ -74,7 +74,7 @@ test.describe('Parcours coeur participant - orientation web', () => {
       await expect(countryField).toHaveValue('Bénin', { timeout: 500 });
       await expect(serviceField).toHaveValue('immigration', { timeout: 500 });
       await expect(messageField).toHaveValue(
-        'Bonjour, je souhaite etre guidee sur les prochaines etapes.',
+        'Bonjour, je souhaite être guidée sur les prochaines étapes.',
         { timeout: 500 },
       );
 

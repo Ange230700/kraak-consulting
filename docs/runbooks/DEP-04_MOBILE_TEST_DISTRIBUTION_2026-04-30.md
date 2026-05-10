@@ -6,31 +6,31 @@ Epic: DEP
 
 ## Objectif
 
-Preparer un circuit de distribution interne pour le pilote mobile KRAAK:
+Préparer un circuit de distribution interne pour le pilote mobile KRAAK:
 
 - Android: APK debug partageable en interne
 - iOS: build interne TestFlight (Internal Testing)
-- procedure reproductible et tracable pour l equipe
+- procédure reproductible et traçable pour l'équipe
 
-## Dependances
+## Dépendances
 
 - MOB-04: Capacitor Android/iOS et builds debug
-- QAT-04: E2E Given/When/Then du parcours coeur participant
+- QAT-04: E2E Given/When/Then du parcours cœur participant
 
 Statut pour DEP-04:
 
 - MOB-04: satisfaite (scripts de build/debug mobiles disponibles et valides)
-- QAT-04: satisfaite (suite E2E coeur participant executee et verte)
+- QAT-04: satisfaite (suite E2E cœur participant exécutée et verte)
 
-## Portee DEP-04
+## Portée DEP-04
 
-Cette tache couvre:
+Cette tâche couvre:
 
-- preparation des artefacts de test mobile pour partage interne
-- standardisation des etapes de livraison Android/iOS en mode test
+- préparation des artefacts de test mobile pour partage interne
+- standardisation des étapes de livraison Android/iOS en mode test
 - collecte des preuves de validation avant bascule vers DEP-07
 
-Cette tache ne couvre pas:
+Cette tâche ne couvre pas:
 
 - publication stores production
 - signature/release finale publique
@@ -39,20 +39,20 @@ Cette tache ne couvre pas:
 
 ### Variante A - CI (recommande)
 
-Le workflow GitHub Actions genere deja un APK debug:
+Le workflow GitHub Actions génère déjà un APK debug:
 
 - workflow: `.github/workflows/ci.yml`
 - job: `android-debug`
 - artefact: `debug-apk`
 - chemin artefact dans le build: `apps/client/android/app/build/outputs/apk/debug/app-debug.apk`
 
-Procedure:
+Procédure:
 
 1. Push de la branche avec CI active.
-2. Ouvrir l onglet Actions du depot.
-3. Attendre le succes du job `android-debug`.
-4. Telecharger l artefact `debug-apk`.
-5. Partager l APK au panel test interne (Drive/Slack/outil interne).
+2. Ouvrir l'onglet Actions du dépôt.
+3. Attendre le succès du job `android-debug`.
+4. Télécharger l'artefact `debug-apk`.
+5. Partager l'APK au panel test interne (Drive/Slack/outil interne).
 
 ### Variante B - local (fallback)
 
@@ -82,12 +82,12 @@ Contrainte:
 Preconditions macOS:
 
 - Xcode 16+
-- Apple Developer Team configuree
-- App Store Connect acces Internal Testing
+- Apple Developer Team configurée
+- App Store Connect accès Internal Testing
 
-Procedure recommandee:
+Procédure recommandée:
 
-1. Preparer les assets web mobiles:
+1. Préparer les assets web mobiles:
 
 ```bash
 pnpm build:mobile
@@ -102,11 +102,11 @@ pnpm --filter @kraak/client cap:open:ios
 
 3. Dans Xcode:
 
-- selectionner le scheme applicatif
-- incrementer `Version` / `Build`
+- sélectionner le scheme applicatif
+- incrémenter `Version` / `Build`
 - `Product > Archive`
 
-4. Uploader l archive vers App Store Connect.
+4. Uploader l'archive vers App Store Connect.
 5. Dans TestFlight:
 
 - assigner le build au groupe `Internal Testing`
@@ -115,10 +115,10 @@ pnpm --filter @kraak/client cap:open:ios
 
 ## Checklist de validation DEP-04
 
-- [x] Procedure APK interne documentee
-- [x] Procedure TestFlight interne documentee
-- [x] Dependance MOB-04 reliee a des commandes/scripts effectifs
-- [x] Dependance QAT-04 verifiee sur une suite E2E coeur participant
+- [x] Procédure APK interne documentée
+- [x] Procédure TestFlight interne documentée
+- [x] Dependance MOB-04 reliée à des commandes/scripts effectifs
+- [x] Dependance QAT-04 vérifiée sur une suite E2E cœur participant
 - [x] Preuves de validation ajoutees
 
 ## Artefacts de preuve
@@ -127,11 +127,11 @@ pnpm --filter @kraak/client cap:open:ios
 - `docs/runbooks/QAT-05_REGRESSION_2026-04-30.md`
 - `docs/runbooks/MOBILE_BUILD.md`
 
-## Risques residuels
+## Risques résiduels
 
 - iOS TestFlight non executable sur environnement Windows local.
-- Signature iOS/Apple provisioning a realiser sur machine macOS de release.
+- Signature iOS/Apple provisioning a réaliser sur machine macOS de release.
 
-## Prochaine etape
+## Prochaine étape
 
-- DEP-07: go/no-go pilote avec verification de disponibilite des deux canaux de distribution interne.
+- DEP-07: go/no-go pilote avec vérification de disponibilité des deux canaux de distribution interne.

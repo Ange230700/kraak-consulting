@@ -73,4 +73,4 @@ Resultat:
 
 1. Le socle de qualite local est valide pour l epic DEP.
 2. Le check runtime API est accessible.
-3. Le check runtime web public est bloque (401) et doit etre corrige avant validation finale sans reserve.
+3. Le check runtime web public est bloqué (401) et doit être corrigé avant validation finale sans réserve.

@@ -21,7 +21,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -50,7 +50,7 @@
         "https://github.com/Ange230700/kraak-group/pull/140"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -85,7 +85,7 @@
         "https://github.com/Ange230700/kraak-group/pull/141"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -120,7 +120,7 @@
         "https://github.com/Ange230700/kraak-group/pull/142"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -152,7 +152,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -345,7 +345,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -377,7 +377,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -412,7 +412,7 @@
         "https://github.com/Ange230700/kraak-group/pull/186"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -447,7 +447,7 @@
         "https://github.com/Ange230700/kraak-group/pull/127"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -482,7 +482,7 @@
         "https://github.com/Ange230700/kraak-group/pull/127"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -511,7 +511,7 @@
         "https://github.com/Ange230700/kraak-group/pull/128"
       ],
       "milestone": {
-        "description": "Socle de dev operationnel",
+        "description": "Socle de dev opérationnel",
         "dueOn": "",
         "title": "M2 - Workspace bootstrapped"
       },
@@ -558,10 +558,10 @@
       "area": "Pages",
       "assignees": ["Ange230700", "Copilot"],
       "content": {
-        "body": "## Parent epic\nWEB\n\n## Description\nIntegrer formulaires de contact et CTA conversion\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of WEB-02 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nWEB\n\n## Description\nIntégrer formulaires de contact et CTA conversion\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of WEB-02 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 76,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][WEB-02] Integrer formulaires de contact et CTA conversion",
+        "title": "[TASK][WEB-02] Intégrer formulaires de contact et CTA conversion",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/76"
       },
@@ -587,7 +587,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "web",
-      "title": "[TASK][WEB-02] Integrer formulaires de contact et CTA conversion",
+      "title": "[TASK][WEB-02] Intégrer formulaires de contact et CTA conversion",
       "wave": "Wave 3A - Site public"
     },
     {
@@ -789,10 +789,10 @@
     {
       "area": "Frontend",
       "content": {
-        "body": "## Parent epic\nMOB\n\n## Description\nIntegrer theming, design tokens et composants UI de base\n\n## Dependencies\nMOB-01, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-03 implemented\n- [ ] Dependencies satisfied (MOB-01, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nMOB\n\n## Description\nIntégrer theming, design tokens et composants UI de base\n\n## Dependencies\nMOB-01, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of MOB-03 implemented\n- [ ] Dependencies satisfied (MOB-01, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 82,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][MOB-03] Integrer theming, design tokens et composants UI de base",
+        "title": "[TASK][MOB-03] Intégrer theming, design tokens et composants UI de base",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/82"
       },
@@ -815,7 +815,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "mobile",
-      "title": "[TASK][MOB-03] Integrer theming, design tokens et composants UI de base",
+      "title": "[TASK][MOB-03] Intégrer theming, design tokens et composants UI de base",
       "wave": "Wave 2 - Acces"
     },
     {
@@ -1658,10 +1658,10 @@
     {
       "area": "Forms",
       "content": {
-        "body": "## Parent epic\nSUP\n\n## Description\nIntegrer formulaire support dans mobile\n\n## Dependencies\nMOB-02, SUP-01, AUT-04\n\n## Acceptance criteria\n- [ ] Scope of SUP-02 implemented\n- [ ] Dependencies satisfied (MOB-02, SUP-01, AUT-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nSUP\n\n## Description\nIntégrer formulaire support dans mobile\n\n## Dependencies\nMOB-02, SUP-01, AUT-04\n\n## Acceptance criteria\n- [ ] Scope of SUP-02 implemented\n- [ ] Dependencies satisfied (MOB-02, SUP-01, AUT-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 108,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][SUP-02] Integrer formulaire support dans mobile",
+        "title": "[TASK][SUP-02] Intégrer formulaire support dans mobile",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/108"
       },
@@ -1684,16 +1684,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "In Progress",
       "surface": "mobile",
-      "title": "[TASK][SUP-02] Integrer formulaire support dans mobile",
+      "title": "[TASK][SUP-02] Intégrer formulaire support dans mobile",
       "wave": "Wave 3B - Parcours participant"
     },
     {
       "area": "Forms",
       "content": {
-        "body": "## Parent epic\nSUP\n\n## Description\nIntegrer formulaire contact site web\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of SUP-03 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nSUP\n\n## Description\nIntégrer formulaire contact site web\n\n## Dependencies\nWEB-01, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of SUP-03 implemented\n- [ ] Dependencies satisfied (WEB-01, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 109,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][SUP-03] Integrer formulaire contact site web",
+        "title": "[TASK][SUP-03] Intégrer formulaire contact site web",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/109"
       },
@@ -1716,7 +1716,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "web",
-      "title": "[TASK][SUP-03] Integrer formulaire contact site web",
+      "title": "[TASK][SUP-03] Intégrer formulaire contact site web",
       "wave": "Wave 3A - Site public"
     },
     {
@@ -1999,7 +1999,7 @@
         "https://github.com/Ange230700/kraak-group/pull/204"
       ],
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2013,10 +2013,10 @@
     {
       "area": "Deployment",
       "content": {
-        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline deploiement web\n\n## Dependencies\nSET-06, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of DEP-02 implemented\n- [ ] Dependencies satisfied (SET-06, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline déploiement web\n\n## Dependencies\nSET-06, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of DEP-02 implemented\n- [ ] Dependencies satisfied (SET-06, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 119,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-02] Mettre en place pipeline deploiement web",
+        "title": "[TASK][DEP-02] Mettre en place pipeline déploiement web",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/119"
       },
@@ -2031,7 +2031,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2039,16 +2039,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "ops",
-      "title": "[TASK][DEP-02] Mettre en place pipeline deploiement web",
+      "title": "[TASK][DEP-02] Mettre en place pipeline déploiement web",
       "wave": "Wave 5 - Release"
     },
     {
       "area": "Deployment",
       "content": {
-        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline deploiement API\n\n## Dependencies\nSET-06, QAT-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-03 implemented\n- [ ] Dependencies satisfied (SET-06, QAT-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDEP\n\n## Description\nMettre en place pipeline déploiement API\n\n## Dependencies\nSET-06, QAT-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-03 implemented\n- [ ] Dependencies satisfied (SET-06, QAT-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 120,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-03] Mettre en place pipeline deploiement API",
+        "title": "[TASK][DEP-03] Mettre en place pipeline déploiement API",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/120"
       },
@@ -2063,7 +2063,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2071,7 +2071,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "ops",
-      "title": "[TASK][DEP-03] Mettre en place pipeline deploiement API",
+      "title": "[TASK][DEP-03] Mettre en place pipeline déploiement API",
       "wave": "Wave 5 - Release"
     },
     {
@@ -2095,7 +2095,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2127,7 +2127,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2159,7 +2159,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2191,7 +2191,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Deploiement pilote et runbooks operationnels",
+        "description": "Déploiement pilote et runbooks opérationnels",
         "dueOn": "",
         "title": "M7 - Pilot release ready"
       },
@@ -2478,10 +2478,10 @@
     {
       "area": "Deployment",
       "content": {
-        "body": "## Contexte\nLe projet Vercel et le domaine public doivent etre alignes sur le nom du depot \\\\kraak-group\\\\.\n\n## Attendu\n- renommer le projet Vercel en kraak-group\n- attacher kraak-group.vercel.app au deploiement de production\n- retirer l'alias legacy client-six-indol-58.vercel.app\n- tracer le domaine public courant dans la documentation de runbook\n\n## Validation\n- verification via CLI Vercel des alias actifs\n- verification Git du changement documentaire",
+        "body": "## Contexte\nLe projet Vercel et le domaine public doivent être alignés sur le nom du dépôt \\\\kraak-group\\\\.\n\n## Attendu\n- renommer le projet Vercel en kraak-group\n- attacher kraak-group.vercel.app au déploiement de production\n- retirer l'alias legacy client-six-indol-58.vercel.app\n- tracer le domaine public courant dans la documentation de runbook\n\n## Validation\n- vérification via CLI Vercel des alias actifs\n- vérification Git du changement documentaire",
         "number": 159,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du depot",
+        "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du dépôt",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/159"
       },
@@ -2496,7 +2496,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "ops",
-      "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du depot",
+      "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du dépôt",
       "wave": "Wave 5 - Release"
     },
     {
@@ -2644,10 +2644,10 @@
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Contexte\n- `http://localhost:4200/` ne sert pas encore une icone de marque exploitable dans l'onglet navigateur.\n- `http://localhost:4300/` sert un favicon generique et ne declare pas les icones d'installation attendues pour Android/iOS.\n\n## Objectif\nAjouter le symbole KRAAK comme favicon navigateur et comme base d'icones installables pour les shells web et mobile.\n\n## Validation attendue\n- verification des liens d'icones et manifests dans les deux entry points client\n- verification des assets publics generes pour les deux projets\n- verification runtime sur le shell mobile et signalement clair de tout blocage existant cote web\r\n",
+        "body": "## Contexte\n- `http://localhost:4200/` ne sert pas encore une icône de marque exploitable dans l'onglet navigateur.\n- `http://localhost:4300/` sert un favicon générique et ne déclare pas les icônes d'installation attendues pour Android/iOS.\n\n## Objectif\nAjouter le symbole KRAAK comme favicon navigateur et comme base d'icônes installables pour les shells web et mobile.\n\n## Validation attendue\n- vérification des liens d'icônes et manifests dans les deux entry points client\n- vérification des assets publics générés pour les deux projets\n- vérification runtime sur le shell mobile et signalement clair de tout blocage existant côté web\r\n",
         "number": 194,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK] Ajouter les icones de marque pour les shells web et mobile",
+        "title": "[TASK] Ajouter les icônes de marque pour les shells web et mobile",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/194"
       },
@@ -2657,16 +2657,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK] Ajouter les icones de marque pour les shells web et mobile"
+      "title": "[TASK] Ajouter les icônes de marque pour les shells web et mobile"
     },
     {
       "area": "Cross-cutting",
       "assignees": ["Ange230700"],
       "content": {
-        "body": "## Contexte\nLes points d'entree web et mobile declarent encore uniquement la balise deprecated ^Gpple-mobile-web-app-capable, ce qui fait remonter un avertissement navigateur.\n\n## Objectif\nAjouter la balise standard mobile-web-app-capable dans les deux index.html clients tout en conservant la compatibilite Apple existante.\n\n## Validation attendue\n- verification du diff Git sur les deux entry points\n- verification de la presence des deux meta tags dans les fichiers web et mobile",
+        "body": "## Contexte\nLes points d'entrée web et mobile déclarent encore uniquement la balise deprecated ^Gpple-mobile-web-app-capable, ce qui fait remonter un avertissement navigateur.\n\n## Objectif\nAjouter la balise standard mobile-web-app-capable dans les deux index.html clients tout en conservant la compatibilité Apple existante.\n\n## Validation attendue\n- vérification du diff Git sur les deux entry points\n- vérification de la présence des deux meta tags dans les fichiers web et mobile",
         "number": 195,
         "repository": "Ange230700/kraak-group",
-        "title": "fix(client): declarer mobile-web-app-capable sur web et mobile",
+        "title": "fix(client): déclarer mobile-web-app-capable sur web et mobile",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/195"
       },
@@ -2678,12 +2678,12 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "fix(client): declarer mobile-web-app-capable sur web et mobile",
+      "title": "fix(client): déclarer mobile-web-app-capable sur web et mobile",
       "wave": "Wave 4 - Qualite"
     },
     {
       "content": {
-        "body": "## Contexte\r\nLe serveur de dev mobile echoue pendant l'optimisation de dependances avec l'erreur `Could not resolve \"./client\"` remontee depuis `@kraak/api-client`.\r\n\r\n## Attendu\r\n- `pnpm dev:mobile` demarre sans erreur de prebundle\r\n- le garde-fou de configuration reste couvert par un test workspace\r\n\r\n## Validation visee\r\n- `pnpm test:workspace`\r\n- verification de demarrage de `ng serve mobile --configuration local --port 4300`\r\n",
+        "body": "## Contexte\r\nLe serveur de dev mobile échoue pendant l'optimisation de dépendances avec l'erreur `Could not resolve \"./client\"` remontée depuis `@kraak/api-client`.\r\n\r\n## Attendu\r\n- `pnpm dev:mobile` démarre sans erreur de prebundle\r\n- le garde-fou de configuration reste couvert par un test workspace\r\n\r\n## Validation visee\r\n- `pnpm test:workspace`\r\n- vérification de démarrage de `ng serve mobile --configuration local --port 4300`\r\n",
         "number": 206,
         "repository": "Ange230700/kraak-group",
         "title": "Corriger le prebundle Vite du dev server mobile avec @kraak/api-client",
