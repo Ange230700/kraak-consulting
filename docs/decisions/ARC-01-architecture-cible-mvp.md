@@ -124,28 +124,6 @@ PostgreSQL (Supabase)
 Auth (Supabase Auth)
 ```
 
-```mermaid
-flowchart TD
-    web["Client Web\nAngular + PrimeNG\n(apps/client/projects/web)"]
-    mobile["Client Mobile\nIonic + Capacitor\n(apps/client/projects/mobile)"]
-    contracts["packages/contracts\nDTOs Zod partagés"]
-    api["NestJS API\n(apps/api)"]
-    sb_js["Supabase JS Client\n(requêtes directes, sans ORM)"]
-    pg["PostgreSQL\n(Supabase)"]
-    rls["RLS Policies\nsécurité au niveau ligne"]
-    auth["Supabase Auth\nJWT / sessions"]
-    storage["Supabase Storage\nfichiers / assets"]
-
-    web -- "HTTP REST" --> api
-    mobile -- "HTTP REST" --> api
-    contracts -. "validation des DTOs" .-> api
-    api --> sb_js
-    sb_js --> pg
-    sb_js --> storage
-    pg --- rls
-    auth -. "vérification JWT" .-> api
-```
-
 ### 4.3 Déploiement
 
 - **Web** : Vercel, `outputDirectory: apps/client/dist/web/browser`
