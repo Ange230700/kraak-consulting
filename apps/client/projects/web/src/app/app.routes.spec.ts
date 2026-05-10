@@ -140,7 +140,9 @@ describe('Web routes', () => {
 
   describe('buildMarketingRoute', () => {
     it('When the path has no SEO entry Then it throws a descriptive error', () => {
-      class MissingSeoComponent {}
+      class MissingSeoComponent {
+        static readonly marker = 'missing-seo';
+      }
 
       expect(() =>
         buildMarketingRoute('inconnu-sans-seo', () =>

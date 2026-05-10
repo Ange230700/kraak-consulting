@@ -258,14 +258,15 @@ Milestone cible : `M5 - Core participant flows ready`
 Objectif : vérifier la conformité fonctionnelle, qualité et robustesse du MVP.
 Milestone cible : `M6 - QA ready`
 
-| Issue ID | Tache                                                         | Priorité | Dépendances                                                |
-| -------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------- |
-| `QAT-01` | Définir matrice de couverture (page, composant, comportement) | `P0`     | `SET-04`, `SET-05`                                         |
-| `QAT-02` | Écrire tests unitaires composants critiques web/mobile        | `P0`     | `QAT-01`, `WEB-01`, `MOB-02`                               |
-| `QAT-03` | Écrire tests integration API modules critiques                | `P0`     | `QAT-01`, `AUT-02`, `PRG-02`, `RES-02`, `ANN-02`, `SUP-01` |
-| `QAT-04` | Écrire E2E Given/When/Then pour parcours coeur participant    | `P0`     | `QAT-01`, `AUT-03`, `DSH-03`, `PRG-03`, `RES-03`, `SUP-02` |
-| `QAT-05` | Réaliser campagne regression et corriger blockers             | `P0`     | `QAT-02`, `QAT-03`, `QAT-04`                               |
-| `QAT-06` | Réaliser checks accessibilité/performance pre-pilot           | `P1`     | `QAT-05`, `WEB-05`                                         |
+| Issue ID | Tache                                                         | Priorité | Dépendances                                                                              |
+| -------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `QAT-01` | Définir matrice de couverture (page, composant, comportement) | `P0`     | `SET-04`, `SET-05`                                                                       |
+| `QAT-02` | Écrire tests unitaires composants critiques web/mobile        | `P0`     | `QAT-01`, `WEB-01`, `MOB-02`                                                             |
+| `QAT-03` | Écrire tests integration API modules critiques                | `P0`     | `QAT-01`, `AUT-02`, `PRG-02`, `RES-02`, `ANN-02`, `SUP-01`                               |
+| `QAT-04` | Écrire E2E Given/When/Then pour parcours coeur participant    | `P0`     | `QAT-01`, `AUT-03`, `DSH-03`, `PRG-03`, `RES-03`, `SUP-02`                               |
+| `QAT-05` | Réaliser campagne regression et corriger blockers             | `P0`     | `QAT-02`, `QAT-03`, `QAT-04`                                                             |
+| `QAT-06` | Réaliser checks accessibilité/performance pre-pilot           | `P1`     | `QAT-05`, `WEB-05`                                                                       |
+| `QAT-07` | Couvrir les parcours auth + support en Given/When/Then        | `P0`     | `QAT-01`, `AUT-02`, `AUT-03`, `AUT-04`, `AUT-05`, `SUP-01`, `SUP-02`, `SUP-03`, `SUP-05` |
 
 Référence QAT-01 : `docs/specs/qa_coverage_matrix.md`
 
@@ -377,12 +378,12 @@ Intégration Stripe : checkout, abonnements, factures et reçus automatiques.
 
 | ID     | Issue                                                         | Surface | Priorité |
 | ------ | ------------------------------------------------------------- | ------- | -------- |
-| PAY-01 | #336 Integrer Stripe (providers, webhooks, cles API)          | api     | P0       |
+| PAY-01 | #336 Intégrer Stripe (providers, webhooks, clés API)          | api     | P0       |
 | PAY-02 | #337 Implementer checkout sessions (paiement unique)          | api     | P0       |
-| PAY-03 | #338 Implementer abonnements et plans recurrents              | api     | P0       |
-| PAY-04 | #339 Integrer UI paiement web (checkout et confirmation)      | web     | P0       |
-| PAY-05 | #340 Integrer UI paiement mobile (checkout Stripe mobile)     | mobile  | P0       |
-| PAY-06 | #341 Generer factures et recus automatiques (Stripe + Resend) | api     | P1       |
+| PAY-03 | #338 Implementer abonnements et plans récurrents              | api     | P0       |
+| PAY-04 | #339 Intégrer UI paiement web (checkout et confirmation)      | web     | P0       |
+| PAY-05 | #340 Intégrer UI paiement mobile (checkout Stripe mobile)     | mobile  | P0       |
+| PAY-06 | #341 Générer factures et reçus automatiques (Stripe + Resend) | api     | P1       |
 
 ---
 
@@ -392,7 +393,7 @@ LMS léger : cours, modules, leçons, quiz, progression avancée, attestation PD
 
 | ID     | Issue                                                                 | Surface | Priorité |
 | ------ | --------------------------------------------------------------------- | ------- | -------- |
-| LMS-01 | #342 Definir modele cours/module/lecon/quiz                           | shared  | P0       |
+| LMS-01 | #342 Définir modèle cours/module/leçon/quiz                           | shared  | P0       |
 | LMS-02 | #343 Implementer endpoints contenu cours (liste, detail, progression) | api     | P0       |
 | LMS-03 | #344 Implementer lecteur de contenu mobile                            | mobile  | P0       |
 | LMS-04 | #345 Implementer suivi de progression avance                          | api     | P0       |
@@ -407,7 +408,7 @@ Upload/download sécurisé de documents via Supabase Storage avec RLS.
 
 | ID     | Issue                                                         | Surface | Priorité |
 | ------ | ------------------------------------------------------------- | ------- | -------- |
-| DOC-01 | #348 Definir modele document (type, visibilite, proprietaire) | shared  | P1       |
+| DOC-01 | #348 Définir modèle document (type, visibilité, propriétaire) | shared  | P1       |
 | DOC-02 | #349 Implementer endpoints upload/download (Supabase Storage) | api     | P1       |
 | DOC-03 | #350 Implementer espace documents mobile                      | mobile  | P1       |
 | DOC-04 | #351 Implementer espace documents web                         | web     | P1       |
@@ -420,9 +421,9 @@ Interface éditoriale admin : articles, catégories, tags, blog public web.
 
 | ID     | Issue                                                           | Surface | Priorité |
 | ------ | --------------------------------------------------------------- | ------- | -------- |
-| CMS-01 | #352 Definir modele editorial (article, categorie, tag, auteur) | shared  | P1       |
+| CMS-01 | #352 Définir modèle éditorial (article, catégorie, tag, auteur) | shared  | P1       |
 | CMS-02 | #353 Implementer endpoints admin publication (CRUD articles)    | api     | P1       |
-| CMS-03 | #354 Implementer blog/actualites web (liste, detail)            | web     | P1       |
+| CMS-03 | #354 Implementer blog/actualités web (liste, detail)            | web     | P1       |
 | CMS-04 | #355 Implementer dashboard admin gestion programmes et contenus | web     | P1       |
 
 ---
@@ -446,9 +447,9 @@ Matrice couverture, tests unitaires, E2E et campagne régression V1.1.
 
 | ID     | Issue                                                    | Surface | Priorité |
 | ------ | -------------------------------------------------------- | ------- | -------- |
-| QA2-01 | #360 Definir matrice couverture V1.1                     | shared  | P0       |
-| QA2-02 | #361 Ecrire tests unitaires composants et services V1.1  | shared  | P0       |
-| QA2-03 | #362 Ecrire tests E2E parcours paiement et apprentissage | qa      | P0       |
+| QA2-01 | #360 Définir matrice couverture V1.1                     | shared  | P0       |
+| QA2-02 | #361 Écrire tests unitaires composants et services V1.1  | shared  | P0       |
+| QA2-03 | #362 Écrire tests E2E parcours paiement et apprentissage | qa      | P0       |
 | QA2-04 | #363 Campagne regression V1.1 et correction des blockers | qa      | P0       |
 
 ---
@@ -461,7 +462,7 @@ Migrations DB, variables d'environnement V1.1, tag et déploiement staging/prod.
 | ------- | --------------------------------------------------------------------- | ------- | -------- |
 | DEP2-01 | #364 Migrer schema DB V1.1 (Supabase migrations)                      | shared  | P0       |
 | DEP2-02 | #365 Configurer variables d'environnement V1.1 (Stripe, Storage, LMS) | ops     | P0       |
-| DEP2-03 | #366 Executer release tag V1.1 et deploiement staging/prod            | ops     | P0       |
+| DEP2-03 | #366 Executer release tag V1.1 et déploiement staging/prod            | ops     | P0       |
 
 ---
 
