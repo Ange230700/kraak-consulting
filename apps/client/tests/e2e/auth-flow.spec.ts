@@ -47,7 +47,7 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Reinitialiser mon mot de passe',
+        name: 'Réinitialiser mon mot de passe',
       }),
     ).toBeVisible();
   });
