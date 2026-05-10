@@ -36,7 +36,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(div);
+      div.remove();
     });
 
     it('should handle empty selector gracefully', () => {
@@ -63,7 +63,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(div);
+      div.remove();
     });
 
     it('should handle empty selector gracefully', () => {
@@ -123,7 +123,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(button);
+      button.remove();
     });
   });
 
@@ -140,7 +140,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(input);
+      input.remove();
     });
   });
 
@@ -157,7 +157,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(li);
+      li.remove();
     });
   });
 
@@ -175,7 +175,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(p);
+      p.remove();
     });
   });
 
@@ -192,7 +192,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(svg);
+      svg.remove();
     });
   });
 
@@ -227,7 +227,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(section);
+      section.remove();
     });
   });
 
@@ -245,7 +245,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(badge);
+      badge.remove();
     });
   });
 
@@ -262,7 +262,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(link);
+      link.remove();
     });
   });
 
@@ -280,7 +280,7 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
-      document.body.removeChild(img);
+      img.remove();
     });
   });
 });

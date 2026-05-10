@@ -126,7 +126,7 @@ When `canShowPreviewContent()` returns `false` (production), these sections are 
 
 ## 🔄 How It Works at Build Time
 
-```
+```text
 pnpm build:web (prod)
   ↓
 Angular detects --configuration=production

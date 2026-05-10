@@ -18,7 +18,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 2. PAGE HERO — bannière interne
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║   < Fond : dégradé navy → blue ou image overlay >           ║
@@ -39,7 +39,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 3. HISTOIRE / CONTEXTE
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Notre histoire
 
@@ -67,7 +67,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 4. MISSION + VISION — deux colonnes côte à côte
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  ┌───────────────────────────┐ ┌───────────────────────────┐ ║
@@ -94,7 +94,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 5. VALEURS — grille 3 × 3 (max 7 valeurs)
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Nos valeurs
 
@@ -125,7 +125,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 6. LEADERSHIP / ÉQUIPE — fondateur
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   L'équipe KRAAK                                             ║
 ║                                                              ║
@@ -155,7 +155,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 7. PREUVES / RÉALISATIONS
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Notre engagement en chiffres
 
@@ -176,7 +176,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 8. CTA
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Vous souhaitez collaborer avec KRAAK ?                     ║
 ║                                                              ║

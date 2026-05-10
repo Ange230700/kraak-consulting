@@ -51,7 +51,7 @@
 | **FAQ**               | 4 questions hardcodées dans `.ts`                                                                                  | ✅ Complete | `faqItems[]` array  |
 | **CTA final**         | Banner standard                                                                                                    | ✅ Complete | CtaBanner component |
 
-#### ⚠️ À remplacer ou cacher pour v1.0.0
+#### ⚠️ HOME — À remplacer ou cacher pour v1.0.0
 
 | Section                      | Problème                                                                                                                                                           | Status               | Raison                                          | Ligne                                                                                             |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -68,7 +68,7 @@
 
 ### 2. ABOUT PAGE (`about.page.ts` / `.html`)
 
-#### ✅ Complète & statique
+#### ✅ ABOUT — Complète & statique
 
 | Section            | Contenu                                                                                                       | Status      | Source         |
 | ------------------ | ------------------------------------------------------------------------------------------------------------- | ----------- | -------------- |
@@ -79,7 +79,7 @@
 | **Visuals**        | 2 images (community-impact, team-workshop)                                                                    | ✅ Complete | Static images  |
 | **CTA final**      | CtaBanner                                                                                                     | ✅ Complete | Component      |
 
-#### ⚠️ À remplacer ou cacher pour v1.0.0
+#### ⚠️ Placeholders à remplacer pour v1.0.0
 
 | Section               | Problème                                                                                                                                                                                                | Status               | Evidence                                                                                                                                     |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -116,7 +116,7 @@ HTML template:
 
 ### 3. SERVICES PAGE (`services.page.ts` / `.html`)
 
-#### ✅ Complète & statique
+#### ✅ SERVICES — Complète & statique
 
 | Section                   | Contenu                                                                                                                                    | Status      | Source                |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | --------------------- |
@@ -129,7 +129,7 @@ HTML template:
 | **FAQ**                   | 4 questions                                                                                                                                | ✅ Complete | `faqItems[]` in `.ts` |
 | **CTA final**             | Banner                                                                                                                                     | ✅ Complete | Component             |
 
-#### ⚠️ À remplacer ou cacher pour v1.0.0
+#### ⚠️ SERVICES — À remplacer ou cacher pour v1.0.0
 
 | Section                      | Problème                                                                         | Status         | Evidence                                            |
 | ---------------------------- | -------------------------------------------------------------------------------- | -------------- | --------------------------------------------------- |
@@ -139,7 +139,7 @@ HTML template:
 
 ### 4. PROGRAMS PAGE (`programs.page.ts` / `.html`)
 
-#### ✅ Complète & statique
+#### ✅ PROGRAMS — Complète & statique
 
 | Section                 | Contenu                                                                                             | Status      | Source         |
 | ----------------------- | --------------------------------------------------------------------------------------------------- | ----------- | -------------- |
@@ -149,13 +149,13 @@ HTML template:
 | **Format description**  | "Les programmes KRAAK restent volontairement lisibles..."                                           | ✅ Complete | Hardcoded text |
 | **CTA final**           | Banner                                                                                              | ✅ Complete | Component      |
 
-#### ✅ Pas de sections incomplètes détectées
+#### ✅ PROGRAMS — Pas de sections incomplètes détectées
 
 ---
 
 ### 5. RESOURCES PAGE (`resources.page.ts` / `.html`)
 
-#### ✅ Complète & statique
+#### ✅ RESOURCES — Complète & statique
 
 | Section            | Contenu                                                                 | Status      | Source         |
 | ------------------ | ----------------------------------------------------------------------- | ----------- | -------------- |
@@ -164,7 +164,7 @@ HTML template:
 | **3 questions**    | "Où voulez-vous arriver?", "Qu'est-ce qui bloque?", "Quel premier pas?" | ✅ Complete | Hardcoded HTML |
 | **CTA final**      | Banner                                                                  | ✅ Complete | Component      |
 
-#### ✅ Pas de sections incomplètes détectées
+#### ✅ RESOURCES — Pas de sections incomplètes détectées
 
 ---
 
@@ -186,7 +186,7 @@ HTML template:
 | **FAQ**                      | 4 questions                                                                   | ✅ Complete             | `faqItems[]`                              |
 | **CTA final**                | Banner                                                                        | ✅ Complete             | Component                                 |
 
-#### ✅ Pas de sections incomplètes détectées
+#### ✅ CONTACT — Pas de sections incomplètes détectées
 
 ---
 

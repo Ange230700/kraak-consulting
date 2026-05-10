@@ -18,7 +18,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 2. PAGE HERO — bannière interne
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║   < Fond : image ou dégradé navy → blue >                   ║
@@ -39,7 +39,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 3. INTRODUCTION SERVICES
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Ce que nous faisons
 
@@ -59,7 +59,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 4. PÔLE 1 — FORMATION
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  < Illustration ou photo formation (droite 45 %) >          ║
@@ -98,7 +98,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 5. PÔLE 2 — GESTION DE PROJET
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   < Icône Gestion de projet >
   Gestion de projet
@@ -129,7 +129,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 6. PÔLE 3 — CONSEIL EN IMMIGRATION
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  < Illustration voyage / international (droite 45 %) >      ║
@@ -159,7 +159,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 7. COMMENT ÇA MARCHE — processus en 4 étapes
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Notre processus d'accompagnement
 
@@ -183,7 +183,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 8. FAQ (optionnel MVP)
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Questions fréquentes                                       ║
 ║                                                              ║
@@ -205,7 +205,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 9. CTA PRINCIPAL
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Vous avez un projet ou un besoin spécifique ?              ║
 ║                                                              ║

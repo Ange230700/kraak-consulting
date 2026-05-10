@@ -202,10 +202,8 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       expect(title).toMatch(/FAQ|aide|support/i);
 
       // And: Meta description should exist
-      const metaDescription = page
-        .locator('meta[name="description"]')
-        ;
-      await expect(metaDescription).toHaveAttribute('content', );
+      const metaDescription = page.locator('meta[name="description"]');
+      await expect(metaDescription).toHaveAttribute('content');
       expect(metaDescription?.length).toBeGreaterThan(20);
     });
 

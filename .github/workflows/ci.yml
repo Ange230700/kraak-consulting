@@ -34,7 +34,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Vérifier le formatage (Prettier)
         run: pnpm format:check
@@ -59,7 +59,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
@@ -87,7 +87,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
@@ -112,7 +112,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Exécuter les tests workspace
         run: pnpm test:workspace
@@ -147,13 +147,13 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
 
       - name: Installer les navigateurs Playwright
-        run: pnpm --filter @kraak/client exec playwright install --with-deps chromium firefox webkit
+        run: pnpm --filter @kraak/client --ignore-scripts exec playwright install --with-deps chromium firefox webkit
 
       - name: Exécuter les tests E2E
         run: pnpm test:e2e
@@ -188,7 +188,7 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
