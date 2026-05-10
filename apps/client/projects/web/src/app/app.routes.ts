@@ -5,7 +5,7 @@ import {
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
 import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
-import { findSeoPageByPath } from './seo/site-seo';
+import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 
 export const participantAreaCanMatch: CanMatchFn = () =>
   isParticipantAreaEnabled();
@@ -35,6 +35,7 @@ const marketingRoutes: Routes = [
     'services',
     () => import('./features/services/services.page'),
   ),
+  buildMarketingRoute('faq', () => import('./features/support/faq.page')),
   buildMarketingRoute(
     'programmes',
     () => import('./features/programs/programs.page'),
@@ -56,6 +57,24 @@ const marketingRoutes: Routes = [
     () => import('./features/legal/politique-de-confidentialite.page'),
   ),
 ];
+
+const notFoundSeo: SeoPageDefinition = {
+  path: '**',
+  title: 'Page introuvable | KRAAK Consulting',
+  description:
+    "La page demandee est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+  openGraph: {
+    title: 'Page introuvable | KRAAK Consulting',
+    description:
+      "La page demandee est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+    imagePath: '/open-graph/kraak-share-card.svg',
+    imageAlt: 'Carte de partage KRAAK Consulting.',
+  },
+  sitemap: {
+    changeFrequency: 'never',
+    priority: 0.1,
+  },
+};
 
 const participantAreaRoutes: Routes = [
   {
@@ -102,7 +121,9 @@ export function buildRoutes(): Routes {
     ...participantAreaRoutes,
     {
       path: '**',
-      redirectTo: '',
+      title: notFoundSeo.title,
+      data: { seo: notFoundSeo },
+      loadComponent: () => import('./features/support/not-found.page'),
     },
   ];
 }

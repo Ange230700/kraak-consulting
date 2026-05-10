@@ -14,6 +14,7 @@ describe('Web routes', () => {
     '',
     'a-propos',
     'services',
+    'faq',
     'programmes',
     'ressources',
     'contact',
@@ -39,10 +40,12 @@ describe('Web routes', () => {
     }
   });
 
-  it('When inspecting routes Then a wildcard fallback redirects to home', () => {
+  it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
     const wildcard = builtRoutes.find((r) => r.path === '**');
     expect(wildcard).toBeDefined();
-    expect(wildcard!.redirectTo).toBe('');
+    expect(wildcard!.loadComponent).toBeDefined();
+    expect(wildcard!.title).toBe('Page introuvable | KRAAK Consulting');
+    expect(wildcard!.data?.['seo']).toBeDefined();
   });
 
   it('When inspecting page routes Then every page component is lazy-loaded', () => {
@@ -137,9 +140,11 @@ describe('Web routes', () => {
 
   describe('buildMarketingRoute', () => {
     it('When the path has no SEO entry Then it throws a descriptive error', () => {
+      class MissingSeoComponent {}
+
       expect(() =>
         buildMarketingRoute('inconnu-sans-seo', () =>
-          Promise.resolve({ default: class {} }),
+          Promise.resolve({ default: MissingSeoComponent }),
         ),
       ).toThrowError(/Missing SEO configuration/);
     });
