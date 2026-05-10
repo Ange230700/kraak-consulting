@@ -30,7 +30,7 @@ Body:
 ## Contexte
 
 Verrouiller les choix d'architecture web/mobile/api et les conventions de base
-pour éviter le scope creep et accélérer l'execution MVP.
+pour éviter le scope creep et accélérer l'exécution MVP.
 
 ## Objectif
 
@@ -41,7 +41,7 @@ Clore toutes les issues ARC-\* pour atteindre le milestone M1.
 - [ ] ARC-01 - Valider architecture cible web/mobile/api avec scope MVP (P0) - deps: none
 - [ ] ARC-02 - Définir conventions repo (naming, structure, quality gates) (P0) - deps: ARC-01
 - [ ] ARC-03 - Définir stratégie de rendu web (SEO/prerender) (P0) - deps: ARC-01
-- [ ] ARC-04 - Définir modèles de donnees MVP (P0) - deps: ARC-01
+- [ ] ARC-04 - Définir modèles de données MVP (P0) - deps: ARC-01
 - [ ] ARC-05 - Documenter ADRs et critères anti-scope-creep (P1) - deps: ARC-02, ARC-04
 
 ## Dépendances amont
@@ -194,7 +194,7 @@ Clore les chantiers pages, formulaires, SEO et optimisation web.
 
 ## Sous-taches (issues enfants)
 
-- [ ] WEB-01 - Implementer pages core (Accueil, A propos, Services, Programmes, Contact) (P0) - deps: SET-01, ARC-03
+- [ ] WEB-01 - Implémenter pages core (Accueil, À propos, Services, Programmes, Contact) (P0) - deps: SET-01, ARC-03
 - [ ] WEB-02 - Intégrer formulaires de contact et CTA conversion (P0) - deps: WEB-01, SUP-01
 - [ ] WEB-03 - Ajouter SEO technique (meta, sitemap, robots, Open Graph) (P0) - deps: WEB-01
 - [ ] WEB-04 - Ajouter analytics web (PostHog/GA) (P1) - deps: WEB-01
@@ -299,9 +299,9 @@ Clore toutes les issues AUT-\* pour atteindre M4.
 ## Sous-taches (issues enfants)
 
 - [ ] AUT-01 - Configurer Supabase Auth (providers, policies de base) (P0) - deps: ARC-04, SET-02
-- [ ] AUT-02 - Implementer endpoints API auth/session (NestJS) (P0) - deps: AUT-01, LIB-01
-- [ ] AUT-03 - Implementer écrans login/signup/reset mobile (P0) - deps: MOB-02, AUT-02
-- [ ] AUT-04 - Implementer garde routes protegees web/mobile (P0) - deps: AUT-02, LIB-03
+- [ ] AUT-02 - Implémenter endpoints API auth/session (NestJS) (P0) - deps: AUT-01, LIB-01
+- [ ] AUT-03 - Implémenter écrans login/signup/reset mobile (P0) - deps: MOB-02, AUT-02
+- [ ] AUT-04 - Implémenter garde routes protégées web/mobile (P0) - deps: AUT-02, LIB-03
 - [ ] AUT-05 - Ajouter gestion role participant/admin minimal (P1) - deps: AUT-02, ARC-04
 
 ## Dépendances amont
@@ -313,7 +313,7 @@ Clore toutes les issues AUT-\* pour atteindre M4.
 ## Critères d'acceptation
 
 - [ ] Login/signup/reset opérationnels
-- [ ] Sessions et routes protegees valides
+- [ ] Sessions et routes protégées valides
 - [ ] Roles minimaux appliques
 
 ## Definition of done de l'epic
@@ -347,14 +347,14 @@ Proposer une vue d'accueil participant utile et actionnable.
 
 ## Objectif
 
-Implementer le contenu dashboard, l'aggregation API et les vues clientes.
+Implémenter le contenu dashboard, l'aggregation API et les vues clientes.
 
 ## Sous-taches (issues enfants)
 
 - [ ] DSH-01 - Définir contenu dashboard MVP (cartes, rappels, dernières actus) (P0) - deps: ARC-04
 - [ ] DSH-02 - Exposer endpoint dashboard aggregate cote API (P0) - deps: SET-02, LIB-01, AUT-02
-- [ ] DSH-03 - Implementer vue dashboard mobile (P0) - deps: MOB-02, AUT-04, DSH-02
-- [ ] DSH-04 - Implementer vue dashboard web participant (si activée MVP) (P1) - deps: WEB-01, AUT-04, DSH-02
+- [ ] DSH-03 - Implémenter vue dashboard mobile (P0) - deps: MOB-02, AUT-04, DSH-02
+- [ ] DSH-04 - Implémenter vue dashboard web participant (si activée MVP) (P1) - deps: WEB-01, AUT-04, DSH-02
 
 ## Dépendances amont
 
@@ -365,7 +365,7 @@ Implementer le contenu dashboard, l'aggregation API et les vues clientes.
 ## Critères d'acceptation
 
 - [ ] Dashboard mobile utilisable
-- [ ] Donnees agrégées fiables
+- [ ] Données agrégées fiables
 - [ ] Variante web confirmée selon scope
 
 ## Definition of done de l'epic
@@ -399,14 +399,14 @@ Permettre la consultation et le suivi minimum des programmes participants.
 
 ## Objectif
 
-Implementer modèles, endpoints, vues mobiles et tests de comportement.
+Implémenter modèles, endpoints, vues mobiles et tests de comportement.
 
 ## Sous-taches (issues enfants)
 
 - [ ] PRG-01 - Définir modèle programme/cohorte/statut progression MVP (P0) - deps: ARC-04
-- [ ] PRG-02 - Implementer endpoints liste/detail programmes (P0) - deps: SET-02, LIB-01, AUT-02, PRG-01
-- [ ] PRG-03 - Implementer écran mobile liste + detail programme (P0) - deps: MOB-02, PRG-02
-- [ ] PRG-04 - Implementer marquage de progression minimale (P1) - deps: PRG-02, LIB-02
+- [ ] PRG-02 - Implémenter endpoints liste/détail programmes (P0) - deps: SET-02, LIB-01, AUT-02, PRG-01
+- [ ] PRG-03 - Implémenter écran mobile liste + détail programme (P0) - deps: MOB-02, PRG-02
+- [ ] PRG-04 - Implémenter marquage de progression minimale (P1) - deps: PRG-02, LIB-02
 - [ ] PRG-05 - Ajouter scenarii de test Given/When/Then programmes (P1) - deps: PRG-03, PRG-04, QAT-01
 
 ## Dépendances amont
@@ -417,7 +417,7 @@ Implementer modèles, endpoints, vues mobiles et tests de comportement.
 
 ## Critères d'acceptation
 
-- [ ] Liste et detail programmes accessibles
+- [ ] Liste et détail programmes accessibles
 - [ ] Progression minimale sauvegardée
 - [ ] Scenarios BDD associes
 
@@ -453,14 +453,14 @@ participants.
 
 ## Objectif
 
-Implementer taxonomie, endpoints, experience mobile et tracking.
+Implémenter taxonomie, endpoints, experience mobile et tracking.
 
 ## Sous-taches (issues enfants)
 
 - [ ] RES-01 - Définir taxonomie ressources (type, theme, audience) (P0) - deps: ARC-04
-- [ ] RES-02 - Implementer endpoints ressources (liste, filtre, detail) (P0) - deps: SET-02, LIB-01, AUT-02, RES-01
-- [ ] RES-03 - Implementer écran mobile ressources (recherche/filtre) (P0) - deps: MOB-02, RES-02
-- [ ] RES-04 - Implementer tracking consultation ressources (P1) - deps: RES-02, WEB-04
+- [ ] RES-02 - Implémenter endpoints ressources (liste, filtre, détail) (P0) - deps: SET-02, LIB-01, AUT-02, RES-01
+- [ ] RES-03 - Implémenter écran mobile ressources (recherche/filtre) (P0) - deps: MOB-02, RES-02
+- [ ] RES-04 - Implémenter tracking consultation ressources (P1) - deps: RES-02, WEB-04
 
 ## Dépendances amont
 
@@ -471,7 +471,7 @@ Implementer taxonomie, endpoints, experience mobile et tracking.
 ## Critères d'acceptation
 
 - [ ] Consultation/filtrage ressources opérationnels
-- [ ] Detail ressource disponible
+- [ ] Détail ressource disponible
 - [ ] Tracking de consultation enregistre
 
 ## Definition of done de l'epic
@@ -505,13 +505,13 @@ Diffuser des annonces utiles et prioritaires vers les participants.
 
 ## Objectif
 
-Implementer le format annonce, le feed API, l'affichage mobile et les push.
+Implémenter le format annonce, le feed API, l'affichage mobile et les push.
 
 ## Sous-taches (issues enfants)
 
 - [ ] ANN-01 - Définir format annonce et règles de publication MVP (P0) - deps: ARC-04
-- [ ] ANN-02 - Implementer endpoints annonces (feed + detail) (P0) - deps: SET-02, LIB-01, AUT-02, ANN-01
-- [ ] ANN-03 - Implementer flux annonces dans mobile dashboard/feed (P0) - deps: MOB-02, DSH-02, ANN-02
+- [ ] ANN-02 - Implémenter endpoints annonces (feed + détail) (P0) - deps: SET-02, LIB-01, AUT-02, ANN-01
+- [ ] ANN-03 - Implémenter flux annonces dans mobile dashboard/feed (P0) - deps: MOB-02, DSH-02, ANN-02
 - [ ] ANN-04 - Ajouter notification push pour annonce prioritaire (P1) - deps: MOB-05, ANN-02
 
 ## Dépendances amont
@@ -523,7 +523,7 @@ Implementer le format annonce, le feed API, l'affichage mobile et les push.
 ## Critères d'acceptation
 
 - [ ] Feed annonces visible dans l'app
-- [ ] Detail annonce accessible
+- [ ] Détail annonce accessible
 - [ ] Push prioritaire déclenchable
 
 ## Definition of done de l'epic
@@ -561,7 +561,7 @@ Mettre en place endpoint support, formulaires web/mobile et notifications email.
 
 ## Sous-taches (issues enfants)
 
-- [ ] SUP-01 - Implementer endpoint contact/support (API + validation) (P0) - deps: SET-02, LIB-01
+- [ ] SUP-01 - Implémenter endpoint contact/support (API + validation) (P0) - deps: SET-02, LIB-01
 - [ ] SUP-02 - Intégrer formulaire support dans mobile (P0) - deps: MOB-02, SUP-01, AUT-04
 - [ ] SUP-03 - Intégrer formulaire contact site web (P0) - deps: WEB-01, SUP-01
 - [ ] SUP-04 - Configurer envoi email transactionnel (Resend ou equivalent) (P1) - deps: SUP-01

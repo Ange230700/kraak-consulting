@@ -15,7 +15,7 @@ describe('Mobile ResourceListPage', () => {
       programId: null,
       cohortId: null,
       title: 'Guide de demarrage',
-      description: 'Document de preparation a la premiere session.',
+      description: 'Document de préparation à la première session.',
       resourceType: 'document',
       resourceTheme: 'training',
       resourceAudience: 'all',

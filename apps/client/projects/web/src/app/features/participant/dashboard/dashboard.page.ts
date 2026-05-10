@@ -159,7 +159,7 @@ export default class DashboardPage implements OnInit {
         key: 'app-feedback',
         severity: 'success',
         summary: 'Dashboard',
-        detail: 'Les donnees ont ete rechargees avec succes.',
+        detail: 'Les données ont été rechargées avec succès.',
         life: 4500,
       });
       this.hasRecoveredFromError.set(false);

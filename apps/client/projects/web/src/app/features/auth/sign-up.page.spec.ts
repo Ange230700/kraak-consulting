@@ -20,7 +20,7 @@ describe('Web SignUpPage', () => {
   beforeEach(async () => {
     authService.signUp.mockReset();
     authService.signUp.mockResolvedValue({
-      message: 'Votre compte a ete cree.',
+      message: 'Votre compte a été créé.',
       requiresEmailConfirmation: true,
       session: null,
       profile: null,
@@ -68,7 +68,7 @@ describe('Web SignUpPage', () => {
     });
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
     expect(fixture.componentInstance.successMessage()).toBe(
-      'Votre compte a ete cree.',
+      'Votre compte a été créé.',
     );
     expect(messageServiceAddSpy).toHaveBeenCalledWith(
       expect.objectContaining({

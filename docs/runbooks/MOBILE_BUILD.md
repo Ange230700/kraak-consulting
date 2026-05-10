@@ -1,6 +1,6 @@
 # Guide de build mobile (Capacitor Android / iOS)
 
-Ce runbook decrit comment generer les projets natifs Android et iOS, lancer un build debug local, ouvrir le projet dans l'IDE natif, et tester avec le live-reload.
+Ce runbook décrit comment générer les projets natifs Android et iOS, lancer un build debug local, ouvrir le projet dans l'IDE natif, et tester avec le live-reload.
 
 ---
 
@@ -23,9 +23,9 @@ Pour que les builds Android fonctionnent sans specifier manuellement les chemins
 
 ### Android SDK (`local.properties`)
 
-Le fichier `apps/client/android/local.properties` est automatiquement genere a partir de votre installation locale d'Android Studio. Il ne doit pas etre commite.
+Le fichier `apps/client/android/local.properties` est automatiquement généré à partir de votre installation locale d'Android Studio. Il ne doit pas être commité.
 
-Verification manuelle (si le build Gradle echoue sur "SDK location not found") :
+Vérification manuelle (si le build Gradle échoue sur "SDK location not found") :
 
 ```bash
 # Verifier que le fichier existe
@@ -40,7 +40,7 @@ echo "sdk.dir=$HOME/Library/Android/Sdk" > apps/client/android/local.properties
 
 ### JAVA_HOME et variables d'environnement
 
-Si le build Gradle echoue sur "Unsupported class file major version" ou "Unknown Java version", le JDK actif est incompatible. Deux approches :
+Si le build Gradle échoue sur "Unsupported class file major version" ou "Unknown Java version", le JDK actif est incompatible. Deux approches :
 
 #### Option 1 : Configuration shell permanente (recommande)
 
@@ -83,8 +83,8 @@ node scripts/setup-android-env.mjs --run "pnpm build:debug:android"
 
 ## Generation des projets natifs
 
-Les dossiers `android/` et `ios/` ne sont pas generes automatiquement.
-Dans l'etat actuel du depot, ils sont generes a la demande en local ou en CI.
+Les dossiers `android/` et `ios/` ne sont pas générés automatiquement.
+Dans l'état actuel du dépôt, ils sont générés à la demande en local ou en CI.
 Si vous devez preparer manuellement les plateformes natives, utilisez :
 
 ```bash
@@ -120,7 +120,7 @@ cd apps/client/android
 ./gradlew assembleDebug
 ```
 
-APK genere dans `apps/client/android/app/build/outputs/apk/debug/app-debug.apk`.
+APK généré dans `apps/client/android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ### iOS (macOS uniquement)
 
@@ -231,7 +231,7 @@ ANN-04 (notification push annonce prioritaire) ajoute sur ce wiring :
 
 ## Test avec live-reload (appareil physique ou emulateur)
 
-1. Demarrer le serveur de developpement mobile :
+1. Démarrer le serveur de développement mobile :
 
 ```bash
 pnpm dev:mobile
@@ -259,7 +259,7 @@ pnpm --filter @kraak/client cap:open:ios
 
 1. Lancer l'app depuis Android Studio ou Xcode sur un emulateur ou un appareil connecte.
 
-Important : ne pas commiter le bloc `url` / `cleartext` dans le depot, il est reserve au developpement local.
+Important : ne pas commiter le bloc `url` / `cleartext` dans le dépôt, il est réservé au développement local.
 
 ---
 
@@ -273,7 +273,7 @@ Le job `android-debug` du pipeline CI (`.github/workflows/ci.yml`) :
 - assemble le debug APK via `./gradlew assembleDebug`
 - publie l'APK comme artefact GitHub Actions (`debug-apk`, retention 14 jours)
 
-Le debug APK est accessible dans l'onglet Actions du depot GitHub, dans le resume de chaque run CI reussi.
+Le debug APK est accessible dans l'onglet Actions du dépôt GitHub, dans le résumé de chaque run CI réussi.
 
 ---
 

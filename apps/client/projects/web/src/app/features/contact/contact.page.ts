@@ -112,7 +112,7 @@ export default class ContactPage implements OnInit, OnDestroy {
     {
       question: 'Puis-je être accompagné à distance depuis un autre pays ?',
       answer:
-        'Oui. KRAAK accompagne des publics en Afrique et à l international via des formats à distance et des échanges planifiés selon votre disponibilité.',
+        "Oui. KRAAK accompagne des publics en Afrique et à l'international via des formats à distance et des échanges planifiés selon votre disponibilité.",
     },
     {
       question: 'Combien de temps faut-il pour recevoir une première réponse ?',
@@ -197,7 +197,7 @@ export default class ContactPage implements OnInit, OnDestroy {
           severity: 'success',
           summary: 'Contact',
           detail:
-            'Votre message a bien ete envoye. Notre equipe revient vers vous rapidement.',
+            'Votre message a bien été envoyé. Notre équipe revient vers vous rapidement.',
           life: 6000,
         });
         this.form.reset();

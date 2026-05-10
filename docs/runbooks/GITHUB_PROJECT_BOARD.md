@@ -101,7 +101,7 @@ Usage attendu :
 - `Lane` = qui peut avancer dessus sans attendre l'autre
 - `Surface` = ou se fait le changement principal
 - `Coupling` = niveau de coordination requis
-- `Wave` = ordre macro d'execution
+- `Wave` = ordre macro d'exécution
 
 ---
 
