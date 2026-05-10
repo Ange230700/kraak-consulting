@@ -91,7 +91,7 @@ This document inventories **all incomplete, WIP, and non-MVP features** currentl
 
 ### Public Endpoints (No Auth Required)
 
-```
+```bash
 POST   /support/contact          - Submit contact form
 POST   /contact                  - Alias for /support/contact
 GET    /resources                - List public resources
@@ -105,13 +105,13 @@ POST   /auth/refresh-session     - Refresh access token
 
 #### Dashboard & Overview
 
-```
+```bash
 GET    /dashboard                - Aggregate: programs, sessions, announcements
 ```
 
 #### Programs
 
-```
+```bash
 GET    /programs                 - List enrolled programs with progress
 GET    /programs/:id             - Program detail with sessions & announcements
 POST   /programs/:id/sessions/:id/progress - Mark session as completed
@@ -119,21 +119,21 @@ POST   /programs/:id/sessions/:id/progress - Mark session as completed
 
 #### Announcements
 
-```
+```bash
 GET    /announcements            - Paginated list of accessible announcements
 GET    /announcements/:id        - Single announcement detail
 ```
 
 #### Support (Tracking)
 
-```
+```bash
 GET    /support/requests         - List participant's own support requests
 PATCH  /support/requests/:id/status - Update support request status
 ```
 
 #### Profile
 
-```
+```bash
 GET    /auth/profile             - Current authenticated user + participant data
 ```
 

@@ -19,7 +19,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 2. PAGE HERO — bannière interne
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║   < Fond : dégradé navy → blue >                            ║
@@ -40,7 +40,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 3. CONTENU PRINCIPAL — 2 colonnes desktop
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║  ┌─────────────────────────────┐  ┌──────────────────────┐  ║
@@ -121,7 +121,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 4. MESSAGE DE CONFIRMATION (état post-envoi)
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ┌──────────────────────────────────────────────────┐
   │                                                  │

@@ -11,7 +11,7 @@
 
 ### 1. HEADER (composant partagé)
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║ [Logo KRAAK]  Accueil  À propos  Services  Programmes        ║
 ║                                            [Nous contacter]  ║
@@ -24,7 +24,7 @@ Fond navy. Sticky au scroll.
 
 ### 2. HERO — section pleine largeur
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
 ║   < Image / illustration de fond (overlay navy sombre) >    ║
@@ -52,7 +52,7 @@ Fond navy. Sticky au scroll.
 
 ### 3. RÉSUMÉ MISSION — bande alternée
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Qui sommes-nous ?
 
@@ -73,7 +73,7 @@ Fond navy. Sticky au scroll.
 
 ### 4. DOMAINES D'EXPERTISE — grille 3 colonnes
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Nos domaines d'intervention                                ║
 ║                                                              ║
@@ -103,7 +103,7 @@ Fond navy. Sticky au scroll.
 
 ### 5. POURQUOI KRAAK — bande alternée
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Pourquoi choisir KRAAK ?
 
@@ -127,7 +127,7 @@ Fond navy. Sticky au scroll.
 
 ### 6. IMPACT — bande chiffres clés
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║         Notre impact en chiffres                             ║
 ║                                                              ║
@@ -146,7 +146,7 @@ Fond navy. Sticky au scroll.
 
 ### 7. TÉMOIGNAGES — carrousel (placeholder)
 
-```
+```text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Ce que disent nos bénéficiaires
 
@@ -173,7 +173,7 @@ Fond navy. Sticky au scroll.
 
 ### 8. CTA PRINCIPAL — bande de conversion
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║   Prêt à construire votre avenir avec KRAAK ?                ║
 ║                                                              ║

@@ -58,7 +58,7 @@ export const routes: Routes = [
 
 ### How It Works
 
-```
+```text
 User tries to access /connexion in production
   ↓
 Router checks: canMatch: [participantAreaCanMatch]
@@ -163,7 +163,7 @@ export class DashboardController {
 
 ### What Happens Without Token (Production)
 
-```
+```text
 curl http://production-api/api/dashboard
   (no Authorization header)
   ↓
@@ -239,7 +239,7 @@ They **still cannot** access another participant's data because:
 
 Production architecture has **5 layers** of protection:
 
-```
+```text
 Layer 1: Feature Flag
   ↓ (If bypassed)
 Layer 2: Routes Hidden

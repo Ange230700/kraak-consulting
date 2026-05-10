@@ -75,9 +75,7 @@ describe('site-seo', () => {
   // When resolvePublicSiteUrl is called
   // Then it returns the default site URL
   it('Given no siteUrl argument, when resolvePublicSiteUrl is called, then the default site URL is returned', () => {
-    expect(resolvePublicSiteUrl(undefined)).toBe(
-      'https://kraak-consulting.vercel.app',
-    );
+    expect(resolvePublicSiteUrl()).toBe('https://kraak-consulting.vercel.app');
   });
 
   // Given a siteUrl with trailing slash

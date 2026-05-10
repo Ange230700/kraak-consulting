@@ -17,7 +17,7 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     // Only set up scroll-to-top in browser environment (not during SSR)
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
+    if (globalThis.window === undefined || document === undefined) {
       return;
     }
 
@@ -26,7 +26,7 @@ export class App implements OnInit {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         // Smoothly reset scroll position on each route change.
-        window.scrollTo({
+        globalThis.window.scrollTo({
           top: 0,
           left: 0,
           behavior: 'smooth',
