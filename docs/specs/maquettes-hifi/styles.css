@@ -95,7 +95,7 @@ a {
 }
 
 .btn {
-  background: linear-gradient(120deg, var(--kr-blue), #1f8fca);
+  background: linear-gradient(120deg, var(--kr-blue), #0d5f98);
   color: #fff;
   box-shadow: 0 10px 22px rgba(15, 108, 173, 0.35);
 }

@@ -178,16 +178,16 @@ flowchart TD
 
 ## 5.1 Sign in
 
-### But
+### But - Sign in
 
 Permettre à un participant autorisé de se connecter avec un accès sécurisé.
 
-### Déclencheur
+### Déclencheur - Sign in
 
 - ouverture de l'application sans session valide
 - retour à l'application après déconnexion ou expiration de session
 
-### Parcours nominal
+### Parcours nominal - Sign in
 
 1. L'utilisateur arrive sur l'écran `Sign in`.
 2. Il saisit son email et son mot de passe.
@@ -198,7 +198,7 @@ Permettre à un participant autorisé de se connecter avec un accès sécurisé.
    accès.
 7. Sinon, il entre sur `Accueil`.
 
-### Critères d'acceptation
+### Critères d'acceptation - Sign in
 
 - l'écran affiche au minimum `email`, `mot de passe` et action de connexion
 - l'authentification réussie redirige vers le bon flux post-login
@@ -211,16 +211,16 @@ Permettre à un participant autorisé de se connecter avec un accès sécurisé.
 
 ## 5.2 First Access / Onboarding
 
-### But
+### But - First Access / Onboarding
 
 Confirmer le premier accès et orienter le participant avant l'usage courant.
 
-### Déclencheur
+### Déclencheur - First Access / Onboarding
 
 - première connexion d'un participant
 - compte `registered` sans onboarding complété
 
-### Parcours nominal
+### Parcours nominal - First Access / Onboarding
 
 1. L'utilisateur est redirigé vers l'écran de premier accès.
 2. L'application affiche un message de bienvenue, le cadre du parcours et les
@@ -229,7 +229,7 @@ Confirmer le premier accès et orienter le participant avant l'usage courant.
 4. L'application marque l'onboarding comme terminé.
 5. L'utilisateur est redirigé vers `Accueil`.
 
-### Critères d'acceptation
+### Critères d'acceptation - First Access / Onboarding
 
 - le premier accès n'apparaît qu'aux utilisateurs concernés
 - l'écran rappelle clairement ce que l'utilisateur peut faire dans l'app
@@ -241,16 +241,16 @@ Confirmer le premier accès et orienter le participant avant l'usage courant.
 
 ## 5.3 View Dashboard
 
-### But
+### But - View Dashboard
 
 Donner une vue synthétique du contexte participant à l'ouverture de l'app.
 
-### Déclencheur
+### Déclencheur - View Dashboard
 
 - connexion réussie sans onboarding en attente
 - ouverture de l'onglet `Accueil`
 
-### Parcours nominal
+### Parcours nominal - View Dashboard
 
 1. Le participant arrive sur `Accueil`.
 2. L'application affiche le résumé du compte et du parcours.
@@ -258,7 +258,7 @@ Donner une vue synthétique du contexte participant à l'ouverture de l'app.
 4. Il voit les prochaines sessions, les annonces récentes et les accès rapides
    utiles.
 
-### Critères d'acceptation
+### Critères d'acceptation - View Dashboard
 
 - l'écran `Accueil` est le point d'entrée principal post-login
 - les données affichées sont limitées au périmètre du participant
@@ -270,23 +270,23 @@ Donner une vue synthétique du contexte participant à l'ouverture de l'app.
 
 ## 5.4 Open Program
 
-### But
+### But - Open Program
 
 Permettre au participant d'ouvrir un programme auquel il est inscrit.
 
-### Déclencheur
+### Déclencheur - Open Program
 
 - clic depuis `Accueil`
 - clic depuis l'onglet `Programmes`
 
-### Parcours nominal
+### Parcours nominal - Open Program
 
 1. Le participant sélectionne un programme visible.
 2. L'application ouvre l'écran détail du programme.
 3. L'écran affiche au minimum résumé, cohorte liée si applicable, sessions,
    ressources et annonces utiles.
 
-### Critères d'acceptation
+### Critères d'acceptation - Open Program
 
 - seuls les programmes accessibles au participant sont ouvrables
 - l'écran détail expose les informations minimales attendues
@@ -298,23 +298,23 @@ Permettre au participant d'ouvrir un programme auquel il est inscrit.
 
 ## 5.5 View Session Details
 
-### But
+### But - View Session Details
 
 Permettre au participant de consulter le détail d'une session.
 
-### Déclencheur
+### Déclencheur - View Session Details
 
 - clic depuis `Accueil`
 - clic depuis un programme
 
-### Parcours nominal
+### Parcours nominal - View Session Details
 
 1. Le participant sélectionne une session.
 2. L'application ouvre le détail de session.
 3. Le détail affiche le titre, l'horaire, le statut, le lieu/lien, le
    descriptif et les informations utiles.
 
-### Critères d'acceptation
+### Critères d'acceptation - View Session Details
 
 - seules les sessions du périmètre du participant sont visibles
 - le détail contient les informations nécessaires pour rejoindre ou comprendre
@@ -325,23 +325,23 @@ Permettre au participant de consulter le détail d'une session.
 
 ## 5.6 Open a Resource
 
-### But
+### But - Open a Resource
 
 Permettre au participant d'accéder à une ressource pédagogique publiée.
 
-### Déclencheur
+### Déclencheur - Open a Resource
 
 - clic depuis le détail programme
 - clic depuis une liste de ressources
 
-### Parcours nominal
+### Parcours nominal - Open a Resource
 
 1. Le participant ouvre une ressource visible.
 2. L'application affiche le détail de la ressource ou ouvre directement la
    cible selon le type.
 3. Le participant consulte le contenu ou le télécharge.
 
-### Critères d'acceptation
+### Critères d'acceptation - Open a Resource
 
 - seules les ressources publiées et autorisées sont visibles
 - le type de ressource est géré proprement (`link`, `file`, etc.)
@@ -352,24 +352,24 @@ Permettre au participant d'accéder à une ressource pédagogique publiée.
 
 ## 5.7 Read Announcement
 
-### But
+### But - Read Announcement
 
 Permettre au participant de lire une annonce pertinente.
 
-### Déclencheur
+### Déclencheur - Read Announcement
 
 - clic depuis `Accueil`
 - clic depuis l'onglet `Annonces`
 - clic depuis une notification
 
-### Parcours nominal
+### Parcours nominal - Read Announcement
 
 1. Le participant ouvre une annonce.
 2. L'application affiche le détail de l'annonce.
 3. Le contenu est lisible et contextualisé.
 4. L'annonce peut être marquée lue si ce comportement est prévu.
 
-### Critères d'acceptation
+### Critères d'acceptation - Read Announcement
 
 - seules les annonces du périmètre du participant sont visibles
 - l'écran détail affiche titre, contenu, date et contexte utile
@@ -380,16 +380,16 @@ Permettre au participant de lire une annonce pertinente.
 
 ## 5.8 Contact Support
 
-### But
+### But - Contact Support
 
 Permettre au participant de solliciter de l'aide rapidement.
 
-### Déclencheur
+### Déclencheur - Contact Support
 
 - clic sur l'onglet `Support`
 - clic sur une action de support depuis `Accueil` ou un écran détail
 
-### Parcours nominal
+### Parcours nominal - Contact Support
 
 1. Le participant ouvre `Support`.
 2. L'application affiche les moyens de contact disponibles.
@@ -397,7 +397,7 @@ Permettre au participant de solliciter de l'aide rapidement.
 4. Il saisit sa demande et valide.
 5. L'application confirme la prise en compte.
 
-### Critères d'acceptation
+### Critères d'acceptation - Contact Support
 
 - l'onglet `Support` est accessible depuis la navigation principale
 - au moins un canal exploitable est disponible au MVP
@@ -409,21 +409,21 @@ Permettre au participant de solliciter de l'aide rapidement.
 
 ## 5.9 Log out
 
-### But
+### But - Log out
 
 Permettre à l'utilisateur de fermer proprement sa session.
 
-### Déclencheur
+### Déclencheur - Log out
 
 - clic sur l'action `Log out`
 
-### Parcours nominal
+### Parcours nominal - Log out
 
 1. L'utilisateur déclenche l'action de déconnexion.
 2. L'application invalide la session locale et distante si nécessaire.
 3. L'utilisateur est redirigé vers `Sign in`.
 
-### Critères d'acceptation
+### Critères d'acceptation - Log out
 
 - la session locale est supprimée
 - les écrans protégés ne restent pas accessibles après déconnexion

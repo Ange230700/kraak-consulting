@@ -87,7 +87,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-**Colonne gauche — Formulaire de contact**
+#### Colonne gauche — Formulaire de contact
 
 | Champ               | Type     | Requis | Validation                                          |
 | ------------------- | -------- | ------ | --------------------------------------------------- |
@@ -108,7 +108,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 - Validation : inline sous le champ (rouge `#ef4444`, Poppins 400, 13 px)
 - RGPD : lien "Politique de confidentialité" sous le bouton, taille 12 px
 
-**Colonne droite — Coordonnées**
+#### Colonne droite — Coordonnées
 
 - Fond : page `#f3f3f3`, border-radius 8 px, padding 24 px
 - Icônes : navy `#122b4a`, 20 px

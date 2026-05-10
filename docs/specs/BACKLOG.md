@@ -1,7 +1,7 @@
 # Backlog Produit MVP KRAAK - Epics, Issues Et Milestones
 
 - Projet : KRAAK (MVP web + base mobile)
-- Depot : https://github.com/Ange230700/kraak-group
+- Depot : <https://github.com/Ange230700/kraak-group>
 - Project board : voir le board actif documenté dans `docs/runbooks/GITHUB_PROJECT_BOARD.md`
 - Mise a jour : 10 avril 2026
 
@@ -371,7 +371,7 @@ Nouvelles options Wave à ajouter manuellement dans les settings GitHub Project 
 
 ### Epics V1.1
 
-#### [EPIC][PAY] Paiement en ligne — #329 — M8 — P0
+#### [EPIC] [PAY] Paiement en ligne — #329 — M8 — P0
 
 Intégration Stripe : checkout, abonnements, factures et reçus automatiques.
 
@@ -386,7 +386,7 @@ Intégration Stripe : checkout, abonnements, factures et reçus automatiques.
 
 ---
 
-#### [EPIC][LMS] Apprentissage et certification — #330 — M9 — P0
+#### [EPIC] [LMS] Apprentissage et certification — #330 — M9 — P0
 
 LMS léger : cours, modules, leçons, quiz, progression avancée, attestation PDF.
 
@@ -401,7 +401,7 @@ LMS léger : cours, modules, leçons, quiz, progression avancée, attestation PD
 
 ---
 
-#### [EPIC][DOC] Documents participants — #331 — M9 — P1
+#### [EPIC] [DOC] Documents participants — #331 — M9 — P1
 
 Upload/download sécurisé de documents via Supabase Storage avec RLS.
 
@@ -414,7 +414,7 @@ Upload/download sécurisé de documents via Supabase Storage avec RLS.
 
 ---
 
-#### [EPIC][CMS] Gestion de contenu admin — #332 — M9 — P1
+#### [EPIC] [CMS] Gestion de contenu admin — #332 — M9 — P1
 
 Interface éditoriale admin : articles, catégories, tags, blog public web.
 
@@ -427,7 +427,7 @@ Interface éditoriale admin : articles, catégories, tags, blog public web.
 
 ---
 
-#### [EPIC][CRM] Relation client et marketing — #333 — M10 — P2
+#### [EPIC] [CRM] Relation client et marketing — #333 — M10 — P2
 
 Enrichissement profil, vue admin participants, scoring, séquences email.
 
@@ -440,7 +440,7 @@ Enrichissement profil, vue admin participants, scoring, séquences email.
 
 ---
 
-#### [EPIC][QA2] Qualité et couverture V1.1 — #334 — M10 — P0
+#### [EPIC] [QA2] Qualité et couverture V1.1 — #334 — M10 — P0
 
 Matrice couverture, tests unitaires, E2E et campagne régression V1.1.
 
@@ -453,7 +453,7 @@ Matrice couverture, tests unitaires, E2E et campagne régression V1.1.
 
 ---
 
-#### [EPIC][DEP2] Déploiement V1.1 — #335 — M10 — P0
+#### [EPIC] [DEP2] Déploiement V1.1 — #335 — M10 — P0
 
 Migrations DB, variables d'environnement V1.1, tag et déploiement staging/prod.
 
