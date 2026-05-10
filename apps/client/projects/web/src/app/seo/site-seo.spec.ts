@@ -14,6 +14,7 @@ describe('site-seo', () => {
       '',
       'a-propos',
       'services',
+      'faq',
       'programmes',
       'ressources',
       'contact',
