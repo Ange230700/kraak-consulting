@@ -135,7 +135,7 @@ Structure de la migration :
 
 ### 4.3 Relations clés
 
-```
+```text
 auth.users ← app_user (1:1, id partagé)
 app_user ← participant (1:1, user_id FK)
 program ← cohort (1:N, program_id FK)

@@ -21,7 +21,7 @@ Angular dans `apps/client/projects/web/`.
 
 ## Conventions de lecture
 
-```
+```text
 ╔══════════════════════════════════════════════╗
 ║  NOM DU BLOC                                 ║
 ║  Contenu / description                       ║
@@ -57,7 +57,7 @@ Police : **Poppins** — titres 600–700, corps 400–500.
 
 ### Header — présent sur toutes les pages
 
-```
+```text
 ╔══════════════════════════════════════════════════════════╗
 ║ [Logo KRAAK]   Accueil  À propos  Services  Programmes  ║
 ║                                          [Nous contacter]║
@@ -72,7 +72,7 @@ Police : **Poppins** — titres 600–700, corps 400–500.
 
 ### Footer — présent sur toutes les pages
 
-```
+```text
 ╔══════════════════════════════════════════════════════════╗
 ║ [Logo KRAAK]                                             ║
 ║ Slogan court                                             ║

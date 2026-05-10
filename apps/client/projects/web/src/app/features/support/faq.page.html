@@ -1,0 +1,129 @@
+<section
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
+>
+  <div
+    aria-hidden="true"
+    class="from-brand-navy/10 via-brand-navy/35 to-brand-navy/80 absolute inset-0 bg-linear-to-b"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-4 lg:px-6">
+    <div
+      class="border-brand-blue/15 bg-brand-white/95 grid gap-10 rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] backdrop-blur-sm lg:grid-cols-[1.05fr_0.95fr] lg:px-10"
+    >
+      <div>
+        <p
+          class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+        >
+          FAQ
+        </p>
+        <h1
+          class="text-brand-navy mt-4 text-4xl leading-tight font-bold lg:text-5xl"
+        >
+          Les r&eacute;ponses utiles pour avancer avec plus de clart&eacute;.
+        </h1>
+        <p class="text-brand-navy mt-5 max-w-2xl text-lg leading-relaxed">
+          Retrouvez les questions les plus fr&eacute;quentes sur nos services,
+          nos parcours, les modalit&eacute;s d'accompagnement et les
+          d&eacute;lais de r&eacute;ponse. Si votre besoin est
+          sp&eacute;cifique, nous vous orientons directement.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a
+            pButton
+            routerLink="/contact"
+            label="Parler &agrave; un conseiller"
+            icon="pi pi-comments"
+            size="large"
+            class="kr-button-primary"
+            aria-label="Parler à un conseiller KRAAK"
+          ></a>
+          <a
+            pButton
+            routerLink="/services"
+            label="Voir nos services"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            size="large"
+            class="kr-button-ghost"
+            aria-label="Voir les services KRAAK"
+          ></a>
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <article class="rounded-card bg-neutral-50 p-5">
+          <i
+            class="pi pi-compass text-brand-blue text-2xl"
+            aria-hidden="true"
+          ></i>
+          <h2 class="mt-4 text-lg font-bold">Orientation rapide</h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            Clarifiez votre besoin avant d'investir du temps ou de
+            l'&eacute;nergie dans la mauvaise piste.
+          </p>
+        </article>
+        <article class="rounded-card bg-neutral-50 p-5">
+          <i class="pi pi-globe text-accent text-2xl" aria-hidden="true"></i>
+          <h2 class="mt-4 text-lg font-bold">Ouverture internationale</h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            Programmes, projets et mobilit&eacute;: nous structurons des
+            parcours r&eacute;alistes et progressifs.
+          </p>
+        </article>
+        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
+          <i class="pi pi-bolt text-brand-gold text-2xl" aria-hidden="true"></i>
+          <h2 class="mt-4 text-lg font-bold">R&eacute;ponse concr&egrave;te</h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            Nous privil&eacute;gions des r&eacute;ponses courtes, actionnables
+            et reli&eacute;es &agrave; votre prochaine &eacute;tape utile.
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-neutral-50 py-16 lg:py-20">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <kraak-faq-accordion [items]="faqItems" />
+  </div>
+</section>
+
+<section class="bg-brand-white py-16">
+  <div class="mx-auto max-w-5xl px-4 text-center lg:px-6">
+    <div
+      class="border-brand-blue/10 rounded-3xl border bg-neutral-50 px-6 py-10 lg:px-10"
+    >
+      <h2 class="text-brand-navy text-3xl font-bold lg:text-4xl">
+        Vous ne trouvez pas votre r&eacute;ponse ?
+      </h2>
+      <p class="text-brand-navy mx-auto mt-4 max-w-2xl text-base leading-7">
+        Expliquez-nous votre contexte. Nous vous aidons &agrave; identifier la
+        bonne porte d'entr&eacute;e selon votre besoin, votre profil et vos
+        objectifs.
+      </p>
+      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <a
+          pButton
+          routerLink="/contact"
+          label="Nous contacter"
+          icon="pi pi-send"
+          size="large"
+          class="kr-button-primary"
+          aria-label="Contacter KRAAK"
+        ></a>
+        <a
+          pButton
+          routerLink="/programmes"
+          label="Explorer les programmes"
+          icon="pi pi-book"
+          size="large"
+          class="kr-button-ghost"
+          aria-label="Explorer les programmes KRAAK"
+        ></a>
+      </div>
+    </div>
+  </div>
+</section>

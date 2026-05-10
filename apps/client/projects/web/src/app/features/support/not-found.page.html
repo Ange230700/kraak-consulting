@@ -1,0 +1,116 @@
+<section
+  class="bg-brand-page relative isolate min-h-screen overflow-hidden px-4 py-12 sm:px-6 lg:px-8"
+>
+  <div aria-hidden="true" class="absolute inset-0">
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(76,195,217,0.22),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(28,78,134,0.28),transparent_34%),linear-gradient(180deg,#f3f3f3_0%,#ffffff_100%)]"
+    ></div>
+    <svg
+      viewBox="0 0 960 540"
+      xmlns="http://www.w3.org/2000/svg"
+      class="text-brand-blue/90 absolute inset-x-0 bottom-[-10rem] min-h-screen min-w-full"
+      preserveAspectRatio="none"
+    >
+      <rect x="0" y="0" width="960" height="540" fill="transparent"></rect>
+      <path
+        d="M0 331L26.7 321C53.3 311 106.7 291 160 291C213.3 291 266.7 311 320 329.5C373.3 348 426.7 365 480 373.2C533.3 381.3 586.7 380.7 640 373.8C693.3 367 746.7 354 800 341.2C853.3 328.3 906.7 315.7 933.3 309.3L960 303L960 541L933.3 541C906.7 541 853.3 541 800 541C746.7 541 693.3 541 640 541C586.7 541 533.3 541 480 541C426.7 541 373.3 541 320 541C266.7 541 213.3 541 160 541C106.7 541 53.3 541 26.7 541L0 541Z"
+        fill="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="miter"
+      ></path>
+    </svg>
+  </div>
+
+  <div
+    class="relative z-10 mx-auto flex min-h-[calc(100vh-6rem)] max-w-5xl items-center justify-center"
+  >
+    <div
+      class="border-brand-blue/12 bg-brand-white/95 w-full rounded-3xl border px-6 py-10 text-center shadow-[0_24px_60px_rgb(18_43_74/14%)] backdrop-blur-sm sm:px-10 lg:px-14 lg:py-14"
+    >
+      <p
+        class="text-brand-blue text-sm font-semibold tracking-[0.2em] uppercase"
+      >
+        Page introuvable
+      </p>
+      <h1
+        class="text-brand-navy mt-5 text-5xl font-bold sm:text-6xl lg:text-7xl"
+      >
+        Oups.
+      </h1>
+      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg leading-8">
+        La page que vous cherchez n'existe pas, a &eacute;t&eacute;
+        d&eacute;plac&eacute;e ou n'est plus disponible. Nous vous ramenons vers
+        une prochaine &eacute;tape utile.
+      </p>
+
+      <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+        <a
+          pButton
+          routerLink="/"
+          label="Retour &agrave; l'accueil"
+          icon="pi pi-home"
+          size="large"
+          class="kr-button-primary"
+          aria-label="Retour à la page d'accueil"
+        ></a>
+        <a
+          pButton
+          routerLink="/faq"
+          label="Consulter l'aide"
+          icon="pi pi-question-circle"
+          size="large"
+          class="kr-button-ghost"
+          aria-label="Consulter la FAQ KRAAK"
+        ></a>
+        <a
+          pButton
+          routerLink="/contact"
+          label="Nous contacter"
+          icon="pi pi-envelope"
+          size="large"
+          class="kr-button-ghost"
+          aria-label="Contacter KRAAK"
+        ></a>
+      </div>
+
+      <div class="mt-12 grid gap-4 text-left md:grid-cols-3">
+        <a
+          routerLink="/"
+          class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
+        >
+          <h2 class="text-brand-navy text-base font-semibold">
+            Reprendre depuis l'accueil
+          </h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            Retrouvez les points d'entr&eacute;e principaux selon votre profil
+            et votre objectif.
+          </p>
+        </a>
+        <a
+          routerLink="/faq"
+          class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
+        >
+          <h2 class="text-brand-navy text-base font-semibold">
+            Consulter l'aide
+          </h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            FAQ, conseils et orientation: trouvez la r&eacute;ponse &agrave; vos
+            questions fr&eacute;quentes.
+          </p>
+        </a>
+        <a
+          routerLink="/contact"
+          class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
+        >
+          <h2 class="text-brand-navy text-base font-semibold">
+            Demander une orientation
+          </h2>
+          <p class="text-brand-navy mt-2 text-sm leading-6">
+            Si vous h&eacute;sitez, nous vous aidons &agrave; identifier la
+            bonne prochaine &eacute;tape.
+          </p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
