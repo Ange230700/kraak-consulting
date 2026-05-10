@@ -254,4 +254,4 @@ A: Minimal. Angular's tree-shaking will remove unreachable code from the `@if` b
 4. → **Tag release v1.0.0**
 5. → Deploy to production
 
-**Ready to proceed with the release? 🚀**
+## Ready to proceed with the release? 🚀
