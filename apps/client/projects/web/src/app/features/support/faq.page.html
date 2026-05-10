@@ -31,24 +31,21 @@
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
           <a
-            pButton
             routerLink="/contact"
-            label="Parler &agrave; un conseiller"
-            icon="pi pi-comments"
-            size="large"
-            class="kr-button-primary"
+            class="kr-button-primary inline-flex items-center justify-center gap-2"
             aria-label="Parler à un conseiller KRAAK"
-          ></a>
+          >
+            <i class="pi pi-comments" aria-hidden="true"></i>
+            <span>Parler à un conseiller</span>
+          </a>
           <a
-            pButton
             routerLink="/services"
-            label="Voir nos services"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            size="large"
-            class="kr-button-ghost"
+            class="kr-button-ghost inline-flex items-center justify-center gap-2"
             aria-label="Voir les services KRAAK"
-          ></a>
+          >
+            <span>Voir nos services</span>
+            <i class="pi pi-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
 
@@ -106,23 +103,21 @@
       </p>
       <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
         <a
-          pButton
           routerLink="/contact"
-          label="Nous contacter"
-          icon="pi pi-send"
-          size="large"
-          class="kr-button-primary"
+          class="kr-button-primary inline-flex items-center justify-center gap-2"
           aria-label="Contacter KRAAK"
-        ></a>
+        >
+          <i class="pi pi-send" aria-hidden="true"></i>
+          <span>Nous contacter</span>
+        </a>
         <a
-          pButton
           routerLink="/programmes"
-          label="Explorer les programmes"
-          icon="pi pi-book"
-          size="large"
-          class="kr-button-ghost"
+          class="kr-button-ghost inline-flex items-center justify-center gap-2"
           aria-label="Explorer les programmes KRAAK"
-        ></a>
+        >
+          <i class="pi pi-book" aria-hidden="true"></i>
+          <span>Explorer les programmes</span>
+        </a>
       </div>
     </div>
   </div>
