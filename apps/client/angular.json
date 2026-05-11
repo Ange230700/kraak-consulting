@@ -24,6 +24,11 @@
             "index": "projects/web/src/index.html",
             "browser": "projects/web/src/main.ts",
             "polyfills": [],
+            "optimization": {
+              "styles": {
+                "inlineCritical": false
+              }
+            },
             "tsConfig": "projects/web/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
