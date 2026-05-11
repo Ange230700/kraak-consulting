@@ -1,9 +1,4 @@
-import {
-  buildMarketingRoute,
-  buildRoutes,
-  participantAreaCanMatch,
-  routes,
-} from './app.routes';
+import { buildMarketingRoute, buildRoutes, routes } from './app.routes';
 import {
   participantRoleGuard,
   participantRoleChildGuard,
@@ -68,13 +63,13 @@ describe('Web routes', () => {
     }
   });
 
-  it('When inspecting participant routes Then they are gated by the feature flag canMatch guard', () => {
+  it('When inspecting participant routes Then auth and participant routes are reachable without canMatch gating', () => {
     const gated = builtRoutes.filter((r) =>
       participantPaths.includes(r.path ?? ''),
     );
     expect(gated.length).toBe(participantPaths.length);
     for (const route of gated) {
-      expect(route.canMatch).toContain(participantAreaCanMatch);
+      expect(route.canMatch).toBeUndefined();
     }
   });
 
@@ -111,26 +106,6 @@ describe('Web routes', () => {
       expect(defaultRedirect).toBeDefined();
       expect(defaultRedirect!.redirectTo).toBe('dashboard');
       expect(defaultRedirect!.pathMatch).toBe('full');
-    });
-  });
-
-  describe('participantAreaCanMatch guard', () => {
-    const originalConfig = globalThis.__KRAAK_RUNTIME_CONFIG__;
-
-    afterEach(() => {
-      globalThis.__KRAAK_RUNTIME_CONFIG__ = originalConfig;
-    });
-
-    it('When the flag is enabled Then the guard allows the route to match', () => {
-      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(participantAreaCanMatch(null as any, [] as any)).toBe(true);
-    });
-
-    it('When the flag is disabled Then the guard prevents the route from matching', () => {
-      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(participantAreaCanMatch(null as any, [] as any)).toBe(false);
     });
   });
 
