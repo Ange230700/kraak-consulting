@@ -51,7 +51,7 @@ describe('SeoService', () => {
 
     expect(title.getTitle()).toContain('Contact');
     expect(meta.getTag('name="description"')?.content).toContain(
-      '\u00E9tudiant, professionnel, entrepreneur ou entreprise',
+      'gestion de projets, immigration ou besoin entreprise',
     );
     expect(meta.getTag('property="og:title"')?.content).toContain(
       'Parlons de votre projet',

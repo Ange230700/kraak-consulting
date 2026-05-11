@@ -12,7 +12,7 @@ test.describe(`Page d'accueil — smoke tests`, () => {
     page,
   }) => {
     await expect(page).toHaveTitle(
-      'KRAAK Consulting | Formation, projets et mobilité internationale',
+      'KRAAK Consulting | Développez vos compétences, lancez vos projets',
     );
   });
 

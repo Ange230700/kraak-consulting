@@ -69,6 +69,19 @@ describe('ContactPage', () => {
     expect(fixture.nativeElement.querySelector('#message')).toBeTruthy();
   });
 
+  it('devrait afficher une action WhatsApp visible pour un contact rapide', () => {
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    const whatsappLink = page.querySelector(
+      'a[aria-label="Discuter sur WhatsApp"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(whatsappLink).toBeTruthy();
+    expect(whatsappLink?.getAttribute('href')).toContain('wa.me/2250502741818');
+  });
+
   // Given le formulaire est vide
   // When l'utilisateur soumet le formulaire
   // Then le formulaire doit \u00EAtre invalide et les erreurs affich\u00E9es

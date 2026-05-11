@@ -78,9 +78,15 @@ describe('HomePage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Programmes ciblés en français et anglais');
-    expect(content).toContain('Parcours Simples & Clairs');
-    expect(content).toContain('Mobilité Internationale');
+    expect(content).toContain(
+      'Formations en anglais et français professionnel',
+    );
+    expect(content).toContain('Développement personnel et professionnel');
+    expect(content).toContain('Formations en leadership professionnel');
+    expect(content).toContain("Accompagnement à l'emploi");
+    expect(content).toContain('Création, gestion et suivi de projets');
+    expect(content).toContain('Immigration Canada et États-Unis');
+    expect(content).toContain('Intégration socioéconomique et professionnelle');
   });
 
   it('should render home-specific FAQ section', () => {

@@ -6,10 +6,12 @@ test.describe(`SEO technique du site vitrine`, () => {
   }) => {
     await page.goto('/services');
 
-    await expect(page).toHaveTitle(/Services/);
+    await expect(page).toHaveTitle(
+      /Services \| Formation, projets, études, immigration et entreprises/i,
+    );
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /formation, gestion de projets, immigration et solutions entreprises/i,
+      /formation, recherche et gestion de projets, études et immigration, et solutions entreprises/i,
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
@@ -34,10 +36,10 @@ test.describe(`SEO technique du site vitrine`, () => {
   }) => {
     await page.goto('/contact');
 
-    await expect(page).toHaveTitle(/Contact/);
+    await expect(page).toHaveTitle(/Contact \| Parlons de votre projet/i);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /étudiant, professionnel, entrepreneur ou entreprise/i,
+      /formation, gestion de projets, immigration ou besoin entreprise/i,
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',

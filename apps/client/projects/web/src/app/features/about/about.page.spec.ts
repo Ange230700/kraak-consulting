@@ -22,11 +22,14 @@ describe('AboutPage', () => {
     expect(heading?.textContent).toContain('Former. Structurer. Transformer.');
   });
 
-  it('should render the three intervention levels and values', () => {
+  it('should render the refreshed mission, intervention levels and values', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
+    expect(content).toContain(
+      'Révéler le potentiel, développer les compétences et accompagner vers un impact professionnel et communautaire durable',
+    );
     expect(content).toContain('D\u00E9veloppement des comp\u00E9tences');
     expect(content).toContain('Structuration des projets');
     expect(content).toContain(

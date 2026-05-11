@@ -23,18 +23,18 @@ export default class ServicesPage implements OnInit, OnDestroy {
     {
       question: 'Comment choisir le service le plus adapté à mon objectif ?',
       answer:
-        'Nous commençons par clarifier votre besoin, votre contexte et vos priorités. Ensuite, nous vous orientons vers la combinaison de services la plus utile pour avancer rapidement.',
+        'Nous clarifions d’abord votre besoin, votre contexte et la prochaine décision à prendre. Ensuite, nous vous orientons vers le bon point d’entrée entre formation, projet, études et immigration, programmes ou solutions entreprises.',
     },
     {
       question:
-        'Proposez-vous un accompagnement pour les particuliers et les entreprises ?',
+        'Intervenez-vous pour les particuliers, les entreprises et la diaspora ?',
       answer:
-        'Oui. Nous accompagnons les étudiants, professionnels, entrepreneurs et organisations avec des formats dédiés : individuel, équipe ou programme sur mesure.',
+        'Oui. KRAAK accompagne étudiants, professionnels, entrepreneurs, entreprises, diaspora et organisations avec des formats individuels, équipe ou sur mesure.',
     },
     {
-      question: 'Vos services sont-ils disponibles à distance ?',
+      question: 'Puis-je combiner plusieurs services dans un même parcours ?',
       answer:
-        'Oui. Une grande partie de nos accompagnements est disponible à distance, avec des sessions planifiées et un suivi structuré selon vos contraintes.',
+        'Oui. Un parcours peut articuler formation, structuration de projet, orientation internationale et accompagnement entreprise si cela sert mieux votre objectif.',
     },
     {
       question: 'Quel est le délai pour démarrer après une prise de contact ?',
