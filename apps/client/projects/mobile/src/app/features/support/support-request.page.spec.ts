@@ -13,6 +13,7 @@ describe('Mobile SupportRequestPage', () => {
 
   let router: Router;
   let navigateByUrlSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     supportService.submitContactForm.mockReset();
@@ -34,6 +35,9 @@ describe('Mobile SupportRequestPage', () => {
     navigateByUrlSpy = vi
       .spyOn(router, 'navigateByUrl')
       .mockResolvedValue(true);
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+      return undefined;
+    });
   });
 
   it('should create', () => {
@@ -111,6 +115,7 @@ describe('Mobile SupportRequestPage', () => {
 
     expect(fixture.componentInstance.errorMessage()).toBeTruthy();
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('Given an API validation error payload, when submit is called, then the backend message is surfaced to the user', async () => {

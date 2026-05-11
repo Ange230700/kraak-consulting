@@ -102,6 +102,22 @@ Ne pas remettre une mise à jour documentaire nécessaire à plus tard.
 
 ---
 
+## Règle Debug
+
+Quand un flux applicatif intercepte une erreur, un rejet, ou un état inattendu
+sans le relancer, laisser une trace via les méthodes de l’objet `Console`
+(`console.error`, `console.warn`, `console.info`, `console.debug`) avec un
+contexte bref et utile au diagnostic.
+
+Contraintes obligatoires :
+
+- ne jamais logger de mot de passe, token, secret, cookie, ou payload complet
+  sensible
+- préférer un scope court et stable (ex : `web.auth.sign-in.submit`)
+- garder les traces orientées diagnostic, pas verbeuses
+
+---
+
 ## Workflow Git complet
 
 Avant de commencer à coder, chaque collaborateur doit **s'assigner une tâche**

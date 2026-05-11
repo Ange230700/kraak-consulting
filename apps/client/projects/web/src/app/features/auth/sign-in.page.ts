@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
@@ -72,6 +73,9 @@ export default class SignInPage {
       });
       await this.router.navigateByUrl('/participant/dashboard');
     } catch (error) {
+      logDebugError('web.auth.sign-in.submit', error, {
+        route: '/connexion',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,

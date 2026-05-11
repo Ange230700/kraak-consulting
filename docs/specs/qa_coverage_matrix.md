@@ -5,7 +5,7 @@ Portée: MVP KRAAK (web public, web participant, mobile participant, API support
 
 ## 1) Objectif
 
-Definir une matrice de couverture de test exploitable par:
+Définir une matrice de couverture de test exploitable par:
 
 - QAT-02 (tests unitaires/composants)
 - QAT-03 (tests integration API)

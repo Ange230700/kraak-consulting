@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import {
   MOBILE_AUTH_RESET_URL,
@@ -58,6 +59,9 @@ export default class PasswordResetPage {
 
       this.successMessage.set(response.message);
     } catch (error) {
+      logDebugError('mobile.auth.password-reset.submit', error, {
+        route: '/mot-de-passe-oublie',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
