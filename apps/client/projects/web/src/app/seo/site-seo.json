@@ -90,6 +90,21 @@
     }
   },
   {
+    "path": "faq",
+    "title": "FAQ | Aide et orientation | KRAAK Consulting",
+    "description": "Consultez la FAQ KRAAK pour clarifier vos questions sur les services, les programmes, l'accompagnement et les dÃ©lais de rÃ©ponse.",
+    "openGraph": {
+      "title": "FAQ | Aide et orientation | KRAAK Consulting",
+      "description": "Des rÃ©ponses utiles pour choisir le bon point d'entrÃ©e chez KRAAK et avancer avec plus de clartÃ©.",
+      "imagePath": "/open-graph/kraak-share-card.svg",
+      "imageAlt": "Carte de partage KRAAK Consulting prÃ©sentant formation, projets et mobilitÃ© internationale."
+    },
+    "sitemap": {
+      "changeFrequency": "monthly",
+      "priority": 0.6
+    }
+  },
+  {
     "path": "mentions-legales",
     "title": "Mentions légales | KRAAK Consulting",
     "description": "Mentions légales de KRAAK Consulting : éditeur, hébergeur, propriété intellectuelle et responsabilité.",

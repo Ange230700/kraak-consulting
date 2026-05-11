@@ -17,6 +17,7 @@ describe('site-seo', () => {
       'programmes',
       'ressources',
       'contact',
+      'faq',
       'mentions-legales',
       'politique-de-confidentialite',
     ]);
@@ -42,6 +43,9 @@ describe('site-seo', () => {
     );
     expect(sitemap).toContain(
       '<loc>https://kraak-consulting.vercel.app/contact</loc>',
+    );
+    expect(sitemap).toContain(
+      '<loc>https://kraak-consulting.vercel.app/faq</loc>',
     );
   });
 

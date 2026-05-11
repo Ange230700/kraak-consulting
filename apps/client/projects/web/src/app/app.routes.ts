@@ -5,7 +5,7 @@ import {
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
 import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
-import { findSeoPageByPath } from './seo/site-seo';
+import { type SeoPageDefinition, findSeoPageByPath } from './seo/site-seo';
 
 export const participantAreaCanMatch: CanMatchFn = () =>
   isParticipantAreaEnabled();
@@ -28,6 +28,25 @@ export const buildMarketingRoute = (
   };
 };
 
+const notFoundSeo = {
+  path: '404',
+  title: 'Page introuvable | KRAAK',
+  description:
+    "La page demand\u00e9e est introuvable. KRAAK vous oriente vers l'accueil, la FAQ ou la page contact pour reprendre votre parcours.",
+  openGraph: {
+    title: 'Page introuvable | KRAAK',
+    description:
+      "Cette page n'existe pas ou n'est plus disponible. Reprenez votre parcours avec les points d'entr\u00e9e utiles de KRAAK.",
+    imagePath: '/open-graph/kraak-share-card.svg',
+    imageAlt:
+      'Carte de partage KRAAK Consulting pr\u00e9sentant formation, projets et mobilit\u00e9 internationale.',
+  },
+  sitemap: {
+    changeFrequency: 'never',
+    priority: 0,
+  },
+} satisfies SeoPageDefinition;
+
 const marketingRoutes: Routes = [
   buildMarketingRoute('', () => import('./features/home/home.page')),
   buildMarketingRoute('a-propos', () => import('./features/about/about.page')),
@@ -47,6 +66,7 @@ const marketingRoutes: Routes = [
     'contact',
     () => import('./features/contact/contact.page'),
   ),
+  buildMarketingRoute('faq', () => import('./features/support/faq.page')),
   buildMarketingRoute(
     'mentions-legales',
     () => import('./features/legal/mentions-legales.page'),
@@ -102,7 +122,9 @@ export function buildRoutes(): Routes {
     ...participantAreaRoutes,
     {
       path: '**',
-      redirectTo: '',
+      title: notFoundSeo.title,
+      data: { seo: notFoundSeo },
+      loadComponent: () => import('./features/support/not-found.page'),
     },
   ];
 }

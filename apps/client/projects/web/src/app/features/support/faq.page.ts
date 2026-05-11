@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ButtonDirective } from 'primeng/button';
 
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import {
@@ -11,7 +12,7 @@ import {
 @Component({
   selector: 'kraak-faq-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, FaqAccordion],
+  imports: [NgStyle, RouterLink, ButtonDirective, FaqAccordion],
   templateUrl: './faq.page.html',
 })
 export default class FaqPage {
