@@ -8,7 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import type { SupportCategoryValue } from '@kraak/contracts';
-import { ApiError } from '@kraak/api-client';
+import { ApiError, logDebugError } from '@kraak/api-client';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import { MobileSupportService } from './mobile-support.service';
 
@@ -94,6 +94,9 @@ export default class SupportRequestPage {
 
       await this.router.navigateByUrl('/tabs/support');
     } catch (error) {
+      logDebugError('mobile.support.submit', error, {
+        route: '/tabs/support/request',
+      });
       this.errorMessage.set(resolveSupportErrorMessage(error));
     } finally {
       this.submitting.set(false);

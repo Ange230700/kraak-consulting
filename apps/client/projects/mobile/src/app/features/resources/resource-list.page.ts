@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type {
   ResourceAudienceValue,
   ResourceDto,
@@ -145,6 +146,9 @@ export default class ResourceListPage implements OnInit {
       }
     } catch (error) {
       if (requestId === this.latestLoadRequestId) {
+        logDebugError('mobile.resources.list', error, {
+          route: '/tabs/programmes/ressources',
+        });
         this.errorMessage.set(
           resolveAuthErrorMessage(
             error,

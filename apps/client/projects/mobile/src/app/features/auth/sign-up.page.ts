@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import {
   MOBILE_AUTH_CALLBACK_URL,
@@ -93,6 +94,9 @@ export default class SignUpPage {
       this.successMessage.set(response.message);
       this.form.controls.password.reset('');
     } catch (error) {
+      logDebugError('mobile.auth.sign-up.submit', error, {
+        route: '/inscription',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,

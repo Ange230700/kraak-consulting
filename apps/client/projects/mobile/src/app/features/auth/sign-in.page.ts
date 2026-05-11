@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import {
   MobileAuthService,
@@ -63,6 +64,9 @@ export default class SignInPage {
 
       await this.router.navigateByUrl('/tabs/accueil');
     } catch (error) {
+      logDebugError('mobile.auth.sign-in.submit', error, {
+        route: '/connexion',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
