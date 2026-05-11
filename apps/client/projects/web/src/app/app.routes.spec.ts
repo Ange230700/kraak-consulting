@@ -17,6 +17,7 @@ describe('Web routes', () => {
     'programmes',
     'ressources',
     'contact',
+    'faq',
   ];
   const participantPaths = [
     'connexion',
@@ -39,10 +40,11 @@ describe('Web routes', () => {
     }
   });
 
-  it('When inspecting routes Then a wildcard fallback redirects to home', () => {
+  it('When inspecting routes Then a wildcard fallback loads the not-found page', () => {
     const wildcard = builtRoutes.find((r) => r.path === '**');
     expect(wildcard).toBeDefined();
-    expect(wildcard!.redirectTo).toBe('');
+    expect(wildcard!.loadComponent).toBeDefined();
+    expect(wildcard!.data?.['seo']).toBeDefined();
   });
 
   it('When inspecting page routes Then every page component is lazy-loaded', () => {

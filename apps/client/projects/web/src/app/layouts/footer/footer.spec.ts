@@ -39,11 +39,11 @@ describe('Footer', () => {
     const tiktokLink = element.querySelector(
       'a[aria-label="TikTok"]',
     ) as HTMLAnchorElement | null;
-
     expect(brandImage?.getAttribute('src')).toContain('kraak-symbol.png');
     expect(footerLinks.length).toBeGreaterThan(0);
     expect(socialButtons.every(Boolean)).toBe(true);
     expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);
     expect(tiktokLink?.getAttribute('href')).toBe(expectedTiktokUrl);
+    expect(element.textContent).toContain('FAQ');
   });
 });
