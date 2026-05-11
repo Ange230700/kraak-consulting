@@ -24,11 +24,6 @@
             "index": "projects/web/src/index.html",
             "browser": "projects/web/src/main.ts",
             "polyfills": [],
-            "optimization": {
-              "styles": {
-                "inlineCritical": false
-              }
-            },
             "tsConfig": "projects/web/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -53,6 +48,11 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "fileReplacements": [
                 {
                   "replace": "projects/web/src/environments/environment.ts",
@@ -74,6 +74,11 @@
               "outputHashing": "all"
             },
             "staging": {
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "fileReplacements": [
                 {
                   "replace": "projects/web/src/environments/environment.ts",
