@@ -21,30 +21,30 @@ export class Testimonials {
   readonly fallbackTestimonials: Testimonial[] = [
     {
       id: 1,
-      name: 'Robert Fox',
-      job: 'Product Designer',
+      name: 'Aïcha K.',
+      job: 'Jeune professionnelle',
       avatar:
         'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-m-16.png',
       comment:
-        'Sed adipiscing diam donec adipiscing. Est lorem ipsum dolor sit amet consectetur. Auctor elit sed vulputate mi sit amet mauris commodo quis. Pulvinar neque laoreet suspendisse interdum consectetur.',
+        "Grâce à KRAAK, j'ai clarifié mon objectif de mobilité et identifié les étapes concrètes pour renforcer mon profil avant de lancer mes démarches.",
     },
     {
       id: 2,
-      name: 'Jane Cooper',
-      job: 'UI/UX Designer',
+      name: 'Moussa T.',
+      job: 'Entrepreneur',
       avatar:
         'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-f-18.png',
       comment:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc sit amet aliquam lacinia, nisl nisl aliquam nisl, nec aliquam nisl nisl sit amet lorem.',
+        "L'accompagnement projet nous a permis de transformer une idée floue en feuille de route structurée, avec des priorités lisibles et des actions réalistes.",
     },
     {
       id: 3,
-      name: 'Wade Warren',
-      job: 'Software Engineer',
+      name: 'Clarisse N.',
+      job: 'Responsable RH',
       avatar:
         'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-m-1.png',
       comment:
-        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.',
+        'Le format entreprise est sobre, utile et orienté terrain. Il aide vraiment à travailler la cohésion, le leadership et la montée en compétences.',
     },
   ];
 

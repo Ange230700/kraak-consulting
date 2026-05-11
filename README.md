@@ -63,7 +63,7 @@ pnpm dev:mobile
 
 ## Structure du monorepo
 
-```
+```text
 kraak-group/
 ├── apps/
 │   ├── api/           # Backend NestJS (port 3000)

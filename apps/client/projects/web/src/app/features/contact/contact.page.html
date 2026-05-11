@@ -110,6 +110,20 @@
                   <span>Afrique &amp; international</span>
                 </li>
                 <li class="flex items-center gap-3">
+                  <i
+                    class="pi pi-whatsapp text-brand-cyan"
+                    aria-hidden="true"
+                  ></i>
+                  <a
+                    [href]="whatsappLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-brand-cyan transition-colors"
+                  >
+                    WhatsApp : +225 05 02 74 18 18
+                  </a>
+                </li>
+                <li class="flex items-center gap-3">
                   <i class="pi pi-clock text-brand-cyan" aria-hidden="true"></i>
                   <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
                 </li>
@@ -382,7 +396,7 @@
                 }
               </div>
 
-              <div class="pt-1">
+              <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center">
                 <button
                   pButton
                   type="submit"
@@ -393,6 +407,16 @@
                   [disabled]="loading()"
                   class="kr-button-primary w-full sm:w-auto"
                 ></button>
+                <a
+                  pButton
+                  [href]="whatsappLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  label="Discuter sur WhatsApp"
+                  aria-label="Discuter sur WhatsApp"
+                  icon="pi pi-whatsapp"
+                  class="kr-button-secondary w-full sm:w-auto"
+                ></a>
               </div>
             </form>
           }
@@ -416,6 +440,18 @@
         </a>
       </div>
       <div class="text-center">
+        <i class="pi pi-whatsapp text-3xl" aria-hidden="true"></i>
+        <h3 class="mt-2 text-lg font-bold">WhatsApp</h3>
+        <a
+          [href]="whatsappLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="kr-link mt-1 block"
+        >
+          +225 05 02 74 18 18
+        </a>
+      </div>
+      <div class="text-center md:col-span-2">
         <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">Zone d'intervention</h3>
         <p class="mt-1 text-neutral-700">
@@ -434,6 +470,6 @@
 </section>
 
 <kraak-cta-banner
-  heading="Vous savez o&ugrave; vous voulez aller."
-  body="Nous vous aidons &agrave; choisir le chemin le plus clair pour y arriver."
+  heading="Parlons de votre prochaine &eacute;tape."
+  body="Envoyez votre demande via le formulaire ou lancez directement un &eacute;change sur WhatsApp."
 />

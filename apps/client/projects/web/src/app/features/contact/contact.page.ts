@@ -91,12 +91,15 @@ export default class ContactPage implements OnInit, OnDestroy {
       value: 'immigration',
       category: 'other',
     },
-    { label: 'Solution entreprise', value: 'business', category: 'other' },
-    { label: 'Programme KRAAK', value: 'program', category: 'program' },
+    { label: 'Solutions entreprises', value: 'business', category: 'other' },
+    { label: 'Programmes KRAAK', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
+  protected readonly whatsappLink =
+    KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
+    'https://wa.me/2250502741818';
 
   protected readonly faqItems: FaqItem[] = [
     {
@@ -107,12 +110,12 @@ export default class ContactPage implements OnInit, OnDestroy {
     {
       question: 'Quels types de services propose KRAAK ?',
       answer:
-        "Nous intervenons sur la formation, la gestion de projets, les programmes de développement et l'accompagnement en études et immigration.",
+        "Nous intervenons sur la formation, la recherche et gestion de projets, les programmes KRAAK, les solutions entreprises et l'accompagnement en études et immigration.",
     },
     {
-      question: 'Puis-je être accompagné à distance depuis un autre pays ?',
+      question: 'Puis-je vous contacter directement sur WhatsApp ?',
       answer:
-        "Oui. KRAAK accompagne des publics en Afrique et à l'international via des formats à distance et des échanges planifiés selon votre disponibilité.",
+        'Oui. Si vous préférez un échange rapide, le canal WhatsApp reste disponible en complément du formulaire de contact.',
     },
     {
       question: 'Combien de temps faut-il pour recevoir une première réponse ?',
