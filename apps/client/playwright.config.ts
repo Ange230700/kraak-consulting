@@ -39,12 +39,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && npx ng serve web --port ${localWebPort}`,
+    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort}`,
     url: localWebBaseUrl,
     reuseExistingServer,
     timeout: 120_000,
     env: {
       CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
+      CLIENT_API_BASE_URL: localWebBaseUrl,
     },
   },
 });

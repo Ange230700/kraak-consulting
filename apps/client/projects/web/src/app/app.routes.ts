@@ -1,14 +1,10 @@
-import { CanMatchFn, Route, Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 
 import {
   participantRoleGuard,
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
-import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
-
-export const participantAreaCanMatch: CanMatchFn = () =>
-  isParticipantAreaEnabled();
 
 export const buildMarketingRoute = (
   path: string,
@@ -80,24 +76,20 @@ const participantAreaRoutes: Routes = [
   {
     path: 'connexion',
     title: 'Connexion | KRAAK',
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/sign-in.page'),
   },
   {
     path: 'inscription',
     title: 'Inscription | KRAAK',
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/sign-up.page'),
   },
   {
     path: 'mot-de-passe-oublie',
     title: 'Mot de passe oubli\u00E9 | KRAAK',
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/password-reset.page'),
   },
   {
     path: 'participant',
-    canMatch: [participantAreaCanMatch],
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
     children: [
