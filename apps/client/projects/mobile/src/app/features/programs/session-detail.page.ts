@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import { MobileProgramsService } from './mobile-programs.service';
@@ -109,6 +110,9 @@ export default class SessionDetailPage implements OnInit {
       );
       await this.loadProgramDetail(programId);
     } catch (error) {
+      logDebugError('mobile.programs.session.progress', error, {
+        completed,
+      });
       this.markErrorMessage.set(
         error instanceof Error
           ? error.message

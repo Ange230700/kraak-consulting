@@ -14,6 +14,7 @@ describe('ContactPage', () => {
   let httpTestingController: HttpTestingController;
   let messageService: MessageService;
   let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -29,6 +30,9 @@ describe('ContactPage', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
     messageService = TestBed.inject(MessageService);
     messageServiceAddSpy = vi.spyOn(messageService, 'add');
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+      return undefined;
+    });
   });
 
   afterEach(() => {
@@ -305,5 +309,6 @@ describe('ContactPage', () => {
         summary: 'Contact',
       }),
     );
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });

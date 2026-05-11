@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
@@ -99,6 +100,9 @@ export default class SignUpPage {
         life: 6000,
       });
     } catch (error) {
+      logDebugError('web.auth.sign-up.submit', error, {
+        route: '/inscription',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,

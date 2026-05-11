@@ -35,10 +35,10 @@
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/contracts (DTO, schema validation, versioning)\n\n## Dependencies\nARC-04, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-01 implemented\n- [ ] Dependencies satisfied (ARC-04, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nLIB\n\n## Description\nCréer packages/contracts (DTO, schema validation, versioning)\n\n## Dependencies\nARC-04, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-01 implemented\n- [ ] Dependencies satisfied (ARC-04, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 71,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][LIB-01] Creer packages/contracts (DTO, schema validation, versioning)",
+        "title": "[TASK][LIB-01] Créer packages/contracts (DTO, schema validation, versioning)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/71"
       },
@@ -58,16 +58,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][LIB-01] Creer packages/contracts (DTO, schema validation, versioning)",
+      "title": "[TASK][LIB-01] Créer packages/contracts (DTO, schema validation, versioning)",
       "wave": "Wave 1 - Socle"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/domain (regles metier pures MVP)\n\n## Dependencies\nARC-04, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of LIB-02 implemented\n- [ ] Dependencies satisfied (ARC-04, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nLIB\n\n## Description\nCréer packages/domain (règles métier pures MVP)\n\n## Dependencies\nARC-04, LIB-01\n\n## Acceptance criteria\n- [ ] Scope of LIB-02 implemented\n- [ ] Dependencies satisfied (ARC-04, LIB-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 72,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][LIB-02] Creer packages/domain (regles metier pures MVP)",
+        "title": "[TASK][LIB-02] Créer packages/domain (règles métier pures MVP)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/72"
       },
@@ -93,16 +93,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][LIB-02] Creer packages/domain (regles metier pures MVP)",
+      "title": "[TASK][LIB-02] Créer packages/domain (règles métier pures MVP)",
       "wave": "Wave 1 - Socle"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nLIB\n\n## Description\nCreer packages/api-client (typed client web/mobile vers API)\n\n## Dependencies\nLIB-01, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-03 implemented\n- [ ] Dependencies satisfied (LIB-01, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nLIB\n\n## Description\nCréer packages/api-client (typed client web/mobile vers API)\n\n## Dependencies\nLIB-01, SET-02\n\n## Acceptance criteria\n- [ ] Scope of LIB-03 implemented\n- [ ] Dependencies satisfied (LIB-01, SET-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 73,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][LIB-03] Creer packages/api-client (typed client web/mobile vers API)",
+        "title": "[TASK][LIB-03] Créer packages/api-client (typed client web/mobile vers API)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/73"
       },
@@ -128,7 +128,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][LIB-03] Creer packages/api-client (typed client web/mobile vers API)",
+      "title": "[TASK][LIB-03] Créer packages/api-client (typed client web/mobile vers API)",
       "wave": "Wave 1 - Socle"
     },
     {
@@ -166,7 +166,7 @@
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Contexte\nLe board GitHub Project n'est plus aligne avec le backlog MVP canonique et melange des issues legacy web-only avec la nouvelle famille [EPIC][ID] / [TASK][ID].\n\n## Objectif\nRemettre la documentation de pilotage a plat pour un travail a deux sans dupliquer les familles d'issues.\n\n## Livrables attendus\n- rework du runbook docs/runbooks/GITHUB_PROJECT_BOARD.md\n- alignement de docs/specs/BACKLOG.md\n- clarification des packs d'issues GitHub CLI / templates\n- ajout de l'artefact docs/specs/github_project_import_parallel_duo.csv\n\n## Critères d'acceptation\n- le board actif, ses champs et ses vues recommandees sont documentes\n- la source de verite backlog vs board est clarifiee\n- le flux de remise a plat du project est explicite et actionnable\n- l'artefact CSV duo est reference par la documentation\n",
+        "body": "## Contexte\nLe board GitHub Project n'est plus aligne avec le backlog MVP canonique et melange des issues legacy web-only avec la nouvelle famille [EPIC][ID] / [TASK][ID].\n\n## Objectif\nRemettre la documentation de pilotage a plat pour un travail a deux sans dupliquer les familles d'issues.\n\n## Livrables attendus\n- rework du runbook docs/runbooks/GITHUB_PROJECT_BOARD.md\n- alignement de docs/specs/BACKLOG.md\n- clarification des packs d'issues GitHub CLI / templates\n- ajout de l'artefact docs/specs/github_project_import_parallel_duo.csv\n\n## Critères d'acceptation\n- le board actif, ses champs et ses vues recommandées sont documentes\n- la source de verite backlog vs board est clarifiée\n- le flux de remise a plat du project est explicite et actionnable\n- l'artefact CSV duo est reference par la documentation\n",
         "number": 143,
         "repository": "Ange230700/kraak-group",
         "title": "[DOCS] Rework du GitHub Project MVP pour le pilotage a deux",
@@ -214,7 +214,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Architecture validee et tracee",
+        "description": "Architecture validée et tracée",
         "dueOn": "",
         "title": "M1 - Architecture locked"
       },
@@ -246,7 +246,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Architecture validee et tracee",
+        "description": "Architecture validée et tracée",
         "dueOn": "",
         "title": "M1 - Architecture locked"
       },
@@ -260,10 +260,10 @@
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nARC\n\n## Description\nDefinir conventions repo (naming, structure, quality gates)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-02 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nARC\n\n## Description\nDéfinir conventions repo (naming, structure, quality gates)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-02 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 60,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][ARC-02] Definir conventions repo (naming, structure, quality gates)",
+        "title": "[TASK][ARC-02] Définir conventions repo (naming, structure, quality gates)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/60"
       },
@@ -281,7 +281,7 @@
         "https://github.com/Ange230700/kraak-group/pull/185"
       ],
       "milestone": {
-        "description": "Architecture validee et tracee",
+        "description": "Architecture validée et tracée",
         "dueOn": "",
         "title": "M1 - Architecture locked"
       },
@@ -289,16 +289,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "docs",
-      "title": "[TASK][ARC-02] Definir conventions repo (naming, structure, quality gates)",
+      "title": "[TASK][ARC-02] Définir conventions repo (naming, structure, quality gates)",
       "wave": "Wave 0 - Cadrage"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nARC\n\n## Description\nDefinir modeles de donnees MVP\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-04 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nARC\n\n## Description\nDéfinir modeles de donnees MVP\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-04 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 62,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][ARC-04] Definir modeles de donnees MVP",
+        "title": "[TASK][ARC-04] Définir modeles de donnees MVP",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/62"
       },
@@ -313,7 +313,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Architecture validee et tracee",
+        "description": "Architecture validée et tracée",
         "dueOn": "",
         "title": "M1 - Architecture locked"
       },
@@ -321,7 +321,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "docs",
-      "title": "[TASK][ARC-04] Definir modeles de donnees MVP",
+      "title": "[TASK][ARC-04] Définir modeles de donnees MVP",
       "wave": "Wave 0 - Cadrage"
     },
     {
@@ -661,10 +661,10 @@
     {
       "area": "Pages",
       "content": {
-        "body": "## Parent epic\nWEB\n\n## Description\nOptimiser accessibilite/performance (objectif Lighthouse > 90)\n\n## Dependencies\nWEB-01, WEB-03\n\n## Acceptance criteria\n- [ ] Scope of WEB-05 implemented\n- [ ] Dependencies satisfied (WEB-01, WEB-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nWEB\n\n## Description\nOptimiser accessibilité/performance (objectif Lighthouse > 90)\n\n## Dependencies\nWEB-01, WEB-03\n\n## Acceptance criteria\n- [ ] Scope of WEB-05 implemented\n- [ ] Dependencies satisfied (WEB-01, WEB-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 79,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][WEB-05] Optimiser accessibilite/performance (objectif Lighthouse > 90)",
+        "title": "[TASK][WEB-05] Optimiser accessibilité/performance (objectif Lighthouse > 90)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/79"
       },
@@ -687,16 +687,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "web",
-      "title": "[TASK][WEB-05] Optimiser accessibilite/performance (objectif Lighthouse > 90)",
+      "title": "[TASK][WEB-05] Optimiser accessibilité/performance (objectif Lighthouse > 90)",
       "wave": "Wave 3A - Site public"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nARC\n\n## Description\nDefinir strategie de rendu web (SEO/prerender)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-03 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nARC\n\n## Description\nDéfinir stratégie de rendu web (SEO/prerender)\n\n## Dependencies\nARC-01\n\n## Acceptance criteria\n- [ ] Scope of ARC-03 implemented\n- [ ] Dependencies satisfied (ARC-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 61,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][ARC-03] Definir strategie de rendu web (SEO/prerender)",
+        "title": "[TASK][ARC-03] Définir stratégie de rendu web (SEO/prerender)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/61"
       },
@@ -711,7 +711,7 @@
       ],
       "lane": "Shared handoff",
       "milestone": {
-        "description": "Architecture validee et tracee",
+        "description": "Architecture validée et tracée",
         "dueOn": "",
         "title": "M1 - Architecture locked"
       },
@@ -719,7 +719,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "docs",
-      "title": "[TASK][ARC-03] Definir strategie de rendu web (SEO/prerender)",
+      "title": "[TASK][ARC-03] Définir stratégie de rendu web (SEO/prerender)",
       "wave": "Wave 0 - Cadrage"
     },
     {
@@ -752,7 +752,7 @@
       "status": "Done",
       "surface": "mobile",
       "title": "[TASK][MOB-01] Initialiser app Ionic Angular dans apps/mobile",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Frontend",
@@ -784,7 +784,7 @@
       "status": "Done",
       "surface": "mobile",
       "title": "[TASK][MOB-02] Mettre en place navigation shell (tabs/stack) et layout de base",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Frontend",
@@ -816,7 +816,7 @@
       "status": "Done",
       "surface": "mobile",
       "title": "[TASK][MOB-03] Intégrer theming, design tokens et composants UI de base",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Frontend",
@@ -851,7 +851,7 @@
       "status": "Done",
       "surface": "mobile",
       "title": "[TASK][MOB-04] Configurer Capacitor (Android/iOS) et builds debug",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Frontend",
@@ -883,7 +883,7 @@
       "status": "Done",
       "surface": "mobile",
       "title": "[TASK][MOB-05] Ajouter service notifications push stub (FCM wiring initial)",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
@@ -915,7 +915,7 @@
       "status": "Done",
       "surface": "api",
       "title": "[TASK][AUT-01] Configurer Supabase Auth (providers, policies de base)",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
@@ -947,15 +947,15 @@
       "status": "Done",
       "surface": "api",
       "title": "[TASK][AUT-02] Implementer endpoints API auth/session (NestJS)",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "## Parent epic\nAUT\n\n## Description\nImplementer ecrans login/signup/reset mobile\n\n## Dependencies\nMOB-02, AUT-02\n\n## Acceptance criteria\n- [ ] Scope of AUT-03 implemented\n- [ ] Dependencies satisfied (MOB-02, AUT-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nAUT\n\n## Description\nImplementer écrans login/signup/reset mobile\n\n## Dependencies\nMOB-02, AUT-02\n\n## Acceptance criteria\n- [ ] Scope of AUT-03 implemented\n- [ ] Dependencies satisfied (MOB-02, AUT-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 87,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][AUT-03] Implementer ecrans login/signup/reset mobile",
+        "title": "[TASK][AUT-03] Implementer écrans login/signup/reset mobile",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/87"
       },
@@ -978,8 +978,8 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "mobile",
-      "title": "[TASK][AUT-03] Implementer ecrans login/signup/reset mobile",
-      "wave": "Wave 2 - Acces"
+      "title": "[TASK][AUT-03] Implementer écrans login/signup/reset mobile",
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
@@ -1015,7 +1015,7 @@
       "status": "Done",
       "surface": "shared",
       "title": "[TASK][AUT-04] Implementer garde routes protegees web/mobile",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
@@ -1050,15 +1050,15 @@
       "status": "Done",
       "surface": "api",
       "title": "[TASK][AUT-05] Ajouter gestion role participant/admin minimal",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Frontend",
       "content": {
-        "body": "## Parent epic\nDSH\n\n## Description\nDefinir contenu dashboard MVP (cartes, rappels, dernieres actus)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of DSH-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDSH\n\n## Description\nDéfinir contenu dashboard MVP (cartes, rappels, dernières actus)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of DSH-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 90,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DSH-01] Definir contenu dashboard MVP (cartes, rappels, dernieres actus)",
+        "title": "[TASK][DSH-01] Définir contenu dashboard MVP (cartes, rappels, dernières actus)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/90"
       },
@@ -1081,7 +1081,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][DSH-01] Definir contenu dashboard MVP (cartes, rappels, dernieres actus)",
+      "title": "[TASK][DSH-01] Définir contenu dashboard MVP (cartes, rappels, dernières actus)",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1154,10 +1154,10 @@
     {
       "area": "Frontend",
       "content": {
-        "body": "## Parent epic\nDSH\n\n## Description\nImplementer vue dashboard web participant (si activee MVP)\n\n## Dependencies\nWEB-01, AUT-04, DSH-02\n\n## Acceptance criteria\n- [ ] Scope of DSH-04 implemented\n- [ ] Dependencies satisfied (WEB-01, AUT-04, DSH-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDSH\n\n## Description\nImplementer vue dashboard web participant (si activée MVP)\n\n## Dependencies\nWEB-01, AUT-04, DSH-02\n\n## Acceptance criteria\n- [ ] Scope of DSH-04 implemented\n- [ ] Dependencies satisfied (WEB-01, AUT-04, DSH-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 93,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activee MVP)",
+        "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activée MVP)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/93"
       },
@@ -1180,16 +1180,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "web",
-      "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activee MVP)",
+      "title": "[TASK][DSH-04] Implementer vue dashboard web participant (si activée MVP)",
       "wave": "Wave 3B - Parcours participant"
     },
     {
       "area": "Frontend",
       "content": {
-        "body": "## Parent epic\nPRG\n\n## Description\nDefinir modele programme/cohorte/statut progression MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of PRG-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nPRG\n\n## Description\nDéfinir modèle programme/cohorte/statut progression MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of PRG-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 94,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][PRG-01] Definir modele programme/cohorte/statut progression MVP",
+        "title": "[TASK][PRG-01] Définir modèle programme/cohorte/statut progression MVP",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/94"
       },
@@ -1215,7 +1215,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][PRG-01] Definir modele programme/cohorte/statut progression MVP",
+      "title": "[TASK][PRG-01] Définir modèle programme/cohorte/statut progression MVP",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1256,10 +1256,10 @@
     {
       "area": "Frontend",
       "content": {
-        "body": "## Parent epic\nPRG\n\n## Description\nImplementer ecran mobile liste + detail programme\n\n## Dependencies\nMOB-02, PRG-02\n\n## Acceptance criteria\n- [ ] Scope of PRG-03 implemented\n- [ ] Dependencies satisfied (MOB-02, PRG-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nPRG\n\n## Description\nImplementer écran mobile liste + detail programme\n\n## Dependencies\nMOB-02, PRG-02\n\n## Acceptance criteria\n- [ ] Scope of PRG-03 implemented\n- [ ] Dependencies satisfied (MOB-02, PRG-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 96,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][PRG-03] Implementer ecran mobile liste + detail programme",
+        "title": "[TASK][PRG-03] Implementer écran mobile liste + detail programme",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/96"
       },
@@ -1285,7 +1285,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "mobile",
-      "title": "[TASK][PRG-03] Implementer ecran mobile liste + detail programme",
+      "title": "[TASK][PRG-03] Implementer écran mobile liste + detail programme",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1361,10 +1361,10 @@
     {
       "area": "Content",
       "content": {
-        "body": "## Parent epic\nRES\n\n## Description\nDefinir taxonomie ressources (type, theme, audience)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of RES-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nRES\n\n## Description\nDéfinir taxonomie ressources (type, theme, audience)\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of RES-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 99,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][RES-01] Definir taxonomie ressources (type, theme, audience)",
+        "title": "[TASK][RES-01] Définir taxonomie ressources (type, theme, audience)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/99"
       },
@@ -1390,7 +1390,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "shared",
-      "title": "[TASK][RES-01] Definir taxonomie ressources (type, theme, audience)",
+      "title": "[TASK][RES-01] Définir taxonomie ressources (type, theme, audience)",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1428,10 +1428,10 @@
     {
       "area": "Content",
       "content": {
-        "body": "## Parent epic\nRES\n\n## Description\nImplementer ecran mobile ressources (recherche/filtre)\n\n## Dependencies\nMOB-02, RES-02\n\n## Acceptance criteria\n- [ ] Scope of RES-03 implemented\n- [ ] Dependencies satisfied (MOB-02, RES-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nRES\n\n## Description\nImplementer écran mobile ressources (recherche/filtre)\n\n## Dependencies\nMOB-02, RES-02\n\n## Acceptance criteria\n- [ ] Scope of RES-03 implemented\n- [ ] Dependencies satisfied (MOB-02, RES-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 101,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][RES-03] Implementer ecran mobile ressources (recherche/filtre)",
+        "title": "[TASK][RES-03] Implementer écran mobile ressources (recherche/filtre)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/101"
       },
@@ -1457,7 +1457,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "mobile",
-      "title": "[TASK][RES-03] Implementer ecran mobile ressources (recherche/filtre)",
+      "title": "[TASK][RES-03] Implementer écran mobile ressources (recherche/filtre)",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1495,10 +1495,10 @@
     {
       "area": "Content",
       "content": {
-        "body": "## Parent epic\nANN\n\n## Description\nDefinir format annonce et regles de publication MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of ANN-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nANN\n\n## Description\nDéfinir format annonce et règles de publication MVP\n\n## Dependencies\nARC-04\n\n## Acceptance criteria\n- [ ] Scope of ANN-01 implemented\n- [ ] Dependencies satisfied (ARC-04)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 103,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][ANN-01] Definir format annonce et regles de publication MVP",
+        "title": "[TASK][ANN-01] Définir format annonce et règles de publication MVP",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/103"
       },
@@ -1521,7 +1521,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "shared",
-      "title": "[TASK][ANN-01] Definir format annonce et regles de publication MVP",
+      "title": "[TASK][ANN-01] Définir format annonce et règles de publication MVP",
       "wave": "Wave 3B - Parcours participant"
     },
     {
@@ -1786,10 +1786,10 @@
     {
       "area": "QA",
       "content": {
-        "body": "## Parent epic\nQAT\n\n## Description\nDefinir matrice de couverture (page, composant, comportement)\n\n## Dependencies\nSET-04, SET-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-01 implemented\n- [ ] Dependencies satisfied (SET-04, SET-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nQAT\n\n## Description\nDéfinir matrice de couverture (page, composant, comportement)\n\n## Dependencies\nSET-04, SET-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-01 implemented\n- [ ] Dependencies satisfied (SET-04, SET-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 112,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][QAT-01] Definir matrice de couverture (page, composant, comportement)",
+        "title": "[TASK][QAT-01] Définir matrice de couverture (page, composant, comportement)",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/112"
       },
@@ -1812,16 +1812,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "qa",
-      "title": "[TASK][QAT-01] Definir matrice de couverture (page, composant, comportement)",
-      "wave": "Wave 4 - Qualite"
+      "title": "[TASK][QAT-01] Définir matrice de couverture (page, composant, comportement)",
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "QA",
       "content": {
-        "body": "## Parent epic\nQAT\n\n## Description\nEcrire tests unitaires composants critiques web/mobile\n\n## Dependencies\nQAT-01, WEB-01, MOB-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-02 implemented\n- [ ] Dependencies satisfied (QAT-01, WEB-01, MOB-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nQAT\n\n## Description\nÉcrire tests unitaires composants critiques web/mobile\n\n## Dependencies\nQAT-01, WEB-01, MOB-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-02 implemented\n- [ ] Dependencies satisfied (QAT-01, WEB-01, MOB-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 113,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][QAT-02] Ecrire tests unitaires composants critiques web/mobile",
+        "title": "[TASK][QAT-02] Écrire tests unitaires composants critiques web/mobile",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/113"
       },
@@ -1844,16 +1844,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "qa",
-      "title": "[TASK][QAT-02] Ecrire tests unitaires composants critiques web/mobile",
-      "wave": "Wave 4 - Qualite"
+      "title": "[TASK][QAT-02] Écrire tests unitaires composants critiques web/mobile",
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "QA",
       "content": {
-        "body": "## Parent epic\nQAT\n\n## Description\nEcrire tests integration API modules critiques\n\n## Dependencies\nQAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of QAT-03 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nQAT\n\n## Description\nÉcrire tests integration API modules critiques\n\n## Dependencies\nQAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01\n\n## Acceptance criteria\n- [ ] Scope of QAT-03 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-02, PRG-02, RES-02, ANN-02, SUP-01)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 114,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][QAT-03] Ecrire tests integration API modules critiques",
+        "title": "[TASK][QAT-03] Écrire tests integration API modules critiques",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/114"
       },
@@ -1876,16 +1876,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "qa",
-      "title": "[TASK][QAT-03] Ecrire tests integration API modules critiques",
-      "wave": "Wave 4 - Qualite"
+      "title": "[TASK][QAT-03] Écrire tests integration API modules critiques",
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "QA",
       "content": {
-        "body": "## Parent epic\nQAT\n\n## Description\nEcrire E2E Given/When/Then pour parcours coeur participant\n\n## Dependencies\nQAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-04 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nQAT\n\n## Description\nÉcrire E2E Given/When/Then pour parcours coeur participant\n\n## Dependencies\nQAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02\n\n## Acceptance criteria\n- [ ] Scope of QAT-04 implemented\n- [ ] Dependencies satisfied (QAT-01, AUT-03, DSH-03, PRG-03, RES-03, SUP-02)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 115,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][QAT-04] Ecrire E2E Given/When/Then pour parcours coeur participant",
+        "title": "[TASK][QAT-04] Écrire E2E Given/When/Then pour parcours coeur participant",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/115"
       },
@@ -1908,8 +1908,8 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "qa",
-      "title": "[TASK][QAT-04] Ecrire E2E Given/When/Then pour parcours coeur participant",
-      "wave": "Wave 4 - Qualite"
+      "title": "[TASK][QAT-04] Écrire E2E Given/When/Then pour parcours coeur participant",
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "QA",
@@ -1941,15 +1941,15 @@
       "status": "Todo",
       "surface": "qa",
       "title": "[TASK][QAT-05] Realiser campagne regression et corriger blockers",
-      "wave": "Wave 4 - Qualite"
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "QA",
       "content": {
-        "body": "## Parent epic\nQAT\n\n## Description\nRealiser checks accessibilite/performance pre-pilot\n\n## Dependencies\nQAT-05, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-06 implemented\n- [ ] Dependencies satisfied (QAT-05, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nQAT\n\n## Description\nRealiser checks accessibilité/performance pre-pilot\n\n## Dependencies\nQAT-05, WEB-05\n\n## Acceptance criteria\n- [ ] Scope of QAT-06 implemented\n- [ ] Dependencies satisfied (QAT-05, WEB-05)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 117,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][QAT-06] Realiser checks accessibilite/performance pre-pilot",
+        "title": "[TASK][QAT-06] Realiser checks accessibilité/performance pre-pilot",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/117"
       },
@@ -1972,8 +1972,8 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "qa",
-      "title": "[TASK][QAT-06] Realiser checks accessibilite/performance pre-pilot",
-      "wave": "Wave 4 - Qualite"
+      "title": "[TASK][QAT-06] Realiser checks accessibilité/performance pre-pilot",
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "Deployment",
@@ -2109,10 +2109,10 @@
     {
       "area": "Deployment",
       "content": {
-        "body": "## Parent epic\nDEP\n\n## Description\nFinaliser observabilite et alerting minimum\n\n## Dependencies\nDEP-02, DEP-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-05 implemented\n- [ ] Dependencies satisfied (DEP-02, DEP-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDEP\n\n## Description\nFinaliser observabilité et alerting minimum\n\n## Dependencies\nDEP-02, DEP-03\n\n## Acceptance criteria\n- [ ] Scope of DEP-05 implemented\n- [ ] Dependencies satisfied (DEP-02, DEP-03)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 122,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-05] Finaliser observabilite et alerting minimum",
+        "title": "[TASK][DEP-05] Finaliser observabilité et alerting minimum",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/122"
       },
@@ -2135,16 +2135,16 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "ops",
-      "title": "[TASK][DEP-05] Finaliser observabilite et alerting minimum",
+      "title": "[TASK][DEP-05] Finaliser observabilité et alerting minimum",
       "wave": "Wave 5 - Release"
     },
     {
       "area": "Deployment",
       "content": {
-        "body": "## Parent epic\nDEP\n\n## Description\nRediger runbook incident + rollback + pilot checklist\n\n## Dependencies\nDEP-01, DEP-05, QAT-06\n\n## Acceptance criteria\n- [ ] Scope of DEP-06 implemented\n- [ ] Dependencies satisfied (DEP-01, DEP-05, QAT-06)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
+        "body": "## Parent epic\nDEP\n\n## Description\nRédiger runbook incident + rollback + pilot checklist\n\n## Dependencies\nDEP-01, DEP-05, QAT-06\n\n## Acceptance criteria\n- [ ] Scope of DEP-06 implemented\n- [ ] Dependencies satisfied (DEP-01, DEP-05, QAT-06)\n- [ ] Validation evidence added (tests/checks/screenshots as relevant)",
         "number": 123,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-06] Rediger runbook incident + rollback + pilot checklist",
+        "title": "[TASK][DEP-06] Rédiger runbook incident + rollback + pilot checklist",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/123"
       },
@@ -2167,7 +2167,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Todo",
       "surface": "ops",
-      "title": "[TASK][DEP-06] Rediger runbook incident + rollback + pilot checklist",
+      "title": "[TASK][DEP-06] Rédiger runbook incident + rollback + pilot checklist",
       "wave": "Wave 5 - Release"
     },
     {
@@ -2247,7 +2247,7 @@
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "Factoriser les contrats et la logique transverse sans sur-ingenierie",
+        "body": "Factoriser les contrats et la logique transverse sans sur-ingénierie",
         "number": 148,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][LIB] Shared libraries",
@@ -2268,7 +2268,7 @@
     {
       "area": "Frontend",
       "content": {
-        "body": "Fournir l ossature mobile Ionic/Capacitor prete pour les modules",
+        "body": "Fournir l ossature mobile Ionic/Capacitor prête pour les modules",
         "number": 149,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][MOB] Mobile shell",
@@ -2284,12 +2284,12 @@
       "status": "In Progress",
       "surface": "mobile",
       "title": "[EPIC][MOB] Mobile shell",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Cross-cutting",
       "content": {
-        "body": "Offrir une authentification securisee et consistente web/mobile",
+        "body": "Offrir une authentification sécurisée et consistente web/mobile",
         "number": 150,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][AUT] Auth",
@@ -2305,7 +2305,7 @@
       "status": "In Progress",
       "surface": "api",
       "title": "[EPIC][AUT] Auth",
-      "wave": "Wave 2 - Acces"
+      "wave": "Wave 2 - Accès"
     },
     {
       "area": "Pages",
@@ -2331,7 +2331,7 @@
     {
       "area": "Frontend",
       "content": {
-        "body": "Proposer une page d accueil participant avec synthese utile",
+        "body": "Proposer une page d accueil participant avec synthèse utile",
         "number": 152,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][DSH] Dashboard",
@@ -2373,7 +2373,7 @@
     {
       "area": "Content",
       "content": {
-        "body": "Offrir un acces simple a des ressources utiles aux participants",
+        "body": "Offrir un accès simple a des ressources utiles aux participants",
         "number": 154,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][RES] Resources",
@@ -2436,7 +2436,7 @@
     {
       "area": "QA",
       "content": {
-        "body": "Verifier la conformite fonctionnelle, qualite et robustesse du MVP",
+        "body": "Verifier la conformité fonctionnelle, qualité et robustesse du MVP",
         "number": 157,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][QAT] QA",
@@ -2452,12 +2452,12 @@
       "status": "Todo",
       "surface": "qa",
       "title": "[EPIC][QAT] QA",
-      "wave": "Wave 4 - Qualite"
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "Deployment",
       "content": {
-        "body": "Preparer et executer un lancement pilote maitrise",
+        "body": "Preparer et executer un lancement pilote maîtrise",
         "number": 158,
         "repository": "Ange230700/kraak-group",
         "title": "[EPIC][DEP] Deployment",
@@ -2639,7 +2639,7 @@
       "status": "Done",
       "surface": "shared",
       "title": "[TASK][BRAND-01] Renforcer le branding web/mobile et harmoniser boutons et liens",
-      "wave": "Wave 4 - Qualite"
+      "wave": "Wave 4 - qualité"
     },
     {
       "area": "Cross-cutting",
@@ -2679,11 +2679,11 @@
       "status": "Done",
       "surface": "shared",
       "title": "fix(client): déclarer mobile-web-app-capable sur web et mobile",
-      "wave": "Wave 4 - Qualite"
+      "wave": "Wave 4 - qualité"
     },
     {
       "content": {
-        "body": "## Contexte\r\nLe serveur de dev mobile échoue pendant l'optimisation de dépendances avec l'erreur `Could not resolve \"./client\"` remontée depuis `@kraak/api-client`.\r\n\r\n## Attendu\r\n- `pnpm dev:mobile` démarre sans erreur de prebundle\r\n- le garde-fou de configuration reste couvert par un test workspace\r\n\r\n## Validation visee\r\n- `pnpm test:workspace`\r\n- vérification de démarrage de `ng serve mobile --configuration local --port 4300`\r\n",
+        "body": "## Contexte\r\nLe serveur de dev mobile échoue pendant l'optimisation de dépendances avec l'erreur `Could not resolve \"./client\"` remontée depuis `@kraak/api-client`.\r\n\r\n## Attendu\r\n- `pnpm dev:mobile` démarre sans erreur de prebundle\r\n- le garde-fou de configuration reste couvert par un test workspace\r\n\r\n## Validation visée\r\n- `pnpm test:workspace`\r\n- vérification de démarrage de `ng serve mobile --configuration local --port 4300`\r\n",
         "number": 206,
         "repository": "Ange230700/kraak-group",
         "title": "Corriger le prebundle Vite du dev server mobile avec @kraak/api-client",

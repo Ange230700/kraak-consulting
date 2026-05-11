@@ -475,6 +475,12 @@ toute tâche touchant l'API.
   dépôt.
 - Faire en sorte que les composants UI implémentés ou adaptés restent cohérents
   avec l’identité visuelle de KRAAK, sa lisibilité, sa crédibilité et son ton.
+- Lorsqu’un flux intercepte une erreur, un rejet, ou un état inattendu sans le
+  relancer, laisser une trace de debug via les méthodes de l’objet `Console`
+  (`console.error`, `console.warn`, `console.info`, `console.debug`) avec un
+  contexte court et exploitable.
+- Ne jamais écrire dans la console des secrets, mots de passe, tokens, données
+  personnelles, ni des payloads complets de formulaires.
 - Lorsqu’une route API est ajoutée ou mise à jour, mettre à jour la documentation
   OpenAPI / Swagger dans le même changement si une couche API documentée existe.
 - Toute modification du codebase qui rend une doc inexacte impose une mise à

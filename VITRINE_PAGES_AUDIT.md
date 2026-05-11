@@ -81,9 +81,10 @@
 
 #### ⚠️ Placeholders à remplacer pour v1.0.0
 
-| Section               | Problème                                                                                                                                                                                                | Status               | Evidence                                                                                                                                     |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Team Grid section** | 12 profils staff fictifs (Savannah Nguyen, Jenny Wilson, etc.) + bannière "Prévisualisation de l'équipe KRAAK" + texte "En attendant la liste officielle, voici un aperçu du format de présentation..." | ❌ Placeholder/Draft | [team-grid.ts:28-90](team-grid.ts#L28) (fallbackMembers hardcoded) + [team-grid.html:7-10](team-grid.html#L7) (preview label et disclaimter) |
+- Section: **Team Grid section**
+- Problème: 12 profils staff fictifs (Savannah Nguyen, Jenny Wilson, etc.) + bannière "Prévisualisation de l'équipe KRAAK" + texte "En attendant la liste officielle, voici un aperçu du format de présentation..."
+- Status: ❌ Placeholder/Draft
+- Evidence: [team-grid.ts:28-90](team-grid.ts#L28) (fallbackMembers hardcoded) + [team-grid.html:7-10](team-grid.html#L7) (preview label et disclaimer)
 
 #### Details du placeholder Team Grid
 

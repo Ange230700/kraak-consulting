@@ -13,6 +13,7 @@ import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
+import { logDebugError } from '@kraak/api-client';
 import type { ContactFormDto } from '@kraak/contracts';
 
 import {
@@ -210,6 +211,11 @@ export default class ContactPage implements OnInit, OnDestroy {
         this.loading.set(false);
         const extractedErrors = this.extractApiErrors(errorResponse);
         this.apiErrors.set(extractedErrors);
+        logDebugError('web.contact.submit', errorResponse, {
+          route: '/contact',
+          status: errorResponse.status,
+          apiErrorCount: extractedErrors.length,
+        });
 
         if (
           extractedErrors.length === 1 &&

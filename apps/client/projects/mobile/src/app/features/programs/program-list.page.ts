@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramListItemDto } from '@kraak/contracts';
 import { PageShell } from '../../shared/page-shell/page-shell';
 import { MobileProgramsService } from './mobile-programs.service';
@@ -31,6 +32,9 @@ export default class ProgramListPage implements OnInit {
       const data = await this.programsService.listPrograms();
       this.programs.set(data);
     } catch (error) {
+      logDebugError('mobile.programs.list', error, {
+        route: '/tabs/programmes',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
