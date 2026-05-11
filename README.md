@@ -161,3 +161,4 @@ changement.
 | [`docs/runbooks/TECH_OVERVIEW.md`](docs/runbooks/TECH_OVERVIEW.md)                                   | Vue d'ensemble de la stack pour débutants          |
 | [`docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md`](docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md) | Sources officielles des documentations de la stack |
 | [`docs/runbooks/GITHUB_PROJECT_BOARD.md`](docs/runbooks/GITHUB_PROJECT_BOARD.md)                     | Pilotage du board GitHub Project                   |
+| [`docs/specs/erd_mvp.md`](docs/specs/erd_mvp.md)                                                     | ERD complet commenté du modèle de données MVP      |
