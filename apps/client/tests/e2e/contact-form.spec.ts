@@ -1,6 +1,22 @@
 import { expect, test } from '@playwright/test';
 
 test.describe(`Page contact — comportement formulaire`, () => {
+  test(`Given la page contact, When le visiteur cherche un échange rapide, Then une action WhatsApp visible mène vers le canal dédié`, async ({
+    page,
+  }) => {
+    await page.goto('/contact');
+
+    const whatsappLink = page.getByRole('link', {
+      name: 'Discuter sur WhatsApp',
+    });
+
+    await expect(whatsappLink).toBeVisible();
+    await expect(whatsappLink).toHaveAttribute(
+      'href',
+      /https:\/\/wa\.me\/2250502741818/,
+    );
+  });
+
   test(`Given la page contact, When l'utilisateur soumet un formulaire valide, Then un message de confirmation est affiché`, async ({
     page,
   }) => {

@@ -5,32 +5,33 @@
 ### Accueil
 
 **Titre :**
-Développez votre potentiel. Construisez votre impact.
+Développez vos compétences. Lancez vos projets. Accédez aux opportunités internationales.
 
 **Sous-titre :**
-KRAAK accompagne les jeunes professionnels et les organisations vers des opportunités concrètes, locales et internationales.
+KRAAK Consulting accompagne étudiants, professionnels, entreprises et diaspora avec des solutions concrètes en formation, gestion de projets et immigration.
 
 **CTA principal :**
-Demander une consultation
+Réserver une consultation / Découvrir nos programmes
 
 **Résumé mission :**
-Nous identifions, formons et accompagnons des talents pour leur permettre de s’intégrer stratégiquement dans des environnements professionnels exigeants.
+Vous avez un objectif. Nous cheminons avec vous et vous aidons à l’atteindre.
+KRAAK Consulting est un cabinet à expertise internationale qui forme, accompagne et propulse des individus et des organisations vers des résultats concrets : emploi, projets réussis, mobilité internationale.
 
 ---
 
 ### À propos
 
 **Titre :**
-Former une génération prête à agir
+Former. Structurer. Transformer.
 
 **Mission :**
-Accompagner les jeunes dans le développement de compétences solides et d’un positionnement professionnel clair.
+Révéler le potentiel, développer les compétences et accompagner vers un impact professionnel et communautaire durable.
 
 **Vision :**
-Construire une génération de leaders africains capables de créer un impact durable.
+Former une génération de leaders africains capables d’agir, d’influencer et de construire un avenir solide, localement et à l’international.
 
 **Valeurs :**
-Humanisme • Responsabilité • Leadership • Solidarité • Résilience • Ouverture • Impact
+Humanisme • Responsabilité • Leadership • Résilience • Solidarité • Ouverture internationale
 
 ---
 
@@ -39,46 +40,46 @@ Humanisme • Responsabilité • Leadership • Solidarité • Résilience •
 #### Formation
 
 **Courte :**
-Développement de compétences techniques et linguistiques.
+Des compétences qui ouvrent des portes.
 
 **Longue :**
-Programmes de formation en développement personnel, communication professionnelle et langues (anglais/français), adaptés aux exigences du marché.
+Nos formations couvrent les langues professionnelles, le développement personnel et le leadership, les soft skills et l’employabilité : anglais professionnel, français professionnel, préparation aux tests internationaux, confiance en soi, prise de parole, leadership stratégique, préparation aux entretiens, rédaction CV et placement en emploi. Les programmes KRAAK prolongent cette logique avec des ateliers leadership jeunesse, des parcours pour étudiants, de l’engagement communautaire et des conférences utiles à la progression des trajectoires.
 
 #### Gestion de projet
 
 **Courte :**
-Accompagnement stratégique des organisations.
+Vos idées méritent une structure solide.
 
 **Longue :**
-Support en structuration de projets, identification de talents, recrutement et développement de partenariats.
+Nous accompagnons la structuration, la croissance et l’optimisation des organisations, le développement de startups, la planification et le suivi de projets, les partenariats stratégiques et le recrutement de talents. Les besoins entreprises sont pris en charge dans la même logique, avec des solutions ciblées en formation du personnel, cohésion d’équipe, gestion des conflits, leadership organisationnel et santé / culture d’entreprise.
 
 #### Immigration
 
 **Courte :**
-Orientation vers des opportunités internationales.
+Votre projet international commence ici.
 
 **Longue :**
-Conseil stratégique pour études, travail et mobilité internationale.
+Nous accompagnons les projets d’études au Canada et aux États-Unis, l’immigration professionnelle, les permis de travail, le regroupement familial, la recherche d’emploi à l’international et l’intégration socio-professionnelle. L’accompagnement s’appuie sur une approche fiable et stratégique, avec des consultants et avocats en immigration agréés.
 
 ---
 
 ### Contact
 
 **CTA :**
-Contactez-nous
+Envoyer ma demande / Discuter sur WhatsApp
 
 ---
 
 ## 2. FAQ ❓
 
 - Qui peut bénéficier des services KRAAK ?
-  → Étudiants, jeunes professionnels et organisations.
+  → Étudiants, professionnels, entreprises, diaspora et organisations qui veulent clarifier une trajectoire, structurer un projet ou préparer une mobilité internationale.
 
 - Comment démarrer ?
-  → Via le formulaire de contact ou une demande de consultation.
+  → Via le formulaire de contact, une demande de consultation ou un premier échange sur WhatsApp selon votre besoin.
 
 - Les formations sont-elles en ligne ?
-  → Selon les programmes.
+  → Oui, selon les programmes et le format retenu ; une partie des accompagnements peut être suivie à distance.
 
 ---
 
@@ -86,13 +87,13 @@ Contactez-nous
 
 ### Accueil
 
-- Title : KRAAK — Développez votre potentiel
-- Description : Formation, accompagnement et opportunités internationales pour jeunes professionnels.
+- Title : KRAAK Consulting | Développez vos compétences, lancez vos projets
+- Description : KRAAK Consulting accompagne étudiants, professionnels, entreprises et diaspora avec des solutions concrètes en formation, gestion de projets et immigration.
 
 ### Open Graph
 
-- Title : KRAAK
-- Description : Développez vos compétences et accédez à des opportunités internationales.
+- Title : KRAAK Consulting | Développez vos compétences, lancez vos projets
+- Description : Développez vos compétences, lancez vos projets et accédez aux opportunités internationales avec un accompagnement KRAAK clair et structuré.
 
 ---
 
@@ -113,15 +114,15 @@ Ce site utilise des cookies pour analyser le trafic.
 - Logo : variantes KRAAK intégrées
 - Favicon et icônes app : symbole KRAAK généré
 - Couleurs : noir, blanc, gris
-- Typographie : Inter + JetBrains Mono
+- Typographie : Poppins + IBM Plex Mono
 
 ---
 
 ## 6. Coordonnées 📞
 
 - Email : kraakconsulting@gmail.com
-- Téléphone : à définir
-- WhatsApp : à définir
+- Téléphone : via WhatsApp
+- WhatsApp : +225 05 02 74 18 18
 - Zone : Afrique / international
 
 ---

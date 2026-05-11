@@ -160,7 +160,7 @@
         <h3 class="text-xl font-bold">Recherche &amp; Gestion de projets</h3>
         <p class="text-brand-navy mt-3">
           Transformez vos id&eacute;es en projets structur&eacute;s, rentables
-          et durables, avec une m&eacute;thode claire et un suivi utile.
+          et durables.
         </p>
         <a
           routerLink="/services"
@@ -179,7 +179,7 @@
         <h3 class="text-xl font-bold">&Eacute;tudes &amp; Immigration</h3>
         <p class="text-brand-navy mt-3">
           Construisez votre avenir &agrave; l'international avec un
-          accompagnement fiable, strat&eacute;gique et conforme.
+          accompagnement fiable et strat&eacute;gique.
         </p>
         <a routerLink="/contact" class="kr-link mt-5 inline-flex font-semibold">
           &Eacute;valuer mon profil
@@ -202,129 +202,19 @@
           Des points d'entr&eacute;e concrets selon votre trajectoire.
         </h2>
       </div>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-desktop text-accent text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Formations Professionnelles
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Programmes cibl&eacute;s en fran&ccedil;ais et anglais pour
-              renforcer vos comp&eacute;tences et votre employabilit&eacute;.
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        @for (solution of keySolutions; track solution) {
+          <article class="rounded-card w-full bg-neutral-50 p-5 text-center">
+            <span
+              class="bg-brand-white text-secondary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold shadow-sm"
+            >
+              {{ $index + 1 }}
+            </span>
+            <p class="text-brand-navy text-lg leading-snug font-medium">
+              {{ solution }}
             </p>
-          </div>
-        </article>
-
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-lock text-secondary text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Accompagnement S&eacute;curis&eacute;
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Un cadre fiable, confidentiel et structur&eacute; pour vos
-              d&eacute;marches acad&eacute;miques, professionnelles et
-              administratives.
-            </p>
-          </div>
-        </article>
-
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-face-smile text-highlight text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Parcours Simples &amp; Clairs
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Des &eacute;tapes compr&eacute;hensibles, des conseils concrets et
-              un suivi humain &agrave; chaque phase de votre trajectoire.
-            </p>
-          </div>
-        </article>
-
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-globe text-accent text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Mobilit&eacute; Internationale
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Appui strat&eacute;gique pour vos projets d'&eacute;tudes,
-              d'immigration et d'int&eacute;gration au Canada et aux
-              &Eacute;tats-Unis.
-            </p>
-          </div>
-        </article>
-
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-github text-secondary text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Solutions Ouvertes
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Outils, m&eacute;thodes et ressources adapt&eacute;s &agrave;
-              votre r&eacute;alit&eacute; pour acc&eacute;l&eacute;rer vos
-              r&eacute;sultats.
-            </p>
-          </div>
-        </article>
-
-        <article class="rounded-card w-full bg-neutral-50 p-4">
-          <span
-            class="bg-brand-white mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg shadow-sm"
-          >
-            <i
-              class="pi pi-shield text-highlight text-2xl lg:text-3xl"
-              aria-hidden="true"
-            ></i>
-          </span>
-          <div class="flex flex-col gap-1 text-center">
-            <h3 class="text-brand-navy text-xl leading-tight font-medium">
-              Confiance &amp; Rigueur
-            </h3>
-            <p class="text-brand-navy/80 leading-normal">
-              Approche professionnelle et &eacute;thique pour transformer vos
-              ambitions en r&eacute;sultats mesurables et durables.
-            </p>
-          </div>
-        </article>
+          </article>
+        }
       </div>
     </div>
   </div>
@@ -363,7 +253,7 @@
       >
         <i class="pi pi-heart text-accent text-2xl" aria-hidden="true"></i>
         <p class="mt-3 font-semibold">
-          Programmes accessibles, gratuits et premium
+          Programmes accessibles (gratuits et premium)
         </p>
       </div>
     </div>
@@ -391,8 +281,8 @@
         r&eacute;sultat.
       </h2>
       <p class="text-brand-navy mx-auto mt-4 max-w-2xl">
-        Un espace sera ouvert aux retours clients et aux preuves sociales
-        d&egrave;s que les prochains t&eacute;moignages seront valid&eacute;s.
+        Un espace est r&eacute;serv&eacute; aux t&eacute;moignages clients en
+        cours de validation.
       </p>
     </div>
     <div class="mx-auto mt-10 max-w-6xl px-4 lg:px-6">
@@ -409,7 +299,7 @@
 
 <kraak-cta-banner
   heading="Vous savez o&ugrave; vous voulez aller."
-  body="Nous savons comment vous y amener, avec une consultation claire et une premi&egrave;re orientation utile."
+  body="Nous savons comment vous y amener."
   ctaLabel="Prendre rendez-vous maintenant"
   ctaLink="/contact"
   ctaContext="home_main_cta"

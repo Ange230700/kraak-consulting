@@ -41,6 +41,15 @@ import { canShowPreviewContent } from '../../core/runtime/runtime-config';
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
   protected readonly canShowPreviewContent = canShowPreviewContent;
+  protected readonly keySolutions: readonly string[] = [
+    'Formations en anglais et français professionnel',
+    'Développement personnel et professionnel',
+    'Formations en leadership professionnel',
+    "Accompagnement à l'emploi",
+    'Création, gestion et suivi de projets',
+    'Immigration Canada et États-Unis',
+    'Intégration socioéconomique et professionnelle',
+  ];
 
   protected readonly faqItems: FaqItem[] = [
     {
@@ -50,14 +59,15 @@ export default class HomePage implements OnInit, OnDestroy {
         "Commencez par une consultation d'orientation. Nous clarifions votre objectif, vos contraintes et les options réalistes pour définir un point de départ concret.",
     },
     {
-      question: "Comment KRAAK m'aide-t-il à choisir la bonne orientation ?",
+      question: 'Quels services KRAAK peuvent répondre à mon objectif ?',
       answer:
-        'Nous analysons votre profil, votre contexte et votre priorité du moment pour vous proposer un parcours cohérent entre formation, projet et mobilité internationale.',
+        'Nous partons de votre priorité du moment pour vous orienter vers le bon point d’entrée entre formation, recherche et gestion de projets, études et immigration, programmes KRAAK ou besoin entreprise.',
     },
     {
-      question: 'Comment savoir quel programme KRAAK correspond à mon besoin ?',
+      question:
+        'Proposez-vous des programmes pour les jeunes, les étudiants et les organisations ?',
       answer:
-        'Nos équipes comparent votre objectif aux programmes disponibles et vous orientent vers le format le plus pertinent selon votre niveau, votre calendrier et vos attentes.',
+        'Oui. Nos programmes et accompagnements s’adressent aux étudiants, jeunes professionnels, entreprises, diaspora et organisations avec des formats courts, structurés et orientés résultats.',
     },
     {
       question:

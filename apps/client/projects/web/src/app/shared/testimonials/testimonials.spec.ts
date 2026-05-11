@@ -18,7 +18,7 @@ describe('Testimonials', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Prévisualisation du format témoignages');
-    expect(text).toContain('Robert Fox');
+    expect(text).toContain('Aïcha K.');
   });
 
   it('Given aucun item et placeholder désactivé, When le composant est rendu, Then rien n est affiché', () => {

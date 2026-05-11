@@ -35,6 +35,10 @@ describe('ServicesPage', () => {
     expect(content).toContain(
       'Des \u00E9quipes performantes construisent des organisations solides',
     );
+    expect(content).toContain('Rédaction CV');
+    expect(content).toContain('Recrutement de talents');
+    expect(content).toContain('Immigration professionnelle');
+    expect(content).toContain("Santé et culture d'entreprise");
   });
 
   it('should render service-specific FAQ section', () => {
