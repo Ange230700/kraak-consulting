@@ -35,7 +35,7 @@
     "dev:api:staging": "pnpm --filter @kraak/api run start:staging",
     "build:api": "pnpm --filter @kraak/api build",
     "check:observability": "node ./scripts/check-observability.mjs",
-    "test:workspace": "node --test ./scripts/workspace-commands.test.mjs ./scripts/ensure-capacitor-platform.test.mjs ./scripts/setup-android-env.test.mjs ./scripts/verify-supabase-auth-config.test.mjs ./scripts/verify-mobile-dev-server-config.test.mjs ./scripts/verify-capacitor-android-plugins.test.mjs ./scripts/check-observability.test.mjs ./scripts/vercel-config.test.mjs",
+    "test:workspace": "node --test ./scripts/workspace-commands.test.mjs ./scripts/ensure-capacitor-platform.test.mjs ./scripts/setup-android-env.test.mjs ./scripts/verify-supabase-auth-config.test.mjs ./scripts/verify-mobile-dev-server-config.test.mjs ./scripts/verify-capacitor-android-plugins.test.mjs ./scripts/check-observability.test.mjs ./scripts/vercel-config.test.mjs ./scripts/angular-web-build-config.test.mjs",
     "test:api": "pnpm --filter @kraak/api test",
     "test:libs": "pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test",
     "test:coverage": "pnpm --filter @kraak/api test:cov && pnpm --filter @kraak/client test:coverage && pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test:coverage",
