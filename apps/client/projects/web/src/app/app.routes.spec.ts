@@ -322,5 +322,17 @@ describe('Web routes', () => {
 
       expect(resolvedComponent).toBe(NotFoundPage);
     });
+
+    it('When the wildcard route loadComponent is invoked Then it resolves to the not-found page component', async () => {
+      const wildcard = builtRoutes.find((route) => route.path === '**');
+
+      expect(wildcard?.loadComponent).toBeDefined();
+
+      const loaded = await (
+        wildcard!.loadComponent as () => Promise<unknown>
+      )();
+
+      expect(loaded).toBeTruthy();
+    });
   });
 });
