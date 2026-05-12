@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   ForbiddenException,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -150,7 +151,10 @@ describe('SupportService', () => {
     });
 
     sendMock.mockResolvedValue({ data: {}, error: null });
-    const loggerLogSpy = jest.spyOn((service as any).logger, 'log');
+    const loggerLogSpy = jest.spyOn(
+      (service as unknown as { logger: Logger }).logger,
+      'log',
+    );
 
     await expect(
       service.submitContact({
@@ -176,7 +180,10 @@ describe('SupportService', () => {
     });
 
     sendMock.mockResolvedValue({ data: null, error: null });
-    const loggerLogSpy = jest.spyOn((service as any).logger, 'log');
+    const loggerLogSpy = jest.spyOn(
+      (service as unknown as { logger: Logger }).logger,
+      'log',
+    );
 
     await expect(
       service.submitContact({
@@ -697,7 +704,10 @@ describe('SupportService', () => {
     });
 
     sendMock.mockRejectedValue('network-down');
-    const loggerErrorSpy = jest.spyOn((service as any).logger, 'error');
+    const loggerErrorSpy = jest.spyOn(
+      (service as unknown as { logger: Logger }).logger,
+      'error',
+    );
 
     await expect(
       service.submitContact({
@@ -710,7 +720,7 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
 
     expect(loggerErrorSpy).toHaveBeenCalledWith(
-      "Echec de l'envoi d'email transactionnel",
+      "Échec de l'envoi d'email transactionnel",
       undefined,
     );
   });
@@ -885,7 +895,7 @@ describe('SupportService', () => {
 
       if (table === 'participant') {
         return createQueryChain({
-          data: {} as { id?: string | null },
+          data: {},
           error: null,
         });
       }

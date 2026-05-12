@@ -12,7 +12,7 @@ describe('MobileResourcesService', () => {
     id: 'resource-1',
     programId: null,
     cohortId: null,
-    title: 'Guide de demarrage',
+    title: 'Guide de démarrage',
     description: 'Description test',
     resourceType: 'document',
     resourceTheme: 'training',

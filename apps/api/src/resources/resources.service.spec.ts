@@ -64,7 +64,9 @@ describe('ResourcesService', () => {
     terminalResult: TResult,
     options?: { withOrder?: boolean; withRange?: boolean; withIs?: boolean },
   ) => {
-    const base = Promise.resolve(terminalResult) as Promise<TResult> & {
+    const base = Promise.resolve(
+      terminalResult,
+    ) as unknown as Promise<TResult> & {
       from: ReturnType<typeof jest.fn>;
       select: ReturnType<typeof jest.fn>;
       eq: ReturnType<typeof jest.fn>;

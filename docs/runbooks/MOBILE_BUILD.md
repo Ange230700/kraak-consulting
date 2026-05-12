@@ -4,7 +4,7 @@ Ce runbook décrit comment générer les projets natifs Android et iOS, lancer u
 
 ---
 
-## Prerequis
+## Prérequis
 
 | Outil          | Version recommandee / utilisee | Remarque                                                  |
 | -------------- | ------------------------------ | --------------------------------------------------------- |
