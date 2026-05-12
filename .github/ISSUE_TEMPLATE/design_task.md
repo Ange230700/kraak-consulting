@@ -2,8 +2,8 @@
 
 ---
 
-name: 'Tache design'
-about: Créer ou ajuster une decision de design
+name: 'Tâche design'
+about: Créer ou ajuster une décision de design
 labels: ['design', 'type: chore', 'status: ready']
 
 ---
@@ -16,10 +16,10 @@ labels: ['design', 'type: chore', 'status: ready']
 
 - [ ] Mobile-first
 - [ ] Accessibilité de base
-- [ ] Cohesion visuelle KRAAK
+- [ ] Cohésion visuelle KRAAK
 
-## Criteres d'acceptation
+## Critères d'acceptation
 
-- [ ] Decision documentée
+- [ ] Décision documentée
 - [ ] Comportement attendu clair
 - [ ] Handoff dev possible

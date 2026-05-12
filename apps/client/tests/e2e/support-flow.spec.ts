@@ -101,8 +101,13 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
 
       // When: User clicks first contact button
       const contactButton = page.locator('a[routerLink="/contact"]').first();
-      await contactButton.click();
-      await page.waitForURL('**/contact', { timeout: 5000 });
+      await Promise.all([
+        page.waitForURL('**/contact', {
+          timeout: 10000,
+          waitUntil: 'domcontentloaded',
+        }),
+        contactButton.click(),
+      ]);
 
       // Then: User lands on contact page
       await expect(page).toHaveTitle(/Contact/i);

@@ -102,6 +102,10 @@ describe('AnnouncementsService', () => {
     return base;
   };
 
+  const createClientMock = (tableQueries: Record<string, unknown> = {}) => ({
+    from: jest.fn((table: string) => tableQueries[table]),
+  });
+
   describe('listAnnouncements', () => {
     it('Given: valid access token and enrolled participant, When: listAnnouncements called, Then: return filtered announcements', async () => {
       const accessToken = 'valid-token';
@@ -156,19 +160,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') {
-            return participantQuery;
-          }
-          if (table === 'announcement') {
-            return announcementsQuery;
-          }
-          if (table === 'enrollment') {
-            return enrollmentsQuery;
-          }
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements(accessToken, 1, 20);
 
@@ -251,19 +249,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') {
-            return participantQuery;
-          }
-          if (table === 'announcement') {
-            return announcementsQuery;
-          }
-          if (table === 'enrollment') {
-            return enrollmentsQuery;
-          }
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements(
         accessToken,
@@ -322,19 +314,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') {
-            return participantQuery;
-          }
-          if (table === 'announcement') {
-            return announcementQuery;
-          }
-          if (table === 'enrollment') {
-            return enrollmentQuery;
-          }
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       const result = await service.getAnnouncementById(
         announcementId,
@@ -367,16 +353,12 @@ describe('AnnouncementsService', () => {
         error: new Error('Not found'),
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') {
-            return participantQuery;
-          }
-          if (table === 'announcement') {
-            return announcementQuery;
-          }
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById(announcementId, accessToken),
@@ -427,19 +409,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') {
-            return participantQuery;
-          }
-          if (table === 'announcement') {
-            return announcementQuery;
-          }
-          if (table === 'enrollment') {
-            return enrollmentQuery;
-          }
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById(announcementId, accessToken),
@@ -454,9 +430,7 @@ describe('AnnouncementsService', () => {
         error: new Error('Invalid'),
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn(),
-      });
+      mockSupabaseService.getClient.mockReturnValue(createClientMock());
 
       await expect(service.listAnnouncements('bad-token')).rejects.toThrow(
         'Could not resolve participant ID from access token',
@@ -479,12 +453,12 @@ describe('AnnouncementsService', () => {
         { withOrder: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
         }),
-      });
+      );
 
       await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
         'Failed to list announcements',
@@ -512,13 +486,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
         'Failed to get enrollments',
@@ -546,13 +520,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.total).toBe(0);
@@ -586,13 +560,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
         'Invalid audience type',
@@ -635,13 +609,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'enrollment') return enrollmentQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       const result = await service.getAnnouncementById(
         'ann-002',
@@ -685,13 +659,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'enrollment') return enrollmentQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       const result = await service.getAnnouncementById(
         'ann-003',
@@ -732,12 +706,12 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'participant') return participantQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementQuery,
+          participant: participantQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById('ann-001', 'valid-token'),
@@ -755,11 +729,11 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'announcement') return announcementQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById('non-existent', 'valid-token'),
@@ -800,13 +774,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'enrollment') return enrollmentQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById('ann-004', 'valid-token'),
@@ -852,13 +826,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.data).toHaveLength(0);
@@ -906,13 +880,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.data).toHaveLength(1);
@@ -961,13 +935,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.data).toHaveLength(0);
@@ -1015,13 +989,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.data).toHaveLength(1);
@@ -1070,13 +1044,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'participant') return participantQuery;
-          if (table === 'announcement') return announcementsQuery;
-          if (table === 'enrollment') return enrollmentsQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+          enrollment: enrollmentsQuery,
         }),
-      });
+      );
 
       const result = await service.listAnnouncements('valid-token');
       expect(result.data).toHaveLength(0);
@@ -1111,12 +1085,12 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'participant') return participantQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementQuery,
+          participant: participantQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById('ann-custom', 'valid-token'),
@@ -1157,13 +1131,13 @@ describe('AnnouncementsService', () => {
         { withIn: true },
       );
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn((table: string) => {
-          if (table === 'announcement') return announcementQuery;
-          if (table === 'participant') return participantQuery;
-          if (table === 'enrollment') return enrollmentQuery;
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementQuery,
+          participant: participantQuery,
+          enrollment: enrollmentQuery,
         }),
-      });
+      );
 
       await expect(
         service.getAnnouncementById('ann-prog-no-data', 'valid-token'),
