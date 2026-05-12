@@ -11,7 +11,14 @@
   "pnpm": {
     "overrides": {
       "typescript": "~5.9.2"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lmdb",
+      "playwright",
+      "rollup",
+      "sharp"
+    ]
   },
   "scripts": {
     "clean": "pnpm -r clean && node ./scripts/clean.mjs",
