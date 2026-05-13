@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
   loadProgramDetailState,

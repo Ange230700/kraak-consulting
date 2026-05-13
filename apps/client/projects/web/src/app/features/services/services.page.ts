@@ -3,11 +3,11 @@ import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import {
   FaqAccordion,
   type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion';
+} from '../../shared/faq-accordion/faq-accordion.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 @Component({

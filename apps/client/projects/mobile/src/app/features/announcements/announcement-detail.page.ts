@@ -9,7 +9,7 @@ import {
   MobileAuthService,
   resolveAuthErrorMessage,
 } from '../auth/mobile-auth.service';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 
 @Component({
   selector: 'kraak-announcement-detail-page',

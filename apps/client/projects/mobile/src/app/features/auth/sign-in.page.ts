@@ -8,7 +8,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 import {
   MobileAuthService,
   resolveAuthErrorMessage,

@@ -4,15 +4,15 @@ import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import {
   FaqAccordion,
   type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion';
+} from '../../shared/faq-accordion/faq-accordion.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { Testimonials } from '../../shared/testimonials/testimonials';
-import { FadingPartners } from '../../shared/fading-partners/fading-partners';
-import { ImpactStats } from '../../shared/impact-stats/impact-stats';
+import { Testimonials } from '../../shared/testimonials/testimonials.component';
+import { FadingPartners } from '../../shared/fading-partners/fading-partners.component';
+import { ImpactStats } from '../../shared/impact-stats/impact-stats.component';
 import { canShowPreviewContent } from '../../core/runtime/runtime-config';
 
 @Component({

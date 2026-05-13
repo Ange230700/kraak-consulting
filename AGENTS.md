@@ -105,14 +105,18 @@ comme défaut :
 Chaque composant ou page Angular (web **et** mobile) doit comporter
 **exactement trois fichiers** au minimum :
 
-| Fichier         | Rôle                             |
-| --------------- | -------------------------------- |
-| `<nom>.ts`      | Classe du composant / de la page |
-| `<nom>.html`    | Template HTML (fichier séparé)   |
-| `<nom>.spec.ts` | Tests unitaires / composants     |
+| Fichier                                           | Rôle                              |
+| ------------------------------------------------- | --------------------------------- |
+| `<nom>.page.ts` ou `<nom>.component.ts`           | Classe de la page ou du composant |
+| `<nom>.page.html` ou `<nom>.component.html`       | Template HTML (fichier séparé)    |
+| `<nom>.page.spec.ts` ou `<nom>.component.spec.ts` | Tests unitaires / composants      |
 
 Règles associées :
 
+- Pour une page Angular complète, utiliser strictement le suffixe
+  `*.page.{ts,html,spec.ts}`.
+- Pour un composant Angular réutilisable, utiliser strictement le suffixe
+  `*.component.{ts,html,spec.ts}`.
 - Utiliser **`templateUrl`** dans le décorateur `@Component` pour pointer vers
   le fichier `.html` séparé. Ne **pas** utiliser `template:` en ligne.
 - Ne **pas** créer de fichier `.scss` ni `.css` dédié par composant ou page.
@@ -387,6 +391,8 @@ Règle de langue de collaboration / travail :
 - La communication assistant-utilisateur doit suivre la langue de l’utilisateur.
 - Par défaut, dans le contexte KRAAK, le français est la langue privilégiée pour
   le cadrage, le contenu, les retours, les revues, et les mises à jour.
+- Les assistants doivent vérifier systématiquement l’orthographe française des
+  contenus rédigés en français avant de considérer un travail comme terminé.
 
 Règle de langue du dépôt (obligatoire, tout le repo) :
 
@@ -475,6 +481,9 @@ toute tâche touchant l'API.
   dépôt.
 - Faire en sorte que les composants UI implémentés ou adaptés restent cohérents
   avec l’identité visuelle de KRAAK, sa lisibilité, sa crédibilité et son ton.
+- En phase de débogage ou d’investigation, utiliser régulièrement les méthodes
+  de l’objet `Console` (`console.debug`, `console.info`, `console.warn`,
+  `console.error`) pour tracer les étapes clés et faciliter le diagnostic.
 - Lorsqu’un flux intercepte une erreur, un rejet, ou un état inattendu sans le
   relancer, laisser une trace de debug via les méthodes de l’objet `Console`
   (`console.error`, `console.warn`, `console.info`, `console.debug`) avec un

@@ -7,7 +7,7 @@ import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import {
   FaqAccordion,
   type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion';
+} from '../../shared/faq-accordion/faq-accordion.component';
 
 @Component({
   selector: 'kraak-faq-page',
