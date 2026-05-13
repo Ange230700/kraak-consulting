@@ -8,7 +8,7 @@ import type {
   ResourceThemeValue,
   ResourceTypeValue,
 } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 
@@ -45,7 +45,7 @@ const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
 @Component({
   selector: 'kraak-resource-list-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink],
   templateUrl: './resource-list.page.html',
 })
 export default class ResourceListPage implements OnInit {

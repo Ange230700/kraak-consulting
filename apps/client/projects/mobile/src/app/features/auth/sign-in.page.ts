@@ -8,7 +8,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import {
   MobileAuthService,
   resolveAuthErrorMessage,
@@ -23,7 +23,7 @@ interface SignInFormModel {
 @Component({
   selector: 'kraak-sign-in-page',
   standalone: true,
-  imports: [PageShell, ReactiveFormsModule, RouterLink, IonButton],
+  imports: [PageShellComponent, ReactiveFormsModule, RouterLink, IonButton],
   templateUrl: './sign-in.page.html',
 })
 export default class SignInPage {

@@ -21,7 +21,7 @@ import {
   ],
   templateUrl: './page-shell.component.html',
 })
-export class PageShell {
+export class PageShellComponent {
   readonly title = input.required<string>();
   readonly eyebrow = input('');
   readonly description = input('');

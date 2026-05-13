@@ -4,14 +4,14 @@ import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
 import type { ResourceDto } from '@kraak/contracts';
 import { map } from 'rxjs';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 
 @Component({
   selector: 'kraak-resource-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner],
+  imports: [PageShellComponent, IonButton, IonSpinner],
   templateUrl: './resource-detail.page.html',
 })
 export default class ResourceDetailPage implements OnInit {

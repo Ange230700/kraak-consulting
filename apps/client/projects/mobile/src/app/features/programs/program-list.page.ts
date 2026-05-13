@@ -4,14 +4,14 @@ import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramListItemDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 
 @Component({
   selector: 'kraak-program-list-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './program-list.page.html',
 })
 export default class ProgramListPage implements OnInit {
