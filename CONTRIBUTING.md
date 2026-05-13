@@ -187,6 +187,14 @@ Contraintes obligatoires :
 
 ## Workflow Git complet
 
+### Interdiction de contournement des hooks
+
+Le flag `--no-verify` est strictement interdit pour toutes les commandes Git
+(`commit`, `push`, etc.).
+
+Si un hook échoue, il faut corriger la cause (format, lint, typecheck, tests,
+nommage) puis relancer la commande, sans contourner les contrôles.
+
 Avant de commencer à coder, chaque collaborateur doit **s'assigner une tâche**
 sur le **GitHub Project lié à ce dépôt**. Ne pas démarrer un travail sans item
 de Project clairement pris en charge.

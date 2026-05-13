@@ -56,7 +56,7 @@ describe('HomePage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('R\u00E9server une consultation');
-    expect(element.textContent).toContain('D\u00E9couvrir nos programmes');
+    expect(element.textContent).toContain('D\u00E9couvrir nos services');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -79,14 +79,15 @@ describe('HomePage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain(
-      'Formations en anglais et français professionnel',
+      'D&eacute;veloppement personnel et professionnel',
     );
-    expect(content).toContain('Développement personnel et professionnel');
-    expect(content).toContain('Formations en leadership professionnel');
-    expect(content).toContain("Accompagnement à l'emploi");
-    expect(content).toContain('Création, gestion et suivi de projets');
-    expect(content).toContain('Immigration Canada et États-Unis');
-    expect(content).toContain('Intégration socioéconomique et professionnelle');
+    expect(content).toContain('Anglais et fran&ccedil;ais professionnel');
+    expect(content).toContain('Leadership et prise de parole');
+    expect(content).toContain('Pr&eacute;paration aux entretiens');
+    expect(content).toContain('Structuration de projets');
+    expect(content).toContain("Accompagnement d'entreprises et startups");
+    expect(content).toContain('Conseils en mobilit&eacute; internationale');
+    expect(content).toContain('Recrutement et placement en emploi');
   });
 
   it('should render home-specific FAQ section', () => {
