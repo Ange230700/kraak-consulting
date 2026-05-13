@@ -215,7 +215,12 @@ export class MobilePushNotificationsService {
       `/tabs/annonces/${encodeURIComponent(matchedPush.announcementId)}`,
     );
 
-    void navigationPromise?.catch(() => undefined);
+    void navigationPromise?.catch((error) => {
+      console.warn('Mobile push notification navigation failed.', {
+        error,
+        target: '/tabs/annonces/:announcementId',
+      });
+    });
   }
 
   private handlePriorityAnnouncementPush(data: unknown): void {
@@ -279,6 +284,11 @@ export function provideMobilePushNotificationsInitialization(): () => Promise<vo
   return async () => {
     const pushNotificationsService = inject(MobilePushNotificationsService);
 
-    void pushNotificationsService.initialize().catch(() => undefined);
+    void pushNotificationsService.initialize().catch((error) => {
+      console.warn(
+        'Mobile push notifications initialization failed during app bootstrap.',
+        error,
+      );
+    });
   };
 }

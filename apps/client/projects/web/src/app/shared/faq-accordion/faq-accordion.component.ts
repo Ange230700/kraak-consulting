@@ -5,6 +5,7 @@ import {
   AccordionHeader,
   AccordionPanel,
 } from 'primeng/accordion';
+import { FAQ_BACKGROUND_IMAGE_URL } from '../brand/brand-constants';
 
 export interface FaqItem {
   question: string;
@@ -30,6 +31,5 @@ export interface FaqItem {
 export class FaqAccordion {
   @Input({ required: true }) items: FaqItem[] = [];
 
-  protected readonly backgroundImageUrl =
-    'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/faq/glassmorphic-accordion-bg.jpg';
+  protected readonly backgroundImageUrl = FAQ_BACKGROUND_IMAGE_URL;
 }

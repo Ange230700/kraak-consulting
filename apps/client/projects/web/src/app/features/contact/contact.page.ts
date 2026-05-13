@@ -17,6 +17,8 @@ import { logDebugError } from '@kraak/api-client';
 import type { ContactFormDto } from '@kraak/contracts';
 
 import {
+  CONTACT_EMAIL,
+  CONTACT_VISUAL_URL,
   HERO_BACKGROUND_STYLE,
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
@@ -71,8 +73,9 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
   ],
 })
 export default class ContactPage implements OnInit, OnDestroy {
-  protected readonly contactVisualUrl =
-    'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/contact/map-4.jpg';
+  protected readonly contactVisualUrl = CONTACT_VISUAL_URL;
+  protected readonly contactEmail = CONTACT_EMAIL;
+  protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
 
   protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
 
@@ -100,7 +103,7 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
   protected readonly whatsappLink =
     KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
-    'https://wa.me/2250502741818';
+    '';
 
   protected readonly faqItems: FaqItem[] = [
     {
