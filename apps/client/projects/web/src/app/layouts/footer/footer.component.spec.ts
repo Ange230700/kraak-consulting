@@ -1,10 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { KRAAK_SOCIAL_LINKS } from '../../shared/brand/brand-constants';
 
 import { Footer } from './footer.component';
 
-const expectedFacebookUrl = 'https://www.facebook.com/kraakconsulting/';
-const expectedTiktokUrl = 'https://www.tiktok.com/@kraakconsulting';
+const expectedFacebookUrl =
+  KRAAK_SOCIAL_LINKS.find((socialLink) => socialLink.label === 'Facebook')
+    ?.href ?? '';
+const expectedTiktokUrl =
+  KRAAK_SOCIAL_LINKS.find((socialLink) => socialLink.label === 'TikTok')
+    ?.href ?? '';
 
 describe('Footer', () => {
   beforeEach(async () => {

@@ -4,6 +4,9 @@ import {
   resolveApiBaseUrl,
 } from './runtime-config';
 
+const TEST_RUNTIME_API_BASE_URL = 'https://api.kraak.example';
+const TEST_FALLBACK_API_BASE_URL = 'https://fallback.example';
+
 describe('Runtime config helpers', () => {
   const originalConfig = globalThis.__KRAAK_RUNTIME_CONFIG__;
 
@@ -43,20 +46,20 @@ describe('Runtime config helpers', () => {
   describe('Given the runtime config exposes apiBaseUrl', () => {
     it('When resolveApiBaseUrl is called Then it returns the runtime value without trailing slash', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = {
-        apiBaseUrl: 'https://api.kraak.example/',
+        apiBaseUrl: `${TEST_RUNTIME_API_BASE_URL}/`,
       };
-      expect(resolveApiBaseUrl('https://fallback.example')).toBe(
-        'https://api.kraak.example',
+      expect(resolveApiBaseUrl(TEST_FALLBACK_API_BASE_URL)).toBe(
+        TEST_RUNTIME_API_BASE_URL,
       );
     });
 
     it('When resolveApiBaseUrl receives a runtime value without trailing slash Then it returns it unchanged', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = {
-        apiBaseUrl: 'https://api.kraak.example',
+        apiBaseUrl: TEST_RUNTIME_API_BASE_URL,
       };
 
-      expect(resolveApiBaseUrl('https://fallback.example/')).toBe(
-        'https://api.kraak.example',
+      expect(resolveApiBaseUrl(`${TEST_FALLBACK_API_BASE_URL}/`)).toBe(
+        TEST_RUNTIME_API_BASE_URL,
       );
     });
   });
@@ -64,8 +67,8 @@ describe('Runtime config helpers', () => {
   describe('Given the runtime config has no apiBaseUrl', () => {
     it('When resolveApiBaseUrl is called Then it returns the fallback value', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
-      expect(resolveApiBaseUrl('https://fallback.example/')).toBe(
-        'https://fallback.example',
+      expect(resolveApiBaseUrl(`${TEST_FALLBACK_API_BASE_URL}/`)).toBe(
+        TEST_FALLBACK_API_BASE_URL,
       );
     });
 
@@ -77,8 +80,8 @@ describe('Runtime config helpers', () => {
     it('When resolveApiBaseUrl receives a runtime apiBaseUrl with only spaces Then it falls back to fallback', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { apiBaseUrl: '   ' };
 
-      expect(resolveApiBaseUrl('https://fallback.example/')).toBe(
-        'https://fallback.example',
+      expect(resolveApiBaseUrl(`${TEST_FALLBACK_API_BASE_URL}/`)).toBe(
+        TEST_FALLBACK_API_BASE_URL,
       );
     });
   });

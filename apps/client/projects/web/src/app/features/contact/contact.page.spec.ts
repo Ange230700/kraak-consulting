@@ -7,8 +7,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { vi } from 'vitest';
+import { KRAAK_SOCIAL_LINKS } from '../../shared/brand/brand-constants';
 
 import ContactPage from './contact.page';
+
+const WHATSAPP_URL =
+  KRAAK_SOCIAL_LINKS.find((socialLink) => socialLink.label === 'WhatsApp')
+    ?.href ?? '';
 
 describe('ContactPage', () => {
   let httpTestingController: HttpTestingController;
@@ -79,11 +84,11 @@ describe('ContactPage', () => {
 
     const page = fixture.nativeElement as HTMLElement;
     const whatsappLink = page.querySelector(
-      'a[aria-label="Discuter sur WhatsApp"]',
+      'a[href*="wa.me"]',
     ) as HTMLAnchorElement | null;
 
     expect(whatsappLink).toBeTruthy();
-    expect(whatsappLink?.getAttribute('href')).toContain('wa.me/2250502741818');
+    expect(whatsappLink?.getAttribute('href')).toBe(WHATSAPP_URL);
   });
 
   // Given le formulaire est vide

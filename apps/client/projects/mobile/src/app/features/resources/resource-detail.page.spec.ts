@@ -11,6 +11,8 @@ import { BehaviorSubject } from 'rxjs';
 import { MobileResourcesService } from './mobile-resources.service';
 import ResourceDetailPage from './resource-detail.page';
 
+const TEST_RESOURCE_URL = 'https://example.com/guide';
+
 describe('Mobile ResourceDetailPage', () => {
   let service: {
     getResourceById: ReturnType<typeof vi.fn>;
@@ -27,7 +29,7 @@ describe('Mobile ResourceDetailPage', () => {
     resourceType: 'document',
     resourceTheme: 'training',
     resourceAudience: 'all',
-    url: 'https://example.com/guide',
+    url: TEST_RESOURCE_URL,
     filePath: null,
     status: 'published',
     publishedAt: new Date().toISOString(),
