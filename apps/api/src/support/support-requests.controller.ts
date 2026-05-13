@@ -84,6 +84,11 @@ export class SupportRequestsController {
     description: 'Session invalide ou header Authorization manquant',
     schema: apiErrorSchema,
   })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors du chargement des demandes de support',
+    schema: apiErrorSchema,
+  })
   async list(
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<SupportRequestDto[]> {
@@ -139,6 +144,11 @@ export class SupportRequestsController {
   @ApiResponse({
     status: 404,
     description: 'Demande introuvable',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la mise à jour du statut',
     schema: apiErrorSchema,
   })
   async updateStatus(

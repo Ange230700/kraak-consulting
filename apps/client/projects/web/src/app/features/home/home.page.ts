@@ -42,13 +42,14 @@ export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
   protected readonly canShowPreviewContent = canShowPreviewContent;
   protected readonly keySolutions: readonly string[] = [
-    'Formations en anglais et français professionnel',
-    'Développement personnel et professionnel',
-    'Formations en leadership professionnel',
-    "Accompagnement à l'emploi",
-    'Création, gestion et suivi de projets',
-    'Immigration Canada et États-Unis',
-    'Intégration socioéconomique et professionnelle',
+    'D&eacute;veloppement personnel et professionnel',
+    'Anglais et fran&ccedil;ais professionnel',
+    'Leadership et prise de parole',
+    'Pr&eacute;paration aux entretiens',
+    'Structuration de projets',
+    "Accompagnement d'entreprises et startups",
+    'Conseils en mobilit&eacute; internationale',
+    'Recrutement et placement en emploi',
   ];
 
   protected readonly faqItems: FaqItem[] = [

@@ -31,6 +31,7 @@ const apiErrorSchema = {
   properties: {
     success: { type: 'boolean', example: false },
     message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
   },
 };
 

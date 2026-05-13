@@ -13,6 +13,15 @@ import { extractAccessToken } from '../auth/auth.dto';
 import { SupportService } from './support.service';
 import { validateContactForm } from './support.dto';
 
+const apiServerErrorSchema = {
+  type: 'object',
+  properties: {
+    success: { type: 'boolean', example: false },
+    message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
+  },
+};
+
 @ApiTags('Support')
 @Controller(['support/contact', 'contact'])
 export class SupportController {
@@ -73,6 +82,11 @@ export class SupportController {
         errors: { type: 'array', items: { type: 'string' } },
       },
     },
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Erreur serveur lors de l'envoi du formulaire de contact",
+    schema: apiServerErrorSchema,
   })
   async submit(
     @Body() body: unknown,

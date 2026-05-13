@@ -84,6 +84,15 @@ const RESOURCE_LIST_SCHEMA = {
   },
 };
 
+const apiErrorSchema = {
+  type: 'object',
+  properties: {
+    success: { type: 'boolean', example: false },
+    message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
+  },
+};
+
 @ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
@@ -133,6 +142,7 @@ export class ResourcesController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Error fetching resources',
+    schema: apiErrorSchema,
   })
   async listResources(
     @Query('resourceTheme') resourceTheme?: ResourceThemeValue,
@@ -173,6 +183,7 @@ export class ResourcesController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Error fetching resource',
+    schema: apiErrorSchema,
   })
   async getResourceById(@Param('id') id: string) {
     return this.resourcesService.getResourceById(id);
@@ -201,6 +212,7 @@ export class ResourcesController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Error recording resource consultation',
+    schema: apiErrorSchema,
   })
   async trackResourceConsultation(@Param('id') id: string): Promise<void> {
     await this.resourcesService.trackResourceConsultation(id);
