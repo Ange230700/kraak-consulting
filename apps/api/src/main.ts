@@ -42,6 +42,22 @@ async function bootstrap() {
     .addTag('Health', "Vérification de l'état de l'API")
     .addTag('Auth', 'Authentification, session et récupération de compte')
     .addTag('Support', 'Formulaire de contact et demandes de support')
+    .addTag(
+      'Announcements',
+      'Annonces publiées accessibles aux participants selon leur périmètre',
+    )
+    .addTag(
+      'Programs',
+      'Programmes participants, détail des sessions et progression minimale',
+    )
+    .addTag(
+      'Dashboard',
+      'Agrégat dashboard participant (programmes, sessions à venir, annonces)',
+    )
+    .addTag(
+      'Resources',
+      'Ressources publiées (liste, détail, suivi des consultations)',
+    )
     .addBearerAuth(
       {
         type: 'http',

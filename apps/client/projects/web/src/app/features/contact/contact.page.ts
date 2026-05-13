@@ -86,17 +86,17 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly serviceOptions: ServiceOption[] = [
     { label: 'Formation', value: 'formation', category: 'program' },
     {
-      label: 'Recherche & gestion de projets',
+      label: 'Gestion de projets',
       value: 'project',
       category: 'other',
     },
     {
-      label: '\u00C9tudes & immigration',
+      label: 'Conseil en immigration',
       value: 'immigration',
       category: 'other',
     },
     { label: 'Solutions entreprises', value: 'business', category: 'other' },
-    { label: 'Programmes KRAAK', value: 'program', category: 'program' },
+    { label: 'Partenariat', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
 

@@ -19,6 +19,7 @@ const apiErrorSchema = {
   properties: {
     success: { type: 'boolean', example: false },
     message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
   },
 };
 
@@ -160,6 +161,11 @@ export class DashboardController {
   @ApiResponse({
     status: 401,
     description: "Session invalide ou header d'autorisation manquant",
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors du chargement du dashboard',
     schema: apiErrorSchema,
   })
   async getAggregate(
