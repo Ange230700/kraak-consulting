@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, signal } from '@angular/core';
+import { buildAvatarCircleUrl } from '../brand/brand-constants';
 
 export interface Testimonial {
   id: number;
@@ -23,8 +24,7 @@ export class Testimonials {
       id: 1,
       name: 'Aïcha K.',
       job: 'Jeune professionnelle',
-      avatar:
-        'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-m-16.png',
+      avatar: buildAvatarCircleUrl('avatar-m-16.png'),
       comment:
         "Grâce à KRAAK, j'ai clarifié mon objectif de mobilité et identifié les étapes concrètes pour renforcer mon profil avant de lancer mes démarches.",
     },
@@ -32,8 +32,7 @@ export class Testimonials {
       id: 2,
       name: 'Moussa T.',
       job: 'Entrepreneur',
-      avatar:
-        'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-f-18.png',
+      avatar: buildAvatarCircleUrl('avatar-f-18.png'),
       comment:
         "L'accompagnement projet nous a permis de transformer une idée floue en feuille de route structurée, avec des priorités lisibles et des actions réalistes.",
     },
@@ -41,8 +40,7 @@ export class Testimonials {
       id: 3,
       name: 'Clarisse N.',
       job: 'Responsable RH',
-      avatar:
-        'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/avatars/circle/avatar-m-1.png',
+      avatar: buildAvatarCircleUrl('avatar-m-1.png'),
       comment:
         'Le format entreprise est sobre, utile et orienté terrain. Il aide vraiment à travailler la cohésion, le leadership et la montée en compétences.',
     },

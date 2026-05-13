@@ -41,7 +41,7 @@ interface Partner {
       .fade-gradient-left {
         background: linear-gradient(
           to right,
-          var(--fade-start-color),
+          var(--fade-start-color, rgb(248, 248, 248)),
           transparent
         );
       }
@@ -49,7 +49,7 @@ interface Partner {
       .fade-gradient-right {
         background: linear-gradient(
           to left,
-          var(--fade-start-color),
+          var(--fade-start-color, rgb(248, 248, 248)),
           transparent
         );
       }
