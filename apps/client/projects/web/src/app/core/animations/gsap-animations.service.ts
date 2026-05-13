@@ -340,7 +340,7 @@ export class GsapAnimationsService {
 
   /**
    * Anime les sections de la page avec un effet de reveal au scroll
-   * Chaque section se revèle avec un slide subtle
+   * Chaque section se révèle avec un slide subtle
    */
   initializeSectionAnimations(selector = 'section'): void {
     if (typeof document === 'undefined') {
@@ -469,7 +469,7 @@ export class GsapAnimationsService {
   }
 
   /**
-   * Nettoie les animations GSAP et ScrollTrigger (important pour eviter les memory leaks)
+   * Nettoie les animations GSAP et ScrollTrigger (important pour éviter les memory leaks)
    */
   killAllAnimations(): void {
     // Ensure we're in the browser environment (not SSR)

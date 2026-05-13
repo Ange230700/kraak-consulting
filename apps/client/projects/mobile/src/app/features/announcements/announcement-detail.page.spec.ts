@@ -57,7 +57,7 @@ describe('Mobile AnnouncementDetailPage', () => {
     const announcement: AnnouncementDto = {
       id: 'ann-001',
       title: 'Session de suivi',
-      body: 'La session de suivi est deplacee au jeudi.',
+      body: 'La session de suivi est déplacée au jeudi.',
       priority: 'critical',
       audienceType: 'all_participants',
       programId: null,
@@ -80,7 +80,7 @@ describe('Mobile AnnouncementDetailPage', () => {
 
     expect(title?.textContent).toContain('Session de suivi');
     expect(element.textContent).toContain(
-      'La session de suivi est deplacee au jeudi.',
+      'La session de suivi est déplacée au jeudi.',
     );
     expect(element.textContent).toContain('Critique');
   });
@@ -131,7 +131,7 @@ describe('Mobile AnnouncementDetailPage', () => {
     expect(getByIdMock).toHaveBeenCalledTimes(2);
   });
 
-  it('Given a component instance, when getPriorityLabel is called with high, then it returns Elevée', () => {
+  it('Given a component instance, when getPriorityLabel is called with high, then it returns Élevée', () => {
     const fixture = TestBed.createComponent(AnnouncementDetailPage);
     configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
     fixture.detectChanges();

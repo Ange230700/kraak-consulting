@@ -303,7 +303,7 @@ describe('WebAuthService', () => {
 
   describe('Given the service runs during prerender', () => {
     it('when browser storage is unavailable, then initialisation falls back to an anonymous session state', () => {
-      vi.stubGlobal('localStorage', undefined as unknown as Storage);
+      vi.stubGlobal('localStorage', undefined);
 
       TestBed.configureTestingModule({
         providers: [{ provide: PLATFORM_ID, useValue: 'server' }],

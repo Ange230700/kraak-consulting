@@ -71,7 +71,7 @@ export default class HomePage implements OnInit {
       tag: 'Annonces',
       title: 'Restez align\u00E9 avec les mises \u00E0 jour importantes.',
       description:
-        'Gardez un oeil sur les informations cl\u00E9s \u00E0 relayer rapidement.',
+        'Gardez un \u0153il sur les informations cl\u00E9s \u00E0 relayer rapidement.',
       tone: 'accent',
     },
     {

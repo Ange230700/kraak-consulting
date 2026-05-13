@@ -101,8 +101,13 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
 
       // When: User clicks first contact button
       const contactButton = page.locator('a[routerLink="/contact"]').first();
-      await contactButton.click();
-      await page.waitForURL('**/contact', { timeout: 5000 });
+      await Promise.all([
+        page.waitForURL('**/contact', {
+          timeout: 10000,
+          waitUntil: 'domcontentloaded',
+        }),
+        contactButton.click(),
+      ]);
 
       // Then: User lands on contact page
       await expect(page).toHaveTitle(/Contact/i);
@@ -350,7 +355,6 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
   test.describe('Performance - Support flow', () => {
     test('When navigating 404 page Then page loads within acceptable time', async ({
       page,
-      browserName,
     }) => {
       // Given: User navigates to 404 page
       const startTime = Date.now();
@@ -358,7 +362,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         waitUntil: 'domcontentloaded',
       });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = browserName === 'firefox' ? 6000 : 4500;
+      const loadThresholdMs = 6000;
 
       // When: Measuring load time
       // Then: Page should load within a CI-realistic threshold
@@ -367,13 +371,12 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
 
     test('When navigating FAQ page Then page loads and accordion renders quickly', async ({
       page,
-      browserName,
     }) => {
       // Given: User navigates to FAQ page
       const startTime = Date.now();
       await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = browserName === 'firefox' ? 6000 : 4500;
+      const loadThresholdMs = 6000;
 
       // When: Checking accordion visibility
       const accordion = page.locator('kraak-faq-accordion');

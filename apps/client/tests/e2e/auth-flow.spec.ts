@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Auth flow - connexion, inscription et reset', () => {
-  test('Given une page de connexion, When elle se charge, Then le formulaire et les liens d acces sont visibles', async ({
+  test('Given une page de connexion, When elle se charge, Then le formulaire et les liens d\u0027accès sont visibles', async ({
     page,
   }) => {
     await page.goto('/connexion');
@@ -23,7 +23,7 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
     ).toBeVisible();
   });
 
-  test('Given une page de connexion, When le visiteur ouvre la creation de compte, Then la page d inscription est affichée', async ({
+  test('Given une page de connexion, When le visiteur ouvre la création de compte, Then la page d inscription est affichée', async ({
     page,
   }) => {
     await page.goto('/connexion');

@@ -6,6 +6,20 @@ import { PLATFORM_ID } from '@angular/core';
 import { MlRuntimeService } from './ml-runtime.service';
 import { TFJS_CONFIG, type TfjsConfig } from './tfjs-config';
 
+interface TfjsRuntimeModule {
+  setBackend?: (backend: string) => Promise<void> | void;
+  ready?: () => Promise<void> | void;
+}
+
+interface MlRuntimeServiceSpyTarget {
+  initializeRuntime: () => Promise<void>;
+  loadTfjsModule: () => Promise<TfjsRuntimeModule | null>;
+}
+
+function asSpyTarget(service: MlRuntimeService): MlRuntimeServiceSpyTarget {
+  return service as unknown as MlRuntimeServiceSpyTarget;
+}
+
 describe('MlRuntimeService', () => {
   afterEach(() => {
     MlRuntimeService.resetForTests();
@@ -15,11 +29,9 @@ describe('MlRuntimeService', () => {
   it('initializes runtime only once across repeated calls', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
-    const initSpy = vi.spyOn(
-      service as unknown as { initializeRuntime: () => Promise<void> },
-      'initializeRuntime',
-    );
+    const initSpy = vi.spyOn(spyTarget, 'initializeRuntime');
 
     await service.initOnce();
     await service.initOnce();
@@ -30,11 +42,9 @@ describe('MlRuntimeService', () => {
   it('reuses the same in-flight promise for concurrent calls', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
-    const initSpy = vi.spyOn(
-      service as unknown as { initializeRuntime: () => Promise<void> },
-      'initializeRuntime',
-    );
+    const initSpy = vi.spyOn(spyTarget, 'initializeRuntime');
 
     const [first, second] = await Promise.all([
       service.initOnce(),
@@ -49,12 +59,10 @@ describe('MlRuntimeService', () => {
   it('allows retry after an initialization failure', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
     const initSpy = vi
-      .spyOn(
-        service as unknown as { initializeRuntime: () => Promise<void> },
-        'initializeRuntime',
-      )
+      .spyOn(spyTarget, 'initializeRuntime')
       .mockRejectedValueOnce(new Error('init failed'))
       .mockResolvedValueOnce(undefined);
 
@@ -72,15 +80,11 @@ describe('MlRuntimeService', () => {
       ],
     });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
-    const loadSpy = vi.spyOn(
-      service as unknown as { loadTfjsModule: () => Promise<unknown> },
-      'loadTfjsModule',
-    );
+    const loadSpy = vi.spyOn(spyTarget, 'loadTfjsModule');
 
-    await (
-      service as unknown as { initializeRuntime: () => Promise<void> }
-    ).initializeRuntime();
+    await spyTarget.initializeRuntime();
 
     expect(loadSpy).not.toHaveBeenCalled();
   });
@@ -94,19 +98,15 @@ describe('MlRuntimeService', () => {
       ],
     });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
     const setBackend = vi.fn().mockResolvedValue(undefined);
     const ready = vi.fn().mockResolvedValue(undefined);
     const loadSpy = vi
-      .spyOn(
-        service as unknown as { loadTfjsModule: () => Promise<unknown> },
-        'loadTfjsModule',
-      )
+      .spyOn(spyTarget, 'loadTfjsModule')
       .mockResolvedValue({ setBackend, ready });
 
-    await (
-      service as unknown as { initializeRuntime: () => Promise<void> }
-    ).initializeRuntime();
+    await spyTarget.initializeRuntime();
 
     expect(loadSpy).toHaveBeenCalledTimes(1);
     expect(setBackend).toHaveBeenCalledWith('cpu');
@@ -116,17 +116,13 @@ describe('MlRuntimeService', () => {
   it('skips tfjs setup when module cannot be loaded', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
     const loadSpy = vi
-      .spyOn(
-        service as unknown as { loadTfjsModule: () => Promise<unknown> },
-        'loadTfjsModule',
-      )
+      .spyOn(spyTarget, 'loadTfjsModule')
       .mockResolvedValue(null);
 
-    await (
-      service as unknown as { initializeRuntime: () => Promise<void> }
-    ).initializeRuntime();
+    await spyTarget.initializeRuntime();
 
     expect(loadSpy).toHaveBeenCalledTimes(1);
   });
@@ -134,22 +130,18 @@ describe('MlRuntimeService', () => {
   it('does not fail bootstrap when tfjs backend setup throws', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
 
     const setBackend = vi.fn().mockRejectedValue(new Error('backend failed'));
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
       // no-op in tests
     });
 
-    vi.spyOn(
-      service as unknown as { loadTfjsModule: () => Promise<unknown> },
-      'loadTfjsModule',
-    ).mockResolvedValue({ setBackend });
+    vi.spyOn(spyTarget, 'loadTfjsModule').mockResolvedValue({
+      setBackend,
+    });
 
-    await expect(
-      (
-        service as unknown as { initializeRuntime: () => Promise<void> }
-      ).initializeRuntime(),
-    ).resolves.toBeUndefined();
+    await expect(spyTarget.initializeRuntime()).resolves.toBeUndefined();
 
     expect(warnSpy).toHaveBeenCalled();
   });

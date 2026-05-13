@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Provider, Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AnnouncementsController } from '../announcements/announcements.controller';
@@ -14,8 +14,8 @@ import { SupportRequestsController } from '../support/support-requests.controlle
 import { SupportService } from '../support/support.service';
 
 async function buildHttpApp(options: {
-  controllers: unknown[];
-  providers: Array<{ provide: unknown; useValue: object }>;
+  controllers: Array<Type<unknown>>;
+  providers: Provider[];
 }): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: options.controllers,
@@ -31,10 +31,12 @@ describe('Critical API Modules Integration', () => {
   describe('AUT-02 Auth endpoints', () => {
     let app: INestApplication;
 
-    const authServiceMock = {
+    const authServiceMock: jest.Mocked<
+      Pick<AuthService, 'signIn' | 'getSession'>
+    > = {
       signIn: jest.fn(),
       getSession: jest.fn(),
-    } as Pick<AuthService, 'signIn' | 'getSession'>;
+    };
 
     beforeAll(async () => {
       app = await buildHttpApp({
@@ -61,7 +63,9 @@ describe('Critical API Modules Integration', () => {
     });
 
     it('returns 401 on missing authorization header for session', async () => {
-      await request(app.getHttpServer()).get('/auth/session').expect(401);
+      await (request(app.getHttpServer())
+        .get('/auth/session')
+        .expect(401) as unknown as Promise<void>);
 
       expect(authServiceMock.getSession).not.toHaveBeenCalled();
     });
@@ -98,10 +102,12 @@ describe('Critical API Modules Integration', () => {
   describe('PRG-02 Programs endpoints', () => {
     let app: INestApplication;
 
-    const programsServiceMock = {
+    const programsServiceMock: jest.Mocked<
+      Pick<ProgramsService, 'listPrograms' | 'markSessionProgress'>
+    > = {
       listPrograms: jest.fn(),
       markSessionProgress: jest.fn(),
-    } as Pick<ProgramsService, 'listPrograms' | 'markSessionProgress'>;
+    };
 
     beforeAll(async () => {
       app = await buildHttpApp({
@@ -121,7 +127,9 @@ describe('Critical API Modules Integration', () => {
     });
 
     it('returns 401 on list without auth header', async () => {
-      await request(app.getHttpServer()).get('/programs').expect(401);
+      await (request(app.getHttpServer())
+        .get('/programs')
+        .expect(401) as unknown as Promise<void>);
       expect(programsServiceMock.listPrograms).not.toHaveBeenCalled();
     });
 
@@ -172,10 +180,12 @@ describe('Critical API Modules Integration', () => {
   describe('RES-02 Resources endpoints', () => {
     let app: INestApplication;
 
-    const resourcesServiceMock = {
+    const resourcesServiceMock: jest.Mocked<
+      Pick<ResourcesService, 'listResources' | 'trackResourceConsultation'>
+    > = {
       listResources: jest.fn(),
       trackResourceConsultation: jest.fn(),
-    } as Pick<ResourcesService, 'listResources' | 'trackResourceConsultation'>;
+    };
 
     beforeAll(async () => {
       app = await buildHttpApp({
@@ -221,9 +231,9 @@ describe('Critical API Modules Integration', () => {
     });
 
     it('returns 204 for consultation tracking', async () => {
-      await request(app.getHttpServer())
+      await (request(app.getHttpServer())
         .post('/resources/resource-1/consultations')
-        .expect(204);
+        .expect(204) as unknown as Promise<void>);
 
       expect(
         resourcesServiceMock.trackResourceConsultation,
@@ -234,13 +244,12 @@ describe('Critical API Modules Integration', () => {
   describe('ANN-02 Announcements endpoints', () => {
     let app: INestApplication;
 
-    const announcementsServiceMock = {
+    const announcementsServiceMock: jest.Mocked<
+      Pick<AnnouncementsService, 'listAnnouncements' | 'getAnnouncementById'>
+    > = {
       listAnnouncements: jest.fn(),
       getAnnouncementById: jest.fn(),
-    } as Pick<
-      AnnouncementsService,
-      'listAnnouncements' | 'getAnnouncementById'
-    >;
+    };
 
     beforeAll(async () => {
       app = await buildHttpApp({
@@ -264,7 +273,9 @@ describe('Critical API Modules Integration', () => {
     });
 
     it('returns 401 when authorization header is missing', async () => {
-      await request(app.getHttpServer()).get('/announcements').expect(401);
+      await (request(app.getHttpServer())
+        .get('/announcements')
+        .expect(401) as unknown as Promise<void>);
       expect(announcementsServiceMock.listAnnouncements).not.toHaveBeenCalled();
     });
 
@@ -286,10 +297,12 @@ describe('Critical API Modules Integration', () => {
   describe('SUP-01 Support endpoints', () => {
     let app: INestApplication;
 
-    const supportServiceMock = {
+    const supportServiceMock: jest.Mocked<
+      Pick<SupportService, 'submitContact' | 'listSupportRequests'>
+    > = {
       submitContact: jest.fn(),
       listSupportRequests: jest.fn(),
-    } as Pick<SupportService, 'submitContact' | 'listSupportRequests'>;
+    };
 
     beforeAll(async () => {
       app = await buildHttpApp({
@@ -343,7 +356,9 @@ describe('Critical API Modules Integration', () => {
     });
 
     it('returns 401 on support requests list without authorization', async () => {
-      await request(app.getHttpServer()).get('/support/requests').expect(401);
+      await (request(app.getHttpServer())
+        .get('/support/requests')
+        .expect(401) as unknown as Promise<void>);
       expect(supportServiceMock.listSupportRequests).not.toHaveBeenCalled();
     });
   });

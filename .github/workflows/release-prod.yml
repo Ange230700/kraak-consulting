@@ -20,9 +20,6 @@ concurrency:
   group: release-prod
   cancel-in-progress: false
 
-permissions:
-  contents: read
-
 env:
   # Versions CLI épinglées : reproductibilité de la release et des rollbacks.
   # Toute mise à jour doit faire l'objet d'une PR dédiée.
@@ -36,6 +33,8 @@ jobs:
   validate-tag:
     name: Valider la référence
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       ref: ${{ steps.resolve.outputs.ref }}
       sha: ${{ steps.resolve.outputs.sha }}
@@ -47,10 +46,13 @@ jobs:
       - name: Résoudre la référence cible et vérifier l'accessibilité depuis main
         id: resolve
         shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="${{ inputs.tag }}"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            tag="$INPUT_TAG"
           else
             tag="${GITHUB_REF#refs/tags/}"
           fi
@@ -95,7 +97,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Lint
         run: pnpm lint
@@ -136,7 +138,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Lien projet Supabase prod
         env:
@@ -268,7 +270,7 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Pull configuration Vercel
         env:

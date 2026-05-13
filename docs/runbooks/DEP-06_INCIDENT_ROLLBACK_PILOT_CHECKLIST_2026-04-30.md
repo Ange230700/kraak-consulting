@@ -80,8 +80,8 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
    ```
 
 2. **Vérifier les logs déploiement** :
-   - Vercel : https://vercel.com/dashboard/kraak-group (Events + Deployments)
-   - Render : https://dashboard.render.com (Web Service: kraak-api)
+   - Vercel : <https://vercel.com/dashboard/kraak-group> (Events + Deployments)
+   - Render : <https://dashboard.render.com> (Web Service: kraak-api)
 
 3. **Notifier l'équipe** si incident confirmé (non-résolution = escalade)
 
@@ -100,7 +100,7 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
 #### Phase 2 : Collecte de données
 
-**Web (Vercel)**
+##### Web (Vercel)
 
 ```bash
 # 1. Derniers deployments
@@ -114,7 +114,7 @@ curl -s https://api.vercel.com/v6/deployments?teamId=TEAM_ID \
 curl -i https://kraak-consulting.vercel.app
 ```
 
-**API (Render)**
+##### API (Render)
 
 ```bash
 # 1. Vérifier le statut du service
@@ -127,7 +127,7 @@ curl -v https://kraak-api-staging.onrender.com/health
 # Via dashboard: https://dashboard.render.com > Web Services > kraak-api > Analytics
 ```
 
-**Supabase**
+##### Supabase
 
 ```bash
 # 1. Vérifier l'état global
@@ -144,7 +144,7 @@ curl -v https://kraak-api-staging.onrender.com/health
 
 #### Scénario A : Web indisponible, API OK
 
-```
+```text
 Action 1 : Vérifier le dernier déploiement web
 - URL: https://vercel.com/dashboard/kraak-group
 - Chercher la dernière fonction/build échouée
@@ -161,7 +161,7 @@ Action 3 : Si le problème persiste
 
 #### Scénario B : API indisponible, Web OK (error 500/timeout)
 
-```
+```text
 Action 1 : Vérifier les logs Render
 - URL: https://dashboard.render.com > kraak-api > Logs
 - Chercher les erreurs d'initialisation (DB, variables d'env)
@@ -183,11 +183,11 @@ Action 4 : Si le problème persiste
 
 #### Scénario C : Lenteur généralisée (API/Web lents)
 
-```
+```text
 Action 1 : Vérifier les ressources Render
 - URL: https://dashboard.render.com > kraak-api > Analytics
 - Chercher un pic de CPU ou mémoire
-- Chercher un saturement de connexions Supabase
+- Chercher une saturation de connexions Supabase
 
 Action 2 : Vérifier Supabase
 - URL: https://supabase.com/dashboard > Status (global)
@@ -196,7 +196,7 @@ Action 2 : Vérifier Supabase
 
 Action 3 : Si Supabase est saturé
 - Attendre la récupération naturelle (DB timeout autolimitant)
-- Ou limiter le trafic côté API en temporaire avec un redirect vers une page maintenace
+- Ou limiter le trafic côté API en temporaire avec un redirect vers une page maintenance
 
 Action 4 : Redémarrer le service API
 - URL: https://dashboard.render.com > kraak-api > Settings > Restart
@@ -205,7 +205,7 @@ Action 4 : Redémarrer le service API
 
 #### Scénario D : Erreurs spécifiques par route (ex: `/programs` en 500, `/` en 200)
 
-```
+```text
 Action 1 : Identifier la route défaillante depuis les logs Web
 - URL: https://vercel.com/dashboard > Logs (Function Logs)
 - Chercher les GET /programs (ou la route en erreur)
@@ -244,12 +244,12 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 
 **Prérequis** :
 
-- Accès dashboard Vercel (https://vercel.com)
+- Accès dashboard Vercel (<https://vercel.com>)
 - Accès repo GitHub avec droits push
 
 #### Méthode A : Redeploy depuis l'UI Vercel (rapide)
 
-1. Aller sur https://vercel.com/dashboard/kraak-group
+1. Aller sur <https://vercel.com/dashboard/kraak-group>
 2. Cliquer sur le projet `kraak-group`
 3. Aller dans l'onglet **Deployments**
 4. Trouver le déploiement stable précédent (chercher la date/heure)
@@ -279,7 +279,7 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 
 #### Méthode C : Rollback complet depuis une étiquette (sûr)
 
-Utile si vous avez taggé des releases :
+Utile si vous avez tagué des releases :
 
 ```bash
 # 1. Créer une branche depuis le tag stable
@@ -298,12 +298,12 @@ git push origin fix/rollback-from-<tag>
 
 **Prérequis** :
 
-- Accès dashboard Render (https://dashboard.render.com)
+- Accès dashboard Render (<https://dashboard.render.com>)
 - Accès repo GitHub avec droits push
 
 #### Méthode A : Redeploy un commit précédent depuis Render UI
 
-1. Aller sur https://dashboard.render.com > Web Services > kraak-api
+1. Aller sur <https://dashboard.render.com> > Web Services > kraak-api
 2. Cliquer sur l'onglet **Deployments**
 3. Trouver le déploiement stable précédent (chercher la date/heure)
 4. Cliquer sur le déploiement
@@ -355,7 +355,7 @@ curl https://kraak-api-staging.onrender.com/health
 
 Si web ET API doivent être rollbackés ensemble :
 
-```
+```text
 1. Commencer par l'API (moins visible, prioritaire)
    - Rollback API suivant méthode 2.2.B
    - Attendre vérification: curl https://kraak-api-staging.onrender.com/health
@@ -396,9 +396,9 @@ Si web ET API doivent être rollbackés ensemble :
 - [ ] API déployée et accessible : `curl https://kraak-api-staging.onrender.com/health` → `{ "status": "ok", ... }`
 - [ ] Supabase production-pilot configuré et connecté
 - [ ] Variables d'environnement validées sur tous les services
-  - Vercel: https://vercel.com/dashboard/kraak-group > Settings > Environment Variables
-  - Render: https://dashboard.render.com > kraak-api > Environment
-  - Supabase: https://supabase.com/dashboard > Settings
+  - Vercel: <https://vercel.com/dashboard/kraak-group> > Settings > Environment Variables
+  - Render: <https://dashboard.render.com> > kraak-api > Environment
+  - Supabase: <https://supabase.com/dashboard> > Settings
 - [ ] Domaines personnalisés (si applicable) configurés et validés
 - [ ] HTTPS/certificats valides sur tous les endpoints publics
 
@@ -406,9 +406,9 @@ Si web ET API doivent être rollbackés ensemble :
 
 - [ ] Workflow `Observability` activé et testé
   - `pnpm check:observability` exécuté avec succès localement
-  - Vérifier les 15 dernières exécutions: https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml
+  - Vérifier les 15 dernières exécutions: <https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml>
 - [ ] Dashboard de santé accessible aux responsables
-  - Bookmark: https://github.com/Ange230700/kraak-group/issues?q=label%3A%5BALERT%5D
+  - Bookmark: <https://github.com/Ange230700/kraak-group/issues?q=label%3A%5BALERT%5D>
 - [ ] Procédure d'alerte documentée et connue de l'équipe
 
 #### Tests Pré-Pilot
@@ -426,7 +426,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 #### Parcours Utilisateur Critiques
 
-Tester manuellement chaque flux principal via https://kraak-consulting.vercel.app :
+Tester manuellement chaque flux principal via <https://kraak-consulting.vercel.app> :
 
 - [ ] **Page d'accueil** `/`
   - [ ] Charge en < 2s
@@ -475,14 +475,14 @@ Tester manuellement chaque flux principal via https://kraak-consulting.vercel.ap
 - [ ] Supabase production-pilot data seeded
   - [ ] Programmes avec contenu complet
   - [ ] Catégories de services présentes
-  - [ ] Au moins 1 utilisateur test disponible (si applicale pour auth)
+  - [ ] Au moins 1 utilisateur test disponible (si applicable pour auth)
 
 - [ ] Migrations Supabase appliquées
   - Vérifier le schéma correspond aux modèles attendus
   - `docs/specs/data_models.md` synchronisé avec le schéma réel
 
 - [ ] Sauvegardes Supabase configurées
-  - Vérifier dans dashboard: https://supabase.com/dashboard > Settings > Backups
+  - Vérifier dans dashboard: <https://supabase.com/dashboard> > Settings > Backups
 
 #### Documentation & Support
 
@@ -567,7 +567,7 @@ pnpm check:observability
 
 ### 4.2 Escalade
 
-```
+```text
 Incident NON-RÉSOLU après:
   - 15 min (Web critique) → appeler responsable infrastructure
   - 30 min (API critique) → appeler responsable backend
@@ -578,7 +578,7 @@ Incident NON-RÉSOLU après:
 
 ## 5. Annexe : Checklist Rapide de Poche
 
-```
+```text
 🚨 INCIDENT DÉTECTÉ ?
 
 1. Vérifier l'issue GitHub [ALERT][DEP-05]
@@ -622,8 +622,8 @@ Appeler = 🚨
 
 ## Ressources Externes
 
-- Vercel docs: https://vercel.com/docs/deployments/overview
-- Render docs: https://render.com/docs
-- Supabase dashboard: https://supabase.com/dashboard
-- GitHub issues: https://github.com/Ange230700/kraak-group/issues
-- Observability workflow: https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml
+- Vercel docs: <https://vercel.com/docs/deployments/overview>
+- Render docs: <https://render.com/docs>
+- Supabase dashboard: <https://supabase.com/dashboard>
+- GitHub issues: <https://github.com/Ange230700/kraak-group/issues>
+- Observability workflow: <https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml>
