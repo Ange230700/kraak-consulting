@@ -23,6 +23,16 @@ Etat constate pendant la campagne: satisfaites (les suites associees passent).
 3. `pnpm lint`
 4. `pnpm test`
 
+## Contrôle API Newman
+
+Le dépôt expose désormais deux modes Newman pour la collection `api-user-journey` :
+
+1. `pnpm test:api:journey` pour le mode CI-ready par défaut (`strictAuth=false`)
+2. `pnpm test:api:journey:strict` pour le contrat nominal strict (`strictAuth=true`)
+3. `pnpm test:api:journey:strict:staging` pour rejouer le strict sur l'API staging déployée
+
+Le workflow nocturne dédié `Nightly Regression` exécute le job Newman strict contre `https://kraak-api-staging.onrender.com` afin de garder un signal de régression sans alourdir la CI principale.
+
 ## Resultats
 
 - Typecheck: OK (web, mobile, api)

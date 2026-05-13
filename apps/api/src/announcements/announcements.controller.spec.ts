@@ -99,9 +99,18 @@ describe('AnnouncementsController', () => {
       );
     });
 
-    it('Given: missing authorization header, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
-      await expect(controller.listAnnouncements()).rejects.toThrow(
-        UnauthorizedException,
+    it('Given: missing authorization header, When: listAnnouncements called, Then: return public published announcements', async () => {
+      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
+        mockListResponse,
+      );
+
+      const result = await controller.listAnnouncements();
+
+      expect(result).toEqual(mockListResponse);
+      expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        undefined,
       );
     });
 

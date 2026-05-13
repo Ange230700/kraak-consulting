@@ -127,11 +127,11 @@ describe('ProgramsController', () => {
 
   // Given un header Authorization absent
   // When GET /programs est appelé
-  // Then une erreur d'authentification explicite est renvoyée
-  it('Given un header Authorization absent, When listPrograms est appelé, Then une UnauthorizedException est renvoyée', async () => {
-    await expect(controller.listPrograms()).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
+  // Then la liste publique des programmes publiés est renvoyée
+  it('Given un header Authorization absent, When listPrograms est appelé, Then le service est appelé en mode public', async () => {
+    await controller.listPrograms();
+
+    expect(programsService.listPrograms).toHaveBeenCalledWith(undefined);
   });
 
   // Given un header Authorization absent
