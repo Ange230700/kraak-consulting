@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import type { AnnouncementDto } from '@kraak/contracts';
 import * as domainUtils from '@kraak/domain';
 import { AnnouncementsService } from './announcements.service';
@@ -424,17 +424,26 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements — cas limites', () => {
-    it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur est levée', async () => {
+    it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur UnauthorizedException est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: null },
         error: new Error('Invalid'),
       });
 
-      mockSupabaseService.getClient.mockReturnValue(createClientMock());
-
-      await expect(service.listAnnouncements('bad-token')).rejects.toThrow(
-        'Could not resolve participant ID from access token',
+      const announcementsQuery = createAsyncQuery(
+        { data: [], error: null },
+        { withOrder: true },
       );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(
+        service.listAnnouncements('bad-token'),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('Given: une erreur DB sur announcements, When: listAnnouncements appelé, Then: une erreur est levée', async () => {

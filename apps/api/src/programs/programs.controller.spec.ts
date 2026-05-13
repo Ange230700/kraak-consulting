@@ -131,7 +131,8 @@ describe('ProgramsController', () => {
   it('Given un header Authorization absent, When listPrograms est appelé, Then le service est appelé en mode public', async () => {
     await controller.listPrograms();
 
-    expect(programsService.listPrograms).toHaveBeenCalledWith(undefined);
+    expect(programsService.listPrograms).toHaveBeenCalledTimes(1);
+    expect(programsService.listPrograms).toHaveBeenCalledWith();
   });
 
   // Given un header Authorization absent

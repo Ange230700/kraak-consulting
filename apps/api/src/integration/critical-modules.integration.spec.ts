@@ -130,7 +130,8 @@ describe('Critical API Modules Integration', () => {
       await (request(app.getHttpServer())
         .get('/programs')
         .expect(200) as unknown as Promise<void>);
-      expect(programsServiceMock.listPrograms).toHaveBeenCalledWith(undefined);
+      expect(programsServiceMock.listPrograms).toHaveBeenCalledTimes(1);
+      expect(programsServiceMock.listPrograms).toHaveBeenCalledWith();
     });
 
     it('returns 400 on invalid progress payload', async () => {
