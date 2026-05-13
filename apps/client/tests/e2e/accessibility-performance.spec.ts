@@ -93,13 +93,15 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
 
       const axe = await new AxeBuilder({ page }).analyze();
       const axeSummary = parseImpactSummary(
-        axe.violations.map((violation) => ({ impact: violation.impact })),
+        axe.violations.map((violation) => ({
+          impact: violation.impact ?? null,
+        })),
       );
       const axeViolations = axe.violations.map((violation) => ({
         id: violation.id,
-        impact: violation.impact,
+        impact: violation.impact ?? null,
         description: violation.help,
-        nodes: violation.nodes.map((node) => node.target),
+        nodes: violation.nodes.map((node) => node.target as string[]),
       }));
       const blockingViolations = axe.violations.filter(
         (violation) =>

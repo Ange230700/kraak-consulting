@@ -53,9 +53,9 @@ describe('AnalyticsService', () => {
     vi.restoreAllMocks();
   });
 
-  // Given un identifiant GA4 vide (analytics non configur\u00E9 pour cet environnement)
-  // When le service est initialis\u00E9
-  // Then aucun script Google Analytics n'est inject\u00E9 et aucun appel gtag n'est \u00E9mis
+  // Given un identifiant GA4 vide (analytics non configuré pour cet environnement)
+  // When le service est initialisé
+  // Then aucun script Google Analytics n'est injecté et aucun appel gtag n'est émis
   it("ne doit rien injecter quand l'identifiant GA4 est absent", () => {
     setupAnalyticsTestBed('');
 
@@ -70,8 +70,8 @@ describe('AnalyticsService', () => {
   });
 
   // Given un identifiant GA4 valide
-  // When le service est initialis\u00E9
-  // Then le loader gtag.js est inject\u00E9 et la configuration de base est pos\u00E9e
+  // When le service est initialisé
+  // Then le loader gtag.js est injecté et la configuration de base est posée
   it("doit injecter le loader gtag.js et configurer GA4 quand l'identifiant est fourni", () => {
     setupAnalyticsTestBed('G-ABC123');
 
@@ -91,10 +91,10 @@ describe('AnalyticsService', () => {
     expect(service.isEnabled()).toBe(true);
   });
 
-  // Given le service initialis\u00E9 deux fois
-  // When la deuxi\u00E8me initialisation est demand\u00E9e
-  // Then aucun loader suppl\u00E9mentaire n'est inject\u00E9
-  it('ne doit pas r\u00E9injecter le loader si initialize() est appel\u00E9 deux fois', () => {
+  // Given le service initialisé deux fois
+  // When la deuxième initialisation est demandée
+  // Then aucun loader supplémentaire n'est injecté
+  it('ne doit pas réinjecter le loader si initialize() est appelé deux fois', () => {
     setupAnalyticsTestBed('G-ABC123');
     const service = TestBed.inject(AnalyticsService);
 
@@ -106,10 +106,10 @@ describe('AnalyticsService', () => {
     ).toHaveLength(1);
   });
 
-  // Given le service activ\u00E9
-  // When le router \u00E9met une navigation termin\u00E9e
-  // Then un \u00E9v\u00E8nement page_view est envoy\u00E9 \u00E0 GA4 avec le chemin courant
-  it('doit envoyer un \u00E9v\u00E8nement page_view sur chaque NavigationEnd', () => {
+  // Given le service activé
+  // When le router émet une navigation terminée
+  // Then un événement page_view est envoyé à GA4 avec le chemin courant
+  it('doit envoyer un événement page_view sur chaque NavigationEnd', () => {
     const { router } = setupAnalyticsTestBed('G-ABC123');
     const service = TestBed.inject(AnalyticsService);
     service.initialize();
@@ -130,9 +130,9 @@ describe('AnalyticsService', () => {
   });
 
   // Given un identifiant GA4 absent
-  // When le router \u00E9met une navigation termin\u00E9e
-  // Then aucun \u00E9v\u00E8nement n'est envoy\u00E9
-  it("ne doit envoyer aucun page_view quand l'analytics est d\u00E9sactiv\u00E9", () => {
+  // When le router émet une navigation terminée
+  // Then aucun événement n'est envoyé
+  it("ne doit envoyer aucun page_view quand l'analytics est désactivé", () => {
     const { router } = setupAnalyticsTestBed('');
     const service = TestBed.inject(AnalyticsService);
     service.initialize();
@@ -147,10 +147,10 @@ describe('AnalyticsService', () => {
     expect(called).toBe(false);
   });
 
-  // Given le service activ\u00E9
-  // When trackEvent est appel\u00E9 avec un nom et des param\u00E8tres
-  // Then gtag est invoqu\u00E9 avec ces valeurs
-  it('doit d\u00E9l\u00E9guer trackEvent \u00E0 gtag avec les param\u00E8tres fournis', () => {
+  // Given le service activé
+  // When trackEvent est appelé avec un nom et des paramètres
+  // Then gtag est invoqué avec ces valeurs
+  it('doit déléguer trackEvent à gtag avec les paramètres fournis', () => {
     setupAnalyticsTestBed('G-ABC123');
     const service = TestBed.inject(AnalyticsService);
     service.initialize();

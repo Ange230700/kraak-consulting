@@ -94,20 +94,20 @@ pnpm build:mobile
 pnpm build:debug:ios
 ```
 
-2. Ouvrir le projet iOS natif:
+1. Ouvrir le projet iOS natif:
 
 ```bash
 pnpm --filter @kraak/client cap:open:ios
 ```
 
-3. Dans Xcode:
+1. Dans Xcode:
 
 - sélectionner le scheme applicatif
 - incrémenter `Version` / `Build`
 - `Product > Archive`
 
-4. Uploader l'archive vers App Store Connect.
-5. Dans TestFlight:
+1. Uploader l'archive vers App Store Connect.
+2. Dans TestFlight:
 
 - assigner le build au groupe `Internal Testing`
 - ajouter les testeurs internes

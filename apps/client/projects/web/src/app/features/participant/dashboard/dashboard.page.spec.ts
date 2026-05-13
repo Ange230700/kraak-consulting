@@ -273,10 +273,8 @@ describe('Web Participant Dashboard Page', () => {
 
     it('Given a non-Error rejection value, When the page loads, Then it shows the generic fallback message', async () => {
       const fixture = TestBed.createComponent(DashboardPage);
-      configureDashboardClient(
-        fixture,
-        Promise.reject('oops' as unknown as Error),
-      );
+      const nonErrorReason: unknown = 'oops';
+      configureDashboardClient(fixture, Promise.reject(nonErrorReason));
       await flush(fixture);
 
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';

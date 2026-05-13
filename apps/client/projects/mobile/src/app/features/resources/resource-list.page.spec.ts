@@ -170,7 +170,7 @@ describe('Mobile ResourceListPage', () => {
     const component = fixture.componentInstance as unknown as {
       getResourceThemeLabel: (theme: string) => string;
     };
-    expect(component.getResourceThemeLabel('unknown_theme' as never)).toBe(
+    expect(component.getResourceThemeLabel('unknown_theme')).toBe(
       'unknown_theme',
     );
   });
@@ -183,9 +183,9 @@ describe('Mobile ResourceListPage', () => {
     const component = fixture.componentInstance as unknown as {
       getResourceAudienceLabel: (audience: string) => string;
     };
-    expect(
-      component.getResourceAudienceLabel('unknown_audience' as never),
-    ).toBe('unknown_audience');
+    expect(component.getResourceAudienceLabel('unknown_audience')).toBe(
+      'unknown_audience',
+    );
   });
 
   it('Given onSearchInput is called with a null event target, then searchQuery defaults to empty string', async () => {
