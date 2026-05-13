@@ -305,6 +305,9 @@ Comportement obligatoire pour les assistants :
 - Ne pas sauter les étapes de branchement, de mise à jour Project / issue, de
   validation, de fusion, de push, ou de nettoyage de branche, sauf si
   l’utilisateur remplace explicitement ce workflow.
+- Interdiction absolue d'utiliser le flag `--no-verify` dans toute commande
+  Git (`commit`, `push`, etc.). Les hooks locaux et contrôles de qualité ne
+  doivent jamais être contournés.
 - Règle de récupération des changements en suspens : si des fichiers modifiés ou
   non suivis se trouvent sur `staging` (ou pire sur `main`) sans pouvoir y être
   commités directement (protection de branche ou politique de PR), ne jamais

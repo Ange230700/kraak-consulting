@@ -55,11 +55,11 @@ describe('ContactPage', () => {
   // Given la page de contact est affichée
   // When le contenu est rendu
   // Then le titre principal doit \u00EAtre visible
-  it('devrait afficher le titre principal "Parlons de votre projet"', () => {
+  it('devrait afficher le titre principal "Parlez-nous de votre objectif."', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Parlons de votre projet');
+    expect(heading?.textContent).toContain('Parlez-nous de votre objectif.');
   });
 
   // Given le formulaire de contact est affich\u00E9

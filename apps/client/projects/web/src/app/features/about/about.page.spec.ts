@@ -19,7 +19,9 @@ describe('AboutPage', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Former. Structurer. Transformer.');
+    expect(heading?.textContent).toContain(
+      'Former des leaders conscients de leur valeur et capables de créer un impact durable.',
+    );
   });
 
   it('should render the refreshed mission, intervention levels and values', () => {
@@ -28,14 +30,14 @@ describe('AboutPage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain(
-      'Révéler le potentiel, développer les compétences et accompagner vers un impact professionnel et communautaire durable',
+      'Révéler, former et accompagner les jeunes dans leur transformation',
     );
     expect(content).toContain('D\u00E9veloppement des comp\u00E9tences');
     expect(content).toContain('Structuration des projets');
     expect(content).toContain(
       'Acc\u00E8s aux opportunit\u00E9s internationales',
     );
-    expect(content).toContain('Ouverture internationale');
+    expect(content).toContain('Ouverture et connexion globale');
   });
 
   it('should render the team preview section', () => {

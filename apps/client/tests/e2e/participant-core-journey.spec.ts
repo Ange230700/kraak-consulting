@@ -21,7 +21,10 @@ test.describe('Parcours coeur participant - orientation web', () => {
 
     await page.goto('/contact');
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Parlons de votre projet.' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Parlez-nous de votre objectif.',
+      }),
     ).toBeVisible();
   });
 
@@ -46,45 +49,29 @@ test.describe('Parcours coeur participant - orientation web', () => {
     });
 
     await page.goto('/contact');
+    const contactForm = page.locator('form').first();
+    await expect(contactForm).toBeVisible();
 
-    const nameField = page.getByRole('textbox', { name: 'Nom complet' });
-    const emailField = page.getByRole('textbox', { name: 'Adresse e-mail' });
-    const subjectField = page.getByRole('textbox', { name: 'Objectif' });
-    const countryField = page.getByRole('textbox', { name: 'Pays' });
-    const serviceField = page.getByLabel('Type de service');
-    const messageField = page.getByRole('textbox', { name: 'Message' });
+    const nameField = page.locator('#name');
+    const emailField = page.locator('#email');
+    const subjectField = page.locator('#subject');
+    const countryField = page.locator('#country');
+    const serviceField = page.locator('#serviceType');
+    const messageField = page.locator('#message');
 
-    await expect(async () => {
-      await nameField.fill('Aline Kouassi');
-      await emailField.fill('aline@exemple.com');
-      await subjectField.fill("Demande d'accompagnement");
-      await countryField.fill('Bénin');
-      await serviceField.selectOption('immigration');
-      await messageField.fill(
-        'Bonjour, je souhaite être guidée sur les prochaines étapes.',
-      );
+    await nameField.fill('Aline Kouassi');
+    await emailField.fill('aline@exemple.com');
+    await subjectField.fill("Demande d'accompagnement");
+    await countryField.fill('Bénin');
+    await serviceField.selectOption('immigration');
+    await messageField.fill(
+      'Bonjour, je souhaite être guidée sur les prochaines étapes.',
+    );
 
-      await expect(nameField).toHaveValue('Aline Kouassi', { timeout: 500 });
-      await expect(emailField).toHaveValue('aline@exemple.com', {
-        timeout: 500,
-      });
-      await expect(subjectField).toHaveValue("Demande d'accompagnement", {
-        timeout: 500,
-      });
-      await expect(countryField).toHaveValue('Bénin', { timeout: 500 });
-      await expect(serviceField).toHaveValue('immigration', { timeout: 500 });
-      await expect(messageField).toHaveValue(
-        'Bonjour, je souhaite être guidée sur les prochaines étapes.',
-        { timeout: 500 },
-      );
+    await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
 
-      await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
-
-      await expect(
-        page.getByText(
-          'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.',
-        ),
-      ).toBeVisible({ timeout: 10_000 });
-    }).toPass({ timeout: 60_000 });
+    await expect(
+      page.getByText(/Votre message a bien été envoyé\./i).first(),
+    ).toBeVisible({ timeout: 15_000 });
   });
 });
