@@ -3,8 +3,8 @@ set -e
 
 pnpm exec validate-branch-name
 
-# Les controles statiques sont independants: on les lance en parallele
-# pour reduire le temps mur du hook sans baisser le niveau de verification.
+# Les contrôles statiques sont indépendants: on les lance en parallèle
+# pour réduire le temps mur du hook sans baisser le niveau de vérification.
 pnpm typecheck &
 typecheck_pid=$!
 

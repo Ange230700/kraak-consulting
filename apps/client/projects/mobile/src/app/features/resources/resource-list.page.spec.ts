@@ -14,7 +14,7 @@ describe('Mobile ResourceListPage', () => {
       id: 'resource-1',
       programId: null,
       cohortId: null,
-      title: 'Guide de demarrage',
+      title: 'Guide de démarrage',
       description: 'Document de préparation à la première session.',
       resourceType: 'document',
       resourceTheme: 'training',
@@ -74,7 +74,7 @@ describe('Mobile ResourceListPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Ressources');
-    expect(element.textContent).toContain('Guide de demarrage');
+    expect(element.textContent).toContain('Guide de démarrage');
     expect(element.textContent).toContain('Boite a outils projet');
   });
 
@@ -90,11 +90,11 @@ describe('Mobile ResourceListPage', () => {
       'input[type="search"]',
     ) as HTMLInputElement;
 
-    searchInput.value = 'demarrage';
+    searchInput.value = 'démarrage';
     searchInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    expect(element.textContent).toContain('Guide de demarrage');
+    expect(element.textContent).toContain('Guide de démarrage');
     expect(element.textContent).not.toContain('Boite a outils projet');
   });
 
@@ -170,7 +170,7 @@ describe('Mobile ResourceListPage', () => {
     const component = fixture.componentInstance as unknown as {
       getResourceThemeLabel: (theme: string) => string;
     };
-    expect(component.getResourceThemeLabel('unknown_theme' as never)).toBe(
+    expect(component.getResourceThemeLabel('unknown_theme')).toBe(
       'unknown_theme',
     );
   });
@@ -183,9 +183,9 @@ describe('Mobile ResourceListPage', () => {
     const component = fixture.componentInstance as unknown as {
       getResourceAudienceLabel: (audience: string) => string;
     };
-    expect(
-      component.getResourceAudienceLabel('unknown_audience' as never),
-    ).toBe('unknown_audience');
+    expect(component.getResourceAudienceLabel('unknown_audience')).toBe(
+      'unknown_audience',
+    );
   });
 
   it('Given onSearchInput is called with a null event target, then searchQuery defaults to empty string', async () => {

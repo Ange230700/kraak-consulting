@@ -62,6 +62,7 @@ Preuves :
 
 - API KRAAK déployée et accessible : `https://kraak-api-staging.onrender.com`
 - `GET /health` renvoie un payload enrichi :
+
   ```json
   {
     "status": "ok",
@@ -72,6 +73,7 @@ Preuves :
     "uptimeSeconds": "<uptime>"
   }
   ```
+
 - `render.yaml` configure `healthCheckPath: /health`
 - workflow `Observability` vérifie `/health` toutes les 15 minutes
 - tests unitaires contrat santé : 2 suites, 4 tests passés

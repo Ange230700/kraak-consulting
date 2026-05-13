@@ -232,7 +232,7 @@ est prêt.
 
 - ❌ Installer `supabase` via `npm i -g supabase` → paquet déprécié.
 - ❌ Installer `render` via un wrapper npm douteux → certains stubs sont des
-  scripts bash qui s'auto-invoquent et hangent indéfiniment.
+  scripts bash qui s'auto-invoquent et hanguent indéfiniment.
 - ❌ Commiter `.vercel/`, `.supabase/`, `supabase/.temp/` ou tout fichier
   contenant un token → vérifier `.gitignore`.
 - ❌ Partager un token via chat, ticket ou commit → uniquement gestionnaire de

@@ -100,7 +100,7 @@ describe('AnnouncementsController', () => {
     });
 
     it('Given: missing authorization header, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
-      await expect(controller.listAnnouncements(undefined)).rejects.toThrow(
+      await expect(controller.listAnnouncements()).rejects.toThrow(
         UnauthorizedException,
       );
     });
@@ -160,7 +160,7 @@ describe('AnnouncementsController', () => {
       const announcementId = 'ann-001';
 
       await expect(
-        controller.getAnnouncementById(announcementId, undefined),
+        controller.getAnnouncementById(announcementId),
       ).rejects.toThrow(UnauthorizedException);
     });
 

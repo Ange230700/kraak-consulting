@@ -708,21 +708,10 @@ export type Enums<
     : never;
 
 export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
-    | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
-    : never;
+  SchemaOptions extends { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends
+    keyof DatabaseWithoutInternals[SchemaOptions['schema']]['CompositeTypes'],
+> = DatabaseWithoutInternals[SchemaOptions['schema']]['CompositeTypes'][CompositeTypeName];
 
 export const Constants = {
   graphql_public: {

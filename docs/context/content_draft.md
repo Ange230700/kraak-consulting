@@ -85,7 +85,7 @@ Envoyer ma demande / Discuter sur WhatsApp
 
 ## 3. Métadonnées SEO 🔍
 
-### Accueil
+### Page d'accueil
 
 - Title : KRAAK Consulting | Développez vos compétences, lancez vos projets
 - Description : KRAAK Consulting accompagne étudiants, professionnels, entreprises et diaspora avec des solutions concrètes en formation, gestion de projets et immigration.
@@ -120,7 +120,7 @@ Ce site utilise des cookies pour analyser le trafic.
 
 ## 6. Coordonnées 📞
 
-- Email : kraakconsulting@gmail.com
+- Email : <kraakconsulting@gmail.com>
 - Téléphone : via WhatsApp
 - WhatsApp : +225 05 02 74 18 18
 - Zone : Afrique / international

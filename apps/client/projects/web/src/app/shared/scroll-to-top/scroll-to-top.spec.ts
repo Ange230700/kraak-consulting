@@ -49,7 +49,7 @@ describe('ScrollToTop', () => {
 
   describe('Scroll to top functionality', () => {
     it('should scroll to top when button is clicked', () => {
-      const scrollToSpy = vi.spyOn(window, 'scrollTo');
+      const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
 
       component.scrollToTop();
 
@@ -62,11 +62,11 @@ describe('ScrollToTop', () => {
       scrollToSpy.mockRestore();
     });
 
-    it('should update visibility on window scroll', () => {
+    it('should update visibility on globalThis scroll', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
       // Simulate scroll event
-      window.dispatchEvent(new Event('scroll'));
+      globalThis.dispatchEvent(new Event('scroll'));
 
       expect(updateVisibilitySpy).toHaveBeenCalled();
 
@@ -74,8 +74,8 @@ describe('ScrollToTop', () => {
     });
 
     it('should set isVisible to true when scrollY > threshold', () => {
-      // Mock window.scrollY
-      Object.defineProperty(window, 'scrollY', {
+      // Mock globalThis.scrollY
+      Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
         configurable: true,
         value: 500,
@@ -87,7 +87,7 @@ describe('ScrollToTop', () => {
     });
 
     it('should set isVisible to false when scrollY < threshold', () => {
-      Object.defineProperty(window, 'scrollY', {
+      Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
         configurable: true,
         value: 100,
@@ -101,7 +101,7 @@ describe('ScrollToTop', () => {
 
   describe('Lifecycle', () => {
     it('should attach scroll listener on init', () => {
-      const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
 
       component.ngOnInit();
 
@@ -114,7 +114,10 @@ describe('ScrollToTop', () => {
     });
 
     it('should remove scroll listener on destroy', () => {
-      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+      const removeEventListenerSpy = vi.spyOn(
+        globalThis,
+        'removeEventListener',
+      );
 
       component.ngOnDestroy();
 

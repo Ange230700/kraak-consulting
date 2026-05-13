@@ -1,6 +1,7 @@
 {
   "js/ts.tsdk.path": "apps/client/node_modules/typescript/lib",
   "angular.experimental.ivy": true,
+  "css.lint.unknownAtRules": "ignore",
   "sonarlint.connectedMode.project": {
     "connectionId": "ange230700",
     "projectKey": "Ange230700_kraak-group"

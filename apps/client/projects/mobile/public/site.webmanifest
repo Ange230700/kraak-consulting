@@ -1,7 +1,7 @@
 {
   "name": "KRAAK",
   "short_name": "KRAAK",
-  "description": "Shell mobile KRAAK pour l'acces rapide aux parcours, ressources et accompagnements.",
+  "description": "Shell mobile KRAAK pour l’accès rapide aux parcours, ressources et accompagnements.",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",

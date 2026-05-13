@@ -4,15 +4,15 @@ Ce runbook décrit comment générer les projets natifs Android et iOS, lancer u
 
 ---
 
-## Prerequis
+## Prérequis
 
-| Outil          | Version recommandee / utilisee | Remarque                                                  |
+| Outil          | Version recommandée / utilisée | Remarque                                                  |
 | -------------- | ------------------------------ | --------------------------------------------------------- |
-| Node.js        | 24.14.1                        | version utilisee via `.nvmrc`                             |
-| pnpm           | 10.23.0                        | version utilisee via `packageManager` dans `package.json` |
-| JDK            | 21+                            | Temurin recommande, necessaire pour Gradle / Android      |
-| Android Studio | Hedgehog (2023.1.1)+           | Installe le SDK Android et les emulateurs                 |
-| Xcode          | 16+                            | macOS uniquement, necessaire pour les builds iOS          |
+| Node.js        | 24.14.1                        | version utilisée via `.nvmrc`                             |
+| pnpm           | 10.23.0                        | version utilisée via `packageManager` dans `package.json` |
+| JDK            | 21+                            | Temurin recommande, nécessaire pour Gradle / Android      |
+| Android Studio | Hedgehog (2023.1.1)+           | Installe le SDK Android et les émulateurs                 |
+| Xcode          | 16+                            | macOS uniquement, nécessaire pour les builds iOS          |
 | CocoaPods      | 1.13+                          | macOS uniquement, `sudo gem install cocoapods`            |
 
 ---
@@ -31,7 +31,7 @@ Vérification manuelle (si le build Gradle échoue sur "SDK location not found")
 # Verifier que le fichier existe
 cat apps/client/android/local.properties
 
-# Ou le recreer manuellement sur Windows
+# Ou le recréer manuellement sur Windows
 echo "sdk.dir=C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Android\\Sdk" > apps/client/android/local.properties
 
 # Sur macOS/Linux
@@ -66,7 +66,7 @@ $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
 
 #### Option 2 : Via helper script (siege)
 
-Pour une approche isolee (une seule session) :
+Pour une approche isolée (une seule session) :
 
 ```bash
 # Bash/Zsh
@@ -90,15 +90,15 @@ Si vous devez preparer manuellement les plateformes natives, utilisez :
 ```bash
 cd apps/client
 
-# Generer le projet Android
+# Générer le projet Android
 npx cap add android
 
-# Generer le projet iOS (macOS uniquement)
+# Générer le projet iOS (macOS uniquement)
 npx cap add ios
 ```
 
-Le helper utilise par `pnpm build:debug:android` et `pnpm build:debug:ios` peut aussi creer la plateforme manquante automatiquement avant `cap sync`.
-Les artefacts de build intermediaires restent exclus via `apps/client/.gitignore`.
+Le helper utilise par `pnpm build:debug:android` et `pnpm build:debug:ios` peut aussi créer la plateforme manquante automatiquement avant `cap sync`.
+Les artefacts de build intermédiaires restent exclus via `apps/client/.gitignore`.
 
 ---
 
@@ -199,7 +199,7 @@ Le mobile inclut un service de base `MobilePushNotificationsService` pour le wir
 
 Objectif du stub MVP :
 
-- initialiser la chaine Capacitor Push Notifications au demarrage de l'application
+- initialiser la chaîne Capacitor Push Notifications au démarrage de l'application
 - retourner un token device (token FCM en natif, token stub en fallback)
 - preparer les listeners minimaux pour la suite des travaux (`ANN-04`)
 
@@ -211,8 +211,8 @@ Fichiers reliés :
 
 Comportement attendu :
 
-- plateforme web ou permissions refusees : token stub `stub-mobile-token-<env>-<raison>`
-- plateforme native + permissions accordees : tentative d'enregistrement FCM via `@capacitor/push-notifications`
+- plateforme web ou permissions refusées : token stub `stub-mobile-token-<env>-<raison>`
+- plateforme native + permissions accordées : tentative d'enregistrement FCM via `@capacitor/push-notifications`
 - timeout d'enregistrement : fallback automatique vers token stub
 
 Verification rapide :
@@ -224,12 +224,12 @@ pnpm --filter @kraak/client test:mobile
 ANN-04 (notification push annonce prioritaire) ajoute sur ce wiring :
 
 - detection des payloads `priority` en `high` ou `critical` pour les annonces
-- conservation du dernier payload prioritaire recu via le signal `lastPriorityAnnouncementPush`
+- conservation du dernier payload prioritaire reçu via le signal `lastPriorityAnnouncementPush`
 - navigation automatique vers `/tabs/annonces/:announcementId` lors de l'action utilisateur sur la notification
 
 ---
 
-## Test avec live-reload (appareil physique ou emulateur)
+## Test avec live-reload (appareil physique ou émulateur)
 
 1. Démarrer le serveur de développement mobile :
 
@@ -237,7 +237,7 @@ ANN-04 (notification push annonce prioritaire) ajoute sur ce wiring :
 pnpm dev:mobile
 ```
 
-1. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les proprietes `server.url` et `cleartext` dans l'objet `server` :
+1. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les propriétés `server.url` et `cleartext` dans l'objet `server` :
 
 ```typescript
 server: {
@@ -257,7 +257,7 @@ pnpm --filter @kraak/client cap:open:android
 pnpm --filter @kraak/client cap:open:ios
 ```
 
-1. Lancer l'app depuis Android Studio ou Xcode sur un emulateur ou un appareil connecte.
+1. Lancer l'app depuis Android Studio ou Xcode sur un émulateur ou un appareil connecte.
 
 Important : ne pas commiter le bloc `url` / `cleartext` dans le dépôt, il est réservé au développement local.
 
@@ -267,7 +267,7 @@ Important : ne pas commiter le bloc `url` / `cleartext` dans le dépôt, il est 
 
 Le job `android-debug` du pipeline CI (`.github/workflows/ci.yml`) :
 
-- se declenche apres le job `build`
+- se déclenche apres le job `build`
 - installe Java 21 (Temurin)
 - execute `pnpm build:debug:android`
 - assemble le debug APK via `./gradlew assembleDebug`

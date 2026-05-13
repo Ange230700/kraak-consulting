@@ -2,8 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import type { AnnouncementDto } from '@kraak/contracts';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import AnnouncementListPage from './announcement-list.page';
 
 function configureAnnouncementsClient(

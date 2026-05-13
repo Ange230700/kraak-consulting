@@ -6,5 +6,12 @@ export default [
   { ignores: ['dist/', 'node_modules/', 'coverage/'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   prettier,
 ];
