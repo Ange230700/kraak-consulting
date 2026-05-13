@@ -150,6 +150,11 @@ changement.
 
 ## Documentation complémentaire
 
+### Validation API
+
+- [`docs/runbooks/CLI_TOOLS.md`](docs/runbooks/CLI_TOOLS.md) — commandes de validation API et de régression
+- [`docs/runbooks/NIGHTLY_REGRESSION.md`](docs/runbooks/NIGHTLY_REGRESSION.md) — workflow nocturne de régression stricte
+
 | Document                                                                                             | Contenu                                            |
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                                 | Workflow Git, conventions de commits, hooks, PR    |

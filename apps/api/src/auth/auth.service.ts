@@ -378,6 +378,14 @@ export class AuthService {
       return 'Le mot de passe ne respecte pas les exigences minimales.';
     }
 
+    if (message.includes('invalid') && message.includes('email')) {
+      return "L'adresse email fournie est invalide.";
+    }
+
+    if (message.includes('rate') || message.includes('limit')) {
+      return "Le service d'inscription est temporairement indisponible. Réessayez plus tard.";
+    }
+
     return 'Impossible de créer le compte avec ces informations.';
   }
 }

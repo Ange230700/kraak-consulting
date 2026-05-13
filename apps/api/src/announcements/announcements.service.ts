@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import type {
   AnnouncementDto,
   AnnouncementPriorityValue,
@@ -47,19 +51,13 @@ export class AnnouncementsService {
    * @param limit - Items per page (default: 20, max: 100)
    */
   async listAnnouncements(
-    accessToken: string,
+    accessToken?: string,
     page?: number,
     limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
     const adminClient = this.supabaseService.getClient();
     const paginationLimit = this.resolvePaginationLimit(limit);
     const paginationPage = this.resolvePaginationPage(page);
-
-    // Get participant ID from access token
-    const participantId = await this.resolveParticipantId(accessToken);
-    if (!participantId) {
-      throw new Error('Could not resolve participant ID from access token');
-    }
 
     // Get all published announcements
     const { data: allAnnouncements, error: announcementsError } =
@@ -70,9 +68,45 @@ export class AnnouncementsService {
         .order('published_at', { ascending: false });
 
     if (announcementsError) {
+      if (!accessToken) {
+        console.error('Public announcements listing failed', {
+          context: 'announcements.list.public',
+          message: announcementsError.message,
+        });
+        return {
+          data: [],
+          total: 0,
+        };
+      }
+
       throw new Error(
         `Failed to list announcements: ${announcementsError.message}`,
       );
+    }
+
+    // Public mode: return all published announcements when no token is provided.
+    if (!accessToken) {
+      const sorted = sortAnnouncementsByPriority(
+        ((allAnnouncements ?? []) as AnnouncementRow[]).map((row) =>
+          this.mapAnnouncement(row),
+        ),
+      );
+      const offset = (paginationPage - 1) * paginationLimit;
+      const paginated = sorted.slice(offset, offset + paginationLimit);
+
+      return {
+        data: paginated,
+        total: sorted.length,
+      };
+    }
+
+    // Authenticated mode: filter by participant scope.
+    const participantId = await this.resolveParticipantId(accessToken);
+    if (!participantId) {
+      throw new UnauthorizedException({
+        success: false,
+        message: 'La session est invalide ou expirée.',
+      });
     }
 
     // Get participant's enrollments

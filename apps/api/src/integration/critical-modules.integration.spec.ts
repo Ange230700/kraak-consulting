@@ -126,11 +126,11 @@ describe('Critical API Modules Integration', () => {
       await app.close();
     });
 
-    it('returns 401 on list without auth header', async () => {
+    it('returns 200 on public programs list without auth header', async () => {
       await (request(app.getHttpServer())
         .get('/programs')
-        .expect(401) as unknown as Promise<void>);
-      expect(programsServiceMock.listPrograms).not.toHaveBeenCalled();
+        .expect(200) as unknown as Promise<void>);
+      expect(programsServiceMock.listPrograms).toHaveBeenCalledWith(undefined);
     });
 
     it('returns 400 on invalid progress payload', async () => {
@@ -272,11 +272,15 @@ describe('Critical API Modules Integration', () => {
       await app.close();
     });
 
-    it('returns 401 when authorization header is missing', async () => {
+    it('returns 200 on public announcements list when authorization header is missing', async () => {
       await (request(app.getHttpServer())
         .get('/announcements')
-        .expect(401) as unknown as Promise<void>);
-      expect(announcementsServiceMock.listAnnouncements).not.toHaveBeenCalled();
+        .expect(200) as unknown as Promise<void>);
+      expect(announcementsServiceMock.listAnnouncements).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        undefined,
+      );
     });
 
     it('returns 200 on authorized announcements list', async () => {
