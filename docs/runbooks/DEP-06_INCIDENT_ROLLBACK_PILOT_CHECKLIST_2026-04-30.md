@@ -187,7 +187,7 @@ Action 4 : Si le problème persiste
 Action 1 : Vérifier les ressources Render
 - URL: https://dashboard.render.com > kraak-api > Analytics
 - Chercher un pic de CPU ou mémoire
-- Chercher un saturement de connexions Supabase
+- Chercher une saturation de connexions Supabase
 
 Action 2 : Vérifier Supabase
 - URL: https://supabase.com/dashboard > Status (global)
@@ -196,7 +196,7 @@ Action 2 : Vérifier Supabase
 
 Action 3 : Si Supabase est saturé
 - Attendre la récupération naturelle (DB timeout autolimitant)
-- Ou limiter le trafic côté API en temporaire avec un redirect vers une page maintenace
+- Ou limiter le trafic côté API en temporaire avec un redirect vers une page maintenance
 
 Action 4 : Redémarrer le service API
 - URL: https://dashboard.render.com > kraak-api > Settings > Restart
@@ -279,7 +279,7 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 
 #### Méthode C : Rollback complet depuis une étiquette (sûr)
 
-Utile si vous avez taggé des releases :
+Utile si vous avez tagué des releases :
 
 ```bash
 # 1. Créer une branche depuis le tag stable
@@ -475,7 +475,7 @@ Tester manuellement chaque flux principal via https://kraak-consulting.vercel.ap
 - [ ] Supabase production-pilot data seeded
   - [ ] Programmes avec contenu complet
   - [ ] Catégories de services présentes
-  - [ ] Au moins 1 utilisateur test disponible (si applicale pour auth)
+  - [ ] Au moins 1 utilisateur test disponible (si applicable pour auth)
 
 - [ ] Migrations Supabase appliquées
   - Vérifier le schéma correspond aux modèles attendus
