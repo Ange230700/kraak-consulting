@@ -21,11 +21,11 @@ import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import {
   FaqAccordion,
   type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion';
+} from '../../shared/faq-accordion/faq-accordion.component';
 import { ContactService } from './contact.service';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 

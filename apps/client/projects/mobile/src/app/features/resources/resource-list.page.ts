@@ -8,7 +8,7 @@ import type {
   ResourceThemeValue,
   ResourceTypeValue,
 } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 

@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import type { ParticipantProgramDetailDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
   loadProgramDetailState,

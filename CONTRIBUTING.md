@@ -42,6 +42,19 @@ git checkout -b docs/update-readme
 
 ---
 
+## Nommage Angular (Pages Et Composants)
+
+Pour les applications client Angular (`web` et `mobile`) :
+
+- une page complète doit être nommée en `*.page.{ts,html,spec.ts}`
+- un composant destiné à être intégré dans une page doit être nommé en
+  `*.component.{ts,html,spec.ts}`
+
+Cette convention est obligatoire pour tout nouveau fichier et pour toute mise en
+conformité des fichiers existants.
+
+---
+
 ## Commits (Conventional Commits)
 
 Chaque message de commit suit le format [Conventional Commits](https://www.conventionalcommits.org/) :
@@ -103,6 +116,10 @@ Ne pas remettre une mise à jour documentaire nécessaire à plus tard.
 ---
 
 ## Règle Debug
+
+En phase de débogage ou d’investigation, utiliser régulièrement les méthodes de
+l’objet `Console` (`console.debug`, `console.info`, `console.warn`,
+`console.error`) pour tracer les étapes clés et accélérer le diagnostic.
 
 Quand un flux applicatif intercepte une erreur, un rejet, ou un état inattendu
 sans le relancer, laisser une trace via les méthodes de l’objet `Console`

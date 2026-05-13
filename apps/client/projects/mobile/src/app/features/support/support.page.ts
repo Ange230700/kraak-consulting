@@ -6,7 +6,7 @@ import type {
   SupportRequestDto,
   SupportRequestStatusValue,
 } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShell } from '../../shared/page-shell/page-shell.component';
 import { MobileSupportService } from './mobile-support.service';
 
 @Component({

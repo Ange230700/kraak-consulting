@@ -25,7 +25,7 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadComponent: () =>
-      import('./layouts/tabs/tabs.layout').then((m) => m.TabsLayout),
+      import('./layouts/tabs/tabs.component').then((m) => m.TabsLayout),
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
     children: [

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 
 @Component({
   selector: 'kraak-mentions-legales-page',
