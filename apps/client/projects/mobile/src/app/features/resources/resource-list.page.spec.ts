@@ -6,6 +6,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MobileResourcesService } from './mobile-resources.service';
 import ResourceListPage from './resource-list.page';
 
+const TEST_RESOURCE_URL = 'https://example.com/guide';
+
 describe('Mobile ResourceListPage', () => {
   let service: { listResources: ReturnType<typeof vi.fn> };
 
@@ -19,7 +21,7 @@ describe('Mobile ResourceListPage', () => {
       resourceType: 'document',
       resourceTheme: 'training',
       resourceAudience: 'all',
-      url: 'https://example.com/guide',
+      url: TEST_RESOURCE_URL,
       filePath: null,
       status: 'published',
       publishedAt: new Date().toISOString(),

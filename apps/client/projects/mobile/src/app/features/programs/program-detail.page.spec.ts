@@ -11,6 +11,8 @@ import type {
 import { MobileProgramsService } from './mobile-programs.service';
 import ProgramDetailPage from './program-detail.page';
 
+const TEST_PROGRAM_RESOURCE_URL = 'https://example.com/guide.pdf';
+
 describe('Mobile ProgramDetailPage', () => {
   let service: { getProgramDetail: ReturnType<typeof vi.fn> };
   let activatedRoute: {
@@ -156,7 +158,7 @@ describe('Mobile ProgramDetailPage', () => {
       resourceType: 'document',
       resourceTheme: 'training',
       resourceAudience: 'all',
-      url: 'https://example.com/guide.pdf',
+      url: TEST_PROGRAM_RESOURCE_URL,
       filePath: null,
       status: 'published',
       publishedAt: new Date().toISOString(),

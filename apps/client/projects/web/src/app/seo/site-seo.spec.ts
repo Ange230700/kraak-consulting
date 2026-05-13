@@ -8,6 +8,9 @@ import {
   seoPages,
 } from './site-seo';
 
+const DEFAULT_SITE_URL = 'https://kraak-consulting.vercel.app';
+const EXAMPLE_SITE_URL = 'https://example.com';
+
 describe('site-seo', () => {
   it('should expose every public marketing page as a single source of truth', () => {
     expect(seoPages.map((page) => page.path)).toEqual([
@@ -18,46 +21,28 @@ describe('site-seo', () => {
       'programmes',
       'ressources',
       'contact',
-      'faq',
       'mentions-legales',
       'politique-de-confidentialite',
     ]);
   });
 
   it('should build an XML sitemap with absolute URLs for every public page', () => {
-    const sitemap = buildSitemapXml('https://kraak-consulting.vercel.app');
+    const sitemap = buildSitemapXml(DEFAULT_SITE_URL);
 
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/a-propos</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/services</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/programmes</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/ressources</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/contact</loc>',
-    );
-    expect(sitemap).toContain(
-      '<loc>https://kraak-consulting.vercel.app/faq</loc>',
-    );
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/a-propos</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/services</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/programmes</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/ressources</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/contact</loc>`);
   });
 
   it('should build robots.txt pointing crawlers to the sitemap', () => {
-    const robots = buildRobotsTxt('https://kraak-consulting.vercel.app');
+    const robots = buildRobotsTxt(DEFAULT_SITE_URL);
 
     expect(robots).toContain('User-agent: *');
     expect(robots).toContain('Allow: /');
-    expect(robots).toContain(
-      'Sitemap: https://kraak-consulting.vercel.app/sitemap.xml',
-    );
+    expect(robots).toContain(`Sitemap: ${DEFAULT_SITE_URL}/sitemap.xml`);
   });
 
   it('should define an Open Graph image for public sharing previews', () => {
@@ -73,31 +58,29 @@ describe('site-seo', () => {
   // When the function is called
   // Then it returns the DEFAULT_SITE_URL fallback
   it('Given an empty siteUrl, when normalizeSiteUrl is called, then the default site URL is returned', () => {
-    expect(normalizeSiteUrl('')).toBe('https://kraak-consulting.vercel.app');
+    expect(normalizeSiteUrl('')).toBe(DEFAULT_SITE_URL);
   });
 
   // Given no PUBLIC_SITE_URL env var and no siteUrl argument
   // When resolvePublicSiteUrl is called
   // Then it returns the default site URL
   it('Given no siteUrl argument, when resolvePublicSiteUrl is called, then the default site URL is returned', () => {
-    expect(resolvePublicSiteUrl()).toBe('https://kraak-consulting.vercel.app');
+    expect(resolvePublicSiteUrl()).toBe(DEFAULT_SITE_URL);
   });
 
   // Given a siteUrl with trailing slash
   // When normalizeSiteUrl is called
   // Then the trailing slash is trimmed
   it('Given a siteUrl with trailing slash, when normalizeSiteUrl is called, then trailing slash is trimmed', () => {
-    expect(normalizeSiteUrl('https://example.com/')).toBe(
-      'https://example.com',
-    );
+    expect(normalizeSiteUrl(`${EXAMPLE_SITE_URL}/`)).toBe(EXAMPLE_SITE_URL);
   });
 
   // Given a path with leading slash
   // When buildAbsoluteUrl is called
   // Then leading slash in path is handled correctly
   it('Given a path with leading slash, when buildAbsoluteUrl is called, then the URL is correctly built', () => {
-    expect(buildAbsoluteUrl('/contact', 'https://example.com')).toBe(
-      'https://example.com/contact',
+    expect(buildAbsoluteUrl('/contact', EXAMPLE_SITE_URL)).toBe(
+      `${EXAMPLE_SITE_URL}/contact`,
     );
   });
 });

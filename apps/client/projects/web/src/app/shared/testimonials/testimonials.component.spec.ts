@@ -3,6 +3,12 @@ import { vi } from 'vitest';
 
 import { Testimonials } from './testimonials.component';
 
+const TEST_AVATAR_BASE_URL = 'https://example.com';
+
+function buildTestAvatarUrl(fileName: string): string {
+  return `${TEST_AVATAR_BASE_URL}/${fileName}`;
+}
+
 describe('Testimonials', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -39,21 +45,21 @@ describe('Testimonials', () => {
         comment: 'Super formation',
         name: 'Alice',
         job: 'Chef de projet',
-        avatar: 'https://example.com/alice.png',
+        avatar: buildTestAvatarUrl('alice.png'),
       },
       {
         id: 2,
         comment: 'Excellent accompagnement',
         name: 'Bob',
         job: 'Designer',
-        avatar: 'https://example.com/bob.png',
+        avatar: buildTestAvatarUrl('bob.png'),
       },
       {
         id: 3,
         comment: 'Très bon suivi',
         name: 'Chloe',
         job: 'Coach',
-        avatar: 'https://example.com/chloe.png',
+        avatar: buildTestAvatarUrl('chloe.png'),
       },
     ]);
     fixture.detectChanges();
@@ -74,21 +80,21 @@ describe('Testimonials', () => {
         comment: 'Excellent accompagnement',
         name: 'Bob',
         job: 'Consultant',
-        avatar: 'https://example.com/bob.png',
+        avatar: buildTestAvatarUrl('bob.png'),
       },
       {
         id: 2,
         comment: 'Parcours clair',
         name: 'Nina',
         job: 'Data Analyst',
-        avatar: 'https://example.com/nina.png',
+        avatar: buildTestAvatarUrl('nina.png'),
       },
       {
         id: 3,
         comment: 'Très bon support',
         name: 'Sam',
         job: 'Engineer',
-        avatar: 'https://example.com/sam.png',
+        avatar: buildTestAvatarUrl('sam.png'),
       },
     ]);
     fixture.detectChanges();

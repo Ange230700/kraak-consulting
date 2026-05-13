@@ -12,6 +12,8 @@ import {
   participantRoleChildGuard,
 } from '../../../core/auth/auth.guard';
 
+const TEST_MEETING_LINK_URL = 'https://meet.example/session-1';
+
 function configureDashboardClient(
   fixture: ReturnType<typeof TestBed.createComponent<DashboardPage>>,
   response: Promise<unknown>,
@@ -77,7 +79,7 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       endsAt: '2026-05-02T18:00:00.000Z',
       locationType: 'online',
       locationLabel: null,
-      meetingLink: 'https://meet.example/session-1',
+      meetingLink: TEST_MEETING_LINK_URL,
       cohortId: 'cohort-1',
       cohortName: 'Cohorte printemps',
       programId: 'program-1',
