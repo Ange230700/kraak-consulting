@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import type { ParticipantProgramDetailDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
   loadProgramDetailState,
@@ -13,7 +13,7 @@ import {
 @Component({
   selector: 'kraak-program-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './program-detail.page.html',
 })
 export default class ProgramDetailPage implements OnInit {

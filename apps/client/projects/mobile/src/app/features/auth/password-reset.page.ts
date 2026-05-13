@@ -8,7 +8,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import {
   MOBILE_AUTH_RESET_URL,
   MobileAuthService,
@@ -22,7 +22,7 @@ interface PasswordResetFormModel {
 @Component({
   selector: 'kraak-password-reset-page',
   standalone: true,
-  imports: [PageShell, ReactiveFormsModule, RouterLink, IonButton],
+  imports: [PageShellComponent, ReactiveFormsModule, RouterLink, IonButton],
   templateUrl: './password-reset.page.html',
 })
 export default class PasswordResetPage {

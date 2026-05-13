@@ -9,12 +9,12 @@ import {
   MobileAuthService,
   resolveAuthErrorMessage,
 } from '../auth/mobile-auth.service';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 
 @Component({
   selector: 'kraak-announcement-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, DatePipe],
   templateUrl: './announcement-detail.page.html',
 })
 export default class AnnouncementDetailPage implements OnInit {

@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell.component';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
   loadProgramDetailState,
@@ -14,7 +14,7 @@ import {
 @Component({
   selector: 'kraak-session-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './session-detail.page.html',
 })
 export default class SessionDetailPage implements OnInit {

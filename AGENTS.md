@@ -15,9 +15,57 @@ Utiliser ce fichier avec :
 - `docs/specs/BACKLOG.md` pour le backlog et l’ordre de priorité
 - `README.md` pour les conventions de structure du dépôt
 
----
-
 ## Stade Actuel Du Projet
+
+## Règles Transverses de Qualité et de Maintenabilité (Obligatoires)
+
+Les règles suivantes sont obligatoires pour tout le code, la documentation et les workflows du dépôt KRAAK :
+
+1. **Chemins d'import explicites** :
+
+- Utiliser uniquement des chemins d'import explicites (relatifs ou alias documenté) dans tout le code Angular/TypeScript.
+- Ne jamais s'appuyer sur des index.ts implicites sauf si l'alias est stable et documenté.
+- Objectif : éviter les dépendances circulaires et faciliter la navigation.
+
+1. **Aucun catch silencieux** :
+
+- Tout bloc try/catch doit logguer l'erreur capturée (avec contexte) via Console.
+- Ne jamais laisser un catch vide ou avec un simple commentaire.
+
+1. **Nommage de tests Given/When/Then** :
+
+- Tous les tests (unitaires, intégration, E2E) doivent utiliser une formulation Given/When/Then dans la description.
+- Les fichiers de test doivent respecter le nom du fichier testé (ex : foo.service.ts → foo.service.spec.ts).
+
+1. **Pas de code mort** :
+
+- Tout code commenté doit être supprimé avant merge.
+- Si un code est laissé pour plus tard, ajouter un TODO avec référence issue/JIRA.
+
+1. **Lint/format strict sur CI** :
+
+- Linting (ESLint, Prettier, markdownlint) et type-checking obligatoires en CI avant merge.
+
+1. **Aucun style direct dans les templates** :
+
+- Ne jamais utiliser d'attribut `style` ou de balise `style` dans les templates Angular.
+- Tout style doit passer par Tailwind ou les styles globaux.
+
+1. **Versionning API/DTO** :
+
+- Tout changement de contrat API/DTO doit être versionné ou documenté dans un changelog, et les consommateurs mis à jour.
+
+1. **Aucun secret/URL en dur** :
+
+- Toute clé, secret ou URL d'environnement doit passer par une variable d'environnement ou un fichier de config, jamais en dur dans le code.
+
+1. **Accessibilité par défaut** :
+
+- Tout nouveau composant/page UI doit inclure au moins une validation d'accessibilité (aria-label, navigation clavier, contraste).
+
+1. **Documentation à jour** :
+
+- Tout changement d'architecture ou de process doit être répercuté dans la doc Markdown dans le même commit que le code.
 
 État actuel (10 avril 2026) :
 
