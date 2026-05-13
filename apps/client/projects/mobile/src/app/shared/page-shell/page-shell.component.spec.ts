@@ -2,11 +2,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { PageShell } from './page-shell.component';
+import { PageShellComponent } from './page-shell.component';
 
 @Component({
   standalone: true,
-  imports: [PageShell],
+  imports: [PageShellComponent],
   template: `
     <kraak-page-shell
       eyebrow="KRAAK mobile"
