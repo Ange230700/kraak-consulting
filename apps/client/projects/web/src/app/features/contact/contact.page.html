@@ -210,8 +210,11 @@
                     type="text"
                     placeholder="Votre nom"
                     formControlName="name"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(name),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(name)"
                     [attr.aria-describedby]="
@@ -247,8 +250,11 @@
                     type="email"
                     placeholder="votre.email@exemple.com"
                     formControlName="email"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(email),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(email)"
                     [attr.aria-describedby]="
@@ -285,8 +291,11 @@
                   type="text"
                   placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
                   formControlName="subject"
-                  class="h-11 w-full"
-                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                      isInvalid(subject),
+                  }"
                   aria-required="true"
                   [attr.aria-invalid]="isInvalid(subject)"
                   [attr.aria-describedby]="
@@ -318,8 +327,11 @@
                     type="text"
                     placeholder="Votre pays de r&eacute;sidence"
                     formControlName="country"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(country),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(country)"
                     [attr.aria-describedby]="
@@ -348,9 +360,10 @@
                   <select
                     id="serviceType"
                     formControlName="serviceType"
-                    class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white text-brand-navy h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm transition outline-none focus:ring-2"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
-                      'ng-invalid ng-dirty': isInvalid(serviceType),
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(serviceType),
                     }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(serviceType)"
@@ -375,8 +388,11 @@
                   rows="6"
                   placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
                   formControlName="message"
-                  class="w-full"
-                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                      isInvalid(message),
+                  }"
                   aria-required="true"
                   [attr.aria-invalid]="isInvalid(message)"
                   [attr.aria-describedby]="

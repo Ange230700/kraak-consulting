@@ -3,7 +3,6 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
-  ChangeDetectionStrategy,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -13,26 +12,28 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './scroll-to-top.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrollToTop implements OnInit, OnDestroy {
-  private readonly cdr = inject(ChangeDetectorRef);
   isVisible = false;
   private readonly scrollThreshold = 300;
   private scrollListener: (() => void) | null = null;
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly isBrowser =
+    globalThis.window !== undefined && typeof document !== 'undefined';
 
   ngOnInit(): void {
-    // Only set up scroll listener in browser environment
-    if (globalThis.window === undefined || document === undefined) {
+    if (!this.isBrowser) {
       return;
     }
-
-    this.scrollListener = () => this.updateVisibility();
+    this.scrollListener = () => {
+      this.updateVisibility();
+    };
     window.addEventListener('scroll', this.scrollListener);
+    this.updateVisibility();
   }
 
   ngOnDestroy(): void {
-    if (this.scrollListener && globalThis.window !== undefined) {
+    if (this.scrollListener && this.isBrowser) {
       window.removeEventListener('scroll', this.scrollListener);
     }
   }
@@ -43,10 +44,9 @@ export class ScrollToTop implements OnInit, OnDestroy {
   }
 
   scrollToTop(): void {
-    if (globalThis.window === undefined) {
+    if (!this.isBrowser) {
       return;
     }
-
     window.scrollTo({
       top: 0,
       left: 0,
