@@ -78,15 +78,13 @@ describe('HomePage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain(
-      'D&eacute;veloppement personnel et professionnel',
-    );
-    expect(content).toContain('Anglais et fran&ccedil;ais professionnel');
+    expect(content).toContain('Développement personnel et professionnel');
+    expect(content).toContain('Anglais et français professionnel');
     expect(content).toContain('Leadership et prise de parole');
-    expect(content).toContain('Pr&eacute;paration aux entretiens');
+    expect(content).toContain('Préparation aux entretiens');
     expect(content).toContain('Structuration de projets');
     expect(content).toContain("Accompagnement d'entreprises et startups");
-    expect(content).toContain('Conseils en mobilit&eacute; internationale');
+    expect(content).toContain('Conseils en mobilité internationale');
     expect(content).toContain('Recrutement et placement en emploi');
   });
 

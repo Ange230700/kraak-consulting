@@ -42,13 +42,13 @@ export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
   protected readonly canShowPreviewContent = canShowPreviewContent;
   protected readonly keySolutions: readonly string[] = [
-    'D&eacute;veloppement personnel et professionnel',
-    'Anglais et fran&ccedil;ais professionnel',
+    'Développement personnel et professionnel',
+    'Anglais et français professionnel',
     'Leadership et prise de parole',
-    'Pr&eacute;paration aux entretiens',
+    'Préparation aux entretiens',
     'Structuration de projets',
     "Accompagnement d'entreprises et startups",
-    'Conseils en mobilit&eacute; internationale',
+    'Conseils en mobilité internationale',
     'Recrutement et placement en emploi',
   ];
 
