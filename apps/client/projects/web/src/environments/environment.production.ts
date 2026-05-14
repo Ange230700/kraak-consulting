@@ -11,8 +11,8 @@ const runtimeGa4Id =
   runtimeGlobals.process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 
 export const environment = {
-  environmentName: 'production',
   production: true,
+  enableParticipantArea: false,
   siteUrl: runtimeSiteUrl,
   apiBaseUrl: 'https://kraak-api-prod.onrender.com',
   supabaseUrl: 'https://pwuivkqnmjpxxpppmnvu.supabase.co',

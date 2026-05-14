@@ -16,7 +16,8 @@ if (
 ) {
   const flag = process.env['CLIENT_FEATURE_PARTICIPANT_AREA'];
   globalThis.__KRAAK_RUNTIME_CONFIG__ = Object.freeze({
-    enableParticipantArea: typeof flag === 'string' && flag.trim() === 'true',
+    enableParticipantArea:
+      typeof flag === 'string' ? flag.trim() === 'true' : undefined,
   });
 }
 

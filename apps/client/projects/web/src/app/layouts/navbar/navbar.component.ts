@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { isParticipantAreaEnabled } from '../../core/runtime/runtime-config';
+import { ParticipantNavCta } from '../../shared/participant-nav-cta/participant-nav-cta.component';
 
 interface NavLink {
   label: string;
@@ -11,7 +11,7 @@ interface NavLink {
 @Component({
   selector: 'kraak-navbar',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, ParticipantNavCta],
   templateUrl: './navbar.component.html',
 })
 export class Navbar {
@@ -23,7 +23,6 @@ export class Navbar {
   ];
 
   protected readonly mobileMenuOpen = signal(false);
-  protected readonly participantAreaEnabled = isParticipantAreaEnabled();
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update((v) => !v);
