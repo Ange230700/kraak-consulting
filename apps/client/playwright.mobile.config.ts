@@ -1,0 +1,43 @@
+import { defineConfig, devices } from '@playwright/test';
+
+const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
+const localWebBaseUrl = `http://localhost:${localWebPort}`;
+const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env['CI'],
+  retries: process.env['CI'] ? 2 : 1,
+  workers: 1,
+  timeout: 60_000,
+  reporter: process.env['CI']
+    ? 'github'
+    : [['list'], ['html', { open: 'never' }]],
+  use: {
+    baseURL: localWebBaseUrl,
+    navigationTimeout: 60_000,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    {
+      name: 'chrome-android',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'safari-iphone',
+      use: { ...devices['iPhone 13'] },
+    },
+  ],
+  webServer: {
+    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort}`,
+    url: localWebBaseUrl,
+    reuseExistingServer,
+    timeout: 120_000,
+    env: {
+      CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
+      CLIENT_API_BASE_URL: localWebBaseUrl,
+    },
+  },
+});
