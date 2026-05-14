@@ -1,16 +1,8 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
-const publicPrerenderPaths = [
-  '',
-  'a-propos',
-  'services',
-  'faq',
-  'programmes',
-  'ressources',
-  'contact',
-  'mentions-legales',
-  'politique-de-confidentialite',
-];
+import { seoPages } from './seo/site-seo';
+
+const publicPrerenderPaths = seoPages.map((page) => page.path);
 
 const publicPrerenderRoutes: ServerRoute[] = publicPrerenderPaths.map(
   (path) => ({
