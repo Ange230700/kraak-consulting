@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 interface Partner {
   name: string;
-  logo: string;
+  logo: SafeHtml;
 }
 
 interface RawPartner {
@@ -62,6 +63,8 @@ interface RawPartner {
   ],
 })
 export class FadingPartners {
+  private readonly sanitizer = inject(DomSanitizer);
+
   private readonly rawPartners: readonly RawPartner[] = [
     {
       name: 'Mistranet',
@@ -101,7 +104,9 @@ export class FadingPartners {
 
   readonly partners: Partner[] = this.rawPartners.map((partner) => ({
     name: partner.name,
-    logo: partner.logo,
+    // Ces SVG sont définis localement dans le composant ; on les marque sûrs
+    // une seule fois pour éviter que le sanitizer Angular les supprime.
+    logo: this.sanitizer.bypassSecurityTrustHtml(partner.logo),
   }));
 
   // For infinite scroll effect, we need to duplicate the partners array
