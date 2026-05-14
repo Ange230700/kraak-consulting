@@ -84,6 +84,20 @@ describe('FadingPartners', () => {
       expect(renderedLogos.length).toBe(component.duplicatedPartners.length);
     });
 
+    it('Given structured SVG logos When the component renders Then it should keep every expected SVG path', () => {
+      renderComponent();
+
+      const renderedPaths = fixture.nativeElement.querySelectorAll(
+        '[aria-hidden="true"] path',
+      );
+      const expectedPathCount = component.duplicatedPartners.reduce(
+        (total, partner) => total + partner.logo.paths.length,
+        0,
+      );
+
+      expect(renderedPaths.length).toBe(expectedPathCount);
+    });
+
     it('Given the logo containers When the component renders Then it should keep one container per duplicated partner', () => {
       renderComponent();
 
