@@ -1,10 +1,11 @@
 import { Route, Routes } from '@angular/router';
 
-import {
-  participantRoleGuard,
-  participantRoleChildGuard,
-} from './core/auth/auth.guard';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
+import {
+  participantAreaCanMatch,
+  participantAreaRoutes,
+} from './participant-area.routes';
+import { environment } from '../environments/environment';
 
 export const buildMarketingRoute = (
   path: string,
@@ -58,11 +59,11 @@ const notFoundSeo: SeoPageDefinition = {
   path: '**',
   title: 'Page introuvable | KRAAK Consulting',
   description:
-    "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+    "La page demand�e est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
   openGraph: {
     title: 'Page introuvable | KRAAK Consulting',
     description:
-      "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+      "La page demand�e est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
     imagePath: '/open-graph/kraak-share-card.svg',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
@@ -72,45 +73,19 @@ const notFoundSeo: SeoPageDefinition = {
   },
 };
 
-const participantAreaRoutes: Routes = [
-  {
-    path: 'connexion',
-    title: 'Connexion | KRAAK',
-    loadComponent: () => import('./features/auth/sign-in.page'),
-  },
-  {
-    path: 'inscription',
-    title: 'Inscription | KRAAK',
-    loadComponent: () => import('./features/auth/sign-up.page'),
-  },
-  {
-    path: 'mot-de-passe-oublie',
-    title: 'Mot de passe oubli\u00E9 | KRAAK',
-    loadComponent: () => import('./features/auth/password-reset.page'),
-  },
-  {
-    path: 'participant',
-    canActivate: [participantRoleGuard],
-    canActivateChild: [participantRoleChildGuard],
-    children: [
-      {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./features/participant/dashboard/dashboard.page'),
-      },
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
-    ],
-  },
-];
+export { participantAreaCanMatch };
 
-export function buildRoutes(): Routes {
+interface BuildRoutesOptions {
+  readonly includeParticipantArea?: boolean;
+}
+
+export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
+  const includeParticipantArea =
+    options.includeParticipantArea ?? environment.enableParticipantArea;
+
   return [
     ...marketingRoutes,
-    ...participantAreaRoutes,
+    ...(includeParticipantArea ? participantAreaRoutes : []),
     {
       path: '**',
       title: notFoundSeo.title,

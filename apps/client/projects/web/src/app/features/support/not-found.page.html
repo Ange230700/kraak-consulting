@@ -45,29 +45,32 @@
 
       <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
         <a
+          pButton
           routerLink="/"
-          class="kr-button-primary inline-flex items-center justify-center gap-2"
+          label="Retour &agrave; l'accueil"
+          icon="pi pi-home"
+          size="large"
+          class="kr-button-primary"
           aria-label="Retour à la page d'accueil"
-        >
-          <i class="pi pi-home" aria-hidden="true"></i>
-          <span>Retour à l'accueil</span>
-        </a>
+        ></a>
         <a
+          pButton
           routerLink="/faq"
-          class="kr-button-ghost inline-flex items-center justify-center gap-2"
+          label="Consulter l'aide"
+          icon="pi pi-question-circle"
+          size="large"
+          class="kr-button-ghost"
           aria-label="Consulter la FAQ KRAAK"
-        >
-          <i class="pi pi-question-circle" aria-hidden="true"></i>
-          <span>Consulter l'aide</span>
-        </a>
+        ></a>
         <a
+          pButton
           routerLink="/contact"
-          class="kr-button-ghost inline-flex items-center justify-center gap-2"
+          label="Nous contacter"
+          icon="pi pi-envelope"
+          size="large"
+          class="kr-button-ghost"
           aria-label="Contacter KRAAK"
-        >
-          <i class="pi pi-envelope" aria-hidden="true"></i>
-          <span>Nous contacter</span>
-        </a>
+        ></a>
       </div>
 
       <div class="mt-12 grid gap-4 text-left md:grid-cols-3">

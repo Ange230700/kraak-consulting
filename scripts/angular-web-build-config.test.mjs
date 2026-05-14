@@ -6,9 +6,16 @@ const angularWorkspace = JSON.parse(
   readFileSync(new URL('../apps/client/angular.json', import.meta.url), 'utf8'),
 );
 
-const webBuildOptions =
-  angularWorkspace.projects?.web?.architect?.build?.options ?? {};
+const webBuildConfigurations =
+  angularWorkspace.projects?.web?.architect?.build?.configurations ?? {};
 
-test('Given the web production build, When CSP forbids inline event handlers, Then critical CSS inlining stays disabled', () => {
-  assert.equal(webBuildOptions.optimization?.styles?.inlineCritical, false);
+test('Given the deployed web builds, When CSP forbids inline event handlers, Then staging and production keep critical CSS inlining disabled', () => {
+  assert.equal(
+    webBuildConfigurations.production?.optimization?.styles?.inlineCritical,
+    false,
+  );
+  assert.equal(
+    webBuildConfigurations.staging?.optimization?.styles?.inlineCritical,
+    false,
+  );
 });

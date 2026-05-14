@@ -1,8 +1,14 @@
-import { buildMarketingRoute, buildRoutes, routes } from './app.routes';
+import {
+  buildMarketingRoute,
+  buildRoutes,
+  participantAreaCanMatch,
+  routes,
+} from './app.routes';
 import {
   participantRoleGuard,
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
+import { environment } from '../environments/environment';
 
 describe('Web routes', () => {
   const marketingPaths = [
@@ -13,6 +19,8 @@ describe('Web routes', () => {
     'programmes',
     'ressources',
     'contact',
+    'mentions-legales',
+    'politique-de-confidentialite',
   ];
   const participantPaths = [
     'connexion',
@@ -20,64 +28,70 @@ describe('Web routes', () => {
     'mot-de-passe-oublie',
     'participant',
   ];
-  const builtRoutes = buildRoutes();
-  const paths = builtRoutes.map((r) => r.path);
 
-  it('When inspecting routes Then all public marketing routes are defined', () => {
-    for (const path of marketingPaths) {
-      expect(paths).toContain(path);
-    }
-  });
+  describe('Given public marketing pages', () => {
+    it('When building routes Then all public marketing routes are defined', () => {
+      const builtRoutes = buildRoutes();
+      const paths = builtRoutes.map((route) => route.path);
 
-  it('When inspecting routes Then participant and auth routes are defined', () => {
-    for (const path of participantPaths) {
-      expect(paths).toContain(path);
-    }
-  });
+      for (const path of marketingPaths) {
+        expect(paths).toContain(path);
+      }
+    });
 
-  it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
-    const wildcard = builtRoutes.find((r) => r.path === '**');
-    expect(wildcard).toBeDefined();
-    expect(wildcard!.loadComponent).toBeDefined();
-    expect(wildcard!.title).toBe('Page introuvable | KRAAK Consulting');
-    expect(wildcard!.data?.['seo']).toBeDefined();
-  });
-
-  it('When inspecting page routes Then every page component is lazy-loaded', () => {
-    const pageRoutes = builtRoutes.filter(
-      (r) => r.path !== '**' && r.path !== 'participant',
-    );
-    for (const route of pageRoutes) {
-      expect(route.loadComponent).toBeDefined();
-    }
-  });
-
-  it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
-    const pageRoutes = builtRoutes.filter((route) =>
-      marketingPaths.includes(route.path ?? ''),
-    );
-
-    for (const route of pageRoutes) {
-      expect(route.title).toEqual(expect.any(String));
-      expect(route.data?.['seo']).toBeDefined();
-    }
-  });
-
-  it('When inspecting participant routes Then auth and participant routes are reachable without canMatch gating', () => {
-    const gated = builtRoutes.filter((r) =>
-      participantPaths.includes(r.path ?? ''),
-    );
-    expect(gated.length).toBe(participantPaths.length);
-    for (const route of gated) {
-      expect(route.canMatch).toBeUndefined();
-    }
-  });
-
-  describe('Participant authenticated routes', () => {
-    it('When inspecting the participant route Then it is protected by both auth guards', () => {
-      const participantRoute = builtRoutes.find(
-        (r) => r.path === 'participant',
+    it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const pageRoutes = builtRoutes.filter((route) =>
+        marketingPaths.includes(route.path ?? ''),
       );
+
+      for (const route of pageRoutes) {
+        expect(route.title).toEqual(expect.any(String));
+        expect(route.data?.['seo']).toBeDefined();
+      }
+    });
+  });
+
+  describe('Given the participant area is disabled for the build', () => {
+    it('When building routes Then auth and participant routes are excluded', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const paths = builtRoutes.map((route) => route.path);
+
+      for (const path of participantPaths) {
+        expect(paths).not.toContain(path);
+      }
+    });
+  });
+
+  describe('Given the participant area is enabled for the build', () => {
+    it('When building routes Then auth and participant routes are defined', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const paths = builtRoutes.map((route) => route.path);
+
+      for (const path of participantPaths) {
+        expect(paths).toContain(path);
+      }
+    });
+
+    it('When inspecting participant routes Then every auth and participant route is protected by canMatch gating', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const gatedRoutes = builtRoutes.filter((route) =>
+        participantPaths.includes(route.path ?? ''),
+      );
+
+      expect(gatedRoutes.length).toBe(participantPaths.length);
+
+      for (const route of gatedRoutes) {
+        expect(route.canMatch).toContain(participantAreaCanMatch);
+      }
+    });
+
+    it('When inspecting the participant route Then it is protected by both auth guards', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const participantRoute = builtRoutes.find(
+        (route) => route.path === 'participant',
+      );
+
       expect(participantRoute).toBeDefined();
       expect(participantRoute!.canActivate).toContain(participantRoleGuard);
       expect(participantRoute!.canActivateChild).toContain(
@@ -86,34 +100,66 @@ describe('Web routes', () => {
     });
 
     it('When inspecting the participant route Then a dashboard child route exists', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const participantRoute = builtRoutes.find(
-        (r) => r.path === 'participant',
+        (route) => route.path === 'participant',
       );
       const dashboardRoute = participantRoute!.children?.find(
-        (r) => r.path === 'dashboard',
+        (route) => route.path === 'dashboard',
       );
+
       expect(dashboardRoute).toBeDefined();
       expect(dashboardRoute!.loadComponent).toBeDefined();
     });
 
     it('When navigating to /participant Then the default child redirects to /participant/dashboard', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const participantRoute = builtRoutes.find(
-        (r) => r.path === 'participant',
+        (route) => route.path === 'participant',
       );
       const defaultRedirect = participantRoute!.children?.find(
-        (r) => r.path === '',
+        (route) => route.path === '',
       );
+
       expect(defaultRedirect).toBeDefined();
       expect(defaultRedirect!.redirectTo).toBe('dashboard');
       expect(defaultRedirect!.pathMatch).toBe('full');
     });
   });
 
-  it('exports the runtime routes constant', () => {
-    expect(routes.length).toBe(builtRoutes.length);
+  describe('Given the route table', () => {
+    it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
+      const builtRoutes = buildRoutes();
+      const wildcard = builtRoutes.find((route) => route.path === '**');
+
+      expect(wildcard).toBeDefined();
+      expect(wildcard!.loadComponent).toBeDefined();
+      expect(wildcard!.title).toBe('Page introuvable | KRAAK Consulting');
+      expect(wildcard!.data?.['seo']).toBeDefined();
+    });
+
+    it('When inspecting page routes Then every page component is lazy-loaded', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const pageRoutes = builtRoutes.filter(
+        (route) => route.path !== '**' && route.path !== 'participant',
+      );
+
+      for (const route of pageRoutes) {
+        expect(route.loadComponent).toBeDefined();
+      }
+    });
+
+    it('When comparing exported routes Then they match the environment default', () => {
+      const exportedPaths = routes.map((route) => route.path);
+      const rebuiltPaths = buildRoutes({
+        includeParticipantArea: environment.enableParticipantArea,
+      }).map((route) => route.path);
+
+      expect(exportedPaths).toEqual(rebuiltPaths);
+    });
   });
 
-  describe('buildMarketingRoute', () => {
+  describe('Given buildMarketingRoute', () => {
     it('When the path has no SEO entry Then it throws a descriptive error', () => {
       class MissingSeoComponent {
         static readonly marker = 'missing-seo';
@@ -127,11 +173,16 @@ describe('Web routes', () => {
     });
   });
 
-  describe('Lazy-loaded route components', () => {
+  describe('Given lazy-loaded route components', () => {
     it('When each marketing route loadComponent is invoked Then it resolves to a component', async () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const targets = builtRoutes.filter(
-        (r) => r.path !== '**' && r.path !== 'participant' && r.loadComponent,
+        (route) =>
+          route.path !== '**' &&
+          route.path !== 'participant' &&
+          route.loadComponent,
       );
+
       for (const route of targets) {
         const loaded = await (route.loadComponent as () => Promise<unknown>)();
         expect(loaded).toBeTruthy();
@@ -139,15 +190,18 @@ describe('Web routes', () => {
     }, 15000);
 
     it('When the participant dashboard child loadComponent is invoked Then it resolves to a component', async () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const participantRoute = builtRoutes.find(
-        (r) => r.path === 'participant',
+        (route) => route.path === 'participant',
       );
-      const dashboard = participantRoute!.children!.find(
-        (c) => c.path === 'dashboard',
+      const dashboardRoute = participantRoute!.children!.find(
+        (childRoute) => childRoute.path === 'dashboard',
       );
+
       const loaded = await (
-        dashboard!.loadComponent as () => Promise<unknown>
+        dashboardRoute!.loadComponent as () => Promise<unknown>
       )();
+
       expect(loaded).toBeTruthy();
     });
   });

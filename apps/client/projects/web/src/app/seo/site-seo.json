@@ -45,21 +45,6 @@
     }
   },
   {
-    "path": "faq",
-    "title": "FAQ | Réponses utiles et orientation | KRAAK Consulting",
-    "description": "Retrouvez les réponses aux questions fréquentes sur les services, programmes, modalités d'accompagnement et délais de réponse de KRAAK Consulting.",
-    "openGraph": {
-      "title": "FAQ | KRAAK Consulting",
-      "description": "Des réponses utiles pour choisir la bonne prochaine étape avec KRAAK Consulting.",
-      "imagePath": "/open-graph/kraak-share-card.svg",
-      "imageAlt": "Carte de partage KRAAK Consulting présentant formation, projets et mobilité internationale."
-    },
-    "sitemap": {
-      "changeFrequency": "weekly",
-      "priority": 0.7
-    }
-  },
-  {
     "path": "programmes",
     "title": "Programmes | Trajectoires, leadership et communauté | KRAAK",
     "description": "Explorez les programmes KRAAK Consulting : ateliers leadership jeunesse, engagement communautaire, parcours étudiants et conférences utiles à la progression des trajectoires.",
@@ -102,6 +87,21 @@
     "sitemap": {
       "changeFrequency": "weekly",
       "priority": 0.8
+    }
+  },
+  {
+    "path": "faq",
+    "title": "FAQ | Aide et orientation | KRAAK Consulting",
+    "description": "Consultez la FAQ KRAAK pour clarifier vos questions sur les services, les programmes, l'accompagnement et les dÃ©lais de rÃ©ponse.",
+    "openGraph": {
+      "title": "FAQ | Aide et orientation | KRAAK Consulting",
+      "description": "Des rÃ©ponses utiles pour choisir le bon point d'entrÃ©e chez KRAAK et avancer avec plus de clartÃ©.",
+      "imagePath": "/open-graph/kraak-share-card.svg",
+      "imageAlt": "Carte de partage KRAAK Consulting prÃ©sentant formation, projets et mobilitÃ© internationale."
+    },
+    "sitemap": {
+      "changeFrequency": "monthly",
+      "priority": 0.6
     }
   },
   {

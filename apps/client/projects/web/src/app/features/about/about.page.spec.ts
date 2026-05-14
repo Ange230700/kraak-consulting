@@ -10,12 +10,12 @@ describe('AboutPage', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the about page component When it is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(AboutPage);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the heading', () => {
+  it('Given the about page When it renders Then it shows the page heading', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
@@ -24,7 +24,7 @@ describe('AboutPage', () => {
     );
   });
 
-  it('should render the refreshed mission, intervention levels and values', () => {
+  it('Given the about page When it renders Then it shows the mission, intervention levels and values', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
@@ -40,7 +40,7 @@ describe('AboutPage', () => {
     expect(content).toContain('Ouverture et connexion globale');
   });
 
-  it('should render the team preview section', () => {
+  it('Given the local web build When the about page renders Then it keeps the team preview section visible for review', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;

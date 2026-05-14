@@ -16,7 +16,10 @@ export function getRuntimeConfig(): KraakRuntimeConfig {
 }
 
 export function isParticipantAreaEnabled(): boolean {
-  return getRuntimeConfig().enableParticipantArea === true;
+  return (
+    getRuntimeConfig().enableParticipantArea ??
+    environment.enableParticipantArea
+  );
 }
 
 export function isProductionEnvironment(): boolean {

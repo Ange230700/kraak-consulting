@@ -1,6 +1,6 @@
 export const environment = {
-  environmentName: 'staging',
   production: true,
+  enableParticipantArea: true,
   siteUrl:
     'https://kraak-consulting-git-staging-ange230700s-projects.vercel.app',
   apiBaseUrl: 'https://kraak-api-staging.onrender.com',
