@@ -19,14 +19,14 @@ describe('Footer', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the footer component, when Angular creates it, then the instance is available', () => {
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the brand logo and enhanced footer links', () => {
+  it('Given the footer links, when the component renders, then it shows the brand and social navigation', () => {
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 
@@ -50,5 +50,22 @@ describe('Footer', () => {
     expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);
     expect(tiktokLink?.getAttribute('href')).toBe(expectedTiktokUrl);
     expect(element.textContent).toContain('FAQ');
+  });
+
+  it('Given the footer navigation, when the component renders, then each public link is unique', () => {
+    const fixture = TestBed.createComponent(Footer);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    const navigationKeys = component['navigationLinks'].map(
+      (link) => `${link.path}${link.label}`,
+    );
+    const uniqueNavigationKeys = new Set(navigationKeys);
+    const faqLinks = component['navigationLinks'].filter(
+      (link) => link.path === '/faq' && link.label === 'FAQ',
+    );
+
+    expect(uniqueNavigationKeys.size).toBe(navigationKeys.length);
+    expect(faqLinks).toHaveLength(1);
   });
 });
