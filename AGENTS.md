@@ -307,7 +307,9 @@ Comportement obligatoire pour les assistants :
   l’utilisateur remplace explicitement ce workflow.
 - Interdiction absolue d'utiliser le flag `--no-verify` dans toute commande
   Git (`commit`, `push`, etc.). Les hooks locaux et contrôles de qualité ne
-  doivent jamais être contournés.
+  doivent jamais être contournés. Si un push bloque et qu’aucune solution
+  propre n’est trouvée, arrêter immédiatement et signaler le problème à
+  l’utilisateur plutôt que de contourner les contrôles.
 - Règle de récupération des changements en suspens : si des fichiers modifiés ou
   non suivis se trouvent sur `staging` (ou pire sur `main`) sans pouvoir y être
   commités directement (protection de branche ou politique de PR), ne jamais
