@@ -10,10 +10,7 @@ import {
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { Testimonials } from '../../shared/testimonials/testimonials.component';
-import { FadingPartners } from '../../shared/fading-partners/fading-partners.component';
-import { ImpactStats } from '../../shared/impact-stats/impact-stats.component';
-import { canShowPreviewContent } from '../../core/runtime/runtime-config';
+import { HomePreviewSections } from '../../shared/home-preview-sections/home-preview-sections.component';
 
 @Component({
   selector: 'kraak-home-page',
@@ -24,9 +21,7 @@ import { canShowPreviewContent } from '../../core/runtime/runtime-config';
     ButtonDirective,
     FaqAccordion,
     CtaBanner,
-    Testimonials,
-    FadingPartners,
-    ImpactStats,
+    HomePreviewSections,
   ],
   templateUrl: './home.page.html',
   styles: [
@@ -40,7 +35,6 @@ import { canShowPreviewContent } from '../../core/runtime/runtime-config';
 })
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
-  protected readonly canShowPreviewContent = canShowPreviewContent;
   protected readonly keySolutions: readonly string[] = [
     'Développement personnel et professionnel',
     'Anglais et français professionnel',

@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
 import { Navbar } from './navbar.component';
 
-async function compile() {
+async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [Navbar],
     providers: [provideRouter([])],
@@ -17,7 +18,7 @@ describe('Navbar', () => {
     globalThis.__KRAAK_RUNTIME_CONFIG__ = originalConfig;
   });
 
-  describe('Given the participant area feature flag is enabled', () => {
+  describe('Given the participant area feature flag is enabled at runtime', () => {
     beforeEach(async () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
       await compile();
@@ -31,7 +32,7 @@ describe('Navbar', () => {
       const brandImage = element.querySelector(
         'img[alt="Logo KRAAK Consulting"]',
       ) as HTMLImageElement | null;
-      const primaryCta = element.querySelector(
+      const participantCta = element.querySelector(
         'a[aria-label="Espace participant"]',
       ) as HTMLAnchorElement | null;
       const menuToggle = element.querySelector(
@@ -42,13 +43,13 @@ describe('Navbar', () => {
       expect(menuToggle).toBeTruthy();
       expect(element.textContent).toContain('Espace participant');
       expect(brandImage?.getAttribute('src')).toContain('kraak-logo.png');
-      expect(primaryCta).toBeTruthy();
+      expect(participantCta).toBeTruthy();
       expect(element.textContent).not.toContain('Accueil');
-      expect(element.textContent).toContain('\u00C0 propos');
+      expect(element.textContent).toContain('À propos');
     });
   });
 
-  describe('Given the participant area feature flag is disabled', () => {
+  describe('Given the participant area feature flag is disabled at runtime', () => {
     beforeEach(async () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
       await compile();
@@ -59,17 +60,17 @@ describe('Navbar', () => {
       fixture.detectChanges();
 
       const element = fixture.nativeElement as HTMLElement;
-      const primaryCta = element.querySelector(
+      const participantCta = element.querySelector(
         'a[aria-label="Espace participant"]',
       );
       const menuToggle = element.querySelector(
         'button[aria-label="Menu de navigation"]',
       );
 
-      expect(primaryCta).toBeNull();
+      expect(participantCta).toBeNull();
       expect(element.textContent).not.toContain('Espace participant');
       expect(menuToggle).toBeTruthy();
-      expect(element.textContent).toContain('\u00C0 propos');
+      expect(element.textContent).toContain('À propos');
     });
   });
 
@@ -91,15 +92,20 @@ describe('Navbar', () => {
       );
     });
 
-    it('When the navbar renders Then the participant CTA stays hidden by default', () => {
+    it('When the navbar renders Then the participant CTA follows the environment default', () => {
       const fixture = TestBed.createComponent(Navbar);
       fixture.detectChanges();
 
       const element = fixture.nativeElement as HTMLElement;
-      const primaryCta = element.querySelector(
+      const participantCta = element.querySelector(
         'a[aria-label="Espace participant"]',
       );
-      expect(primaryCta).toBeNull();
+
+      if (environment.enableParticipantArea) {
+        expect(participantCta).toBeTruthy();
+      } else {
+        expect(participantCta).toBeNull();
+      }
     });
 
     it('When toggleMobileMenu is called Then mobileMenuOpen toggles', () => {

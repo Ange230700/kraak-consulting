@@ -17,10 +17,10 @@ describe('site-seo', () => {
       '',
       'a-propos',
       'services',
-      'faq',
       'programmes',
       'ressources',
       'contact',
+      'faq',
       'mentions-legales',
       'politique-de-confidentialite',
     ]);

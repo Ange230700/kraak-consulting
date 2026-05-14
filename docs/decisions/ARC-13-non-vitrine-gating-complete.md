@@ -1,340 +1,103 @@
-# 🔒 Non-Vitrine Features: Gating Strategy Summary (Already Implemented)
-
-**Date:** 2026-05-09  
-**Status:** ✅ All already in place — NO ADDITIONAL CHANGES NEEDED
-
----
-
-## Overview: What's Hidden in Production
-
-Beyond the vitrine preview sections (handled by environment detection), these features are hidden in production:
-
-| Layer          | Feature                                                            | Gating Mechanism                             | Status            |
-| -------------- | ------------------------------------------------------------------ | -------------------------------------------- | ----------------- |
-| **Web Routes** | Participant area (`/connexion`, `/inscription`, `/participant/**`) | Runtime feature flag `enableParticipantArea` | ✅ Implemented    |
-| **Web Navbar** | "Espace participant" link                                          | `@if (participantAreaEnabled)`               | ✅ Implemented    |
-| **API**        | All participant endpoints                                          | Bearer token `Authorization` header          | ✅ Implemented    |
-| **Mobile App** | Full mobile application                                            | Separate APK/TestFlight deployment           | ✅ Separate build |
-| **Database**   | Participant data access                                            | Supabase Row-Level Security (RLS)            | ✅ Configured     |
-
----
-
-## 1. Web Routes (Runtime Feature Flag) ✅
-
-**File:** `apps/client/projects/web/src/app/app.routes.ts`
-
-```typescript
-import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
-
-export const participantAreaCanMatch: CanMatchFn = () =>
-  isParticipantAreaEnabled();
-
-const participantAreaRoutes: Routes = [
-  {
-    path: 'connexion',
-    canMatch: [participantAreaCanMatch], // ← Routes blocked if flag is false
-    loadComponent: () => import('./features/auth/sign-in.page'),
-  },
-  {
-    path: 'inscription',
-    canMatch: [participantAreaCanMatch], // ← Routes blocked if flag is false
-    loadComponent: () => import('./features/auth/sign-up.page'),
-  },
-  {
-    path: 'participant',
-    canMatch: [participantAreaCanMatch], // ← Routes blocked if flag is false
-    children: [
-      /* ... */
-    ],
-  },
-  // ... more auth routes
-];
-
-export const routes: Routes = [
-  ...marketingRoutes,
-  ...participantAreaRoutes, // ← Conditionally included
-];
-```
-
-### How It Works
-
-```text
-User tries to access /connexion in production
-  ↓
-Router checks: canMatch: [participantAreaCanMatch]
-  ↓
-participantAreaCanMatch() calls isParticipantAreaEnabled()
-  ↓
-isParticipantAreaEnabled() checks CLIENT_FEATURE_PARTICIPANT_AREA flag
-  ↓
-Flag is FALSE in production
-  ↓
-Route not matched → Wildcard /** redirects to /
-  ↓
-User sees 200 OK on home page ✅ (not 404)
-```
-
-### Configuration by Environment
-
-| Environment    | Branch    | Flag Value        | Behavior                    |
-| -------------- | --------- | ----------------- | --------------------------- |
-| **Local dev**  | N/A       | `true`            | ✅ All auth routes work     |
-| **Staging**    | `staging` | `true` (override) | ✅ All auth routes work     |
-| **Production** | `main`    | `false` (default) | ❌ Auth routes return 200→/ |
-
----
-
-## 2. Web Navbar Link (Template Condition) ✅
-
-**File:** `apps/client/projects/web/src/app/layouts/navbar/navbar.ts`
-
-```typescript
-import { isParticipantAreaEnabled } from '../../core/runtime/runtime-config';
-
-export default class NavbarComponent {
-  protected readonly participantAreaEnabled = isParticipantAreaEnabled();
-}
-```
-
-**File:** `apps/client/projects/web/src/app/layouts/navbar/navbar.html`
-
-```html
-<!-- Navbar always shown -->
-<nav class="navbar">
-  <!-- Marketing links always shown -->
-  <a routerLink="/">Accueil</a>
-  <a routerLink="/a-propos">À propos</a>
-  <a routerLink="/services">Services</a>
-
-  <!-- Participant area link conditionally shown -->
-  @if (participantAreaEnabled) {
-  <a routerLink="/participant" class="btn btn-primary"> Espace participant </a>
-  }
-</nav>
-```
-
-### Result
-
-| Environment       | Display                              | Behavior                        |
-| ----------------- | ------------------------------------ | ------------------------------- |
-| **Local/Staging** | ✅ "Espace participant" link visible | User can click to auth area     |
-| **Production**    | ❌ "Espace participant" link hidden  | Only marketing navigation shown |
-
----
-
-## 3. API Endpoints (Bearer Token Protection) ✅
-
-**File:** `apps/api/src/dashboard/dashboard.controller.ts`
-
-```typescript
-@ApiTags('Dashboard')
-@Controller('dashboard')
-export class DashboardController {
-  @Get()
-  @ApiBearerAuth('access-token') // ← Swagger documents auth requirement
-  async getAggregate(
-    @Headers('authorization') authorizationHeader?: string,
-  ): Promise<DashboardAggregateDto> {
-    // Manual token extraction and validation
-    const accessToken = extractAccessToken(authorizationHeader);
-
-    if (!accessToken.valid) {
-      throw new UnauthorizedException({
-        success: false,
-        message: accessToken.error,
-      });
-    }
-
-    return this.dashboardService.getAggregate(accessToken.data);
-  }
-}
-```
-
-### All Participant Endpoints Protected
-
-| Endpoint                     | Module        | Protection            |
-| ---------------------------- | ------------- | --------------------- |
-| `GET /api/dashboard`         | dashboard     | Bearer token required |
-| `GET /api/programs`          | programs      | Bearer token required |
-| `GET /api/resources`         | resources     | Bearer token required |
-| `GET /api/announcements`     | announcements | Bearer token required |
-| `POST /api/support`          | support       | Bearer token required |
-| `GET /api/announcements/:id` | announcements | Bearer token required |
-
-### What Happens Without Token (Production)
-
-```text
-curl http://production-api/api/dashboard
-  (no Authorization header)
-  ↓
-Controller checks token validity
-  ↓
-No valid token found
-  ↓
-Response: 401 Unauthorized
-{
-  "success": false,
-  "message": "Missing or invalid authorization header"
-}
-```
-
----
-
-## 4. Mobile App (Separate Deployment) ✅
-
-**Deployment Strategy:**
-
-| Artifact                | Channel           | Availability                        |
-| ----------------------- | ----------------- | ----------------------------------- |
-| **Web (Vercel)**        | vercel.app domain | Public on prod, staging, preview    |
-| **Mobile (APK)**        | Internal testing  | Staging/Dev only (not distributed)  |
-| **Mobile (TestFlight)** | App Store Connect | Future: Beta testing, pilot release |
-
-**Status:**
-
-- ✅ Mobile app fully implemented and tested
-- ✅ Separate build pipeline (Ionic + Capacitor)
-- ✅ Not included in web bundle
-- ✅ Deployable independently
-
----
+# ARC-13 - Gating des routes non vitrines côté web
 
-## 5. Database Security (Supabase RLS) ✅
+**Date :** 2026-05-14  
+**Statut :** Appliqué
 
-**File:** `supabase/migrations/*.sql`
+## Décision
 
-Row-Level Security ensures that even if an API endpoint is misconfigured, the database layer protects participant data:
+Les routes d'authentification et d'espace participant ne doivent pas être
+publiées en production par défaut. Le gating repose sur deux niveaux :
 
-```sql
--- Example RLS policy (all participant tables have similar)
-CREATE POLICY participant_read_own_data ON programs
-  USING (
-    auth.uid() = participant_id
-  );
-
-CREATE POLICY participant_cannot_update_data ON programs
-  WITH CHECK (
-    auth.uid() = participant_id AND
-    NOT is_admin
-  );
-```
+1. **Compilation** : remplacement du module `participant-area.routes.ts` en production
+2. **Runtime** : vérification `canMatch` via `isParticipantAreaEnabled()`
 
-### What This Means
+## Source de vérité
 
-Even if someone:
+Le flag d'environnement `enableParticipantArea` est défini dans les fichiers :
 
-- ✅ Bypasses the web routing (impossible due to feature flag + `@if`)
-- ✅ Finds an API endpoint directly
-- ✅ Has a stolen token from another participant
+- `environment.local.ts` : `true`
+- `environment.staging.ts` : `true`
+- `environment.production.ts` : `false`
 
-They **still cannot** access another participant's data because:
+Le helper `isParticipantAreaEnabled()` utilise ensuite :
 
-1. Token must be valid (Supabase verifies)
-2. `auth.uid()` from token must match the row's `participant_id`
-3. RLS policy blocks any other access
+1. la valeur runtime injectée dans `globalThis.__KRAAK_RUNTIME_CONFIG__`
+2. sinon la valeur du fichier d'environnement
 
----
+Ce fallback permet :
 
-## 🎯 Complete Security Layers (Defense in Depth)
+- un build prod qui exclut les routes par défaut
+- un override runtime explicite si nécessaire
 
-Production architecture has **5 layers** of protection:
+## Routes concernées
 
-```text
-Layer 1: Feature Flag
-  ↓ (If bypassed)
-Layer 2: Routes Hidden
-  ↓ (If bypassed)
-Layer 3: API Auth Check
-  ↓ (If bypassed)
-Layer 4: RLS Policies
-  ↓ (If bypassed)
-Layer 5: Database Encryption
-```
+- `/connexion`
+- `/inscription`
+- `/mot-de-passe-oublie`
+- `/participant/**`
 
-Only production would be public; all layers work together to ensure NO participant area exposure.
+## Mise en œuvre
 
----
+### 1. Remplacement du module de routes au build
 
-## ✅ Production Readiness Checklist
+Le fichier `participant-area.routes.ts` est remplacé en production par
+`participant-area.prod.routes.ts` via `fileReplacements`.
 
-### Feature Flag (ARC-10)
+La variante production exporte :
 
-- [x] `enableParticipantArea` implemented
-- [x] Runtime config system in place
-- [x] Default false in production
-- [x] Override true in staging
-- [x] Tests passing (9/9)
+- `participantAreaRoutes = []`
+- `participantAreaCanMatch = () => false`
 
-### Routes (app.routes.ts)
+Le build production n'importe donc plus les `loadComponent()` des pages auth et
+participant.
 
-- [x] `canMatch: [participantAreaCanMatch]` guards all participant routes
-- [x] Wildcard redirect sends users to home
-- [x] No 404 errors (user-friendly)
-- [x] Tested in both states
+### 2. Inclusion conditionnelle dans `buildRoutes()`
 
-### Navbar (navbar component)
+`buildRoutes()` n'ajoute `participantAreaRoutes` que si
+`includeParticipantArea` est vrai.
 
-- [x] `@if (participantAreaEnabled)` hides link in production
-- [x] Link visible in staging/dev
-- [x] No dead links
+La constante exportée `routes` suit la valeur de
+`environment.enableParticipantArea`.
 
-### API (All controllers)
+### 3. Verrou runtime complémentaire
 
-- [x] Bearer token required on all participant endpoints
-- [x] Token validation throws 401
-- [x] Swagger documented with `@ApiBearerAuth`
-- [x] Integration tests passing (292 tests)
+Chaque route auth/participant porte aussi :
 
-### Database (RLS)
+- `canMatch: [participantAreaCanMatch]`
 
-- [x] Policies enforced at row level
-- [x] No admin bypass available for participants
-- [x] Tested with restricted tokens
+Ainsi, même dans un build non production, un override runtime peut encore
+désactiver l'accès.
 
-### Mobile
+### 4. Navigation cohérente
 
-- [x] Separate deployment pipeline
-- [x] Not included in web bundle
-- [x] Independent versioning
+Le wrapper `participant-nav-cta.component.ts` est remplacé en production par
+`participant-nav-cta.prod.component.ts`.
 
----
+Le lien réel reste porté par `participant-nav-cta-link.component.ts`, importé
+uniquement hors production par le wrapper standard.
 
-## 🚀 What You Get for Production v1.0.0
+La navigation lit donc toujours le même helper `isParticipantAreaEnabled()`
+hors production, sans livrer un lien caché dans le bundle vitrine.
 
-| Feature                       | Production          | Staging/Dev         |
-| ----------------------------- | ------------------- | ------------------- |
-| **Vitrine pages**             | ✅ All public       | ✅ All public       |
-| **Vitrine preview sections**  | ❌ Hidden           | ✅ Visible          |
-| **Participant routes**        | ❌ Unreachable      | ✅ Accessible       |
-| **Navbar participant link**   | ❌ Hidden           | ✅ Visible          |
-| **API participant endpoints** | ❌ 401 Unauthorized | ✅ Works with token |
-| **Mobile app**                | ❌ Not deployed     | ✅ APK/TestFlight   |
+### 5. Prerender limité aux pages publiques
 
----
+Le prerender SSR ne cible plus `**`. Il est restreint aux pages marketing
+publiques afin d'éviter de générer des artefacts statiques pour des routes non
+vitrines.
 
-## 📋 Summary: Nothing More to Do
+## Conséquences
 
-You asked to "handle the other stuff that will remain hidden in prod" — **it's already all handled:**
+- En production, les routes auth/participant ne sont plus dans la table de
+  routes par défaut.
+- Le manifest de prerender ne doit plus contenir les pages
+  `/connexion`, `/inscription`, `/mot-de-passe-oublie` ni
+  `/participant/dashboard`.
+- Le CTA `Espace participant` n'est plus livré dans le bundle production.
+- En local et en staging, le flux participant reste disponible pour les tests.
 
-✅ **Participant web area** — Gated by runtime feature flag + route guards  
-✅ **Participant navbar link** — Hidden with template condition  
-✅ **API endpoints** — Protected by bearer token + RLS  
-✅ **Mobile app** — Separate deployment, doesn't affect web  
-✅ **Database** — RLS policies add extra layer
+## Validation attendue
 
-**No additional code changes needed. All systems are production-ready.**
-
----
-
-## Ready to Tag v1.0.0?
-
-You have:
-
-1. ✅ Vitrine preview sections gated by environment
-2. ✅ Participant area gated by feature flag
-3. ✅ API protected by auth + RLS
-4. ✅ Mobile separate deployment
-5. ✅ All tests passing (1,060 tests)
-6. ✅ Build verified
-
-**Everything is in place for a clean, secure production release.** 🚀
+1. `pnpm.cmd --dir apps/client ng test web --watch=false --include=projects/web/src/app/app.routes.spec.ts`
+2. `pnpm.cmd --dir apps/client ng build web --configuration production`
+3. Vérifier dans `apps/client/dist/web/prerendered-routes.json` l'absence des
+   routes auth/participant.
