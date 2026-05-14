@@ -8,9 +8,7 @@ test.describe('Analytics — gating GA4', () => {
     page,
   }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(
-      page.getByRole('link', { name: 'Espace participant' }).first(),
-    ).toBeVisible();
+    await expect(page.getByRole('banner')).toBeVisible();
 
     await expect(
       page.locator('script[data-kraak-analytics="loader"]'),
@@ -32,10 +30,7 @@ test.describe('Analytics — gating GA4', () => {
     });
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page
-      .getByRole('link', { name: 'Espace participant' })
-      .first()
-      .waitFor();
+    await expect(page.getByRole('banner')).toBeVisible();
 
     expect(gtagRequests).toEqual([]);
   });
