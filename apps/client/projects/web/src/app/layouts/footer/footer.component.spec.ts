@@ -19,14 +19,14 @@ describe('Footer', () => {
     }).compileComponents();
   });
 
-  it('Given the footer component, when Angular creates it, then the instance is available', () => {
+  it('Given the footer component When Angular creates it Then the instance is available', () => {
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('Given the footer links, when the component renders, then it shows the brand and social navigation', () => {
+  it('Given the footer links When the component renders Then it shows the brand and social navigation', () => {
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 
@@ -44,15 +44,19 @@ describe('Footer', () => {
     const tiktokLink = element.querySelector(
       'a[aria-label="TikTok"]',
     ) as HTMLAnchorElement | null;
+    const facebookIcon = facebookLink?.querySelector('i');
     expect(brandImage?.getAttribute('src')).toContain('kraak-symbol.png');
     expect(footerLinks.length).toBeGreaterThan(0);
     expect(socialButtons.every(Boolean)).toBe(true);
     expect(facebookLink?.getAttribute('href')).toBe(expectedFacebookUrl);
     expect(tiktokLink?.getAttribute('href')).toBe(expectedTiktokUrl);
+    expect(facebookLink?.className).toContain('h-12');
+    expect(facebookLink?.className).toContain('w-12');
+    expect(facebookIcon?.className).toContain('text-xl');
     expect(element.textContent).toContain('FAQ');
   });
 
-  it('Given the footer navigation, when the component renders, then each public link is unique', () => {
+  it('Given the footer navigation When the component renders Then each public link is unique', () => {
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 

@@ -1,15 +1,11 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
+import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
-import {
-  FaqAccordion,
-  type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion.component';
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { HomePreviewSections } from '../../shared/home-preview-sections/home-preview-sections.component';
 
 @Component({
@@ -19,57 +15,22 @@ import { HomePreviewSections } from '../../shared/home-preview-sections/home-pre
     NgStyle,
     RouterLink,
     ButtonDirective,
-    FaqAccordion,
     CtaBanner,
     HomePreviewSections,
   ],
   templateUrl: './home.page.html',
-  styles: [
-    `
-      .kr-perf-section {
-        content-visibility: auto;
-        contain-intrinsic-size: 1px 900px;
-      }
-    `,
-  ],
 })
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
   protected readonly keySolutions: readonly string[] = [
-    'Développement personnel et professionnel',
-    'Anglais et français professionnel',
+    'D\u00e9veloppement personnel et professionnel',
+    'Anglais et fran\u00e7ais professionnel',
     'Leadership et prise de parole',
-    'Préparation aux entretiens',
+    'Pr\u00e9paration aux entretiens',
     'Structuration de projets',
     "Accompagnement d'entreprises et startups",
-    'Conseils en mobilité internationale',
+    'Conseils en mobilit\u00e9 internationale',
     'Recrutement et placement en emploi',
-  ];
-
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question:
-        'Je ne sais pas par où commencer, quelle est la première étape ?',
-      answer:
-        "Commencez par une consultation d'orientation. Nous clarifions votre objectif, vos contraintes et les options réalistes pour définir un point de départ concret.",
-    },
-    {
-      question: 'Quels services KRAAK peuvent répondre à mon objectif ?',
-      answer:
-        'Nous partons de votre priorité du moment pour vous orienter vers le bon point d’entrée entre formation, recherche et gestion de projets, études et immigration, programmes KRAAK ou besoin entreprise.',
-    },
-    {
-      question:
-        'Proposez-vous des programmes pour les jeunes, les étudiants et les organisations ?',
-      answer:
-        'Oui. Nos programmes et accompagnements s’adressent aux étudiants, jeunes professionnels, entreprises, diaspora et organisations avec des formats courts, structurés et orientés résultats.',
-    },
-    {
-      question:
-        'En combien de temps puis-je recevoir une réponse après contact ?',
-      answer:
-        'Après votre message, nous revenons généralement vers vous sous 48h ouvrées avec une première orientation et les prochaines étapes recommandées.',
-    },
   ];
 
   private readonly gsapService = inject(GsapAnimationsService);

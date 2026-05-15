@@ -1,6 +1,6 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -8,14 +8,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import type { ContactFormDto } from '@kraak/contracts';
+import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
-import { logDebugError } from '@kraak/api-client';
-import type { ContactFormDto } from '@kraak/contracts';
 
+import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import {
   CONTACT_EMAIL,
   CONTACT_VISUAL_URL,
@@ -24,12 +25,7 @@ import {
   type SocialLink,
 } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
-import {
-  FaqAccordion,
-  type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion.component';
 import { ContactService } from './contact.service';
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 type ServiceType =
   | 'formation'
@@ -46,7 +42,7 @@ interface ServiceOption {
 }
 
 const GENERIC_CONTACT_ERROR_MESSAGE =
-  'Une erreur est survenue. Veuillez r\u00E9essayer plus tard.';
+  'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.';
 
 @Component({
   selector: 'kraak-contact-page',
@@ -59,7 +55,6 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
     InputText,
     Textarea,
     Message,
-    FaqAccordion,
     CtaBanner,
   ],
   templateUrl: './contact.page.html',
@@ -76,7 +71,6 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly contactVisualUrl = CONTACT_VISUAL_URL;
   protected readonly contactEmail = CONTACT_EMAIL;
   protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
-
   protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
 
   private readonly contactService = inject(ContactService);
@@ -105,41 +99,6 @@ export default class ContactPage implements OnInit, OnDestroy {
     KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
     '';
 
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question: 'Comment obtenir un accompagnement personnalisé avec KRAAK ?',
-      answer:
-        'Remplissez le formulaire de contact avec votre objectif principal. Notre équipe analyse votre besoin et vous propose une orientation claire sous 48h ouvrées.',
-    },
-    {
-      question: 'Quels types de services propose KRAAK ?',
-      answer:
-        "Nous intervenons sur la formation, la recherche et gestion de projets, les programmes KRAAK, les solutions entreprises et l'accompagnement en études et immigration.",
-    },
-    {
-      question: 'Puis-je vous contacter directement sur WhatsApp ?',
-      answer:
-        'Oui. Si vous préférez un échange rapide, le canal WhatsApp reste disponible en complément du formulaire de contact.',
-    },
-    {
-      question: 'Combien de temps faut-il pour recevoir une première réponse ?',
-      answer:
-        'Après soumission de votre demande, nous revenons généralement vers vous sous 48h ouvrées avec une proposition de prochaine étape.',
-    },
-  ];
-
-  ngOnInit(): void {
-    this.gsapService.animatePageIn();
-    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
-    this.gsapService.initializeInteractiveCardAnimations('article');
-    this.gsapService.initializeButtonTransitions();
-    this.gsapService.initializeFormFieldAnimations();
-    this.gsapService.initializeSectionAnimations();
-  }
-
-  ngOnDestroy(): void {
-    this.gsapService.killAllAnimations();
-  }
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2)]),
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -159,21 +118,39 @@ export default class ContactPage implements OnInit, OnDestroy {
   readonly success = signal(false);
   readonly apiErrors = signal<string[]>([]);
 
+  ngOnInit(): void {
+    this.gsapService.animatePageIn();
+    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
+    this.gsapService.initializeInteractiveCardAnimations('article');
+    this.gsapService.initializeButtonTransitions();
+    this.gsapService.initializeFormFieldAnimations();
+    this.gsapService.initializeSectionAnimations();
+  }
+
+  ngOnDestroy(): void {
+    this.gsapService.killAllAnimations();
+  }
+
   get name(): AbstractControl {
     return this.form.get('name')!;
   }
+
   get email(): AbstractControl {
     return this.form.get('email')!;
   }
+
   get subject(): AbstractControl {
     return this.form.get('subject')!;
   }
+
   get country(): AbstractControl {
     return this.form.get('country')!;
   }
+
   get serviceType(): AbstractControl {
     return this.form.get('serviceType')!;
   }
+
   get message(): AbstractControl {
     return this.form.get('message')!;
   }
@@ -204,7 +181,7 @@ export default class ContactPage implements OnInit, OnDestroy {
           severity: 'success',
           summary: 'Contact',
           detail:
-            'Votre message a bien été envoyé. Notre équipe revient vers vous rapidement.',
+            'Votre message a bien \u00e9t\u00e9 envoy\u00e9. Notre \u00e9quipe revient vers vous rapidement.',
           life: 6000,
         });
         this.form.reset();
