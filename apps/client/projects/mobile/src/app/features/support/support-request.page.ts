@@ -8,8 +8,8 @@ import {
 import { Router } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import type { SupportCategoryValue } from '@kraak/contracts';
-import { ApiError } from '@kraak/api-client';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { ApiError, logDebugError } from '@kraak/api-client';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileSupportService } from './mobile-support.service';
 
 interface SupportRequestFormModel {
@@ -23,7 +23,7 @@ interface SupportRequestFormModel {
 @Component({
   selector: 'kraak-support-request-page',
   standalone: true,
-  imports: [PageShell, ReactiveFormsModule, IonButton],
+  imports: [PageShellComponent, ReactiveFormsModule, IonButton],
   templateUrl: './support-request.page.html',
 })
 export default class SupportRequestPage {
@@ -94,6 +94,9 @@ export default class SupportRequestPage {
 
       await this.router.navigateByUrl('/tabs/support');
     } catch (error) {
+      logDebugError('mobile.support.submit', error, {
+        route: '/tabs/support/request',
+      });
       this.errorMessage.set(resolveSupportErrorMessage(error));
     } finally {
       this.submitting.set(false);

@@ -4,6 +4,11 @@ import { TestBed } from '@angular/core/testing';
 import { findSeoPageByPath } from './site-seo';
 import { SeoService } from './seo.service';
 
+const LOCAL_BASE_URL = 'http://localhost:4200';
+const LOCAL_HOME_URL = `${LOCAL_BASE_URL}/`;
+const LOCAL_CONTACT_URL = `${LOCAL_BASE_URL}/contact`;
+const LOCAL_OG_IMAGE_URL = `${LOCAL_BASE_URL}/open-graph/kraak-share-card.svg`;
+
 describe('SeoService', () => {
   beforeEach(() => {
     document.head
@@ -47,24 +52,22 @@ describe('SeoService', () => {
 
     expect(contactPage).toBeDefined();
 
-    service.applyPageSeo(contactPage!, 'http://localhost:4200');
+    service.applyPageSeo(contactPage!, LOCAL_BASE_URL);
 
     expect(title.getTitle()).toContain('Contact');
     expect(meta.getTag('name="description"')?.content).toContain(
-      '\u00E9tudiant, professionnel, entrepreneur ou entreprise',
+      'gestion de projets, immigration ou besoin entreprise',
     );
     expect(meta.getTag('property="og:title"')?.content).toContain(
       'Parlons de votre projet',
     );
-    expect(meta.getTag('property="og:url"')?.content).toBe(
-      'http://localhost:4200/contact',
-    );
+    expect(meta.getTag('property="og:url"')?.content).toBe(LOCAL_CONTACT_URL);
     expect(meta.getTag('property="og:image"')?.content).toBe(
-      'http://localhost:4200/open-graph/kraak-share-card.svg',
+      LOCAL_OG_IMAGE_URL,
     );
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe('http://localhost:4200/contact');
+    ).toBe(LOCAL_CONTACT_URL);
   });
 
   it('should normalize the homepage canonical URL with a trailing slash', () => {
@@ -73,11 +76,11 @@ describe('SeoService', () => {
 
     expect(homePage).toBeDefined();
 
-    service.applyPageSeo(homePage!, 'http://localhost:4200/');
+    service.applyPageSeo(homePage!, LOCAL_HOME_URL);
 
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe('http://localhost:4200/');
+    ).toBe(LOCAL_HOME_URL);
   });
 
   // Given the canonical link already exists in the document head
@@ -91,15 +94,15 @@ describe('SeoService', () => {
     expect(contactPage).toBeDefined();
     expect(homePage).toBeDefined();
 
-    service.applyPageSeo(contactPage!, 'http://localhost:4200');
+    service.applyPageSeo(contactPage!, LOCAL_BASE_URL);
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe('http://localhost:4200/contact');
+    ).toBe(LOCAL_CONTACT_URL);
 
-    service.applyPageSeo(homePage!, 'http://localhost:4200/');
+    service.applyPageSeo(homePage!, LOCAL_HOME_URL);
     expect(document.querySelectorAll('link[rel="canonical"]').length).toBe(1);
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe('http://localhost:4200/');
+    ).toBe(LOCAL_HOME_URL);
   });
 });

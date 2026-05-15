@@ -5,6 +5,8 @@ import {
   MOBILE_AUTH_STORAGE_KEY,
 } from './mobile-auth.service';
 
+const TEST_AUTH_SIGN_IN_ENDPOINT = 'http://localhost:3000/auth/sign-in';
+
 describe('MobileAuthService', () => {
   const fetchMock = vi.fn();
 
@@ -57,7 +59,7 @@ describe('MobileAuthService', () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:3000/auth/sign-in',
+      TEST_AUTH_SIGN_IN_ENDPOINT,
       expect.objectContaining({
         method: 'POST',
       }),

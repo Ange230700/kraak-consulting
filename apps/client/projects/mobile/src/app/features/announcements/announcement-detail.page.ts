@@ -2,19 +2,19 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
-import { createApiClient } from '@kraak/api-client';
+import { createApiClient, logDebugError } from '@kraak/api-client';
 import type { AnnouncementDto } from '@kraak/contracts';
 import { environment } from '../../../environments/environment';
 import {
   MobileAuthService,
   resolveAuthErrorMessage,
 } from '../auth/mobile-auth.service';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 
 @Component({
   selector: 'kraak-announcement-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, DatePipe],
   templateUrl: './announcement-detail.page.html',
 })
 export default class AnnouncementDetailPage implements OnInit {
@@ -74,6 +74,9 @@ export default class AnnouncementDetailPage implements OnInit {
         await this.announcementsClient.getById(announcementId);
       this.announcement.set(announcement);
     } catch (error) {
+      logDebugError('mobile.announcements.detail.load', error, {
+        feature: 'announcements',
+      });
       this.announcement.set(null);
       this.errorMessage.set(
         resolveAuthErrorMessage(

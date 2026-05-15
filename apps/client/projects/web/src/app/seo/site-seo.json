@@ -1,11 +1,11 @@
 [
   {
     "path": "",
-    "title": "KRAAK Consulting | Formation, projets et mobilité internationale",
-    "description": "KRAAK Consulting accompagne étudiants, professionnels, entreprises et diaspora en formation, gestion de projets et immigration.",
+    "title": "KRAAK Consulting | Développez vos compétences, lancez vos projets",
+    "description": "KRAAK Consulting accompagne étudiants, professionnels, entreprises et diaspora avec des solutions concrètes en formation, gestion de projets et immigration.",
     "openGraph": {
-      "title": "KRAAK Consulting | Formation, projets et mobilité internationale",
-      "description": "Développez vos compétences, lancez vos projets et accédez aux opportunités internationales.",
+      "title": "KRAAK Consulting | Développez vos compétences, lancez vos projets",
+      "description": "Développez vos compétences, lancez vos projets et accédez aux opportunités internationales avec un accompagnement KRAAK clair et structuré.",
       "imagePath": "/open-graph/kraak-share-card.svg",
       "imageAlt": "Carte de partage KRAAK Consulting présentant formation, projets et mobilité internationale."
     },
@@ -17,10 +17,10 @@
   {
     "path": "a-propos",
     "title": "À propos | Former, structurer, transformer | KRAAK Consulting",
-    "description": "Découvrez la mission, la vision et les valeurs de KRAAK Consulting au service des compétences, des projets et des opportunités internationales.",
+    "description": "Découvrez comment KRAAK Consulting révèle le potentiel, développe les compétences et accompagne vers un impact professionnel et communautaire durable.",
     "openGraph": {
       "title": "À propos de KRAAK Consulting",
-      "description": "Former, structurer et transformer des trajectoires professionnelles et communautaires.",
+      "description": "Former, structurer et transformer des trajectoires avec une vision africaine et internationale.",
       "imagePath": "/open-graph/kraak-share-card.svg",
       "imageAlt": "Carte de partage KRAAK Consulting présentant formation, projets et mobilité internationale."
     },
@@ -31,11 +31,11 @@
   },
   {
     "path": "services",
-    "title": "Services | Formation, projets, immigration et entreprises | KRAAK",
-    "description": "Découvrez les services KRAAK Consulting en formation, gestion de projets, immigration et solutions entreprises.",
+    "title": "Services | Formation, projets, études, immigration et entreprises | KRAAK",
+    "description": "Découvrez les services KRAAK Consulting en formation, recherche et gestion de projets, études et immigration, et solutions entreprises.",
     "openGraph": {
       "title": "Services KRAAK Consulting",
-      "description": "Des solutions concrètes pour apprendre, entreprendre et préparer un projet international.",
+      "description": "Des solutions concrètes pour apprendre, entreprendre, structurer un projet et préparer une trajectoire internationale.",
       "imagePath": "/open-graph/kraak-share-card.svg",
       "imageAlt": "Carte de partage KRAAK Consulting présentant formation, projets et mobilité internationale."
     },
@@ -46,11 +46,11 @@
   },
   {
     "path": "programmes",
-    "title": "Programmes | Leadership, communauté et étudiants | KRAAK",
-    "description": "Explorez les programmes KRAAK Consulting : ateliers leadership jeunesse, engagement communautaire, parcours étudiants, conférences et forums.",
+    "title": "Programmes | Trajectoires, leadership et communauté | KRAAK",
+    "description": "Explorez les programmes KRAAK Consulting : ateliers leadership jeunesse, engagement communautaire, parcours étudiants et conférences utiles à la progression des trajectoires.",
     "openGraph": {
       "title": "Programmes KRAAK Consulting",
-      "description": "Des programmes conçus pour transformer des trajectoires.",
+      "description": "Des programmes conçus pour transformer des trajectoires avec plus de clarté, d'engagement et d'impact.",
       "imagePath": "/open-graph/kraak-share-card.svg",
       "imageAlt": "Carte de partage KRAAK Consulting présentant formation, projets et mobilité internationale."
     },
@@ -76,8 +76,8 @@
   },
   {
     "path": "contact",
-    "title": "Contact | Parlez de votre projet | KRAAK Consulting",
-    "description": "Contactez KRAAK Consulting si vous êtes étudiant, professionnel, entrepreneur ou entreprise et souhaitez une solution adaptée.",
+    "title": "Contact | Parlons de votre projet | KRAAK Consulting",
+    "description": "Formation, gestion de projets, immigration ou besoin entreprise : contactez KRAAK Consulting via le formulaire ou WhatsApp.",
     "openGraph": {
       "title": "Parlons de votre projet",
       "description": "Formation, projet, immigration ou besoin entreprise : envoyez votre demande à KRAAK Consulting.",

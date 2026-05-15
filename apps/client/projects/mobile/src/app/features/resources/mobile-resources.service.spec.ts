@@ -4,6 +4,8 @@ import type { ResourceDto } from '@kraak/contracts';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 
+const TEST_RESOURCE_URL = 'https://example.com/guide';
+
 describe('MobileResourcesService', () => {
   let service: MobileResourcesService;
   let authService: { currentSession: () => { accessToken: string } | null };
@@ -12,12 +14,12 @@ describe('MobileResourcesService', () => {
     id: 'resource-1',
     programId: null,
     cohortId: null,
-    title: 'Guide de demarrage',
+    title: 'Guide de démarrage',
     description: 'Description test',
     resourceType: 'document',
     resourceTheme: 'training',
     resourceAudience: 'all',
-    url: 'https://example.com/guide',
+    url: TEST_RESOURCE_URL,
     filePath: null,
     status: 'published',
     publishedAt: new Date().toISOString(),

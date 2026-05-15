@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
@@ -67,11 +68,14 @@ export default class SignInPage {
         key: 'app-feedback',
         severity: 'success',
         summary: 'Connexion',
-        detail: 'Connexion reussie. Redirection vers votre dashboard.',
+        detail: 'Connexion réussie. Redirection vers votre dashboard.',
         life: 4500,
       });
       await this.router.navigateByUrl('/participant/dashboard');
     } catch (error) {
+      logDebugError('web.auth.sign-in.submit', error, {
+        route: '/connexion',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,

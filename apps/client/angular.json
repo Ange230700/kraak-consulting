@@ -24,6 +24,11 @@
             "index": "projects/web/src/index.html",
             "browser": "projects/web/src/main.ts",
             "polyfills": [],
+            "optimization": {
+              "styles": {
+                "inlineCritical": false
+              }
+            },
             "tsConfig": "projects/web/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -57,6 +62,22 @@
                 {
                   "replace": "projects/web/src/environments/environment.ts",
                   "with": "projects/web/src/environments/environment.production.ts"
+                },
+                {
+                  "replace": "projects/web/src/app/shared/home-preview-sections/home-preview-sections.component.ts",
+                  "with": "projects/web/src/app/shared/home-preview-sections/home-preview-sections.prod.component.ts"
+                },
+                {
+                  "replace": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.component.ts",
+                  "with": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.prod.component.ts"
+                },
+                {
+                  "replace": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.component.ts",
+                  "with": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.prod.component.ts"
+                },
+                {
+                  "replace": "projects/web/src/app/participant-area.routes.ts",
+                  "with": "projects/web/src/app/participant-area.prod.routes.ts"
                 }
               ],
               "budgets": [

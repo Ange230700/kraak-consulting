@@ -2,8 +2,9 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
   loadProgramDetailState,
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'kraak-session-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './session-detail.page.html',
 })
 export default class SessionDetailPage implements OnInit {
@@ -109,6 +110,9 @@ export default class SessionDetailPage implements OnInit {
       );
       await this.loadProgramDetail(programId);
     } catch (error) {
+      logDebugError('mobile.programs.session.progress', error, {
+        completed,
+      });
       this.markErrorMessage.set(
         error instanceof Error
           ? error.message

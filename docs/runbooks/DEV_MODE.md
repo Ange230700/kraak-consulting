@@ -42,7 +42,7 @@ La configuration Auth locale versionnée pour le MVP est décrite dans
 pnpm dev:web
 ```
 
-- URL : **http://localhost:4200**
+- URL : **<http://localhost:4200>**
 - Hot-reload : oui (les modifications dans `apps/client/projects/web/` se reflètent automatiquement)
 - Commande sous-jacente : `ng serve web --configuration local`
 - Option utile pour les tests/outils en PowerShell :
@@ -71,7 +71,7 @@ flowchart TD
 pnpm dev:api
 ```
 
-- URL : **http://localhost:3000**
+- URL : **<http://localhost:3000>**
 - Hot-reload : oui (`cross-env NODE_ENV=local nest start --watch`)
 - Tester que ça tourne : `curl http://localhost:3000` (devrait retourner une réponse)
 
@@ -103,7 +103,7 @@ flowchart TD
 pnpm dev:mobile
 ```
 
-- URL : **http://localhost:4300**
+- URL : **<http://localhost:4300>**
 - Hot-reload : oui
 - Commande sous-jacente : `ng serve mobile --configuration local --port 4300`
   via la commande racine `pnpm dev:mobile`
@@ -120,9 +120,9 @@ Les trois apps peuvent tourner en parallèle avec une seule commande :
 pnpm dev
 ```
 
-- Web : **http://localhost:4200** par défaut, ou le prochain port libre
-- Mobile : **http://localhost:4300** par défaut, ou le prochain port libre
-- API : **http://localhost:3000**
+- Web : **<http://localhost:4200>** par défaut, ou le prochain port libre
+- Mobile : **<http://localhost:4300>** par défaut, ou le prochain port libre
+- API : **<http://localhost:3000>**
 
 Le script `pnpm dev` sonde les ports web et mobile avant démarrage pour éviter
 une première tentative en échec quand `4200` ou `4300` sont déjà utilisés.

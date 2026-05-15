@@ -64,7 +64,9 @@ describe('ResourcesService', () => {
     terminalResult: TResult,
     options?: { withOrder?: boolean; withRange?: boolean; withIs?: boolean },
   ) => {
-    const base = Promise.resolve(terminalResult) as Promise<TResult> & {
+    const base = Promise.resolve(
+      terminalResult,
+    ) as unknown as Promise<TResult> & {
       from: ReturnType<typeof jest.fn>;
       select: ReturnType<typeof jest.fn>;
       eq: ReturnType<typeof jest.fn>;
@@ -200,7 +202,7 @@ describe('ResourcesService', () => {
       expect(result).toEqual({ data: [], total: 0 });
     });
 
-    it('Given a query failure, When listResources is called, Then it throws an explicit list error', async () => {
+    it('Given a query failure, When listResources is called, Then it returns an empty public payload', async () => {
       const mockClient = createListQuery({
         data: null,
         error: new Error('Database connection failed'),
@@ -209,9 +211,10 @@ describe('ResourcesService', () => {
 
       mockSupabaseService.getClient.mockReturnValue(mockClient);
 
-      await expect(service.listResources()).rejects.toThrow(
-        'Failed to list resources',
-      );
+      await expect(service.listResources()).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
     });
   });
 

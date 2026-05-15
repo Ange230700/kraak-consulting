@@ -58,11 +58,11 @@ describe('SupportRequestsController', () => {
     );
   });
 
-  it('devrait etre defini', () => {
+  it('devrait être défini', () => {
     expect(controller).toBeDefined();
   });
 
-  it('Given un header Bearer valide, When la liste est demandee, Then le token est transmis au service', async () => {
+  it('Given un header Bearer valide, When la liste est demandée, Then le token est transmis au service', async () => {
     await controller.list('Bearer access-token');
 
     expect(supportService.listSupportRequests).toHaveBeenCalledWith(
@@ -70,19 +70,19 @@ describe('SupportRequestsController', () => {
     );
   });
 
-  it('Given un header absent, When la liste est demandee, Then une UnauthorizedException est renvoyee', async () => {
-    await expect(controller.list(undefined)).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
-  });
-
-  it('Given un argument authorization omis, When la liste est demandee, Then une UnauthorizedException est renvoyee', async () => {
+  it('Given un header absent, When la liste est demandée, Then une UnauthorizedException est renvoyée', async () => {
     await expect(controller.list()).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
   });
 
-  it('Given un payload de statut valide, When updateStatus est appele, Then le service est invoque avec token et payload normalise', async () => {
+  it('Given un argument authorization omis, When la liste est demandée, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.list()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un payload de statut valide, When updateStatus est appelé, Then le service est invoque avec token et payload normalise', async () => {
     await controller.updateStatus(
       'req-1',
       { status: ' in_progress ' },
@@ -96,7 +96,7 @@ describe('SupportRequestsController', () => {
     );
   });
 
-  it('Given un payload invalide, When updateStatus est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given un payload invalide, When updateStatus est appelé, Then une BadRequestException est renvoyée', async () => {
     await expect(
       controller.updateStatus(
         'req-1',
@@ -106,13 +106,13 @@ describe('SupportRequestsController', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('Given un header absent, When updateStatus est appele, Then une UnauthorizedException est renvoyee', async () => {
+  it('Given un header absent, When updateStatus est appelé, Then une UnauthorizedException est renvoyée', async () => {
     await expect(
-      controller.updateStatus('req-1', { status: 'in_progress' }, undefined),
+      controller.updateStatus('req-1', { status: 'in_progress' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  it('Given un argument authorization omis, When updateStatus est appele, Then une UnauthorizedException est renvoyee', async () => {
+  it('Given un argument authorization omis, When updateStatus est appelé, Then une UnauthorizedException est renvoyée', async () => {
     await expect(
       controller.updateStatus('req-1', { status: 'in_progress' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);

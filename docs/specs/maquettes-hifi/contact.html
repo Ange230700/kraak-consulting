@@ -9,6 +9,8 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+      integrity="sha384-4vY/BcSsE7jJCqUjMnzEP4Z1AgTImrHeiMYapAyonzvDWfsKFF2eZs/FBKxnutt8"
+      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -40,36 +42,56 @@
         <article class="card">
           <h3>Formulaire de contact</h3>
           <form class="form">
-            <label>Nom *</label>
-            <input type="text" placeholder="Votre nom" />
-            <label>Prenom *</label>
-            <input type="text" placeholder="Votre prenom" />
-            <label>Email *</label>
-            <input type="email" placeholder="vous@exemple.com" />
-            <label>Telephone</label>
-            <input type="tel" placeholder="+XX XX XX XX XX" />
-            <label>Objet *</label>
-            <select>
-              <option>Formation</option>
-              <option>Gestion de projet</option>
-              <option>Immigration</option>
-              <option>Autre</option>
+            <label for="firstName">Nom *</label>
+            <input
+              id="firstName"
+              type="text"
+              placeholder="Votre nom"
+              required
+            />
+            <label for="lastName">Prenom *</label>
+            <input
+              id="lastName"
+              type="text"
+              placeholder="Votre prenom"
+              required
+            />
+            <label for="email">Email *</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="vous@exemple.com"
+              required
+            />
+            <label for="phone">Telephone</label>
+            <input id="phone" type="tel" placeholder="+XX XX XX XX XX" />
+            <label for="subject">Objet *</label>
+            <select id="subject" required>
+              <option value="">Sélectionnez un objet</option>
+              <option value="formation">Formation</option>
+              <option value="gestion-projet">Gestion de projet</option>
+              <option value="immigration">Immigration</option>
+              <option value="autre">Autre</option>
             </select>
-            <label>Message *</label>
-            <textarea placeholder="Expliquez votre besoin"></textarea>
-            <button class="btn" type="button">Envoyer la demande</button>
+            <label for="message">Message *</label>
+            <textarea
+              id="message"
+              placeholder="Expliquez votre besoin"
+              required
+            ></textarea>
+            <button class="btn" type="submit">Envoyer la demande</button>
           </form>
         </article>
 
         <article class="card">
-          <h3>Coordonnees</h3>
+          <h3>Coordonnées</h3>
           <p>contact@kraak.org</p>
           <p>+221 77 000 00 00</p>
           <p>WhatsApp disponible</p>
-          <h3 style="margin-top: 20px">Disponibilite</h3>
-          <p>Lun - Ven, 09:00 a 18:00</p>
+          <h3 style="margin-top: 20px">Disponibilité</h3>
+          <p>Lun - Ven, 09:00 à 18:00</p>
           <h3 style="margin-top: 20px">Zones</h3>
-          <p>Afrique de l Ouest, Europe, Amerique du Nord</p>
+          <p>Afrique de l'Ouest, Europe, Amérique du Nord</p>
         </article>
       </div>
     </section>
@@ -77,10 +99,10 @@
     <section class="section">
       <div class="container">
         <article class="panel" style="text-align: center">
-          <h3>Etat de confirmation</h3>
-          <p>Votre demande a ete envoyee. Reponse sous 48 heures.</p>
+          <h3>État de confirmation</h3>
+          <p>Votre demande a été envoyée. Réponse sous 48 heures.</p>
           <p style="margin-top: 14px">
-            <a class="btn" href="accueil.html">Retour a l accueil</a>
+            <a class="btn" href="accueil.html">Retour à l'accueil</a>
           </p>
         </article>
       </div>

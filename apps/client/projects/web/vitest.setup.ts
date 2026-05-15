@@ -2,8 +2,10 @@
  * Vitest setup file to mock browser APIs required by GSAP and other libraries
  */
 
+import { vi } from 'vitest';
+
 // Mock matchMedia for ScrollTrigger
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -18,19 +20,24 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
+globalThis.IntersectionObserver = class IntersectionObserver {
+  disconnect() {
+    /* No-op: In tests, we don't need to perform cleanup since the mock isn't tracking real visibility changes */
+  }
+  observe() {
+    /* No-op: In tests, we don't need to track element visibility; components handle mock responses directly */
+  }
   takeRecords() {
     return [];
   }
-  unobserve() {}
+  unobserve() {
+    /* No-op: In tests, there are no real observers to remove; components handle mock responses directly */
+  }
 } as any;
 
 // Mock requestAnimationFrame for GSAP
-global.requestAnimationFrame = (callback: FrameRequestCallback) =>
+globalThis.requestAnimationFrame = (callback: FrameRequestCallback) =>
   setTimeout(callback, 0) as any;
 
 // Mock cancelAnimationFrame
-global.cancelAnimationFrame = (id: number) => clearTimeout(id);
+globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);

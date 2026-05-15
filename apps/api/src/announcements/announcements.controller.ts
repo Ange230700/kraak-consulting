@@ -71,6 +71,7 @@ const apiErrorSchema = {
   properties: {
     success: { type: 'boolean', example: false },
     message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
   },
 };
 
@@ -81,11 +82,11 @@ export class AnnouncementsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Lister les annonces accessibles au participant connecté',
+    summary:
+      'Lister les annonces publiées (public) avec filtrage participant optionnel',
     description:
-      "Récupère une liste paginée d'annonces publiées filtrées selon le périmètre du participant (all_participants, program, cohort). Les résultats sont triés par priorité puis par date de publication décroissante.",
+      "Récupère une liste paginée d'annonces publiées. Sans token: retourne toutes les annonces publiées. Avec token valide: filtre selon le périmètre du participant (all_participants, program, cohort).",
   })
   @ApiQuery({
     name: 'page',
@@ -119,6 +120,14 @@ export class AnnouncementsController {
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
+    if (!authorizationHeader) {
+      return this.announcementsService.listAnnouncements(
+        undefined,
+        page,
+        limit,
+      );
+    }
+
     const accessToken = extractAccessToken(authorizationHeader);
 
     if (!accessToken.valid) {

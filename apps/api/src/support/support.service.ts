@@ -317,7 +317,7 @@ export class SupportService {
       // ignoré et l'utilisateur verrait quand même un succès.
       if (result.error) {
         this.logger.error(
-          "Echec de l'envoi d'email transactionnel (Resend a retourné une erreur)",
+          "Échec de l'envoi d'email transactionnel (Resend a retourné une erreur)",
           JSON.stringify(result.error),
         );
 
@@ -337,7 +337,7 @@ export class SupportService {
       }
 
       this.logger.error(
-        "Echec de l'envoi d'email transactionnel",
+        "Échec de l'envoi d'email transactionnel",
         error instanceof Error ? error.stack : undefined,
       );
 
@@ -356,7 +356,7 @@ export class SupportService {
     return [
       'Nouvelle demande de contact KRAAK',
       '',
-      `Categorie: ${categoryLabel}`,
+      `Catégorie: ${categoryLabel}`,
       `Nom: ${dto.name}`,
       `Email: ${dto.email}`,
       `Objet: ${dto.subject}`,

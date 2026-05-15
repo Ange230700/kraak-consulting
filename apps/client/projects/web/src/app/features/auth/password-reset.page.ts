@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
@@ -75,10 +76,13 @@ export default class PasswordResetPage {
         life: 6000,
       });
     } catch (error) {
+      logDebugError('web.auth.password-reset.submit', error, {
+        route: '/mot-de-passe-oublie',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          "Impossible d'envoyer l'email de reinitialisation.",
+          "Impossible d'envoyer l'email de réinitialisation.",
         ),
       );
     } finally {

@@ -11,6 +11,8 @@ import type {
 import { MobileProgramsService } from './mobile-programs.service';
 import ProgramDetailPage from './program-detail.page';
 
+const TEST_PROGRAM_RESOURCE_URL = 'https://example.com/guide.pdf';
+
 describe('Mobile ProgramDetailPage', () => {
   let service: { getProgramDetail: ReturnType<typeof vi.fn> };
   let activatedRoute: {
@@ -19,6 +21,19 @@ describe('Mobile ProgramDetailPage', () => {
         get: ReturnType<typeof vi.fn>;
       };
     };
+  };
+
+  const mockCohort: NonNullable<ParticipantProgramDetailDto['cohort']> = {
+    id: 'cohort-1',
+    programId: 'prog-1',
+    name: 'Cohorte 1',
+    code: 'COH-001',
+    status: 'active',
+    startDate: new Date().toISOString(),
+    endDate: null,
+    capacity: 20,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
   const mockProgramDetail: ParticipantProgramDetailDto = {
@@ -35,18 +50,7 @@ describe('Mobile ProgramDetailPage', () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
-    cohort: {
-      id: 'cohort-1',
-      programId: 'prog-1',
-      name: 'Cohorte 1',
-      code: 'COH-001',
-      status: 'active',
-      startDate: new Date().toISOString(),
-      endDate: null,
-      capacity: 20,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
+    cohort: mockCohort,
     progress: {
       totalSessions: 0,
       completedSessions: 0,
@@ -142,7 +146,7 @@ describe('Mobile ProgramDetailPage', () => {
       ...mockSession,
       id: 'session-2',
       title: 'Session en ligne',
-      locationType: null as unknown as SessionDto['locationType'],
+      locationType: 'online',
     };
 
     const mockResourceWithContent: ResourceDto = {
@@ -154,7 +158,7 @@ describe('Mobile ProgramDetailPage', () => {
       resourceType: 'document',
       resourceTheme: 'training',
       resourceAudience: 'all',
-      url: 'https://example.com/guide.pdf',
+      url: TEST_PROGRAM_RESOURCE_URL,
       filePath: null,
       status: 'published',
       publishedAt: new Date().toISOString(),
@@ -181,7 +185,7 @@ describe('Mobile ProgramDetailPage', () => {
       service.getProgramDetail.mockResolvedValue({
         ...mockProgramDetail,
         cohort: {
-          ...mockProgramDetail.cohort!,
+          ...mockCohort,
           endDate: new Date('2026-12-31').toISOString(),
         },
         sessions: [mockSession, mockSessionNoLocationType],

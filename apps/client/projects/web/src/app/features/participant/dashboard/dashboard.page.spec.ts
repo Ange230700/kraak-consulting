@@ -12,6 +12,8 @@ import {
   participantRoleChildGuard,
 } from '../../../core/auth/auth.guard';
 
+const TEST_MEETING_LINK_URL = 'https://meet.example/session-1';
+
 function configureDashboardClient(
   fixture: ReturnType<typeof TestBed.createComponent<DashboardPage>>,
   response: Promise<unknown>,
@@ -77,7 +79,7 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       endsAt: '2026-05-02T18:00:00.000Z',
       locationType: 'online',
       locationLabel: null,
-      meetingLink: 'https://meet.example/session-1',
+      meetingLink: TEST_MEETING_LINK_URL,
       cohortId: 'cohort-1',
       cohortName: 'Cohorte printemps',
       programId: 'program-1',
@@ -273,7 +275,8 @@ describe('Web Participant Dashboard Page', () => {
 
     it('Given a non-Error rejection value, When the page loads, Then it shows the generic fallback message', async () => {
       const fixture = TestBed.createComponent(DashboardPage);
-      configureDashboardClient(fixture, Promise.reject('oops'));
+      const nonErrorReason: unknown = 'oops';
+      configureDashboardClient(fixture, Promise.reject(nonErrorReason));
       await flush(fixture);
 
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';

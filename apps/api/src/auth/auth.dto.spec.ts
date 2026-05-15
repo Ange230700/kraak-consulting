@@ -163,12 +163,16 @@ it('Given un payload signup valide complet, When la validation est appliquée, T
     redirectTo: 'kraak://auth/callback',
   });
   expect(result.valid).toBe(true);
-  const data = (result as { valid: true; data: Record<string, unknown> }).data;
-  expect(data['email']).toBe('alice@example.com');
-  expect(data['firstName']).toBe('Alice');
-  expect(data['lastName']).toBe('Dupont');
-  expect(data['phone']).toBe('+33600000000');
-  expect(data['redirectTo']).toBe('kraak://auth/callback');
+  if (!result.valid) {
+    throw new Error('Le payload signup devrait être valide dans ce scenario.');
+  }
+
+  const { data } = result;
+  expect(data.email).toBe('alice@example.com');
+  expect(data.firstName).toBe('Alice');
+  expect(data.lastName).toBe('Dupont');
+  expect(data.phone).toBe('+33600000000');
+  expect(data.redirectTo).toBe('kraak://auth/callback');
 });
 
 it('Given un mot de passe trop long dans signup (>128), When la validation est appliquée, Then une erreur est renvoyée', () => {

@@ -19,7 +19,9 @@ describe('ServicesPage', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Des solutions concr\u00E8tes');
+    expect(heading?.textContent).toContain(
+      'Des solutions adapt\u00E9es pour former, structurer et d\u00E9velopper',
+    );
   });
 
   it('should render the four consulting service families', () => {
@@ -27,14 +29,20 @@ describe('ServicesPage', () => {
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Des comp\u00E9tences qui ouvrent des portes');
+    expect(content).toContain('Des compétences solides pour ouvrir des portes');
     expect(content).toContain(
-      'Vos id\u00E9es m\u00E9ritent une structure solide',
+      'Des idées bien structurées deviennent des projets durables',
     );
-    expect(content).toContain('Votre projet international commence ici');
+    expect(content).toContain(
+      'Votre projet international mérite une préparation claire et stratégique',
+    );
     expect(content).toContain(
       'Des \u00E9quipes performantes construisent des organisations solides',
     );
+    expect(content).toContain('Rédaction CV');
+    expect(content).toContain('Identification et recrutement de talents');
+    expect(content).toContain("Politiques et stratégies d'immigration");
+    expect(content).toContain("Santé et culture d'entreprise");
   });
 
   it('should render service-specific FAQ section', () => {

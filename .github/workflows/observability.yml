@@ -19,7 +19,7 @@ jobs:
         include:
           - environment: staging
             # Pas d'URL web staging stable (les previews Vercel changent a chaque commit
-            # et le branch alias a la protection SSO activee). On utilise la meme home
+            # et le branch alias a la protection SSO activée). On utilise la meme home
             # production pour le check web ; la valeur distincte de ce job est le check
             # de l'API staging.
             web_url: https://kraak-consulting.vercel.app
@@ -71,12 +71,12 @@ jobs:
               `- Run: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
               `- Web cible: ${process.env.KRAAK_OBSERVABILITY_WEB_URL}`,
               `- API cible: ${process.env.KRAAK_OBSERVABILITY_API_URL}/health`,
-              `- Detecte le: ${new Date().toISOString()}`,
+              `- Détecté le: ${new Date().toISOString()}`,
               '',
               '## Action attendue',
               '',
-              '1. Verifier le statut Vercel et Render.',
-              '2. Rejouer `pnpm check:observability` avec les memes URLs.',
+              '1. Vérifier le statut Vercel et Render.',
+              '2. Rejouer `pnpm check:observability` avec les mêmes URLs.',
               '3. Suivre le runbook DEP-05 / DEP-06 si le service reste indisponible.',
             ].join('\n');
 
@@ -132,7 +132,7 @@ jobs:
               repo,
               issue_number: alertIssue.number,
               body: [
-                'Recuperation detectee par le workflow `Observability`.',
+                'Récupération détectée par le workflow `Observability`.',
                 '',
                 `Run vert: ${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
               ].join('\n'),

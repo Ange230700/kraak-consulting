@@ -32,8 +32,8 @@ Les participants doivent pouvoir :
 1. Se connecter
 2. Voir leurs programmes suivis
 3. Consulter le planning et les informations de session
-4. Acceder aux ressources de formation
-5. Recevoir des annonces/mises a jour
+4. Accéder aux ressources de formation
+5. Recevoir des annonces/mises à jour
 6. Contacter le support, le formateur ou KRAAK
 
 ## 4. Critères de succès (préparation pilote)
@@ -86,38 +86,38 @@ Ces fonctionnalités sont requises pour lancer un pilote Android reel.
 - Reinitialisation de mot de passe (flux basique)
 - Mapping de résultat : le participant peut s'authentifier
 
-2. Accueil périmètre participant
+1. Accueil périmètre participant
 
 - Afficher uniquement le contenu pertinent après connexion
 - Carte(s) programme : titre du programme suivi, statut, prochaine étape clé
 - Écran de bienvenue/onboarding de base après première connexion
 - Mapping de résultat : le participant voit uniquement le contenu pertinent
 
-3. Planning et sessions
+1. Planning et sessions
 
 - Liste des sessions a venir (date/heure, titre, lieu/lien)
-- Page detail session (description + formateur + infos de participation)
+- Page détail session (description + formateur + infos de participation)
 - Mapping de résultat : consulter le planning/sessions
 
-4. Ressources de formation (lecture/téléchargement)
+1. Ressources de formation (lecture/téléchargement)
 
 - Liste des ressources par programme/module
-- Ouvrir le detail d'une ressource et acceder au lien/fichier
-- Mapping de résultat : acceder aux ressources de formation
+- Ouvrir le détail d'une ressource et accéder au lien/fichier
+- Mapping de résultat : accéder aux ressources de formation
 
-5. Annonces (base)
+1. Annonces (base)
 
 - Fil d'annonces in-app
 - Marqueur non lu/lu (simple)
 - Mapping de résultat : notifications/annonces de base disponibles
 
-6. Contact et support
+1. Contact et support
 
 - Action de contact depuis l'application (email/WhatsApp/formulaire deeplink)
 - Informations de contact support/formateur visibles
 - Mapping de résultat : rester connecte a KRAAK
 
-7. Preparation pilote Android
+1. Preparation pilote Android
 
 - Build Android signe et installable
 - Baseline crash-free et contrôles de performance de base
@@ -132,19 +132,19 @@ Ces fonctionnalités améliorent la qualité du pilote mais ne bloquent pas le d
 - Recevoir une notification push lorsqu'une nouvelle annonce est publiée
 - Ouvrir l'application directement sur l'annonce concernée
 
-2. Profil participant léger
+1. Profil participant léger
 
 - Voir/modifier les champs de profil de base (nom, téléphone, contact préféré)
 
-3. Marqueurs de progression des ressources
+1. Marqueurs de progression des ressources
 
 - Marquer une ressource comme vue/téléchargée
 
-4. Rappels de session
+1. Rappels de session
 
 - Rappel local 24 h/1 h avant une session à venir
 
-5. Feedback in-app basique
+1. Feedback in-app basique
 
 - Formulaire rapide "Besoin d'aide" ou "Signaler un problème"
 
@@ -279,7 +279,7 @@ Enveloppe MVP (globale) :
 | Panneau admin multi-rôle dans le mobile    | Plus tard      |
 | Gamification complexe                      | Plus tard      |
 
-### Règles d'exécution :
+### Règles d'exécution
 
 - Le design et l'engineering démarrent depuis les fonctionnalités Indispensable uniquement.
 - Les éléments Souhaite ne peuvent être pris que si l'Indispensable est terminé et que la stabilité pilote n'est pas à risque.

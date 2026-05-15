@@ -13,18 +13,21 @@ import { ButtonDirective } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
+import { logDebugError } from '@kraak/api-client';
 import type { ContactFormDto } from '@kraak/contracts';
 
 import {
+  CONTACT_EMAIL,
+  CONTACT_VISUAL_URL,
   HERO_BACKGROUND_STYLE,
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import {
   FaqAccordion,
   type FaqItem,
-} from '../../shared/faq-accordion/faq-accordion';
+} from '../../shared/faq-accordion/faq-accordion.component';
 import { ContactService } from './contact.service';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
@@ -70,8 +73,9 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
   ],
 })
 export default class ContactPage implements OnInit, OnDestroy {
-  protected readonly contactVisualUrl =
-    'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/contact/map-4.jpg';
+  protected readonly contactVisualUrl = CONTACT_VISUAL_URL;
+  protected readonly contactEmail = CONTACT_EMAIL;
+  protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
 
   protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
 
@@ -82,21 +86,24 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly serviceOptions: ServiceOption[] = [
     { label: 'Formation', value: 'formation', category: 'program' },
     {
-      label: 'Recherche & gestion de projets',
+      label: 'Gestion de projets',
       value: 'project',
       category: 'other',
     },
     {
-      label: '\u00C9tudes & immigration',
+      label: 'Conseil en immigration',
       value: 'immigration',
       category: 'other',
     },
-    { label: 'Solution entreprise', value: 'business', category: 'other' },
-    { label: 'Programme KRAAK', value: 'program', category: 'program' },
+    { label: 'Solutions entreprises', value: 'business', category: 'other' },
+    { label: 'Partenariat', value: 'program', category: 'program' },
     { label: 'Autre demande', value: 'other', category: 'other' },
   ];
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
+  protected readonly whatsappLink =
+    KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
+    '';
 
   protected readonly faqItems: FaqItem[] = [
     {
@@ -107,12 +114,12 @@ export default class ContactPage implements OnInit, OnDestroy {
     {
       question: 'Quels types de services propose KRAAK ?',
       answer:
-        "Nous intervenons sur la formation, la gestion de projets, les programmes de développement et l'accompagnement en études et immigration.",
+        "Nous intervenons sur la formation, la recherche et gestion de projets, les programmes KRAAK, les solutions entreprises et l'accompagnement en études et immigration.",
     },
     {
-      question: 'Puis-je être accompagné à distance depuis un autre pays ?',
+      question: 'Puis-je vous contacter directement sur WhatsApp ?',
       answer:
-        'Oui. KRAAK accompagne des publics en Afrique et à l international via des formats à distance et des échanges planifiés selon votre disponibilité.',
+        'Oui. Si vous préférez un échange rapide, le canal WhatsApp reste disponible en complément du formulaire de contact.',
     },
     {
       question: 'Combien de temps faut-il pour recevoir une première réponse ?',
@@ -197,7 +204,7 @@ export default class ContactPage implements OnInit, OnDestroy {
           severity: 'success',
           summary: 'Contact',
           detail:
-            'Votre message a bien ete envoye. Notre equipe revient vers vous rapidement.',
+            'Votre message a bien été envoyé. Notre équipe revient vers vous rapidement.',
           life: 6000,
         });
         this.form.reset();
@@ -207,6 +214,11 @@ export default class ContactPage implements OnInit, OnDestroy {
         this.loading.set(false);
         const extractedErrors = this.extractApiErrors(errorResponse);
         this.apiErrors.set(extractedErrors);
+        logDebugError('web.contact.submit', errorResponse, {
+          route: '/contact',
+          status: errorResponse.status,
+          apiErrorCount: extractedErrors.length,
+        });
 
         if (
           extractedErrors.length === 1 &&

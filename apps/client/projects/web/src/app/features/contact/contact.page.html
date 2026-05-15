@@ -12,12 +12,13 @@
       class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
     >
       <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
-        Parlons de votre projet.
+        Parlez-nous de votre objectif.
       </h1>
       <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
-        Que vous soyez &eacute;tudiant, professionnel, entrepreneur ou
-        entreprise, nous avons une solution adapt&eacute;e &agrave; votre
-        objectif.
+        Vous souhaitez suivre une formation, structurer un projet,
+        pr&eacute;parer une mobilit&eacute; internationale ou discuter d'un
+        partenariat ? L'&eacute;quipe KRAAK est disponible pour vous orienter
+        vers l'accompagnement le plus adapt&eacute;.
       </p>
     </div>
   </div>
@@ -96,10 +97,10 @@
                     aria-hidden="true"
                   ></i>
                   <a
-                    href="mailto:kraakconsulting@gmail.com"
+                    [href]="contactEmailHref"
                     class="hover:text-brand-cyan transition-colors"
                   >
-                    kraakconsulting&#64;gmail.com
+                    {{ contactEmail }}
                   </a>
                 </li>
                 <li class="flex items-center gap-3">
@@ -108,6 +109,20 @@
                     aria-hidden="true"
                   ></i>
                   <span>Afrique &amp; international</span>
+                </li>
+                <li class="flex items-center gap-3">
+                  <i
+                    class="pi pi-whatsapp text-brand-cyan"
+                    aria-hidden="true"
+                  ></i>
+                  <a
+                    [href]="whatsappLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-brand-cyan transition-colors"
+                  >
+                    WhatsApp : +225 05 02 74 18 18
+                  </a>
                 </li>
                 <li class="flex items-center gap-3">
                   <i class="pi pi-clock text-brand-cyan" aria-hidden="true"></i>
@@ -144,11 +159,12 @@
             <h2
               class="text-brand-navy text-3xl leading-tight font-bold lg:text-4xl"
             >
-              Contactez-nous
+              Envoyez votre demande
             </h2>
             <p class="text-brand-gray text-base leading-relaxed">
-              Partagez votre besoin et votre contexte. Notre &eacute;quipe vous
-              accompagne avec une orientation concr&egrave;te et adapt&eacute;e.
+              D&eacute;crivez brièvement votre objectif : formation, projet,
+              immigration, partenariat, ou autre demande. Nous vous
+              r&eacute;pondrons dans les meilleurs d&eacute;lais.
             </p>
           </div>
 
@@ -194,8 +210,11 @@
                     type="text"
                     placeholder="Votre nom"
                     formControlName="name"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(name) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(name),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(name)"
                     [attr.aria-describedby]="
@@ -231,8 +250,11 @@
                     type="email"
                     placeholder="votre.email@exemple.com"
                     formControlName="email"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(email) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(email),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(email)"
                     [attr.aria-describedby]="
@@ -269,8 +291,11 @@
                   type="text"
                   placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
                   formControlName="subject"
-                  class="h-11 w-full"
-                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(subject) }"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                      isInvalid(subject),
+                  }"
                   aria-required="true"
                   [attr.aria-invalid]="isInvalid(subject)"
                   [attr.aria-describedby]="
@@ -302,8 +327,11 @@
                     type="text"
                     placeholder="Votre pays de r&eacute;sidence"
                     formControlName="country"
-                    class="h-11 w-full"
-                    [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(country) }"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    [ngClass]="{
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(country),
+                    }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(country)"
                     [attr.aria-describedby]="
@@ -332,9 +360,10 @@
                   <select
                     id="serviceType"
                     formControlName="serviceType"
-                    class="border-brand-blue/20 focus:border-brand-blue focus:ring-brand-cyan/40 bg-brand-white text-brand-navy h-11 w-full rounded-(--kr-radius-btn) border px-3 text-sm transition outline-none focus:ring-2"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
-                      'ng-invalid ng-dirty': isInvalid(serviceType),
+                      'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                        isInvalid(serviceType),
                     }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(serviceType)"
@@ -359,8 +388,11 @@
                   rows="6"
                   placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
                   formControlName="message"
-                  class="w-full"
-                  [ngClass]="{ 'ng-invalid ng-dirty': isInvalid(message) }"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
+                      isInvalid(message),
+                  }"
                   aria-required="true"
                   [attr.aria-invalid]="isInvalid(message)"
                   [attr.aria-describedby]="
@@ -382,7 +414,7 @@
                 }
               </div>
 
-              <div class="pt-1">
+              <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center">
                 <button
                   pButton
                   type="submit"
@@ -393,6 +425,16 @@
                   [disabled]="loading()"
                   class="kr-button-primary w-full sm:w-auto"
                 ></button>
+                <a
+                  pButton
+                  [href]="whatsappLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  label="Discuter sur WhatsApp"
+                  aria-label="Discuter sur WhatsApp"
+                  icon="pi pi-whatsapp"
+                  class="kr-button-secondary w-full sm:w-auto"
+                ></a>
               </div>
             </form>
           }
@@ -411,11 +453,23 @@
       <div class="text-center">
         <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">E-mail</h3>
-        <a href="mailto:kraakconsulting@gmail.com" class="kr-link mt-1 block">
-          kraakconsulting&#64;gmail.com
+        <a [href]="contactEmailHref" class="kr-link mt-1 block">
+          {{ contactEmail }}
         </a>
       </div>
       <div class="text-center">
+        <i class="pi pi-whatsapp text-3xl" aria-hidden="true"></i>
+        <h3 class="mt-2 text-lg font-bold">WhatsApp</h3>
+        <a
+          [href]="whatsappLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="kr-link mt-1 block"
+        >
+          +225 05 02 74 18 18
+        </a>
+      </div>
+      <div class="text-center md:col-span-2">
         <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">Zone d'intervention</h3>
         <p class="mt-1 text-neutral-700">
@@ -434,6 +488,6 @@
 </section>
 
 <kraak-cta-banner
-  heading="Vous savez o&ugrave; vous voulez aller."
-  body="Nous vous aidons &agrave; choisir le chemin le plus clair pour y arriver."
+  heading="Parlons de votre prochaine &eacute;tape."
+  body="Envoyez votre demande via le formulaire ou lancez directement un &eacute;change sur WhatsApp."
 />

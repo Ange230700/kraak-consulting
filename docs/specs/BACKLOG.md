@@ -1,9 +1,9 @@
 # Backlog Produit MVP KRAAK - Epics, Issues Et Milestones
 
 - Projet : KRAAK (MVP web + base mobile)
-- Depot : https://github.com/Ange230700/kraak-group
+- Dépôt : <https://github.com/Ange230700/kraak-group>
 - Project board : voir le board actif documenté dans `docs/runbooks/GITHUB_PROJECT_BOARD.md`
-- Mise a jour : 10 avril 2026
+- Mise à jour : 10 avril 2026
 
 ---
 
@@ -59,7 +59,7 @@ Lanes recommandées :
 
 Issues a re-découper au niveau board si elles redeviennent bloquantes :
 
-- `WEB-01` : piloter en sous-tranches `Accueil`, `A propos`, `Services`,
+- `WEB-01` : piloter en sous-tranches `Accueil`, `À propos`, `Services`,
   `Programmes`, `Contact`
 - `AUT-04` : séparer la garde web et la garde mobile si les deux surfaces
   avancent en parallèle
@@ -84,7 +84,7 @@ Principe de pilotage :
 | `M2 - Workspace bootstrapped`       | socle de dev opérationnel                         | toutes les issues `SET-*` + `LIB-01` + `LIB-02` en `done`               |
 | `M3 - Mobile shell ready`           | shell mobile navigable et installable             | toutes les issues `MOB-*` en `done`                                     |
 | `M4 - Auth ready`                   | authentification stable web/mobile/api            | toutes les issues `AUT-*` en `done`                                     |
-| `M5 - Core participant flows ready` | parcours coeur participant utilisables            | toutes les issues `DSH-*`, `PRG-*`, `RES-*`, `ANN-*`, `SUP-*` en `done` |
+| `M5 - Core participant flows ready` | parcours cœur participant utilisables             | toutes les issues `DSH-*`, `PRG-*`, `RES-*`, `ANN-*`, `SUP-*` en `done` |
 | `M6 - QA ready`                     | couverture de test et stabilisation pre-lancement | toutes les issues `QAT-*` en `done`                                     |
 | `M7 - Pilot release ready`          | déploiement pilote et runbooks opérationnels      | toutes les issues `DEP-*` en `done`                                     |
 
@@ -100,7 +100,7 @@ Milestone cible : `M1 - Architecture locked`
 | `ARC-01` | Valider architecture cible web/mobile/api avec scope MVP                                    | `P0`     | `none`             |
 | `ARC-02` | Définir conventions repo (naming, structure, quality gates)                                 | `P0`     | `ARC-01`           |
 | `ARC-03` | Définir stratégie de rendu web (SEO/prerender)                                              | `P0`     | `ARC-01`           |
-| `ARC-04` | Définir modèles de donnees MVP (participant, programme, ressource, annonce, ticket support) | `P0`     | `ARC-01`           |
+| `ARC-04` | Définir modèles de données MVP (participant, programme, ressource, annonce, ticket support) | `P0`     | `ARC-01`           |
 | `ARC-05` | Documenter ADRs et critères anti-scope-creep                                                | `P1`     | `ARC-02`, `ARC-04` |
 
 ---
@@ -143,7 +143,7 @@ Milestone cible : `M5 - Core participant flows ready`
 
 | Issue ID | Tache                                                                     | Priorité | Dépendances        |
 | -------- | ------------------------------------------------------------------------- | -------- | ------------------ |
-| `WEB-01` | Implementer pages core (Accueil, A propos, Services, Programmes, Contact) | `P0`     | `SET-01`, `ARC-03` |
+| `WEB-01` | Implémenter pages core (Accueil, À propos, Services, Programmes, Contact) | `P0`     | `SET-01`, `ARC-03` |
 | `WEB-02` | Intégrer formulaires de contact et CTA conversion                         | `P0`     | `WEB-01`, `SUP-01` |
 | `WEB-03` | Ajouter SEO technique (meta, sitemap, robots, Open Graph)                 | `P0`     | `WEB-01`           |
 | `WEB-04` | Ajouter analytics web (PostHog/GA)                                        | `P1`     | `WEB-01`           |
@@ -174,9 +174,9 @@ Milestone cible : `M4 - Auth ready`
 | Issue ID | Tache                                                  | Priorité | Dépendances        |
 | -------- | ------------------------------------------------------ | -------- | ------------------ |
 | `AUT-01` | Configurer Supabase Auth (providers, policies de base) | `P0`     | `ARC-04`, `SET-02` |
-| `AUT-02` | Implementer endpoints API auth/session (NestJS)        | `P0`     | `AUT-01`, `LIB-01` |
-| `AUT-03` | Implementer écrans login/signup/reset mobile           | `P0`     | `MOB-02`, `AUT-02` |
-| `AUT-04` | Implementer garde routes protégées web/mobile          | `P0`     | `AUT-02`, `LIB-03` |
+| `AUT-02` | Implémenter endpoints API auth/session (NestJS)        | `P0`     | `AUT-01`, `LIB-01` |
+| `AUT-03` | Implémenter écrans login/signup/reset mobile           | `P0`     | `MOB-02`, `AUT-02` |
+| `AUT-04` | Implémenter garde routes protégées web/mobile          | `P0`     | `AUT-02`, `LIB-03` |
 | `AUT-05` | Ajouter gestion role participant/admin minimal         | `P1`     | `AUT-02`, `ARC-04` |
 
 ---
@@ -258,14 +258,15 @@ Milestone cible : `M5 - Core participant flows ready`
 Objectif : vérifier la conformité fonctionnelle, qualité et robustesse du MVP.
 Milestone cible : `M6 - QA ready`
 
-| Issue ID | Tache                                                         | Priorité | Dépendances                                                |
-| -------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------- |
-| `QAT-01` | Définir matrice de couverture (page, composant, comportement) | `P0`     | `SET-04`, `SET-05`                                         |
-| `QAT-02` | Écrire tests unitaires composants critiques web/mobile        | `P0`     | `QAT-01`, `WEB-01`, `MOB-02`                               |
-| `QAT-03` | Écrire tests integration API modules critiques                | `P0`     | `QAT-01`, `AUT-02`, `PRG-02`, `RES-02`, `ANN-02`, `SUP-01` |
-| `QAT-04` | Écrire E2E Given/When/Then pour parcours coeur participant    | `P0`     | `QAT-01`, `AUT-03`, `DSH-03`, `PRG-03`, `RES-03`, `SUP-02` |
-| `QAT-05` | Réaliser campagne regression et corriger blockers             | `P0`     | `QAT-02`, `QAT-03`, `QAT-04`                               |
-| `QAT-06` | Réaliser checks accessibilité/performance pre-pilot           | `P1`     | `QAT-05`, `WEB-05`                                         |
+| Issue ID | Tache                                                         | Priorité | Dépendances                                                                              |
+| -------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `QAT-01` | Définir matrice de couverture (page, composant, comportement) | `P0`     | `SET-04`, `SET-05`                                                                       |
+| `QAT-02` | Écrire tests unitaires composants critiques web/mobile        | `P0`     | `QAT-01`, `WEB-01`, `MOB-02`                                                             |
+| `QAT-03` | Écrire tests integration API modules critiques                | `P0`     | `QAT-01`, `AUT-02`, `PRG-02`, `RES-02`, `ANN-02`, `SUP-01`                               |
+| `QAT-04` | Écrire E2E Given/When/Then pour parcours cœur participant     | `P0`     | `QAT-01`, `AUT-03`, `DSH-03`, `PRG-03`, `RES-03`, `SUP-02`                               |
+| `QAT-05` | Réaliser campagne regression et corriger blockers             | `P0`     | `QAT-02`, `QAT-03`, `QAT-04`                                                             |
+| `QAT-06` | Réaliser checks accessibilité/performance pré-pilot           | `P1`     | `QAT-05`, `WEB-05`                                                                       |
+| `QAT-07` | Couvrir les parcours auth + support en Given/When/Then        | `P0`     | `QAT-01`, `AUT-02`, `AUT-03`, `AUT-04`, `AUT-05`, `SUP-01`, `SUP-02`, `SUP-03`, `SUP-05` |
 
 Référence QAT-01 : `docs/specs/qa_coverage_matrix.md`
 
@@ -281,10 +282,10 @@ Milestone cible : `M7 - Pilot release ready`
 | `DEP-01` | Configurer environnements (dev/staging/pilot)              | `P0`     | `SET-07`                               |
 | `DEP-02` | Mettre en place pipeline déploiement web                   | `P0`     | `SET-06`, `WEB-05`                     |
 | `DEP-03` | Mettre en place pipeline déploiement API                   | `P0`     | `SET-06`, `QAT-03`                     |
-| `DEP-04` | Preparer distribution mobile test (APK/TestFlight interne) | `P0`     | `MOB-04`, `QAT-04`                     |
+| `DEP-04` | Préparer distribution mobile test (APK/TestFlight interne) | `P0`     | `MOB-04`, `QAT-04`                     |
 | `DEP-05` | Finaliser observabilité et alerting minimum                | `P1`     | `DEP-02`, `DEP-03`                     |
 | `DEP-06` | Rédiger runbook incident + rollback + pilot checklist      | `P0`     | `DEP-01`, `DEP-05`, `QAT-06`           |
-| `DEP-07` | Executer go/no-go pilote et publier release pilote         | `P0`     | `DEP-02`, `DEP-03`, `DEP-04`, `DEP-06` |
+| `DEP-07` | Exécuter go/no-go pilote et publier release pilote         | `P0`     | `DEP-02`, `DEP-03`, `DEP-04`, `DEP-06` |
 
 ---
 
@@ -326,18 +327,18 @@ Milestone cible : `M7 - Pilot release ready`
 2. `M2` : clore `SET-*` et socle `LIB-*`.
 3. `M3` : clore `MOB-*`.
 4. `M4` : clore `AUT-*`.
-5. `M5` : clore modules coeur participant (`DSH-*`, `PRG-*`, `RES-*`, `ANN-*`, `SUP-*`) + pages web MVP.
+5. `M5` : clore modules cœur participant (`DSH-*`, `PRG-*`, `RES-*`, `ANN-*`, `SUP-*`) + pages web MVP.
 6. `M6` : clore `QAT-*`.
 7. `M7` : clore `DEP-*` et lancer pilote.
 
 ---
 
-## Notes D'Execution
+## Notes D'Exécution
 
 - Respect strict du scope MVP (pas de glissement V1.1 sans validation explicite).
 - TDD obligatoire : `RED -> GREEN -> REFACTOR` sur chaque feature/bug.
 - E2E obligatoires sur parcours critiques avec formulation Given/When/Then.
-- Politique de langue du depot : code en anglais, documentation/messages en français.
+- Politique de langue du dépôt : code en anglais, documentation/messages en français.
 
 ---
 
@@ -371,89 +372,89 @@ Nouvelles options Wave à ajouter manuellement dans les settings GitHub Project 
 
 ### Epics V1.1
 
-#### [EPIC][PAY] Paiement en ligne — #329 — M8 — P0
+#### [EPIC] [PAY] Paiement en ligne — #329 — M8 — P0
 
 Intégration Stripe : checkout, abonnements, factures et reçus automatiques.
 
 | ID     | Issue                                                         | Surface | Priorité |
 | ------ | ------------------------------------------------------------- | ------- | -------- |
-| PAY-01 | #336 Integrer Stripe (providers, webhooks, cles API)          | api     | P0       |
-| PAY-02 | #337 Implementer checkout sessions (paiement unique)          | api     | P0       |
-| PAY-03 | #338 Implementer abonnements et plans recurrents              | api     | P0       |
-| PAY-04 | #339 Integrer UI paiement web (checkout et confirmation)      | web     | P0       |
-| PAY-05 | #340 Integrer UI paiement mobile (checkout Stripe mobile)     | mobile  | P0       |
-| PAY-06 | #341 Generer factures et recus automatiques (Stripe + Resend) | api     | P1       |
+| PAY-01 | #336 Intégrer Stripe (providers, webhooks, clés API)          | api     | P0       |
+| PAY-02 | #337 Implémenter checkout sessions (paiement unique)          | api     | P0       |
+| PAY-03 | #338 Implémenter abonnements et plans récurrents              | api     | P0       |
+| PAY-04 | #339 Intégrer UI paiement web (checkout et confirmation)      | web     | P0       |
+| PAY-05 | #340 Intégrer UI paiement mobile (checkout Stripe mobile)     | mobile  | P0       |
+| PAY-06 | #341 Générer factures et reçus automatiques (Stripe + Resend) | api     | P1       |
 
 ---
 
-#### [EPIC][LMS] Apprentissage et certification — #330 — M9 — P0
+#### [EPIC] [LMS] Apprentissage et certification — #330 — M9 — P0
 
 LMS léger : cours, modules, leçons, quiz, progression avancée, attestation PDF.
 
 | ID     | Issue                                                                 | Surface | Priorité |
 | ------ | --------------------------------------------------------------------- | ------- | -------- |
-| LMS-01 | #342 Definir modele cours/module/lecon/quiz                           | shared  | P0       |
-| LMS-02 | #343 Implementer endpoints contenu cours (liste, detail, progression) | api     | P0       |
-| LMS-03 | #344 Implementer lecteur de contenu mobile                            | mobile  | P0       |
-| LMS-04 | #345 Implementer suivi de progression avance                          | api     | P0       |
-| LMS-05 | #346 Implementer logique de certification (attestation PDF)           | api     | P0       |
-| LMS-06 | #347 Implementer espace apprenant web                                 | web     | P1       |
+| LMS-01 | #342 Définir modèle cours/module/leçon/quiz                           | shared  | P0       |
+| LMS-02 | #343 Implémenter endpoints contenu cours (liste, detail, progression) | api     | P0       |
+| LMS-03 | #344 Implémenter lecteur de contenu mobile                            | mobile  | P0       |
+| LMS-04 | #345 Implémenter suivi de progression avance                          | api     | P0       |
+| LMS-05 | #346 Implémenter logique de certification (attestation PDF)           | api     | P0       |
+| LMS-06 | #347 Implémenter espace apprenant web                                 | web     | P1       |
 
 ---
 
-#### [EPIC][DOC] Documents participants — #331 — M9 — P1
+#### [EPIC] [DOC] Documents participants — #331 — M9 — P1
 
 Upload/download sécurisé de documents via Supabase Storage avec RLS.
 
 | ID     | Issue                                                         | Surface | Priorité |
 | ------ | ------------------------------------------------------------- | ------- | -------- |
-| DOC-01 | #348 Definir modele document (type, visibilite, proprietaire) | shared  | P1       |
-| DOC-02 | #349 Implementer endpoints upload/download (Supabase Storage) | api     | P1       |
-| DOC-03 | #350 Implementer espace documents mobile                      | mobile  | P1       |
-| DOC-04 | #351 Implementer espace documents web                         | web     | P1       |
+| DOC-01 | #348 Définir modèle document (type, visibilité, propriétaire) | shared  | P1       |
+| DOC-02 | #349 Implémenter endpoints upload/download (Supabase Storage) | api     | P1       |
+| DOC-03 | #350 Implémenter espace documents mobile                      | mobile  | P1       |
+| DOC-04 | #351 Implémenter espace documents web                         | web     | P1       |
 
 ---
 
-#### [EPIC][CMS] Gestion de contenu admin — #332 — M9 — P1
+#### [EPIC] [CMS] Gestion de contenu admin — #332 — M9 — P1
 
 Interface éditoriale admin : articles, catégories, tags, blog public web.
 
 | ID     | Issue                                                           | Surface | Priorité |
 | ------ | --------------------------------------------------------------- | ------- | -------- |
-| CMS-01 | #352 Definir modele editorial (article, categorie, tag, auteur) | shared  | P1       |
-| CMS-02 | #353 Implementer endpoints admin publication (CRUD articles)    | api     | P1       |
-| CMS-03 | #354 Implementer blog/actualites web (liste, detail)            | web     | P1       |
-| CMS-04 | #355 Implementer dashboard admin gestion programmes et contenus | web     | P1       |
+| CMS-01 | #352 Définir modèle éditorial (article, catégorie, tag, auteur) | shared  | P1       |
+| CMS-02 | #353 Implémenter endpoints admin publication (CRUD articles)    | api     | P1       |
+| CMS-03 | #354 Implémenter blog/actualités web (liste, detail)            | web     | P1       |
+| CMS-04 | #355 Implémenter dashboard admin gestion programmes et contenus | web     | P1       |
 
 ---
 
-#### [EPIC][CRM] Relation client et marketing — #333 — M10 — P2
+#### [EPIC] [CRM] Relation client et marketing — #333 — M10 — P2
 
 Enrichissement profil, vue admin participants, scoring, séquences email.
 
 | ID     | Issue                                                                 | Surface | Priorité |
 | ------ | --------------------------------------------------------------------- | ------- | -------- |
-| CRM-01 | #356 Enrichir profil participant (competences, objectifs, historique) | api     | P2       |
-| CRM-02 | #357 Implementer vue admin participants                               | web     | P2       |
-| CRM-03 | #358 Implementer scoring et segmentation basique                      | api     | P2       |
+| CRM-01 | #356 Enrichir profil participant (compétences, objectifs, historique) | api     | P2       |
+| CRM-02 | #357 Implémenter vue admin participants                               | web     | P2       |
+| CRM-03 | #358 Implémenter scoring et segmentation basique                      | api     | P2       |
 | CRM-04 | #359 Configurer sequences email marketing (Resend)                    | api     | P2       |
 
 ---
 
-#### [EPIC][QA2] Qualité et couverture V1.1 — #334 — M10 — P0
+#### [EPIC] [QA2] Qualité et couverture V1.1 — #334 — M10 — P0
 
 Matrice couverture, tests unitaires, E2E et campagne régression V1.1.
 
 | ID     | Issue                                                    | Surface | Priorité |
 | ------ | -------------------------------------------------------- | ------- | -------- |
-| QA2-01 | #360 Definir matrice couverture V1.1                     | shared  | P0       |
-| QA2-02 | #361 Ecrire tests unitaires composants et services V1.1  | shared  | P0       |
-| QA2-03 | #362 Ecrire tests E2E parcours paiement et apprentissage | qa      | P0       |
+| QA2-01 | #360 Définir matrice couverture V1.1                     | shared  | P0       |
+| QA2-02 | #361 Écrire tests unitaires composants et services V1.1  | shared  | P0       |
+| QA2-03 | #362 Écrire tests E2E parcours paiement et apprentissage | qa      | P0       |
 | QA2-04 | #363 Campagne regression V1.1 et correction des blockers | qa      | P0       |
 
 ---
 
-#### [EPIC][DEP2] Déploiement V1.1 — #335 — M10 — P0
+#### [EPIC] [DEP2] Déploiement V1.1 — #335 — M10 — P0
 
 Migrations DB, variables d'environnement V1.1, tag et déploiement staging/prod.
 
@@ -461,7 +462,7 @@ Migrations DB, variables d'environnement V1.1, tag et déploiement staging/prod.
 | ------- | --------------------------------------------------------------------- | ------- | -------- |
 | DEP2-01 | #364 Migrer schema DB V1.1 (Supabase migrations)                      | shared  | P0       |
 | DEP2-02 | #365 Configurer variables d'environnement V1.1 (Stripe, Storage, LMS) | ops     | P0       |
-| DEP2-03 | #366 Executer release tag V1.1 et deploiement staging/prod            | ops     | P0       |
+| DEP2-03 | #366 Exécuter release tag V1.1 et déploiement staging/prod            | ops     | P0       |
 
 ---
 

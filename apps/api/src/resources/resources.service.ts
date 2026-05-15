@@ -13,8 +13,6 @@ const RESOURCE_SELECT_FIELDS =
 const RESOURCE_TRACKING_SELECT_FIELDS =
   'id, consultation_count, last_consulted_at';
 
-const RESOURCE_SELECT_FIELDS_WITH_COUNT = `${RESOURCE_SELECT_FIELDS}, count:id.count()`;
-
 type ResourceTrackingRow = {
   id: string;
   consultation_count: number;
@@ -43,7 +41,7 @@ export class ResourcesService {
 
     let query = adminClient
       .from('resource')
-      .select(RESOURCE_SELECT_FIELDS_WITH_COUNT, { count: 'exact' })
+      .select(RESOURCE_SELECT_FIELDS, { count: 'exact' })
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -63,7 +61,14 @@ export class ResourcesService {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new Error(`Failed to list resources: ${error.message}`);
+      console.error('Public resources listing failed', {
+        context: 'resources.list.public',
+        message: error.message,
+      });
+      return {
+        data: [],
+        total: 0,
+      };
     }
 
     const resources = ((data as ResourceRow[] | null) ?? []).map((row) =>

@@ -7,8 +7,8 @@ const runtimeOrigin =
     : defaultSiteUrl;
 
 export const environment = {
-  environmentName: 'local',
   production: false,
+  enableParticipantArea: true,
   siteUrl: runtimeOrigin,
   apiBaseUrl: 'http://localhost:3000',
   supabaseUrl: 'http://127.0.0.1:54321',

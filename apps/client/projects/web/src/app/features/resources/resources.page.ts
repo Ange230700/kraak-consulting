@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner';
+import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 @Component({

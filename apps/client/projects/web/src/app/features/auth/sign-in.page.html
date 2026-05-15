@@ -62,7 +62,7 @@
                   <i class="pi pi-send text-xs"></i>
                 </span>
                 <p>
-                  Recevez les mises a jour de l'equipe KRAAK en temps reel via
+                  Recevez les mises à jour de l'équipe KRAAK en temps réel via
                   votre dashboard.
                 </p>
               </div>
@@ -73,8 +73,8 @@
                   <i class="pi pi-shield text-xs"></i>
                 </span>
                 <p>
-                  Vos acces et vos informations restent proteges avec nos
-                  standards de securite.
+                  Vos accès et vos informations restent protégés avec nos
+                  standards de sécurité.
                 </p>
               </div>
             </div>
@@ -135,14 +135,14 @@
                 type="password"
                 formControlName="password"
                 autocomplete="current-password"
-                placeholder="Minimum 8 caracteres"
+                placeholder="Minimum 8 caractères"
                 class="focus:border-brand-blue focus:ring-brand-blue/20 min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition-shadow outline-none focus:ring-4"
               />
               @if (
                 form.controls.password.touched && form.controls.password.invalid
               ) {
                 <p class="text-sm leading-6 text-rose-700">
-                  Votre mot de passe doit contenir au moins 8 caracteres.
+                  Votre mot de passe doit contenir au moins 8 caractères.
                 </p>
               }
             </div>
@@ -175,12 +175,14 @@
           >
             <a
               routerLink="/inscription"
+              href="/inscription"
               class="text-brand-blue hover:underline"
             >
               Cr&eacute;er un compte
             </a>
             <a
               routerLink="/mot-de-passe-oublie"
+              href="/mot-de-passe-oublie"
               class="text-brand-blue hover:underline"
             >
               Mot de passe oubli&eacute;

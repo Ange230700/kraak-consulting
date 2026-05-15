@@ -131,9 +131,7 @@
         [disabled]="submitting()"
       >
         {{
-          submitting()
-            ? 'Cr&eacute;ation en cours...'
-            : 'Cr&eacute;er un compte'
+          submitting() ? 'Cr\u00e9ation en cours...' : 'Cr\u00e9er un compte'
         }}
       </ion-button>
     </form>

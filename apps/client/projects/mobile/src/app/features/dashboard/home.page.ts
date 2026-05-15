@@ -8,7 +8,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { createApiClient } from '@kraak/api-client';
+import { createApiClient, logDebugError } from '@kraak/api-client';
 import type {
   DashboardAggregateDto,
   DashboardAnnouncementSummaryDto,
@@ -71,7 +71,7 @@ export default class HomePage implements OnInit {
       tag: 'Annonces',
       title: 'Restez align\u00E9 avec les mises \u00E0 jour importantes.',
       description:
-        'Gardez un oeil sur les informations cl\u00E9s \u00E0 relayer rapidement.',
+        'Gardez un \u0153il sur les informations cl\u00E9s \u00E0 relayer rapidement.',
       tone: 'accent',
     },
     {
@@ -117,8 +117,13 @@ export default class HomePage implements OnInit {
       setLoading: (value) => this.loading.set(value),
       setData: (value) => this.dashboardState.set(value),
       setError: (value) => this.errorMessage.set(value),
-      resolveErrorMessage: (error, fallback) =>
-        resolveAuthErrorMessage(error, fallback),
+      resolveErrorMessage: (error, fallback) => {
+        logDebugError('mobile.dashboard.load', error, {
+          route: '/tabs/accueil',
+        });
+
+        return resolveAuthErrorMessage(error, fallback);
+      },
     });
   }
 }

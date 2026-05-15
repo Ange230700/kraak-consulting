@@ -2,8 +2,8 @@
 
 ## 1. Décision globale
 
-Pour KRAAK, le meilleur compromis entre **rapidité de livraison**,
-**crédibilité technique**, **SEO**, **évolutivité** et **cohérence long terme**
+Pour KRAAK, le meilleur compromis entre rapidité de livraison,
+crédibilité technique, SEO, évolutivité et cohérence long terme
 est :
 
 - **Type de site :** site web marketing personnalisé, avec fondations applicatives pour les futures fonctionnalités
@@ -22,9 +22,9 @@ est :
 
 ### Type de site
 
-**Choix : site web marketing personnalisé**
+#### Choix : site web marketing personnalisé
 
-**Pourquoi :**
+#### Pourquoi
 
 - le MVP a d’abord besoin d’un site clair, rapide et orienté conversion ;
 - un CMS n’est pas nécessaire au départ puisque le contenu sera limité ;
@@ -95,7 +95,7 @@ est :
 Le site doit être bien référencé et charger vite.  
 Le meilleur compromis est de construire le front avec Angular, mais de **pré-rendre les pages marketing** à la génération du build.
 
-**Avantages :**
+#### Avantages du prerender Angular
 
 - meilleur SEO ;
 - pages plus rapides ;
@@ -106,7 +106,7 @@ Le meilleur compromis est de construire le front avec Angular, mais de **pré-re
 
 C’est cohérent avec ton choix initial.
 
-**Avantages :**
+#### Avantages de PrimeNG 21 + Tailwind
 
 - composants prêts à l’emploi ;
 - gain de temps important ;
@@ -115,9 +115,9 @@ C’est cohérent avec ton choix initial.
 
 ### Signals + services + RxJS pour la gestion d’état
 
-**Choix final : Angular Signals + services + RxJS**
+#### Choix final : Angular Signals + services + RxJS
 
-**Pourquoi :**
+#### Pourquoi retenir Signals + services + RxJS
 
 - beaucoup moins de boilerplate que NgRx ;
 - plus rapide à mettre en place ;
@@ -131,7 +131,7 @@ C’est cohérent avec ton choix initial.
 
 ### NestJS + Supabase
 
-**Pourquoi :**
+#### Pourquoi associer NestJS et Supabase
 
 - NestJS fournit une vraie couche API propre, testable et évolutive ;
 - Supabase couvre la base de données, l’authentification et le stockage ;
@@ -140,9 +140,9 @@ C’est cohérent avec ton choix initial.
 
 ### Formulaires : API personnalisée au lieu de Formspree / Tally / Google Forms
 
-**Choix final : API NestJS + Resend + Supabase**
+#### Choix final : API NestJS + Resend + Supabase
 
-**Pourquoi :**
+#### Pourquoi une API personnalisée pour les formulaires
 
 - meilleure cohérence avec la stack ;
 - contrôle total sur les validations ;
@@ -156,9 +156,9 @@ C’est cohérent avec ton choix initial.
 
 ### Front-end — préproduction
 
-**Choix : Vercel**
+#### Choix : Vercel
 
-**Rôle :**
+#### Rôle de Vercel
 
 - héberger le front Angular pré-rendu ;
 - gérer les previews par branche / pull request ;
@@ -166,9 +166,9 @@ C’est cohérent avec ton choix initial.
 
 ### Back-end — préproduction
 
-**Choix : Render via `render.yaml`**
+#### Choix : Render via `render.yaml`
 
-**Rôle :**
+#### Rôle de Render
 
 - déployer l’API NestJS ;
 - gérer les variables d’environnement côté serveur ;
@@ -240,15 +240,15 @@ flowchart TD
 
 ### Docker
 
-**Choix : oui, Docker dans le pipeline CI/CD**
+#### Choix : oui, Docker dans le pipeline CI/CD
 
-**Usage recommandé :**
+#### Usage recommandé
 
 - Docker multi-stage pour l’API NestJS ;
 - image reproductible entre local, CI et Render ;
 - validation du build en CI avant déploiement.
 
-**Remarque :**
+#### Remarque
 
 - Docker est indispensable côté API ;
 - il n’est pas nécessaire pour le front Vercel au MVP.

@@ -359,6 +359,59 @@ describe('AuthService', () => {
     });
   });
 
+  // Given un signup avec email invalide
+  // When signUp est appelé
+  // Then une BadRequestException avec message explicite est renvoyée
+  it('Given un signup avec email invalide, When signUp est appelé, Then une BadRequestException explicite est renvoyée', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Email address is invalid' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: "L'adresse email fournie est invalide.",
+      },
+    });
+  });
+
+  // Given un signup limité par le provider auth
+  // When signUp est appelé
+  // Then une BadRequestException avec message explicite est renvoyée
+  it('Given un signup rate-limited, When signUp est appelé, Then une BadRequestException explicite est renvoyée', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Email rate limit exceeded' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message:
+          "Le service d'inscription est temporairement indisponible. Réessayez plus tard.",
+      },
+    });
+  });
+
   // Given un signup avec erreur Supabase générique
   // When signUp est appelé
   // Then une BadRequestException avec message générique est renvoyée

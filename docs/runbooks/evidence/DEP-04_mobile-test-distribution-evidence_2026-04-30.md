@@ -21,7 +21,7 @@ Resultat:
 
 Indicateurs observables:
 
-- output mobile genere dans `apps/client/dist/mobile`
+- output mobile généré dans `apps/client/dist/mobile`
 - synchronisation Android terminee sans erreur
 
 Reference infrastructure:
@@ -53,5 +53,5 @@ Scenario couvert:
 ## 3) Statut acceptance DEP-04
 
 - scope DEP-04 implemente: oui (runbook de distribution interne Android/iOS)
-- dependances satisfaites (MOB-04, QAT-04): oui (preuves ci-dessus)
+- dépendances satisfaites (MOB-04, QAT-04): oui (preuves ci-dessus)
 - evidence ajoutee: oui (ce document + runbook DEP-04)

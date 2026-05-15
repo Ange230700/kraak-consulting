@@ -2,7 +2,7 @@
 
 Date: 2026-04-30
 Issue: #157
-Scope: verification transversale MVP (web, mobile, api, packages partages, scripts workspace)
+Scope: vérification transversale MVP (web, mobile, api, packages partagés, scripts workspace)
 
 ## Objectif
 
@@ -45,13 +45,13 @@ Verifier que le MVP respecte les attentes minimales de conformite fonctionnelle,
 - Couverture fonctionnelle observee:
   - parcours marketing MVP (home, services, programmes, ressources, contact)
   - redirections auth/protection routes participant
-  - verification SEO de base
-  - verification CTA contact
+  - vérification SEO de base
+  - vérification CTA contact
   - checks accessibilite/performance integres au flux E2E
 
 ## Blocages PR et contraintes de revue
 
-- Aucune PR ouverte detectee liee a l'issue #157 au moment du controle.
+- Aucune PR ouverte détectée liée à l'issue #157 au moment du contrôle.
 - Aucun blocage quality gate/review actif sur une PR associee n'a ete detecte, faute de PR ouverte.
 
 ## Conclusion
@@ -61,7 +61,7 @@ Verifier que le MVP respecte les attentes minimales de conformite fonctionnelle,
 - Robustesse non-regression: validee
 - Blocage immediat identifie: aucun
 
-## Limites et risques residuels
+## Limites et risques résiduels
 
 1. Les tests E2E valident les scenarios critiques existants, mais ne remplacent pas une campagne exploratoire manuelle complete.
 2. Les seuils de couverture ne sont pas utilises ici comme critere bloquant global unique; la decision reste basee sur la batterie de checks executee.
