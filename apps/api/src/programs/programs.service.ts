@@ -66,8 +66,8 @@ type EnrollmentRow = {
   completed_at: string | null;
   program_id: string;
   cohort_id: string | null;
-  progress_completed_session_ids: string[] | null;
-  progress_updated_at: string | null;
+  progress_completed_session_ids?: string[] | null;
+  progress_updated_at?: string | null;
   program: ProgramRow | ProgramRow[] | null;
   cohort: CohortRow | CohortRow[] | null;
 };
@@ -102,6 +102,8 @@ type AnnouncementPreviewRow = Pick<
 
 const enrollmentProgramSelect =
   'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
+const enrollmentProgramSelectWithoutProgress =
+  'id, status, completed_at, program_id, cohort_id, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
 
 const progressUpdateErrorMessage =
   'Impossible de mettre à jour la progression du programme.';
@@ -116,6 +118,39 @@ function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   }
 
   return value ?? null;
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function readErrorCode(error: unknown): string | null {
+  if (!isObject(error) || typeof error['code'] !== 'string') {
+    return null;
+  }
+
+  return error['code'];
+}
+
+function readErrorMessage(error: unknown): string | null {
+  if (!isObject(error) || typeof error['message'] !== 'string') {
+    return null;
+  }
+
+  return error['message'];
+}
+
+function isEnrollmentProgressColumnMissing(error: unknown): boolean {
+  const message = readErrorMessage(error);
+
+  if (!message || readErrorCode(error) !== '42703') {
+    return false;
+  }
+
+  return (
+    message.includes('progress_completed_session_ids') ||
+    message.includes('progress_updated_at')
+  );
 }
 
 @Injectable()
@@ -135,23 +170,7 @@ export class ProgramsService {
       return [];
     }
 
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('enrollment')
-      .select(enrollmentProgramSelect)
-      .eq('participant_id', participantId)
-      .in('status', ['pending', 'active', 'completed'])
-      .order('enrolled_at', { ascending: false })
-      .limit(20);
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de charger la liste des programmes.',
-      });
-    }
-
-    const enrollments = (data as EnrollmentRow[] | null) ?? [];
+    const enrollments = await this.readParticipantEnrollments(participantId);
     const cohortIds = enrollments
       .map((row) => normalizeRelation(row.cohort)?.id ?? null)
       .filter((id): id is string => Boolean(id));
@@ -184,6 +203,76 @@ export class ProgramsService {
         };
       })
       .filter((item): item is ParticipantProgramListItemDto => item !== null);
+  }
+
+  private async readParticipantEnrollments(
+    participantId: string,
+  ): Promise<EnrollmentRow[]> {
+    const data = await this.readEnrollmentQuery<EnrollmentRow[] | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('enrollment')
+          .select(selectClause)
+          .eq('participant_id', participantId)
+          .in('status', ['pending', 'active', 'completed'])
+          .order('enrolled_at', { ascending: false })
+          .limit(20) as PromiseLike<{
+          data: EnrollmentRow[] | null;
+          error: unknown;
+        }>,
+      'Impossible de charger la liste des programmes.',
+      'programs.listPrograms',
+    );
+
+    return data ?? [];
+  }
+
+  private async readEnrollmentQuery<T>(
+    loadQuery: (
+      selectClause: string,
+    ) => PromiseLike<{ data: T; error: unknown }>,
+    errorMessage: string,
+    context: string,
+  ): Promise<T> {
+    const primaryResult = await loadQuery(enrollmentProgramSelect);
+
+    if (!primaryResult.error) {
+      return primaryResult.data;
+    }
+
+    if (isEnrollmentProgressColumnMissing(primaryResult.error)) {
+      console.warn('Enrollment progress columns missing; retrying fallback', {
+        context,
+        code: readErrorCode(primaryResult.error),
+        message: readErrorMessage(primaryResult.error),
+      });
+
+      const fallbackResult = await loadQuery(
+        enrollmentProgramSelectWithoutProgress,
+      );
+
+      if (!fallbackResult.error) {
+        return fallbackResult.data;
+      }
+
+      console.error('Enrollment fallback query failed', {
+        context,
+        code: readErrorCode(fallbackResult.error),
+        message: readErrorMessage(fallbackResult.error),
+      });
+    } else {
+      console.error('Enrollment query failed', {
+        context,
+        code: readErrorCode(primaryResult.error),
+        message: readErrorMessage(primaryResult.error),
+      });
+    }
+
+    throw new InternalServerErrorException({
+      success: false,
+      message: errorMessage,
+    });
   }
 
   private async listPublishedPrograms(): Promise<ProgramDto[]> {
@@ -586,23 +675,24 @@ export class ProgramsService {
     programId: string,
     errorMessage: string,
   ): Promise<EnrollmentRow | null> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('enrollment')
-      .select(enrollmentProgramSelect)
-      .eq('participant_id', participantId)
-      .eq('program_id', programId)
-      .in('status', ['pending', 'active', 'completed'])
-      .maybeSingle();
+    const data = await this.readEnrollmentQuery<EnrollmentRow | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('enrollment')
+          .select(selectClause)
+          .eq('participant_id', participantId)
+          .eq('program_id', programId)
+          .in('status', ['pending', 'active', 'completed'])
+          .maybeSingle() as PromiseLike<{
+          data: EnrollmentRow | null;
+          error: unknown;
+        }>,
+      errorMessage,
+      'programs.readEnrollmentByProgram',
+    );
 
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: errorMessage,
-      });
-    }
-
-    return data as EnrollmentRow | null;
+    return data;
   }
 
   private async readPublishedResources(

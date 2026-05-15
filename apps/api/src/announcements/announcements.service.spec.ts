@@ -267,6 +267,96 @@ describe('AnnouncementsService', () => {
       expect(result.data).toHaveLength(2);
       expect(result.data[0].id).toBe('ann-001');
     });
+
+    it('Given: missing priority column on announcement, When: listAnnouncements called, Then: fallback query returns announcements with normal priority', async () => {
+      const accessToken = 'valid-token';
+      const participantId = 'participant-001';
+      const userId = 'user-001';
+
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: {
+          user: { id: userId },
+        },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: participantId },
+        error: null,
+      });
+
+      const announcementsQueryWithMissingPriority = createAsyncQuery(
+        {
+          data: null,
+          error: {
+            code: '42703',
+            message: 'column announcement.priority does not exist',
+          },
+        },
+        { withOrder: true },
+      );
+
+      const announcementsFallbackQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: 'ann-001',
+              title: 'Fallback Announcement',
+              body: 'Body',
+              audience_type: 'all_participants',
+              program_id: null,
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T10:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T10:00:00Z',
+              updated_at: '2026-04-20T10:00:00Z',
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      const enrollmentsQuery = createAsyncQuery(
+        {
+          data: [],
+          error: null,
+        },
+        { withIn: true },
+      );
+
+      let announcementCalls = 0;
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') {
+            return participantQuery;
+          }
+
+          if (table === 'announcement') {
+            announcementCalls += 1;
+            return announcementCalls === 1
+              ? announcementsQueryWithMissingPriority
+              : announcementsFallbackQuery;
+          }
+
+          if (table === 'enrollment') {
+            return enrollmentsQuery;
+          }
+
+          return undefined;
+        }),
+      });
+
+      const result = await service.listAnnouncements(accessToken, 1, 20);
+
+      expect(result.total).toBe(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toMatchObject({
+        id: 'ann-001',
+        priority: 'normal',
+      });
+    });
   });
 
   describe('getAnnouncementById', () => {
@@ -420,6 +510,76 @@ describe('AnnouncementsService', () => {
       await expect(
         service.getAnnouncementById(announcementId, accessToken),
       ).rejects.toThrow(NotFoundException);
+    });
+
+    it('Given: missing priority column on announcement, When: getAnnouncementById called, Then: fallback query returns the announcement with normal priority', async () => {
+      const accessToken = 'valid-token';
+      const announcementId = 'ann-001';
+
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: {
+          user: { id: 'user-001' },
+        },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementQueryWithMissingPriority = createAsyncQuery({
+        data: null,
+        error: {
+          code: '42703',
+          message: 'column announcement.priority does not exist',
+        },
+      });
+
+      const announcementFallbackQuery = createAsyncQuery({
+        data: {
+          id: announcementId,
+          title: 'Fallback Announcement',
+          body: 'Body',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-04-20T10:00:00Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-04-20T10:00:00Z',
+        },
+        error: null,
+      });
+
+      let announcementCalls = 0;
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn((table: string) => {
+          if (table === 'participant') {
+            return participantQuery;
+          }
+
+          if (table === 'announcement') {
+            announcementCalls += 1;
+            return announcementCalls === 1
+              ? announcementQueryWithMissingPriority
+              : announcementFallbackQuery;
+          }
+
+          return undefined;
+        }),
+      });
+
+      const result = await service.getAnnouncementById(
+        announcementId,
+        accessToken,
+      );
+
+      expect(result).toMatchObject({
+        id: announcementId,
+        priority: 'normal',
+      });
     });
   });
 

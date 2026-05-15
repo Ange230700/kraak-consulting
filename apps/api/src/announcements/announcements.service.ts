@@ -17,12 +17,14 @@ import { SupabaseService } from '../supabase/supabase.service';
 
 const ANNOUNCEMENT_SELECT_FIELDS =
   'id, title, body, priority, audience_type, program_id, cohort_id, status, published_at, created_by_user_id, created_at, updated_at';
+const ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY =
+  'id, title, body, audience_type, program_id, cohort_id, status, published_at, created_by_user_id, created_at, updated_at';
 
 type AnnouncementRow = {
   id: string;
   title: string;
   body: string;
-  priority: AnnouncementPriorityValue;
+  priority?: AnnouncementPriorityValue | null;
   audience_type: AudienceTypeValue;
   program_id: string | null;
   cohort_id: string | null;
@@ -37,6 +39,36 @@ type EnrollmentRow = {
   program_id: string;
   cohort_id: string | null;
 };
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function readErrorCode(error: unknown): string | null {
+  if (!isObject(error) || typeof error['code'] !== 'string') {
+    return null;
+  }
+
+  return error['code'];
+}
+
+function readErrorMessage(error: unknown): string | null {
+  if (!isObject(error) || typeof error['message'] !== 'string') {
+    return null;
+  }
+
+  return error['message'];
+}
+
+function isAnnouncementPriorityColumnMissing(error: unknown): boolean {
+  const message = readErrorMessage(error);
+
+  return Boolean(
+    message &&
+    readErrorCode(error) === '42703' &&
+    message.includes('announcement.priority'),
+  );
+}
 
 @Injectable()
 export class AnnouncementsService {
@@ -55,23 +87,18 @@ export class AnnouncementsService {
     page?: number,
     limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
-    const adminClient = this.supabaseService.getClient();
     const paginationLimit = this.resolvePaginationLimit(limit);
     const paginationPage = this.resolvePaginationPage(page);
 
-    // Get all published announcements
     const { data: allAnnouncements, error: announcementsError } =
-      await adminClient
-        .from('announcement')
-        .select(ANNOUNCEMENT_SELECT_FIELDS)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
+      await this.readPublishedAnnouncements();
 
     if (announcementsError) {
       if (!accessToken) {
         console.error('Public announcements listing failed', {
           context: 'announcements.list.public',
-          message: announcementsError.message,
+          code: readErrorCode(announcementsError),
+          message: readErrorMessage(announcementsError),
         });
         return {
           data: [],
@@ -80,7 +107,7 @@ export class AnnouncementsService {
       }
 
       throw new Error(
-        `Failed to list announcements: ${announcementsError.message}`,
+        `Failed to list announcements: ${readErrorMessage(announcementsError) ?? 'unknown error'}`,
       );
     }
 
@@ -110,6 +137,7 @@ export class AnnouncementsService {
     }
 
     // Get participant's enrollments
+    const adminClient = this.supabaseService.getClient();
     const { data: enrollments, error: enrollmentsError } = await adminClient
       .from('enrollment')
       .select('program_id, cohort_id')
@@ -139,6 +167,84 @@ export class AnnouncementsService {
       data: paginated,
       total: sorted.length,
     };
+  }
+
+  private async readPublishedAnnouncements(): Promise<{
+    data: AnnouncementRow[] | null;
+    error: unknown;
+  }> {
+    return this.readAnnouncementQuery<AnnouncementRow[] | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('announcement')
+          .select(selectClause)
+          .eq('status', 'published')
+          .order('published_at', { ascending: false }) as PromiseLike<{
+          data: AnnouncementRow[] | null;
+          error: unknown;
+        }>,
+      'announcements.list',
+    );
+  }
+
+  private async readPublishedAnnouncementById(id: string): Promise<{
+    data: AnnouncementRow | null;
+    error: unknown;
+  }> {
+    return this.readAnnouncementQuery<AnnouncementRow | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('announcement')
+          .select(selectClause)
+          .eq('id', id)
+          .eq('status', 'published')
+          .single() as PromiseLike<{
+          data: AnnouncementRow | null;
+          error: unknown;
+        }>,
+      'announcements.getById',
+    );
+  }
+
+  private async readAnnouncementQuery<T>(
+    loadQuery: (
+      selectClause: string,
+    ) => PromiseLike<{ data: T; error: unknown }>,
+    context: string,
+  ): Promise<{ data: T; error: unknown }> {
+    const primaryResult = await loadQuery(ANNOUNCEMENT_SELECT_FIELDS);
+
+    if (!primaryResult.error) {
+      return primaryResult;
+    }
+
+    if (!isAnnouncementPriorityColumnMissing(primaryResult.error)) {
+      return primaryResult;
+    }
+
+    console.warn('Announcement priority column missing; retrying fallback', {
+      context,
+      code: readErrorCode(primaryResult.error),
+      message: readErrorMessage(primaryResult.error),
+    });
+
+    const fallbackResult = await loadQuery(
+      ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY,
+    );
+
+    if (!fallbackResult.error) {
+      return fallbackResult;
+    }
+
+    console.error('Announcement fallback query failed', {
+      context,
+      code: readErrorCode(fallbackResult.error),
+      message: readErrorMessage(fallbackResult.error),
+    });
+
+    return fallbackResult;
   }
 
   private resolvePaginationLimit(limit?: number): number {
@@ -171,16 +277,8 @@ export class AnnouncementsService {
     id: string,
     accessToken: string,
   ): Promise<AnnouncementDto> {
-    const adminClient = this.supabaseService.getClient();
-
-    // Get the announcement
     const { data: announcementData, error: announcementError } =
-      await adminClient
-        .from('announcement')
-        .select(ANNOUNCEMENT_SELECT_FIELDS)
-        .eq('id', id)
-        .eq('status', 'published')
-        .single();
+      await this.readPublishedAnnouncementById(id);
 
     if (announcementError || !announcementData) {
       throw new NotFoundException('Announcement not found or not published');
@@ -333,7 +431,7 @@ export class AnnouncementsService {
       id: row.id,
       title: row.title,
       body: row.body,
-      priority: row.priority,
+      priority: row.priority ?? 'normal',
       audienceType: row.audience_type,
       programId: row.program_id,
       cohortId: row.cohort_id,
