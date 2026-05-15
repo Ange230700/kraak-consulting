@@ -14,6 +14,12 @@ import {
   sortAnnouncementsByPriority,
 } from '@kraak/domain';
 import { SupabaseService } from '../supabase/supabase.service';
+import {
+  isSupabaseColumnMissingError,
+  readSupabaseErrorCode,
+  readSupabaseErrorMessage,
+  readSupabaseQueryWithFallback,
+} from '../shared/supabase-query-fallback.utils';
 
 const ANNOUNCEMENT_SELECT_FIELDS =
   'id, title, body, priority, audience_type, program_id, cohort_id, status, published_at, created_by_user_id, created_at, updated_at';
@@ -40,34 +46,8 @@ type EnrollmentRow = {
   cohort_id: string | null;
 };
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
-}
-
-function readErrorCode(error: unknown): string | null {
-  if (!isObject(error) || typeof error['code'] !== 'string') {
-    return null;
-  }
-
-  return error['code'];
-}
-
-function readErrorMessage(error: unknown): string | null {
-  if (!isObject(error) || typeof error['message'] !== 'string') {
-    return null;
-  }
-
-  return error['message'];
-}
-
 function isAnnouncementPriorityColumnMissing(error: unknown): boolean {
-  const message = readErrorMessage(error);
-
-  return Boolean(
-    message &&
-    readErrorCode(error) === '42703' &&
-    message.includes('announcement.priority'),
-  );
+  return isSupabaseColumnMissingError(error, ['announcement.priority']);
 }
 
 @Injectable()
@@ -97,8 +77,8 @@ export class AnnouncementsService {
       if (!accessToken) {
         console.error('Public announcements listing failed', {
           context: 'announcements.list.public',
-          code: readErrorCode(announcementsError),
-          message: readErrorMessage(announcementsError),
+          code: readSupabaseErrorCode(announcementsError),
+          message: readSupabaseErrorMessage(announcementsError),
         });
         return {
           data: [],
@@ -107,16 +87,15 @@ export class AnnouncementsService {
       }
 
       throw new Error(
-        `Failed to list announcements: ${readErrorMessage(announcementsError) ?? 'unknown error'}`,
+        `Failed to list announcements: ${readSupabaseErrorMessage(announcementsError) ?? 'unknown error'}`,
       );
     }
 
     // Public mode: return all published announcements when no token is provided.
     if (!accessToken) {
+      const announcementRows = allAnnouncements ?? [];
       const sorted = sortAnnouncementsByPriority(
-        ((allAnnouncements ?? []) as AnnouncementRow[]).map((row) =>
-          this.mapAnnouncement(row),
-        ),
+        announcementRows.map((row) => this.mapAnnouncement(row)),
       );
       const offset = (paginationPage - 1) * paginationLimit;
       const paginated = sorted.slice(offset, offset + paginationLimit);
@@ -149,9 +128,11 @@ export class AnnouncementsService {
     }
 
     // Filter announcements based on participant's scope
+    const announcementRows = allAnnouncements ?? [];
+    const enrollmentRows = (enrollments ?? []) as EnrollmentRow[];
     const visibleAnnouncements = this.filterAnnouncementsByScope(
-      (allAnnouncements ?? []) as AnnouncementRow[],
-      (enrollments ?? []) as EnrollmentRow[],
+      announcementRows,
+      enrollmentRows,
     );
 
     // Sort by priority and publishedAt
@@ -214,37 +195,15 @@ export class AnnouncementsService {
     ) => PromiseLike<{ data: T; error: unknown }>,
     context: string,
   ): Promise<{ data: T; error: unknown }> {
-    const primaryResult = await loadQuery(ANNOUNCEMENT_SELECT_FIELDS);
-
-    if (!primaryResult.error) {
-      return primaryResult;
-    }
-
-    if (!isAnnouncementPriorityColumnMissing(primaryResult.error)) {
-      return primaryResult;
-    }
-
-    console.warn('Announcement priority column missing; retrying fallback', {
+    return readSupabaseQueryWithFallback({
+      loadQuery,
+      primarySelect: ANNOUNCEMENT_SELECT_FIELDS,
+      fallbackSelect: ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY,
+      shouldRetry: isAnnouncementPriorityColumnMissing,
       context,
-      code: readErrorCode(primaryResult.error),
-      message: readErrorMessage(primaryResult.error),
+      retryNotice: 'Announcement priority column missing; retrying fallback',
+      fallbackFailureNotice: 'Announcement fallback query failed',
     });
-
-    const fallbackResult = await loadQuery(
-      ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY,
-    );
-
-    if (!fallbackResult.error) {
-      return fallbackResult;
-    }
-
-    console.error('Announcement fallback query failed', {
-      context,
-      code: readErrorCode(fallbackResult.error),
-      message: readErrorMessage(fallbackResult.error),
-    });
-
-    return fallbackResult;
   }
 
   private resolvePaginationLimit(limit?: number): number {
@@ -284,7 +243,7 @@ export class AnnouncementsService {
       throw new NotFoundException('Announcement not found or not published');
     }
 
-    const announcement = announcementData as AnnouncementRow;
+    const announcement = announcementData;
 
     // Get participant ID from access token
     const participantId = await this.resolveParticipantId(accessToken);

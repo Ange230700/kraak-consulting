@@ -30,6 +30,11 @@ import type {
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
+import {
+  isSupabaseColumnMissingError,
+  readSupabaseQueryWithFallback,
+  type SupabaseQueryResult,
+} from '../shared/supabase-query-fallback.utils';
 
 type ParticipantRow = {
   id: string;
@@ -120,37 +125,31 @@ function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   return value ?? null;
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
-}
-
-function readErrorCode(error: unknown): string | null {
-  if (!isObject(error) || typeof error['code'] !== 'string') {
-    return null;
-  }
-
-  return error['code'];
-}
-
-function readErrorMessage(error: unknown): string | null {
-  if (!isObject(error) || typeof error['message'] !== 'string') {
-    return null;
-  }
-
-  return error['message'];
-}
-
 function isEnrollmentProgressColumnMissing(error: unknown): boolean {
-  const message = readErrorMessage(error);
+  return isSupabaseColumnMissingError(error, [
+    'progress_completed_session_ids',
+    'progress_updated_at',
+  ]);
+}
 
-  if (!message || readErrorCode(error) !== '42703') {
-    return false;
-  }
+type SupabaseQueryLoader<T> = (
+  selectClause: string,
+) => PromiseLike<SupabaseQueryResult<T>>;
 
-  return (
-    message.includes('progress_completed_session_ids') ||
-    message.includes('progress_updated_at')
-  );
+function executeEnrollmentQueryWithFallback<T>(
+  loadQuery: SupabaseQueryLoader<T>,
+  context: string,
+): Promise<SupabaseQueryResult<T>> {
+  return readSupabaseQueryWithFallback({
+    loadQuery,
+    primarySelect: enrollmentProgramSelect,
+    fallbackSelect: enrollmentProgramSelectWithoutProgress,
+    shouldRetry: isEnrollmentProgressColumnMissing,
+    context,
+    retryNotice: 'Enrollment progress columns missing; retrying fallback',
+    fallbackFailureNotice: 'Enrollment fallback query failed',
+    primaryFailureNotice: 'Enrollment query failed',
+  });
 }
 
 @Injectable()
@@ -235,38 +234,10 @@ export class ProgramsService {
     errorMessage: string,
     context: string,
   ): Promise<T> {
-    const primaryResult = await loadQuery(enrollmentProgramSelect);
+    const result = await executeEnrollmentQueryWithFallback(loadQuery, context);
 
-    if (!primaryResult.error) {
-      return primaryResult.data;
-    }
-
-    if (isEnrollmentProgressColumnMissing(primaryResult.error)) {
-      console.warn('Enrollment progress columns missing; retrying fallback', {
-        context,
-        code: readErrorCode(primaryResult.error),
-        message: readErrorMessage(primaryResult.error),
-      });
-
-      const fallbackResult = await loadQuery(
-        enrollmentProgramSelectWithoutProgress,
-      );
-
-      if (!fallbackResult.error) {
-        return fallbackResult.data;
-      }
-
-      console.error('Enrollment fallback query failed', {
-        context,
-        code: readErrorCode(fallbackResult.error),
-        message: readErrorMessage(fallbackResult.error),
-      });
-    } else {
-      console.error('Enrollment query failed', {
-        context,
-        code: readErrorCode(primaryResult.error),
-        message: readErrorMessage(primaryResult.error),
-      });
+    if (!result.error) {
+      return result.data;
     }
 
     throw new InternalServerErrorException({
