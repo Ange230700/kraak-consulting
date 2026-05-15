@@ -324,6 +324,93 @@ describe('ProgramsService', () => {
     );
   });
 
+  // Given un schéma staging sans colonnes de progression enrollment
+  // When la liste programmes est demandée
+  // Then un fallback sans colonnes de progression est utilisé
+  it('Given des colonnes de progression absentes, When listPrograms est appelé, Then les programmes restent renvoyés avec une progression vide', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQueryWithMissingProgress = createListQuery({
+      data: null,
+      error: {
+        code: '42703',
+        message:
+          'column enrollment.progress_completed_session_ids does not exist',
+      },
+    });
+    const enrollmentFallbackQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: {
+            id: 'cohort-1',
+            program_id: 'program-1',
+            name: 'Cohorte Avril',
+            code: 'APR-26',
+            status: 'active',
+            start_date: '2026-04-10',
+            end_date: null,
+            capacity: 25,
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+        },
+      ],
+      error: null,
+    });
+    const sessionsByCohortQuery = createListQuery({
+      data: [{ id: 'session-1', cohort_id: 'cohort-1' }],
+      error: null,
+    });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentQueryWithMissingProgress
+          : enrollmentFallbackQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsByCohortQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      {
+        enrollmentId: 'enrollment-1',
+        progress: {
+          totalSessions: 1,
+          completedSessions: 0,
+        },
+      },
+    ]);
+  });
+
   // Given un programme accessible avec cohorte
   // When le détail programme est demandé
   // Then le détail inclut sessions, ressources et annonces visibles
@@ -1095,6 +1182,116 @@ describe('ProgramsService', () => {
     await expect(
       service.getProgramDetail('access-token', 'program-1'),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  // Given un schéma staging sans colonnes de progression enrollment
+  // When le détail programme est demandé
+  // Then le fallback d'enrollment sans progression permet de charger le détail
+  it('Given des colonnes de progression absentes, When getProgramDetail est appelé, Then le détail programme reste disponible', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQueryWithMissingProgress = createSingleRowQuery({
+      data: null,
+      error: {
+        code: '42703',
+        message: 'column enrollment.progress_updated_at does not exist',
+      },
+    });
+    const enrollmentFallbackQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        completed_at: null,
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: 'APR-26',
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: 25,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: [
+        {
+          id: 'session-1',
+          cohort_id: 'cohort-1',
+          title: 'Atelier Vision',
+          description: 'Vision et priorités',
+          status: 'scheduled',
+          starts_at: '2026-05-02T09:00:00.000Z',
+          ends_at: '2026-05-02T11:00:00.000Z',
+          location_type: 'online',
+          location_label: null,
+          meeting_link: 'https://meet.example.com/kraak',
+          trainer_user_id: null,
+          created_at: '2026-04-20T00:00:00.000Z',
+          updated_at: '2026-04-20T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({ data: [], error: null });
+
+    let enrollmentCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        enrollmentCalls += 1;
+        return enrollmentCalls === 1
+          ? enrollmentQueryWithMissingProgress
+          : enrollmentFallbackQuery;
+      }
+
+      if (tableName === 'session') {
+        return sessionsQuery;
+      }
+
+      if (tableName === 'resource') {
+        return resourcesQuery;
+      }
+
+      if (tableName === 'announcement') {
+        return announcementsQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      progress: {
+        totalSessions: 1,
+        completedSessions: 0,
+      },
+    });
   });
 
   // Given une erreur DB sur sessions dans getProgramDetail
