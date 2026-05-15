@@ -92,24 +92,32 @@ export class GsapAnimationsService {
     }
 
     this.ngZone.runOutsideAngular(() => {
+      const firstSection = document.querySelector('section:first-child');
+
       // Hero section entrance
-      gsap.from('section:first-child', {
-        duration: 1,
-        ease: 'power3.out',
-        y: 12,
-      });
+      if (firstSection) {
+        gsap.from(firstSection, {
+          duration: 1,
+          ease: 'power3.out',
+          y: 12,
+        });
+      }
+
+      const headings = document.querySelectorAll('h1, h2');
 
       // Main headings progressive reveal
-      gsap.from('h1, h2', {
-        y: 20,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: 'body',
-          start: 'top top',
-        },
-      });
+      if (headings.length > 0) {
+        gsap.from(headings, {
+          y: 20,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: document.body,
+            start: 'top top',
+          },
+        });
+      }
     });
   }
 
@@ -340,7 +348,7 @@ export class GsapAnimationsService {
 
   /**
    * Anime les sections de la page avec un effet de reveal au scroll
-   * Chaque section se revèle avec un slide subtle
+   * Chaque section se révèle avec un slide subtle
    */
   initializeSectionAnimations(selector = 'section'): void {
     if (typeof document === 'undefined') {
@@ -469,7 +477,7 @@ export class GsapAnimationsService {
   }
 
   /**
-   * Nettoie les animations GSAP et ScrollTrigger (important pour eviter les memory leaks)
+   * Nettoie les animations GSAP et ScrollTrigger (important pour éviter les memory leaks)
    */
   killAllAnimations(): void {
     // Ensure we're in the browser environment (not SSR)

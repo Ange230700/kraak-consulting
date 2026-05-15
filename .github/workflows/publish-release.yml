@@ -1,0 +1,59 @@
+name: Publish Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.changeset/CHANGELOG.md'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'apps/**'
+      - 'packages/**'
+  workflow_dispatch:
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Publish changesets and create git tags
+  # ──────────────────────────────────────────────
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, 'chore: bump versions and update changelogs'))
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Publish changesets
+        id: publish
+        run: |
+          pnpm changesets:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push tags
+        if: steps.publish.outcome == 'success'
+        run: git push --follow-tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

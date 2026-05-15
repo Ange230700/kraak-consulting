@@ -1,18 +1,18 @@
 # Guide de build mobile (Capacitor Android / iOS)
 
-Ce runbook decrit comment generer les projets natifs Android et iOS, lancer un build debug local, ouvrir le projet dans l'IDE natif, et tester avec le live-reload.
+Ce runbook décrit comment générer les projets natifs Android et iOS, lancer un build debug local, ouvrir le projet dans l'IDE natif, et tester avec le live-reload.
 
 ---
 
-## Prerequis
+## Prérequis
 
-| Outil          | Version recommandee / utilisee | Remarque                                                  |
+| Outil          | Version recommandée / utilisée | Remarque                                                  |
 | -------------- | ------------------------------ | --------------------------------------------------------- |
-| Node.js        | 24.14.1                        | version utilisee via `.nvmrc`                             |
-| pnpm           | 10.23.0                        | version utilisee via `packageManager` dans `package.json` |
-| JDK            | 21+                            | Temurin recommande, necessaire pour Gradle / Android      |
-| Android Studio | Hedgehog (2023.1.1)+           | Installe le SDK Android et les emulateurs                 |
-| Xcode          | 16+                            | macOS uniquement, necessaire pour les builds iOS          |
+| Node.js        | 24.14.1                        | version utilisée via `.nvmrc`                             |
+| pnpm           | 10.23.0                        | version utilisée via `packageManager` dans `package.json` |
+| JDK            | 21+                            | Temurin recommande, nécessaire pour Gradle / Android      |
+| Android Studio | Hedgehog (2023.1.1)+           | Installe le SDK Android et les émulateurs                 |
+| Xcode          | 16+                            | macOS uniquement, nécessaire pour les builds iOS          |
 | CocoaPods      | 1.13+                          | macOS uniquement, `sudo gem install cocoapods`            |
 
 ---
@@ -23,15 +23,15 @@ Pour que les builds Android fonctionnent sans specifier manuellement les chemins
 
 ### Android SDK (`local.properties`)
 
-Le fichier `apps/client/android/local.properties` est automatiquement genere a partir de votre installation locale d'Android Studio. Il ne doit pas etre commite.
+Le fichier `apps/client/android/local.properties` est automatiquement généré à partir de votre installation locale d'Android Studio. Il ne doit pas être commité.
 
-Verification manuelle (si le build Gradle echoue sur "SDK location not found") :
+Vérification manuelle (si le build Gradle échoue sur "SDK location not found") :
 
 ```bash
 # Verifier que le fichier existe
 cat apps/client/android/local.properties
 
-# Ou le recreer manuellement sur Windows
+# Ou le recréer manuellement sur Windows
 echo "sdk.dir=C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Android\\Sdk" > apps/client/android/local.properties
 
 # Sur macOS/Linux
@@ -40,7 +40,7 @@ echo "sdk.dir=$HOME/Library/Android/Sdk" > apps/client/android/local.properties
 
 ### JAVA_HOME et variables d'environnement
 
-Si le build Gradle echoue sur "Unsupported class file major version" ou "Unknown Java version", le JDK actif est incompatible. Deux approches :
+Si le build Gradle échoue sur "Unsupported class file major version" ou "Unknown Java version", le JDK actif est incompatible. Deux approches :
 
 #### Option 1 : Configuration shell permanente (recommande)
 
@@ -66,7 +66,7 @@ $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
 
 #### Option 2 : Via helper script (siege)
 
-Pour une approche isolee (une seule session) :
+Pour une approche isolée (une seule session) :
 
 ```bash
 # Bash/Zsh
@@ -83,22 +83,22 @@ node scripts/setup-android-env.mjs --run "pnpm build:debug:android"
 
 ## Generation des projets natifs
 
-Les dossiers `android/` et `ios/` ne sont pas generes automatiquement.
-Dans l'etat actuel du depot, ils sont generes a la demande en local ou en CI.
+Les dossiers `android/` et `ios/` ne sont pas générés automatiquement.
+Dans l'état actuel du dépôt, ils sont générés à la demande en local ou en CI.
 Si vous devez preparer manuellement les plateformes natives, utilisez :
 
 ```bash
 cd apps/client
 
-# Generer le projet Android
+# Générer le projet Android
 npx cap add android
 
-# Generer le projet iOS (macOS uniquement)
+# Générer le projet iOS (macOS uniquement)
 npx cap add ios
 ```
 
-Le helper utilise par `pnpm build:debug:android` et `pnpm build:debug:ios` peut aussi creer la plateforme manquante automatiquement avant `cap sync`.
-Les artefacts de build intermediaires restent exclus via `apps/client/.gitignore`.
+Le helper utilise par `pnpm build:debug:android` et `pnpm build:debug:ios` peut aussi créer la plateforme manquante automatiquement avant `cap sync`.
+Les artefacts de build intermédiaires restent exclus via `apps/client/.gitignore`.
 
 ---
 
@@ -120,7 +120,7 @@ cd apps/client/android
 ./gradlew assembleDebug
 ```
 
-APK genere dans `apps/client/android/app/build/outputs/apk/debug/app-debug.apk`.
+APK généré dans `apps/client/android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ### iOS (macOS uniquement)
 
@@ -199,7 +199,7 @@ Le mobile inclut un service de base `MobilePushNotificationsService` pour le wir
 
 Objectif du stub MVP :
 
-- initialiser la chaine Capacitor Push Notifications au demarrage de l'application
+- initialiser la chaîne Capacitor Push Notifications au démarrage de l'application
 - retourner un token device (token FCM en natif, token stub en fallback)
 - preparer les listeners minimaux pour la suite des travaux (`ANN-04`)
 
@@ -211,8 +211,8 @@ Fichiers reliés :
 
 Comportement attendu :
 
-- plateforme web ou permissions refusees : token stub `stub-mobile-token-<env>-<raison>`
-- plateforme native + permissions accordees : tentative d'enregistrement FCM via `@capacitor/push-notifications`
+- plateforme web ou permissions refusées : token stub `stub-mobile-token-<env>-<raison>`
+- plateforme native + permissions accordées : tentative d'enregistrement FCM via `@capacitor/push-notifications`
 - timeout d'enregistrement : fallback automatique vers token stub
 
 Verification rapide :
@@ -224,20 +224,20 @@ pnpm --filter @kraak/client test:mobile
 ANN-04 (notification push annonce prioritaire) ajoute sur ce wiring :
 
 - detection des payloads `priority` en `high` ou `critical` pour les annonces
-- conservation du dernier payload prioritaire recu via le signal `lastPriorityAnnouncementPush`
+- conservation du dernier payload prioritaire reçu via le signal `lastPriorityAnnouncementPush`
 - navigation automatique vers `/tabs/annonces/:announcementId` lors de l'action utilisateur sur la notification
 
 ---
 
-## Test avec live-reload (appareil physique ou emulateur)
+## Test avec live-reload (appareil physique ou émulateur)
 
-1. Demarrer le serveur de developpement mobile :
+1. Démarrer le serveur de développement mobile :
 
 ```bash
 pnpm dev:mobile
 ```
 
-1. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les proprietes `server.url` et `cleartext` dans l'objet `server` :
+1. Dans `apps/client/capacitor.config.ts`, ajouter ou completer les propriétés `server.url` et `cleartext` dans l'objet `server` :
 
 ```typescript
 server: {
@@ -257,9 +257,9 @@ pnpm --filter @kraak/client cap:open:android
 pnpm --filter @kraak/client cap:open:ios
 ```
 
-1. Lancer l'app depuis Android Studio ou Xcode sur un emulateur ou un appareil connecte.
+1. Lancer l'app depuis Android Studio ou Xcode sur un émulateur ou un appareil connecte.
 
-Important : ne pas commiter le bloc `url` / `cleartext` dans le depot, il est reserve au developpement local.
+Important : ne pas commiter le bloc `url` / `cleartext` dans le dépôt, il est réservé au développement local.
 
 ---
 
@@ -267,13 +267,13 @@ Important : ne pas commiter le bloc `url` / `cleartext` dans le depot, il est re
 
 Le job `android-debug` du pipeline CI (`.github/workflows/ci.yml`) :
 
-- se declenche apres le job `build`
+- se déclenche apres le job `build`
 - installe Java 21 (Temurin)
 - execute `pnpm build:debug:android`
 - assemble le debug APK via `./gradlew assembleDebug`
 - publie l'APK comme artefact GitHub Actions (`debug-apk`, retention 14 jours)
 
-Le debug APK est accessible dans l'onglet Actions du depot GitHub, dans le resume de chaque run CI reussi.
+Le debug APK est accessible dans l'onglet Actions du dépôt GitHub, dans le résumé de chaque run CI réussi.
 
 ---
 

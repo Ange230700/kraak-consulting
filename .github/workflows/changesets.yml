@@ -1,0 +1,47 @@
+name: Changesets
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: changesets
+  cancel-in-progress: false
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Create or update version PR
+  # ──────────────────────────────────────────────
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Create or update version PR
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
+        with:
+          version: pnpm run changesets:version
+          publish: pnpm run changesets:publish
+          commit: 'chore: bump versions and update changelogs'
+          title: 'chore: bump versions and update changelogs'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

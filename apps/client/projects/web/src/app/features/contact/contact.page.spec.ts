@@ -7,13 +7,19 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { vi } from 'vitest';
+import { KRAAK_SOCIAL_LINKS } from '../../shared/brand/brand-constants';
 
 import ContactPage from './contact.page';
+
+const WHATSAPP_URL =
+  KRAAK_SOCIAL_LINKS.find((socialLink) => socialLink.label === 'WhatsApp')
+    ?.href ?? '';
 
 describe('ContactPage', () => {
   let httpTestingController: HttpTestingController;
   let messageService: MessageService;
   let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -29,28 +35,31 @@ describe('ContactPage', () => {
     httpTestingController = TestBed.inject(HttpTestingController);
     messageService = TestBed.inject(MessageService);
     messageServiceAddSpy = vi.spyOn(messageService, 'add');
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+      return undefined;
+    });
   });
 
   afterEach(() => {
     httpTestingController.verify();
   });
 
-  // Given la page de contact est charg\u00E9e
-  // When le composant est instanci\u00E9
-  // Then il doit \u00EAtre cr\u00E9\u00E9 sans erreur
-  it('devrait cr\u00E9er le composant', () => {
+  // Given la page de contact est chargée
+  // When le composant est instancié
+  // Then il doit être créé sans erreur
+  it('devrait créer le composant', () => {
     const fixture = TestBed.createComponent(ContactPage);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  // Given la page de contact est affich\u00E9e
+  // Given la page de contact est affichée
   // When le contenu est rendu
   // Then le titre principal doit \u00EAtre visible
-  it('devrait afficher le titre principal "Parlons de votre projet"', () => {
+  it('devrait afficher le titre principal "Parlez-nous de votre objectif."', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Parlons de votre projet');
+    expect(heading?.textContent).toContain('Parlez-nous de votre objectif.');
   });
 
   // Given le formulaire de contact est affich\u00E9
@@ -69,6 +78,19 @@ describe('ContactPage', () => {
     expect(fixture.nativeElement.querySelector('#message')).toBeTruthy();
   });
 
+  it('devrait afficher une action WhatsApp visible pour un contact rapide', () => {
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    const whatsappLink = page.querySelector(
+      'a[href*="wa.me"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(whatsappLink).toBeTruthy();
+    expect(whatsappLink?.getAttribute('href')).toBe(WHATSAPP_URL);
+  });
+
   // Given le formulaire est vide
   // When l'utilisateur soumet le formulaire
   // Then le formulaire doit \u00EAtre invalide et les erreurs affich\u00E9es
@@ -83,10 +105,10 @@ describe('ContactPage', () => {
     expect(component.form.invalid).toBe(true);
   });
 
-  // Given l'\u00E9tat initial
-  // When le composant est cr\u00E9\u00E9
-  // Then le signal de succ\u00E8s doit \u00EAtre false
-  it('devrait initialiser success \u00E0 false', () => {
+  // Given l'état initial
+  // When le composant est créé
+  // Then le signal de succès doit être false
+  it('devrait initialiser success à false', () => {
     const fixture = TestBed.createComponent(ContactPage);
     expect(fixture.componentInstance.success()).toBe(false);
   });
@@ -120,9 +142,9 @@ describe('ContactPage', () => {
   });
 
   // Given un formulaire valide
-  // When la soumission API r\u00E9ussit
-  // Then le formulaire est r\u00E9initialis\u00E9 et le message de succ\u00E8s est affich\u00E9
-  it('devrait afficher un succ\u00E8s apr\u00E8s une soumission r\u00E9ussie', () => {
+  // When la soumission API réussit
+  // Then le formulaire est réinitialisé et le message de succès est affiché
+  it('devrait afficher un succès après une soumission réussie', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -171,15 +193,15 @@ describe('ContactPage', () => {
     );
   });
 
-  // Given un succ\u00E8s pr\u00E9c\u00E9dent
-  // When l'utilisateur soumet \u00E0 nouveau le formulaire
-  // Then success doit repasser \u00E0 false imm\u00E9diatement avant la r\u00E9ponse HTTP
-  it("devrait r\u00E9initialiser success \u00E0 false au d\u00E9but d'une nouvelle soumission", () => {
+  // Given un succès précédent
+  // When l'utilisateur soumet à nouveau le formulaire
+  // Then success doit repasser à false immédiatement avant la réponse HTTP
+  it("devrait réinitialiser success à false au début d'une nouvelle soumission", () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
 
-    // Premi\u00E8re soumission r\u00E9ussie
+    // Première soumission réussie
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
@@ -195,7 +217,7 @@ describe('ContactPage', () => {
     fixture.detectChanges();
     expect(component.success()).toBe(true);
 
-    // Deuxi\u00E8me soumission : success doit \u00EAtre false imm\u00E9diatement
+    // Deuxième soumission : success doit être false immédiatement
     component.form.setValue({
       name: 'Alice Dupont',
       email: 'alice@exemple.com',
@@ -207,16 +229,16 @@ describe('ContactPage', () => {
     component.onSubmit();
     expect(component.success()).toBe(false);
 
-    // Flush pour ne pas laisser de requ\u00EAtes en suspens
+    // Flush pour ne pas laisser de requêtes en suspens
     httpTestingController
       .expectOne((req) => req.url.endsWith('/contact'))
       .flush({ success: true, message: 'OK' });
   });
 
   // Given un formulaire valide
-  // When l'API r\u00E9pond avec des erreurs de validation
-  // Then les erreurs API doivent \u00EAtre affich\u00E9es dans la page
-  it('devrait afficher les erreurs API renvoy\u00E9es par le backend', () => {
+  // When l'API répond avec des erreurs de validation
+  // Then les erreurs API doivent être affichées dans la page
+  it('devrait afficher les erreurs API renvoyées par le backend', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -292,5 +314,6 @@ describe('ContactPage', () => {
         summary: 'Contact',
       }),
     );
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });

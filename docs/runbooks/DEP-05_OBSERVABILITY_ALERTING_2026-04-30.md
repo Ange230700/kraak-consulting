@@ -1,4 +1,4 @@
-# DEP-05 - Observabilite et alerting minimum
+# DEP-05 - Observabilité et alerting minimum
 
 Date: 2026-04-30  
 Issue: #122  
@@ -6,39 +6,39 @@ Epic: DEP
 
 ## Objectif
 
-Finaliser un minimum exploitable d observabilite pour le pilote KRAAK sans
-ajouter d infrastructure externe supplementaire:
+Finaliser un minimum exploitable d'observabilité pour le pilote KRAAK sans
+ajouter d'infrastructure externe supplémentaire :
 
-- un signal de sante API exploitable par machine et par humain
-- un check automatise des endpoints publics issus de DEP-02 et DEP-03
-- un mecanisme d alerte minimal traçable dans GitHub
+- un signal de santé API exploitable par machine et par humain
+- un check automatisé des endpoints publics issus de DEP-02 et DEP-03
+- un mécanisme d'alerte minimal traçable dans GitHub
 
-## Dependances
+## Dépendances
 
 - DEP-02: satisfaite
-  - le site public est deja deployee via Vercel
-  - URL publique documentee: `https://kraak-consulting.vercel.app`
+  - le site public est déjà déployée via Vercel
+  - URL publique documentée: `https://kraak-consulting.vercel.app`
 - DEP-03: satisfaite
-  - l API est deja deployee via Render
-  - endpoint de sante declare dans `render.yaml` via `healthCheckPath: /health`
+  - l'API est déjà déployée via Render
+  - endpoint de santé déclaré dans `render.yaml` via `healthCheckPath: /health`
 
-## Portee DEP-05
+## Portée DEP-05
 
-Cette tache couvre:
+Cette tâche couvre:
 
-- enrichissement de `GET /health` avec des metadonnees d exploitation
-- script repo `pnpm check:observability` pour verifier web + API
-- workflow GitHub Actions `Observability` lance toutes les 15 minutes et a la demande
-- ouverture/mise a jour d une issue GitHub d alerte lors d une indisponibilite
-- fermeture automatique de l issue d alerte lors du retour au vert
+- enrichissement de `GET /health` avec des métadonnées d'exploitation
+- script repo `pnpm check:observability` pour vérifier web + API
+- workflow GitHub Actions `Observability` lancé toutes les 15 minutes et à la demande
+- ouverture/mise à jour d'une issue GitHub d'alerte lors d'une indisponibilité
+- fermeture automatique de l'issue d'alerte lors du retour au vert
 
-Cette tache ne couvre pas:
+Cette tâche ne couvre pas:
 
-- APM complet ou tracing distribue
+- APM complet ou tracing distribué
 - centralisation de logs externe
-- paging temps reel hors GitHub
+- paging temps réel hors GitHub
 
-## Contrat de sante API
+## Contrat de santé API
 
 `GET /health` renvoie maintenant un payload minimum de supervision:
 
@@ -55,23 +55,23 @@ Cette tache ne couvre pas:
 
 Usage:
 
-- `status` et `service` servent au check automatise
-- `environment` evite les confusions local/staging/pilot
-- `version` permet de corréler un incident a une release
-- `uptimeSeconds` aide a distinguer un redemarrage recent d une degradation longue
+- `status` et `service` servent au check automatisé
+- `environment` évite les confusions local/staging/pilot
+- `version` permet de corréler un incident à une release
+- `uptimeSeconds` aide à distinguer un redémarrage récent d'une dégradation longue
 
-## Workflow d alerte minimum
+## Workflow d'alerte minimum
 
 Fichier: `.github/workflows/observability.yml`
 
 Comportement:
 
-1. toutes les 15 minutes, le workflow execute deux checks (staging puis production)
-2. pour chaque environnement, le workflow verifie la home web et `GET /health`
-3. en cas d echec, il ouvre (ou met a jour) une issue dediee a l environnement
-4. quand les checks repassent au vert, le workflow commente puis ferme l issue dediee
+1. toutes les 15 minutes, le workflow exécute deux checks (staging puis production)
+2. pour chaque environnement, le workflow vérifie la home web et `GET /health`
+3. en cas d'échec, il ouvre (ou met à jour) une issue dédiée à l'environnement
+4. quand les checks repassent au vert, le workflow commente puis ferme l'issue dédiée
 
-Valeurs versionnees actuellement dans le workflow:
+Valeurs versionnées actuellement dans le workflow:
 
 - staging
   - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app` (aucune URL web staging stable ; les previews Vercel changent a chaque commit et le branch alias a SSO)
@@ -104,16 +104,16 @@ Sortie attendue:
 
 - `web-home: 200`
 - `api-health: 200`
-- resume incluant `env=` et `version=` pour l API
+- résumé incluant `env=` et `version=` pour l'API
 
 ## Checklist de validation DEP-05
 
-- [x] Contrat `/health` enrichi et documente
-- [x] Check scriptable web + API ajoute
-- [x] Workflow GitHub planifie ajoute
-- [x] Alerte GitHub minimale ouverte/fermee automatiquement
+- [x] Contrat `/health` enrichi et documenté
+- [x] Check scriptable web + API ajouté
+- [x] Workflow GitHub planifié ajouté
+- [x] Alerte GitHub minimale ouverte/fermée automatiquement
 - [x] Variables et runbook mis a jour
-- [x] Preuves de validation ajoutees
+- [x] Preuves de validation ajoutées
 
 ## Artefacts de preuve
 
@@ -121,12 +121,12 @@ Sortie attendue:
 - `docs/runbooks/ENVIRONMENT_VARIABLES.md`
 - `.github/workflows/observability.yml`
 
-## Risques residuels
+## Risques résiduels
 
-- L alerte depend encore des notifications GitHub et non d un canal paging dedie.
-- Le web est valide sur la home publique, pas sur un endpoint de sante dedie cote Vercel.
-- La valeur `APP_VERSION` doit etre renseignee cote Render pour etre pleinement utile.
+- L'alerte dépend encore des notifications GitHub et non d'un canal paging dédié.
+- Le web est valide sur la home publique, pas sur un endpoint de santé dédié côté Vercel.
+- La valeur `APP_VERSION` doit être renseignée côté Render pour être pleinement utile.
 
-## Prochaine etape
+## Prochaine étape
 
 - DEP-06: capitaliser sur cette base pour formaliser incident response, rollback et pilot checklist.

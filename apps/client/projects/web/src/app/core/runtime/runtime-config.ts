@@ -16,15 +16,10 @@ export function getRuntimeConfig(): KraakRuntimeConfig {
 }
 
 export function isParticipantAreaEnabled(): boolean {
-  return getRuntimeConfig().enableParticipantArea === true;
-}
-
-export function isProductionEnvironment(): boolean {
-  return environment.environmentName === 'production';
-}
-
-export function canShowPreviewContent(): boolean {
-  return !isProductionEnvironment();
+  return (
+    getRuntimeConfig().enableParticipantArea ??
+    environment.enableParticipantArea
+  );
 }
 
 function stripTrailingSlashes(value: string): string {

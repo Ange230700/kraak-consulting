@@ -10,7 +10,7 @@ Ce document explique comment contribuer au dépôt KRAAK Group.
 
 ### Nommage
 
-```
+```text
 <type>/<sujet-court>
 ```
 
@@ -42,17 +42,80 @@ git checkout -b docs/update-readme
 
 ---
 
+## Nommage Angular (Pages Et Composants)
+
+Pour les applications client Angular (`web` et `mobile`) :
+
+- une page complète doit être nommée en `*.page.{ts,html,spec.ts}`
+- un composant destiné à être intégré dans une page doit être nommé en
+  `*.component.{ts,html,spec.ts}`
+
+Cette convention est obligatoire pour tout nouveau fichier et pour toute mise en
+conformité des fichiers existants.
+
+---
+
+## Règles Transverses de Qualité et de Maintenabilité (Obligatoires)
+
+1. **Chemins d'import explicites** :
+
+- Utiliser uniquement des chemins d'import explicites (relatifs ou alias documenté) dans tout le code Angular/TypeScript.
+- Ne jamais s'appuyer sur des index.ts implicites sauf si l'alias est stable et documenté.
+- Objectif : éviter les dépendances circulaires et faciliter la navigation.
+
+1. **Aucun catch silencieux** :
+
+- Tout bloc try/catch doit logguer l'erreur capturée (avec contexte) via Console.
+- Ne jamais laisser un catch vide ou avec un simple commentaire.
+
+1. **Nommage de tests Given/When/Then** :
+
+- Tous les tests (unitaires, intégration, E2E) doivent utiliser une formulation Given/When/Then dans la description.
+- Les fichiers de test doivent respecter le nom du fichier testé (ex : foo.service.ts → foo.service.spec.ts).
+
+1. **Pas de code mort** :
+
+- Tout code commenté doit être supprimé avant merge.
+- Si un code est laissé pour plus tard, ajouter un TODO avec référence issue/JIRA.
+
+1. **Lint/format strict sur CI** :
+
+- Linting (ESLint, Prettier, markdownlint) et type-checking obligatoires en CI avant merge.
+
+1. **Aucun style direct dans les templates** :
+
+- Ne jamais utiliser d'attribut `style` ou de balise `style` dans les templates Angular.
+- Tout style doit passer par Tailwind ou les styles globaux.
+
+1. **Versionning API/DTO** :
+
+- Tout changement de contrat API/DTO doit être versionné ou documenté dans un changelog, et les consommateurs mis à jour.
+
+1. **Aucun secret/URL en dur** :
+
+- Toute clé, secret ou URL d'environnement doit passer par une variable d'environnement ou un fichier de config, jamais en dur dans le code.
+
+1. **Accessibilité par défaut** :
+
+- Tout nouveau composant/page UI doit inclure au moins une validation d'accessibilité (aria-label, navigation clavier, contraste).
+
+1. **Documentation à jour** :
+
+- Tout changement d'architecture ou de process doit être répercuté dans la doc Markdown dans le même commit que le code.
+
+---
+
 ## Commits (Conventional Commits)
 
 Chaque message de commit suit le format [Conventional Commits](https://www.conventionalcommits.org/) :
 
-```
+```text
 <type>(<scope>): <description courte>
 ```
 
 **Exemples :**
 
-```
+```text
 feat(web): ajouter la page d'accueil
 fix(api): corriger le CORS pour /contact
 docs(docs): mettre à jour le README
@@ -102,7 +165,35 @@ Ne pas remettre une mise à jour documentaire nécessaire à plus tard.
 
 ---
 
+## Règle Debug
+
+En phase de débogage ou d’investigation, utiliser régulièrement les méthodes de
+l’objet `Console` (`console.debug`, `console.info`, `console.warn`,
+`console.error`) pour tracer les étapes clés et accélérer le diagnostic.
+
+Quand un flux applicatif intercepte une erreur, un rejet, ou un état inattendu
+sans le relancer, laisser une trace via les méthodes de l’objet `Console`
+(`console.error`, `console.warn`, `console.info`, `console.debug`) avec un
+contexte bref et utile au diagnostic.
+
+Contraintes obligatoires :
+
+- ne jamais logger de mot de passe, token, secret, cookie, ou payload complet
+  sensible
+- préférer un scope court et stable (ex : `web.auth.sign-in.submit`)
+- garder les traces orientées diagnostic, pas verbeuses
+
+---
+
 ## Workflow Git complet
+
+### Interdiction de contournement des hooks
+
+Le flag `--no-verify` est strictement interdit pour toutes les commandes Git
+(`commit`, `push`, etc.).
+
+Si un hook échoue, il faut corriger la cause (format, lint, typecheck, tests,
+nommage) puis relancer la commande, sans contourner les contrôles.
 
 Avant de commencer à coder, chaque collaborateur doit **s'assigner une tâche**
 sur le **GitHub Project lié à ce dépôt**. Ne pas démarrer un travail sans item
@@ -125,7 +216,7 @@ Ces réglages sont déjà appliqués dans le `.git/config` du dépôt. Si vous c
 
 ### Séquence type
 
-```
+```text
 1. s'assigner la tâche correspondante sur le GitHub Project du dépôt
 2. git checkout main && git pull origin main
 3. git checkout -b feat/ma-feature

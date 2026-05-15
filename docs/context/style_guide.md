@@ -229,7 +229,7 @@ Les boutons doivent paraître :
 - texte bleu ou navy
 - soulignement au hover
 
-### Règles
+### Règles des boutons
 
 - un seul **CTA principal** par zone critique ;
 - ne pas multiplier plusieurs boutons primaires côte à côte sans raison ;
@@ -239,7 +239,7 @@ Les boutons doivent paraître :
 
 ## 7. Cartes 🪪
 
-### Usage
+### Usage des cartes
 
 Les cartes serviront pour :
 
@@ -265,7 +265,7 @@ Les cartes serviront pour :
 3. texte court
 4. CTA ou lien optionnel
 
-### Règles
+### Règles des cartes
 
 - privilégier des cartes simples et aérées ;
 - éviter les cartes trop textuelles ;
@@ -292,7 +292,7 @@ KRAAK doit transmettre une impression de **clarté, de méthode et de maîtrise*
 - **64 px**
 - **96 px**
 
-### Usage
+### Usage des espacements
 
 - espacement interne composant : 12–24 px
 - espacement entre blocs : 24–32 px
@@ -394,7 +394,7 @@ Les images doivent exprimer :
 - usage limité ;
 - plutôt comme support secondaire que comme identité principale.
 
-### Règles
+### Règles des visuels
 
 - éviter les visuels trop institutionnels, figés ou vieillissants ;
 - éviter les compositions trop “startup gadget” ;

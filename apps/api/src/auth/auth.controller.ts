@@ -169,6 +169,11 @@ export class AuthController {
     description: 'Identifiants invalides',
     schema: apiErrorSchema,
   })
+  @ApiResponse({
+    status: 500,
+    description: "Erreur serveur lors de l'authentification",
+    schema: apiErrorSchema,
+  })
   signIn(@Body() body: unknown): Promise<AuthSessionBundleDto> {
     const validation = validateSignInPayload(body);
 
@@ -218,6 +223,11 @@ export class AuthController {
     description: 'Données d’inscription invalides',
     schema: apiErrorSchema,
   })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la création du compte',
+    schema: apiErrorSchema,
+  })
   signUp(@Body() body: unknown): Promise<SignUpResponseDto> {
     const validation = validateSignUpPayload(body);
 
@@ -258,6 +268,11 @@ export class AuthController {
   @ApiResponse({
     status: 401,
     description: 'Session expirée ou invalide',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors du renouvellement de session',
     schema: apiErrorSchema,
   })
   refreshSession(@Body() body: unknown): Promise<AuthSessionBundleDto> {
@@ -305,6 +320,11 @@ export class AuthController {
     description: 'Payload de réinitialisation invalide',
     schema: apiErrorSchema,
   })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la demande de réinitialisation',
+    schema: apiErrorSchema,
+  })
   requestPasswordReset(
     @Body() body: unknown,
   ): Promise<PasswordResetResponseDto> {
@@ -337,6 +357,11 @@ export class AuthController {
   @ApiResponse({
     status: 401,
     description: 'Session absente ou invalide',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la récupération de session',
     schema: apiErrorSchema,
   })
   getSession(

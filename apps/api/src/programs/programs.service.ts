@@ -123,8 +123,12 @@ export class ProgramsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   async listPrograms(
-    accessToken: string,
-  ): Promise<ParticipantProgramListItemDto[]> {
+    accessToken?: string,
+  ): Promise<ParticipantProgramListItemDto[] | ProgramDto[]> {
+    if (!accessToken) {
+      return this.listPublishedPrograms();
+    }
+
     const participantId = await this.resolveParticipantId(accessToken);
 
     if (!participantId) {
@@ -180,6 +184,29 @@ export class ProgramsService {
         };
       })
       .filter((item): item is ParticipantProgramListItemDto => item !== null);
+  }
+
+  private async listPublishedPrograms(): Promise<ProgramDto[]> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select(
+        'id, slug, title, summary, description, status, visibility, created_at, updated_at',
+      )
+      .eq('status', 'published')
+      .order('updated_at', { ascending: false })
+      .limit(20);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger la liste des programmes.',
+      });
+    }
+
+    return ((data as ProgramRow[] | null) ?? []).map((row) =>
+      this.mapProgram(row),
+    );
   }
 
   async getProgramDetail(

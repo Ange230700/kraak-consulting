@@ -1,0 +1,46 @@
+# Workflow de regression nocturne — kraak-group monorepo
+# Déclenché chaque nuit et à la demande.
+# Exécute la collection Newman en mode strict contre l'API staging pour garder un signal de régression sans alourdir la CI principale.
+
+name: Nightly Regression
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-regression
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  newman-strict:
+    name: Newman strict (staging API)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Exécuter Newman en mode strict contre l'API staging
+        id: newman-strict
+        run: >
+          pnpm test:api:journey:strict:staging
+
+      - name: Publier le résumé Newman strict
+        if: always()
+        run: |
+          echo "## Nightly regression (staging API)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Base URL: https://kraak-api-staging.onrender.com" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Result: ${{ steps.newman-strict.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Mode: strictAuth=true" >> "$GITHUB_STEP_SUMMARY"

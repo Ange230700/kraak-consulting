@@ -6,13 +6,13 @@ import type {
   SupportRequestDto,
   SupportRequestStatusValue,
 } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileSupportService } from './mobile-support.service';
 
 @Component({
   selector: 'kraak-support-page',
   standalone: true,
-  imports: [PageShell, IonButton, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, RouterLink, DatePipe],
   templateUrl: './support.page.html',
 })
 export default class SupportPage implements OnInit {

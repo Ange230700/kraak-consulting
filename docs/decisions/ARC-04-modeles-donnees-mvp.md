@@ -149,6 +149,9 @@ app_user ← support_request (1:N, user_id FK)
 
 ### 4.3bis Diagramme entité-relation (ERD)
 
+Une version expliquée du diagramme complet est disponible dans
+[`docs/specs/erd_mvp.md`](../specs/erd_mvp.md).
+
 ```mermaid
 erDiagram
     AUTH_USERS {
@@ -324,6 +327,7 @@ erDiagram
 
 - [supabase/migrations/20250718000000_initial_schema.sql](../../supabase/migrations/20250718000000_initial_schema.sql)
 - [ARC-01 — Architecture cible MVP](./ARC-01-architecture-cible-mvp.md)
+- [docs/specs/erd_mvp.md](../specs/erd_mvp.md)
 - [docs/specs/product_model.md](../specs/product_model.md)
 - [Supabase — Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
 - [PostgreSQL — CREATE POLICY](https://www.postgresql.org/docs/current/sql-createpolicy.html)

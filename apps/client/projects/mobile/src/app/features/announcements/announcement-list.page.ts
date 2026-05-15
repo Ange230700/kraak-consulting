@@ -2,19 +2,19 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
-import { createApiClient } from '@kraak/api-client';
+import { createApiClient, logDebugError } from '@kraak/api-client';
 import type { AnnouncementDto } from '@kraak/contracts';
 import { environment } from '../../../environments/environment';
 import {
   MobileAuthService,
   resolveAuthErrorMessage,
 } from '../auth/mobile-auth.service';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 
 @Component({
   selector: 'kraak-announcement-list-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
   templateUrl: './announcement-list.page.html',
 })
 export default class AnnouncementListPage implements OnInit {
@@ -68,6 +68,9 @@ export default class AnnouncementListPage implements OnInit {
       }
     } catch (error) {
       if (requestId === this.latestLoadRequestId) {
+        logDebugError('mobile.announcements.list', error, {
+          route: '/tabs/annonces',
+        });
         this.announcements.set([]);
         this.total.set(0);
         this.errorMessage.set(

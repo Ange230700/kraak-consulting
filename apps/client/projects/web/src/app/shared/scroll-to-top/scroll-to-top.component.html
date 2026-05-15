@@ -1,0 +1,11 @@
+<button
+  (click)="scrollToTop()"
+  aria-label="Remonter vers le haut de la page"
+  class="fixed right-6 bottom-6 z-40 rounded-full bg-blue-600 text-white shadow-lg transition-all duration-300 hover:bg-blue-700"
+  [class.opacity-0]="!isVisible"
+  [class.pointer-events-none]="!isVisible"
+  [class.opacity-100]="isVisible"
+  [class.pointer-events-auto]="isVisible"
+>
+  <i class="pi pi-arrow-up m-3 text-2xl" aria-hidden="true"></i>
+</button>

@@ -14,6 +14,7 @@ describe('Web SignInPage', () => {
   let navigateByUrlSpy: ReturnType<typeof vi.spyOn>;
   let messageService: MessageService;
   let messageServiceAddSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     authService.signIn.mockReset();
@@ -34,6 +35,9 @@ describe('Web SignInPage', () => {
       .spyOn(router, 'navigateByUrl')
       .mockResolvedValue(true);
     messageServiceAddSpy = vi.spyOn(messageService, 'add');
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+      return undefined;
+    });
   });
 
   it('should create', () => {
@@ -105,6 +109,7 @@ describe('Web SignInPage', () => {
 
     expect(fixture.componentInstance.errorMessage()).not.toBeNull();
     expect(fixture.componentInstance.submitting()).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   // Given a valid form and signIn is in progress

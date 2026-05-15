@@ -36,12 +36,12 @@ describe('HomePage', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the home page component When it is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(HomePage);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the consulting hero promise', () => {
+  it('Given the home page When it renders Then it shows the consulting hero promise', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
@@ -50,17 +50,17 @@ describe('HomePage', () => {
     );
   });
 
-  it('should render the primary consulting calls to action', () => {
+  it('Given the home page When it renders Then it shows the primary consulting calls to action', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('R\u00E9server une consultation');
-    expect(element.textContent).toContain('D\u00E9couvrir nos programmes');
+    expect(element.textContent).toContain('D\u00E9couvrir nos services');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
-  it('should expose a dark hero background style object', () => {
+  it('Given the home page component When reading the hero background Then it exposes the expected style object', () => {
     const fixture = TestBed.createComponent(HomePage);
     const component = fixture.componentInstance;
 
@@ -72,18 +72,23 @@ describe('HomePage', () => {
     );
   });
 
-  it('should render the key solutions without repeating one service label only', () => {
+  it('Given the home page When it renders Then it lists the key solutions without collapsing them into one service label', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Programmes ciblés en français et anglais');
-    expect(content).toContain('Parcours Simples & Clairs');
-    expect(content).toContain('Mobilité Internationale');
+    expect(content).toContain('Développement personnel et professionnel');
+    expect(content).toContain('Anglais et français professionnel');
+    expect(content).toContain('Leadership et prise de parole');
+    expect(content).toContain('Préparation aux entretiens');
+    expect(content).toContain('Structuration de projets');
+    expect(content).toContain("Accompagnement d'entreprises et startups");
+    expect(content).toContain('Conseils en mobilité internationale');
+    expect(content).toContain('Recrutement et placement en emploi');
   });
 
-  it('should render home-specific FAQ section', () => {
+  it('Given the home page When it renders Then it includes the home-specific FAQ section', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
@@ -93,5 +98,16 @@ describe('HomePage', () => {
     expect(content).toContain(
       'Je ne sais pas par o\u00F9 commencer, quelle est la premi\u00E8re \u00E9tape ?',
     );
+  });
+
+  it('Given the local web build When the home page renders Then the preview sections stay visible for review', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Partenaires et clients de confiance');
+    expect(content).toContain('Prévisualisation du format témoignages');
+    expect(content).toContain('Chiffres d’impact en prévisualisation');
   });
 });

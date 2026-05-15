@@ -1,13 +1,14 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type {
   ResourceAudienceValue,
   ResourceDto,
   ResourceThemeValue,
   ResourceTypeValue,
 } from '@kraak/contracts';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 
@@ -44,7 +45,7 @@ const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
 @Component({
   selector: 'kraak-resource-list-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner, RouterLink],
+  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink],
   templateUrl: './resource-list.page.html',
 })
 export default class ResourceListPage implements OnInit {
@@ -145,6 +146,9 @@ export default class ResourceListPage implements OnInit {
       }
     } catch (error) {
       if (requestId === this.latestLoadRequestId) {
+        logDebugError('mobile.resources.list', error, {
+          route: '/tabs/programmes/ressources',
+        });
         this.errorMessage.set(
           resolveAuthErrorMessage(
             error,

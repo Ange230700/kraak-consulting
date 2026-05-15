@@ -4,9 +4,23 @@ export interface SocialLink {
   icon: string;
 }
 
+export const KRAAK_PUBLIC_ASSET_BASE_URL =
+  'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images';
+
+export const KRAAK_AVATAR_CIRCLE_BASE_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/avatars/circle`;
+
+export function buildAvatarCircleUrl(fileName: string): string {
+  return `${KRAAK_AVATAR_CIRCLE_BASE_URL}/${fileName}`;
+}
+
+export const HERO_BACKGROUND_IMAGE_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/hero/bw-hero-bg.jpg`;
+
+export const CONTACT_VISUAL_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/contact/map-4.jpg`;
+
+export const FAQ_BACKGROUND_IMAGE_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/faq/glassmorphic-accordion-bg.jpg`;
+
 export const HERO_BACKGROUND_STYLE = {
-  background:
-    "linear-gradient(0deg, color-mix(in srgb, var(--p-surface-950) 50%, transparent) 0%, transparent 100%), linear-gradient(0deg, var(--p-primary-500) 0%, var(--p-primary-500) 100%), linear-gradient(0deg, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 0%, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 100%), url('https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/hero/bw-hero-bg.jpg') center/cover no-repeat",
+  background: `linear-gradient(0deg, color-mix(in srgb, var(--p-surface-950) 50%, transparent) 0%, transparent 100%), linear-gradient(0deg, var(--p-primary-500) 0%, var(--p-primary-500) 100%), linear-gradient(0deg, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 0%, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 100%), url('${HERO_BACKGROUND_IMAGE_URL}') center/cover no-repeat`,
   backgroundBlendMode: 'normal, multiply, lighten, normal',
 } as const;
 
@@ -32,3 +46,5 @@ export const KRAAK_SOCIAL_LINKS: readonly SocialLink[] = [
     icon: 'pi-tiktok',
   },
 ] as const;
+
+export const CONTACT_EMAIL = 'kraakconsulting@gmail.com';

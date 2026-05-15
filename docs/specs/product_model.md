@@ -210,7 +210,7 @@ Entités retenues :
 
 ## 5. Règles De Visibilité
 
-### `participant`
+### Visibilité `participant`
 
 Peut voir :
 
@@ -234,7 +234,7 @@ Ne peut pas voir :
   explicite
 - les demandes de support d'autres utilisateurs
 
-### `admin`
+### Visibilité `admin`
 
 Peut voir :
 
@@ -242,7 +242,7 @@ Peut voir :
 - toutes les inscriptions, cohortes, sessions, annonces, notifications et
   demandes de support
 
-### `trainer`
+### Visibilité `trainer`
 
 Peut voir, si ce rôle est activé :
 

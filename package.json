@@ -11,7 +11,14 @@
   "pnpm": {
     "overrides": {
       "typescript": "~5.9.2"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lmdb",
+      "playwright",
+      "rollup",
+      "sharp"
+    ]
   },
   "scripts": {
     "clean": "pnpm -r clean && node ./scripts/clean.mjs",
@@ -37,6 +44,9 @@
     "check:observability": "node ./scripts/check-observability.mjs",
     "test:workspace": "node --test ./scripts/workspace-commands.test.mjs ./scripts/ensure-capacitor-platform.test.mjs ./scripts/setup-android-env.test.mjs ./scripts/verify-supabase-auth-config.test.mjs ./scripts/verify-mobile-dev-server-config.test.mjs ./scripts/verify-capacitor-android-plugins.test.mjs ./scripts/check-observability.test.mjs ./scripts/vercel-config.test.mjs ./scripts/angular-web-build-config.test.mjs",
     "test:api": "pnpm --filter @kraak/api test",
+    "test:api:journey": "npx newman run test-results/postman/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json",
+    "test:api:journey:strict": "npx newman run test-results/postman/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json --env-var strictAuth=true",
+    "test:api:journey:strict:staging": "npx newman run test-results/postman/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json --env-var strictAuth=true --env-var baseUrl=https://kraak-api-staging.onrender.com",
     "test:libs": "pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test",
     "test:coverage": "pnpm --filter @kraak/api test:cov && pnpm --filter @kraak/client test:coverage && pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test:coverage",
     "lint:api": "pnpm --filter @kraak/api lint",
@@ -47,13 +57,18 @@
     "typecheck:api": "pnpm --filter @kraak/api exec tsc --noEmit -p tsconfig.build.json",
     "typecheck": "pnpm typecheck:web && pnpm typecheck:mobile && pnpm typecheck:api",
     "test:unit": "pnpm --filter @kraak/client test",
-    "test:e2e": "pnpm --filter @kraak/client e2e",
+    "test:e2e": "pnpm test:e2e:web",
+    "test:e2e:web": "pnpm --filter @kraak/client e2e",
+    "test:e2e:mobile": "pnpm --filter @kraak/client exec playwright test --config=playwright.mobile.config.ts",
+    "test:e2e:all": "pnpm test:e2e:web && pnpm test:e2e:mobile",
     "check:prepilot:web": "pnpm --filter @kraak/client e2e:prepilot",
     "format": "prettier --write \"**/*.{ts,html,scss,css,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,html,scss,css,json,md}\"",
     "commit": "git-cz",
     "prepare": "husky",
-    "save": "git add . && pnpm commit && git push origin HEAD"
+    "save": "git add . && pnpm commit && git push origin HEAD",
+    "changesets:version": "changeset version",
+    "changesets:publish": "changeset publish"
   },
   "validate-branch-name": {
     "pattern": "^(main|staging|(feat|fix|chore|docs|test|refactor|ci|style|perf|revert|build|copilot)/.+)$",
@@ -88,6 +103,7 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@vitest/coverage-v8": "4.1.4",

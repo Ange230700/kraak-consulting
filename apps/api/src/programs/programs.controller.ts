@@ -21,6 +21,7 @@ import type {
   MarkProgramSessionProgressResponseDto,
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
+  ProgramDto,
 } from '@kraak/contracts';
 import { extractAccessToken } from '../auth/auth.dto';
 import { validateMarkSessionProgressPayload } from './programs.dto';
@@ -31,6 +32,7 @@ const apiErrorSchema = {
   properties: {
     success: { type: 'boolean', example: false },
     message: { type: 'string' },
+    errors: { type: 'array', items: { type: 'string' } },
   },
 };
 
@@ -278,14 +280,20 @@ export class ProgramsController {
   constructor(private readonly programsService: ProgramsService) {}
 
   @Get()
-  @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Lister les programmes accessibles au participant connecté',
+    summary:
+      'Lister les programmes publiés (public) avec filtrage participant optionnel',
   })
   @ApiResponse({
     status: 200,
-    description: 'Liste des programmes accessibles avec succès',
-    schema: { type: 'array', items: programListItemSchema },
+    description:
+      'Sans token: liste des programmes publiés. Avec token: liste participant enrichie (inscriptions/progression).',
+    schema: {
+      oneOf: [
+        { type: 'array', items: programListItemSchema },
+        { type: 'array', items: programSchema },
+      ],
+    },
   })
   @ApiResponse({
     status: 401,
@@ -299,7 +307,11 @@ export class ProgramsController {
   })
   async listPrograms(
     @Headers('authorization') authorizationHeader?: string,
-  ): Promise<ParticipantProgramListItemDto[]> {
+  ): Promise<ParticipantProgramListItemDto[] | ProgramDto[]> {
+    if (!authorizationHeader) {
+      return this.programsService.listPrograms();
+    }
+
     const accessToken = extractAccessToken(authorizationHeader);
 
     if (!accessToken.valid) {

@@ -33,7 +33,13 @@ export const appConfig: ApplicationConfig = {
           .then(({ MobilePushNotificationsService }) =>
             injector.get(MobilePushNotificationsService).initialize(),
           )
-          .catch(() => undefined);
+          .catch((error) => {
+            console.warn(
+              'Mobile push notifications initialization skipped after first render.',
+              error,
+            );
+            return undefined;
+          });
       });
     }),
   ],

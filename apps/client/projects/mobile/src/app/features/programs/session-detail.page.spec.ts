@@ -6,6 +6,8 @@ import type { ParticipantProgramDetailDto } from '@kraak/contracts';
 import { MobileProgramsService } from './mobile-programs.service';
 import SessionDetailPage from './session-detail.page';
 
+const TEST_MEETING_LINK_URL = 'https://meet.example.com/session1';
+
 describe('Mobile SessionDetailPage', () => {
   let service: {
     getProgramDetail: ReturnType<typeof vi.fn>;
@@ -56,7 +58,7 @@ describe('Mobile SessionDetailPage', () => {
         endsAt: new Date(Date.now() + 3600000).toISOString(),
         locationType: 'online',
         locationLabel: null,
-        meetingLink: 'https://meet.example.com/session1',
+        meetingLink: TEST_MEETING_LINK_URL,
         trainerUserId: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

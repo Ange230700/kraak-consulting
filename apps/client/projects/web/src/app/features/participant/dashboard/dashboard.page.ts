@@ -1,9 +1,16 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { createApiClient, type ApiClient } from '@kraak/api-client';
+import {
+  createApiClient,
+  logDebugError,
+  type ApiClient,
+} from '@kraak/api-client';
 import type { DashboardAggregateDto } from '@kraak/contracts';
-import { loadDashboardAggregate } from '@kraak/domain';
+import {
+  loadDashboardAggregate,
+  resolveDashboardErrorMessage,
+} from '@kraak/domain';
 import { MessageService } from 'primeng/api';
 import { Message } from 'primeng/message';
 
@@ -139,6 +146,13 @@ export default class DashboardPage implements OnInit {
       setLoading: (value) => this.loading.set(value),
       setData: (value) => this.dashboardState.set(value),
       setError: (value) => this.errorMessage.set(value),
+      resolveErrorMessage: (error, fallback) => {
+        logDebugError('web.dashboard.load', error, {
+          route: '/participant/dashboard',
+        });
+
+        return resolveDashboardErrorMessage(error, fallback);
+      },
     });
 
     const currentError = this.errorMessage();
@@ -159,7 +173,7 @@ export default class DashboardPage implements OnInit {
         key: 'app-feedback',
         severity: 'success',
         summary: 'Dashboard',
-        detail: 'Les donnees ont ete rechargees avec succes.',
+        detail: 'Les données ont été rechargées avec succès.',
         life: 4500,
       });
       this.hasRecoveredFromError.set(false);

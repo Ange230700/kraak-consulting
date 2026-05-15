@@ -5,6 +5,8 @@ import { ApiError } from '@kraak/api-client';
 import HomePage from './home.page';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
+const TEST_MEETING_LINK_URL = 'https://meet.example/session-1';
+
 function configureDashboardClient(
   fixture: ReturnType<typeof TestBed.createComponent<HomePage>>,
   response: Promise<unknown>,
@@ -122,7 +124,7 @@ describe('Mobile HomePage', () => {
             endsAt: '2026-05-02T18:00:00.000Z',
             locationType: 'online',
             locationLabel: null,
-            meetingLink: 'https://meet.example/session-1',
+            meetingLink: TEST_MEETING_LINK_URL,
             cohortId: 'cohort-1',
             cohortName: 'Cohorte printemps',
             programId: 'program-1',

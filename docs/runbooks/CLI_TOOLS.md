@@ -9,6 +9,7 @@
 Voir aussi : [`STAGING_PROMOTION`](STAGING_PROMOTION.md),
 [`RELEASE_PROD`](RELEASE_PROD.md),
 [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md),
+[`NIGHTLY_REGRESSION`](NIGHTLY_REGRESSION.md),
 [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environment.md),
 [`ARC-09-inversion-main-staging`](../decisions/ARC-09-inversion-main-staging.md),
 [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md).
@@ -212,6 +213,20 @@ supabase gen types typescript --linked > packages/contracts/src/db.types.ts
 supabase functions list                # edge functions
 ```
 
+### 5.4 Newman / régression API
+
+```bash
+pnpm test:api:journey                  # collection Newman CI-ready (strictAuth=false)
+pnpm test:api:journey:strict           # contrat nominal strict en local (strictAuth=true)
+pnpm test:api:journey:strict:staging   # contrat strict contre l'API staging
+```
+
+Utilisation recommandée:
+
+- La CI principale et les vérifications rapides utilisent `pnpm test:api:journey`.
+- Le workflow nocturne `Nightly Regression` utilise `pnpm test:api:journey:strict:staging`.
+- `pnpm test:api:journey:strict` sert à reproduire localement le contrat nominal strict avant d'ouvrir ou de corriger un ticket de régression.
+
 ---
 
 ## 6 · Vérification post-installation
@@ -232,7 +247,7 @@ est prêt.
 
 - ❌ Installer `supabase` via `npm i -g supabase` → paquet déprécié.
 - ❌ Installer `render` via un wrapper npm douteux → certains stubs sont des
-  scripts bash qui s'auto-invoquent et hangent indéfiniment.
+  scripts bash qui s'auto-invoquent et hanguent indéfiniment.
 - ❌ Commiter `.vercel/`, `.supabase/`, `supabase/.temp/` ou tout fichier
   contenant un token → vérifier `.gitignore`.
 - ❌ Partager un token via chat, ticket ou commit → uniquement gestionnaire de

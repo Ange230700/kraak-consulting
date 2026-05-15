@@ -140,7 +140,7 @@ Fixer la stratégie de rendu web adaptée au SEO MVP.
 ### ARC-04
 
 ```md
-Title: [TASK][ARC-04] Définir modèles de donnees MVP
+Title: [TASK][ARC-04] Définir modèles de données MVP
 
 Labels:
 
@@ -656,7 +656,7 @@ Renforcer la fiabilité des libs et documenter leur publication interne.
 ### WEB-01
 
 ```md
-Title: [TASK][WEB-01] Implementer pages core (Accueil, A propos, Services, Programmes, Contact)
+Title: [TASK][WEB-01] Implémenter pages core (Accueil, À propos, Services, Programmes, Contact)
 
 Labels:
 
@@ -678,7 +678,7 @@ WEB
 
 ## Description
 
-Implementer les pages publiques coeur du site MVP.
+Implémenter les pages publiques coeur du site MVP.
 
 ## Dépendances
 
@@ -804,7 +804,7 @@ Instrumenter le site pour mesurer les parcours et conversions.
 
 - [ ] events critiques traces
 - [ ] pages vues tracées
-- [ ] verification data en env test
+- [ ] vérification data en env test
 ```
 
 ### WEB-05
@@ -913,7 +913,7 @@ MOB
 
 ## Description
 
-Implementer la navigation principale et le layout shell.
+Implémenter la navigation principale et le layout shell.
 
 ## Dépendances
 
@@ -1088,7 +1088,7 @@ Configurer l'authentification Supabase et policies minimales.
 ### AUT-02
 
 ```md
-Title: [TASK][AUT-02] Implementer endpoints API auth/session (NestJS)
+Title: [TASK][AUT-02] Implémenter endpoints API auth/session (NestJS)
 
 Labels:
 
@@ -1110,7 +1110,7 @@ AUT
 
 ## Description
 
-Implementer les endpoints auth/session cote API.
+Implémenter les endpoints auth/session côté API.
 
 ## Dépendances
 
@@ -1127,7 +1127,7 @@ Implementer les endpoints auth/session cote API.
 ### AUT-03
 
 ```md
-Title: [TASK][AUT-03] Implementer écrans login/signup/reset mobile
+Title: [TASK][AUT-03] Implémenter écrans login/signup/reset mobile
 
 Labels:
 
@@ -1166,7 +1166,7 @@ Construire les écrans d'authentification mobile.
 ### AUT-04
 
 ```md
-Title: [TASK][AUT-04] Implementer garde routes protegees web/mobile
+Title: [TASK][AUT-04] Implémenter garde routes protégées web/mobile
 
 Labels:
 
@@ -1227,7 +1227,7 @@ AUT
 
 ## Description
 
-Implementer la gestion minimale des roles et autorisations.
+Implémenter la gestion minimale des rôles et autorisations.
 
 ## Dépendances
 
@@ -1236,8 +1236,8 @@ Implementer la gestion minimale des roles et autorisations.
 
 ## Critères d'acceptation
 
-- [ ] roles minimaux définis
-- [ ] verification autorisation active
+- [ ] rôles minimaux définis
+- [ ] vérification autorisation active
 - [ ] cas limites documentes
 ```
 
@@ -1326,7 +1326,7 @@ Exposer un endpoint agrégateur pour alimenter le dashboard.
 ### DSH-03
 
 ```md
-Title: [TASK][DSH-03] Implementer vue dashboard mobile
+Title: [TASK][DSH-03] Implémenter vue dashboard mobile
 
 Labels:
 
@@ -1348,7 +1348,7 @@ DSH
 
 ## Description
 
-Implementer l’écran dashboard dans l'application mobile.
+Implémenter l’écran dashboard dans l'application mobile.
 
 ## Dépendances
 
@@ -1366,7 +1366,7 @@ Implementer l’écran dashboard dans l'application mobile.
 ### DSH-04
 
 ```md
-Title: [TASK][DSH-04] Implementer vue dashboard web participant (si activée MVP)
+Title: [TASK][DSH-04] Implémenter vue dashboard web participant (si activée MVP)
 
 Labels:
 
@@ -1448,7 +1448,7 @@ Définir le modèle de données programme/cohorte/progression.
 ### PRG-02
 
 ```md
-Title: [TASK][PRG-02] Implementer endpoints liste/detail programmes
+Title: [TASK][PRG-02] Implémenter endpoints liste/détail programmes
 
 Labels:
 
@@ -1470,7 +1470,7 @@ PRG
 
 ## Description
 
-Implementer les endpoints API de consultation programmes.
+Implémenter les endpoints API de consultation programmes.
 
 ## Dépendances
 
@@ -1482,7 +1482,7 @@ Implementer les endpoints API de consultation programmes.
 ## Critères d'acceptation
 
 - [ ] endpoint liste disponible
-- [ ] endpoint detail disponible
+- [ ] endpoint détail disponible
 - [ ] filtrage minimal supporte
 ```
 
@@ -1511,7 +1511,7 @@ PRG
 
 ## Description
 
-Implementer les écrans mobiles liste et detail programme.
+Implémenter les écrans mobiles liste et détail programme.
 
 ## Dépendances
 
@@ -1521,14 +1521,14 @@ Implementer les écrans mobiles liste et detail programme.
 ## Critères d'acceptation
 
 - [ ] liste programmes visible
-- [ ] detail programme accessible
-- [ ] navigation liste->detail stable
+- [ ] détail programme accessible
+- [ ] navigation liste->détail stable
 ```
 
 ### PRG-04
 
 ```md
-Title: [TASK][PRG-04] Implementer marquage de progression minimale
+Title: [TASK][PRG-04] Implémenter marquage de progression minimale
 
 Labels:
 
@@ -1600,7 +1600,7 @@ Ajouter la couverture comportementale BDD des parcours programmes.
 ## Critères d'acceptation
 
 - [ ] scenarios Given/When/Then rédigés
-- [ ] execution E2E possible
+- [ ] exécution E2E possible
 - [ ] assertions comportement explicites
 ```
 
@@ -1649,7 +1649,7 @@ Définir la taxonomie fonctionnelle des ressources.
 ### RES-02
 
 ```md
-Title: [TASK][RES-02] Implementer endpoints ressources (liste, filtre, detail)
+Title: [TASK][RES-02] Implémenter endpoints ressources (liste, filtre, détail)
 
 Labels:
 
@@ -1671,7 +1671,7 @@ RES
 
 ## Description
 
-Implementer les endpoints API pour ressources et filtres.
+Implémenter les endpoints API pour ressources et filtres.
 
 ## Dépendances
 
@@ -1683,14 +1683,14 @@ Implementer les endpoints API pour ressources et filtres.
 ## Critères d'acceptation
 
 - [ ] endpoint liste opérationnel
-- [ ] endpoint detail opérationnel
+- [ ] endpoint détail opérationnel
 - [ ] filtres MVP disponibles
 ```
 
 ### RES-03
 
 ```md
-Title: [TASK][RES-03] Implementer écran mobile ressources (recherche/filtre)
+Title: [TASK][RES-03] Implémenter écran mobile ressources (recherche/filtre)
 
 Labels:
 
@@ -1712,7 +1712,7 @@ RES
 
 ## Description
 
-Implementer l’écran mobile de consultation des ressources.
+Implémenter l’écran mobile de consultation des ressources.
 
 ## Dépendances
 
@@ -1723,13 +1723,13 @@ Implementer l’écran mobile de consultation des ressources.
 
 - [ ] recherche fonctionnelle
 - [ ] filtres fonctionnels
-- [ ] detail ressource accessible
+- [ ] détail ressource accessible
 ```
 
 ### RES-04
 
 ```md
-Title: [TASK][RES-04] Implementer tracking consultation ressources
+Title: [TASK][RES-04] Implémenter tracking consultation ressources
 
 Labels:
 
@@ -1762,7 +1762,7 @@ Tracer les consultations de ressources pour suivi produit.
 
 - [ ] events consultation traces
 - [ ] métadonnées minimales capturées
-- [ ] verification des traces en test
+- [ ] vérification des traces en test
 ```
 
 ---
@@ -1810,7 +1810,7 @@ Définir la structure annonce et ses règles de publication.
 ### ANN-02
 
 ```md
-Title: [TASK][ANN-02] Implementer endpoints annonces (feed + detail)
+Title: [TASK][ANN-02] Implémenter endpoints annonces (feed + détail)
 
 Labels:
 
@@ -1832,7 +1832,7 @@ ANN
 
 ## Description
 
-Implementer les endpoints API de feed et detail annonces.
+Implémenter les endpoints API de feed et détail annonces.
 
 ## Dépendances
 
@@ -1844,14 +1844,14 @@ Implementer les endpoints API de feed et detail annonces.
 ## Critères d'acceptation
 
 - [ ] endpoint feed disponible
-- [ ] endpoint detail disponible
+- [ ] endpoint détail disponible
 - [ ] tri/ordre MVP valide
 ```
 
 ### ANN-03
 
 ```md
-Title: [TASK][ANN-03] Implementer flux annonces dans mobile dashboard/feed
+Title: [TASK][ANN-03] Implémenter flux annonces dans mobile dashboard/feed
 
 Labels:
 
@@ -1884,7 +1884,7 @@ Afficher les annonces dans l'application mobile.
 ## Critères d'acceptation
 
 - [ ] feed annonce visible
-- [ ] detail annonce accessible
+- [ ] détail annonce accessible
 - [ ] integration dashboard validée
 ```
 
@@ -1934,7 +1934,7 @@ Déclencher une notification push pour annonces prioritaires.
 ### SUP-01
 
 ```md
-Title: [TASK][SUP-01] Implementer endpoint contact/support (API + validation)
+Title: [TASK][SUP-01] Implémenter endpoint contact/support (API + validation)
 
 Labels:
 
@@ -2569,7 +2569,7 @@ Mettre en place la supervision minimale avant pilote.
 
 - [ ] logs et métriques accessibles
 - [ ] alertes minimales configurées
-- [ ] procedure verification en place
+- [ ] procédure vérification en place
 ```
 
 ### DEP-06

@@ -2,7 +2,7 @@ import {
   BootstrapContext,
   bootstrapApplication,
 } from '@angular/platform-browser';
-import { App } from './app/app';
+import { App } from './app/app.component';
 import { config } from './app/app.config.server';
 
 // Hydrate the runtime config on the SSR side from process.env when the browser
@@ -16,7 +16,8 @@ if (
 ) {
   const flag = process.env['CLIENT_FEATURE_PARTICIPANT_AREA'];
   globalThis.__KRAAK_RUNTIME_CONFIG__ = Object.freeze({
-    enableParticipantArea: typeof flag === 'string' && flag.trim() === 'true',
+    enableParticipantArea:
+      typeof flag === 'string' ? flag.trim() === 'true' : undefined,
   });
 }
 

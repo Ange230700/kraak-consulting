@@ -1,16 +1,17 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { logDebugError } from '@kraak/api-client';
 import type { ResourceDto } from '@kraak/contracts';
 import { map } from 'rxjs';
-import { PageShell } from '../../shared/page-shell/page-shell';
+import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
 
 @Component({
   selector: 'kraak-resource-detail-page',
   standalone: true,
-  imports: [PageShell, IonButton, IonSpinner],
+  imports: [PageShellComponent, IonButton, IonSpinner],
   templateUrl: './resource-detail.page.html',
 })
 export default class ResourceDetailPage implements OnInit {
@@ -59,6 +60,9 @@ export default class ResourceDetailPage implements OnInit {
       this.resource.set(data);
       await this.trackResourceConsultation(resourceId);
     } catch (error) {
+      logDebugError('mobile.resources.detail.load', error, {
+        feature: 'resources',
+      });
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
@@ -74,7 +78,8 @@ export default class ResourceDetailPage implements OnInit {
   private async trackResourceConsultation(resourceId: string): Promise<void> {
     try {
       await this.resourcesService.trackResourceConsultation(resourceId);
-    } catch {
+    } catch (error) {
+      console.warn('[Debug] mobile.resources.detail.track', error);
       // Tracking failures should not block resource consultation.
     }
   }
