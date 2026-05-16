@@ -179,7 +179,18 @@ function parseRequestPath(req: express.Request): string | undefined {
 }
 
 function trimRouteSlashes(routePath: string): string {
-  return routePath.replace(/^\/+|\/+$/gu, '');
+  let startIndex = 0;
+  let endIndex = routePath.length;
+
+  while (startIndex < endIndex && routePath.charCodeAt(startIndex) === 47) {
+    startIndex += 1;
+  }
+
+  while (endIndex > startIndex && routePath.charCodeAt(endIndex - 1) === 47) {
+    endIndex -= 1;
+  }
+
+  return routePath.slice(startIndex, endIndex);
 }
 
 function isPathInsideBrowserDist(filePath: string): boolean {
