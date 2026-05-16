@@ -281,46 +281,49 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       expect(title).toMatch(/introuvable|not found/i);
     });
 
-    test('When accessing 401 page Then title and primary CTAs are visible', async ({
+    test('When accessing support status pages Then title canonical and og:url remain aligned', async ({
       page,
     }) => {
-      await page.goto(`${BASE_URL}/401`, { waitUntil: 'domcontentloaded' });
+      const routes = [
+        {
+          path: '/401',
+          title: /Authentification requise/i,
+          ctas: ['Se connecter', "Demander de l'aide"],
+        },
+        {
+          path: '/403',
+          title: /Accès refusé/i,
+          ctas: ["Retour à l'accueil", 'Nous contacter'],
+        },
+        {
+          path: '/500',
+          title: /Incident technique/i,
+          ctas: ["Retour à l'accueil", /Signaler un problème/i],
+        },
+      ];
 
-      await expect(page).toHaveTitle(/Authentification requise/i);
-      await expect(
-        page.locator('a').filter({ hasText: 'Se connecter' }),
-      ).toBeVisible();
-      await expect(
-        page.locator('a').filter({ hasText: "Demander de l'aide" }),
-      ).toBeVisible();
-    });
+      for (const route of routes) {
+        await page.goto(`${BASE_URL}${route.path}`, {
+          waitUntil: 'domcontentloaded',
+        });
 
-    test('When accessing 403 page Then title and primary CTAs are visible', async ({
-      page,
-    }) => {
-      await page.goto(`${BASE_URL}/403`, { waitUntil: 'domcontentloaded' });
-
-      await expect(page).toHaveTitle(/Accès refusé/i);
-      await expect(
-        page.locator('a').filter({ hasText: "Retour à l'accueil" }),
-      ).toBeVisible();
-      await expect(
-        page.locator('a').filter({ hasText: 'Nous contacter' }),
-      ).toBeVisible();
-    });
-
-    test('When accessing 500 page Then title and primary CTAs are visible', async ({
-      page,
-    }) => {
-      await page.goto(`${BASE_URL}/500`, { waitUntil: 'domcontentloaded' });
-
-      await expect(page).toHaveTitle(/Incident technique/i);
-      await expect(
-        page.locator('a').filter({ hasText: "Retour à l'accueil" }),
-      ).toBeVisible();
-      await expect(
-        page.locator('a').filter({ hasText: /Signaler un problème/i }),
-      ).toBeVisible();
+        await expect(page).toHaveTitle(route.title);
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+          'content',
+          /.+/,
+        );
+        await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+          'href',
+          new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        );
+        await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+          'content',
+          new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        );
+        for (const cta of route.ctas) {
+          await expect(page.locator('a').filter({ hasText: cta })).toBeVisible();
+        }
+      }
     });
   });
 
