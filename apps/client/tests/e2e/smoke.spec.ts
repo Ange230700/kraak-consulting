@@ -80,4 +80,13 @@ test.describe(`Page d'accueil — smoke tests`, () => {
       `KRAAK Consulting — Expertise internationale au service de votre croissance.`,
     );
   });
+
+  test(`Given la navigation publique, When le visiteur ouvre la page à propos, Then le titre et le contenu principal sont visibles`, async ({
+    page,
+  }) => {
+    await page.goto('/a-propos', { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveTitle(/À propos|A propos/i);
+    await expect(page.locator('h1').first()).toContainText(/capital humain/i);
+  });
 });
