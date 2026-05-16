@@ -7,7 +7,13 @@ const vercelConfig = JSON.parse(
 );
 
 const expectedStaticOutputDirectory = 'apps/client/dist/web/browser';
+const expectedStagingOnlyIgnoreCommand =
+  'case "$VERCEL_GIT_COMMIT_REF" in staging) exit 0 ;; *) exit 1 ;; esac';
 
 test('Given le build web prerender, When Vercel publie le site, Then le dossier browser est servi', () => {
   assert.equal(vercelConfig.outputDirectory, expectedStaticOutputDirectory);
+});
+
+test('Given la branche staging, When Vercel reçoit un push, Then le build automatique reste autorisé uniquement sur staging', () => {
+  assert.equal(vercelConfig.ignoreCommand, expectedStagingOnlyIgnoreCommand);
 });
