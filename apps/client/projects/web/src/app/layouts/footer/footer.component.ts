@@ -5,6 +5,7 @@ import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
+import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 
 interface FooterLink {
   label: string;
@@ -14,7 +15,7 @@ interface FooterLink {
 @Component({
   selector: 'kraak-footer',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PublicConversionTrackingDirective],
   templateUrl: './footer.component.html',
 })
 export class Footer {

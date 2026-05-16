@@ -56,14 +56,14 @@ const marketingRoutes: Routes = [
 ];
 
 const notFoundSeo: SeoPageDefinition = {
-  path: '**',
+  path: '404',
   title: 'Page introuvable | KRAAK Consulting',
   description:
-    "La page demand�e est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+    "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
   openGraph: {
     title: 'Page introuvable | KRAAK Consulting',
     description:
-      "La page demand�e est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
+      "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
     imagePath: '/open-graph/kraak-share-card.svg',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
@@ -86,6 +86,12 @@ export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
   return [
     ...marketingRoutes,
     ...(includeParticipantArea ? participantAreaRoutes : []),
+    {
+      path: '404',
+      title: notFoundSeo.title,
+      data: { seo: notFoundSeo },
+      loadComponent: () => import('./features/support/not-found.page'),
+    },
     {
       path: '**',
       title: notFoundSeo.title,

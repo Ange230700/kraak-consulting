@@ -95,6 +95,20 @@ describe('ContactFormSchema', () => {
     );
   });
 
+  it('should accept public operational contact categories', () => {
+    for (const category of [
+      'training',
+      'project_management',
+      'immigration',
+      'business',
+      'partnership',
+    ]) {
+      expect(ContactFormSchema.safeParse({ ...valid, category }).success).toBe(
+        true,
+      );
+    }
+  });
+
   it('should reject malformed email addresses', () => {
     expect(
       ContactFormSchema.safeParse({ ...valid, email: 'not-an-email' }).success,
@@ -108,6 +122,17 @@ describe('ContactSubmissionResultSchema', () => {
       ContactSubmissionResultSchema.safeParse({
         success: true,
         message: 'Votre message a bien été reçu.',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should accept an authenticated support tracking acknowledgement payload', () => {
+    expect(
+      ContactSubmissionResultSchema.safeParse({
+        success: true,
+        message: 'Votre demande a bien été enregistrée.',
+        requestId: 'req-1',
+        requestStatus: 'open',
       }).success,
     ).toBe(true);
   });

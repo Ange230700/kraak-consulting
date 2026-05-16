@@ -35,7 +35,7 @@ Ces éléments **SERONT publics** sur main/production :
 | About (`/a-propos`)             | ✅ Production-ready                       | 99%            |
 | Services (`/services`)          | ✅ Production-ready                       | 99%            |
 | Programs (`/programmes`)        | ✅ Production-ready (data-driven, public) | 99%            |
-| Resources (`/ressources`)       | ✅ Production-ready (data-driven, public) | 99%            |
+| Resources (`/ressources`)       | ✅ Production-ready (orientation, static) | 99%            |
 | Contact (`/contact`)            | ✅ Production-ready (form + email)        | 99%            |
 | Legal/Privacy (`/mentions-*`)   | ✅ Production-ready (static)              | 99%            |
 | API public endpoints            | ✅ Production-ready (6 routes)            | 100%           |

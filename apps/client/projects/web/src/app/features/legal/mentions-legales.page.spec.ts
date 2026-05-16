@@ -36,5 +36,25 @@ describe('MentionsLegalesPage', () => {
       const texts = Array.from(headings).map((h) => h.textContent ?? '');
       expect(texts.some((t) => t.includes('bergement'))).toBe(true);
     });
+
+    it('When displayed, Then it states the current legal status and public contact channels', () => {
+      const text = fixture.nativeElement.textContent ?? '';
+      const links: HTMLAnchorElement[] = Array.from(
+        fixture.nativeElement.querySelectorAll('a'),
+      );
+
+      expect(text).toContain("structure en cours d'immatriculation");
+      expect(text).toContain('kraakconsulting@gmail.com');
+      expect(text).toContain('+225 05 02 74 18 18');
+      expect(
+        links.some((link) => link.href === 'mailto:kraakconsulting@gmail.com'),
+      ).toBe(true);
+      expect(links.some((link) => link.href === 'tel:+2250502741818')).toBe(
+        true,
+      );
+      expect(
+        links.some((link) => link.href === 'https://wa.me/2250502741818'),
+      ).toBe(true);
+    });
   });
 });

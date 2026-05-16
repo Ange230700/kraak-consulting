@@ -2,7 +2,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 import { seoPages } from './seo/site-seo';
 
-const publicPrerenderPaths = seoPages.map((page) => page.path);
+const publicPrerenderPaths = [...seoPages.map((page) => page.path), '404'];
 
 const publicPrerenderRoutes: ServerRoute[] = publicPrerenderPaths.map(
   (path) => ({

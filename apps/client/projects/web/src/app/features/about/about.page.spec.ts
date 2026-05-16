@@ -20,7 +20,7 @@ describe('AboutPage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'Former des leaders conscients de leur valeur et capables de créer un impact durable.',
+      'Une structure engag\u00e9e pour le capital humain et les trajectoires durables.',
     );
   });
 
@@ -30,23 +30,24 @@ describe('AboutPage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain(
-      'Révéler, former et accompagner les jeunes dans leur transformation',
+      'R\u00e9v\u00e9ler, former et accompagner les jeunes dans leur transformation',
     );
-    expect(content).toContain('D\u00E9veloppement des comp\u00E9tences');
+    expect(content).toContain('D\u00e9veloppement des comp\u00e9tences');
     expect(content).toContain('Structuration des projets');
     expect(content).toContain(
-      'Acc\u00E8s aux opportunit\u00E9s internationales',
+      'Acc\u00e8s aux opportunit\u00e9s internationales',
     );
     expect(content).toContain('Ouverture et connexion globale');
   });
 
-  it('Given the local web build When the about page renders Then it keeps the team preview section visible for review', () => {
+  it('Given the about page When it renders Then it shows real organizational proof instead of a generic team preview', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain("Pr\u00E9visualisation de l'\u00E9quipe KRAAK");
-    expect(content).toContain("L'\u00E9quipe KRAAK");
-    expect(content).toContain('Savannah Nguyen');
+    expect(content).toContain('jeunes professionnels');
+    expect(content).toContain('engagement citoyen');
+    expect(content).toContain('Canada');
+    expect(content).toContain("C\u00f4te d'Ivoire");
   });
 });

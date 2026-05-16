@@ -37,7 +37,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         name: 'Consulter la FAQ KRAAK',
       });
       await faqLink.click();
-      await page.waitForURL('**/faq', { timeout: 5000 });
+      await page.waitForURL('**/faq', {
+        timeout: 5000,
+        waitUntil: 'domcontentloaded',
+      });
 
       // Then: User lands on FAQ page with correct title
       await expect(page).toHaveTitle(/FAQ/i);
@@ -165,7 +168,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await programsButton.scrollIntoViewIfNeeded();
       await programsButton.click();
-      await page.waitForURL('**/programmes', { timeout: 5000 });
+      await page.waitForURL('**/programmes', {
+        timeout: 5000,
+        waitUntil: 'domcontentloaded',
+      });
 
       // Then: User lands on programs page
       await expect(page).toHaveTitle(/Programmes/i);
@@ -190,7 +196,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await expect(faqFooterLink).toBeVisible();
       await faqFooterLink.click();
-      await page.waitForURL('**/faq', { timeout: 5000 });
+      await page.waitForURL('**/faq', {
+        timeout: 5000,
+        waitUntil: 'domcontentloaded',
+      });
       await expect(page).toHaveTitle(/FAQ/i);
     });
 

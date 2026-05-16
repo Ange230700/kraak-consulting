@@ -591,9 +591,14 @@ export type Database = {
       session_status: 'scheduled' | 'live' | 'completed' | 'cancelled';
       support_category:
         | 'technical'
+        | 'training'
         | 'program'
         | 'session'
         | 'billing'
+        | 'project_management'
+        | 'immigration'
+        | 'business'
+        | 'partnership'
         | 'other';
       support_request_status: 'open' | 'in_progress' | 'resolved' | 'closed';
       user_role: 'participant' | 'admin' | 'trainer';
@@ -741,7 +746,18 @@ export const Constants = {
       publication_status: ['draft', 'published', 'archived'],
       resource_type: ['link', 'file', 'video', 'document'],
       session_status: ['scheduled', 'live', 'completed', 'cancelled'],
-      support_category: ['technical', 'program', 'session', 'billing', 'other'],
+      support_category: [
+        'technical',
+        'training',
+        'program',
+        'session',
+        'billing',
+        'project_management',
+        'immigration',
+        'business',
+        'partnership',
+        'other',
+      ],
       support_request_status: ['open', 'in_progress', 'resolved', 'closed'],
       user_role: ['participant', 'admin', 'trainer'],
     },

@@ -1,13 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { environment } from '../../../environments/environment';
 import { Navbar } from './navbar.component';
 
+let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
+
 async function compile(): Promise<void> {
+  analyticsService = {
+    trackEvent: vi.fn(),
+  };
+
   await TestBed.configureTestingModule({
     imports: [Navbar],
-    providers: [provideRouter([])],
+    providers: [
+      provideRouter([
+        { path: 'a-propos', children: [] },
+        { path: 'services', children: [] },
+        { path: 'programmes', children: [] },
+        { path: 'contact', children: [] },
+      ]),
+      { provide: AnalyticsService, useValue: analyticsService },
+    ],
   }).compileComponents();
 }
 
@@ -144,6 +159,27 @@ describe('Navbar', () => {
       component.closeMobileMenu();
       fixture.detectChanges();
       expect(component.mobileMenuOpen()).toBe(false);
+    });
+
+    it('When the contact navigation CTA is clicked Then the public nav click is tracked', () => {
+      const fixture = TestBed.createComponent(Navbar);
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      const contactLink = Array.from(element.querySelectorAll('a')).find(
+        (link) => link.textContent?.includes('Contact'),
+      ) as HTMLAnchorElement;
+
+      contactLink.click();
+
+      expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+        'nav_cta_click',
+        {
+          nav_label: 'Contact',
+          nav_path: '/contact',
+          nav_surface: 'primary_nav',
+        },
+      );
     });
   });
 });

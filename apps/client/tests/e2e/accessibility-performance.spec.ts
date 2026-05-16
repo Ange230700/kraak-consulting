@@ -82,13 +82,13 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
     const results: RouteReport[] = [];
 
     for (const routeCheck of criticalRoutes) {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto(routeCheck.route, { waitUntil: 'load' });
 
       // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
-      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.addStyleTag({
         content:
-          '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}',
+          '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}.kr-perf-section,section,figure.reveal-on-scroll,h1,h2,main{opacity:1 !important;transform:none !important;filter:none !important;}',
       });
 
       const axe = await new AxeBuilder({ page }).analyze();
@@ -105,8 +105,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       }));
       const blockingViolations = axe.violations.filter(
         (violation) =>
-          (violation.impact === 'critical' || violation.impact === 'serious') &&
-          violation.id !== 'color-contrast',
+          violation.impact === 'critical' || violation.impact === 'serious',
       );
 
       const perf = await page.evaluate<PerfSnapshot>(() => {

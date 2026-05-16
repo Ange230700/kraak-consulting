@@ -16,6 +16,10 @@ import type {
 } from '@kraak/contracts';
 import { Resend } from 'resend';
 import { SupabaseService } from '../supabase/supabase.service';
+import {
+  type ContactTriagePlan,
+  resolveContactTriagePlan,
+} from './contact-triage.config';
 
 type UserRole = 'participant' | 'admin' | 'trainer';
 
@@ -51,6 +55,9 @@ const allowedStatusTransitions: Record<
   closed: [],
 };
 
+const contactNotificationFailureMessage =
+  "Le formulaire est temporairement indisponible. Veuillez utiliser l'e-mail direct ou WhatsApp indiqué sur la page contact.";
+
 @Injectable()
 export class SupportService {
   private readonly logger = new Logger(SupportService.name);
@@ -65,6 +72,7 @@ export class SupportService {
     accessToken?: string,
   ): Promise<ContactSubmissionResultDto> {
     let trackingRequest: SupportRequestDto | null = null;
+    const triagePlan = resolveContactTriagePlan(dto.category);
 
     if (accessToken) {
       trackingRequest = await this.createTrackedSupportRequest(
@@ -73,12 +81,17 @@ export class SupportService {
       );
     }
 
-    await this.sendTransactionalEmail(dto);
+    const emailSent = await this.sendTransactionalEmail(
+      dto,
+      triagePlan,
+      Boolean(trackingRequest),
+    );
 
     return {
       success: true,
-      message:
-        'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.',
+      message: emailSent
+        ? 'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.'
+        : 'Votre demande a bien été enregistrée. La notification e-mail est temporairement indisponible, mais le suivi interne reste ouvert.',
       requestId: trackingRequest?.id,
       requestStatus: trackingRequest?.status,
     };
@@ -284,7 +297,11 @@ export class SupportService {
     };
   }
 
-  private async sendTransactionalEmail(dto: ContactFormDto): Promise<void> {
+  private async sendTransactionalEmail(
+    dto: ContactFormDto,
+    triagePlan: ContactTriagePlan,
+    trackingFallbackAvailable: boolean,
+  ): Promise<boolean> {
     const apiKey = this.configService.get<string>('RESEND_API_KEY');
     const toEmail = this.configService.get<string>('CONTACT_TO_EMAIL');
     const fromEmail =
@@ -295,19 +312,21 @@ export class SupportService {
       this.logger.warn(
         'RESEND_API_KEY ou CONTACT_TO_EMAIL manquant — envoi transactionnel désactivé',
       );
-      return;
+      return this.resolveEmailFailureFallback(
+        'Configuration e-mail absente pour la demande de contact.',
+        trackingFallbackAvailable,
+      );
     }
 
     const resend = new Resend(apiKey);
-    const categoryLabel = this.getCategoryLabel(dto.category);
 
     try {
       const result = await resend.emails.send({
         from: fromEmail,
         to: toEmail,
         replyTo: dto.email,
-        subject: `[KRAAK][${categoryLabel}] ${dto.subject}`,
-        text: this.buildPlainTextBody(dto, categoryLabel),
+        subject: `[KRAAK][${triagePlan.label}] ${dto.subject}`,
+        text: this.buildPlainTextBody(dto, triagePlan),
       });
 
       // Le SDK Resend ne lève pas d'exception sur erreur API ;
@@ -321,16 +340,16 @@ export class SupportService {
           JSON.stringify(result.error),
         );
 
-        throw new InternalServerErrorException({
-          success: false,
-          message:
-            "Votre demande a été reçue, mais l'envoi de notification a échoué. Veuillez réessayer.",
-        });
+        return this.resolveEmailFailureFallback(
+          'Resend a retourné une erreur pour la demande de contact.',
+          trackingFallbackAvailable,
+        );
       }
 
       this.logger.log(
         `Email transactionnel envoyé via Resend (id=${result.data?.id ?? 'inconnu'}) vers ${toEmail}`,
       );
+      return true;
     } catch (error) {
       if (error instanceof InternalServerErrorException) {
         throw error;
@@ -341,22 +360,25 @@ export class SupportService {
         error instanceof Error ? error.stack : undefined,
       );
 
-      throw new InternalServerErrorException({
-        success: false,
-        message:
-          "Votre demande a été reçue, mais l'envoi de notification a échoué. Veuillez réessayer.",
-      });
+      return this.resolveEmailFailureFallback(
+        "Exception levée pendant l'envoi de notification de contact.",
+        trackingFallbackAvailable,
+      );
     }
   }
 
   private buildPlainTextBody(
     dto: ContactFormDto,
-    categoryLabel: string,
+    triagePlan: ContactTriagePlan,
   ): string {
     return [
       'Nouvelle demande de contact KRAAK',
       '',
-      `Catégorie: ${categoryLabel}`,
+      `Catégorie: ${triagePlan.label}`,
+      `File interne: ${triagePlan.internalPath}`,
+      `Workflow de réponse: ${triagePlan.responseWorkflow}`,
+      `Fallback opérationnel: ${triagePlan.fallbackWorkflow}`,
+      '',
       `Nom: ${dto.name}`,
       `Email: ${dto.email}`,
       `Objet: ${dto.subject}`,
@@ -366,16 +388,22 @@ export class SupportService {
     ].join('\n');
   }
 
-  private getCategoryLabel(category: ContactFormDto['category']): string {
-    const labels: Record<ContactFormDto['category'], string> = {
-      technical: 'Support technique',
-      program: 'Programme',
-      session: 'Session',
-      billing: 'Facturation',
-      other: 'Autre',
-    };
+  private resolveEmailFailureFallback(
+    logContext: string,
+    trackingFallbackAvailable: boolean,
+  ): boolean {
+    if (trackingFallbackAvailable) {
+      this.logger.warn(
+        `${logContext} Fallback: demande enregistrée dans support_request.`,
+      );
+      return false;
+    }
 
-    return labels[category];
+    throw new InternalServerErrorException({
+      success: false,
+      message: contactNotificationFailureMessage,
+      errors: [contactNotificationFailureMessage],
+    });
   }
 }
 

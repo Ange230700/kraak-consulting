@@ -128,6 +128,16 @@ describe('Web routes', () => {
   });
 
   describe('Given the route table', () => {
+    it('When inspecting routes Then /404 serves the dedicated not-found page with SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const notFoundRoute = builtRoutes.find((route) => route.path === '404');
+
+      expect(notFoundRoute).toBeDefined();
+      expect(notFoundRoute!.loadComponent).toBeDefined();
+      expect(notFoundRoute!.title).toBe('Page introuvable | KRAAK Consulting');
+      expect(notFoundRoute!.data?.['seo']).toBeDefined();
+    });
+
     it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
       const builtRoutes = buildRoutes();
       const wildcard = builtRoutes.find((route) => route.path === '**');

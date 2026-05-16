@@ -164,7 +164,7 @@
   }
 
   .kr-link {
-    color: var(--color-secondary);
+    color: var(--kr-brand-navy-soft);
     font-weight: 600;
     text-decoration-color: rgb(22 115 174 / 28%);
   }

@@ -40,9 +40,14 @@ export type SupportStatusUpdateValidationResult =
 
 const supportCategories: Set<ContactCategory> = new Set([
   'technical',
+  'training',
   'program',
   'session',
   'billing',
+  'project_management',
+  'immigration',
+  'business',
+  'partnership',
   'other',
 ]);
 

@@ -21,12 +21,20 @@ describe('ProgramsPage', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     expect(page.querySelector('h1')?.textContent).toContain(
-      'Des programmes con\u00E7us pour transformer des trajectoires',
+      "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
     );
-    expect(page.textContent).toContain('Ateliers leadership jeunesse');
-    expect(page.textContent).toContain('Engagement communautaire');
-    expect(page.textContent).toContain('Programmes pour \u00E9tudiants');
-    expect(page.textContent).toContain('Conf\u00E9rences et forums');
+    expect(page.textContent).toContain(
+      "Ateliers d'employabilit\u00e9 et de posture professionnelle",
+    );
+    expect(page.textContent).toContain(
+      'Pr\u00e9paration linguistique et tests de langue',
+    );
+    expect(page.textContent).toContain(
+      'Orientation \u00e9tudes, travail et mobilit\u00e9 internationale',
+    );
+    expect(page.textContent).toContain(
+      'Interventions collectives pour \u00e9coles, associations et entreprises',
+    );
   });
 
   it('Given the registration process section, when the Programs page is rendered, then the four expected steps are displayed in order', () => {
@@ -35,10 +43,10 @@ describe('ProgramsPage', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     const content = page.textContent ?? '';
-    const candidatureIndex = content.indexOf('Candidature');
-    const entretienIndex = content.indexOf('Entretien');
-    const inscriptionIndex = content.indexOf('Inscription');
-    const demarrageIndex = content.indexOf('D\u00E9marrage');
+    const candidatureIndex = content.indexOf('Demande de contact');
+    const entretienIndex = content.indexOf("Entretien d'orientation");
+    const inscriptionIndex = content.indexOf('Proposition de format');
+    const demarrageIndex = content.indexOf('Confirmation');
 
     expect(candidatureIndex).toBeGreaterThan(-1);
     expect(entretienIndex).toBeGreaterThan(candidatureIndex);
@@ -56,6 +64,6 @@ describe('ProgramsPage', () => {
     ) as HTMLAnchorElement | null;
 
     expect(registrationLink).toBeTruthy();
-    expect(registrationLink?.textContent).toContain('Rejoindre un programme');
+    expect(registrationLink?.textContent).toContain('Demander une orientation');
   });
 });

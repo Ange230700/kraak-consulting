@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { KRAAK_SOCIAL_LINKS } from '../../shared/brand/brand-constants';
 
 import { Footer } from './footer.component';
@@ -11,11 +12,32 @@ const expectedTiktokUrl =
   KRAAK_SOCIAL_LINKS.find((socialLink) => socialLink.label === 'TikTok')
     ?.href ?? '';
 
+function dispatchTrackedClick(link: HTMLAnchorElement): void {
+  link.addEventListener('click', (event) => event.preventDefault(), {
+    once: true,
+  });
+  link.dispatchEvent(
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+    }),
+  );
+}
+
 describe('Footer', () => {
+  let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
+
   beforeEach(async () => {
+    analyticsService = {
+      trackEvent: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [Footer],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: AnalyticsService, useValue: analyticsService },
+      ],
     }).compileComponents();
   });
 
@@ -71,5 +93,25 @@ describe('Footer', () => {
 
     expect(uniqueNavigationKeys.size).toBe(navigationKeys.length);
     expect(faqLinks).toHaveLength(1);
+  });
+
+  it('Given the footer social links When WhatsApp is clicked Then the public WhatsApp event is tracked', () => {
+    const fixture = TestBed.createComponent(Footer);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const whatsappLink = element.querySelector(
+      'a[aria-label="WhatsApp"]',
+    ) as HTMLAnchorElement;
+
+    dispatchTrackedClick(whatsappLink);
+
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'whatsapp_click',
+      expect.objectContaining({
+        contact_surface: 'footer_social',
+        contact_method: 'whatsapp',
+      }),
+    );
   });
 });
