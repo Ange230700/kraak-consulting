@@ -6,51 +6,67 @@ test.describe('Page programmes - parcours vitrine', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Des programmes conçus pour transformer des trajectoires.',
+        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
       }),
     ).toBeVisible();
   });
 
-  test('Given la page Programmes, When elle se charge, Then le titre principal et les parcours clés sont visibles', async ({
+  test('Given la page Programmes, When elle se charge, Then le titre principal et les formats cles sont visibles', async ({
     page,
   }) => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Des programmes conçus pour transformer des trajectoires.',
+        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
       }),
     ).toBeVisible();
 
-    await expect(page.getByText('Ateliers leadership jeunesse')).toBeVisible();
-    await expect(page.getByText('Engagement communautaire')).toBeVisible();
-    await expect(page.getByText('Programmes pour étudiants')).toBeVisible();
-    await expect(page.getByText('Conférences et forums')).toBeVisible();
-  });
-
-  test("Given la section d'inscription, When elle est lue, Then les quatre étapes de parcours sont présentées", async ({
-    page,
-  }) => {
     await expect(
-      page.getByRole('heading', { name: "Comment s'inscrire ?" }),
+      page.getByText(
+        "Ateliers d'employabilit\u00e9 et de posture professionnelle",
+      ),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Candidature' }),
+      page.getByText('Pr\u00e9paration linguistique et tests de langue'),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Entretien' }),
+      page.getByText(
+        'Orientation \u00e9tudes, travail et mobilit\u00e9 internationale',
+      ),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Inscription' }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'Démarrage' }),
+      page.getByText(
+        'Interventions collectives pour \u00e9coles, associations et entreprises',
+      ),
     ).toBeVisible();
   });
 
-  test("Given le call-to-action de fin de page, When un visiteur veut rejoindre une cohorte, Then l'action mène vers la page contact", async ({
+  test("Given la section d'orientation, When elle est lue, Then les quatre etapes de parcours sont presentees", async ({
     page,
   }) => {
-    const cta = page.getByRole('link', { name: 'Rejoindre un programme' });
+    await expect(
+      page.getByRole('heading', {
+        name: 'Comment \u00eatre orient\u00e9 vers le bon programme ?',
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Demande de contact' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: "Entretien d'orientation" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Proposition de format' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Confirmation' }),
+    ).toBeVisible();
+  });
+
+  test("Given le call-to-action de fin de page, When un visiteur veut etre oriente, Then l'action mene vers la page contact", async ({
+    page,
+  }) => {
+    const cta = page.getByRole('link', { name: 'Demander une orientation' });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute('href', '/contact');
   });

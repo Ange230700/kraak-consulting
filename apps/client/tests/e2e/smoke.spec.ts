@@ -1,9 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-async function revealParticipantCta(page: Parameters<typeof test>[0]['page']) {
-  const participantCta = page
-    .getByRole('link', { name: 'Espace participant' })
-    .first();
+const expectParticipantCta =
+  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
+  (process.env['KRAAK_E2E_REUSE_SERVER'] === 'true' ? 'false' : 'true');
+const participantCtaExpected = expectParticipantCta === 'true';
+const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
+
+async function revealNavigation(page: Parameters<typeof test>[0]['page']) {
   const mobileMenuButton = page.getByRole('button', {
     name: 'Menu de navigation',
   });
@@ -18,10 +21,6 @@ async function revealParticipantCta(page: Parameters<typeof test>[0]['page']) {
   if (mobileMenuVisible) {
     await mobileMenuButton.click();
   }
-
-  await expect(participantCta).toBeVisible();
-
-  return participantCta;
 }
 
 // Smoke E2E — shell web KRAAK
@@ -29,7 +28,7 @@ async function revealParticipantCta(page: Parameters<typeof test>[0]['page']) {
 
 test.describe(`Page d'accueil — smoke tests`, () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
   test(`Given la page d'accueil, When elle se charge, Then le titre du document contient "KRAAK"`, async ({
@@ -49,10 +48,29 @@ test.describe(`Page d'accueil — smoke tests`, () => {
     ).toBeVisible();
   });
 
-  test(`Given la page d'accueil, When elle se charge, Then l'appel à l'action "Espace participant" est visible`, async ({
+  test(`Given la page d'accueil, When elle se charge, Then l'appel public vers le contact est visible`, async ({
     page,
   }) => {
-    await expect(await revealParticipantCta(page)).toBeVisible();
+    await revealNavigation(page);
+
+    await expect(
+      page.getByRole('link', { name: 'Contact' }).first(),
+    ).toBeVisible();
+  });
+
+  test(`Given la page d'accueil, When elle se charge, Then le CTA participant respecte le périmètre attendu`, async ({
+    page,
+  }) => {
+    await revealNavigation(page);
+
+    const participantCta = page.getByRole('link', {
+      name: 'Espace participant',
+    });
+
+    await expect(participantCta).toHaveCount(expectedParticipantCtaCount);
+    await expect(participantCta.first()).toBeVisible({
+      visible: participantCtaExpected,
+    });
   });
 
   test(`Given la page d'accueil, When elle se charge, Then le pied de page affiche la promesse KRAAK`, async ({

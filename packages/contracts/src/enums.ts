@@ -114,9 +114,14 @@ export const SupportRequestStatus = {
 
 export const SupportCategory = {
   TECHNICAL: 'technical',
+  TRAINING: 'training',
   PROGRAM: 'program',
   SESSION: 'session',
   BILLING: 'billing',
+  PROJECT_MANAGEMENT: 'project_management',
+  IMMIGRATION: 'immigration',
+  BUSINESS: 'business',
+  PARTNERSHIP: 'partnership',
   OTHER: 'other',
 } as const;
 

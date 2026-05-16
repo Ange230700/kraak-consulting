@@ -16,7 +16,18 @@ export const ContactFormSchema = z
     subject: z.string().trim().min(3).max(120),
     message: z.string().trim().min(10).max(2000),
     category: z
-      .enum(['technical', 'program', 'session', 'billing', 'other'])
+      .enum([
+        'technical',
+        'training',
+        'program',
+        'session',
+        'billing',
+        'project_management',
+        'immigration',
+        'business',
+        'partnership',
+        'other',
+      ])
       .default('other'),
   })
   .strict();
@@ -25,6 +36,10 @@ export const ContactSubmissionResultSchema = z
   .object({
     success: z.boolean(),
     message: z.string().trim().min(1),
+    requestId: z.string().trim().min(1).optional(),
+    requestStatus: z
+      .enum(['open', 'in_progress', 'resolved', 'closed'])
+      .optional(),
   })
   .strict();
 
@@ -430,7 +445,18 @@ export const SupportRequestSchema = z.object({
   subject: z.string(),
   message: z.string(),
   status: z.enum(['open', 'in_progress', 'resolved', 'closed']),
-  category: z.enum(['technical', 'program', 'session', 'billing', 'other']),
+  category: z.enum([
+    'technical',
+    'training',
+    'program',
+    'session',
+    'billing',
+    'project_management',
+    'immigration',
+    'business',
+    'partnership',
+    'other',
+  ]),
   assignedToUserId: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),

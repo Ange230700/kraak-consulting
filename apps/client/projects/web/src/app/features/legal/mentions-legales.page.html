@@ -3,17 +3,60 @@
     Mentions légales
   </h1>
 
+  <p class="text-secondary mb-8 leading-7">
+    Dernière mise à jour : mai 2026. Cette page présente les informations
+    légales applicables au site vitrine public de KRAAK Consulting.
+  </p>
+
   <section class="mb-10">
     <h2 class="text-primary mb-3 text-xl font-semibold">Éditeur du site</h2>
     <p class="text-secondary leading-7">
-      KRAAK Consulting<br />
-      Structure en cours d'immatriculation<br />
-      Email :
+      KRAAK Consulting est une structure en cours d'immatriculation. Les
+      informations légales complémentaires, notamment la forme juridique, le
+      numéro d'immatriculation et l'adresse administrative de référence, seront
+      publiées dès leur finalisation.
+    </p>
+    <p class="text-secondary mt-4 leading-7">
+      Coordonnées publiques :
       <a
-        href="mailto:kraak-consulting@gmail.com"
+        [href]="contactEmailHref"
+        kraakPublicConversion="direct_email_click"
+        [kraakPublicConversionPayload]="{
+          contact_method: 'email',
+          contact_surface: 'legal_mentions',
+          link_url: contactEmailHref,
+        }"
         class="text-brand-blue hover:underline"
-        >kraak-consulting&#64;gmail.com</a
-      >
+        >{{ contactEmail }}</a
+      >,
+      <a [href]="contactPhoneHref" class="text-brand-blue hover:underline">{{
+        contactPhoneDisplay
+      }}</a>
+      et
+      <a
+        [href]="whatsappContactHref"
+        target="_blank"
+        rel="noopener noreferrer"
+        kraakPublicConversion="whatsapp_click"
+        [kraakPublicConversionPayload]="{
+          contact_method: 'whatsapp',
+          contact_surface: 'legal_mentions',
+          link_url: whatsappContactHref,
+        }"
+        class="text-brand-blue hover:underline"
+        >WhatsApp</a
+      >.
+    </p>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="text-primary mb-3 text-xl font-semibold">
+      Direction de publication
+    </h2>
+    <p class="text-secondary leading-7">
+      La direction de publication est assurée par KRAAK Consulting. Pour toute
+      demande relative au site, aux contenus publiés ou aux données
+      personnelles, utilisez les coordonnées publiques indiquées ci-dessus.
     </p>
   </section>
 
@@ -44,29 +87,35 @@
       Propriété intellectuelle
     </h2>
     <p class="text-secondary leading-7">
-      L'ensemble des contenus présents sur ce site (textes, images, logo,
-      structure) est la propriété exclusive de KRAAK Consulting. Toute
-      reproduction ou utilisation sans autorisation écrite préalable est
+      Les textes, visuels, logos, éléments graphiques, parcours et structures de
+      page publiés sur ce site appartiennent à KRAAK Consulting ou sont utilisés
+      avec une autorisation adaptée. Toute reproduction, adaptation ou
+      réutilisation substantielle sans autorisation écrite préalable est
       interdite.
     </p>
   </section>
 
   <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Responsabilité</h2>
+    <h2 class="text-primary mb-3 text-xl font-semibold">
+      Informations et responsabilité
+    </h2>
     <p class="text-secondary leading-7">
-      KRAAK Consulting s'efforce de maintenir les informations publiées à jour
-      et exactes. Toutefois, nous ne saurions être tenus responsables des
-      erreurs ou omissions, ni des conséquences découlant de leur utilisation.
+      KRAAK Consulting s'efforce de publier des informations exactes,
+      compréhensibles et à jour. Les contenus du site ont une vocation
+      d'information, d'orientation et de prise de contact : ils ne constituent
+      ni une garantie de visa, d'admission, de financement, d'emploi, de
+      résultat administratif, ni un avis juridique individualisé.
     </p>
   </section>
 
   <section class="mb-10">
     <h2 class="text-primary mb-3 text-xl font-semibold">
-      Données personnelles
+      Données personnelles et cookies
     </h2>
     <p class="text-secondary leading-7">
-      Pour toute information relative au traitement de vos données personnelles,
-      veuillez consulter notre
+      Les traitements de données personnelles, la conservation des demandes de
+      contact et l'usage éventuel de cookies de mesure d'audience sont détaillés
+      dans notre
       <a
         routerLink="/politique-de-confidentialite"
         class="text-brand-blue hover:underline"
@@ -78,7 +127,7 @@
 
 <kraak-cta-banner
   heading="Vous avez des questions ? Nous sommes là."
-  body="Contactez notre équipe pour toute demande relative à vos données ou à nos services."
+  body="Contactez notre équipe pour toute demande relative au site, à vos données ou à nos services."
   ctaLabel="Nous contacter"
   ctaLink="/contact"
   ctaContext="legal_mentions_cta"

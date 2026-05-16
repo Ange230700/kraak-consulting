@@ -231,14 +231,19 @@ describe('Enums', () => {
   describe('SupportCategory', () => {
     it('devrait contenir les catégories de support', () => {
       expect(SupportCategory.TECHNICAL).toBe('technical');
+      expect(SupportCategory.TRAINING).toBe('training');
       expect(SupportCategory.PROGRAM).toBe('program');
       expect(SupportCategory.SESSION).toBe('session');
       expect(SupportCategory.BILLING).toBe('billing');
+      expect(SupportCategory.PROJECT_MANAGEMENT).toBe('project_management');
+      expect(SupportCategory.IMMIGRATION).toBe('immigration');
+      expect(SupportCategory.BUSINESS).toBe('business');
+      expect(SupportCategory.PARTNERSHIP).toBe('partnership');
       expect(SupportCategory.OTHER).toBe('other');
     });
 
-    it('devrait avoir exactement 5 valeurs', () => {
-      expect(Object.values(SupportCategory)).toHaveLength(5);
+    it('devrait avoir exactement 10 valeurs', () => {
+      expect(Object.values(SupportCategory)).toHaveLength(10);
     });
   });
 });

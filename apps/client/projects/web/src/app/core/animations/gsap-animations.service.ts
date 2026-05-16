@@ -16,13 +16,28 @@ export class GsapAnimationsService {
   private readonly ngZone = inject(NgZone);
   private readonly activeAnimations = new Map<HTMLElement, gsap.core.Tween>();
 
+  private canAnimate(): boolean {
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    ) {
+      return true;
+    }
+
+    return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   /**
    * Initialise les animations scroll-triggered pour les blocs visuels (figures)
    * Chaque figure se révèle au scroll avec un effet de fade-in + slide-up
    */
   initializeFigureAnimations(selector = 'figure.reveal-on-scroll'): void {
     // Ensure we're in the browser environment (not SSR)
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -52,7 +67,7 @@ export class GsapAnimationsService {
    */
   initializeInteractiveCardAnimations(selector = 'article'): void {
     // Ensure we're in the browser environment (not SSR)
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -87,7 +102,7 @@ export class GsapAnimationsService {
    */
   initializePageEntranceAnimations(): void {
     // Ensure we're in the browser environment (not SSR)
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -128,7 +143,7 @@ export class GsapAnimationsService {
   initializeButtonTransitions(
     selector = 'button, [pButton], a.btn, a.link-btn',
   ): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -182,7 +197,7 @@ export class GsapAnimationsService {
   initializeFormFieldAnimations(
     selector = 'input, textarea, [pInputText]',
   ): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -216,7 +231,7 @@ export class GsapAnimationsService {
    * Parfait pour les listes de ressources, programmes, services
    */
   initializeListItemAnimations(selector = 'li, .list-item'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -244,7 +259,7 @@ export class GsapAnimationsService {
    * Parfait pour les paragraphes, descriptions
    */
   initializeTextRevealAnimations(selector = 'p'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -270,7 +285,7 @@ export class GsapAnimationsService {
    * Anime les icônes avec un effet de scale et rotation subtile
    */
   initializeIconAnimations(selector = 'svg, i, [icon]'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -305,7 +320,7 @@ export class GsapAnimationsService {
    * À utiliser lors de changements de route
    */
   createPageTransition(): Promise<void> {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return Promise.resolve();
     }
 
@@ -330,7 +345,7 @@ export class GsapAnimationsService {
    * Anime l'entrée d'une nouvelle page (utilisé après la transition)
    */
   animatePageIn(): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -351,7 +366,7 @@ export class GsapAnimationsService {
    * Chaque section se révèle avec un slide subtle
    */
   initializeSectionAnimations(selector = 'section'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -378,7 +393,7 @@ export class GsapAnimationsService {
    * Utile pour les indicateurs, nouveautés
    */
   initializeBadgeAnimations(selector = '.badge, .tag, .label'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -409,7 +424,7 @@ export class GsapAnimationsService {
    * Améliore l'interactivité globale
    */
   initializeMouseFollowAnimations(): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 
@@ -441,7 +456,7 @@ export class GsapAnimationsService {
    * Parallax subtile pour la profondeur
    */
   initializeImageParallaxAnimations(selector = 'img'): void {
-    if (typeof document === 'undefined') {
+    if (!this.canAnimate()) {
       return;
     }
 

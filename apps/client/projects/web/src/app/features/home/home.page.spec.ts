@@ -47,7 +47,7 @@ describe('HomePage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'D\u00e9veloppez vos comp\u00e9tences',
+      'Transformez votre potentiel en trajectoire concr\u00e8te.',
     );
   });
 
@@ -56,8 +56,8 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('R\u00e9server une consultation');
-    expect(element.textContent).toContain('D\u00e9couvrir nos services');
+    expect(element.textContent).toContain('Parler \u00e0 un conseiller');
+    expect(element.textContent).toContain('Explorer nos services');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -100,18 +100,15 @@ describe('HomePage', () => {
     expect(element.textContent).not.toContain('Questions fr\u00e9quentes');
   });
 
-  it('Given the local web build When the home page renders Then the preview sections stay visible for review', () => {
+  it("Given the home page When it renders Then it exposes proof blocks grounded in KRAAK's real positioning", () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Partenaires et clients de confiance');
-    expect(content).toContain(
-      'Pr\u00e9visualisation du format t\u00e9moignages',
-    );
-    expect(content).toContain(
-      'Chiffres d\u2019impact en pr\u00e9visualisation',
-    );
+    expect(content).toContain('Insertion socioprofessionnelle');
+    expect(content).toContain('Approche bidirectionnelle');
+    expect(content).toContain('Exp\u00e9rience internationale');
+    expect(content).toContain('Accompagnement structur\u00e9');
   });
 });

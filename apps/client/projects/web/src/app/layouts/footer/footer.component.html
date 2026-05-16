@@ -73,6 +73,15 @@
           [href]="social.href"
           target="_blank"
           rel="noopener noreferrer"
+          [kraakPublicConversion]="
+            social.label === 'WhatsApp' ? 'whatsapp_click' : ''
+          "
+          [kraakPublicConversionPayload]="{
+            contact_method: 'whatsapp',
+            contact_surface: 'footer_social',
+            link_label: social.label,
+            link_url: social.href,
+          }"
           class="border-brand-blue/20 hover:border-brand-blue/35 text-secondary hover:text-primary bg-brand-white hover:bg-brand-cream/90 flex h-12 w-12 items-center justify-center rounded-full border p-2.5 shadow-sm transition-all hover:-translate-y-px hover:scale-[1.03]"
           [attr.aria-label]="social.label"
           [attr.title]="social.label"

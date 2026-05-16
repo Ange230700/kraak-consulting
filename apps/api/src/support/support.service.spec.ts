@@ -123,7 +123,7 @@ describe('SupportService', () => {
         email: 'alice@exemple.com',
         subject: 'Renseignements',
         message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
-        category: 'other',
+        category: 'training',
       }),
     ).resolves.toEqual({
       success: true,
@@ -137,8 +137,10 @@ describe('SupportService', () => {
       from: 'noreply@kraak.org',
       to: 'contact@kraak.org',
       replyTo: 'alice@exemple.com',
-      subject: '[KRAAK][Autre] Renseignements',
-      text: expect.stringContaining('Nouvelle demande de contact KRAAK'),
+      subject: '[KRAAK][Formation] Renseignements',
+      text: expect.stringContaining(
+        'File interne: formation/orientation-public',
+      ),
     });
   });
 
@@ -293,7 +295,7 @@ describe('SupportService', () => {
     ).resolves.toEqual({
       success: true,
       message:
-        'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.',
+        'Votre demande a bien été enregistrée. La notification e-mail est temporairement indisponible, mais le suivi interne reste ouvert.',
       requestId: 'req-1',
       requestStatus: 'open',
     });
@@ -660,19 +662,27 @@ describe('SupportService', () => {
     expect(result.status).toBe('open');
   });
 
-  it('Given RESEND_API_KEY absent, When submitContact est appelé, Then un avertissement est loggué et la fonction retourne sans envoyer', async () => {
+  it('Given RESEND_API_KEY absent sans suivi interne, When submitContact est appelé, Then la demande est rejetée avec un fallback public', async () => {
     configService.get.mockReturnValue(undefined);
 
-    const result = await service.submitContact({
-      name: 'Bob',
-      email: 'bob@example.com',
-      subject: 'Test',
-      message: 'Message test',
-      category: 'other',
+    await expect(
+      service.submitContact({
+        name: 'Bob',
+        email: 'bob@example.com',
+        subject: 'Test',
+        message: 'Message test',
+        category: 'other',
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        success: false,
+        errors: [
+          "Le formulaire est temporairement indisponible. Veuillez utiliser l'e-mail direct ou WhatsApp indiqué sur la page contact.",
+        ],
+      },
     });
 
     expect(sendMock).not.toHaveBeenCalled();
-    expect(result.success).toBe(true);
   });
 
   it('Given Resend lève une exception réseau, When submitContact est appelé, Then une InternalServerErrorException est levée', async () => {

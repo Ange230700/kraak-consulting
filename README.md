@@ -98,6 +98,34 @@ Pour les détails, voir [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ---
 
+## Surface vitrine publique
+
+La surface vitrine publique actuellement gelée et considérée comme complète
+pour le MVP est :
+
+- `/`
+- `/a-propos`
+- `/services`
+- `/faq`
+- `/programmes`
+- `/ressources`
+- `/contact`
+- `/mentions-legales`
+- `/politique-de-confidentialite`
+- la page `404` servie via la wildcard `**`
+
+Les routes authentifiées et non vitrines (`/connexion`, `/inscription`,
+`/mot-de-passe-oublie`, `/participant/**`) restent hors de cette surface et ne
+doivent pas rouvrir le scope public sans décision explicite. Voir
+[`docs/decisions/ARC-14-freeze-surface-vitrine-publique.md`](docs/decisions/ARC-14-freeze-surface-vitrine-publique.md).
+
+Note de positionnement : la route `/ressources` est intentionnellement une page
+d'orientation vitrine statique. Elle n'est ni un blog, ni une bibliothèque
+publique de contenu. Voir
+[`docs/decisions/ARC-15-positionnement-page-ressources-vitrine.md`](docs/decisions/ARC-15-positionnement-page-ressources-vitrine.md).
+
+---
+
 ## Scripts disponibles
 
 | Commande                    | Description                                               |
