@@ -6,7 +6,9 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { existsSync } from 'node:fs';
-import { extname, join, resolve, sep } from 'node:path';
+import { extname, join, resolve } from 'node:path';
+
+import { buildPrerenderedHtmlPath } from './ssr-path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const resolvedBrowserDistFolder = resolve(browserDistFolder);
@@ -112,27 +114,9 @@ function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
   }
 
   const routePath = parseRequestPath(req);
-  if (!routePath) {
-    return undefined;
-  }
-
-  const relativeIndexPath =
-    routePath === '/'
-      ? 'index.html'
-      : join(trimRouteSlashes(routePath), 'index.html');
-  const prerenderedHtmlPath = resolve(
-    resolvedBrowserDistFolder,
-    relativeIndexPath,
-  );
-
-  if (
-    !isPathInsideBrowserDist(prerenderedHtmlPath) ||
-    !existsSync(prerenderedHtmlPath)
-  ) {
-    return undefined;
-  }
-
-  return prerenderedHtmlPath;
+  return routePath
+    ? buildPrerenderedHtmlPath(routePath, resolvedBrowserDistFolder)
+    : undefined;
 }
 
 function resolveStaticNotFoundHtmlPath(
@@ -176,26 +160,4 @@ function parseRequestPath(req: express.Request): string | undefined {
     });
     return undefined;
   }
-}
-
-function trimRouteSlashes(routePath: string): string {
-  let startIndex = 0;
-  let endIndex = routePath.length;
-
-  while (startIndex < endIndex && routePath.charCodeAt(startIndex) === 47) {
-    startIndex += 1;
-  }
-
-  while (endIndex > startIndex && routePath.charCodeAt(endIndex - 1) === 47) {
-    endIndex -= 1;
-  }
-
-  return routePath.slice(startIndex, endIndex);
-}
-
-function isPathInsideBrowserDist(filePath: string): boolean {
-  return (
-    filePath === resolvedBrowserDistFolder ||
-    filePath.startsWith(`${resolvedBrowserDistFolder}${sep}`)
-  );
 }
