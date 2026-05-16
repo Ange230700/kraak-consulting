@@ -115,7 +115,7 @@ function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
 
   const routePath = parseRequestPath(req);
   return routePath
-    ? buildPrerenderedHtmlPath(routePath, resolvedBrowserDistFolder)
+    ? buildPrerenderedHtmlPath(routePath, resolvedBrowserDistFolder, existsSync)
     : undefined;
 }
 
