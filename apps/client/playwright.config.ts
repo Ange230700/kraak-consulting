@@ -7,6 +7,18 @@ import { defineConfig, devices } from '@playwright/test';
 const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
 const localWebBaseUrl = `http://localhost:${localWebPort}`;
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+const useStaticWebServer = process.platform === 'win32';
+const webServerCommand = useStaticWebServer
+  ? [
+      'pnpm run clean',
+      'pnpm run build:web:local',
+      `node ../../scripts/serve-static.mjs dist/web/browser ${localWebPort}`,
+    ].join(' && ')
+  : [
+      'node ../../scripts/generate-client-runtime-config.mjs --env local',
+      `node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })"`,
+      `npx ng serve web --port ${localWebPort}`,
+    ].join(' && ');
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -39,10 +51,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort}`,
+    command: webServerCommand,
     url: localWebBaseUrl,
     reuseExistingServer,
-    timeout: 120_000,
+    timeout: useStaticWebServer ? 300_000 : 120_000,
     env: {
       CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
       CLIENT_API_BASE_URL: localWebBaseUrl,
