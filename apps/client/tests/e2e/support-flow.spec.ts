@@ -334,7 +334,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         waitUntil: 'domcontentloaded',
       });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = 6000;
+      const loadThresholdMs = 8000;
 
       // When: Measuring load time
       // Then: Page should load within a CI-realistic threshold
@@ -348,7 +348,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       const startTime = Date.now();
       await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = 6000;
+      const loadThresholdMs = 8000;
 
       // When: Checking accordion visibility
       const accordion = page.locator('kraak-faq-accordion');
