@@ -75,6 +75,41 @@ const parseImpactSummary = (
   return summary;
 };
 
+const isTransientNavigationError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return /Execution context was destroyed|Target page, context or browser has been closed/i.test(
+    error.message,
+  );
+};
+
+const analyzeWithRetry = async (
+  page: Parameters<typeof AxeBuilder>[0]['page'],
+) => {
+  const maxAttempts = 2;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await new AxeBuilder({ page }).analyze();
+    } catch (error) {
+      if (!isTransientNavigationError(error) || attempt === maxAttempts) {
+        throw error;
+      }
+
+      await page.waitForLoadState('load');
+      await page.waitForFunction(
+        () =>
+          document.readyState === 'interactive' ||
+          document.readyState === 'complete',
+      );
+    }
+  }
+
+  throw new Error('Axe analyze retry loop exhausted unexpectedly.');
+};
+
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
@@ -84,6 +119,11 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
     for (const routeCheck of criticalRoutes) {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto(routeCheck.route, { waitUntil: 'load' });
+      await page.waitForFunction(
+        () =>
+          document.readyState === 'interactive' ||
+          document.readyState === 'complete',
+      );
 
       // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
       await page.addStyleTag({
@@ -91,7 +131,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
           '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}.kr-perf-section,section,figure.reveal-on-scroll,h1,h2,main{opacity:1 !important;transform:none !important;filter:none !important;}',
       });
 
-      const axe = await new AxeBuilder({ page }).analyze();
+      const axe = await analyzeWithRetry(page);
       const axeSummary = parseImpactSummary(
         axe.violations.map((violation) => ({
           impact: violation.impact ?? null,

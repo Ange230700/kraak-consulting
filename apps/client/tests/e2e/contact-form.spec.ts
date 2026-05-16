@@ -51,6 +51,20 @@ test.describe(`Page contact — comportement formulaire`, () => {
 
     await page.goto('/contact');
 
+    // Evite qu'une soumission native SSR recharge la page avant l'hydratation Angular.
+    await page
+      .locator('form')
+      .first()
+      .evaluate((form) => {
+        form.addEventListener(
+          'submit',
+          (event) => {
+            event.preventDefault();
+          },
+          { capture: true },
+        );
+      });
+
     const nameField = page.getByRole('textbox', { name: 'Nom complet' });
     const emailField = page.getByRole('textbox', { name: 'Adresse e-mail' });
     const subjectField = page.getByRole('textbox', { name: 'Objectif' });
@@ -87,7 +101,14 @@ test.describe(`Page contact — comportement formulaire`, () => {
         { timeout: 500 },
       );
 
+      const submitRequest = page.waitForRequest(
+        (request) =>
+          request.method() === 'POST' && request.url().endsWith('/contact'),
+        { timeout: 10_000 },
+      );
+
       await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
+      await submitRequest;
 
       await expect(
         page.getByText(
