@@ -1,38 +1,30 @@
-import { existsSync } from 'node:fs';
-import { join, resolve, sep } from 'node:path';
-
 export function buildPrerenderedHtmlPath(
   routePath: string,
   browserDistFolder: string,
-  fileExists: (filePath: string) => boolean = existsSync,
+  fileExists?: (filePath: string) => boolean,
 ): string | undefined {
   if (!isSafeRoutePath(routePath)) {
     return undefined;
   }
 
-  const relativeIndexPath =
+  const normalizedBrowserDistFolder = trimTrailingSlashes(
+    browserDistFolder.replaceAll('\\', '/'),
+  );
+  const relativeRoutePath = trimRouteSlashes(routePath.replaceAll('\\', '/'));
+  const prerenderedHtmlPath =
     routePath === '/'
-      ? 'index.html'
-      : join(trimRouteSlashes(routePath), 'index.html');
-  const prerenderedHtmlPath = resolve(browserDistFolder, relativeIndexPath);
+      ? `${normalizedBrowserDistFolder}/index.html`
+      : `${normalizedBrowserDistFolder}/${relativeRoutePath}/index.html`;
 
-  if (!isPathInsideBrowserDist(prerenderedHtmlPath, browserDistFolder)) {
+  if (
+    !isPathInsideBrowserDist(prerenderedHtmlPath, normalizedBrowserDistFolder)
+  ) {
     return undefined;
   }
 
-  return fileExists(prerenderedHtmlPath) ? prerenderedHtmlPath : undefined;
-}
-
-function isPathInsideBrowserDist(
-  filePath: string,
-  browserDistFolder: string,
-): boolean {
-  const resolvedBrowserDistFolder = resolve(browserDistFolder);
-
-  return (
-    filePath === resolvedBrowserDistFolder ||
-    filePath.startsWith(`${resolvedBrowserDistFolder}${sep}`)
-  );
+  return (fileExists?.(prerenderedHtmlPath) ?? true)
+    ? prerenderedHtmlPath
+    : undefined;
 }
 
 function trimRouteSlashes(routePath: string): string {
@@ -48,6 +40,29 @@ function trimRouteSlashes(routePath: string): string {
   }
 
   return routePath.slice(startIndex, endIndex);
+}
+
+function trimTrailingSlashes(pathValue: string): string {
+  let endIndex = pathValue.length;
+
+  while (
+    endIndex > 0 &&
+    (pathValue.charCodeAt(endIndex - 1) === 47 ||
+      pathValue.charCodeAt(endIndex - 1) === 92)
+  ) {
+    endIndex -= 1;
+  }
+
+  return pathValue.slice(0, endIndex);
+}
+
+function isPathInsideBrowserDist(
+  filePath: string,
+  browserDistFolder: string,
+): boolean {
+  const prefix = `${browserDistFolder}/`;
+
+  return filePath === browserDistFolder || filePath.startsWith(prefix);
 }
 
 function isSafeRoutePath(routePath: string): boolean {

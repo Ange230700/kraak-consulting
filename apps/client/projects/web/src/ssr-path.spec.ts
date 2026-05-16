@@ -1,5 +1,3 @@
-import { sep } from 'node:path';
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { buildPrerenderedHtmlPath } from './ssr-path';
@@ -14,7 +12,7 @@ describe('Given the web SSR prerender lookup', () => {
       fileExists,
     );
 
-    expect(prerenderedHtmlPath).toContain(`${sep}a-propos${sep}index.html`);
+    expect(prerenderedHtmlPath).toBe('/app/browser/a-propos/index.html');
     expect(fileExists).toHaveBeenCalledTimes(1);
   });
 
