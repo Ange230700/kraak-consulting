@@ -1,11 +1,10 @@
 import { Route, Routes } from '@angular/router';
 
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
-import {
-  participantAreaCanMatch,
-  participantAreaRoutes,
-} from './participant-area.routes';
+import { participantAreaRoutes } from './participant-area.routes';
 import { environment } from '../environments/environment';
+
+export { participantAreaCanMatch } from './participant-area.routes';
 
 export const buildMarketingRoute = (
   path: string,
@@ -73,7 +72,59 @@ const notFoundSeo: SeoPageDefinition = {
   },
 };
 
-export { participantAreaCanMatch };
+const unauthorizedSeo: SeoPageDefinition = {
+  path: '401',
+  title: 'Authentification requise | KRAAK Consulting',
+  description:
+    'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
+  openGraph: {
+    title: 'Authentification requise | KRAAK Consulting',
+    description:
+      'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
+    imagePath: '/open-graph/kraak-share-card.svg',
+    imageAlt: 'Carte de partage KRAAK Consulting.',
+  },
+  sitemap: {
+    changeFrequency: 'never',
+    priority: 0.1,
+  },
+};
+
+const forbiddenSeo: SeoPageDefinition = {
+  path: '403',
+  title: 'Accès refusé | KRAAK Consulting',
+  description:
+    'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
+  openGraph: {
+    title: 'Accès refusé | KRAAK Consulting',
+    description:
+      'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
+    imagePath: '/open-graph/kraak-share-card.svg',
+    imageAlt: 'Carte de partage KRAAK Consulting.',
+  },
+  sitemap: {
+    changeFrequency: 'never',
+    priority: 0.1,
+  },
+};
+
+const serverErrorSeo: SeoPageDefinition = {
+  path: '500',
+  title: 'Incident technique | KRAAK Consulting',
+  description:
+    'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
+  openGraph: {
+    title: 'Incident technique | KRAAK Consulting',
+    description:
+      'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
+    imagePath: '/open-graph/kraak-share-card.svg',
+    imageAlt: 'Carte de partage KRAAK Consulting.',
+  },
+  sitemap: {
+    changeFrequency: 'never',
+    priority: 0.1,
+  },
+};
 
 interface BuildRoutesOptions {
   readonly includeParticipantArea?: boolean;
@@ -86,6 +137,24 @@ export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
   return [
     ...marketingRoutes,
     ...(includeParticipantArea ? participantAreaRoutes : []),
+    {
+      path: '401',
+      title: unauthorizedSeo.title,
+      data: { seo: unauthorizedSeo },
+      loadComponent: () => import('./features/support/unauthorized.page'),
+    },
+    {
+      path: '403',
+      title: forbiddenSeo.title,
+      data: { seo: forbiddenSeo },
+      loadComponent: () => import('./features/support/forbidden.page'),
+    },
+    {
+      path: '500',
+      title: serverErrorSeo.title,
+      data: { seo: serverErrorSeo },
+      loadComponent: () => import('./features/support/server-error.page'),
+    },
     {
       path: '404',
       title: notFoundSeo.title,
