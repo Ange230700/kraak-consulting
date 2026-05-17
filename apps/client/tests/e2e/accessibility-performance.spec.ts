@@ -98,7 +98,7 @@ const isTransientNavigationError = (error: unknown): boolean => {
 };
 
 const analyzeWithRetry = async (
-  page: Parameters<typeof AxeBuilder>[0]['page'],
+  page: InstanceType<typeof AxeBuilder>['page'],
 ) => {
   const maxAttempts = 2;
 

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Parcours coeur participant - orientation web', () => {
-  test('Given un visiteur non authentifie, When il tente l acces dashboard participant, Then il est redirige vers la connexion et oriente vers des pages publiques', async ({
+  test('Given un visiteur non authentifie, When il tente l\u0027accès dashboard participant, Then il est redirige vers la connexion et oriente vers des pages publiques', async ({
     page,
   }) => {
     await page.goto('/participant/dashboard');
