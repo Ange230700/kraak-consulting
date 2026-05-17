@@ -22,6 +22,14 @@ describe('Web routes', () => {
     'mentions-legales',
     'politique-de-confidentialite',
   ];
+  const frozenPublicPaths = [
+    ...marketingPaths,
+    '401',
+    '403',
+    '500',
+    '404',
+    '**',
+  ];
   const participantPaths = [
     'connexion',
     'inscription',
@@ -37,6 +45,13 @@ describe('Web routes', () => {
       for (const path of marketingPaths) {
         expect(paths).toContain(path);
       }
+    });
+
+    it('When building public routes without participant area Then the frozen public surface exactly matches ARC-14 and support status pages', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const paths = builtRoutes.map((route) => route.path ?? '');
+
+      expect(paths).toEqual(frozenPublicPaths);
     });
 
     it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
@@ -128,6 +143,15 @@ describe('Web routes', () => {
   });
 
   describe('Given the route table', () => {
+    it('When inspecting public routes Then auth routes stay outside the frozen vitrine surface', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const paths = builtRoutes.map((route) => route.path ?? '');
+
+      for (const path of participantPaths) {
+        expect(paths).not.toContain(path);
+      }
+    });
+
     it('When inspecting routes Then /401 serves the dedicated unauthorized page with SEO metadata', () => {
       const builtRoutes = buildRoutes();
       const unauthorizedRoute = builtRoutes.find(
