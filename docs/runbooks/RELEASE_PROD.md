@@ -182,3 +182,40 @@ Synthèse :
 - ❌ `git tag -f` ou `git push --force` sur un tag prod.
 - ❌ Désactiver l'environnement GitHub `production` ou ses required reviewers
   pour aller plus vite.
+
+## Addendum dry-run pre-prod (PR-06)
+
+Avant toute nouvelle vague fonctionnelle majeure (ex: routes protegees),
+realiser un dry-run documente de la chaine release prod.
+
+### Procedure minimale de dry-run
+
+1. Lister les workflows disponibles :
+
+```bash
+gh workflow list
+```
+
+2. Declencher le workflow release prod en dry-run (si input dedie present) ou
+   sur une reference de test non publiee.
+
+```bash
+gh workflow run release-prod.yml
+gh run list --workflow release-prod.yml
+```
+
+3. Verifier et tracer les etapes critiques :
+
+- preparation / build / tests
+- gate d'approbation environment `production`
+- migrations Supabase (ou skip explicite)
+- deploiement Render/Vercel (ou simulation explicite)
+- smoke final
+
+### Criteres go/no-go de process
+
+- aucune ambiguite dans la sequence `tag -> validation -> deploiement`
+- aucun secret manquant ou variable non resolue
+- aucun trou de procedure non documente
+
+Conserver la preuve dans les runbooks de deployment/evidence associes.
