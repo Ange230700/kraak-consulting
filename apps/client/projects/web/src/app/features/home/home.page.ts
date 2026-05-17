@@ -6,12 +6,29 @@ import { ButtonDirective } from 'primeng/button';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { FaqAccordion } from '../../shared/faq-accordion/faq-accordion.component';
+import { HomePreviewSections } from '../../shared/home-preview-sections/home-preview-sections.component';
 
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, ButtonDirective, CtaBanner],
+  imports: [
+    NgStyle,
+    RouterLink,
+    ButtonDirective,
+    FaqAccordion,
+    CtaBanner,
+    HomePreviewSections,
+  ],
   templateUrl: './home.page.html',
+  styles: [
+    `
+      .kr-perf-section {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 900px;
+      }
+    `,
+  ],
 })
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;

@@ -28,6 +28,7 @@ import {
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { FaqAccordion } from '../../shared/faq-accordion/faq-accordion.component';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -61,6 +62,7 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
     InputText,
     Textarea,
     Message,
+    FaqAccordion,
     CtaBanner,
     PublicConversionTrackingDirective,
   ],
