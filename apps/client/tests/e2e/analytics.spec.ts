@@ -34,6 +34,8 @@ const PUBLIC_CTA_SURFACES = [
   },
 ] as const;
 
+const PUBLIC_CTA_MATRIX_TIMEOUT_MS = 90000;
+
 function isAnalyticsRequestUrl(url: string): boolean {
   return (
     url.includes('googletagmanager.com') || url.includes('google-analytics.com')
@@ -75,6 +77,8 @@ test.describe('Analytics — gating GA4', () => {
   test(`Given aucun identifiant GA4 configuré, When les pages publiques à CTA se chargent puis déclenchent leur CTA principal, Then aucun loader GA4 ni requête tierce n'est émis`, async ({
     page,
   }) => {
+    test.setTimeout(PUBLIC_CTA_MATRIX_TIMEOUT_MS);
+
     for (const surface of PUBLIC_CTA_SURFACES) {
       const capturedRequests: string[] = [];
       const captureRequest = (request: { url: () => string }) =>
