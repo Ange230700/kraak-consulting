@@ -19,6 +19,15 @@ export interface FaqItem {
   templateUrl: './faq-accordion.component.html',
   styles: [
     `
+      .kr-glass-faq .p-accordioncontent {
+        overflow: hidden;
+      }
+
+      .kr-glass-faq .p-accordioncontent[data-p-active='true'] .p-motion {
+        visibility: visible !important;
+        max-height: none !important;
+      }
+
       .kr-glass-faq .p-accordioncontent-content {
         background-color: transparent !important;
         padding-bottom: 0 !important;

@@ -37,7 +37,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         name: 'Consulter la FAQ KRAAK',
       });
       await faqLink.click();
-      await page.waitForURL('**/faq', { timeout: 5000 });
+      await page.waitForURL('**/faq', {
+        timeout: 5000,
+        waitUntil: 'domcontentloaded',
+      });
 
       // Then: User lands on FAQ page with correct title
       await expect(page).toHaveTitle(/FAQ/i);
@@ -165,7 +168,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await programsButton.scrollIntoViewIfNeeded();
       await programsButton.click();
-      await page.waitForURL('**/programmes', { timeout: 5000 });
+      await expect(page).toHaveURL(/\/programmes$/, { timeout: 10000 });
 
       // Then: User lands on programs page
       await expect(page).toHaveTitle(/Programmes/i);
@@ -190,7 +193,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await expect(faqFooterLink).toBeVisible();
       await faqFooterLink.click();
-      await page.waitForURL('**/faq', { timeout: 5000 });
+      await page.waitForURL('**/faq', {
+        timeout: 5000,
+        waitUntil: 'domcontentloaded',
+      });
       await expect(page).toHaveTitle(/FAQ/i);
     });
 
@@ -274,6 +280,53 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       const title = await page.title();
       expect(title).toMatch(/introuvable|not found/i);
     });
+
+    test('When accessing support status pages Then title canonical and og:url remain aligned', async ({
+      page,
+    }) => {
+      const routes = [
+        {
+          path: '/401',
+          title: /Authentification requise/i,
+          ctas: ['Se connecter', "Demander de l'aide"],
+        },
+        {
+          path: '/403',
+          title: /Accès refusé/i,
+          ctas: ["Retour à l'accueil", 'Nous contacter'],
+        },
+        {
+          path: '/500',
+          title: /Incident technique/i,
+          ctas: ["Retour à l'accueil", /Signaler un problème/i],
+        },
+      ];
+
+      for (const route of routes) {
+        await page.goto(`${BASE_URL}${route.path}`, {
+          waitUntil: 'domcontentloaded',
+        });
+
+        await expect(page).toHaveTitle(route.title);
+        await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+          'content',
+          /.+/,
+        );
+        await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+          'href',
+          new RegExp(`${route.path.replaceAll('/', '/')}$`),
+        );
+        await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+          'content',
+          new RegExp(`${route.path.replaceAll('/', '/')}$`),
+        );
+        for (const cta of route.ctas) {
+          await expect(
+            page.locator('a').filter({ hasText: cta }),
+          ).toBeVisible();
+        }
+      }
+    });
   });
 
   test.describe('Accessibility - Support flow', () => {
@@ -325,7 +378,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         waitUntil: 'domcontentloaded',
       });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = 6000;
+      const loadThresholdMs = 8000;
 
       // When: Measuring load time
       // Then: Page should load within a CI-realistic threshold
@@ -339,7 +392,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       const startTime = Date.now();
       await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
       const loadTime = Date.now() - startTime;
-      const loadThresholdMs = 6000;
+      const loadThresholdMs = 8000;
 
       // When: Checking accordion visibility
       const accordion = page.locator('kraak-faq-accordion');

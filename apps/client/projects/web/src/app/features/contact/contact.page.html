@@ -98,6 +98,12 @@
                   ></i>
                   <a
                     [href]="contactEmailHref"
+                    kraakPublicConversion="direct_email_click"
+                    [kraakPublicConversionPayload]="{
+                      contact_method: 'email',
+                      contact_surface: 'contact_sidebar',
+                      link_url: contactEmailHref,
+                    }"
                     class="hover:text-brand-cyan transition-colors"
                   >
                     {{ contactEmail }}
@@ -115,13 +121,26 @@
                     class="pi pi-whatsapp text-brand-cyan"
                     aria-hidden="true"
                   ></i>
+                  <span>WhatsApp :</span>
+                  <a
+                    [href]="contactPhoneHref"
+                    class="hover:text-brand-cyan transition-colors"
+                  >
+                    {{ contactPhone }}
+                  </a>
                   <a
                     [href]="whatsappLink"
                     target="_blank"
                     rel="noopener noreferrer"
+                    kraakPublicConversion="whatsapp_click"
+                    [kraakPublicConversionPayload]="{
+                      contact_method: 'whatsapp',
+                      contact_surface: 'contact_sidebar',
+                      link_url: whatsappLink,
+                    }"
                     class="hover:text-brand-cyan transition-colors"
                   >
-                    WhatsApp : +225 05 02 74 18 18
+                    Ouvrir WhatsApp
                   </a>
                 </li>
                 <li class="flex items-center gap-3">
@@ -140,12 +159,21 @@
                   [href]="social.href"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="border-brand-white/35 hover:border-brand-cyan hover:text-brand-cyan text-brand-white bg-brand-white/10 flex h-10 w-10 items-center justify-center rounded-full border transition-all hover:-translate-y-px"
+                  [kraakPublicConversion]="
+                    social.label === 'WhatsApp' ? 'whatsapp_click' : ''
+                  "
+                  [kraakPublicConversionPayload]="{
+                    contact_method: 'whatsapp',
+                    contact_surface: 'contact_social',
+                    link_label: social.label,
+                    link_url: social.href,
+                  }"
+                  class="border-brand-white/35 hover:border-brand-cyan hover:text-brand-cyan text-brand-white bg-brand-white/10 flex h-12 w-12 items-center justify-center rounded-full border shadow-sm transition-all hover:-translate-y-px hover:scale-[1.03]"
                   [attr.aria-label]="social.label"
                   [attr.title]="social.label"
                 >
                   <i
-                    [class]="'pi ' + social.icon + ' text-sm'"
+                    [class]="'pi ' + social.icon + ' text-lg'"
                     aria-hidden="true"
                   ></i>
                 </a>
@@ -161,7 +189,7 @@
             >
               Envoyez votre demande
             </h2>
-            <p class="text-brand-gray text-base leading-relaxed">
+            <p class="text-brand-navy text-base leading-relaxed">
               D&eacute;crivez brièvement votre objectif : formation, projet,
               immigration, partenariat, ou autre demande. Nous vous
               r&eacute;pondrons dans les meilleurs d&eacute;lais.
@@ -185,6 +213,46 @@
                     [closable]="false"
                     styleClass="w-full mb-2"
                   />
+                }
+                @if (shouldShowContactFallback()) {
+                  <div
+                    class="border-brand-blue/15 bg-brand-cream/60 text-brand-navy mt-4 rounded-2xl border p-4 text-sm leading-6"
+                    role="status"
+                  >
+                    <p class="font-semibold">
+                      Fallback opérationnel : votre demande peut continuer sans
+                      le formulaire.
+                    </p>
+                    <p class="mt-2">
+                      Écrivez directement à
+                      <a
+                        [href]="contactEmailHref"
+                        kraakPublicConversion="direct_email_click"
+                        [kraakPublicConversionPayload]="{
+                          contact_method: 'email',
+                          contact_surface: 'contact_form_fallback',
+                          link_url: contactEmailHref,
+                        }"
+                        class="kr-link font-semibold"
+                        >{{ contactEmail }}</a
+                      >
+                      ou ouvrez
+                      <a
+                        [href]="whatsappLink"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        kraakPublicConversion="whatsapp_click"
+                        [kraakPublicConversionPayload]="{
+                          contact_method: 'whatsapp',
+                          contact_surface: 'contact_form_fallback',
+                          link_url: whatsappLink,
+                        }"
+                        class="kr-link font-semibold"
+                        >WhatsApp</a
+                      >. Indiquez le type de demande sélectionné pour garder le
+                      triage interne.
+                    </p>
+                  </div>
                 }
               </div>
             }
@@ -210,7 +278,7 @@
                     type="text"
                     placeholder="Votre nom"
                     formControlName="name"
-                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
                       'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
                         isInvalid(name),
@@ -250,7 +318,7 @@
                     type="email"
                     placeholder="votre.email@exemple.com"
                     formControlName="email"
-                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
                       'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
                         isInvalid(email),
@@ -291,7 +359,7 @@
                   type="text"
                   placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
                   formControlName="subject"
-                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                   [ngClass]="{
                     'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
                       isInvalid(subject),
@@ -327,7 +395,7 @@
                     type="text"
                     placeholder="Votre pays de r&eacute;sidence"
                     formControlName="country"
-                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                    class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
                       'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
                         isInvalid(country),
@@ -367,11 +435,20 @@
                     }"
                     aria-required="true"
                     [attr.aria-invalid]="isInvalid(serviceType)"
+                    aria-describedby="serviceType-help"
                   >
                     @for (option of serviceOptions; track option.value) {
                       <option [value]="option.value">{{ option.label }}</option>
                     }
                   </select>
+                  <p
+                    id="serviceType-help"
+                    class="text-brand-navy mt-2 text-xs leading-5"
+                  >
+                    File interne :
+                    {{ getSelectedServiceOption().triagePath }}. Workflow :
+                    {{ getSelectedServiceOption().responseWorkflow }}.
+                  </p>
                 </div>
               </div>
 
@@ -388,7 +465,7 @@
                   rows="6"
                   placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
                   formControlName="message"
-                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy placeholder:text-brand-gray/70 focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
+                  class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                   [ngClass]="{
                     'ng-invalid ng-dirty border-red-300 focus:border-red-500 focus:ring-red-100':
                       isInvalid(message),
@@ -430,6 +507,12 @@
                   [href]="whatsappLink"
                   target="_blank"
                   rel="noopener noreferrer"
+                  kraakPublicConversion="whatsapp_click"
+                  [kraakPublicConversionPayload]="{
+                    contact_method: 'whatsapp',
+                    contact_surface: 'contact_form_secondary_cta',
+                    link_url: whatsappLink,
+                  }"
                   label="Discuter sur WhatsApp"
                   aria-label="Discuter sur WhatsApp"
                   icon="pi pi-whatsapp"
@@ -453,20 +536,38 @@
       <div class="text-center">
         <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">E-mail</h3>
-        <a [href]="contactEmailHref" class="kr-link mt-1 block">
+        <a
+          [href]="contactEmailHref"
+          kraakPublicConversion="direct_email_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'email',
+            contact_surface: 'contact_coordinates',
+            link_url: contactEmailHref,
+          }"
+          class="kr-link mt-1 block"
+        >
           {{ contactEmail }}
         </a>
       </div>
       <div class="text-center">
         <i class="pi pi-whatsapp text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">WhatsApp</h3>
+        <a [href]="contactPhoneHref" class="kr-link mt-1 block">
+          {{ contactPhone }}
+        </a>
         <a
           [href]="whatsappLink"
           target="_blank"
           rel="noopener noreferrer"
-          class="kr-link mt-1 block"
+          kraakPublicConversion="whatsapp_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'whatsapp',
+            contact_surface: 'contact_coordinates',
+            link_url: whatsappLink,
+          }"
+          class="kr-link mt-2 inline-block"
         >
-          +225 05 02 74 18 18
+          Ouvrir WhatsApp
         </a>
       </div>
       <div class="text-center md:col-span-2">
@@ -478,12 +579,6 @@
         </p>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="kr-perf-section bg-neutral-50 pb-6 lg:pb-10">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <kraak-faq-accordion [items]="faqItems" />
   </div>
 </section>
 

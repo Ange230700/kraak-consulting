@@ -11,22 +11,33 @@ describe('ResourcesPage', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the resources page When the component is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(ResourcesPage);
     fixture.detectChanges();
 
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the main heading and the three resource pillars', () => {
+  it('Given the resources page When it renders Then it states that the route is an orientation page and not a news hub', () => {
     const fixture = TestBed.createComponent(ResourcesPage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.textContent).toContain(
-      'Ressources pour clarifier votre prochaine \u00E9tape',
+      "Ressources d'orientation pour clarifier votre prochaine \u00e9tape",
     );
+    expect(element.textContent).toContain(
+      "Cette page n'est pas un hub d'actualit\u00e9s ou une biblioth\u00e8que de contenus",
+    );
+  });
+
+  it('Given the resources page When it renders Then it keeps the four orientation pillars visible', () => {
+    const fixture = TestBed.createComponent(ResourcesPage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+
     expect(element.textContent).toContain('Formation');
     expect(element.textContent).toContain('Projet');
     expect(element.textContent).toContain('Immigration');

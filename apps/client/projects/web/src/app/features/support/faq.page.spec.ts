@@ -22,7 +22,7 @@ describe('FaqPage', () => {
     fixture.detectChanges();
 
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Les réponses utiles');
+    expect(heading?.textContent).toContain('Les r\u00e9ponses utiles');
   });
 
   it('Given the support FAQ page When it renders Then it should expose the KRAAK FAQ questions', () => {
@@ -31,13 +31,12 @@ describe('FaqPage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Les réponses utiles');
+    expect(content).toContain('Les r\u00e9ponses utiles');
     expect(content).toContain(
       'Comment choisir le bon accompagnement chez KRAAK ?',
     );
-    expect(content).toContain('Vous ne trouvez pas votre réponse ?');
+    expect(content).toContain('Vous ne trouvez pas votre r\u00e9ponse ?');
 
-    // Verify navigation links are present
     const contactLinks = fixture.nativeElement.querySelectorAll(
       'a[routerLink="/contact"]',
     );
@@ -47,5 +46,30 @@ describe('FaqPage', () => {
       'a[routerLink="/services"]',
     );
     expect(serviceLinks.length).toBeGreaterThan(0);
+  });
+
+  it('Given the support FAQ page When reading its policies Then it should expose the public SLA and the contact-data rules', () => {
+    const fixture = TestBed.createComponent(FaqPage);
+    const component = fixture.componentInstance as unknown as {
+      faqItems: { question: string; answer: string }[];
+    };
+
+    expect(component.faqItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          question: 'Sous quel delai recevez-vous une reponse apres contact ?',
+          answer: expect.stringContaining('48h ouvrees'),
+        }),
+        expect.objectContaining({
+          question: 'Comment mes donnees de contact sont-elles utilisees ?',
+          answer: expect.stringContaining('3 ans'),
+        }),
+        expect.objectContaining({
+          question:
+            "Est-ce que KRAAK garantit l'obtention d'un visa, d'un emploi ou d'une admission ?",
+          answer: expect.stringContaining('decisions finales relevent'),
+        }),
+      ]),
+    );
   });
 });

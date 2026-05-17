@@ -14,15 +14,23 @@ import {
   sortAnnouncementsByPriority,
 } from '@kraak/domain';
 import { SupabaseService } from '../supabase/supabase.service';
+import {
+  isSupabaseColumnMissingError,
+  readSupabaseErrorCode,
+  readSupabaseErrorMessage,
+  readSupabaseQueryWithFallback,
+} from '../shared/supabase-query-fallback.utils';
 
 const ANNOUNCEMENT_SELECT_FIELDS =
   'id, title, body, priority, audience_type, program_id, cohort_id, status, published_at, created_by_user_id, created_at, updated_at';
+const ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY =
+  'id, title, body, audience_type, program_id, cohort_id, status, published_at, created_by_user_id, created_at, updated_at';
 
 type AnnouncementRow = {
   id: string;
   title: string;
   body: string;
-  priority: AnnouncementPriorityValue;
+  priority?: AnnouncementPriorityValue | null;
   audience_type: AudienceTypeValue;
   program_id: string | null;
   cohort_id: string | null;
@@ -37,6 +45,10 @@ type EnrollmentRow = {
   program_id: string;
   cohort_id: string | null;
 };
+
+function isAnnouncementPriorityColumnMissing(error: unknown): boolean {
+  return isSupabaseColumnMissingError(error, ['announcement.priority']);
+}
 
 @Injectable()
 export class AnnouncementsService {
@@ -55,23 +67,18 @@ export class AnnouncementsService {
     page?: number,
     limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
-    const adminClient = this.supabaseService.getClient();
     const paginationLimit = this.resolvePaginationLimit(limit);
     const paginationPage = this.resolvePaginationPage(page);
 
-    // Get all published announcements
     const { data: allAnnouncements, error: announcementsError } =
-      await adminClient
-        .from('announcement')
-        .select(ANNOUNCEMENT_SELECT_FIELDS)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
+      await this.readPublishedAnnouncements();
 
     if (announcementsError) {
       if (!accessToken) {
         console.error('Public announcements listing failed', {
           context: 'announcements.list.public',
-          message: announcementsError.message,
+          code: readSupabaseErrorCode(announcementsError),
+          message: readSupabaseErrorMessage(announcementsError),
         });
         return {
           data: [],
@@ -80,16 +87,15 @@ export class AnnouncementsService {
       }
 
       throw new Error(
-        `Failed to list announcements: ${announcementsError.message}`,
+        `Failed to list announcements: ${readSupabaseErrorMessage(announcementsError) ?? 'unknown error'}`,
       );
     }
 
     // Public mode: return all published announcements when no token is provided.
     if (!accessToken) {
+      const announcementRows = allAnnouncements ?? [];
       const sorted = sortAnnouncementsByPriority(
-        ((allAnnouncements ?? []) as AnnouncementRow[]).map((row) =>
-          this.mapAnnouncement(row),
-        ),
+        announcementRows.map((row) => this.mapAnnouncement(row)),
       );
       const offset = (paginationPage - 1) * paginationLimit;
       const paginated = sorted.slice(offset, offset + paginationLimit);
@@ -110,6 +116,7 @@ export class AnnouncementsService {
     }
 
     // Get participant's enrollments
+    const adminClient = this.supabaseService.getClient();
     const { data: enrollments, error: enrollmentsError } = await adminClient
       .from('enrollment')
       .select('program_id, cohort_id')
@@ -121,9 +128,11 @@ export class AnnouncementsService {
     }
 
     // Filter announcements based on participant's scope
+    const announcementRows = allAnnouncements ?? [];
+    const enrollmentRows = (enrollments ?? []) as EnrollmentRow[];
     const visibleAnnouncements = this.filterAnnouncementsByScope(
-      (allAnnouncements ?? []) as AnnouncementRow[],
-      (enrollments ?? []) as EnrollmentRow[],
+      announcementRows,
+      enrollmentRows,
     );
 
     // Sort by priority and publishedAt
@@ -139,6 +148,62 @@ export class AnnouncementsService {
       data: paginated,
       total: sorted.length,
     };
+  }
+
+  private async readPublishedAnnouncements(): Promise<{
+    data: AnnouncementRow[] | null;
+    error: unknown;
+  }> {
+    return this.readAnnouncementQuery<AnnouncementRow[] | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('announcement')
+          .select(selectClause)
+          .eq('status', 'published')
+          .order('published_at', { ascending: false }) as PromiseLike<{
+          data: AnnouncementRow[] | null;
+          error: unknown;
+        }>,
+      'announcements.list',
+    );
+  }
+
+  private async readPublishedAnnouncementById(id: string): Promise<{
+    data: AnnouncementRow | null;
+    error: unknown;
+  }> {
+    return this.readAnnouncementQuery<AnnouncementRow | null>(
+      (selectClause) =>
+        this.supabaseService
+          .getClient()
+          .from('announcement')
+          .select(selectClause)
+          .eq('id', id)
+          .eq('status', 'published')
+          .single() as PromiseLike<{
+          data: AnnouncementRow | null;
+          error: unknown;
+        }>,
+      'announcements.getById',
+    );
+  }
+
+  private async readAnnouncementQuery<T>(
+    loadQuery: (
+      selectClause: string,
+    ) => PromiseLike<{ data: T; error: unknown }>,
+    context: string,
+  ): Promise<{ data: T; error: unknown }> {
+    return readSupabaseQueryWithFallback({
+      loadQuery,
+      primarySelect: ANNOUNCEMENT_SELECT_FIELDS,
+      fallbackSelect: ANNOUNCEMENT_SELECT_FIELDS_WITHOUT_PRIORITY,
+      shouldRetry: isAnnouncementPriorityColumnMissing,
+      context,
+      retryNotice: 'Announcement priority column missing; retrying fallback',
+      fallbackFailureNotice: 'Announcement fallback query failed',
+    });
   }
 
   private resolvePaginationLimit(limit?: number): number {
@@ -171,22 +236,14 @@ export class AnnouncementsService {
     id: string,
     accessToken: string,
   ): Promise<AnnouncementDto> {
-    const adminClient = this.supabaseService.getClient();
-
-    // Get the announcement
     const { data: announcementData, error: announcementError } =
-      await adminClient
-        .from('announcement')
-        .select(ANNOUNCEMENT_SELECT_FIELDS)
-        .eq('id', id)
-        .eq('status', 'published')
-        .single();
+      await this.readPublishedAnnouncementById(id);
 
     if (announcementError || !announcementData) {
       throw new NotFoundException('Announcement not found or not published');
     }
 
-    const announcement = announcementData as AnnouncementRow;
+    const announcement = announcementData;
 
     // Get participant ID from access token
     const participantId = await this.resolveParticipantId(accessToken);
@@ -333,7 +390,7 @@ export class AnnouncementsService {
       id: row.id,
       title: row.title,
       body: row.body,
-      priority: row.priority,
+      priority: row.priority ?? 'normal',
       audienceType: row.audience_type,
       programId: row.program_id,
       cohortId: row.cohort_id,

@@ -2,14 +2,14 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
 import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
-import { AboutPreviewSections } from '../../shared/about-preview-sections/about-preview-sections.component';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { AboutPreviewSections } from '../../shared/about-preview-sections/about-preview-sections.component';
 
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
-  imports: [NgStyle, AboutPreviewSections, CtaBanner],
+  imports: [NgStyle, CtaBanner, AboutPreviewSections],
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {

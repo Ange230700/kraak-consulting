@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+
 import ServicesPage from './services.page';
 
 describe('ServicesPage', () => {
@@ -10,49 +11,42 @@ describe('ServicesPage', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
+  it('Given the services page When the component is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the heading', () => {
+  it('Given the services page When it renders Then the page heading is visible', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'Des solutions adapt\u00E9es pour former, structurer et d\u00E9velopper',
+      'Des offres claires pour renforcer les parcours, les projets et les organisations',
     );
   });
 
-  it('should render the four consulting service families', () => {
+  it('Given the services page When it renders Then the four consulting service families are visible', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Des compétences solides pour ouvrir des portes');
-    expect(content).toContain(
-      'Des idées bien structurées deviennent des projets durables',
-    );
-    expect(content).toContain(
-      'Votre projet international mérite une préparation claire et stratégique',
-    );
-    expect(content).toContain(
-      'Des \u00E9quipes performantes construisent des organisations solides',
-    );
-    expect(content).toContain('Rédaction CV');
-    expect(content).toContain('Identification et recrutement de talents');
-    expect(content).toContain("Politiques et stratégies d'immigration");
-    expect(content).toContain("Santé et culture d'entreprise");
+    expect(content).toContain('KRAAK Training Centre');
+    expect(content).toContain("Centre de Recherche et d'Innovation");
+    expect(content).toContain('Centre de Conseils en Immigration');
+    expect(content).toContain('Offres entreprises');
+    expect(content).toContain('Pour qui');
+    expect(content).toContain('Ce que nous livrons');
+    expect(content).toContain('Prochaine \u00e9tape');
   });
 
-  it('should render service-specific FAQ section', () => {
+  it('Given the services page When it renders Then it does not duplicate the dedicated FAQ route content', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();
-    const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Questions fr\u00E9quentes');
-    expect(content).toContain(
-      'Comment choisir le service le plus adapt\u00E9 \u00E0 mon objectif ?',
-    );
+    const element = fixture.nativeElement as HTMLElement;
+    const faqAccordion = element.querySelector('kraak-faq-accordion');
+
+    expect(faqAccordion).toBeNull();
+    expect(element.textContent).not.toContain('Questions fr\u00e9quentes');
   });
 });

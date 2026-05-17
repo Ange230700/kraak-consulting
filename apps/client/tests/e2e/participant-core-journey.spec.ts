@@ -15,7 +15,7 @@ test.describe('Parcours coeur participant - orientation web', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Des programmes conçus pour transformer des trajectoires.',
+        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
       }),
     ).toBeVisible();
 

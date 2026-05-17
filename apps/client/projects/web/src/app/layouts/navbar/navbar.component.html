@@ -36,6 +36,12 @@
             <a
               [routerLink]="link.path"
               routerLinkActive="text-brand-navy after:scale-x-100"
+              kraakPublicConversion="nav_cta_click"
+              [kraakPublicConversionPayload]="{
+                nav_label: link.label,
+                nav_path: link.path,
+                nav_surface: 'primary_nav',
+              }"
               class="kr-nav-link"
               (click)="closeMobileMenu()"
             >

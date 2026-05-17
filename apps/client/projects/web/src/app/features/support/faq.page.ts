@@ -21,33 +21,49 @@ export default class FaqPage {
     {
       question: 'Comment choisir le bon accompagnement chez KRAAK ?',
       answer:
-        'Nous partons de votre objectif, de votre niveau de maturit� et de vos contraintes. Ensuite, nous vous orientons vers le service, le programme ou le format le plus pertinent.',
+        "Nous partons de votre objectif, de votre niveau de maturite et de votre contrainte principale. A partir de ces repères, nous vous orientons vers le bon point d'entree : service, programme, consultation ou accompagnement sur mesure.",
     },
     {
-      question: 'Les accompagnements KRAAK sont-ils disponibles � distance ?',
+      question: 'Comment demarrer avec KRAAK ?',
       answer:
-        'Oui. Une grande partie de nos parcours peut �tre suivie � distance, avec un cadrage clair, des sessions planifi�es et un suivi adapt� � votre rythme.',
+        "Vous pouvez envoyer une demande via le formulaire de contact, ecrire a kraakconsulting@gmail.com ou ouvrir un premier echange sur WhatsApp. Pour accelerer l'orientation, indiquez votre objectif, votre pays, votre calendrier et le type d'appui recherche.",
+    },
+    {
+      question: 'Les accompagnements KRAAK sont-ils disponibles a distance ?',
+      answer:
+        "Oui. Les echanges d'orientation et une partie des accompagnements peuvent etre organises a distance. Le format exact - a distance, hybride ou presentiel - est confirme avant le demarrage selon le service, le public et les contraintes du projet.",
     },
     {
       question: 'Intervenez-vous uniquement pour les particuliers ?',
       answer:
-        'Non. Nous accompagnons aussi les �quipes, organisations, associations et entreprises sur des besoins de formation, structuration et mise en oeuvre de projets.',
+        "Non. KRAAK accompagne aussi les equipes, organisations, associations, etablissements et entreprises sur des besoins de formation, d'orientation, de structuration de projets, de recrutement ou de cohesion d'equipe.",
     },
     {
-      question: 'Sous quel d�lai recevez-vous une r�ponse apr�s contact ?',
+      question: 'Sous quel delai recevez-vous une reponse apres contact ?',
       answer:
-        'Nous revenons en g�n�ral sous 48h ouvr�es avec une premi�re orientation et, si n�cessaire, une proposition de rendez-vous.',
+        'Toute demande envoyee via le formulaire ou par email recoit un premier retour sous 48h ouvrees. Ce premier retour sert a confirmer la bonne orientation, demander un complement utile si besoin ou proposer un rendez-vous.',
     },
     {
       question:
-        "Pouvez-vous aider sur un projet d'immigration ou de mobilit� internationale ?",
+        "Pouvez-vous aider sur un projet d'immigration ou de mobilite internationale ?",
       answer:
-        "Oui. Nous apportons un accompagnement de clarification, de pr�paration et d'orientation sur les �tapes cl�s selon votre profil et votre destination cible.",
+        "Oui. KRAAK accompagne la clarification, la preparation et l'orientation des projets d'etudes, de travail, de voyage ou d'opportunites d'affaires a l'international selon le profil et la destination visee.",
     },
     {
-      question: 'Faut-il d�j� avoir un projet finalis� pour vous contacter ?',
+      question:
+        "Est-ce que KRAAK garantit l'obtention d'un visa, d'un emploi ou d'une admission ?",
       answer:
-        "Non. Vous pouvez nous contacter d�s la phase d'id�e. Notre r�le est aussi de vous aider � structurer la prochaine �tape utile.",
+        "Non. KRAAK accompagne la preparation, la structuration et l'orientation des demarches, mais les decisions finales relevent des institutions, employeurs, ecoles, autorites ou organismes competents.",
+    },
+    {
+      question: 'Faut-il deja avoir un projet finalise pour vous contacter ?',
+      answer:
+        "Non. Vous pouvez nous contacter des la phase d'idee. Notre role consiste aussi a vous aider a clarifier la prochaine etape utile avant qu'un projet soit entierement formalise.",
+    },
+    {
+      question: 'Comment mes donnees de contact sont-elles utilisees ?',
+      answer:
+        "Les donnees transmises via le formulaire servent uniquement a traiter votre demande de contact et d'information. Elles ne sont ni revendues ni transmises a des tiers a des fins commerciales et sont conservees pendant 3 ans a compter de la derniere interaction, puis supprimees.",
     },
   ];
 }

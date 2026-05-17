@@ -22,6 +22,14 @@ describe('Web routes', () => {
     'mentions-legales',
     'politique-de-confidentialite',
   ];
+  const frozenPublicPaths = [
+    ...marketingPaths,
+    '401',
+    '403',
+    '500',
+    '404',
+    '**',
+  ];
   const participantPaths = [
     'connexion',
     'inscription',
@@ -37,6 +45,13 @@ describe('Web routes', () => {
       for (const path of marketingPaths) {
         expect(paths).toContain(path);
       }
+    });
+
+    it('When building public routes without participant area Then the frozen public surface exactly matches ARC-14 and support status pages', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const paths = builtRoutes.map((route) => route.path ?? '');
+
+      expect(paths).toEqual(frozenPublicPaths);
     });
 
     it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
@@ -128,6 +143,63 @@ describe('Web routes', () => {
   });
 
   describe('Given the route table', () => {
+    it('When inspecting public routes Then auth routes stay outside the frozen vitrine surface', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const paths = builtRoutes.map((route) => route.path ?? '');
+
+      for (const path of participantPaths) {
+        expect(paths).not.toContain(path);
+      }
+    });
+
+    it('When inspecting routes Then /401 serves the dedicated unauthorized page with SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const unauthorizedRoute = builtRoutes.find(
+        (route) => route.path === '401',
+      );
+
+      expect(unauthorizedRoute).toBeDefined();
+      expect(unauthorizedRoute!.loadComponent).toBeDefined();
+      expect(unauthorizedRoute!.title).toBe(
+        'Authentification requise | KRAAK Consulting',
+      );
+      expect(unauthorizedRoute!.data?.['seo']).toBeDefined();
+    });
+
+    it('When inspecting routes Then /403 serves the dedicated forbidden page with SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const forbiddenRoute = builtRoutes.find((route) => route.path === '403');
+
+      expect(forbiddenRoute).toBeDefined();
+      expect(forbiddenRoute!.loadComponent).toBeDefined();
+      expect(forbiddenRoute!.title).toBe('Accès refusé | KRAAK Consulting');
+      expect(forbiddenRoute!.data?.['seo']).toBeDefined();
+    });
+
+    it('When inspecting routes Then /500 serves the dedicated server-error page with SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const serverErrorRoute = builtRoutes.find(
+        (route) => route.path === '500',
+      );
+
+      expect(serverErrorRoute).toBeDefined();
+      expect(serverErrorRoute!.loadComponent).toBeDefined();
+      expect(serverErrorRoute!.title).toBe(
+        'Incident technique | KRAAK Consulting',
+      );
+      expect(serverErrorRoute!.data?.['seo']).toBeDefined();
+    });
+
+    it('When inspecting routes Then /404 serves the dedicated not-found page with SEO metadata', () => {
+      const builtRoutes = buildRoutes();
+      const notFoundRoute = builtRoutes.find((route) => route.path === '404');
+
+      expect(notFoundRoute).toBeDefined();
+      expect(notFoundRoute!.loadComponent).toBeDefined();
+      expect(notFoundRoute!.title).toBe('Page introuvable | KRAAK Consulting');
+      expect(notFoundRoute!.data?.['seo']).toBeDefined();
+    });
+
     it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
       const builtRoutes = buildRoutes();
       const wildcard = builtRoutes.find((route) => route.path === '**');

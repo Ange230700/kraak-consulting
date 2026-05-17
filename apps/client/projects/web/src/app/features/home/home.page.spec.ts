@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import HomePage from './home.page';
+
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import HomePage from './home.page';
 
 const gsapAnimationsServiceMock: Pick<
   GsapAnimationsService,
@@ -46,7 +47,7 @@ describe('HomePage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'D\u00E9veloppez vos comp\u00E9tences',
+      'Transformez votre potentiel en trajectoire concr\u00e8te.',
     );
   });
 
@@ -55,8 +56,8 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('R\u00E9server une consultation');
-    expect(element.textContent).toContain('D\u00E9couvrir nos services');
+    expect(element.textContent).toContain('Parler \u00e0 un conseiller');
+    expect(element.textContent).toContain('Explorer nos services');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -78,36 +79,36 @@ describe('HomePage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Développement personnel et professionnel');
-    expect(content).toContain('Anglais et français professionnel');
+    expect(content).toContain('D\u00e9veloppement personnel et professionnel');
+    expect(content).toContain('Anglais et fran\u00e7ais professionnel');
     expect(content).toContain('Leadership et prise de parole');
-    expect(content).toContain('Préparation aux entretiens');
+    expect(content).toContain('Pr\u00e9paration aux entretiens');
     expect(content).toContain('Structuration de projets');
     expect(content).toContain("Accompagnement d'entreprises et startups");
-    expect(content).toContain('Conseils en mobilité internationale');
+    expect(content).toContain('Conseils en mobilit\u00e9 internationale');
     expect(content).toContain('Recrutement et placement en emploi');
   });
 
-  it('Given the home page When it renders Then it includes the home-specific FAQ section', () => {
+  it('Given the home page When it renders Then it does not duplicate the dedicated FAQ route content', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
-    const content = fixture.nativeElement.textContent as string;
+    const element = fixture.nativeElement as HTMLElement;
+    const faqAccordion = element.querySelector('kraak-faq-accordion');
 
-    expect(content).toContain('Questions fr\u00E9quentes');
-    expect(content).toContain(
-      'Je ne sais pas par o\u00F9 commencer, quelle est la premi\u00E8re \u00E9tape ?',
-    );
+    expect(faqAccordion).toBeNull();
+    expect(element.textContent).not.toContain('Questions fr\u00e9quentes');
   });
 
-  it('Given the local web build When the home page renders Then the preview sections stay visible for review', () => {
+  it("Given the home page When it renders Then it exposes proof blocks grounded in KRAAK's real positioning", () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Partenaires et clients de confiance');
-    expect(content).toContain('Prévisualisation du format témoignages');
-    expect(content).toContain('Chiffres d’impact en prévisualisation');
+    expect(content).toContain('Insertion socioprofessionnelle');
+    expect(content).toContain('Approche bidirectionnelle');
+    expect(content).toContain('Exp\u00e9rience internationale');
+    expect(content).toContain('Accompagnement structur\u00e9');
   });
 });

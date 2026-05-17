@@ -5,6 +5,10 @@
 - Project board : voir le board actif documenté dans `docs/runbooks/GITHUB_PROJECT_BOARD.md`
 - Mise à jour : 10 avril 2026
 
+> Addendum PR-06 (cloture vitrine): le scope vitrine publique est considere
+> ferme. Toute evolution non corrective doit etre orientee vers la phase
+> routes protegees. Aucune nouvelle route publique sans decision ARC explicite.
+
 ---
 
 ## Cadre Du Backlog

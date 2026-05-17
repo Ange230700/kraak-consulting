@@ -36,9 +36,21 @@ type RouteReport = {
 
 const criticalRoutes: RouteCheck[] = [
   { route: '/', title: 'Accueil' },
+  { route: '/a-propos', title: 'À propos' },
   { route: '/services', title: 'Services' },
+  { route: '/faq', title: 'FAQ' },
   { route: '/programmes', title: 'Programmes' },
+  { route: '/ressources', title: 'Ressources' },
   { route: '/contact', title: 'Contact' },
+  { route: '/mentions-legales', title: 'Mentions légales' },
+  {
+    route: '/politique-de-confidentialite',
+    title: 'Politique de confidentialité',
+  },
+  { route: '/401', title: 'Authentification requise' },
+  { route: '/403', title: 'Accès refusé' },
+  { route: '/404', title: 'Page introuvable' },
+  { route: '/500', title: 'Incident technique' },
 ];
 
 const parseImpactSummary = (
@@ -75,23 +87,70 @@ const parseImpactSummary = (
   return summary;
 };
 
+const isTransientNavigationError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return /Execution context was destroyed|Target page, context or browser has been closed/i.test(
+    error.message,
+  );
+};
+
+const analyzeWithRetry = async (
+  page: Parameters<typeof AxeBuilder>[0]['page'],
+) => {
+  const maxAttempts = 2;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await new AxeBuilder({ page }).analyze();
+    } catch (error) {
+      if (!isTransientNavigationError(error) || attempt === maxAttempts) {
+        throw error;
+      }
+
+      await page.waitForLoadState('load');
+      await page.waitForFunction(
+        () =>
+          document.readyState === 'interactive' ||
+          document.readyState === 'complete',
+      );
+    }
+  }
+
+  throw new Error('Axe analyze retry loop exhausted unexpectedly.');
+};
+
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
   }) => {
+    test.setTimeout(180000);
     const results: RouteReport[] = [];
 
     for (const routeCheck of criticalRoutes) {
-      await page.goto(routeCheck.route, { waitUntil: 'load' });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(routeCheck.route, {
+        waitUntil: 'domcontentloaded',
+        timeout: 45000,
+      });
+      await page.waitForLoadState('load', { timeout: 45000 });
+      await page.waitForFunction(
+        () =>
+          document.readyState === 'interactive' ||
+          document.readyState === 'complete',
+        undefined,
+        { timeout: 30000 },
+      );
 
       // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
-      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.addStyleTag({
         content:
-          '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}',
+          '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}.kr-perf-section,section,figure.reveal-on-scroll,h1,h2,main{opacity:1 !important;transform:none !important;filter:none !important;}',
       });
 
-      const axe = await new AxeBuilder({ page }).analyze();
+      const axe = await analyzeWithRetry(page);
       const axeSummary = parseImpactSummary(
         axe.violations.map((violation) => ({
           impact: violation.impact ?? null,
@@ -105,8 +164,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       }));
       const blockingViolations = axe.violations.filter(
         (violation) =>
-          (violation.impact === 'critical' || violation.impact === 'serious') &&
-          violation.id !== 'color-contrast',
+          violation.impact === 'critical' || violation.impact === 'serious',
       );
 
       const perf = await page.evaluate<PerfSnapshot>(() => {

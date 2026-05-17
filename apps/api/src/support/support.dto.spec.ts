@@ -33,7 +33,7 @@ describe('validateContactForm', () => {
       email: 'alice@exemple.com',
       subject: 'Demande de renseignements',
       message: 'Bonjour, je souhaite en savoir plus sur vos services.',
-      category: 'technical',
+      category: 'immigration',
     });
 
     expect(result).toEqual({
@@ -43,7 +43,7 @@ describe('validateContactForm', () => {
         email: 'alice@exemple.com',
         subject: 'Demande de renseignements',
         message: 'Bonjour, je souhaite en savoir plus sur vos services.',
-        category: 'technical',
+        category: 'immigration',
       },
     });
   });

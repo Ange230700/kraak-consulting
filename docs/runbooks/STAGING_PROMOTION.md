@@ -234,3 +234,28 @@ synchroniser l'historique des migrations versionnées.
 - [ ] Home web staging vérifiée (HTTP 200, marque visible)
 - [ ] Smoke E2E Playwright staging vert
 - [ ] Item GitHub Project annoté (commit + URL staging)
+
+---
+
+## 9 · Addendum cloture vitrine publique (PR-06)
+
+Cet addendum verrouille la fin de phase vitrine publique et sert de garde-fou
+avant bascule vers les routes protegees.
+
+### Definition of Done vitrine fermee
+
+- [ ] Toutes les routes vitrine gelees ont au moins un test E2E de presence
+      et un test SEO head.
+- [ ] Les pages de support `401`, `403`, `404`, `500` ont une couverture E2E
+      complete (rendu, SEO, CTA).
+- [ ] Les checks accessibilite/performance publics sont verts et stables sur 3
+      executions CI consecutives.
+- [ ] Promotion staging executee et tracee (preuves datees et reproductibles).
+- [ ] Dry-run release prod execute et documente.
+- [ ] Documentation alignee sans contradiction sur le perimetre vitrine final.
+
+### Regle de gouvernance post-cloture
+
+- Toute nouvelle route publique est interdite sans decision ARC explicite.
+- Le backlog actif doit prioriser les routes protegees et les parcours
+  participants.

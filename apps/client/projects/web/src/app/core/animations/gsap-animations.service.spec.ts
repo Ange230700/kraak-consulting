@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { GsapAnimationsService } from './gsap-animations.service';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 
 describe('GsapAnimationsService', () => {
   let service: GsapAnimationsService;
@@ -14,6 +14,7 @@ describe('GsapAnimationsService', () => {
 
   afterEach(() => {
     service.killAllAnimations();
+    vi.restoreAllMocks();
   });
 
   it('should be created', () => {
@@ -21,6 +22,31 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeFigureAnimations', () => {
+    it('Given reduced motion is enabled, When figure animations initialize, Then no transform is applied', () => {
+      vi.spyOn(window, 'matchMedia').mockReturnValue({
+        matches: true,
+        media: '(prefers-reduced-motion: reduce)',
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      } as MediaQueryList);
+
+      const div = document.createElement('div');
+      const figure = document.createElement('figure');
+      figure.classList.add('reveal-on-scroll');
+      div.appendChild(figure);
+      document.body.appendChild(div);
+
+      service.initializeFigureAnimations();
+
+      expect(figure.getAttribute('style')).toBeNull();
+
+      div.remove();
+    });
+
     it('should handle selector when figures exist', () => {
       // Arrange: Create a figure element
       const div = document.createElement('div');

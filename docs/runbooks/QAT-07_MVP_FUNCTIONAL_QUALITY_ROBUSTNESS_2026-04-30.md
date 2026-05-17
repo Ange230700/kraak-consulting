@@ -65,3 +65,19 @@ Verifier que le MVP respecte les attentes minimales de conformite fonctionnelle,
 
 1. Les tests E2E valident les scenarios critiques existants, mais ne remplacent pas une campagne exploratoire manuelle complete.
 2. Les seuils de couverture ne sont pas utilises ici comme critere bloquant global unique; la decision reste basee sur la batterie de checks executee.
+
+## Addendum - Definition of Done vitrine fermee (PR-06)
+
+La fermeture definitive de la vitrine publique est atteinte uniquement si les
+conditions suivantes sont toutes satisfaites:
+
+- 100% des routes vitrine gelees ont une couverture E2E explicite de presence.
+- 100% des routes vitrine gelees ont une verification SEO head E2E.
+- Les pages `401`, `403`, `404`, `500` ont couverture complete (rendu, SEO,
+  CTA).
+- Les checks accessibilite/performance publics sont stables sur 3 runs CI
+  consecutifs.
+- Les preuves de promotion staging et de dry-run release prod sont datees,
+  tracables et referencables.
+
+Sans ces conditions, la phase vitrine ne doit pas etre marquee comme close.

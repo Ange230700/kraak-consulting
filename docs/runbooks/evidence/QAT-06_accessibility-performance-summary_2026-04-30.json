@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T12:17:09.793Z",
+  "generatedAt": "2026-05-17T00:47:24.326Z",
   "scope": "QAT-06 pre-pilot web checks",
   "routes": [
     {
@@ -13,9 +13,25 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 739,
-        "loadMs": 1252,
-        "firstContentfulPaintMs": 576
+        "domContentLoadedMs": 3640,
+        "loadMs": 4130,
+        "firstContentfulPaintMs": 2742
+      }
+    },
+    {
+      "route": "/a-propos",
+      "title": "À propos",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 850,
+        "loadMs": 1098,
+        "firstContentfulPaintMs": 429
       }
     },
     {
@@ -29,9 +45,25 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 451,
-        "loadMs": 490,
-        "firstContentfulPaintMs": 408
+        "domContentLoadedMs": 1013,
+        "loadMs": 1224,
+        "firstContentfulPaintMs": 525
+      }
+    },
+    {
+      "route": "/faq",
+      "title": "FAQ",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 892,
+        "loadMs": 1242,
+        "firstContentfulPaintMs": 452
       }
     },
     {
@@ -45,9 +77,25 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 222,
-        "loadMs": 223,
-        "firstContentfulPaintMs": 212
+        "domContentLoadedMs": 962,
+        "loadMs": 1159,
+        "firstContentfulPaintMs": 420
+      }
+    },
+    {
+      "route": "/ressources",
+      "title": "Ressources",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 977,
+        "loadMs": 1136,
+        "firstContentfulPaintMs": 433
       }
     },
     {
@@ -61,9 +109,143 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 428,
-        "loadMs": 429,
-        "firstContentfulPaintMs": 408
+        "domContentLoadedMs": 901,
+        "loadMs": 1200,
+        "firstContentfulPaintMs": 499
+      }
+    },
+    {
+      "route": "/mentions-legales",
+      "title": "Mentions légales",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 3,
+        "minor": 0
+      },
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "description": "Main landmark should not be contained in another landmark",
+          "nodes": [["kraak-mentions-legales-page > main"]]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "description": "Document should not have more than one main landmark",
+          "nodes": [["#main-content"]]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "description": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+          "nodes": [["#main-content"]]
+        }
+      ],
+      "performance": {
+        "domContentLoadedMs": 621,
+        "loadMs": 801,
+        "firstContentfulPaintMs": 231
+      }
+    },
+    {
+      "route": "/politique-de-confidentialite",
+      "title": "Politique de confidentialité",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 3,
+        "minor": 0
+      },
+      "axeViolations": [
+        {
+          "id": "landmark-main-is-top-level",
+          "impact": "moderate",
+          "description": "Main landmark should not be contained in another landmark",
+          "nodes": [["kraak-politique-de-confidentialite-page > main"]]
+        },
+        {
+          "id": "landmark-no-duplicate-main",
+          "impact": "moderate",
+          "description": "Document should not have more than one main landmark",
+          "nodes": [["#main-content"]]
+        },
+        {
+          "id": "landmark-unique",
+          "impact": "moderate",
+          "description": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+          "nodes": [["#main-content"]]
+        }
+      ],
+      "performance": {
+        "domContentLoadedMs": 881,
+        "loadMs": 1032,
+        "firstContentfulPaintMs": 429
+      }
+    },
+    {
+      "route": "/401",
+      "title": "Authentification requise",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 602,
+        "loadMs": 653,
+        "firstContentfulPaintMs": 189
+      }
+    },
+    {
+      "route": "/403",
+      "title": "Accès refusé",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 539,
+        "loadMs": 589,
+        "firstContentfulPaintMs": 196
+      }
+    },
+    {
+      "route": "/404",
+      "title": "Page introuvable",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 453,
+        "loadMs": 494,
+        "firstContentfulPaintMs": 132
+      }
+    },
+    {
+      "route": "/500",
+      "title": "Incident technique",
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "axeViolations": [],
+      "performance": {
+        "domContentLoadedMs": 750,
+        "loadMs": 919,
+        "firstContentfulPaintMs": 174
       }
     }
   ]
