@@ -36,9 +36,21 @@ type RouteReport = {
 
 const criticalRoutes: RouteCheck[] = [
   { route: '/', title: 'Accueil' },
+  { route: '/a-propos', title: 'À propos' },
   { route: '/services', title: 'Services' },
+  { route: '/faq', title: 'FAQ' },
   { route: '/programmes', title: 'Programmes' },
+  { route: '/ressources', title: 'Ressources' },
   { route: '/contact', title: 'Contact' },
+  { route: '/mentions-legales', title: 'Mentions légales' },
+  {
+    route: '/politique-de-confidentialite',
+    title: 'Politique de confidentialité',
+  },
+  { route: '/401', title: 'Authentification requise' },
+  { route: '/403', title: 'Accès refusé' },
+  { route: '/404', title: 'Page introuvable' },
+  { route: '/500', title: 'Incident technique' },
 ];
 
 const parseImpactSummary = (
