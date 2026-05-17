@@ -25,6 +25,15 @@ dossier.
 - `footer_social` : réseaux sociaux du pied de page.
 - `legal_mentions`, `privacy_controller`, `privacy_rights` : pages légales et
   confidentialité.
+- Les CTA de conversion `conversion_cta_click` sont suivis sur les surfaces
+  publiques suivantes via `kraak-cta-banner` :
+  - `/` (`home_main_cta`)
+  - `/a-propos` (`about_main_cta`)
+  - `/services` (`services_main_cta`)
+  - `/ressources` (`resources_main_cta`)
+  - `/programmes` (`programs_main_cta`)
+  - `/mentions-legales` (`legal_mentions_cta`)
+  - `/politique-de-confidentialite` (`legal_privacy_cta`)
 
 ## Règles de maintenance
 
