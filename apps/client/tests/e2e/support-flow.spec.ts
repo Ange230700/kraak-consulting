@@ -314,11 +314,11 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         );
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
           'href',
-          new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+          new RegExp(`${route.path.replaceAll('/', '/')}$`),
         );
         await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
           'content',
-          new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+          new RegExp(`${route.path.replaceAll('/', '/')}$`),
         );
         for (const cta of route.ctas) {
           await expect(

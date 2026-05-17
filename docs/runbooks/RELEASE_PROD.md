@@ -82,10 +82,12 @@ des étapes migration ou smoke test.
 - Créer un projet Supabase **distinct** `kraak-prod` (jamais partagé avec
   staging).
 - Appliquer les migrations via :
+
   ```bash
   pnpm supabase link --project-ref "$SUPABASE_PROD_PROJECT_REF"
   pnpm supabase db push
   ```
+
 - Sauvegardes activées (point-in-time recovery selon plan).
 - RLS et politiques validées en staging avant tout `db push` prod.
 
@@ -121,7 +123,7 @@ Règles SemVer dans ce repo :
 
 Le push du tag déclenche `.github/workflows/release-prod.yml` :
 
-1. Build et tests rejoués sur le commit taggé.
+1. Build et tests rejoués sur le commit tagué.
 2. Le job `deploy-prod` attend l'approbation du GitHub Environment
    `production`.
 3. Migrations Supabase prod appliquées (si présentes).
@@ -186,7 +188,7 @@ Synthèse :
 ## Addendum dry-run pre-prod (PR-06)
 
 Avant toute nouvelle vague fonctionnelle majeure (ex: routes protegees),
-realiser un dry-run documente de la chaine release prod.
+realiser un dry-run documente de la chaîne release prod.
 
 ### Procedure minimale de dry-run
 
@@ -196,26 +198,26 @@ realiser un dry-run documente de la chaine release prod.
 gh workflow list
 ```
 
-2. Declencher le workflow release prod en dry-run (si input dedie present) ou
-   sur une reference de test non publiee.
+1. Déclencher le workflow release prod en dry-run (si input dédié present) ou
+   sur une reference de test non publiée.
 
 ```bash
 gh workflow run release-prod.yml
 gh run list --workflow release-prod.yml
 ```
 
-3. Verifier et tracer les etapes critiques :
+1. Verifier et tracer les étapes critiques :
 
 - preparation / build / tests
 - gate d'approbation environment `production`
 - migrations Supabase (ou skip explicite)
-- deploiement Render/Vercel (ou simulation explicite)
+- déploiement Render/Vercel (ou simulation explicite)
 - smoke final
 
 ### Criteres go/no-go de process
 
-- aucune ambiguite dans la sequence `tag -> validation -> deploiement`
-- aucun secret manquant ou variable non resolue
+- aucune ambiguïté dans la sequence `tag -> validation -> déploiement`
+- aucun secret manquant ou variable non résolue
 - aucun trou de procedure non documente
 
 Conserver la preuve dans les runbooks de deployment/evidence associes.
