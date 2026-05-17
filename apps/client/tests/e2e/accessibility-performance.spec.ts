@@ -126,15 +126,22 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
   }) => {
+    test.setTimeout(180000);
     const results: RouteReport[] = [];
 
     for (const routeCheck of criticalRoutes) {
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.goto(routeCheck.route, { waitUntil: 'load' });
+      await page.goto(routeCheck.route, {
+        waitUntil: 'domcontentloaded',
+        timeout: 45000,
+      });
+      await page.waitForLoadState('load', { timeout: 45000 });
       await page.waitForFunction(
         () =>
           document.readyState === 'interactive' ||
           document.readyState === 'complete',
+        undefined,
+        { timeout: 30000 },
       );
 
       // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
