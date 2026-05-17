@@ -168,10 +168,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await programsButton.scrollIntoViewIfNeeded();
       await programsButton.click();
-      await page.waitForURL('**/programmes', {
-        timeout: 5000,
-        waitUntil: 'domcontentloaded',
-      });
+      await expect(page).toHaveURL(/\/programmes$/, { timeout: 10000 });
 
       // Then: User lands on programs page
       await expect(page).toHaveTitle(/Programmes/i);
@@ -282,6 +279,48 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       // Then: Page title should reflect 404
       const title = await page.title();
       expect(title).toMatch(/introuvable|not found/i);
+    });
+
+    test('When accessing 401 page Then title and primary CTAs are visible', async ({
+      page,
+    }) => {
+      await page.goto(`${BASE_URL}/401`, { waitUntil: 'domcontentloaded' });
+
+      await expect(page).toHaveTitle(/Authentification requise/i);
+      await expect(
+        page.locator('a').filter({ hasText: 'Se connecter' }),
+      ).toBeVisible();
+      await expect(
+        page.locator('a').filter({ hasText: "Demander de l'aide" }),
+      ).toBeVisible();
+    });
+
+    test('When accessing 403 page Then title and primary CTAs are visible', async ({
+      page,
+    }) => {
+      await page.goto(`${BASE_URL}/403`, { waitUntil: 'domcontentloaded' });
+
+      await expect(page).toHaveTitle(/Accès refusé/i);
+      await expect(
+        page.locator('a').filter({ hasText: "Retour à l'accueil" }),
+      ).toBeVisible();
+      await expect(
+        page.locator('a').filter({ hasText: 'Nous contacter' }),
+      ).toBeVisible();
+    });
+
+    test('When accessing 500 page Then title and primary CTAs are visible', async ({
+      page,
+    }) => {
+      await page.goto(`${BASE_URL}/500`, { waitUntil: 'domcontentloaded' });
+
+      await expect(page).toHaveTitle(/Incident technique/i);
+      await expect(
+        page.locator('a').filter({ hasText: "Retour à l'accueil" }),
+      ).toBeVisible();
+      await expect(
+        page.locator('a').filter({ hasText: /Signaler un problème/i }),
+      ).toBeVisible();
     });
   });
 
