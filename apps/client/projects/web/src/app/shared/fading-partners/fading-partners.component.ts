@@ -70,8 +70,8 @@ const PARTNER_LOGO_VIEWBOX = '0 0 33 32';
   ],
 })
 export class FadingPartners {
-  // On decrit les SVG comme donnees structurees pour eviter innerHTML
-  // et conserver la sanitation Angular active par defaut.
+  // On décrit les SVG comme donnees structurées pour éviter innerHTML
+  // et conserver la sanitation Angular active par défaut.
   readonly partners: readonly Partner[] = [
     {
       name: 'Mistranet',
