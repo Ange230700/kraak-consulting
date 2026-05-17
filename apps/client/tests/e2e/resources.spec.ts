@@ -11,7 +11,7 @@ test.describe('Page ressources - parcours vitrine', () => {
     ).toBeVisible();
   });
 
-  test("Given la page Ressources, When elle se charge, Then elle se presente comme une page d'orientation et non comme un hub de contenus", async ({
+  test("Given la page Ressources, When elle se charge, Then elle se présente comme une page d'orientation et non comme un hub de contenus", async ({
     page,
   }) => {
     await expect(

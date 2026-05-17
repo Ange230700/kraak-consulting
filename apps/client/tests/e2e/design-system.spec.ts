@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
-async function revealParticipantCta(page: Parameters<typeof test>[0]['page']) {
+async function revealParticipantCta(page: Page) {
   const participantCta = page
     .getByRole('link', { name: 'Espace participant' })
     .first();

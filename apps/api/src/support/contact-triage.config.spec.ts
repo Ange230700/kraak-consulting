@@ -19,9 +19,9 @@ describe('contact triage config', () => {
       'other',
     ];
 
-    expect(Object.keys(CONTACT_TRIAGE_PLANS).sort()).toEqual(
-      [...categories].sort(),
-    );
+    expect(
+      Object.keys(CONTACT_TRIAGE_PLANS).sort((a, b) => a.localeCompare(b)),
+    ).toEqual([...categories].sort((a, b) => a.localeCompare(b)));
     expect(
       categories.every((category) => {
         const plan = resolveContactTriagePlan(category);
