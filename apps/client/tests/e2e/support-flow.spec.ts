@@ -321,7 +321,9 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
           new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
         );
         for (const cta of route.ctas) {
-          await expect(page.locator('a').filter({ hasText: cta })).toBeVisible();
+          await expect(
+            page.locator('a').filter({ hasText: cta }),
+          ).toBeVisible();
         }
       }
     });
