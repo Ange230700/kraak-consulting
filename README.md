@@ -112,6 +112,9 @@ pour le MVP est :
 - `/contact`
 - `/mentions-legales`
 - `/politique-de-confidentialite`
+- `/401`
+- `/403`
+- `/500`
 - la page `404` servie via la wildcard `**`
 
 Les routes authentifiées et non vitrines (`/connexion`, `/inscription`,
@@ -123,6 +126,13 @@ Note de positionnement : la route `/ressources` est intentionnellement une page
 d'orientation vitrine statique. Elle n'est ni un blog, ni une bibliothèque
 publique de contenu. Voir
 [`docs/decisions/ARC-15-positionnement-page-ressources-vitrine.md`](docs/decisions/ARC-15-positionnement-page-ressources-vitrine.md).
+
+## Statut de phase
+
+- Statut actuel: **vitrine publique close** (scope gele).
+- Prochaine phase: implementation et durcissement des **routes protegees**.
+- Regle de gouvernance: aucune nouvelle route publique sans decision ARC
+  explicite.
 
 ---
 

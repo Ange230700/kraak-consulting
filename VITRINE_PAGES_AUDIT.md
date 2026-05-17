@@ -1,5 +1,13 @@
 # Audit complet des pages vitrine KRAAK — Status MVP v1.0.0
 
+> Statut documentaire (PR-06): ce fichier est conserve comme **historique
+> d'audit**. Il ne fait plus foi pour le statut courant du perimetre vitrine.
+> La reference active est desormais:
+>
+> - `README.md` (surface publique gelee)
+> - `docs/decisions/ARC-14-freeze-surface-vitrine-publique.md`
+> - `docs/runbooks/STAGING_PROMOTION.md` (Definition of Done vitrine fermee)
+
 **Date du rapport:** 9 mai 2026  
 **Périmètre:** Pages publiques de marketing/vitrine (`apps/client/projects/web/src/app/features/`)  
 **Objectif:** Identifier les sections incomplètes, les données de placeholder, et les blockers pour v1.0.0
