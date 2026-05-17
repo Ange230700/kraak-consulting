@@ -2,7 +2,7 @@
 
 Date: 2026-04-30
 Issue: #117
-Scope: vérification pré-pilot web (routes marketing MVP)
+Scope: vérification pré-pilot web (surface vitrine publique complète + pages support statut)
 
 ## Objectif
 
@@ -26,22 +26,37 @@ Implementation technique associee:
 
 ## Resultats par route
 
-| Route         | Axe critical | Axe serious | DCL (ms) | Load (ms) | FCP (ms) |
-| ------------- | -----------: | ----------: | -------: | --------: | -------: |
-| `/`           |            0 |           0 |      739 |      1252 |      576 |
-| `/services`   |            0 |           0 |      451 |       490 |      408 |
-| `/programmes` |            0 |           0 |      222 |       223 |      212 |
-| `/contact`    |            0 |           0 |      428 |       429 |      408 |
+| Route                           | Axe critical | Axe serious | Axe moderate | DCL (ms) | Load (ms) | FCP (ms) |
+| ------------------------------- | -----------: | ----------: | -----------: | -------: | --------: | -------: |
+| `/`                             |            0 |           0 |            0 |     3935 |      4213 |     2993 |
+| `/a-propos`                     |            0 |           0 |            0 |     1765 |      2090 |      774 |
+| `/services`                     |            0 |           0 |            0 |     1555 |      2113 |      365 |
+| `/faq`                          |            0 |           0 |            0 |     1265 |      1606 |      689 |
+| `/programmes`                   |            0 |           0 |            0 |      959 |      1154 |      459 |
+| `/ressources`                   |            0 |           0 |            0 |      820 |      1021 |      249 |
+| `/contact`                      |            0 |           0 |            0 |      867 |      1242 |      307 |
+| `/mentions-legales`             |            0 |           0 |            3 |      618 |       750 |      185 |
+| `/politique-de-confidentialite` |            0 |           0 |            3 |      797 |      1011 |      263 |
+| `/401`                          |            0 |           0 |            0 |      561 |       663 |      176 |
+| `/403`                          |            0 |           0 |            0 |      609 |       681 |      201 |
+| `/404`                          |            0 |           0 |            0 |      533 |       612 |      167 |
+| `/500`                          |            0 |           0 |            0 |      717 |       812 |      309 |
 
 ## Ecart detecte
 
 Aucun écart `critical` ou `serious` détecté sur les routes couvertes.
 
+Écarts `moderate` relevés:
+
+1. `/mentions-legales`: 3 violations landmarks (`landmark-main-is-top-level`, `landmark-no-duplicate-main`, `landmark-unique`).
+2. `/politique-de-confidentialite`: 3 violations landmarks (`landmark-main-is-top-level`, `landmark-no-duplicate-main`, `landmark-unique`).
+
 ## Plan d'action ecarts
 
 1. Maintenir le seuil bloquant déjà ajouté dans le test (`critical + serious = 0` requis).
-2. Conserver une exécution systématique de `pnpm check:prepilot:web` avant pilot et avant release.
-3. Étendre progressivement la couverture aux routes participant authentifiées.
+2. Corriger la structure landmarks des pages légales pour éliminer les violations `moderate` sans régression SEO/UI.
+3. Conserver une exécution systématique de `pnpm check:prepilot:web` avant pilot et avant release.
+4. Étendre la même logique de contrôle aux routes protégées dans la phase suivante.
 
 ## Conclusion
 
