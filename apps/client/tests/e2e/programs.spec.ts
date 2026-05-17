@@ -11,7 +11,7 @@ test.describe('Page programmes - parcours vitrine', () => {
     ).toBeVisible();
   });
 
-  test('Given la page Programmes, When elle se charge, Then le titre principal et les formats cles sont visibles', async ({
+  test('Given la page Programmes, When elle se charge, Then le titre principal et les formats clés sont visibles', async ({
     page,
   }) => {
     await expect(
@@ -41,7 +41,7 @@ test.describe('Page programmes - parcours vitrine', () => {
     ).toBeVisible();
   });
 
-  test("Given la section d'orientation, When elle est lue, Then les quatre etapes de parcours sont presentees", async ({
+  test("Given la section d'orientation, When elle est lue, Then les quatre étapes de parcours sont presentees", async ({
     page,
   }) => {
     await expect(
@@ -63,7 +63,7 @@ test.describe('Page programmes - parcours vitrine', () => {
     ).toBeVisible();
   });
 
-  test("Given le call-to-action de fin de page, When un visiteur veut etre oriente, Then l'action mene vers la page contact", async ({
+  test("Given le call-to-action de fin de page, When un visiteur veut être oriente, Then l'action mene vers la page contact", async ({
     page,
   }) => {
     const cta = page.getByRole('link', { name: 'Demander une orientation' });

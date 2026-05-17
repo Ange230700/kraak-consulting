@@ -52,14 +52,14 @@
 - [Angular Dynamic Dialog Component](https://primeng.org/dynamicdialog): Dialogs can be created dynamically with any component as the content using a DialogService.
 - [Angular Editor Component](https://primeng.org/editor): Editor is rich text editor component based on Quill.
 - [Angular Fieldset Component](https://primeng.org/fieldset): Fieldset is a grouping component with a content toggle feature.
-- [Angular FileUpload Component](https://primeng.org/fileupload): FileUpload is an advanced uploader with dragdrop support, multi file uploads, auto uploading, progress tracking and validations.
+- [Angular FileUpload Component](https://primeng.org/fileupload): FileUpload is an advanced uploader with drag-drop support, multi file uploads, auto uploading, progress tracking and validations.
 - [Angular Float Label Component](https://primeng.org/floatlabel): FloatLabel appears on top of the input field when focused.
 - [Angular Fluid Component](https://primeng.org/fluid): Fluid is a layout component to make descendant components span full width of their container.
 - [Angular Focus Trap Component](https://primeng.org/focustrap): Focus Trap keeps focus within a certain DOM element while tabbing.
 - [Angular Gallery Component](https://primeng.org/galleria): Galleria is an advanced content gallery component.
 - [Angular IconField Component](https://primeng.org/iconfield): IconField wraps an input and an icon.
 - [Angular Ifta Label Component](https://primeng.org/iftalabel): IftaLabel is used to create infield top aligned labels.
-- [Angular Image Component](https://primeng.org/image): Displays an image with preview and tranformation options.
+- [Angular Image Component](https://primeng.org/image): Displays an image with preview and transformation options.
 - [Angular ImageCompare Component](https://primeng.org/imagecompare): Compare two images side by side with a slider.
 - [Angular Inplace Component](https://primeng.org/inplace): Inplace provides an easy to do editing and display at the same time where clicking the output displays the actual content.
 - [Angular InputGroup Component](https://primeng.org/inputgroup): Text, icon, buttons and other content can be grouped next to an input.

@@ -57,17 +57,17 @@ describe('FaqPage', () => {
     expect(component.faqItems).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          question: 'Sous quel delai recevez-vous une reponse apres contact ?',
-          answer: expect.stringContaining('48h ouvrees'),
+          question: 'Sous quel délai recevez-vous une réponse après contact ?',
+          answer: expect.stringContaining('48h ouvrées'),
         }),
         expect.objectContaining({
-          question: 'Comment mes donnees de contact sont-elles utilisees ?',
+          question: 'Comment mes données de contact sont-elles utilisées ?',
           answer: expect.stringContaining('3 ans'),
         }),
         expect.objectContaining({
           question:
             "Est-ce que KRAAK garantit l'obtention d'un visa, d'un emploi ou d'une admission ?",
-          answer: expect.stringContaining('decisions finales relevent'),
+          answer: expect.stringContaining('décisions finales relèvent'),
         }),
       ]),
     );

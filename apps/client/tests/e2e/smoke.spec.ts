@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, Page } from '@playwright/test';
 
 const expectParticipantCta =
   process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
@@ -6,7 +6,7 @@ const expectParticipantCta =
 const participantCtaExpected = expectParticipantCta === 'true';
 const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
 
-async function revealNavigation(page: Parameters<typeof test>[0]['page']) {
+async function revealNavigation(page: Page) {
   const mobileMenuButton = page.getByRole('button', {
     name: 'Menu de navigation',
   });
