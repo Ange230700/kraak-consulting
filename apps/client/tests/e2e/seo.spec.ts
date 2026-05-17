@@ -1,19 +1,25 @@
 import { expect, test } from '@playwright/test';
 
 test.describe(`SEO technique du site vitrine`, () => {
-  test(`Given la page à propos, When elle se charge, Then le title, la description et la canonical correspondent à la route`, async ({
+  test(`Given la page à propos, When elle se charge, Then le title, la canonical et les balises Open Graph correspondent a la route`, async ({
     page,
   }) => {
     await page.goto('/a-propos');
 
-    await expect(page).toHaveTitle(/À propos|A propos/i);
+    await expect(page).toHaveTitle(
+      /À propos \| Capital humain, impact et trajectoires \| KRAAK Consulting/i,
+    );
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /capital humain|employabilité|trajectoires durables/i,
+      /capital humain, l'employabilit[eé] des jeunes et des trajectoires durables/i,
     );
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       /\/a-propos$/,
+    );
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+      'content',
+      /À propos de KRAAK Consulting/i,
     );
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
       'content',
@@ -75,35 +81,83 @@ test.describe(`SEO technique du site vitrine`, () => {
     );
   });
 
-  test(`Given les pages légales, When elles se chargent, Then title canonical et og:url restent cohérents`, async ({
+  test(`Given les pages programmes et ressources, When elles se chargent, Then leurs métadonnées SEO restent cohérentes avec leurs routes`, async ({
     page,
   }) => {
-    const legalRoutes = [
+    const routes = [
       {
-        route: '/mentions-legales',
-        title: /Mentions légales/i,
+        path: '/programmes',
+        title:
+          /Programmes \| Orientation et formats d'accompagnement \| KRAAK/i,
+        description: /catalogue détaillé est partagé après orientation/i,
+        ogTitle: /Programmes KRAAK Consulting/i,
       },
       {
-        route: '/politique-de-confidentialite',
-        title: /Politique de confidentialité/i,
+        path: '/ressources',
+        title:
+          /Ressources d'orientation \| Formation, projet et immigration \| KRAAK/i,
+        description:
+          /page d'orientation vitrine pour clarifier votre prochaine étape/i,
+        ogTitle: /Ressources d'orientation KRAAK Consulting/i,
       },
     ];
 
-    for (const legalRoute of legalRoutes) {
-      await page.goto(legalRoute.route);
+    for (const route of routes) {
+      await page.goto(route.path);
 
-      await expect(page).toHaveTitle(legalRoute.title);
+      await expect(page).toHaveTitle(route.title);
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+        'content',
+        route.description,
+      );
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+        'href',
+        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+      );
+      await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+        'content',
+        route.ogTitle,
+      );
+      await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+        'content',
+        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+      );
+    }
+  });
+
+  test(`Given les pages FAQ et légales, When elles se chargent, Then title canonical et og:url restent alignés`, async ({
+    page,
+  }) => {
+    const routes = [
+      {
+        path: '/faq',
+        title: /FAQ \| Aide et orientation \| KRAAK Consulting/i,
+      },
+      {
+        path: '/mentions-legales',
+        title: /Mentions légales \| KRAAK Consulting/i,
+      },
+      {
+        path: '/politique-de-confidentialite',
+        title: /Politique de confidentialité \| KRAAK Consulting/i,
+      },
+    ];
+
+    for (const route of routes) {
+      await page.goto(route.path);
+
+      await expect(page).toHaveTitle(route.title);
       await expect(page.locator('meta[name="description"]')).toHaveAttribute(
         'content',
         /.+/,
       );
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
-        new RegExp(`${legalRoute.route.replace(/\//g, '\\/')}$`),
+        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
       );
       await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
         'content',
-        new RegExp(`${legalRoute.route.replace(/\//g, '\\/')}$`),
+        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
       );
     }
   });
