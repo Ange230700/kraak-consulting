@@ -112,7 +112,7 @@ test.describe(`SEO technique du site vitrine`, () => {
       );
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
-        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
       );
       await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
         'content',
@@ -120,7 +120,7 @@ test.describe(`SEO technique du site vitrine`, () => {
       );
       await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
         'content',
-        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
       );
     }
   });
@@ -153,11 +153,11 @@ test.describe(`SEO technique du site vitrine`, () => {
       );
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
-        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
       );
       await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
         'content',
-        new RegExp(`${route.path.replace(/\//g, '\\/')}$`),
+        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
       );
     }
   });
