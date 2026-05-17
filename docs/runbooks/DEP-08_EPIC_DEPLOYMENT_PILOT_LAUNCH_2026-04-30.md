@@ -61,6 +61,20 @@ Justification:
 3. Rejouer `pnpm check:observability` avec URLs pilote en variables d'environnement.
 4. Archiver la preuve de recheck dans `docs/runbooks/evidence/`.
 
+## Addendum PR-06 - Cloture vitrine et handoff
+
+Etat de reference post-cloture vitrine:
+
+- le perimetre vitrine publique est ferme et gele
+- les evolutions prioritaires sont redirigees vers routes protegees
+- aucune extension de surface publique sans decision ARC explicite
+
+Checklist de handoff:
+
+- [ ] runbooks DEP/QAT alignees avec le statut vitrine close
+- [ ] README + backlog sans contradiction de perimetre
+- [ ] criteres de transition vers routes protegees explicitement traces
+
 ## Blocages PR et contraintes de review
 
 - Contrôle initial : aucune PR ouverte détectée pour l'issue #158 au démarrage de cette exécution.
