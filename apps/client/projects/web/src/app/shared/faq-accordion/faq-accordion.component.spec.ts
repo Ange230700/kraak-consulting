@@ -29,7 +29,7 @@ describe('FaqAccordion', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('Given une liste d items, When le composant est rendu, Then chaque question est presente', () => {
+  it('Given une liste d items, When le composant est rendu, Then chaque question est présentée', () => {
     const fixture = TestBed.createComponent(FaqAccordion);
     fixture.componentRef.setInput('items', SAMPLE_ITEMS);
     fixture.detectChanges();
@@ -39,7 +39,7 @@ describe('FaqAccordion', () => {
     expect(text).toContain('Comment nous contacter ?');
   });
 
-  it('Given une liste d items, When le composant est rendu, Then chaque reponse est presente dans le DOM', () => {
+  it('Given une liste d items, When le composant est rendu, Then chaque réponse est présente dans le DOM', () => {
     const fixture = TestBed.createComponent(FaqAccordion);
     fixture.componentRef.setInput('items', SAMPLE_ITEMS);
     fixture.detectChanges();
@@ -50,7 +50,7 @@ describe('FaqAccordion', () => {
     expect(answers.length).toBe(SAMPLE_ITEMS.length);
   });
 
-  it('Given une liste d items, When une question est ouverte, Then la reponse devient visible', async () => {
+  it('Given une liste d items, When une question est ouverte, Then la réponse devient visible', async () => {
     const fixture = TestBed.createComponent(FaqAccordion);
     fixture.componentRef.setInput('items', SAMPLE_ITEMS);
     fixture.detectChanges();
@@ -77,10 +77,10 @@ describe('FaqAccordion', () => {
     ) as HTMLElement | null;
 
     expect(firstHeader?.getAttribute('aria-expanded')).toBe('true');
-    expect(firstContent?.getAttribute('data-p-active')).toBe('true');
-    expect(window.getComputedStyle(motionElement as Element).visibility).toBe(
-      'visible',
-    );
+    expect(firstContent?.dataset['pActive']).toBe('true');
+    expect(
+      globalThis.getComputedStyle(motionElement as Element).visibility,
+    ).toBe('visible');
     expect(answer?.textContent).toContain(
       'KRAAK est un cabinet de conseil en formation',
     );
