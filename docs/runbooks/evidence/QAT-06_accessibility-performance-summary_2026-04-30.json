@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T00:25:47.559Z",
+  "generatedAt": "2026-05-17T00:38:41.372Z",
   "scope": "QAT-06 pre-pilot web checks",
   "routes": [
     {
@@ -13,9 +13,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 3935,
-        "loadMs": 4213,
-        "firstContentfulPaintMs": 2993
+        "domContentLoadedMs": 3239,
+        "loadMs": 3521,
+        "firstContentfulPaintMs": 2466
       }
     },
     {
@@ -29,9 +29,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 1765,
-        "loadMs": 2090,
-        "firstContentfulPaintMs": 774
+        "domContentLoadedMs": 651,
+        "loadMs": 823,
+        "firstContentfulPaintMs": 224
       }
     },
     {
@@ -45,9 +45,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 1555,
-        "loadMs": 2113,
-        "firstContentfulPaintMs": 365
+        "domContentLoadedMs": 920,
+        "loadMs": 1152,
+        "firstContentfulPaintMs": 346
       }
     },
     {
@@ -61,9 +61,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 1265,
-        "loadMs": 1606,
-        "firstContentfulPaintMs": 689
+        "domContentLoadedMs": 833,
+        "loadMs": 1167,
+        "firstContentfulPaintMs": 278
       }
     },
     {
@@ -77,9 +77,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 959,
-        "loadMs": 1154,
-        "firstContentfulPaintMs": 459
+        "domContentLoadedMs": 812,
+        "loadMs": 1017,
+        "firstContentfulPaintMs": 293
       }
     },
     {
@@ -93,9 +93,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 820,
-        "loadMs": 1021,
-        "firstContentfulPaintMs": 249
+        "domContentLoadedMs": 741,
+        "loadMs": 1008,
+        "firstContentfulPaintMs": 242
       }
     },
     {
@@ -109,9 +109,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 867,
-        "loadMs": 1242,
-        "firstContentfulPaintMs": 307
+        "domContentLoadedMs": 910,
+        "loadMs": 1167,
+        "firstContentfulPaintMs": 359
       }
     },
     {
@@ -144,9 +144,9 @@
         }
       ],
       "performance": {
-        "domContentLoadedMs": 618,
-        "loadMs": 750,
-        "firstContentfulPaintMs": 185
+        "domContentLoadedMs": 486,
+        "loadMs": 585,
+        "firstContentfulPaintMs": 184
       }
     },
     {
@@ -179,9 +179,9 @@
         }
       ],
       "performance": {
-        "domContentLoadedMs": 797,
-        "loadMs": 1011,
-        "firstContentfulPaintMs": 263
+        "domContentLoadedMs": 523,
+        "loadMs": 636,
+        "firstContentfulPaintMs": 206
       }
     },
     {
@@ -195,9 +195,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 561,
-        "loadMs": 663,
-        "firstContentfulPaintMs": 176
+        "domContentLoadedMs": 543,
+        "loadMs": 642,
+        "firstContentfulPaintMs": 164
       }
     },
     {
@@ -211,9 +211,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 609,
-        "loadMs": 681,
-        "firstContentfulPaintMs": 201
+        "domContentLoadedMs": 537,
+        "loadMs": 641,
+        "firstContentfulPaintMs": 186
       }
     },
     {
@@ -227,9 +227,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 533,
-        "loadMs": 612,
-        "firstContentfulPaintMs": 167
+        "domContentLoadedMs": 509,
+        "loadMs": 591,
+        "firstContentfulPaintMs": 168
       }
     },
     {
@@ -243,9 +243,9 @@
       },
       "axeViolations": [],
       "performance": {
-        "domContentLoadedMs": 717,
-        "loadMs": 812,
-        "firstContentfulPaintMs": 309
+        "domContentLoadedMs": 564,
+        "loadMs": 623,
+        "firstContentfulPaintMs": 210
       }
     }
   ]
