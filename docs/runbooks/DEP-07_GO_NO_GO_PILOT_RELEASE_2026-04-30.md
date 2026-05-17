@@ -258,6 +258,23 @@ Changements inclus dans le pilote :
 ### Suivi post-release
 
 - [ ] Vérification de santé H+1 (web + API)
+
+---
+
+## Addendum PR-06 - Gate de bascule vers routes protegees
+
+Avant d'ouvrir la phase routes protegees, verifier explicitement:
+
+- [ ] PR de cloture vitrine mergee sur `staging`
+- [ ] Surface vitrine gelee alignee dans README + ARC-14
+- [ ] Aucun P0/P1 vitrine ouvert dans le backlog operationnel
+- [ ] Dry-run release prod execute et documente
+- [ ] Observabilite staging revalidee sur les URLs cibles finales
+
+Decision attendue:
+
+- `GO protected routes` si tous les points ci-dessus sont verts
+- `NO-GO protected routes` sinon, avec plan de correction date
 - [ ] Premier retour pilote collecté sous 48h
 - [ ] Bilan pilote J+14 planifié
 
