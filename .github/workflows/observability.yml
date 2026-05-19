@@ -2,7 +2,7 @@ name: Observability
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -24,11 +24,11 @@ jobs:
             # de l'API staging.
             web_url: https://kraak-consulting.vercel.app
             api_url: https://kraak-api-staging.onrender.com
-            alert_issue_title: '[ALERT][DEP-05][staging] Observability check failure'
+            alert_issue_title: "[ALERT][DEP-05][staging] Observability check failure"
           - environment: production
             web_url: https://kraak-consulting.vercel.app
             api_url: https://kraak-api-prod.onrender.com
-            alert_issue_title: '[ALERT][DEP-05][production] Observability check failure'
+            alert_issue_title: "[ALERT][DEP-05][production] Observability check failure"
     env:
       KRAAK_OBSERVABILITY_ENVIRONMENT: ${{ matrix.environment }}
       KRAAK_OBSERVABILITY_WEB_URL: ${{ matrix.web_url }}
