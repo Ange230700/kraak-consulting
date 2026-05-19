@@ -266,17 +266,11 @@ async function startService(service) {
     `${service.color}[${service.name}]${reset} démarrage sur ${preferred}\n`,
   );
 
-<<<<<<< HEAD
   const spawnCommand = resolveSpawnCommand(args[0], args.slice(1));
 
   // SECURITY: service.command est entièrement hardcodé dans le tableau services.
   // Les scripts .cmd/.bat Windows sont lancés via cmd.exe tout en conservant shell: false.
   const child = spawn(spawnCommand.command, spawnCommand.args, {
-=======
-  // SECURITY: service.command est entièrement hardcodé dans le tableau services.
-  // shell: false empêche toute interpolation de commande non contrôlée.
-  const child = spawn(args[0], args.slice(1), {
->>>>>>> 2ef331a (chore(scripts): disable shell option in spawn to fix Sonar S4721)
     cwd: service.cwd,
     env,
     stdio: ['inherit', 'pipe', 'pipe'],
