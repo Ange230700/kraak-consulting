@@ -10,10 +10,6 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
 );
 
-const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
-);
-
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
