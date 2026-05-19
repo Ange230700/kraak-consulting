@@ -1,9 +1,13 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
-import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
+import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+
+const PROGRAMS_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/programs-hero-adult-learning.avif',
+);
 
 @Component({
   selector: 'kraak-programs-page',
@@ -12,7 +16,7 @@ import { GsapAnimationsService } from '../../core/animations/gsap-animations.ser
   templateUrl: './programs.page.html',
 })
 export default class ProgramsPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = PROGRAMS_HERO_BACKGROUND_STYLE;
 
   private readonly gsapService = inject(GsapAnimationsService);
 

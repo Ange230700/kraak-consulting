@@ -22,8 +22,8 @@ import {
   CONTACT_PHONE_DISPLAY,
   CONTACT_PHONE_HREF,
   CONTACT_VISUAL_URL,
-  HERO_BACKGROUND_STYLE,
   KRAAK_SOCIAL_LINKS,
+  buildHeroBackgroundStyle,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
@@ -50,6 +50,10 @@ interface ServiceOption {
 
 const GENERIC_CONTACT_ERROR_MESSAGE =
   'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.';
+
+const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/contact-hero-consultation.avif',
+);
 
 @Component({
   selector: 'kraak-contact-page',
@@ -82,7 +86,7 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
   protected readonly contactPhone = CONTACT_PHONE_DISPLAY;
   protected readonly contactPhoneHref = CONTACT_PHONE_HREF;
-  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = CONTACT_HERO_BACKGROUND_STYLE;
 
   private readonly contactService = inject(ContactService);
   private readonly gsapService = inject(GsapAnimationsService);

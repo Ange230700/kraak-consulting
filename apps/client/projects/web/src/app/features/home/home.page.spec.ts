@@ -66,7 +66,7 @@ describe('HomePage', () => {
     const component = fixture.componentInstance;
 
     expect(component.heroBackgroundStyle.background).toContain(
-      'bw-hero-bg.jpg',
+      'home-hero-workshop.avif',
     );
     expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
       'normal, multiply, lighten, normal',
