@@ -52,6 +52,21 @@ const marketingRoutes: Routes = [
     'politique-de-confidentialite',
     () => import('./features/legal/politique-de-confidentialite.page'),
   ),
+  {
+    path: 'about',
+    redirectTo: 'a-propos',
+    pathMatch: 'full',
+  },
+  {
+    path: 'programs',
+    redirectTo: 'programmes',
+    pathMatch: 'full',
+  },
+  {
+    path: 'resources',
+    redirectTo: 'ressources',
+    pathMatch: 'full',
+  },
 ];
 
 const notFoundSeo: SeoPageDefinition = {
