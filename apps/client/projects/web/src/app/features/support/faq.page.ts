@@ -2,11 +2,15 @@ import { Component } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
+import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+
+const FAQ_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/resources-orientation-consultation.avif',
+);
 
 @Component({
   selector: 'kraak-faq-page',
@@ -15,7 +19,7 @@ import {
   templateUrl: './faq.page.html',
 })
 export default class FaqPage {
-  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = FAQ_HERO_BACKGROUND_STYLE;
 
   protected readonly faqItems: FaqItem[] = [
     {

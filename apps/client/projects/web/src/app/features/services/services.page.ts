@@ -3,8 +3,12 @@ import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
+import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+
+const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/services-hero-project-planning.avif',
+);
 
 @Component({
   selector: 'kraak-services-page',
@@ -13,7 +17,7 @@ import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
   templateUrl: './services.page.html',
 })
 export default class ServicesPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = SERVICES_HERO_BACKGROUND_STYLE;
 
   private readonly gsapService = inject(GsapAnimationsService);
 

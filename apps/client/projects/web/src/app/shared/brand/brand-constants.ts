@@ -24,10 +24,16 @@ export const CONTACT_PHONE_DISPLAY = '+225 05 02 74 18 18';
 export const CONTACT_PHONE_HREF = `tel:${CONTACT_PHONE_E164}`;
 export const WHATSAPP_CONTACT_HREF = 'https://wa.me/2250502741818';
 
-export const HERO_BACKGROUND_STYLE = {
-  background: `linear-gradient(0deg, color-mix(in srgb, var(--p-surface-950) 50%, transparent) 0%, transparent 100%), linear-gradient(0deg, var(--p-primary-500) 0%, var(--p-primary-500) 100%), linear-gradient(0deg, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 0%, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 100%), url('${HERO_BACKGROUND_IMAGE_URL}') center/cover no-repeat`,
-  backgroundBlendMode: 'normal, multiply, lighten, normal',
-} as const;
+export function buildHeroBackgroundStyle(imageUrl: string) {
+  return {
+    background: `linear-gradient(0deg, color-mix(in srgb, var(--p-surface-950) 50%, transparent) 0%, transparent 100%), linear-gradient(0deg, var(--p-primary-500) 0%, var(--p-primary-500) 100%), linear-gradient(0deg, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 0%, color-mix(in srgb, var(--p-primary-800) 60%, transparent) 100%), url('${imageUrl}') center/cover no-repeat`,
+    backgroundBlendMode: 'normal, multiply, lighten, normal',
+  } as const;
+}
+
+export const HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  HERO_BACKGROUND_IMAGE_URL,
+);
 
 export const KRAAK_SOCIAL_LINKS: readonly SocialLink[] = [
   {
