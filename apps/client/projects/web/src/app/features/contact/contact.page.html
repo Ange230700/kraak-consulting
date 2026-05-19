@@ -30,8 +30,8 @@
       class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
     >
       <img
-        src="/assets/site-visuals/consultation-flow.svg"
-        alt="Illustration du parcours de consultation KRAAK"
+        src="/assets/site-visuals/photos/contact-consultation-flow.avif"
+        alt="Discussion d'accompagnement avec documents pour orienter une demande"
         loading="eager"
         decoding="async"
         fetchpriority="high"
@@ -57,7 +57,7 @@
         >
           <img
             [src]="contactVisualUrl"
-            alt="Carte et ancrage international KRAAK"
+            alt="Entretien d'orientation pour clarifier un besoin d'accompagnement"
             class="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
             decoding="async"
@@ -217,7 +217,7 @@
                 @if (shouldShowContactFallback()) {
                   <div
                     class="border-brand-blue/15 bg-brand-cream/60 text-brand-navy mt-4 rounded-2xl border p-4 text-sm leading-6"
-                    role="status"
+                    role="alert"
                   >
                     <p class="font-semibold">
                       Fallback opérationnel : votre demande peut continuer sans

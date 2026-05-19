@@ -22,8 +22,10 @@ describe('Web routes', () => {
     'mentions-legales',
     'politique-de-confidentialite',
   ];
+  const aliasRedirectPaths = ['about', 'programs', 'resources'];
   const frozenPublicPaths = [
     ...marketingPaths,
+    ...aliasRedirectPaths,
     '401',
     '403',
     '500',
@@ -64,6 +66,31 @@ describe('Web routes', () => {
         expect(route.title).toEqual(expect.any(String));
         expect(route.data?.['seo']).toBeDefined();
       }
+    });
+
+    it('When inspecting alias routes Then english slugs redirect to french canonical paths', () => {
+      const builtRoutes = buildRoutes();
+      const aboutAliasRoute = builtRoutes.find(
+        (route) => route.path === 'about',
+      );
+      const programsAliasRoute = builtRoutes.find(
+        (route) => route.path === 'programs',
+      );
+      const resourcesAliasRoute = builtRoutes.find(
+        (route) => route.path === 'resources',
+      );
+
+      expect(aboutAliasRoute).toBeDefined();
+      expect(aboutAliasRoute?.redirectTo).toBe('a-propos');
+      expect(aboutAliasRoute?.pathMatch).toBe('full');
+
+      expect(programsAliasRoute).toBeDefined();
+      expect(programsAliasRoute?.redirectTo).toBe('programmes');
+      expect(programsAliasRoute?.pathMatch).toBe('full');
+
+      expect(resourcesAliasRoute).toBeDefined();
+      expect(resourcesAliasRoute?.redirectTo).toBe('ressources');
+      expect(resourcesAliasRoute?.pathMatch).toBe('full');
     });
   });
 
@@ -213,7 +240,10 @@ describe('Web routes', () => {
     it('When inspecting page routes Then every page component is lazy-loaded', () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const pageRoutes = builtRoutes.filter(
-        (route) => route.path !== '**' && route.path !== 'participant',
+        (route) =>
+          route.path !== '**' &&
+          route.path !== 'participant' &&
+          !route.redirectTo,
       );
 
       for (const route of pageRoutes) {

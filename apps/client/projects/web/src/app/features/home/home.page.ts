@@ -4,8 +4,12 @@ import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { HERO_BACKGROUND_STYLE } from '../../shared/brand/brand-constants';
+import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+
+const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/home-hero-workshop.avif',
+);
 
 @Component({
   selector: 'kraak-home-page',
@@ -14,7 +18,7 @@ import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
   templateUrl: './home.page.html',
 })
 export default class HomePage implements OnInit, OnDestroy {
-  readonly heroBackgroundStyle = HERO_BACKGROUND_STYLE;
+  readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE;
   protected readonly keySolutions: readonly string[] = [
     'D\u00e9veloppement personnel et professionnel',
     'Anglais et fran\u00e7ais professionnel',
