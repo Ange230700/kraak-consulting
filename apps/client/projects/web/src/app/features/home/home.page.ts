@@ -11,6 +11,10 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/home-hero-workshop.avif',
 );
 
+const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+  '/assets/site-visuals/photos/home-hero-workshop.avif',
+);
+
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
