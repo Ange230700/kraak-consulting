@@ -308,6 +308,7 @@ describe('Web routes', () => {
     });
 
     it('When the wildcard route loadComponent is invoked Then it resolves to the not-found page component', async () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const wildcard = builtRoutes.find((route) => route.path === '**');
 
       expect(wildcard?.loadComponent).toBeDefined();
