@@ -30,10 +30,16 @@ jobs:
             api_url: https://kraak-api-prod.onrender.com
             alert_issue_title: '[ALERT][DEP-05][production] Observability check failure'
     env:
+<<<<<<< HEAD
       KRAAK_OBSERVABILITY_ENVIRONMENT: ${{ matrix.environment }}
       KRAAK_OBSERVABILITY_WEB_URL: ${{ matrix.web_url }}
       KRAAK_OBSERVABILITY_API_URL: ${{ matrix.api_url }}
       ALERT_ISSUE_TITLE: ${{ matrix.alert_issue_title }}
+=======
+      KRAAK_OBSERVABILITY_WEB_URL: https://kraak-consulting.vercel.app
+      KRAAK_OBSERVABILITY_API_URL: https://kraak-api-staging.onrender.com
+      ALERT_ISSUE_TITLE: '[ALERT][DEP-05] Observability check failure'
+>>>>>>> 2226091 (fix(ci): point observability web URL to production Vercel URL)
     steps:
       - uses: actions/checkout@v4
 
