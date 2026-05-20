@@ -1315,6 +1315,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements — cas limites', () => {
+  describe('listAnnouncements — cas limites (série 2)', () => {
     it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur UnauthorizedException est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: null },
@@ -1474,7 +1475,7 @@ describe('AnnouncementsService', () => {
     });
   });
 
-  describe('getAnnouncementById — audience program et cohort', () => {
+  describe('getAnnouncementById — audience program et cohort (série 2)', () => {
     it('Given: annonce de type program avec participant inscrit, When: getAnnouncementById appelé, Then: retourne annonce', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
@@ -1576,7 +1577,7 @@ describe('AnnouncementsService', () => {
     });
   });
 
-  describe('getAnnouncementById — branches non couvertes', () => {
+  describe('getAnnouncementById — branches non couvertes (série 2)', () => {
     it('Given: auth réussit mais participant introuvable, When: getAnnouncementById appelé, Then: lève une erreur de résolution participant', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
