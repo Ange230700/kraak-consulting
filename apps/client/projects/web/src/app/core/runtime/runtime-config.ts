@@ -23,7 +23,7 @@ export function isParticipantAreaEnabled(): boolean {
 }
 
 export function isProductionEnvironment(): boolean {
-  return environment.environmentName === 'production';
+  return environment.production;
 }
 
 export function canShowPreviewContent(): boolean {

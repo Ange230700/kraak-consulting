@@ -151,6 +151,7 @@ app_user ← support_request (1:N, user_id FK)
 
 Une version expliquée du diagramme complet est disponible dans
 [`docs/specs/erd_mvp.md`](../specs/erd_mvp.md).
+
 ```mermaid
 erDiagram
     AUTH_USERS {

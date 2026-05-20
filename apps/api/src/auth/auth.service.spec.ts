@@ -327,7 +327,7 @@ describe('AuthService', () => {
     await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
       NotFoundException,
     );
-    });
+  });
 
   it('Given un signup avec erreur générique, When signUp est appelé, Then une BadRequestException avec message générique est renvoyée', async () => {
     authClient.auth.signUp.mockResolvedValue({
