@@ -9,6 +9,7 @@ import {
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
 import { environment } from '../environments/environment';
+import NotFoundPage from './features/support/not-found.page';
 
 describe('Web routes', () => {
   const marketingPaths = [
@@ -286,7 +287,10 @@ describe('Web routes', () => {
         wildcard!.loadComponent as () => Promise<unknown>
       )();
 
-      expect(loaded).toBeTruthy();
+      const resolvedComponent =
+        (loaded as { default?: unknown }).default ?? loaded;
+
+      expect(resolvedComponent).toBe(NotFoundPage);
     });
   });
 });
