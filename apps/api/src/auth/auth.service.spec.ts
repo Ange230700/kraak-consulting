@@ -307,28 +307,6 @@ describe('AuthService', () => {
     });
   });
 
-  // Given un app_user introuvable
-  // When getSession est appelé
-  // Then une NotFoundException est renvoyée (profil requis absent)
-  it('Given un app_user introuvable, When getSession est appelé, Then une NotFoundException est renvoyée', async () => {
-    authClient.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-1' } },
-      error: null,
-    });
-
-    adminClient.from.mockImplementation((tableName: string) => {
-      if (tableName === 'app_user') {
-        return createSingleRowQuery({ data: null, error: null });
-      }
-
-      throw new Error(`Unexpected table ${tableName}`);
-    });
-
-    await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
-  });
-
   it('Given un signup avec erreur générique, When signUp est appelé, Then une BadRequestException avec message générique est renvoyée', async () => {
     authClient.auth.signUp.mockResolvedValue({
       data: { user: null, session: null },

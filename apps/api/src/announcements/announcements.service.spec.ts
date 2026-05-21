@@ -2053,13 +2053,43 @@ describe('AnnouncementsService', () => {
         error: new Error('Invalid'),
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn(),
-      });
-
-      await expect(service.listAnnouncements('bad-token')).rejects.toThrow(
-        'Could not resolve participant ID from access token',
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: mockAnnouncement.id,
+              title: mockAnnouncement.title,
+              body: mockAnnouncement.body,
+              priority: mockAnnouncement.priority,
+              audience_type: mockAnnouncement.audienceType,
+              program_id: mockAnnouncement.programId,
+              cohort_id: mockAnnouncement.cohortId,
+              status: mockAnnouncement.status,
+              published_at: mockAnnouncement.publishedAt,
+              created_by_user_id: mockAnnouncement.createdByUserId,
+              created_at: mockAnnouncement.createdAt,
+              updated_at: mockAnnouncement.updatedAt,
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
       );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+          participant: createAsyncQuery({ data: null, error: null }),
+        }),
+      );
+
+      await expect(
+        service.listAnnouncements('bad-token'),
+      ).rejects.toMatchObject({
+        response: {
+          message: 'La session est invalide ou expirée.',
+        },
+      });
     });
 
     it('Given: une erreur DB sur announcements, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
