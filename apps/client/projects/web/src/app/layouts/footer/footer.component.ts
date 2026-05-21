@@ -27,7 +27,6 @@ export class Footer {
     { label: 'Services', path: '/services' },
     { label: 'FAQ', path: '/faq' },
     { label: 'Programmes', path: '/programmes' },
-    { label: 'FAQ', path: '/faq' },
     { label: 'Contact', path: '/contact' },
   ];
 
