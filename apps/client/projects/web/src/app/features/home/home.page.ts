@@ -11,10 +11,6 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/home-hero-workshop.avif',
 );
 
-const HOME_HERO_BACKGROUND_STYLE_PAGE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/home-hero-workshop.avif',
-);
-
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
@@ -22,7 +18,9 @@ const HOME_HERO_BACKGROUND_STYLE_PAGE = buildHeroBackgroundStyle(
   templateUrl: './home.page.html',
 })
 export default class HomePage implements OnInit, OnDestroy {
-  readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE_PAGE;
+  readonly heroBackgroundStyle = buildHeroBackgroundStyle(
+    '/assets/site-visuals/photos/home-hero-workshop.avif',
+  );
   protected readonly keySolutions: readonly string[] = [
     'D\u00e9veloppement personnel et professionnel',
     'Anglais et fran\u00e7ais professionnel',
