@@ -9,7 +9,7 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
 );
 
-const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+const ABOUT_HERO_BACKGROUND_STYLE_PAGE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
 );
 
@@ -20,7 +20,7 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = ABOUT_HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = ABOUT_HERO_BACKGROUND_STYLE_PAGE;
 
   private readonly gsapService = inject(GsapAnimationsService);
 
