@@ -1314,7 +1314,6 @@ describe('AnnouncementsService', () => {
     });
   });
 
-  describe('listAnnouncements — cas limites', () => {
   describe('listAnnouncements — cas limites (série 2)', () => {
     it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur UnauthorizedException est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
