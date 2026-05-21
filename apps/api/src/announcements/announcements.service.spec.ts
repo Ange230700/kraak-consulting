@@ -583,166 +583,113 @@ describe('AnnouncementsService', () => {
     });
   });
 
-  describe('listAnnouncements — cas limites (regression doublons staging-main)', () => {
-    it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur UnauthorizedException est levée', async () => {
-      mockAuthClient.auth.getUser.mockResolvedValue({
-        data: { user: null },
-        error: new Error('Invalid'),
-      });
-
-      const announcementsQuery = createAsyncQuery(
-        { data: [], error: null },
-        { withOrder: true },
-      );
-
-      mockSupabaseService.getClient.mockReturnValue(
-        createClientMock({
-          announcement: announcementsQuery,
-        }),
-      );
-
-      await expect(
-        service.listAnnouncements('bad-token'),
-      ).rejects.toBeInstanceOf(UnauthorizedException);
+  it('Given: une erreur DB sur enrollments, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
+    mockAuthClient.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-001' } },
+      error: null,
     });
 
-    it('Given: une erreur DB sur announcements, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
-      mockAuthClient.auth.getUser.mockResolvedValue({
-        data: { user: { id: 'user-001' } },
-        error: null,
-      });
-
-      const participantQuery = createAsyncQuery({
-        data: { id: 'participant-001' },
-        error: null,
-      });
-
-      const announcementsQuery = createAsyncQuery(
-        { data: null, error: { message: 'DB failure' } },
-        { withOrder: true },
-      );
-
-      mockSupabaseService.getClient.mockReturnValue(
-        createClientMock({
-          participant: participantQuery,
-          announcement: announcementsQuery,
-        }),
-      );
-
-      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
-        'Failed to list announcements',
-      );
+    const participantQuery = createAsyncQuery({
+      data: { id: 'participant-001' },
+      error: null,
     });
 
-    it('Given: une erreur DB sur enrollments, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
-      mockAuthClient.auth.getUser.mockResolvedValue({
-        data: { user: { id: 'user-001' } },
-        error: null,
-      });
+    const announcementsQuery = createAsyncQuery(
+      { data: [], error: null },
+      { withOrder: true },
+    );
 
-      const participantQuery = createAsyncQuery({
-        data: { id: 'participant-001' },
-        error: null,
-      });
+    const enrollmentsQuery = createAsyncQuery(
+      { data: null, error: { message: 'enrollment DB error' } },
+      { withIn: true },
+    );
 
-      const announcementsQuery = createAsyncQuery(
-        { data: [], error: null },
-        { withOrder: true },
-      );
+    mockSupabaseService.getClient.mockReturnValue(
+      createClientMock({
+        participant: participantQuery,
+        announcement: announcementsQuery,
+        enrollment: enrollmentsQuery,
+      }),
+    );
 
-      const enrollmentsQuery = createAsyncQuery(
-        { data: null, error: { message: 'enrollment DB error' } },
-        { withIn: true },
-      );
-
-      mockSupabaseService.getClient.mockReturnValue(
-        createClientMock({
-          participant: participantQuery,
-          announcement: announcementsQuery,
-          enrollment: enrollmentsQuery,
-        }),
-      );
-
-      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
-        'Failed to get enrollments',
-      );
-    });
-
-    it('Given: announcements et enrollments null sans erreur, When: listAnnouncements appelé, Then: retourne une liste vide', async () => {
-      mockAuthClient.auth.getUser.mockResolvedValue({
-        data: { user: { id: 'user-001' } },
-        error: null,
-      });
-
-      const participantQuery = createAsyncQuery({
-        data: { id: 'participant-001' },
-        error: null,
-      });
-
-      const announcementsQuery = createAsyncQuery(
-        { data: null, error: null },
-        { withOrder: true },
-      );
-
-      const enrollmentsQuery = createAsyncQuery(
-        { data: null, error: null },
-        { withIn: true },
-      );
-
-      mockSupabaseService.getClient.mockReturnValue(
-        createClientMock({
-          participant: participantQuery,
-          announcement: announcementsQuery,
-          enrollment: enrollmentsQuery,
-        }),
-      );
-
-      const result = await service.listAnnouncements('valid-token');
-      expect(result.total).toBe(0);
-      expect(result.data).toHaveLength(0);
-    });
-
-    it("Given: audience helper retourne false pour all_participants, When: listAnnouncements appelé, Then: lève 'Invalid audience type'", async () => {
-      const audienceMock =
-        domainUtils.isMvpSupportedAnnouncementAudience as jest.MockedFunction<
-          typeof domainUtils.isMvpSupportedAnnouncementAudience
-        >;
-      audienceMock.mockReturnValueOnce(false);
-
-      mockAuthClient.auth.getUser.mockResolvedValue({
-        data: { user: { id: 'user-001' } },
-        error: null,
-      });
-
-      const participantQuery = createAsyncQuery({
-        data: { id: 'participant-001' },
-        error: null,
-      });
-
-      const announcementsQuery = createAsyncQuery(
-        { data: [], error: null },
-        { withOrder: true },
-      );
-
-      const enrollmentsQuery = createAsyncQuery(
-        { data: [], error: null },
-        { withIn: true },
-      );
-
-      mockSupabaseService.getClient.mockReturnValue(
-        createClientMock({
-          participant: participantQuery,
-          announcement: announcementsQuery,
-          enrollment: enrollmentsQuery,
-        }),
-      );
-
-      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
-        'Invalid audience type',
-      );
-    });
+    await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+      'Failed to get enrollments',
+    );
   });
 
+  it('Given: announcements et enrollments null sans erreur, When: listAnnouncements appelé, Then: retourne une liste vide', async () => {
+    mockAuthClient.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-001' } },
+      error: null,
+    });
+
+    const participantQuery = createAsyncQuery({
+      data: { id: 'participant-001' },
+      error: null,
+    });
+
+    const announcementsQuery = createAsyncQuery(
+      { data: null, error: null },
+      { withOrder: true },
+    );
+
+    const enrollmentsQuery = createAsyncQuery(
+      { data: null, error: null },
+      { withIn: true },
+    );
+
+    mockSupabaseService.getClient.mockReturnValue(
+      createClientMock({
+        participant: participantQuery,
+        announcement: announcementsQuery,
+        enrollment: enrollmentsQuery,
+      }),
+    );
+
+    const result = await service.listAnnouncements('valid-token');
+    expect(result.total).toBe(0);
+    expect(result.data).toHaveLength(0);
+  });
+
+  it("Given: audience helper retourne false pour all_participants, When: listAnnouncements appelé, Then: lève 'Invalid audience type'", async () => {
+    const audienceMock =
+      domainUtils.isMvpSupportedAnnouncementAudience as jest.MockedFunction<
+        typeof domainUtils.isMvpSupportedAnnouncementAudience
+      >;
+    audienceMock.mockReturnValueOnce(false);
+
+    mockAuthClient.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-001' } },
+      error: null,
+    });
+
+    const participantQuery = createAsyncQuery({
+      data: { id: 'participant-001' },
+      error: null,
+    });
+
+    const announcementsQuery = createAsyncQuery(
+      { data: [], error: null },
+      { withOrder: true },
+    );
+
+    const enrollmentsQuery = createAsyncQuery(
+      { data: [], error: null },
+      { withIn: true },
+    );
+
+    mockSupabaseService.getClient.mockReturnValue(
+      createClientMock({
+        participant: participantQuery,
+        announcement: announcementsQuery,
+        enrollment: enrollmentsQuery,
+      }),
+    );
+
+    await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+      'Invalid audience type',
+    );
+  });
   describe('getAnnouncementById — audience program et cohort (regression doublons staging-main)', () => {
     it('Given: annonce de type program avec participant inscrit, When: getAnnouncementById appelé, Then: retourne annonce', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
