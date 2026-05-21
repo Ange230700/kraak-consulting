@@ -22,13 +22,13 @@ export class GsapAnimationsService {
     }
 
     if (
-      typeof window === 'undefined' ||
-      typeof window.matchMedia !== 'function'
+      globalThis.window === undefined ||
+      typeof globalThis.matchMedia !== 'function'
     ) {
       return true;
     }
 
-    return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return !globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   /**
