@@ -89,15 +89,16 @@ describe('HomePage', () => {
     expect(content).toContain('Recrutement et placement en emploi');
   });
 
-  it('Given the home page When it renders Then it does not duplicate the dedicated FAQ route content', () => {
+  it('Given the home page When it renders Then it shows a single home-specific FAQ section', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
     const faqAccordion = element.querySelector('kraak-faq-accordion');
 
-    expect(faqAccordion).toBeNull();
-    expect(element.textContent).not.toContain('Questions fr\u00e9quentes');
+    expect(faqAccordion).not.toBeNull();
+    expect(element.querySelectorAll('kraak-faq-accordion')).toHaveLength(1);
+    expect(element.textContent).toContain('Questions fr\u00e9quentes');
   });
 
   it("Given the home page When it renders Then it exposes proof blocks grounded in KRAAK's real positioning", () => {
@@ -110,5 +111,17 @@ describe('HomePage', () => {
     expect(content).toContain('Approche bidirectionnelle');
     expect(content).toContain('Exp\u00e9rience internationale');
     expect(content).toContain('Accompagnement structur\u00e9');
+  });
+
+  it('should render home-specific FAQ section', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain(
+      'Je ne sais pas par o\u00F9 commencer, quelle est la premi\u00E8re \u00E9tape ?',
+    );
   });
 });

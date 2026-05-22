@@ -4,19 +4,20 @@ import { NgStyle } from '@angular/common';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { AboutPreviewSections } from '../../shared/about-preview-sections/about-preview-sections.component';
 
-const STAGING_ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
+const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
 );
 
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
-  imports: [NgStyle, CtaBanner],
+  imports: [NgStyle, CtaBanner, AboutPreviewSections],
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = STAGING_ABOUT_HERO_BACKGROUND_STYLE;
+  protected readonly heroBackgroundStyle = ABOUT_HERO_BACKGROUND_STYLE;
 
   private readonly gsapService = inject(GsapAnimationsService);
 

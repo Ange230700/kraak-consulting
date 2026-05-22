@@ -50,4 +50,14 @@ describe('AboutPage', () => {
     expect(content).toContain('Canada');
     expect(content).toContain("C\u00f4te d'Ivoire");
   });
+
+  it('should render the team preview section', () => {
+    const fixture = TestBed.createComponent(AboutPage);
+    fixture.detectChanges();
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain("Pr\u00E9visualisation de l'\u00E9quipe KRAAK");
+    expect(content).toContain("L'\u00E9quipe KRAAK");
+    expect(content).toContain('Savannah Nguyen');
+  });
 });
