@@ -161,7 +161,7 @@ jobs:
         # NOSONAR
         run: |
           pnpm --filter @kraak/client exec playwright --version
-          pnpm --filter @kraak/client exec playwright install --with-deps chromium
+          pnpm --filter @kraak/client exec playwright install --with-deps
 
       - name: Exécuter les tests E2E
         run: pnpm test:e2e:all
