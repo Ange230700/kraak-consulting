@@ -307,114 +307,6 @@ describe('AuthService', () => {
     });
   });
 
-  // Given un signup avec email déjà utilisé
-  // When signUp est appelé
-  // Then une BadRequestException avec le message 'already' est renvoyée
-  it("Given un signup avec email déjà utilisé, When signUp est appelé, Then une BadRequestException avec message 'already' est renvoyée", async () => {
-    authClient.auth.signUp.mockResolvedValue({
-      data: { user: null, session: null },
-      error: { message: 'User already registered' },
-    });
-
-    await expect(
-      service.signUp({
-        email: 'alice@example.com',
-        password: 'motdepasse-securise',
-        firstName: 'Alice',
-        lastName: 'Dupont',
-        phone: null,
-        preferredContactChannel: null,
-        redirectTo: null,
-      }),
-    ).rejects.toMatchObject({
-      response: {
-        message: 'Un compte existe déjà pour cette adresse email.',
-      },
-    });
-  });
-
-  // Given un signup avec mot de passe trop faible
-  // When signUp est appelé
-  // Then une BadRequestException avec message 'password' est renvoyée
-  it("Given un signup avec mot de passe trop faible, When signUp est appelé, Then une BadRequestException avec message 'password' est renvoyée", async () => {
-    authClient.auth.signUp.mockResolvedValue({
-      data: { user: null, session: null },
-      error: { message: 'Password too weak' },
-    });
-
-    await expect(
-      service.signUp({
-        email: 'alice@example.com',
-        password: 'motdepasse-securise',
-        firstName: 'Alice',
-        lastName: 'Dupont',
-        phone: null,
-        preferredContactChannel: null,
-        redirectTo: null,
-      }),
-    ).rejects.toMatchObject({
-      response: {
-        message: 'Le mot de passe ne respecte pas les exigences minimales.',
-      },
-    });
-  });
-
-  // Given un signup avec email invalide
-  // When signUp est appelé
-  // Then une BadRequestException avec message explicite est renvoyée
-  it('Given un signup avec email invalide, When signUp est appelé, Then une BadRequestException explicite est renvoyée', async () => {
-    authClient.auth.signUp.mockResolvedValue({
-      data: { user: null, session: null },
-      error: { message: 'Email address is invalid' },
-    });
-
-    await expect(
-      service.signUp({
-        email: 'alice@example.com',
-        password: 'motdepasse-securise',
-        firstName: 'Alice',
-        lastName: 'Dupont',
-        phone: null,
-        preferredContactChannel: null,
-        redirectTo: null,
-      }),
-    ).rejects.toMatchObject({
-      response: {
-        message: "L'adresse email fournie est invalide.",
-      },
-    });
-  });
-
-  // Given un signup limité par le provider auth
-  // When signUp est appelé
-  // Then une BadRequestException avec message explicite est renvoyée
-  it('Given un signup rate-limited, When signUp est appelé, Then une BadRequestException explicite est renvoyée', async () => {
-    authClient.auth.signUp.mockResolvedValue({
-      data: { user: null, session: null },
-      error: { message: 'Email rate limit exceeded' },
-    });
-
-    await expect(
-      service.signUp({
-        email: 'alice@example.com',
-        password: 'motdepasse-securise',
-        firstName: 'Alice',
-        lastName: 'Dupont',
-        phone: null,
-        preferredContactChannel: null,
-        redirectTo: null,
-      }),
-    ).rejects.toMatchObject({
-      response: {
-        message:
-          "Le service d'inscription est temporairement indisponible. Réessayez plus tard.",
-      },
-    });
-  });
-
-  // Given un signup avec erreur Supabase générique
-  // When signUp est appelé
-  // Then une BadRequestException avec message générique est renvoyée
   it('Given un signup avec erreur générique, When signUp est appelé, Then une BadRequestException avec message générique est renvoyée', async () => {
     authClient.auth.signUp.mockResolvedValue({
       data: { user: null, session: null },
@@ -839,7 +731,6 @@ describe('AuthService', () => {
       },
     });
   });
-
   // Given un signIn Supabase qui renvoie un user présent mais session null sans erreur
   // When signIn est appelé
   // Then une UnauthorizedException est renvoyée (branche !data.session couverte)

@@ -39,14 +39,26 @@ describe('ServicesPage', () => {
     expect(content).toContain('Prochaine \u00e9tape');
   });
 
-  it('Given the services page When it renders Then it does not duplicate the dedicated FAQ route content', () => {
+  it('Given the services page When it renders Then it shows a single service-specific FAQ section', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
     const faqAccordion = element.querySelector('kraak-faq-accordion');
 
-    expect(faqAccordion).toBeNull();
-    expect(element.textContent).not.toContain('Questions fr\u00e9quentes');
+    expect(faqAccordion).not.toBeNull();
+    expect(element.querySelectorAll('kraak-faq-accordion')).toHaveLength(1);
+    expect(element.textContent).toContain('Questions fr\u00e9quentes');
+  });
+
+  it('should render service-specific FAQ section', () => {
+    const fixture = TestBed.createComponent(ServicesPage);
+    fixture.detectChanges();
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain(
+      'Comment choisir le service le plus adapt\u00E9 \u00E0 mon objectif ?',
+    );
   });
 });
