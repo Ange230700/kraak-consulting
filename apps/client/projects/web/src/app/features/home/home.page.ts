@@ -18,9 +18,7 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   templateUrl: './home.page.html',
 })
 export default class HomePage implements OnInit, OnDestroy {
-  readonly heroBackgroundStyle = buildHeroBackgroundStyle(
-    '/assets/site-visuals/photos/home-hero-workshop.avif',
-  );
+  readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE;
   protected readonly keySolutions: readonly string[] = [
     'D\u00e9veloppement personnel et professionnel',
     'Anglais et fran\u00e7ais professionnel',

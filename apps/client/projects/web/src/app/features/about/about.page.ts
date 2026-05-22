@@ -16,9 +16,7 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = buildHeroBackgroundStyle(
-    '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
-  );
+  protected readonly heroBackgroundStyle = ABOUT_HERO_BACKGROUND_STYLE;
 
   private readonly gsapService = inject(GsapAnimationsService);
 
