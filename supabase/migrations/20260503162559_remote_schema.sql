@@ -6,6 +6,8 @@ drop constraint "announcement_mvp_audience_scope";
 alter table "public"."announcement"
 drop constraint "announcement_published_at_consistency";
 
+drop trigger if exists "on_auth_user_created" on "auth"."users";
+
 drop function if exists "public"."handle_auth_user_created" ();
 
 drop index if exists "public"."idx_enrollment_progress_completed_session_ids";
@@ -38,5 +40,3 @@ drop type "public"."announcement_priority";
 drop type "public"."resource_audience";
 
 drop type "public"."resource_theme";
-
-drop trigger if exists "on_auth_user_created" on "auth"."users";
