@@ -160,8 +160,8 @@ jobs:
         # proviennent de distributions officielles et ne représentent pas un risque de sécurité.
         # NOSONAR
         run: |
-          pnpm --ignore-scripts exec playwright --version
-          pnpm --ignore-scripts exec playwright install --with-deps chromium
+          pnpm exec playwright --version
+          pnpm exec playwright install --with-deps chromium
 
       - name: Exécuter les tests E2E
         run: pnpm test:e2e:all
