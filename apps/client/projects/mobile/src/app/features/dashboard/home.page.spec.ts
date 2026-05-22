@@ -323,7 +323,6 @@ describe('Mobile HomePage', () => {
       'Service temporairement indisponible',
     );
   });
-
   it('Given dashboardState is null, when getters are read before ngOnInit, then they return empty collections', () => {
     const fixture = TestBed.createComponent(HomePage);
     // Do NOT call detectChanges — ngOnInit has not run, dashboardState is null

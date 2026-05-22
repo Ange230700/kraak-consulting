@@ -542,4 +542,41 @@ describe('ContactPage', () => {
     ]);
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
+
+  // Given un formulaire valide
+  // When l'API répond avec une erreur sans tableau errors structuré
+  // Then le message d'erreur générique est affiché
+  it('devrait afficher le message générique si la réponse erreur ne contient pas de tableau errors', () => {
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@exemple.com',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d\u2019Ivoire',
+      serviceType: 'formation',
+      message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+    });
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne((req) =>
+      req.url.endsWith('/contact'),
+    );
+    request.flush(
+      { message: 'Internal Server Error' },
+      { status: 500, statusText: 'Internal Server Error' },
+    );
+
+    fixture.detectChanges();
+
+    expect(component.success()).toBe(false);
+    expect(component.loading()).toBe(false);
+    expect(component.apiErrors()).toEqual([
+      'Une erreur est survenue. Veuillez réessayer plus tard.',
+    ]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+  });
 });

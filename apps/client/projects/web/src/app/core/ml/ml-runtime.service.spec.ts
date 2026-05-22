@@ -19,7 +19,6 @@ interface MlRuntimeServiceSpyTarget {
 function asSpyTarget(service: MlRuntimeService): MlRuntimeServiceSpyTarget {
   return service as unknown as MlRuntimeServiceSpyTarget;
 }
-
 describe('MlRuntimeService', () => {
   afterEach(() => {
     MlRuntimeService.resetForTests();
