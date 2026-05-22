@@ -38,5 +38,4 @@ drop column "resource_theme";
 drop type public.announcement_priority;
 
 drop type public.resource_audience;
-
 drop type public.resource_theme;
