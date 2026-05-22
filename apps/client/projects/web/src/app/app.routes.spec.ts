@@ -319,6 +319,5 @@ describe('Web routes', () => {
 
       expect(loaded).toBeTruthy();
     });
-
   });
 });
