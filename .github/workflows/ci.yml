@@ -137,6 +137,8 @@ jobs:
     name: Tests E2E
     runs-on: ubuntu-latest
     needs: build
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: 0
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -157,7 +159,9 @@ jobs:
         # donc --ignore-scripts ne s'applique pas. Les dépendances système (--with-deps)
         # proviennent de distributions officielles et ne représentent pas un risque de sécurité.
         # NOSONAR
-        run: pnpm --filter @kraak/client exec playwright install --with-deps chromium firefox webkit
+        run: |
+          pnpm --filter @kraak/client exec playwright --version
+          pnpm --filter @kraak/client exec playwright install --with-deps
 
       - name: Exécuter les tests E2E
         run: pnpm test:e2e:all
@@ -190,7 +194,7 @@ jobs:
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 

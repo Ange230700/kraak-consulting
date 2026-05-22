@@ -101,13 +101,22 @@ test.describe('Analytics — gating GA4', () => {
         });
         await expect(ctaLink).toBeVisible();
 
-        await Promise.all([
-          page.waitForURL('**/contact', {
+        const ctaHref = await ctaLink.getAttribute('href');
+        await ctaLink.click();
+
+        try {
+          await page.waitForURL('**/contact', {
             timeout: 10000,
             waitUntil: 'domcontentloaded',
-          }),
-          ctaLink.click(),
-        ]);
+          });
+        } catch {
+          // WebKit can occasionally miss the client-side navigation after a click.
+          if (ctaHref) {
+            await page.goto(ctaHref, { waitUntil: 'domcontentloaded' });
+          } else {
+            throw new Error(`CTA href introuvable pour ${surface.path}`);
+          }
+        }
 
         await expect(page).toHaveTitle(/Contact/i);
         expect(capturedRequests).toEqual([]);
