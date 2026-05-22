@@ -1999,12 +1999,19 @@ describe('AnnouncementsService', () => {
         error: new Error('Invalid'),
       });
 
-      mockSupabaseService.getClient.mockReturnValue({
-        from: jest.fn(),
-      });
+      const announcementsQuery = createAsyncQuery(
+        { data: [], error: null },
+        { withOrder: true },
+      );
 
-      await expect(service.listAnnouncements('bad-token')).rejects.toThrow(
-        'Could not resolve participant ID from access token',
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(service.listAnnouncements('bad-token')).rejects.toBeInstanceOf(
+        UnauthorizedException,
       );
     });
 
