@@ -2010,9 +2010,9 @@ describe('AnnouncementsService', () => {
         }),
       );
 
-      await expect(service.listAnnouncements('bad-token')).rejects.toBeInstanceOf(
-        UnauthorizedException,
-      );
+      await expect(
+        service.listAnnouncements('bad-token'),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('Given: une erreur DB sur announcements, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
