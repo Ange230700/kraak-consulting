@@ -53,7 +53,7 @@ test.describe(`SEO technique du site vitrine`, () => {
     );
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
       'content',
-      /assets\/site-visuals\/photos\/home-hero-workshop\.avif$/,
+      /assets\/site-visuals\/photos\/home-hero-workshop\.jpg$/,
     );
   });
 
