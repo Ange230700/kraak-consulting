@@ -24,10 +24,13 @@ additional_redirect_urls = [
   "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/auth/reset",
   "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/connexion",
   "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/mot-de-passe-oublie",
+<<<<<<< HEAD
   "https://kraak-consulting-*-ange230700s-projects.vercel.app/auth/callback",
   "https://kraak-consulting-*-ange230700s-projects.vercel.app/auth/reset",
   "https://kraak-consulting-*-ange230700s-projects.vercel.app/connexion",
   "https://kraak-consulting-*-ange230700s-projects.vercel.app/mot-de-passe-oublie",
+=======
+>>>>>>> 8589ff5 (fix(supabase): add /connexion and /mot-de-passe-oublie to redirect allowlist)
   "kraak://auth/callback",
   "kraak://auth/reset",
 ]

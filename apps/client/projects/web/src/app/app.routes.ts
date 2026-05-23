@@ -79,7 +79,8 @@ const notFoundSeo: SeoPageDefinition = {
     description:
       "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
     imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt: 'Carte de partage KRAAK Consulting.',
+    imageAlt:
+      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
   },
   sitemap: {
     changeFrequency: 'never',
@@ -97,7 +98,8 @@ const unauthorizedSeo: SeoPageDefinition = {
     description:
       'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
     imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt: 'Carte de partage KRAAK Consulting.',
+    imageAlt:
+      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
   },
   sitemap: {
     changeFrequency: 'never',
@@ -115,7 +117,8 @@ const forbiddenSeo: SeoPageDefinition = {
     description:
       'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
     imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt: 'Carte de partage KRAAK Consulting.',
+    imageAlt:
+      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
   },
   sitemap: {
     changeFrequency: 'never',
@@ -133,7 +136,8 @@ const serverErrorSeo: SeoPageDefinition = {
     description:
       'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
     imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt: 'Carte de partage KRAAK Consulting.',
+    imageAlt:
+      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
   },
   sitemap: {
     changeFrequency: 'never',

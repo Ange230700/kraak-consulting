@@ -49,7 +49,7 @@ describe('ScrollToTop', () => {
 
   describe('Scroll to top functionality', () => {
     it('should scroll to top when button is clicked', () => {
-      const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
+      const scrollToSpy = vi.spyOn(window, 'scrollTo');
 
       component.scrollToTop();
 
@@ -66,7 +66,7 @@ describe('ScrollToTop', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
       // Simulate scroll event
-      globalThis.dispatchEvent(new Event('scroll'));
+      window.dispatchEvent(new Event('scroll'));
 
       expect(updateVisibilitySpy).toHaveBeenCalled();
 
@@ -75,7 +75,7 @@ describe('ScrollToTop', () => {
 
     it('should set isVisible to true when scrollY > threshold', () => {
       // Mock window.scrollY
-      Object.defineProperty(globalThis, 'scrollY', {
+      Object.defineProperty(window, 'scrollY', {
         writable: true,
         configurable: true,
         value: 500,
@@ -87,7 +87,7 @@ describe('ScrollToTop', () => {
     });
 
     it('should set isVisible to false when scrollY < threshold', () => {
-      Object.defineProperty(globalThis, 'scrollY', {
+      Object.defineProperty(window, 'scrollY', {
         writable: true,
         configurable: true,
         value: 100,
@@ -101,7 +101,7 @@ describe('ScrollToTop', () => {
 
   describe('Lifecycle', () => {
     it('should attach scroll listener on init', () => {
-      const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
       component.ngOnInit();
 
@@ -114,10 +114,7 @@ describe('ScrollToTop', () => {
     });
 
     it('should remove scroll listener on destroy', () => {
-      const removeEventListenerSpy = vi.spyOn(
-        globalThis,
-        'removeEventListener',
-      );
+      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
 
       component.ngOnDestroy();
 
