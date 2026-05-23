@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ButtonDirective } from 'primeng/button';
 
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import {
@@ -10,13 +9,13 @@ import {
 } from '../../shared/faq-accordion/faq-accordion.component';
 
 const FAQ_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/resources-orientation-consultation.avif',
+  '/assets/site-visuals/photos/home-hero-workshop.avif',
 );
 
 @Component({
   selector: 'kraak-faq-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, ButtonDirective, FaqAccordion],
+  imports: [NgStyle, RouterLink, FaqAccordion],
   templateUrl: './faq.page.html',
 })
 export default class FaqPage {

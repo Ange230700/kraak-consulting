@@ -78,7 +78,7 @@ const notFoundSeo: SeoPageDefinition = {
     title: 'Page introuvable | KRAAK Consulting',
     description:
       "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
-    imagePath: '/open-graph/kraak-share-card.svg',
+    imagePath: '/assets/site-visuals/photos/home-hero-workshop.avif',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
   sitemap: {
@@ -96,7 +96,7 @@ const unauthorizedSeo: SeoPageDefinition = {
     title: 'Authentification requise | KRAAK Consulting',
     description:
       'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
-    imagePath: '/open-graph/kraak-share-card.svg',
+    imagePath: '/assets/site-visuals/photos/home-hero-workshop.avif',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
   sitemap: {
@@ -114,7 +114,7 @@ const forbiddenSeo: SeoPageDefinition = {
     title: 'Accès refusé | KRAAK Consulting',
     description:
       'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
-    imagePath: '/open-graph/kraak-share-card.svg',
+    imagePath: '/assets/site-visuals/photos/home-hero-workshop.avif',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
   sitemap: {
@@ -132,7 +132,7 @@ const serverErrorSeo: SeoPageDefinition = {
     title: 'Incident technique | KRAAK Consulting',
     description:
       'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
-    imagePath: '/open-graph/kraak-share-card.svg',
+    imagePath: '/assets/site-visuals/photos/home-hero-workshop.avif',
     imageAlt: 'Carte de partage KRAAK Consulting.',
   },
   sitemap: {

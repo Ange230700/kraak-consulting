@@ -6,7 +6,7 @@ import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 
 const RESOURCES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/resources-orientation-consultation.avif',
+  '/assets/site-visuals/photos/home-hero-workshop.avif',
 );
 
 @Component({
