@@ -53,7 +53,7 @@ test.describe(`SEO technique du site vitrine`, () => {
     );
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
       'content',
-      /open-graph\/kraak-share-card\.svg$/,
+      /assets\/site-visuals\/photos\/home-hero-workshop\.avif$/,
     );
   });
 
