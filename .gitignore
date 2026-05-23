@@ -36,6 +36,11 @@ coverage/
 
 # Playwright
 test-results/
+!/test-results/
+/test-results/*
+!/test-results/postman/
+/test-results/postman/*
+!/test-results/postman/api-user-journey.collection.json
 playwright-report/
 blob-report/
 playwright/.cache/
