@@ -50,7 +50,7 @@ describe('site-seo', () => {
 
     expect(homePage).toBeDefined();
     expect(homePage?.openGraph.imagePath).toBe(
-      '/assets/site-visuals/photos/home-hero-workshop.avif',
+      '/assets/site-visuals/photos/home-hero-workshop.jpg',
     );
   });
 
