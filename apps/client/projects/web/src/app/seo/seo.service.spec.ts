@@ -7,7 +7,7 @@ import { SeoService } from './seo.service';
 const LOCAL_BASE_URL = 'http://localhost:4200';
 const LOCAL_HOME_URL = `${LOCAL_BASE_URL}/`;
 const LOCAL_CONTACT_URL = `${LOCAL_BASE_URL}/contact`;
-const LOCAL_OG_IMAGE_URL = `${LOCAL_BASE_URL}/assets/site-visuals/photos/home-hero-workshop.avif`;
+const LOCAL_OG_IMAGE_URL = `${LOCAL_BASE_URL}/assets/site-visuals/photos/home-hero-workshop.jpg`;
 
 describe('SeoService', () => {
   beforeEach(() => {
