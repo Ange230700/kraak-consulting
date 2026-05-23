@@ -6,7 +6,6 @@ import { ButtonDirective } from 'primeng/button';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
-import { HomePreviewSections } from '../../shared/home-preview-sections/home-preview-sections.component';
 import {
   FaqAccordion,
   type FaqItem,
@@ -19,14 +18,7 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
-  imports: [
-    NgStyle,
-    RouterLink,
-    ButtonDirective,
-    FaqAccordion,
-    CtaBanner,
-    HomePreviewSections,
-  ],
+  imports: [NgStyle, RouterLink, ButtonDirective, FaqAccordion, CtaBanner],
   templateUrl: './home.page.html',
   styles: [
     `

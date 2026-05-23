@@ -28,7 +28,6 @@ import {
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
-import { FaqAccordion } from '../../shared/faq-accordion/faq-accordion.component';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -52,7 +51,7 @@ const GENERIC_CONTACT_ERROR_MESSAGE =
   'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.';
 
 const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/contact-hero-consultation.avif',
+  '/assets/site-visuals/photos/services-coaching.avif',
 );
 
 @Component({
@@ -66,7 +65,6 @@ const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
     InputText,
     Textarea,
     Message,
-    FaqAccordion,
     CtaBanner,
     PublicConversionTrackingDirective,
   ],

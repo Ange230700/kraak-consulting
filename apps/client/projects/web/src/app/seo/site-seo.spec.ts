@@ -50,7 +50,7 @@ describe('site-seo', () => {
 
     expect(homePage).toBeDefined();
     expect(homePage?.openGraph.imagePath).toBe(
-      '/open-graph/kraak-share-card.svg',
+      '/assets/site-visuals/photos/home-hero-workshop.avif',
     );
   });
 
