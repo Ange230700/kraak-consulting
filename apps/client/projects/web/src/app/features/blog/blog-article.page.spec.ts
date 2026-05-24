@@ -122,6 +122,29 @@ describe('BlogArticlePage', () => {
     );
     expect(jsonLdTag).not.toBeNull();
     expect(jsonLdTag?.textContent).toContain('"@type":"Article"');
+    expect(
+      blogPublicServiceMock.getPublishedArticleBySlug,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  it('Given an API article with absolute cover image URL, When SEO is rendered, Then JSON-LD keeps that absolute URL', () => {
+    blogPublicServiceMock.getPublishedArticleBySlug.mockReturnValueOnce(
+      of({
+        ...blogArticles[0],
+        coverImagePath: 'https://cdn.example.com/cover.jpg',
+      }),
+    );
+
+    const fixture = TestBed.createComponent(BlogArticlePage);
+    fixture.detectChanges();
+
+    const jsonLdTag = document.head.querySelector<HTMLScriptElement>(
+      '#kraak-blog-article-jsonld',
+    );
+
+    expect(jsonLdTag?.textContent).toContain(
+      '"image":["https://cdn.example.com/cover.jpg"]',
+    );
   });
 
   it('Given the article page initial load When route params emit the initial slug Then the article is fetched once', () => {

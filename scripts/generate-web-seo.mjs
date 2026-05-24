@@ -153,7 +153,11 @@ const main = async () => {
   );
 
   await mkdir(publicDir, { recursive: true });
-  await writeFile(join(publicDir, 'robots.txt'), buildRobotsTxt(siteUrl), 'utf8');
+  await writeFile(
+    join(publicDir, 'robots.txt'),
+    buildRobotsTxt(siteUrl),
+    'utf8',
+  );
   await writeFile(
     join(publicDir, 'sitemap.xml'),
     buildSitemapXml(sitemapPages, siteUrl),

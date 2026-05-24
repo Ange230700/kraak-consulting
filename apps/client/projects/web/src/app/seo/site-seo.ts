@@ -36,7 +36,6 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 };
 
 export const seoPages = siteSeoDefinitions as SeoPageDefinition[];
-
 const blogSitemapPages: SeoPageDefinition[] = seoPages.filter(({ path }) =>
   path.startsWith('blog/'),
 );
@@ -69,6 +68,15 @@ export const resolvePublicSiteUrl = (siteUrl?: string): string => {
 };
 
 export const buildAbsoluteUrl = (path: string, siteUrl: string): string => {
+  try {
+    const absoluteUrl = new URL(path);
+    if (absoluteUrl.protocol === 'http:' || absoluteUrl.protocol === 'https:') {
+      return absoluteUrl.toString();
+    }
+  } catch {
+    // Keep relative path behavior when URL parsing fails.
+  }
+
   const normalizedPath = normalizeRoutePath(path);
   const pathname = normalizedPath.length > 0 ? `/${normalizedPath}` : '/';
 
