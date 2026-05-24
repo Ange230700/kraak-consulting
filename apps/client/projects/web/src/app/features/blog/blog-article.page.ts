@@ -103,10 +103,28 @@ export default class BlogArticlePage implements OnInit, OnDestroy {
     this.gsapService.killAllAnimations();
   }
 
+  private isAbsoluteUrl(value: string): boolean {
+    try {
+      const parsed = new URL(value);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
+  private resolveArticleImageUrl(imagePathOrUrl: string, siteUrl: string): string {
+    return this.isAbsoluteUrl(imagePathOrUrl)
+      ? imagePathOrUrl
+      : buildAbsoluteUrl(imagePathOrUrl, siteUrl);
+  }
+
   private updateStructuredData(article: BlogArticle): void {
     const siteUrl = resolvePublicSiteUrl(environment.siteUrl);
     const canonicalUrl = buildAbsoluteUrl(`blog/${article.slug}`, siteUrl);
-    const imageUrl = buildAbsoluteUrl(article.coverImagePath, siteUrl);
+    const imageUrl = this.resolveArticleImageUrl(
+      article.coverImagePath,
+      siteUrl,
+    );
     const publishedAt =
       article.publishedAt ?? article.createdAt ?? new Date().toISOString();
     const updatedAt = article.updatedAt ?? article.createdAt ?? publishedAt;
