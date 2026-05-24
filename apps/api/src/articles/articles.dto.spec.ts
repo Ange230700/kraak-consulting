@@ -91,4 +91,54 @@ describe('Articles DTO validation', () => {
       errors: ['Au moins un champ doit être fourni pour la mise à jour.'],
     });
   });
+
+  it('Given un corps invalide, When la validation création ou mise à jour est appelée, Then une erreur de corps invalide est renvoyée', () => {
+    expect(validateCreateArticlePayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+
+    expect(validateUpdateArticlePayload('invalid')).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+  });
+
+  it('Given des champs optionnels invalides en mise à jour, When validateUpdateArticlePayload est appelé, Then les erreurs associées sont renvoyées', () => {
+    const result = validateUpdateArticlePayload({
+      slug: '   ',
+      status: 'invalid',
+      categoryIds: [],
+      tagIds: [],
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ slug est requis.',
+        'Le champ status est invalide.',
+        'Le champ categoryIds doit contenir au moins une valeur.',
+        'Le champ tagIds doit contenir au moins une valeur.',
+      ],
+    });
+  });
+
+  it('Given des valeurs nullable en mise à jour, When validateUpdateArticlePayload est appelé, Then les champs sont normalisés', () => {
+    const result = validateUpdateArticlePayload({
+      coverImageUrl: 'not-a-url',
+      publishedAt: 'not-a-date',
+      seoTitle: '  ',
+      seoDescription: ' Description SEO ',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        coverImageUrl: null,
+        publishedAt: null,
+        seoTitle: null,
+        seoDescription: 'Description SEO',
+      },
+    });
+  });
 });
