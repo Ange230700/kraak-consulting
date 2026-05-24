@@ -34,8 +34,7 @@ export default class BlogPage implements OnInit, OnDestroy {
   protected totalPages = 1;
   protected currentPage = 1;
   protected totalArticles = 0;
-  protected isLoading = false;
-  protected errorMessage = '';
+  protected isLoading = true;
   private listArticles: BlogArticle[] = [];
 
   private readonly destroyRef = inject(DestroyRef);
@@ -53,21 +52,17 @@ export default class BlogPage implements OnInit, OnDestroy {
     this.gsapService.initializeButtonTransitions();
     this.gsapService.initializeSectionAnimations();
 
+    this.loadPublishedArticles();
+  }
+
+  private loadPublishedArticles(): void {
     this.blogPublicService
       .listPublishedArticles()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (articles) => {
-          this.errorMessage = '';
           this.isLoading = false;
           this.applyArticles(articles);
-        },
-        error: (error: unknown) => {
-          console.error('[BlogPage] listPublishedArticles failed', { error });
-          this.isLoading = false;
-          this.errorMessage =
-            'Le blog est temporairement indisponible. Merci de réessayer dans un instant.';
-          this.applyArticles([]);
         },
       });
   }
