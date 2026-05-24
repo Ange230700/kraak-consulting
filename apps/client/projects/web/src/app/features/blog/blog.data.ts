@@ -418,9 +418,7 @@ export function mapPublicArticleToBlogArticle(
     categoryLabel: fallback?.categoryLabel ?? 'Actualités',
     categorySlug: fallback?.categorySlug ?? 'actualites',
     tagLabels: fallback?.tagLabels ?? [],
-    coverImagePath:
-      fallback?.coverImagePath ??
-      FALLBACK_COVER_IMAGE_PATH,
+    coverImagePath: fallback?.coverImagePath ?? FALLBACK_COVER_IMAGE_PATH,
     readingTimeMinutes:
       fallback?.readingTimeMinutes ??
       estimateReadingTimeMinutes(article.content),
