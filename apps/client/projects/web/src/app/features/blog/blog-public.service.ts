@@ -18,7 +18,19 @@ export class BlogPublicService {
   private readonly endpoint = `${resolveApiBaseUrl(environment.apiBaseUrl)}/articles`;
 
   private normalizeSlug(slug: string): string {
-    return slug.trim().replace(/^\/+|\/+$/g, '');
+    const trimmedSlug = slug.trim();
+    let start = 0;
+    let end = trimmedSlug.length;
+
+    while (start < end && trimmedSlug.charCodeAt(start) === 47) {
+      start += 1;
+    }
+
+    while (end > start && trimmedSlug.charCodeAt(end - 1) === 47) {
+      end -= 1;
+    }
+
+    return trimmedSlug.slice(start, end);
   }
 
   listPublishedArticles(): Observable<BlogArticle[]> {
