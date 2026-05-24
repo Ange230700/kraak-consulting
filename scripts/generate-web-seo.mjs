@@ -20,29 +20,70 @@ const seoSourcePath = join(
 );
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
 const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
-const blogSitemapPages = [
-  {
-    path: 'blog/clarifier-son-projet-avant-de-candidater',
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-  {
-    path: 'blog/choisir-un-format-de-formation-utile',
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-  {
-    path: 'blog/preparer-un-dossier-immigration-sans-perdre-le-fil',
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-];
+
+function extractBlogSitemapPages(seoConfig) {
+  const candidateCollections = [
+    seoConfig?.blog?.articles,
+    seoConfig?.blogArticles,
+    seoConfig?.pages,
+    seoConfig?.routes,
+  ];
+
+  for (const collection of candidateCollections) {
+    if (!Array.isArray(collection)) {
+      continue;
+    }
+
+    const blogPages = collection
+      .map((entry) => {
+        if (typeof entry === 'string') {
+          return {
+            path: entry.replace(/^\/+|\/+$/gu, ''),
+            sitemap: {
+              changeFrequency: 'monthly',
+              priority: 0.5,
+            },
+          };
+        }
+
+        if (!entry || typeof entry !== 'object') {
+          return null;
+        }
+
+        const normalizedPath =
+          typeof entry.path === 'string'
+            ? entry.path.replace(/^\/+|\/+$/gu, '')
+            : null;
+
+        if (!normalizedPath) {
+          return null;
+        }
+
+        return {
+          ...entry,
+          path: normalizedPath,
+          sitemap: {
+            changeFrequency: 'monthly',
+            priority: 0.5,
+            ...(entry.sitemap ?? {}),
+          },
+        };
+      })
+      .filter((entry) => entry && entry.path.startsWith('blog/'));
+
+    if (blogPages.length > 0) {
+      return blogPages;
+    }
+  }
+
+  throw new Error(
+    `Unable to derive blog sitemap pages from ${seoSourcePath}. ` +
+      'Add blog entries to site-seo.json so it remains the single source of truth.',
+  );
+}
+
+const seoSource = JSON.parse(await readFile(seoSourcePath, 'utf8'));
+const blogSitemapPages = extractBlogSitemapPages(seoSource);
 
 const trimTrailingSlashes = (value) => {
   let end = value.length;
