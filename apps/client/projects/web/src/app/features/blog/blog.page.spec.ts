@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { blogArticles } from './blog.data';
+import { BlogPublicService } from './blog-public.service';
 import BlogPage from './blog.page';
 
 const gsapAnimationsServiceMock: Pick<
@@ -21,6 +24,11 @@ const gsapAnimationsServiceMock: Pick<
   killAllAnimations: () => undefined,
 };
 
+const blogPublicServiceMock: Pick<BlogPublicService, 'listPublishedArticles'> =
+  {
+    listPublishedArticles: () => of([...blogArticles]),
+  };
+
 describe('BlogPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,6 +38,10 @@ describe('BlogPage', () => {
         {
           provide: GsapAnimationsService,
           useValue: gsapAnimationsServiceMock,
+        },
+        {
+          provide: BlogPublicService,
+          useValue: blogPublicServiceMock,
         },
       ],
     }).compileComponents();
@@ -41,8 +53,10 @@ describe('BlogPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('Given the blog page When it renders Then it shows the editorial hero and featured article', () => {
+  it('Given the blog page When it renders Then it shows the editorial hero and featured article', async () => {
     const fixture = TestBed.createComponent(BlogPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
