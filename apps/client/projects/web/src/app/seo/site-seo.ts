@@ -37,63 +37,9 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 
 export const seoPages = siteSeoDefinitions as SeoPageDefinition[];
 
-const blogSitemapPages: SeoPageDefinition[] = [
-  {
-    path: 'blog/clarifier-son-projet-avant-de-candidater',
-    title: 'Article de blog | KRAAK Consulting',
-    description:
-      'Un cadre simple pour clarifier votre objectif, choisir vos preuves et avancer vers une candidature plus crédible.',
-    openGraph: {
-      title: 'Article de blog | KRAAK Consulting',
-      description:
-        'Un cadre simple pour clarifier votre objectif, choisir vos preuves et avancer vers une candidature plus crédible.',
-      imagePath:
-        '/assets/site-visuals/photos/home-services-project-planning.avif',
-      imageAlt:
-        "Illustration de l'article Clarifier son projet avant de candidater.",
-    },
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-  {
-    path: 'blog/choisir-un-format-de-formation-utile',
-    title: 'Article de blog | KRAAK Consulting',
-    description:
-      'Trois critères simples pour choisir un format de formation qui respecte votre objectif, votre niveau et votre calendrier.',
-    openGraph: {
-      title: 'Article de blog | KRAAK Consulting',
-      description:
-        'Trois critères simples pour choisir un format de formation qui respecte votre objectif, votre niveau et votre calendrier.',
-      imagePath: '/assets/site-visuals/photos/home-services-training.avif',
-      imageAlt:
-        "Illustration de l'article Choisir un format de formation utile.",
-    },
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-  {
-    path: 'blog/preparer-un-dossier-immigration-sans-perdre-le-fil',
-    title: 'Article de blog | KRAAK Consulting',
-    description:
-      'Une méthode courte pour garder la cohérence entre votre intention, vos pièces justificatives et votre calendrier.',
-    openGraph: {
-      title: 'Article de blog | KRAAK Consulting',
-      description:
-        'Une méthode courte pour garder la cohérence entre votre intention, vos pièces justificatives et votre calendrier.',
-      imagePath: '/assets/site-visuals/photos/services-immigration.avif',
-      imageAlt:
-        "Illustration de l'article Préparer un dossier immigration sans perdre le fil.",
-    },
-    sitemap: {
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-  },
-];
+const blogSitemapPages: SeoPageDefinition[] = seoPages.filter(({ path }) =>
+  path.startsWith('blog/'),
+);
 
 const SLASH_CHAR_CODE = '/'.codePointAt(0);
 
