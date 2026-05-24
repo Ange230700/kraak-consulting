@@ -18,72 +18,19 @@ const seoSourcePath = join(
   'seo',
   'site-seo.json',
 );
+const blogSitemapSourcePath = join(
+  repoRoot,
+  'apps',
+  'client',
+  'projects',
+  'web',
+  'src',
+  'app',
+  'seo',
+  'blog-sitemap-pages.json',
+);
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
 const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
-
-function extractBlogSitemapPages(seoConfig) {
-  const candidateCollections = [
-    seoConfig?.blog?.articles,
-    seoConfig?.blogArticles,
-    seoConfig?.pages,
-    seoConfig?.routes,
-  ];
-
-  for (const collection of candidateCollections) {
-    if (!Array.isArray(collection)) {
-      continue;
-    }
-
-    const blogPages = collection
-      .map((entry) => {
-        if (typeof entry === 'string') {
-          return {
-            path: entry.replace(/^\/+|\/+$/gu, ''),
-            sitemap: {
-              changeFrequency: 'monthly',
-              priority: 0.5,
-            },
-          };
-        }
-
-        if (!entry || typeof entry !== 'object') {
-          return null;
-        }
-
-        const normalizedPath =
-          typeof entry.path === 'string'
-            ? entry.path.replace(/^\/+|\/+$/gu, '')
-            : null;
-
-        if (!normalizedPath) {
-          return null;
-        }
-
-        return {
-          ...entry,
-          path: normalizedPath,
-          sitemap: {
-            changeFrequency: 'monthly',
-            priority: 0.5,
-            ...(entry.sitemap ?? {}),
-          },
-        };
-      })
-      .filter((entry) => entry && entry.path.startsWith('blog/'));
-
-    if (blogPages.length > 0) {
-      return blogPages;
-    }
-  }
-
-  throw new Error(
-    `Unable to derive blog sitemap pages from ${seoSourcePath}. ` +
-      'Add blog entries to site-seo.json so it remains the single source of truth.',
-  );
-}
-
-const seoSource = JSON.parse(await readFile(seoSourcePath, 'utf8'));
-const blogSitemapPages = extractBlogSitemapPages(seoSource);
 
 const trimTrailingSlashes = (value) => {
   let end = value.length;
@@ -146,7 +93,9 @@ Sitemap: ${buildAbsoluteUrl('sitemap.xml', siteUrl)}
 
 const main = async () => {
   const rawSeoConfig = await readFile(seoSourcePath, 'utf8');
+  const rawBlogSitemapConfig = await readFile(blogSitemapSourcePath, 'utf8');
   const seoPages = JSON.parse(rawSeoConfig);
+  const blogSitemapPages = JSON.parse(rawBlogSitemapConfig);
   const sitemapPages = [...seoPages, ...blogSitemapPages];
   const siteUrl = normalizeSiteUrl(
     process.env['PUBLIC_SITE_URL'] || defaultSiteUrl,

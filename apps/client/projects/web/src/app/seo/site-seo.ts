@@ -1,4 +1,5 @@
 import siteSeoDefinitions from './site-seo.json';
+import blogSitemapDefinitions from './blog-sitemap-pages.json';
 
 export type SitemapChangeFrequency =
   | 'always'
@@ -36,9 +37,7 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 };
 
 export const seoPages = siteSeoDefinitions as SeoPageDefinition[];
-const blogSitemapPages: SeoPageDefinition[] = seoPages.filter(({ path }) =>
-  path.startsWith('blog/'),
-);
+const blogSitemapPages = blogSitemapDefinitions as SeoPageDefinition[];
 
 const SLASH_CHAR_CODE = '/'.codePointAt(0);
 
