@@ -94,4 +94,10 @@ describe('site-seo', () => {
       `${EXAMPLE_SITE_URL}/contact`,
     );
   });
+
+  it('Given an absolute URL path, when buildAbsoluteUrl is called, then the URL is returned unchanged', () => {
+    expect(
+      buildAbsoluteUrl('https://cdn.example.com/asset.webp', EXAMPLE_SITE_URL),
+    ).toBe('https://cdn.example.com/asset.webp');
+  });
 });

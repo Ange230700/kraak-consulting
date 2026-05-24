@@ -94,7 +94,7 @@ describe('BlogPublicService', () => {
     expect(received).toBeNull();
   });
 
-  it('Given a malformed encoded slug, When API article lookup fails, Then fallback handling does not throw and returns null', () => {
+  it('Given a malformed encoded slug, When API fails, Then fallback lookup does not throw and returns null', () => {
     const service = TestBed.inject(BlogPublicService);
     const httpController = TestBed.inject(HttpTestingController);
 

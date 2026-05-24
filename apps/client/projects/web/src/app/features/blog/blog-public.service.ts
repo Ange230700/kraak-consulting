@@ -16,17 +16,24 @@ import {
 export class BlogPublicService {
   private readonly http = inject(HttpClient);
   private readonly endpoint = `${resolveApiBaseUrl(environment.apiBaseUrl)}/articles`;
+  private readonly slashCodePoint = '/'.codePointAt(0);
 
   private normalizeSlug(slug: string): string {
     const trimmedSlug = slug.trim();
     let start = 0;
     let end = trimmedSlug.length;
 
-    while (start < end && trimmedSlug.charCodeAt(start) === 47) {
+    while (
+      start < end &&
+      trimmedSlug.codePointAt(start) === this.slashCodePoint
+    ) {
       start += 1;
     }
 
-    while (end > start && trimmedSlug.charCodeAt(end - 1) === 47) {
+    while (
+      end > start &&
+      trimmedSlug.codePointAt(end - 1) === this.slashCodePoint
+    ) {
       end -= 1;
     }
 
@@ -53,21 +60,7 @@ export class BlogPublicService {
       map((article) => mapPublicArticleToBlogArticle(article)),
       catchError((error: unknown) => {
         const fallbackArticles = [...getFallbackBlogArticles()];
-        let decodedSlug = normalizedSlug;
-
-        try {
-          decodedSlug = decodeURIComponent(normalizedSlug);
-        } catch (decodeError: unknown) {
-          console.warn(
-            '[BlogPublicService] decode slug failed, fallback keeps normalized slug',
-            {
-              slug: normalizedSlug,
-              decodeError,
-            },
-          );
-          decodedSlug = normalizedSlug;
-        }
-
+        const decodedSlug = this.decodeSlugSafely(normalizedSlug);
         const fallback =
           fallbackArticles.find((article) => article.slug === normalizedSlug) ??
           fallbackArticles.find((article) => article.slug === decodedSlug) ??
@@ -92,5 +85,13 @@ export class BlogPublicService {
         return of(fallback);
       }),
     );
+  }
+
+  private decodeSlugSafely(slug: string): string {
+    try {
+      return decodeURIComponent(slug);
+    } catch {
+      return slug;
+    }
   }
 }

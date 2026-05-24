@@ -34,7 +34,7 @@ export default class BlogPage implements OnInit, OnDestroy {
   protected totalPages = 1;
   protected currentPage = 1;
   protected totalArticles = 0;
-  protected isLoading = true;
+  protected isLoading = false;
   private listArticles: BlogArticle[] = [];
 
   private readonly destroyRef = inject(DestroyRef);
@@ -56,15 +56,15 @@ export default class BlogPage implements OnInit, OnDestroy {
   }
 
   private loadPublishedArticles(): void {
-    this.blogPublicService
-      .listPublishedArticles()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (articles) => {
+    setTimeout(() => {
+      this.blogPublicService
+        .listPublishedArticles()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((articles) => {
           this.isLoading = false;
           this.applyArticles(articles);
-        },
-      });
+        });
+    }, 0);
   }
 
   ngOnDestroy(): void {
