@@ -257,16 +257,78 @@ const frenchDateFormatter = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 });
 
+function isWhitespaceCharacter(char: string): boolean {
+  return (
+    char === ' ' ||
+    char === '\n' ||
+    char === '\r' ||
+    char === '\t' ||
+    char === '\f' ||
+    char === '\v'
+  );
+}
+
+function collapseWhitespace(value: string): string {
+  let result = '';
+  let previousWasWhitespace = false;
+
+  for (const char of value) {
+    if (isWhitespaceCharacter(char)) {
+      if (!previousWasWhitespace) {
+        result += ' ';
+      }
+
+      previousWasWhitespace = true;
+      continue;
+    }
+
+    previousWasWhitespace = false;
+    result += char;
+  }
+
+  return result.trim();
+}
+
 function stripHtmlTags(value: string): string {
-  return value
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  let textWithoutTags = '';
+  let insideTag = false;
+
+  for (const char of value) {
+    if (char === '<') {
+      insideTag = true;
+      textWithoutTags += ' ';
+      continue;
+    }
+
+    if (char === '>') {
+      insideTag = false;
+      continue;
+    }
+
+    if (!insideTag) {
+      textWithoutTags += char;
+    }
+  }
+
+  return collapseWhitespace(textWithoutTags);
 }
 
 function estimateReadingTimeMinutes(content: string): number {
   const plainText = stripHtmlTags(content);
-  const words = plainText.length > 0 ? plainText.split(/\s+/).length : 0;
+  let words = 0;
+  let insideWord = false;
+
+  for (const char of plainText) {
+    if (isWhitespaceCharacter(char)) {
+      insideWord = false;
+      continue;
+    }
+
+    if (!insideWord) {
+      words += 1;
+      insideWord = true;
+    }
+  }
 
   return Math.max(1, Math.ceil(words / 200));
 }
