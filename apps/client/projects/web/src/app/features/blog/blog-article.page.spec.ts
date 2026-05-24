@@ -124,6 +124,15 @@ describe('BlogArticlePage', () => {
     expect(jsonLdTag?.textContent).toContain('"@type":"Article"');
   });
 
+  it('Given the article page initial load When route params emit the initial slug Then the article is fetched once', () => {
+    const fixture = TestBed.createComponent(BlogArticlePage);
+    fixture.detectChanges();
+
+    expect(
+      blogPublicServiceMock.getPublishedArticleBySlug,
+    ).toHaveBeenCalledTimes(1);
+  });
+
   it('Given the same component instance When the slug route parameter changes Then article state and SEO are updated', () => {
     const fixture = TestBed.createComponent(BlogArticlePage);
     fixture.detectChanges();
