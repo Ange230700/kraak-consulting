@@ -35,10 +35,10 @@ jobs:
       KRAAK_OBSERVABILITY_API_URL: ${{ matrix.api_url }}
       ALERT_ISSUE_TITLE: ${{ matrix.alert_issue_title }}
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 

@@ -23,7 +23,7 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeFigureAnimations', () => {
     it('Given reduced motion is enabled, When figure animations initialize, Then no transform is applied', () => {
-      vi.spyOn(globalThis, 'matchMedia').mockReturnValue({
+      vi.spyOn(window, 'matchMedia').mockReturnValue({
         matches: true,
         media: '(prefers-reduced-motion: reduce)',
         onchange: null,
@@ -32,7 +32,7 @@ describe('GsapAnimationsService', () => {
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
         dispatchEvent: vi.fn(),
-      });
+      } as MediaQueryList);
 
       const div = document.createElement('div');
       const figure = document.createElement('figure');
