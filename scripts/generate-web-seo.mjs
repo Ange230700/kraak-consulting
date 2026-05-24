@@ -20,6 +20,29 @@ const seoSourcePath = join(
 );
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
 const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
+const blogSitemapPages = [
+  {
+    path: 'blog/clarifier-son-projet-avant-de-candidater',
+    sitemap: {
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+  },
+  {
+    path: 'blog/choisir-un-format-de-formation-utile',
+    sitemap: {
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+  },
+  {
+    path: 'blog/preparer-un-dossier-immigration-sans-perdre-le-fil',
+    sitemap: {
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+  },
+];
 
 const trimTrailingSlashes = (value) => {
   let end = value.length;
@@ -83,6 +106,7 @@ Sitemap: ${buildAbsoluteUrl('sitemap.xml', siteUrl)}
 const main = async () => {
   const rawSeoConfig = await readFile(seoSourcePath, 'utf8');
   const seoPages = JSON.parse(rawSeoConfig);
+  const sitemapPages = [...seoPages, ...blogSitemapPages];
   const siteUrl = normalizeSiteUrl(
     process.env['PUBLIC_SITE_URL'] || defaultSiteUrl,
   );
@@ -91,7 +115,7 @@ const main = async () => {
   await writeFile(join(publicDir, 'robots.txt'), buildRobotsTxt(siteUrl), 'utf8');
   await writeFile(
     join(publicDir, 'sitemap.xml'),
-    buildSitemapXml(seoPages, siteUrl),
+    buildSitemapXml(sitemapPages, siteUrl),
     'utf8',
   );
 };

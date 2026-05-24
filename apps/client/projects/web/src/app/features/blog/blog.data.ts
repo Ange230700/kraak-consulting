@@ -1,4 +1,5 @@
 import type { SeoPageDefinition } from '../../seo/site-seo';
+import type { ArticleDto } from '@kraak/contracts';
 
 export interface BlogSection {
   heading: string;
@@ -240,6 +241,151 @@ export const blogArticles: readonly BlogArticle[] = [
   },
 ] as const;
 
+const FALLBACK_AUTHOR: BlogAuthor = {
+  name: 'Équipe KRAAK',
+  role: 'Rédaction KRAAK',
+  bio: 'Contenu éditorial KRAAK orienté vers des décisions concrètes et actionnables.',
+  avatar: '/assets/site-visuals/photos/home-services-training.avif',
+};
+
+const FALLBACK_COVER_IMAGE_PATH =
+  '/assets/site-visuals/photos/home-hero-workshop.avif';
+
+const frenchDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+function stripHtmlTags(value: string): string {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function estimateReadingTimeMinutes(content: string): number {
+  const plainText = stripHtmlTags(content);
+  const words = plainText.length > 0 ? plainText.split(/\s+/).length : 0;
+
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function formatPublishedLabel(publishedAt: string | null): string {
+  if (!publishedAt) {
+    return 'Publication à venir';
+  }
+
+  const parsedDate = new Date(publishedAt);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'Publication récente';
+  }
+
+  return frenchDateFormatter.format(parsedDate);
+}
+
+function buildIntroFromContent(content: string, fallback?: string): string {
+  if (fallback && fallback.trim().length > 0) {
+    return fallback;
+  }
+
+  const plainText = stripHtmlTags(content);
+
+  if (plainText.length === 0) {
+    return 'Cet article est disponible dans le blog KRAAK.';
+  }
+
+  return plainText.slice(0, 240);
+}
+
+function buildSectionsFromContent(
+  content: string,
+  fallback?: readonly BlogSection[],
+): readonly BlogSection[] {
+  if (fallback && fallback.length > 0) {
+    return fallback;
+  }
+
+  const plainText = stripHtmlTags(content);
+
+  if (plainText.length === 0) {
+    return [
+      {
+        heading: 'Contenu',
+        paragraphs: ['Le contenu de cet article sera bientôt enrichi.'],
+      },
+    ];
+  }
+
+  return [
+    {
+      heading: 'Contenu',
+      paragraphs: [plainText],
+    },
+  ];
+}
+
+export function getFallbackBlogArticles(): readonly BlogArticle[] {
+  return blogArticles;
+}
+
+export function mapPublicArticleToBlogArticle(
+  article: ArticleDto,
+): BlogArticle {
+  const fallback =
+    blogArticles.find((candidate) => candidate.slug === article.slug) ??
+    blogArticles.find((candidate) => candidate.id === article.id);
+
+  return {
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    excerpt: article.excerpt,
+    content: article.content,
+    status: article.status,
+    coverImageUrl: article.coverImageUrl,
+    seoTitle: article.seoTitle,
+    seoDescription: article.seoDescription,
+    publishedAt: article.publishedAt,
+    authorId: article.authorId,
+    categoryIds: article.categoryIds,
+    tagIds: article.tagIds,
+    createdAt: article.createdAt,
+    updatedAt: article.updatedAt,
+    author: fallback?.author ?? FALLBACK_AUTHOR,
+    categoryLabel: fallback?.categoryLabel ?? 'Actualités',
+    categorySlug: fallback?.categorySlug ?? 'actualites',
+    tagLabels: fallback?.tagLabels ?? [],
+    coverImagePath:
+      article.coverImageUrl ??
+      fallback?.coverImagePath ??
+      FALLBACK_COVER_IMAGE_PATH,
+    readingTimeMinutes:
+      fallback?.readingTimeMinutes ??
+      estimateReadingTimeMinutes(article.content),
+    publishedLabel: formatPublishedLabel(article.publishedAt),
+    summary: article.excerpt,
+    intro: buildIntroFromContent(article.content, fallback?.intro),
+    sections: buildSectionsFromContent(article.content, fallback?.sections),
+    takeawayPoints: fallback?.takeawayPoints ?? [],
+    relatedSlugs: fallback?.relatedSlugs ?? [],
+    featured: fallback?.featured ?? false,
+  };
+}
+
+export function mapPublicArticlesToBlogArticles(
+  articles: readonly ArticleDto[],
+): BlogArticle[] {
+  return articles
+    .map((article) => mapPublicArticleToBlogArticle(article))
+    .sort((left, right) => {
+      const leftTime = left.publishedAt ? Date.parse(left.publishedAt) : 0;
+      const rightTime = right.publishedAt ? Date.parse(right.publishedAt) : 0;
+
+      return rightTime - leftTime;
+    });
+}
+
 export const blogListSeo: SeoPageDefinition = {
   path: 'blog',
   title: 'Blog | Actualités et analyses KRAAK Consulting',
@@ -298,15 +444,19 @@ export function buildMissingBlogArticleSeo(slug: string): SeoPageDefinition {
   };
 }
 
-export function findBlogArticleBySlug(slug: string): BlogArticle | undefined {
-  return blogArticles.find((article) => article.slug === slug);
+export function findBlogArticleBySlug(
+  slug: string,
+  source: readonly BlogArticle[] = blogArticles,
+): BlogArticle | undefined {
+  return source.find((article) => article.slug === slug);
 }
 
 export function getRelatedBlogArticles(
   article: BlogArticle,
+  source: readonly BlogArticle[] = blogArticles,
   limit = 3,
 ): BlogArticle[] {
-  return blogArticles
+  return source
     .filter((candidate) => candidate.slug !== article.slug)
     .map((candidate) => ({
       candidate,
