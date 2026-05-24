@@ -150,6 +150,31 @@ const taxonomySchema = {
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
+  private isCoverFile(value: unknown): value is {
+    originalname: string;
+    mimetype: string;
+    size: number;
+    buffer: Buffer;
+  } {
+    if (typeof value !== 'object' || value === null) {
+      return false;
+    }
+
+    const candidate = value as {
+      originalname?: unknown;
+      mimetype?: unknown;
+      size?: unknown;
+      buffer?: unknown;
+    };
+
+    return (
+      typeof candidate.originalname === 'string' &&
+      typeof candidate.mimetype === 'string' &&
+      typeof candidate.size === 'number' &&
+      Buffer.isBuffer(candidate.buffer)
+    );
+  }
+
   @Get()
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Lister tous les articles administrables' })
@@ -368,7 +393,7 @@ export class ArticlesController {
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadCoverImage(
-    @UploadedFile() file: Express.Multer.File | undefined,
+    @UploadedFile() file: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<{ url: string; path: string }> {
     const accessToken = extractAccessToken(authorizationHeader);
@@ -380,7 +405,7 @@ export class ArticlesController {
       });
     }
 
-    if (!file?.buffer) {
+    if (this.isCoverFile(file) === false) {
       throw new BadRequestException({
         success: false,
         message: 'Le fichier image est requis.',

@@ -143,7 +143,7 @@ describe('ArticlesController', () => {
         originalname: 'cover.jpg',
         mimetype: 'image/jpeg',
         size: 120,
-      } as Express.Multer.File,
+      },
       'Bearer access-token',
     );
 
