@@ -57,7 +57,7 @@ function readStringArray(value: unknown): string[] {
 
 function assignRequiredStringUpdate(
   body: Record<string, unknown>,
-  sourceKey: keyof UpdateArticleDto,
+  sourceKey: Extract<keyof UpdateArticleDto, string>,
   errors: string[],
   updates: UpdateArticleDto,
 ): void {
@@ -154,7 +154,7 @@ function assignNullableDateUpdate(
 
 function validateRequiredText(
   value: string,
-  fieldName: keyof CreateArticleDto,
+  fieldName: Extract<keyof CreateArticleDto, string>,
   errors: string[],
 ): void {
   if (!value) {
