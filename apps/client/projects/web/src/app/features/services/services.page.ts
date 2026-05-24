@@ -24,17 +24,20 @@ export default class ServicesPage implements OnInit, OnDestroy {
   protected readonly heroBackgroundStyle = SERVICES_HERO_BACKGROUND_STYLE;
   protected readonly faqItems: FaqItem[] = [
     {
-      question: 'Comment choisir le service le plus adapté à mon objectif ?',
+      question:
+        'Comment choisir le service le plus adapt\u00e9 \u00e0 mon objectif ?',
       answer:
-        'Nous commençons par votre objectif principal, votre contexte et votre contrainte prioritaire. Si besoin, nous vous orientons vers la bonne combinaison entre formation, projet, immigration ou offre entreprise.',
+        'Nous commen\u00e7ons par votre objectif principal, votre contexte et votre contrainte prioritaire. Si besoin, nous vous orientons vers la bonne combinaison entre formation, projet, immigration ou offre entreprise.',
     },
     {
-      question: 'Proposez-vous une première orientation avant de démarrer ?',
+      question:
+        'Proposez-vous une premi\u00e8re orientation avant de d\u00e9marrer ?',
       answer:
-        "Oui. Une première consultation permet de clarifier le besoin, d'identifier le bon format et de définir la prochaine étape utile.",
+        "Oui. Une premi\u00e8re consultation permet de clarifier le besoin, d'identifier le bon format et de d\u00e9finir la prochaine \u00e9tape utile.",
     },
     {
-      question: 'Les accompagnements sont-ils réservés aux particuliers ?',
+      question:
+        'Les accompagnements sont-ils r\u00e9serv\u00e9s aux particuliers ?',
       answer:
         'Non. KRAAK accompagne aussi les entreprises, startups, organisations et fonctions RH selon le type de besoin et le niveau de structuration attendu.',
     },
