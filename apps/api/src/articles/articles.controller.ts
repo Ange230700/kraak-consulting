@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Headers,
+  HttpException,
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
@@ -132,7 +133,7 @@ const apiErrorSchema = {
   },
 };
 
-const taxonomySchema = {
+const categoryResponseSchema = {
   type: 'object',
   required: ['id', 'slug', 'label', 'createdAt', 'updatedAt'],
   properties: {
@@ -142,6 +143,54 @@ const taxonomySchema = {
     description: { type: 'string', nullable: true },
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },
+  },
+};
+
+const categoryCreateBodySchema = {
+  type: 'object',
+  required: ['slug', 'label'],
+  properties: {
+    slug: { type: 'string' },
+    label: { type: 'string' },
+    description: { type: 'string', nullable: true },
+  },
+};
+
+const categoryUpdateBodySchema = {
+  type: 'object',
+  properties: {
+    slug: { type: 'string' },
+    label: { type: 'string' },
+    description: { type: 'string', nullable: true },
+  },
+};
+
+const tagResponseSchema = {
+  type: 'object',
+  required: ['id', 'slug', 'label', 'createdAt', 'updatedAt'],
+  properties: {
+    id: { type: 'string' },
+    slug: { type: 'string' },
+    label: { type: 'string' },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
+  },
+};
+
+const tagCreateBodySchema = {
+  type: 'object',
+  required: ['slug', 'label'],
+  properties: {
+    slug: { type: 'string' },
+    label: { type: 'string' },
+  },
+};
+
+const tagUpdateBodySchema = {
+  type: 'object',
+  properties: {
+    slug: { type: 'string' },
+    label: { type: 'string' },
   },
 };
 
@@ -206,35 +255,6 @@ export class ArticlesController {
     }
 
     return this.articlesService.listArticles(accessToken.data);
-  }
-
-  @Get(':id')
-  @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Récupérer un article par son identifiant' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Article chargé avec succès.',
-    schema: articleSchema,
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Article introuvable.',
-    schema: apiErrorSchema,
-  })
-  async getArticleById(
-    @Param('id') id: string,
-    @Headers('authorization') authorizationHeader?: string,
-  ): Promise<ArticleDto> {
-    const accessToken = extractAccessToken(authorizationHeader);
-
-    if (!accessToken.valid) {
-      throw new UnauthorizedException({
-        success: false,
-        message: accessToken.error,
-      });
-    }
-
-    return this.articlesService.getArticleById(accessToken.data, id);
   }
 
   @Post()
@@ -418,7 +438,7 @@ export class ArticlesController {
         file,
       );
     } catch (error) {
-      if (error instanceof BadRequestException) {
+      if (error instanceof HttpException) {
         throw error;
       }
 
@@ -435,7 +455,7 @@ export class ArticlesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Categories chargees avec succes.',
-    schema: { type: 'array', items: taxonomySchema },
+    schema: { type: 'array', items: categoryResponseSchema },
   })
   async listCategories(
     @Headers('authorization') authorizationHeader?: string,
@@ -455,7 +475,12 @@ export class ArticlesController {
   @Post('categories')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Creer une categorie' })
-  @ApiBody({ schema: taxonomySchema })
+  @ApiBody({ schema: categoryCreateBodySchema })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Categorie creee avec succes.',
+    schema: categoryResponseSchema,
+  })
   async createCategory(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -487,7 +512,12 @@ export class ArticlesController {
   @Patch('categories/:id')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Mettre a jour une categorie' })
-  @ApiBody({ schema: taxonomySchema })
+  @ApiBody({ schema: categoryUpdateBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Categorie mise a jour avec succes.',
+    schema: categoryResponseSchema,
+  })
   async updateCategory(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -544,7 +574,7 @@ export class ArticlesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Tags charges avec succes.',
-    schema: { type: 'array', items: taxonomySchema },
+    schema: { type: 'array', items: tagResponseSchema },
   })
   async listTags(
     @Headers('authorization') authorizationHeader?: string,
@@ -564,7 +594,12 @@ export class ArticlesController {
   @Post('tags')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Creer un tag' })
-  @ApiBody({ schema: taxonomySchema })
+  @ApiBody({ schema: tagCreateBodySchema })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Tag cree avec succes.',
+    schema: tagResponseSchema,
+  })
   async createTag(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -593,7 +628,12 @@ export class ArticlesController {
   @Patch('tags/:id')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Mettre a jour un tag' })
-  @ApiBody({ schema: taxonomySchema })
+  @ApiBody({ schema: tagUpdateBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Tag mis a jour avec succes.',
+    schema: tagResponseSchema,
+  })
   async updateTag(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -638,6 +678,35 @@ export class ArticlesController {
     }
 
     await this.articlesService.deleteTag(accessToken.data, id);
+  }
+
+  @Get(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Récupérer un article par son identifiant' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Article chargé avec succès.',
+    schema: articleSchema,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Article introuvable.',
+    schema: apiErrorSchema,
+  })
+  async getArticleById(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ArticleDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    return this.articlesService.getArticleById(accessToken.data, id);
   }
 
   @Delete(':id')

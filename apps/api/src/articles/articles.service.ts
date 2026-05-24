@@ -89,6 +89,19 @@ const notFoundSupabaseErrorCodes = new Set(['PGRST116']);
 export class ArticlesService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
+  private readSupabaseErrorCode(error: unknown): string | null {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof error.code === 'string'
+    ) {
+      return error.code;
+    }
+
+    return null;
+  }
+
   async listPublicArticles(): Promise<ArticleDto[]> {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
@@ -122,7 +135,23 @@ export class ArticlesService {
       .eq('status', 'published')
       .single();
 
-    if (error || !data) {
+    if (error) {
+      if (
+        notFoundSupabaseErrorCodes.has(this.readSupabaseErrorCode(error) ?? '')
+      ) {
+        throw new NotFoundException({
+          success: false,
+          message: 'Article introuvable.',
+        });
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Impossible de charger l'article demandé.",
+      });
+    }
+
+    if (!data) {
       throw new NotFoundException({
         success: false,
         message: 'Article introuvable.',
@@ -269,13 +298,7 @@ export class ArticlesService {
   }
 
   private handleUpdateError(error: unknown): void {
-    const errorCode =
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      typeof error.code === 'string'
-        ? error.code
-        : null;
+    const errorCode = this.readSupabaseErrorCode(error);
 
     if (errorCode !== null && notFoundSupabaseErrorCodes.has(errorCode)) {
       throw new NotFoundException({
@@ -394,7 +417,23 @@ export class ArticlesService {
       .select(articleSelectFields)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      if (
+        notFoundSupabaseErrorCodes.has(this.readSupabaseErrorCode(error) ?? '')
+      ) {
+        throw new NotFoundException({
+          success: false,
+          message: 'Article introuvable.',
+        });
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Impossible de publier l'article.",
+      });
+    }
+
+    if (!data) {
       throw new NotFoundException({
         success: false,
         message: 'Article introuvable.',
@@ -530,7 +569,23 @@ export class ArticlesService {
       .select(categorySelectFields)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      if (
+        notFoundSupabaseErrorCodes.has(this.readSupabaseErrorCode(error) ?? '')
+      ) {
+        throw new NotFoundException({
+          success: false,
+          message: 'Catégorie introuvable.',
+        });
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de mettre à jour la catégorie.',
+      });
+    }
+
+    if (!data) {
       throw new NotFoundException({
         success: false,
         message: 'Catégorie introuvable.',
@@ -544,6 +599,27 @@ export class ArticlesService {
     await this.assertAdminAccess(accessToken);
 
     const adminClient = this.supabaseService.getClient();
+    const { data: existing, error: existingError } = await adminClient
+      .from('category')
+      .select('id')
+      .eq('id', categoryId)
+      .neq('status', 'archived')
+      .maybeSingle();
+
+    if (existingError) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible d’archiver la catégorie.',
+      });
+    }
+
+    if (!existing) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Catégorie introuvable.',
+      });
+    }
+
     const { error } = await adminClient
       .from('category')
       .update({ status: 'archived' })
@@ -622,7 +698,23 @@ export class ArticlesService {
       .select(tagSelectFields)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      if (
+        notFoundSupabaseErrorCodes.has(this.readSupabaseErrorCode(error) ?? '')
+      ) {
+        throw new NotFoundException({
+          success: false,
+          message: 'Tag introuvable.',
+        });
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de mettre à jour le tag.',
+      });
+    }
+
+    if (!data) {
       throw new NotFoundException({
         success: false,
         message: 'Tag introuvable.',
@@ -636,6 +728,27 @@ export class ArticlesService {
     await this.assertAdminAccess(accessToken);
 
     const adminClient = this.supabaseService.getClient();
+    const { data: existing, error: existingError } = await adminClient
+      .from('tag')
+      .select('id')
+      .eq('id', tagId)
+      .neq('status', 'archived')
+      .maybeSingle();
+
+    if (existingError) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible d’archiver le tag.',
+      });
+    }
+
+    if (!existing) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Tag introuvable.',
+      });
+    }
+
     const { error } = await adminClient
       .from('tag')
       .update({ status: 'archived' })

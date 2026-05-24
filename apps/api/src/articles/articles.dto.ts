@@ -326,18 +326,18 @@ type TaxonomyUpdatePayload = UpdateCategoryDto | UpdateTagDto;
 
 function validateTaxonomyCreatePayload(
   body: unknown,
+  options: { allowDescription: boolean },
 ): ValidationResult<TaxonomyCreatePayload> {
   if (!isObjectPayload(body)) {
     return {
       valid: false,
-      errors: ['Corps de requete invalide.'],
+      errors: ['Corps de requête invalide.'],
     };
   }
 
   const slug = readTrimmedString(body['slug']);
   const label = readTrimmedString(body['label']);
-  const description =
-    'description' in body ? readNullableString(body['description']) : null;
+  const payload: Partial<CreateCategoryDto> = { slug, label };
   const errors: string[] = [];
 
   if (slug.length === 0) {
@@ -352,19 +352,31 @@ function validateTaxonomyCreatePayload(
     return { valid: false, errors };
   }
 
+  if (options.allowDescription) {
+    payload.description =
+      'description' in body ? readNullableString(body['description']) : null;
+  } else if ('description' in body) {
+    errors.push('Le champ description n’est pas autorisé pour un tag.');
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
   return {
     valid: true,
-    data: { slug, label, description } as TaxonomyCreatePayload,
+    data: payload as TaxonomyCreatePayload,
   };
 }
 
 function validateTaxonomyUpdatePayload(
   body: unknown,
+  options: { allowDescription: boolean },
 ): ValidationResult<TaxonomyUpdatePayload> {
   if (!isObjectPayload(body)) {
     return {
       valid: false,
-      errors: ['Corps de requete invalide.'],
+      errors: ['Corps de requête invalide.'],
     };
   }
 
@@ -389,8 +401,10 @@ function validateTaxonomyUpdatePayload(
     }
   }
 
-  if ('description' in body) {
+  if (options.allowDescription && 'description' in body) {
     updates['description'] = readNullableString(body['description']);
+  } else if (!options.allowDescription && 'description' in body) {
+    errors.push('Le champ description n’est pas autorisé pour un tag.');
   }
 
   if (errors.length > 0) {
@@ -400,7 +414,7 @@ function validateTaxonomyUpdatePayload(
   if (Object.keys(updates).length === 0) {
     return {
       valid: false,
-      errors: ['Au moins un champ doit etre fourni pour la mise a jour.'],
+      errors: ['Au moins un champ doit être fourni pour la mise à jour.'],
     };
   }
 
@@ -413,27 +427,31 @@ function validateTaxonomyUpdatePayload(
 export function validateCreateCategoryPayload(
   body: unknown,
 ): ValidationResult<CreateCategoryDto> {
-  return validateTaxonomyCreatePayload(
-    body,
-  ) as ValidationResult<CreateCategoryDto>;
+  return validateTaxonomyCreatePayload(body, {
+    allowDescription: true,
+  }) as ValidationResult<CreateCategoryDto>;
 }
 
 export function validateUpdateCategoryPayload(
   body: unknown,
 ): ValidationResult<UpdateCategoryDto> {
-  return validateTaxonomyUpdatePayload(
-    body,
-  ) as ValidationResult<UpdateCategoryDto>;
+  return validateTaxonomyUpdatePayload(body, {
+    allowDescription: true,
+  }) as ValidationResult<UpdateCategoryDto>;
 }
 
 export function validateCreateTagPayload(
   body: unknown,
 ): ValidationResult<CreateTagDto> {
-  return validateTaxonomyCreatePayload(body) as ValidationResult<CreateTagDto>;
+  return validateTaxonomyCreatePayload(body, {
+    allowDescription: false,
+  }) as ValidationResult<CreateTagDto>;
 }
 
 export function validateUpdateTagPayload(
   body: unknown,
 ): ValidationResult<UpdateTagDto> {
-  return validateTaxonomyUpdatePayload(body) as ValidationResult<UpdateTagDto>;
+  return validateTaxonomyUpdatePayload(body, {
+    allowDescription: false,
+  }) as ValidationResult<UpdateTagDto>;
 }

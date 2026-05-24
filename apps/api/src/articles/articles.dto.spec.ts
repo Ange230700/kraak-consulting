@@ -218,7 +218,7 @@ describe('Articles DTO validation', () => {
 
     expect(result).toEqual({
       valid: false,
-      errors: ['Au moins un champ doit etre fourni pour la mise a jour.'],
+      errors: ['Au moins un champ doit être fourni pour la mise à jour.'],
     });
   });
 
@@ -234,6 +234,30 @@ describe('Articles DTO validation', () => {
         slug: 'integrations',
         label: 'Integrations',
       },
+    });
+  });
+
+  it('Given un payload tag avec description, When validateCreateTagPayload est appele, Then une erreur explicite est renvoyee', () => {
+    const result = validateCreateTagPayload({
+      slug: 'tag-1',
+      label: 'Tag 1',
+      description: 'Description interdite',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ description n’est pas autorisé pour un tag.'],
+    });
+  });
+
+  it('Given un payload tag update avec description, When validateUpdateTagPayload est appele, Then une erreur explicite est renvoyee', () => {
+    const result = validateUpdateTagPayload({
+      description: 'Description interdite',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ description n’est pas autorisé pour un tag.'],
     });
   });
 });
