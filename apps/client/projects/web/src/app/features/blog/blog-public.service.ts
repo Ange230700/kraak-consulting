@@ -57,7 +57,14 @@ export class BlogPublicService {
 
         try {
           decodedSlug = decodeURIComponent(normalizedSlug);
-        } catch {
+        } catch (decodeError: unknown) {
+          console.warn(
+            '[BlogPublicService] decode slug failed, fallback keeps normalized slug',
+            {
+              slug: normalizedSlug,
+              decodeError,
+            },
+          );
           decodedSlug = normalizedSlug;
         }
 

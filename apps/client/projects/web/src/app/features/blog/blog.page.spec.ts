@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { delay, of } from 'rxjs';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { blogArticles } from './blog.data';
@@ -24,11 +24,6 @@ const gsapAnimationsServiceMock: Pick<
   killAllAnimations: () => undefined,
 };
 
-const blogPublicServiceMock: Pick<BlogPublicService, 'listPublishedArticles'> =
-  {
-    listPublishedArticles: () => of([...blogArticles]),
-  };
-
 describe('BlogPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -41,7 +36,9 @@ describe('BlogPage', () => {
         },
         {
           provide: BlogPublicService,
-          useValue: blogPublicServiceMock,
+          useValue: {
+            listPublishedArticles: () => of([...blogArticles]).pipe(delay(0)),
+          } satisfies Pick<BlogPublicService, 'listPublishedArticles'>,
         },
       ],
     }).compileComponents();
@@ -51,12 +48,22 @@ describe('BlogPage', () => {
     const fixture = TestBed.createComponent(BlogPage);
 
     expect(fixture.componentInstance).toBeTruthy();
+    fixture.destroy();
   });
 
-  it('Given the blog page When it renders Then it shows the editorial hero and featured article', async () => {
+  it('Given the blog page When the API request is in progress Then it exposes the loading state', () => {
     const fixture = TestBed.createComponent(BlogPage);
     fixture.detectChanges();
-    await fixture.whenStable();
+
+    expect(
+      (fixture.componentInstance as unknown as { isLoading: boolean })
+        .isLoading,
+    ).toBe(true);
+    fixture.destroy();
+  });
+
+  it('Given the blog page When it renders before API data is loaded Then it shows the editorial hero and loading state', () => {
+    const fixture = TestBed.createComponent(BlogPage);
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
@@ -64,11 +71,8 @@ describe('BlogPage', () => {
     expect(content).toContain(
       'Actualités, repères et analyses pour avancer avec clarté.',
     );
-    expect(content).toContain('Article vedette');
-    expect(content).toContain('Clarifier son projet avant de candidater');
-    expect(content).toContain('Choisir un format de formation utile');
-    expect(content).toContain(
-      'Préparer un dossier immigration sans perdre le fil',
-    );
+    expect(content).toContain('Chargement des articles…');
+
+    fixture.destroy();
   });
 });

@@ -93,4 +93,26 @@ describe('BlogPublicService', () => {
     httpController.verify();
     expect(received).toBeNull();
   });
+
+  it('Given a malformed encoded slug, When API article lookup fails, Then fallback handling does not throw and returns null', () => {
+    const service = TestBed.inject(BlogPublicService);
+    const httpController = TestBed.inject(HttpTestingController);
+
+    let received: unknown = 'uninitialized';
+
+    service.getPublishedArticleBySlug('%').subscribe((article) => {
+      received = article;
+    });
+
+    const request = httpController.expectOne(
+      'http://localhost:3000/articles/%',
+    );
+    request.flush(
+      { message: 'not found' },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    httpController.verify();
+    expect(received).toBeNull();
+  });
 });
