@@ -1,5 +1,9 @@
 import {
+  validateCreateCategoryPayload,
+  validateCreateTagPayload,
   validateCreateArticlePayload,
+  validateUpdateCategoryPayload,
+  validateUpdateTagPayload,
   validateUpdateArticlePayload,
 } from './articles.dto';
 
@@ -177,6 +181,59 @@ describe('Articles DTO validation', () => {
         'Le champ coverImageUrl est invalide.',
         'Le champ publishedAt est invalide.',
       ],
+    });
+  });
+
+  it('Given un payload categorie valide, When validateCreateCategoryPayload est appele, Then les champs normalises sont renvoyes', () => {
+    const result = validateCreateCategoryPayload({
+      slug: '  immigration  ',
+      label: '  Immigration  ',
+      description: '  Description categorie  ',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        slug: 'immigration',
+        label: 'Immigration',
+        description: 'Description categorie',
+      },
+    });
+  });
+
+  it('Given un payload tag invalide, When validateCreateTagPayload est appele, Then les erreurs explicites sont renvoyees', () => {
+    const result = validateCreateTagPayload({
+      slug: '',
+      label: '',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ slug est requis.', 'Le champ label est requis.'],
+    });
+  });
+
+  it('Given un payload categorie update vide, When validateUpdateCategoryPayload est appele, Then une erreur est renvoyee', () => {
+    const result = validateUpdateCategoryPayload({});
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Au moins un champ doit etre fourni pour la mise a jour.'],
+    });
+  });
+
+  it('Given un payload tag update valide, When validateUpdateTagPayload est appele, Then les champs sont normalises', () => {
+    const result = validateUpdateTagPayload({
+      slug: '  integrations  ',
+      label: '  Integrations  ',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        slug: 'integrations',
+        label: 'Integrations',
+      },
     });
   });
 });

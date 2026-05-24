@@ -18,6 +18,16 @@ describe('ArticlesController', () => {
     getArticleById: jest.fn(),
     createArticle: jest.fn(),
     updateArticle: jest.fn(),
+    publishArticle: jest.fn(),
+    uploadCoverImage: jest.fn(),
+    listCategories: jest.fn(),
+    createCategory: jest.fn(),
+    updateCategory: jest.fn(),
+    deleteCategory: jest.fn(),
+    listTags: jest.fn(),
+    createTag: jest.fn(),
+    updateTag: jest.fn(),
+    deleteTag: jest.fn(),
     deleteArticle: jest.fn(),
   };
 
@@ -48,6 +58,36 @@ describe('ArticlesController', () => {
     articlesService.updateArticle.mockResolvedValue(
       articlesService.getArticleById(),
     );
+    articlesService.publishArticle.mockResolvedValue(
+      articlesService.getArticleById(),
+    );
+    articlesService.uploadCoverImage.mockResolvedValue({
+      url: 'https://cdn.kraak.test/articles/cover.jpg',
+      path: 'articles/cover.jpg',
+    });
+    articlesService.listCategories.mockResolvedValue([]);
+    articlesService.createCategory.mockResolvedValue({
+      id: 'category-1',
+      slug: 'categorie-1',
+      label: 'Categorie 1',
+      description: null,
+      createdAt: '2026-05-24T10:00:00.000Z',
+      updatedAt: '2026-05-24T10:00:00.000Z',
+    });
+    articlesService.updateCategory.mockResolvedValue(
+      articlesService.createCategory(),
+    );
+    articlesService.deleteCategory.mockResolvedValue(undefined);
+    articlesService.listTags.mockResolvedValue([]);
+    articlesService.createTag.mockResolvedValue({
+      id: 'tag-1',
+      slug: 'tag-1',
+      label: 'Tag 1',
+      createdAt: '2026-05-24T10:00:00.000Z',
+      updatedAt: '2026-05-24T10:00:00.000Z',
+    });
+    articlesService.updateTag.mockResolvedValue(articlesService.createTag());
+    articlesService.deleteTag.mockResolvedValue(undefined);
     articlesService.deleteArticle.mockResolvedValue(undefined);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -80,11 +120,61 @@ describe('ArticlesController', () => {
       RequestMethod.POST,
     );
     expect(Reflect.getMetadata(METHOD_METADATA, controller.updateArticle)).toBe(
-      RequestMethod.PATCH,
+      RequestMethod.PUT,
     );
     expect(Reflect.getMetadata(METHOD_METADATA, controller.deleteArticle)).toBe(
       RequestMethod.DELETE,
     );
+  });
+
+  it('Given un token admin valide, When publishArticle est appele, Then le service de publication est invoque', async () => {
+    await controller.publishArticle('article-1', 'Bearer access-token');
+
+    expect(articlesService.publishArticle).toHaveBeenCalledWith(
+      'access-token',
+      'article-1',
+    );
+  });
+
+  it('Given un token admin valide, When uploadCoverImage est appele, Then le service upload est invoque', async () => {
+    await controller.uploadCoverImage(
+      {
+        buffer: Buffer.from('image'),
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 120,
+      } as Express.Multer.File,
+      'Bearer access-token',
+    );
+
+    expect(articlesService.uploadCoverImage).toHaveBeenCalled();
+  });
+
+  it('Given une categorie invalide, When createCategory est appele, Then une BadRequestException est renvoyee', async () => {
+    await expect(
+      controller.createCategory(
+        {
+          slug: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un tag valide, When createTag est appele, Then le service createTag est invoque', async () => {
+    await controller.createTag(
+      {
+        slug: 'tag-1',
+        label: 'Tag 1',
+      },
+      'Bearer access-token',
+    );
+
+    expect(articlesService.createTag).toHaveBeenCalledWith('access-token', {
+      slug: 'tag-1',
+      label: 'Tag 1',
+      description: null,
+    });
   });
 
   it('Given un header Authorization valide, When listArticles est appelé, Then le token est transmis au service', async () => {

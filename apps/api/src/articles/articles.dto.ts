@@ -1,4 +1,11 @@
-import type { CreateArticleDto, UpdateArticleDto } from '@kraak/contracts';
+import type {
+  CreateArticleDto,
+  CreateCategoryDto,
+  CreateTagDto,
+  UpdateArticleDto,
+  UpdateCategoryDto,
+  UpdateTagDto,
+} from '@kraak/contracts';
 import {
   isObjectPayload,
   readTrimmedString,
@@ -312,4 +319,121 @@ export function validateUpdateArticlePayload(
     valid: true,
     data: updates,
   };
+}
+
+type TaxonomyCreatePayload = CreateCategoryDto | CreateTagDto;
+type TaxonomyUpdatePayload = UpdateCategoryDto | UpdateTagDto;
+
+function validateTaxonomyCreatePayload(
+  body: unknown,
+): ValidationResult<TaxonomyCreatePayload> {
+  if (!isObjectPayload(body)) {
+    return {
+      valid: false,
+      errors: ['Corps de requete invalide.'],
+    };
+  }
+
+  const slug = readTrimmedString(body['slug']);
+  const label = readTrimmedString(body['label']);
+  const description =
+    'description' in body ? readNullableString(body['description']) : null;
+  const errors: string[] = [];
+
+  if (slug.length === 0) {
+    errors.push('Le champ slug est requis.');
+  }
+
+  if (label.length === 0) {
+    errors.push('Le champ label est requis.');
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    data: { slug, label, description } as TaxonomyCreatePayload,
+  };
+}
+
+function validateTaxonomyUpdatePayload(
+  body: unknown,
+): ValidationResult<TaxonomyUpdatePayload> {
+  if (!isObjectPayload(body)) {
+    return {
+      valid: false,
+      errors: ['Corps de requete invalide.'],
+    };
+  }
+
+  const updates: Record<string, string | null> = {};
+  const errors: string[] = [];
+
+  if ('slug' in body) {
+    const slug = readTrimmedString(body['slug']);
+    if (slug.length === 0) {
+      errors.push('Le champ slug est requis.');
+    } else {
+      updates['slug'] = slug;
+    }
+  }
+
+  if ('label' in body) {
+    const label = readTrimmedString(body['label']);
+    if (label.length === 0) {
+      errors.push('Le champ label est requis.');
+    } else {
+      updates['label'] = label;
+    }
+  }
+
+  if ('description' in body) {
+    updates['description'] = readNullableString(body['description']);
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return {
+      valid: false,
+      errors: ['Au moins un champ doit etre fourni pour la mise a jour.'],
+    };
+  }
+
+  return {
+    valid: true,
+    data: updates as TaxonomyUpdatePayload,
+  };
+}
+
+export function validateCreateCategoryPayload(
+  body: unknown,
+): ValidationResult<CreateCategoryDto> {
+  return validateTaxonomyCreatePayload(
+    body,
+  ) as ValidationResult<CreateCategoryDto>;
+}
+
+export function validateUpdateCategoryPayload(
+  body: unknown,
+): ValidationResult<UpdateCategoryDto> {
+  return validateTaxonomyUpdatePayload(
+    body,
+  ) as ValidationResult<UpdateCategoryDto>;
+}
+
+export function validateCreateTagPayload(
+  body: unknown,
+): ValidationResult<CreateTagDto> {
+  return validateTaxonomyCreatePayload(body) as ValidationResult<CreateTagDto>;
+}
+
+export function validateUpdateTagPayload(
+  body: unknown,
+): ValidationResult<UpdateTagDto> {
+  return validateTaxonomyUpdatePayload(body) as ValidationResult<UpdateTagDto>;
 }
