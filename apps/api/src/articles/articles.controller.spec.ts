@@ -150,6 +150,27 @@ describe('ArticlesController', () => {
     expect(articlesService.uploadCoverImage).toHaveBeenCalled();
   });
 
+  it('Given une erreur ForbiddenException du service upload, When uploadCoverImage est appele, Then l erreur est propagee', async () => {
+    articlesService.uploadCoverImage.mockRejectedValueOnce(
+      new ForbiddenException({
+        success: false,
+        message: 'Accès admin requis.',
+      }),
+    );
+
+    await expect(
+      controller.uploadCoverImage(
+        {
+          buffer: Buffer.from('image'),
+          originalname: 'cover.jpg',
+          mimetype: 'image/jpeg',
+          size: 120,
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('Given une categorie invalide, When createCategory est appele, Then une BadRequestException est renvoyee', async () => {
     await expect(
       controller.createCategory(
@@ -173,8 +194,20 @@ describe('ArticlesController', () => {
     expect(articlesService.createTag).toHaveBeenCalledWith('access-token', {
       slug: 'tag-1',
       label: 'Tag 1',
-      description: null,
     });
+  });
+
+  it('Given un payload tag avec description, When createTag est appele, Then une BadRequestException est renvoyee', async () => {
+    await expect(
+      controller.createTag(
+        {
+          slug: 'tag-1',
+          label: 'Tag 1',
+          description: 'Description interdite',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('Given un header Authorization valide, When listArticles est appelé, Then le token est transmis au service', async () => {
