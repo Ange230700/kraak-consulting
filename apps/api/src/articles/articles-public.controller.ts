@@ -84,10 +84,7 @@ export class ArticlesPublicController {
         throw error;
       }
 
-      throw new NotFoundException({
-        success: false,
-        message: 'Article introuvable.',
-      });
+      throw error;
     }
   }
 }
