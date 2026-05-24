@@ -40,12 +40,11 @@ test.describe('Blog public - smoke CMS-03', () => {
 
     await expect(page).toHaveTitle(/Clarifier son projet avant de candidater/);
 
-    const canonicalHref = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute('href');
-    expect(canonicalHref).toContain(
-      '/blog/clarifier-son-projet-avant-de-candidater',
-    );
+    await expect
+      .poll(async () =>
+        page.locator('link[rel="canonical"]').getAttribute('href'),
+      )
+      .toContain('/blog/clarifier-son-projet-avant-de-candidater');
 
     await expect(
       page.locator('meta[property="og:type"][content="article"]'),

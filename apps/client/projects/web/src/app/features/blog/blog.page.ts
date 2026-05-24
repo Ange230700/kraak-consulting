@@ -61,7 +61,6 @@ export default class BlogPage implements OnInit, OnDestroy {
         .listPublishedArticles()
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((articles) => {
-          this.isLoading = false;
           this.applyArticles(articles);
         });
     }, 0);
