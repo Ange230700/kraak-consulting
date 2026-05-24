@@ -403,6 +403,67 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
+  it('Given un article introuvable côté Supabase, When updateArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: {
+        code: 'PGRST116',
+        message: 'JSON object requested, multiple (or no) rows returned',
+      },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-missing', {
+        title: 'Titre mis à jour',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur Supabase non liée à l absence de ligne, When updateArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: '42501', message: 'permission denied' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        title: 'Titre mis à jour',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
   it('Given un article existant, When deleteArticle est appelé, Then il est archivé sans suppression physique', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },

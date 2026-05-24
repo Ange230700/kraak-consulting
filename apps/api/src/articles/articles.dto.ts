@@ -23,28 +23,36 @@ function readNullableString(value: unknown): string | null {
   return normalized || null;
 }
 
-function readNullableUrl(value: unknown): string | null {
+function readNullableUrl(value: unknown): {
+  value: string | null;
+  isInvalid: boolean;
+} {
   const normalized = readTrimmedString(value);
   if (!normalized) {
-    return null;
+    return { value: null, isInvalid: false };
   }
 
   try {
     new URL(normalized);
-    return normalized;
+    return { value: normalized, isInvalid: false };
   } catch {
-    return null;
+    return { value: null, isInvalid: true };
   }
 }
 
-function readNullableDate(value: unknown): string | null {
+function readNullableDate(value: unknown): {
+  value: string | null;
+  isInvalid: boolean;
+} {
   const normalized = readTrimmedString(value);
   if (!normalized) {
-    return null;
+    return { value: null, isInvalid: false };
   }
 
   const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  return Number.isNaN(date.getTime())
+    ? { value: null, isInvalid: true }
+    : { value: date.toISOString(), isInvalid: false };
 }
 
 function readStringArray(value: unknown): string[] {
@@ -128,28 +136,48 @@ function assignNullableStringUpdate(
 
 function assignNullableUrlUpdate(
   body: Record<string, unknown>,
+  errors: string[],
   updates: UpdateArticleDto,
 ): void {
   if (!('coverImageUrl' in body)) {
     return;
   }
 
-  updates.coverImageUrl =
-    body['coverImageUrl'] === null
-      ? null
-      : readNullableUrl(body['coverImageUrl']);
+  if (body['coverImageUrl'] === null) {
+    updates.coverImageUrl = null;
+    return;
+  }
+
+  const { value, isInvalid } = readNullableUrl(body['coverImageUrl']);
+  if (isInvalid) {
+    errors.push('Le champ coverImageUrl est invalide.');
+    return;
+  }
+
+  updates.coverImageUrl = value;
 }
 
 function assignNullableDateUpdate(
   body: Record<string, unknown>,
+  errors: string[],
   updates: UpdateArticleDto,
 ): void {
   if (!('publishedAt' in body)) {
     return;
   }
 
-  updates.publishedAt =
-    body['publishedAt'] === null ? null : readNullableDate(body['publishedAt']);
+  if (body['publishedAt'] === null) {
+    updates.publishedAt = null;
+    return;
+  }
+
+  const { value, isInvalid } = readNullableDate(body['publishedAt']);
+  if (isInvalid) {
+    errors.push('Le champ publishedAt est invalide.');
+    return;
+  }
+
+  updates.publishedAt = value;
 }
 
 function validateRequiredText(
@@ -183,11 +211,14 @@ export function validateCreateArticlePayload(
   const excerpt = readTrimmedString(body['excerpt']);
   const content = readTrimmedString(body['content']);
   const status = readTrimmedString(body['status']);
-  const coverImageUrl = readNullableUrl(body['coverImageUrl']);
+  const { value: coverImageUrl, isInvalid: isCoverImageUrlInvalid } =
+    readNullableUrl(body['coverImageUrl']);
   const seoTitle = readNullableString(body['seoTitle']);
   const seoDescription = readNullableString(body['seoDescription']);
-  const publishedAt =
-    body['publishedAt'] === null ? null : readNullableDate(body['publishedAt']);
+  const { value: normalizedPublishedAt, isInvalid: isPublishedAtInvalid } =
+    body['publishedAt'] === null
+      ? { value: null, isInvalid: false }
+      : readNullableDate(body['publishedAt']);
   const authorId = readTrimmedString(body['authorId']);
   const categoryIds = readStringArray(body['categoryIds']);
   const tagIds = readStringArray(body['tagIds']);
@@ -209,6 +240,14 @@ export function validateCreateArticlePayload(
     errors.push('Le champ tagIds doit contenir au moins une valeur.');
   }
 
+  if (isCoverImageUrlInvalid) {
+    errors.push('Le champ coverImageUrl est invalide.');
+  }
+
+  if (isPublishedAtInvalid) {
+    errors.push('Le champ publishedAt est invalide.');
+  }
+
   if (errors.length > 0) {
     return { valid: false, errors };
   }
@@ -224,7 +263,7 @@ export function validateCreateArticlePayload(
       coverImageUrl,
       seoTitle,
       seoDescription,
-      publishedAt,
+      publishedAt: normalizedPublishedAt,
       authorId,
       categoryIds,
       tagIds,
@@ -251,10 +290,10 @@ export function validateUpdateArticlePayload(
   assignRequiredStringUpdate(body, 'content', errors, updates);
   assignRequiredStringUpdate(body, 'authorId', errors, updates);
   assignStatusUpdate(body, errors, updates);
-  assignNullableUrlUpdate(body, updates);
+  assignNullableUrlUpdate(body, errors, updates);
   assignNullableStringUpdate(body, 'seoTitle', updates);
   assignNullableStringUpdate(body, 'seoDescription', updates);
-  assignNullableDateUpdate(body, updates);
+  assignNullableDateUpdate(body, errors, updates);
   assignArrayUpdate(body, 'categoryIds', errors, updates);
   assignArrayUpdate(body, 'tagIds', errors, updates);
 

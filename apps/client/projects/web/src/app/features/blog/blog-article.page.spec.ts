@@ -4,6 +4,7 @@ import {
   convertToParamMap,
   provideRouter,
 } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
@@ -31,9 +32,15 @@ describe('BlogArticlePage', () => {
   const seoServiceMock = {
     applyPageSeo: vi.fn(),
   };
+  let paramMapSubject: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   beforeEach(async () => {
     seoServiceMock.applyPageSeo.mockReset();
+    paramMapSubject = new BehaviorSubject(
+      convertToParamMap({
+        slug: 'clarifier-son-projet-avant-de-candidater',
+      }),
+    );
 
     await TestBed.configureTestingModule({
       imports: [BlogArticlePage],
@@ -55,6 +62,7 @@ describe('BlogArticlePage', () => {
                 slug: 'clarifier-son-projet-avant-de-candidater',
               }),
             },
+            paramMap: paramMapSubject.asObservable(),
           },
         },
       ],
@@ -88,6 +96,31 @@ describe('BlogArticlePage', () => {
       expect.objectContaining({
         path: 'blog/clarifier-son-projet-avant-de-candidater',
         title: 'Clarifier son projet avant de candidater | KRAAK Consulting',
+      }),
+    );
+  });
+
+  it('Given the same component instance When the slug route parameter changes Then article state and SEO are updated', () => {
+    const fixture = TestBed.createComponent(BlogArticlePage);
+    fixture.detectChanges();
+
+    seoServiceMock.applyPageSeo.mockClear();
+
+    paramMapSubject.next(
+      convertToParamMap({
+        slug: 'preparer-un-dossier-immigration-sans-perdre-le-fil',
+      }),
+    );
+    expect(
+      (
+        fixture.componentInstance as unknown as {
+          article?: { slug: string };
+        }
+      ).article?.slug,
+    ).toBe('preparer-un-dossier-immigration-sans-perdre-le-fil');
+    expect(seoServiceMock.applyPageSeo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        path: 'blog/preparer-un-dossier-immigration-sans-perdre-le-fil',
       }),
     );
   });

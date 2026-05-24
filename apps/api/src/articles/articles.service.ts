@@ -50,6 +50,7 @@ type TaxonomyIdRow = {
 
 const articleSelectFields =
   'id, slug, title, excerpt, content, status, cover_image_url, seo_title, seo_description, published_at, author_id, created_at, updated_at';
+const notFoundSupabaseErrorCodes = new Set(['PGRST116']);
 
 @Injectable()
 export class ArticlesService {
@@ -209,17 +210,32 @@ export class ArticlesService {
       .select(articleSelectFields)
       .single();
 
+    if (error) {
+      const errorCode =
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        typeof error.code === 'string'
+          ? error.code
+          : null;
+
+      if (errorCode !== null && notFoundSupabaseErrorCodes.has(errorCode)) {
+        throw new NotFoundException({
+          success: false,
+          message: 'Article introuvable.',
+        });
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Impossible de mettre à jour l'article.",
+      });
+    }
+
     if (!data) {
       throw new NotFoundException({
         success: false,
         message: 'Article introuvable.',
-      });
-    }
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: "Impossible de mettre à jour l'article.",
       });
     }
 

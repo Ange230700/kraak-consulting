@@ -123,10 +123,10 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given des valeurs nullable en mise à jour, When validateUpdateArticlePayload est appelé, Then les champs sont normalisés', () => {
+  it('Given des valeurs nullable valides en mise à jour, When validateUpdateArticlePayload est appelé, Then les champs sont normalisés', () => {
     const result = validateUpdateArticlePayload({
-      coverImageUrl: 'not-a-url',
-      publishedAt: 'not-a-date',
+      coverImageUrl: '',
+      publishedAt: '  ',
       seoTitle: '  ',
       seoDescription: ' Description SEO ',
     });
@@ -139,6 +139,44 @@ describe('Articles DTO validation', () => {
         seoTitle: null,
         seoDescription: 'Description SEO',
       },
+    });
+  });
+
+  it('Given des valeurs nullable invalides en mise à jour, When validateUpdateArticlePayload est appelé, Then des erreurs explicites sont renvoyées', () => {
+    const result = validateUpdateArticlePayload({
+      coverImageUrl: 'not-a-url',
+      publishedAt: 'not-a-date',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ coverImageUrl est invalide.',
+        'Le champ publishedAt est invalide.',
+      ],
+    });
+  });
+
+  it('Given des valeurs nullable invalides en création, When validateCreateArticlePayload est appelé, Then des erreurs explicites sont renvoyées', () => {
+    const result = validateCreateArticlePayload({
+      slug: 'nouvel-article',
+      title: 'Titre',
+      excerpt: 'Résumé',
+      content: '<p>Contenu</p>',
+      status: 'draft',
+      coverImageUrl: 'bad-url',
+      publishedAt: 'bad-date',
+      authorId: 'author-1',
+      categoryIds: ['category-1'],
+      tagIds: ['tag-1'],
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ coverImageUrl est invalide.',
+        'Le champ publishedAt est invalide.',
+      ],
     });
   });
 });
