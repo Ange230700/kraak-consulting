@@ -18,6 +18,7 @@ describe('site-seo', () => {
       'a-propos',
       'services',
       'programmes',
+      'blog',
       'ressources',
       'contact',
       'faq',
@@ -33,6 +34,7 @@ describe('site-seo', () => {
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/a-propos</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/services</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/programmes</loc>`);
+    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/blog</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/ressources</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/contact</loc>`);
   });

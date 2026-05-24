@@ -1,8 +1,17 @@
-import { INestApplication, Provider, Type } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  INestApplication,
+  NotFoundException,
+  Provider,
+  Type,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AnnouncementsController } from '../announcements/announcements.controller';
 import { AnnouncementsService } from '../announcements/announcements.service';
+import { ArticlesController } from '../articles/articles.controller';
+import { ArticlesService } from '../articles/articles.service';
 import { AuthController } from '../auth/auth.controller';
 import { AuthService } from '../auth/auth.service';
 import { ProgramsController } from '../programs/programs.controller';
@@ -295,6 +304,209 @@ describe('Critical API Modules Integration', () => {
         'participant-token',
         '1',
         '10',
+      );
+    });
+  });
+
+  describe('CMS-02.1 Admin Articles endpoints', () => {
+    let app: INestApplication;
+
+    const articlesServiceMock: jest.Mocked<
+      Pick<
+        ArticlesService,
+        | 'listArticles'
+        | 'getArticleById'
+        | 'createArticle'
+        | 'updateArticle'
+        | 'deleteArticle'
+      >
+    > = {
+      listArticles: jest.fn(),
+      getArticleById: jest.fn(),
+      createArticle: jest.fn(),
+      updateArticle: jest.fn(),
+      deleteArticle: jest.fn(),
+    };
+
+    const articleFixture = {
+      id: 'article-1',
+      slug: 'article-1',
+      title: 'Article 1',
+      excerpt: 'Résumé article 1',
+      content: '<p>Contenu article 1</p>',
+      status: 'draft' as const,
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: null,
+      authorId: 'author-1',
+      categoryIds: ['category-1'],
+      tagIds: ['tag-1'],
+      createdAt: '2026-05-24T10:00:00.000Z',
+      updatedAt: '2026-05-24T10:00:00.000Z',
+    };
+
+    beforeAll(async () => {
+      app = await buildHttpApp({
+        controllers: [ArticlesController],
+        providers: [
+          { provide: ArticlesService, useValue: articlesServiceMock },
+        ],
+      });
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      articlesServiceMock.listArticles.mockResolvedValue([articleFixture]);
+      articlesServiceMock.getArticleById.mockResolvedValue(articleFixture);
+      articlesServiceMock.createArticle.mockResolvedValue(articleFixture);
+      articlesServiceMock.updateArticle.mockResolvedValue({
+        ...articleFixture,
+        title: 'Article 1 mis à jour',
+      });
+      articlesServiceMock.deleteArticle.mockResolvedValue(undefined);
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('returns 401 on missing authorization header for admin list endpoint', async () => {
+      await (request(app.getHttpServer())
+        .get('/admin/articles')
+        .expect(401) as unknown as Promise<void>);
+
+      expect(articlesServiceMock.listArticles).not.toHaveBeenCalled();
+    });
+
+    it('returns 200 on authorized admin list endpoint', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/admin/articles')
+        .set('authorization', 'Bearer admin-token')
+        .expect(200);
+
+      expect(response.body).toHaveLength(1);
+      expect(articlesServiceMock.listArticles).toHaveBeenCalledWith(
+        'admin-token',
+      );
+    });
+
+    it('returns 403 when the service rejects list access for admin scope', async () => {
+      articlesServiceMock.listArticles.mockRejectedValueOnce(
+        new ForbiddenException({
+          success: false,
+          message: 'Accès admin requis.',
+        }),
+      );
+
+      await request(app.getHttpServer())
+        .get('/admin/articles')
+        .set('authorization', 'Bearer admin-token')
+        .expect(403);
+    });
+
+    it('returns 400 on invalid create payload', async () => {
+      await request(app.getHttpServer())
+        .post('/admin/articles')
+        .set('authorization', 'Bearer admin-token')
+        .send({ slug: '' })
+        .expect(400);
+
+      expect(articlesServiceMock.createArticle).not.toHaveBeenCalled();
+    });
+
+    it('returns 404 when the service reports a missing article on detail endpoint', async () => {
+      articlesServiceMock.getArticleById.mockRejectedValueOnce(
+        new NotFoundException({
+          success: false,
+          message: 'Article introuvable.',
+        }),
+      );
+
+      await request(app.getHttpServer())
+        .get('/admin/articles/article-missing')
+        .set('authorization', 'Bearer admin-token')
+        .expect(404);
+    });
+
+    it('returns 201 on valid create payload', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/admin/articles')
+        .set('authorization', 'Bearer admin-token')
+        .send({
+          slug: 'article-1',
+          title: 'Article 1',
+          excerpt: 'Résumé article 1',
+          content: '<p>Contenu article 1</p>',
+          status: 'draft',
+          authorId: 'author-1',
+          categoryIds: ['category-1'],
+          tagIds: ['tag-1'],
+        })
+        .expect(201);
+
+      expect(response.body.id).toBe('article-1');
+      expect(articlesServiceMock.createArticle).toHaveBeenCalledWith(
+        'admin-token',
+        expect.objectContaining({
+          slug: 'article-1',
+          title: 'Article 1',
+        }),
+      );
+    });
+
+    it('returns 200 on valid update payload', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/admin/articles/article-1')
+        .set('authorization', 'Bearer admin-token')
+        .send({ title: 'Article 1 mis à jour' })
+        .expect(200);
+
+      expect(response.body.title).toBe('Article 1 mis à jour');
+      expect(articlesServiceMock.updateArticle).toHaveBeenCalledWith(
+        'admin-token',
+        'article-1',
+        { title: 'Article 1 mis à jour' },
+      );
+    });
+
+    it('returns 500 when the service raises an unexpected update error', async () => {
+      articlesServiceMock.updateArticle.mockRejectedValueOnce(
+        new Error('boom'),
+      );
+
+      await request(app.getHttpServer())
+        .patch('/admin/articles/article-1')
+        .set('authorization', 'Bearer admin-token')
+        .send({ title: 'Article 1 mis à jour' })
+        .expect(500);
+    });
+
+    it('returns 400 when the service rejects archived category or tag relations', async () => {
+      articlesServiceMock.updateArticle.mockRejectedValueOnce(
+        new BadRequestException({
+          success: false,
+          message:
+            'Certaines catégories ou certains tags sont introuvables ou archivés.',
+        }),
+      );
+
+      await request(app.getHttpServer())
+        .patch('/admin/articles/article-1')
+        .set('authorization', 'Bearer admin-token')
+        .send({ categoryIds: ['category-archived'] })
+        .expect(400);
+    });
+
+    it('returns 204 on delete endpoint and forwards id', async () => {
+      await (request(app.getHttpServer())
+        .delete('/admin/articles/article-1')
+        .set('authorization', 'Bearer admin-token')
+        .expect(204) as unknown as Promise<void>);
+
+      expect(articlesServiceMock.deleteArticle).toHaveBeenCalledWith(
+        'admin-token',
+        'article-1',
       );
     });
   });

@@ -3,16 +3,22 @@ import * as schemasModule from './schemas';
 import {
   ContactFormSchema,
   ContactSubmissionResultSchema,
+  ArticleSchema,
   AuthProfileSchema,
   AuthSessionBundleSchema,
   AuthSessionContextSchema,
   AuthSessionTokensSchema,
+  AuthorSchema,
+  CategorySchema,
   PasswordResetRequestSchema,
   PasswordResetResponseSchema,
   RefreshSessionRequestSchema,
   SignInRequestSchema,
   SignUpRequestSchema,
   SignUpResponseSchema,
+  CreateArticleSchema,
+  CreateAuthorSchema,
+  CreateCategorySchema,
   CreateAppUserSchema,
   CreateParticipantSchema,
   CreateProgramSchema,
@@ -23,7 +29,12 @@ import {
   CreateEnrollmentSchema,
   CreateNotificationSchema,
   CreateSupportRequestSchema,
+  CreateTagSchema,
+  TagSchema,
   UpdateAppUserSchema,
+  UpdateArticleSchema,
+  UpdateAuthorSchema,
+  UpdateCategorySchema,
   UpdateParticipantSchema,
   UpdateProgramSchema,
   UpdateCohortSchema,
@@ -31,6 +42,7 @@ import {
   UpdateResourceSchema,
   UpdateAnnouncementSchema,
   UpdateEnrollmentSchema,
+  UpdateTagSchema,
   UpdateSupportRequestSchema,
   AppUserSchema,
   ParticipantSchema,
@@ -338,6 +350,179 @@ describe('AuthSessionContextSchema', () => {
           },
           participant: null,
         },
+      }).success,
+    ).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+describe('CreateAuthorSchema', () => {
+  const valid = {
+    email: 'editorialiste@kraak-consulting.com',
+    displayName: 'Nadia Kouam',
+    bio: 'Consultante en apprentissage et orientation professionnelle.',
+    avatarUrl: 'https://cdn.kraak.test/authors/nadia-kouam.jpg',
+  };
+
+  it('Given a valid author payload When parsed Then the schema accepts it', () => {
+    expect(CreateAuthorSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given a malformed author email When parsed Then the schema rejects it', () => {
+    expect(
+      CreateAuthorSchema.safeParse({ ...valid, email: 'email-invalide' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('Given update author payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateAuthorSchema.safeParse({ displayName: 'Nadia K.' }).success,
+    ).toBe(true);
+  });
+});
+
+describe('CreateCategorySchema', () => {
+  const valid = {
+    slug: 'actualites-formation',
+    label: 'Actualités Formation',
+    description: 'Contenus éditoriaux liés aux programmes et ateliers.',
+  };
+
+  it('Given a valid category payload When parsed Then the schema accepts it', () => {
+    expect(CreateCategorySchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an empty category label When parsed Then the schema rejects it', () => {
+    expect(
+      CreateCategorySchema.safeParse({ ...valid, label: ' ' }).success,
+    ).toBe(false);
+  });
+
+  it('Given update category payload with one field When parsed Then partial updates are accepted', () => {
+    expect(UpdateCategorySchema.safeParse({ label: 'Insights' }).success).toBe(
+      true,
+    );
+  });
+});
+
+describe('CreateTagSchema', () => {
+  const valid = {
+    slug: 'leadership',
+    label: 'Leadership',
+  };
+
+  it('Given a valid tag payload When parsed Then the schema accepts it', () => {
+    expect(CreateTagSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an empty tag slug When parsed Then the schema rejects it', () => {
+    expect(CreateTagSchema.safeParse({ ...valid, slug: ' ' }).success).toBe(
+      false,
+    );
+  });
+
+  it('Given update tag payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateTagSchema.safeParse({ label: 'Leadership inclusif' }).success,
+    ).toBe(true);
+  });
+});
+
+describe('CreateArticleSchema', () => {
+  const valid = {
+    slug: 'comment-reussir-son-dossier-dimmigration',
+    title: "Comment réussir son dossier d'immigration",
+    excerpt:
+      'Un cadre simple pour préparer les justificatifs, prioriser les étapes et réduire les risques de rejet.',
+    content:
+      '<p>Commencez par cartographier vos échéances puis vérifiez chaque pièce justificative.</p>',
+    status: 'draft',
+    coverImageUrl: 'https://cdn.kraak.test/articles/dossier-immigration.jpg',
+    seoTitle: "Réussir son dossier d'immigration | KRAAK",
+    seoDescription:
+      "Méthode pratique pour structurer un dossier d'immigration et sécuriser vos démarches.",
+    publishedAt: null,
+    authorId: 'author-1',
+    categoryIds: ['category-1'],
+    tagIds: ['tag-1', 'tag-2'],
+  };
+
+  it('Given a valid article payload When parsed Then the schema accepts it', () => {
+    expect(CreateArticleSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an article without categories and tags When parsed Then the schema rejects it', () => {
+    expect(
+      CreateArticleSchema.safeParse({
+        ...valid,
+        categoryIds: [],
+        tagIds: [],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('Given update article payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateArticleSchema.safeParse({ title: 'Nouveau titre' }).success,
+    ).toBe(true);
+  });
+});
+
+describe('Editorial base schemas', () => {
+  it('Given full author/category/tag/article payloads When parsed Then entity schemas accept them', () => {
+    expect(
+      AuthorSchema.safeParse({
+        id: 'author-1',
+        email: 'editorialiste@kraak-consulting.com',
+        displayName: 'Nadia Kouam',
+        bio: null,
+        avatarUrl: null,
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CategorySchema.safeParse({
+        id: 'category-1',
+        slug: 'actualites-formation',
+        label: 'Actualités Formation',
+        description: null,
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      TagSchema.safeParse({
+        id: 'tag-1',
+        slug: 'leadership',
+        label: 'Leadership',
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      ArticleSchema.safeParse({
+        id: 'article-1',
+        slug: 'comment-reussir-son-dossier-dimmigration',
+        title: "Comment réussir son dossier d'immigration",
+        excerpt: 'Résumé article',
+        content: '<p>Contenu</p>',
+        status: 'published',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: '2026-05-24T09:00:00.000Z',
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
       }).success,
     ).toBe(true);
   });

@@ -20,6 +20,7 @@ export class Navbar {
     { label: '\u00C0 propos', path: '/a-propos' },
     { label: 'Services', path: '/services' },
     { label: 'Programmes', path: '/programmes' },
+    { label: 'Blog', path: '/blog' },
     { label: 'Contact', path: '/contact' },
   ];
 
