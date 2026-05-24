@@ -403,6 +403,10 @@ describe('Critical API Modules Integration', () => {
         .get('/admin/articles')
         .set('authorization', 'Bearer admin-token')
         .expect(403);
+
+      expect(articlesServiceMock.listArticles).toHaveBeenCalledWith(
+        'admin-token',
+      );
     });
 
     it('returns 400 on invalid create payload', async () => {
@@ -427,6 +431,11 @@ describe('Critical API Modules Integration', () => {
         .get('/admin/articles/article-missing')
         .set('authorization', 'Bearer admin-token')
         .expect(404);
+
+      expect(articlesServiceMock.getArticleById).toHaveBeenCalledWith(
+        'admin-token',
+        'article-missing',
+      );
     });
 
     it('returns 201 on valid create payload', async () => {
@@ -480,6 +489,12 @@ describe('Critical API Modules Integration', () => {
         .set('authorization', 'Bearer admin-token')
         .send({ title: 'Article 1 mis à jour' })
         .expect(500);
+
+      expect(articlesServiceMock.updateArticle).toHaveBeenCalledWith(
+        'admin-token',
+        'article-1',
+        { title: 'Article 1 mis à jour' },
+      );
     });
 
     it('returns 400 when the service rejects archived category or tag relations', async () => {
@@ -496,6 +511,12 @@ describe('Critical API Modules Integration', () => {
         .set('authorization', 'Bearer admin-token')
         .send({ categoryIds: ['category-archived'] })
         .expect(400);
+
+      expect(articlesServiceMock.updateArticle).toHaveBeenCalledWith(
+        'admin-token',
+        'article-1',
+        { categoryIds: ['category-archived'] },
+      );
     });
 
     it('returns 204 on delete endpoint and forwards id', async () => {
