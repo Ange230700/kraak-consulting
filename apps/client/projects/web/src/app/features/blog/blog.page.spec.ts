@@ -51,18 +51,18 @@ describe('BlogPage', () => {
     fixture.destroy();
   });
 
-  it('Given the blog page When the API request is in progress Then it exposes the loading state', () => {
+  it('Given the blog page When the API request is in progress Then it keeps the non-blocking fallback state', () => {
     const fixture = TestBed.createComponent(BlogPage);
     fixture.detectChanges();
 
     expect(
       (fixture.componentInstance as unknown as { isLoading: boolean })
         .isLoading,
-    ).toBe(true);
+    ).toBe(false);
     fixture.destroy();
   });
 
-  it('Given the blog page When it renders before API data is loaded Then it shows the editorial hero and loading state', () => {
+  it('Given the blog page When it renders before API data is loaded Then it shows the editorial hero with fallback content', () => {
     const fixture = TestBed.createComponent(BlogPage);
     fixture.detectChanges();
 
@@ -71,7 +71,8 @@ describe('BlogPage', () => {
     expect(content).toContain(
       'Actualités, repères et analyses pour avancer avec clarté.',
     );
-    expect(content).toContain('Chargement des articles…');
+    expect(content).toContain('Article vedette');
+    expect(content).not.toContain('Chargement des articles…');
 
     fixture.destroy();
   });
