@@ -53,7 +53,14 @@ export class BlogPublicService {
       map((article) => mapPublicArticleToBlogArticle(article)),
       catchError((error: unknown) => {
         const fallbackArticles = [...getFallbackBlogArticles()];
-        const decodedSlug = decodeURIComponent(normalizedSlug);
+        let decodedSlug = normalizedSlug;
+
+        try {
+          decodedSlug = decodeURIComponent(normalizedSlug);
+        } catch {
+          decodedSlug = normalizedSlug;
+        }
+
         const fallback =
           fallbackArticles.find((article) => article.slug === normalizedSlug) ??
           fallbackArticles.find((article) => article.slug === decodedSlug) ??
