@@ -7,22 +7,32 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
+  Put,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import type { ArticleDto } from '@kraak/contracts';
+import type { ArticleDto, CategoryDto, TagDto } from '@kraak/contracts';
 import { extractAccessToken } from '../auth/auth.dto';
 import {
+  validateCreateCategoryPayload,
+  validateCreateTagPayload,
   validateCreateArticlePayload,
+  validateUpdateCategoryPayload,
+  validateUpdateTagPayload,
   validateUpdateArticlePayload,
 } from './articles.dto';
 import { ArticlesService } from './articles.service';
@@ -119,6 +129,19 @@ const apiErrorSchema = {
     success: { type: 'boolean', example: false },
     message: { type: 'string' },
     errors: { type: 'array', items: { type: 'string' } },
+  },
+};
+
+const taxonomySchema = {
+  type: 'object',
+  required: ['id', 'slug', 'label', 'createdAt', 'updatedAt'],
+  properties: {
+    id: { type: 'string' },
+    slug: { type: 'string' },
+    label: { type: 'string' },
+    description: { type: 'string', nullable: true },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
   },
 };
 
@@ -229,7 +252,7 @@ export class ArticlesController {
     return this.articlesService.createArticle(accessToken.data, validated.data);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Mettre à jour un article' })
   @ApiBody({ schema: updateArticleBodySchema })
@@ -272,6 +295,324 @@ export class ArticlesController {
       id,
       validated.data,
     );
+  }
+
+  @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour un article (compatibilite PATCH)' })
+  @ApiBody({ schema: updateArticleBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Article mis a jour avec succes.',
+    schema: articleSchema,
+  })
+  async patchArticle(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ArticleDto> {
+    return this.updateArticle(id, body, authorizationHeader);
+  }
+
+  @Patch(':id/publish')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Publier un article' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Article publie avec succes.',
+    schema: articleSchema,
+  })
+  async publishArticle(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ArticleDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    return this.articlesService.publishArticle(accessToken.data, id);
+  }
+
+  @Post('cover-image')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: "Envoyer une image de couverture d'article" })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Image de couverture envoyee.',
+    schema: {
+      type: 'object',
+      required: ['url', 'path'],
+      properties: {
+        url: { type: 'string' },
+        path: { type: 'string' },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadCoverImage(
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<{ url: string; path: string }> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    if (!file?.buffer) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Le fichier image est requis.',
+      });
+    }
+
+    try {
+      return await this.articlesService.uploadCoverImage(
+        accessToken.data,
+        file,
+      );
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Impossible d'envoyer l'image de couverture.",
+      });
+    }
+  }
+
+  @Get('categories')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister les categories' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Categories chargees avec succes.',
+    schema: { type: 'array', items: taxonomySchema },
+  })
+  async listCategories(
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<CategoryDto[]> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    return this.articlesService.listCategories(accessToken.data);
+  }
+
+  @Post('categories')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Creer une categorie' })
+  @ApiBody({ schema: taxonomySchema })
+  async createCategory(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<CategoryDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const validated = validateCreateCategoryPayload(body);
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.articlesService.createCategory(
+      accessToken.data,
+      validated.data,
+    );
+  }
+
+  @Patch('categories/:id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre a jour une categorie' })
+  @ApiBody({ schema: taxonomySchema })
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<CategoryDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const validated = validateUpdateCategoryPayload(body);
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.articlesService.updateCategory(
+      accessToken.data,
+      id,
+      validated.data,
+    );
+  }
+
+  @Delete('categories/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver une categorie' })
+  async deleteCategory(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    await this.articlesService.deleteCategory(accessToken.data, id);
+  }
+
+  @Get('tags')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister les tags' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Tags charges avec succes.',
+    schema: { type: 'array', items: taxonomySchema },
+  })
+  async listTags(
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<TagDto[]> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    return this.articlesService.listTags(accessToken.data);
+  }
+
+  @Post('tags')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Creer un tag' })
+  @ApiBody({ schema: taxonomySchema })
+  async createTag(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<TagDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const validated = validateCreateTagPayload(body);
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.articlesService.createTag(accessToken.data, validated.data);
+  }
+
+  @Patch('tags/:id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre a jour un tag' })
+  @ApiBody({ schema: taxonomySchema })
+  async updateTag(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<TagDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const validated = validateUpdateTagPayload(body);
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.articlesService.updateTag(accessToken.data, id, validated.data);
+  }
+
+  @Delete('tags/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver un tag' })
+  async deleteTag(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    await this.articlesService.deleteTag(accessToken.data, id);
   }
 
   @Delete(':id')

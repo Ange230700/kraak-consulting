@@ -54,6 +54,14 @@ describe('ArticlesService', () => {
 
   const adminClient = {
     from: jest.fn(),
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn().mockResolvedValue({ error: null }),
+        getPublicUrl: jest.fn((path: string) => ({
+          data: { publicUrl: `https://cdn.kraak.test/${path}` },
+        })),
+      })),
+    },
   };
 
   const supabaseService = {
@@ -612,5 +620,135 @@ describe('ArticlesService', () => {
     await expect(
       service.deleteArticle('access-token', 'article-1'),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given des articles publies, When listPublicArticles est appele, Then seuls les articles publies sont retournes', async () => {
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-public-1',
+          slug: 'article-public-1',
+          title: 'Article public',
+          excerpt: 'Resume public',
+          content: '<p>Contenu public</p>',
+          status: 'published',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: '2026-05-24T10:00:00.000Z',
+          author_id: 'author-1',
+          created_at: '2026-05-24T09:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: [], error: null });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toHaveLength(1);
+    expect(articleQuery.eq).toHaveBeenCalledWith('status', 'published');
+  });
+
+  it('Given un article admin existant, When publishArticle est appele, Then son statut passe a published', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume article 1',
+        content: '<p>Contenu 1</p>',
+        status: 'published',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: '2026-05-24T10:00:00.000Z',
+        author_id: 'author-1',
+        created_at: '2026-05-24T09:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: [], error: null });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return publishQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-1'),
+    ).resolves.toMatchObject({ status: 'published' });
+  });
+
+  it('Given un fichier image valide, When uploadCoverImage est appele, Then une URL publique est retournee', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.uploadCoverImage('access-token', {
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 1024,
+        buffer: Buffer.from('image'),
+      }),
+    ).resolves.toMatchObject({ path: expect.stringContaining('articles/') });
   });
 });

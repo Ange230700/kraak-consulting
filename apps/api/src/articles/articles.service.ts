@@ -8,10 +8,21 @@ import {
 } from '@nestjs/common';
 import type {
   ArticleDto,
+  CategoryDto,
   CreateArticleDto,
+  CreateCategoryDto,
+  CreateTagDto,
+  TagDto,
   UpdateArticleDto,
+  UpdateCategoryDto,
+  UpdateTagDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
+
+type UploadedCoverImage = {
+  url: string;
+  path: string;
+};
 
 type ArticleRow = {
   id: string;
@@ -48,13 +59,80 @@ type TaxonomyIdRow = {
   id: string;
 };
 
+type CategoryRow = {
+  id: string;
+  slug: string;
+  label: string;
+  description: string | null;
+  status: ArticleDto['status'];
+  created_at: string;
+  updated_at: string;
+};
+
+type TagRow = {
+  id: string;
+  slug: string;
+  label: string;
+  status: ArticleDto['status'];
+  created_at: string;
+  updated_at: string;
+};
+
 const articleSelectFields =
   'id, slug, title, excerpt, content, status, cover_image_url, seo_title, seo_description, published_at, author_id, created_at, updated_at';
+const categorySelectFields =
+  'id, slug, label, description, status, created_at, updated_at';
+const tagSelectFields = 'id, slug, label, status, created_at, updated_at';
 const notFoundSupabaseErrorCodes = new Set(['PGRST116']);
 
 @Injectable()
 export class ArticlesService {
   constructor(private readonly supabaseService: SupabaseService) {}
+
+  async listPublicArticles(): Promise<ArticleDto[]> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('article')
+      .select(articleSelectFields)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(100);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger les articles publiés.',
+      });
+    }
+
+    const rows = (data as ArticleRow[] | null) ?? [];
+    const relations = await this.readArticleRelations(
+      rows.map((row) => row.id),
+    );
+
+    return rows.map((row) => this.mapArticleRow(row, relations));
+  }
+
+  async getPublicArticleBySlug(slug: string): Promise<ArticleDto> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('article')
+      .select(articleSelectFields)
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Article introuvable.',
+      });
+    }
+
+    const articleRow = data as ArticleRow;
+    const relations = await this.readArticleRelations([articleRow.id]);
+    return this.mapArticleRow(articleRow, relations);
+  }
 
   async listArticles(accessToken: string): Promise<ArticleDto[]> {
     await this.assertAdminAccess(accessToken);
@@ -298,6 +376,280 @@ export class ArticlesService {
     }
   }
 
+  async publishArticle(
+    accessToken: string,
+    articleId: string,
+  ): Promise<ArticleDto> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('article')
+      .update({
+        status: 'published',
+        published_at: new Date().toISOString(),
+      })
+      .eq('id', articleId)
+      .neq('status', 'archived')
+      .select(articleSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Article introuvable.',
+      });
+    }
+
+    const row = data as ArticleRow;
+    const relations = await this.readArticleRelations([row.id]);
+    return this.mapArticleRow(row, relations);
+  }
+
+  async uploadCoverImage(
+    accessToken: string,
+    file: {
+      originalname: string;
+      mimetype: string;
+      size: number;
+      buffer: Buffer;
+    },
+  ): Promise<UploadedCoverImage> {
+    await this.assertAdminAccess(accessToken);
+
+    if (file.mimetype.startsWith('image/') === false) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Le fichier doit être une image.',
+      });
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException({
+        success: false,
+        message: "L'image de couverture dépasse la limite de 5MB.",
+      });
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const normalizedName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '-');
+    const uploadPath = `articles/${Date.now()}-${normalizedName}`;
+
+    const { error } = await adminClient.storage
+      .from('article-covers')
+      .upload(uploadPath, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false,
+      });
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: "Impossible d'envoyer l'image de couverture.",
+      });
+    }
+
+    const {
+      data: { publicUrl },
+    } = adminClient.storage.from('article-covers').getPublicUrl(uploadPath);
+
+    return {
+      url: publicUrl,
+      path: uploadPath,
+    };
+  }
+
+  async listCategories(accessToken: string): Promise<CategoryDto[]> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('category')
+      .select(categorySelectFields)
+      .neq('status', 'archived')
+      .order('label', { ascending: true })
+      .limit(200);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger les catégories.',
+      });
+    }
+
+    return ((data as CategoryRow[] | null) ?? []).map((row) =>
+      this.mapCategoryRow(row),
+    );
+  }
+
+  async createCategory(
+    accessToken: string,
+    payload: CreateCategoryDto,
+  ): Promise<CategoryDto> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('category')
+      .insert({
+        slug: payload.slug,
+        label: payload.label,
+        description: payload.description,
+        status: 'draft',
+      })
+      .select(categorySelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de créer la catégorie.',
+      });
+    }
+
+    return this.mapCategoryRow(data as CategoryRow);
+  }
+
+  async updateCategory(
+    accessToken: string,
+    categoryId: string,
+    payload: UpdateCategoryDto,
+  ): Promise<CategoryDto> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('category')
+      .update({
+        slug: payload.slug,
+        label: payload.label,
+        description: payload.description,
+      })
+      .eq('id', categoryId)
+      .neq('status', 'archived')
+      .select(categorySelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Catégorie introuvable.',
+      });
+    }
+
+    return this.mapCategoryRow(data as CategoryRow);
+  }
+
+  async deleteCategory(accessToken: string, categoryId: string): Promise<void> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { error } = await adminClient
+      .from('category')
+      .update({ status: 'archived' })
+      .eq('id', categoryId)
+      .neq('status', 'archived');
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible d’archiver la catégorie.',
+      });
+    }
+  }
+
+  async listTags(accessToken: string): Promise<TagDto[]> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('tag')
+      .select(tagSelectFields)
+      .neq('status', 'archived')
+      .order('label', { ascending: true })
+      .limit(200);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger les tags.',
+      });
+    }
+
+    return ((data as TagRow[] | null) ?? []).map((row) => this.mapTagRow(row));
+  }
+
+  async createTag(accessToken: string, payload: CreateTagDto): Promise<TagDto> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('tag')
+      .insert({
+        slug: payload.slug,
+        label: payload.label,
+        status: 'draft',
+      })
+      .select(tagSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de créer le tag.',
+      });
+    }
+
+    return this.mapTagRow(data as TagRow);
+  }
+
+  async updateTag(
+    accessToken: string,
+    tagId: string,
+    payload: UpdateTagDto,
+  ): Promise<TagDto> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('tag')
+      .update({
+        slug: payload.slug,
+        label: payload.label,
+      })
+      .eq('id', tagId)
+      .neq('status', 'archived')
+      .select(tagSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Tag introuvable.',
+      });
+    }
+
+    return this.mapTagRow(data as TagRow);
+  }
+
+  async deleteTag(accessToken: string, tagId: string): Promise<void> {
+    await this.assertAdminAccess(accessToken);
+
+    const adminClient = this.supabaseService.getClient();
+    const { error } = await adminClient
+      .from('tag')
+      .update({ status: 'archived' })
+      .eq('id', tagId)
+      .neq('status', 'archived');
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible d’archiver le tag.',
+      });
+    }
+  }
+
   private async assertAdminAccess(accessToken: string): Promise<string> {
     const authClient = this.supabaseService.createAuthClient();
     const { data, error } = await authClient.auth.getUser(accessToken);
@@ -495,6 +847,27 @@ export class ArticlesService {
       authorId: row.author_id,
       categoryIds: relations.categoryByArticleId.get(row.id) ?? [],
       tagIds: relations.tagByArticleId.get(row.id) ?? [],
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
+
+  private mapCategoryRow(row: CategoryRow): CategoryDto {
+    return {
+      id: row.id,
+      slug: row.slug,
+      label: row.label,
+      description: row.description,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
+
+  private mapTagRow(row: TagRow): TagDto {
+    return {
+      id: row.id,
+      slug: row.slug,
+      label: row.label,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
