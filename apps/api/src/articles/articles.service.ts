@@ -151,6 +151,67 @@ export class ArticlesService {
     return this.mapArticleRow(data as ArticleRow, relations);
   }
 
+  private buildUpdatePayload(
+    payload: UpdateArticleDto,
+  ): Record<string, unknown> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.slug !== undefined) {
+      updatePayload['slug'] = payload.slug;
+    }
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+    if (payload.excerpt !== undefined) {
+      updatePayload['excerpt'] = payload.excerpt;
+    }
+    if (payload.content !== undefined) {
+      updatePayload['content'] = payload.content;
+    }
+    if (payload.status !== undefined) {
+      updatePayload['status'] = payload.status;
+    }
+    if (payload.coverImageUrl !== undefined) {
+      updatePayload['cover_image_url'] = payload.coverImageUrl;
+    }
+    if (payload.seoTitle !== undefined) {
+      updatePayload['seo_title'] = payload.seoTitle;
+    }
+    if (payload.seoDescription !== undefined) {
+      updatePayload['seo_description'] = payload.seoDescription;
+    }
+    if (payload.publishedAt !== undefined) {
+      updatePayload['published_at'] = payload.publishedAt;
+    }
+    if (payload.authorId !== undefined) {
+      updatePayload['author_id'] = payload.authorId;
+    }
+
+    return updatePayload;
+  }
+
+  private handleUpdateError(error: unknown): void {
+    const errorCode =
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof error.code === 'string'
+        ? error.code
+        : null;
+
+    if (errorCode !== null && notFoundSupabaseErrorCodes.has(errorCode)) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Article introuvable.',
+      });
+    }
+
+    throw new InternalServerErrorException({
+      success: false,
+      message: "Impossible de mettre à jour l'article.",
+    });
+  }
+
   async updateArticle(
     accessToken: string,
     articleId: string,
@@ -159,48 +220,7 @@ export class ArticlesService {
     await this.assertAdminAccess(accessToken);
 
     const adminClient = this.supabaseService.getClient();
-
-    const updatePayload: Record<string, unknown> = {};
-
-    if (payload.slug !== undefined) {
-      updatePayload['slug'] = payload.slug;
-    }
-
-    if (payload.title !== undefined) {
-      updatePayload['title'] = payload.title;
-    }
-
-    if (payload.excerpt !== undefined) {
-      updatePayload['excerpt'] = payload.excerpt;
-    }
-
-    if (payload.content !== undefined) {
-      updatePayload['content'] = payload.content;
-    }
-
-    if (payload.status !== undefined) {
-      updatePayload['status'] = payload.status;
-    }
-
-    if (payload.coverImageUrl !== undefined) {
-      updatePayload['cover_image_url'] = payload.coverImageUrl;
-    }
-
-    if (payload.seoTitle !== undefined) {
-      updatePayload['seo_title'] = payload.seoTitle;
-    }
-
-    if (payload.seoDescription !== undefined) {
-      updatePayload['seo_description'] = payload.seoDescription;
-    }
-
-    if (payload.publishedAt !== undefined) {
-      updatePayload['published_at'] = payload.publishedAt;
-    }
-
-    if (payload.authorId !== undefined) {
-      updatePayload['author_id'] = payload.authorId;
-    }
+    const updatePayload = this.buildUpdatePayload(payload);
 
     const { data, error } = await adminClient
       .from('article')
@@ -211,25 +231,7 @@ export class ArticlesService {
       .single();
 
     if (error) {
-      const errorCode =
-        typeof error === 'object' &&
-        error !== null &&
-        'code' in error &&
-        typeof error.code === 'string'
-          ? error.code
-          : null;
-
-      if (errorCode !== null && notFoundSupabaseErrorCodes.has(errorCode)) {
-        throw new NotFoundException({
-          success: false,
-          message: 'Article introuvable.',
-        });
-      }
-
-      throw new InternalServerErrorException({
-        success: false,
-        message: "Impossible de mettre à jour l'article.",
-      });
+      this.handleUpdateError(error);
     }
 
     if (!data) {

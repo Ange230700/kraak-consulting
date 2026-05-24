@@ -11,6 +11,7 @@ import { ArticlesService } from './articles.service';
 
 function createSingleRowQuery(result: { data: unknown; error: unknown }) {
   return {
+    insert: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     neq: jest.fn().mockReturnThis(),
@@ -362,8 +363,6 @@ describe('ArticlesService', () => {
       data: null,
       error: { message: 'insert error' },
     });
-
-    articleInsertQuery['insert'] = jest.fn().mockReturnThis();
 
     adminClient.from.mockImplementation((tableName: string) => {
       if (tableName === 'app_user') {
