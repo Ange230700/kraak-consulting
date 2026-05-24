@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  NotFoundException,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { ArticleDto } from '@kraak/contracts';
 import { ArticlesService } from './articles.service';
@@ -77,14 +71,6 @@ export class ArticlesPublicController {
     description: 'Article introuvable.',
   })
   async getArticleBySlug(@Param('slug') slug: string): Promise<ArticleDto> {
-    try {
-      return await this.articlesService.getPublicArticleBySlug(slug);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
-      throw error;
-    }
+    return this.articlesService.getPublicArticleBySlug(slug);
   }
 }

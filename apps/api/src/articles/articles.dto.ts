@@ -348,10 +348,6 @@ function validateTaxonomyCreatePayload(
     errors.push('Le champ label est requis.');
   }
 
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
   if (options.allowDescription) {
     payload.description =
       'description' in body ? readNullableString(body['description']) : null;

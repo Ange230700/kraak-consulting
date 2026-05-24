@@ -442,6 +442,11 @@ export class ArticlesController {
         throw error;
       }
 
+      console.error("Échec de l'envoi de l'image de couverture article", {
+        context: 'articles.uploadCoverImage',
+        message: error instanceof Error ? error.message : 'Erreur inconnue',
+      });
+
       throw new InternalServerErrorException({
         success: false,
         message: "Impossible d'envoyer l'image de couverture.",
