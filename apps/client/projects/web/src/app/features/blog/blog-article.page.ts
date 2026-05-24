@@ -10,7 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
 import { ButtonDirective } from 'primeng/button';
-import { map, of, switchMap } from 'rxjs';
+import { distinctUntilChanged, map, of, startWith, switchMap } from 'rxjs';
 
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
@@ -57,7 +57,9 @@ export default class BlogArticlePage implements OnInit, OnDestroy {
     this.gsapService.initializeSectionAnimations();
 
     this.route.paramMap
+      .pipe(startWith(this.route.snapshot.paramMap))
       .pipe(map((params) => params.get('slug') ?? ''))
+      .pipe(distinctUntilChanged())
       .pipe(
         switchMap((slug) => {
           const fallbackArticles = [...getFallbackBlogArticles()];
