@@ -1,7 +1,13 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import type {
   AppUserDto,
+  AuthorDto,
+  ArticleDto,
+  CategoryDto,
   CreateAppUserDto,
+  CreateAuthorDto,
+  CreateArticleDto,
+  CreateCategoryDto,
   UpdateAppUserDto,
   ContactFormDto,
   ContactSubmissionResultDto,
@@ -31,7 +37,13 @@ import type {
   CreateNotificationDto,
   SupportRequestDto,
   CreateSupportRequestDto,
+  CreateTagDto,
+  TagDto,
   UpdateSupportRequestDto,
+  UpdateAuthorDto,
+  UpdateArticleDto,
+  UpdateCategoryDto,
+  UpdateTagDto,
   DashboardAggregateDto,
   DashboardProgramSummaryDto,
   DashboardSessionReminderDto,
@@ -247,6 +259,115 @@ describe('ProgramAnnouncementPreviewDto', () => {
     expectTypeOf<ProgramAnnouncementPreviewDto>()
       .toHaveProperty('publishedAt')
       .toEqualTypeOf<string | null>();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+describe('AuthorDto', () => {
+  it('Given an editorial author contract When inspected Then required author fields are exposed', () => {
+    expectTypeOf<AuthorDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<AuthorDto>().toHaveProperty('email').toBeString();
+    expectTypeOf<AuthorDto>().toHaveProperty('displayName').toBeString();
+    expectTypeOf<AuthorDto>()
+      .toHaveProperty('bio')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<AuthorDto>()
+      .toHaveProperty('avatarUrl')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<AuthorDto>().toHaveProperty('createdAt').toBeString();
+    expectTypeOf<AuthorDto>().toHaveProperty('updatedAt').toBeString();
+  });
+
+  it('Given create and update author DTOs When compared Then create omits server fields and update is partial', () => {
+    expectTypeOf<CreateAuthorDto>().toHaveProperty('email').toBeString();
+    expectTypeOf<CreateAuthorDto>().toHaveProperty('displayName').toBeString();
+    expectTypeOf<CreateAuthorDto>().not.toHaveProperty('id');
+    expectTypeOf<CreateAuthorDto>().not.toHaveProperty('createdAt');
+    expectTypeOf<CreateAuthorDto>().not.toHaveProperty('updatedAt');
+
+    expectTypeOf<UpdateAuthorDto>().toMatchTypeOf<Partial<CreateAuthorDto>>();
+  });
+});
+
+describe('CategoryDto', () => {
+  it('Given an editorial category contract When inspected Then required category fields are exposed', () => {
+    expectTypeOf<CategoryDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<CategoryDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<CategoryDto>().toHaveProperty('label').toBeString();
+    expectTypeOf<CategoryDto>()
+      .toHaveProperty('description')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<CategoryDto>().toHaveProperty('createdAt').toBeString();
+    expectTypeOf<CategoryDto>().toHaveProperty('updatedAt').toBeString();
+  });
+
+  it('Given create and update category DTOs When compared Then update stays partial', () => {
+    expectTypeOf<CreateCategoryDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<CreateCategoryDto>().not.toHaveProperty('id');
+    expectTypeOf<UpdateCategoryDto>().toMatchTypeOf<
+      Partial<CreateCategoryDto>
+    >();
+  });
+});
+
+describe('TagDto', () => {
+  it('Given an editorial tag contract When inspected Then required tag fields are exposed', () => {
+    expectTypeOf<TagDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<TagDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<TagDto>().toHaveProperty('label').toBeString();
+    expectTypeOf<TagDto>().toHaveProperty('createdAt').toBeString();
+    expectTypeOf<TagDto>().toHaveProperty('updatedAt').toBeString();
+  });
+
+  it('Given create and update tag DTOs When compared Then update stays partial', () => {
+    expectTypeOf<CreateTagDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<CreateTagDto>().not.toHaveProperty('id');
+    expectTypeOf<UpdateTagDto>().toMatchTypeOf<Partial<CreateTagDto>>();
+  });
+});
+
+describe('ArticleDto', () => {
+  it('Given an editorial article contract When inspected Then article metadata and relations are exposed', () => {
+    expectTypeOf<ArticleDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<ArticleDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<ArticleDto>().toHaveProperty('title').toBeString();
+    expectTypeOf<ArticleDto>().toHaveProperty('excerpt').toBeString();
+    expectTypeOf<ArticleDto>().toHaveProperty('content').toBeString();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<PublicationStatusValue>();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('coverImageUrl')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('seoTitle')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('seoDescription')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('publishedAt')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<ArticleDto>().toHaveProperty('authorId').toBeString();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('categoryIds')
+      .toEqualTypeOf<string[]>();
+    expectTypeOf<ArticleDto>()
+      .toHaveProperty('tagIds')
+      .toEqualTypeOf<string[]>();
+    expectTypeOf<ArticleDto>().toHaveProperty('createdAt').toBeString();
+    expectTypeOf<ArticleDto>().toHaveProperty('updatedAt').toBeString();
+  });
+
+  it('Given create and update article DTOs When compared Then update stays partial', () => {
+    expectTypeOf<CreateArticleDto>().toHaveProperty('slug').toBeString();
+    expectTypeOf<CreateArticleDto>()
+      .toHaveProperty('categoryIds')
+      .toEqualTypeOf<string[]>();
+    expectTypeOf<CreateArticleDto>().not.toHaveProperty('id');
+    expectTypeOf<UpdateArticleDto>().toMatchTypeOf<Partial<CreateArticleDto>>();
   });
 });
 

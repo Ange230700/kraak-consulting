@@ -1,0 +1,214 @@
+@if (article) {
+  <section
+    class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
+    [ngStyle]="heroBackgroundStyle"
+  >
+    <div
+      aria-hidden="true"
+      class="via-brand-navy/30 to-brand-navy/80 absolute inset-0 bg-linear-to-b from-transparent"
+    ></div>
+
+    <div class="relative z-10 mx-auto max-w-4xl px-4 text-center lg:px-6">
+      <a
+        routerLink="/blog"
+        class="text-brand-white/85 text-sm font-semibold underline"
+      >
+        Retour au blog
+      </a>
+      <p
+        class="text-brand-white/85 mt-4 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        {{ article.categoryLabel }}
+      </p>
+      <h1
+        class="text-brand-white mt-4 text-4xl leading-tight font-bold lg:text-5xl"
+      >
+        {{ article.title }}
+      </h1>
+      <p
+        class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg leading-relaxed"
+      >
+        {{ article.summary }}
+      </p>
+      <div
+        class="text-brand-white/90 mt-8 flex flex-wrap items-center justify-center gap-3 text-sm"
+      >
+        <span>{{ article.publishedLabel }}</span>
+        <span>•</span>
+        <span>{{ article.readingTimeMinutes }} min de lecture</span>
+        <span>•</span>
+        <span>{{ article.author.name }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-brand-white py-16">
+    <div
+      class="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1.1fr_0.9fr] lg:px-6"
+    >
+      <article>
+        <figure
+          class="reveal-on-scroll rounded-card shadow-card overflow-hidden"
+        >
+          <img
+            [src]="article.coverImagePath"
+            [alt]="article.title"
+            class="h-72 w-full object-cover"
+            loading="eager"
+          />
+        </figure>
+
+        <div class="mt-10 space-y-10">
+          <p class="text-brand-navy text-lg leading-relaxed">
+            {{ article.intro }}
+          </p>
+
+          @for (section of article.sections; track section.heading) {
+            <section class="rounded-card bg-neutral-50 p-6">
+              <h2 class="text-2xl font-bold">{{ section.heading }}</h2>
+              @for (paragraph of section.paragraphs; track paragraph) {
+                <p class="mt-4 leading-relaxed text-neutral-700">
+                  {{ paragraph }}
+                </p>
+              }
+              @if (section.bullets?.length) {
+                <ul class="mt-4 list-disc space-y-2 pl-5 text-neutral-700">
+                  @for (bullet of section.bullets; track bullet) {
+                    <li>{{ bullet }}</li>
+                  }
+                </ul>
+              }
+            </section>
+          }
+
+          <section class="rounded-card bg-brand-blue/5 p-6">
+            <h2 class="text-2xl font-bold">À retenir</h2>
+            <ul class="mt-4 space-y-3">
+              @for (point of article.takeawayPoints; track point) {
+                <li class="flex gap-3 text-neutral-700">
+                  <i
+                    class="pi pi-check-circle text-brand-blue mt-1"
+                    aria-hidden="true"
+                  ></i>
+                  <span>{{ point }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        </div>
+      </article>
+
+      <aside class="space-y-6">
+        <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            Auteur
+          </p>
+          <div class="mt-4 flex items-center gap-4">
+            <img
+              [src]="article.author.avatar"
+              [alt]="article.author.name"
+              class="h-16 w-16 rounded-full object-cover"
+              loading="lazy"
+            />
+            <div>
+              <h2 class="text-brand-navy text-xl font-bold">
+                {{ article.author.name }}
+              </h2>
+              <p class="text-neutral-600">{{ article.author.role }}</p>
+            </div>
+          </div>
+          <p class="mt-4 leading-relaxed text-neutral-700">
+            {{ article.author.bio }}
+          </p>
+        </section>
+
+        <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            Catégorie et tags
+          </p>
+          <p class="mt-3 text-lg font-semibold">{{ article.categoryLabel }}</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            @for (tag of article.tagLabels; track tag) {
+              <span
+                class="rounded-full bg-white px-3 py-1 text-sm text-neutral-700 shadow-sm"
+              >
+                {{ tag }}
+              </span>
+            }
+          </div>
+        </section>
+
+        <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            À lire aussi
+          </p>
+          <div class="mt-4 space-y-4">
+            @for (related of relatedArticles; track related.slug) {
+              <article class="rounded-card bg-brand-white p-4 shadow-sm">
+                <p class="text-brand-blue text-sm font-semibold">
+                  {{ related.categoryLabel }}
+                </p>
+                <h3 class="mt-2 text-lg font-bold">{{ related.title }}</h3>
+                <a
+                  [routerLink]="['/blog', related.slug]"
+                  class="text-brand-blue mt-3 inline-flex font-semibold"
+                >
+                  Lire l'article
+                </a>
+              </article>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <kraak-cta-banner
+    heading="Vous voulez aller plus loin ?"
+    body="L'article a peut-être clarifié votre prochain pas. Si vous souhaitez un cadrage plus précis, nous pouvons vous aider à le formaliser."
+    ctaLabel="Parler à KRAAK"
+    ctaLink="/contact"
+    ctaContext="blog_article_cta"
+  />
+} @else {
+  <section class="bg-brand-white py-20">
+    <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
+      <p
+        class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+      >
+        Article introuvable
+      </p>
+      <h1 class="mt-4 text-4xl font-bold lg:text-5xl">
+        Cet article n’est pas disponible.
+      </h1>
+      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg leading-relaxed">
+        Le contenu demandé n’a pas été retrouvé dans la bibliothèque éditoriale
+        KRAAK.
+      </p>
+      <div
+        class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+      >
+        <a
+          pButton
+          routerLink="/blog"
+          label="Retour au blog"
+          class="kr-button-primary"
+          >Retour au blog</a
+        >
+        <a
+          pButton
+          routerLink="/contact"
+          label="Nous contacter"
+          class="kr-button-ghost"
+          >Nous contacter</a
+        >
+      </div>
+    </div>
+  </section>
+}

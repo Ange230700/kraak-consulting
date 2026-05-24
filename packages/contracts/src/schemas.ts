@@ -188,6 +188,123 @@ export const AuthSessionContextSchema = z
   .strict();
 
 // ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+const NullableTrimmedStringSchema = z
+  .union([z.string().trim().min(1), z.null()])
+  .transform((value) => value ?? null);
+
+const EditorialIdSchema = z.string().trim().min(1);
+const EditorialLabelSchema = z.string().trim().min(1).max(120);
+const EditorialSlugSchema = z.string().trim().min(1).max(160);
+const EditorialDateTimeSchema = z.string().trim().datetime({ offset: true });
+
+const NullableOptionalUrlSchema = z
+  .union([z.string().trim().url(), z.null()])
+  .optional()
+  .transform((value) => value ?? null);
+
+const NullableOptionalDateTimeSchema = z
+  .union([z.string().trim().datetime({ offset: true }), z.null()])
+  .optional()
+  .transform((value) => value ?? null);
+
+export const AuthorSchema = z
+  .object({
+    id: EditorialIdSchema,
+    email: z.string().trim().email(),
+    displayName: z.string().trim().min(1).max(120),
+    bio: NullableTrimmedStringSchema,
+    avatarUrl: z.union([z.string().trim().url(), z.null()]),
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateAuthorSchema = AuthorSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateAuthorSchema = CreateAuthorSchema.partial();
+
+export const CategorySchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: EditorialSlugSchema,
+    label: EditorialLabelSchema,
+    description: NullableTrimmedStringSchema,
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateCategorySchema = CategorySchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateCategorySchema = CreateCategorySchema.partial();
+
+export const TagSchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: EditorialSlugSchema,
+    label: EditorialLabelSchema,
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateTagSchema = TagSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateTagSchema = CreateTagSchema.partial();
+
+export const ArticleSchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: z.string().trim().min(1).max(180),
+    title: z.string().trim().min(3).max(180),
+    excerpt: z.string().trim().min(10).max(500),
+    content: z.string().trim().min(1),
+    status: z.enum(['draft', 'published', 'archived']),
+    coverImageUrl: z.union([z.string().trim().url(), z.null()]),
+    seoTitle: z.union([z.string().trim().min(1).max(180), z.null()]),
+    seoDescription: z.union([z.string().trim().min(1).max(320), z.null()]),
+    publishedAt: z.union([
+      z.string().trim().datetime({ offset: true }),
+      z.null(),
+    ]),
+    authorId: EditorialIdSchema,
+    categoryIds: z.array(EditorialIdSchema).min(1),
+    tagIds: z.array(EditorialIdSchema).min(1),
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+const _ArticleCreateBase = ArticleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const CreateArticleSchema = _ArticleCreateBase.extend({
+  coverImageUrl: NullableOptionalUrlSchema,
+  seoTitle: NullableTrimmedStringSchema,
+  seoDescription: NullableTrimmedStringSchema,
+  publishedAt: NullableOptionalDateTimeSchema,
+});
+
+export const UpdateArticleSchema = CreateArticleSchema.partial();
+
+// ---------------------------------------------------------------------------
 // Program
 // ---------------------------------------------------------------------------
 export const ProgramSchema = z.object({

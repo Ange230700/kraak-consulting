@@ -60,6 +60,21 @@
     }
   },
   {
+    "path": "blog",
+    "title": "Blog | Actualités et analyses KRAAK Consulting",
+    "description": "Découvrez les articles KRAAK sur l’employabilité, la formation, la gestion de projet et la mobilité internationale.",
+    "openGraph": {
+      "title": "Blog KRAAK Consulting",
+      "description": "Un espace éditorial public pour clarifier un projet, préparer une candidature et mieux choisir son prochain pas.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
+    },
+    "sitemap": {
+      "changeFrequency": "weekly",
+      "priority": 0.75
+    }
+  },
+  {
     "path": "ressources",
     "title": "Ressources d'orientation | Formation, projet et immigration | KRAAK",
     "description": "Une page d'orientation vitrine pour clarifier votre prochaine \u00e9tape entre formation, projet, immigration, programme ou solution entreprise.",

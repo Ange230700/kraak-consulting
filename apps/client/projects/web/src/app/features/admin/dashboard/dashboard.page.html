@@ -1,0 +1,166 @@
+<section
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
+  [ngStyle]="heroBackgroundStyle"
+>
+  <div
+    aria-hidden="true"
+    class="via-brand-navy/35 to-brand-navy/85 absolute inset-0 bg-linear-to-b from-transparent"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-5xl px-4 text-center lg:px-6">
+    <p
+      class="text-brand-white/85 text-xs font-semibold tracking-[0.3em] uppercase"
+    >
+      Administration
+    </p>
+    <h1
+      class="text-brand-white mt-4 text-4xl leading-tight font-bold lg:text-5xl"
+    >
+      Tableau de bord admin pour les programmes et les contenus.
+    </h1>
+    <p
+      class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg leading-relaxed"
+    >
+      Cette vue de pilotage regroupe les priorités éditoriales, les familles de
+      programmes et les prochaines actions à reprendre pour garder le site
+      cohérent et crédible.
+    </p>
+    <div
+      class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+    >
+      <a
+        pButton
+        routerLink="/blog"
+        label="Ouvrir le blog public"
+        icon="pi pi-book"
+        class="kr-button-primary"
+        >Ouvrir le blog public</a
+      >
+      <a
+        pButton
+        routerLink="/programmes"
+        label="Relire les programmes"
+        icon="pi pi-compass"
+        class="kr-button-ghost"
+        >Relire les programmes</a
+      >
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-white py-16">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <div class="grid gap-6 md:grid-cols-3">
+      @for (snapshot of contentSnapshots; track snapshot.label) {
+        <article class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ snapshot.label }}
+          </p>
+          <p class="mt-4 text-4xl font-bold">{{ snapshot.value }}</p>
+          <p class="mt-3 leading-relaxed text-neutral-700">
+            {{ snapshot.description }}
+          </p>
+        </article>
+      }
+    </div>
+
+    <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+      <article class="rounded-card bg-neutral-50 p-8 shadow-sm">
+        <p
+          class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+        >
+          Programmes
+        </p>
+        <h2 class="mt-3 text-3xl font-bold">
+          Les trois familles de service à garder alignées.
+        </h2>
+        <div class="mt-8 space-y-5">
+          @for (program of programSnapshots; track program.label) {
+            <section
+              class="rounded-card bg-brand-white border border-neutral-200 p-5"
+            >
+              <div
+                class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <h3 class="text-xl font-bold">{{ program.label }}</h3>
+                <span class="text-brand-blue text-sm font-semibold">{{
+                  program.status
+                }}</span>
+              </div>
+              <p class="mt-3 leading-relaxed text-neutral-700">
+                {{ program.description }}
+              </p>
+              <p class="text-brand-navy mt-4 text-sm font-semibold">
+                {{ program.primaryMetric }}
+              </p>
+            </section>
+          }
+        </div>
+      </article>
+
+      <aside class="space-y-6">
+        <section class="rounded-card bg-neutral-50 p-8 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            Contenus
+          </p>
+          <h2 class="mt-3 text-3xl font-bold">
+            Ce qui peut être publié ou retravaillé rapidement.
+          </h2>
+          <div class="mt-8 space-y-4">
+            @for (article of recentArticles; track article.slug) {
+              <article
+                class="rounded-card bg-brand-white border border-neutral-200 p-4"
+              >
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <p class="text-brand-blue text-sm font-semibold">
+                      {{ article.categoryLabel }}
+                    </p>
+                    <h3 class="mt-1 text-lg font-bold">{{ article.title }}</h3>
+                  </div>
+                  <span
+                    class="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600"
+                  >
+                    {{ article.publishedLabel }}
+                  </span>
+                </div>
+                <p class="mt-3 leading-relaxed text-neutral-700">
+                  {{ article.summary }}
+                </p>
+              </article>
+            }
+          </div>
+        </section>
+
+        <section class="rounded-card bg-neutral-50 p-8 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            Actions rapides
+          </p>
+          <div class="mt-6 space-y-4">
+            @for (action of contentActions; track action.path) {
+              <article
+                class="rounded-card bg-brand-white border border-neutral-200 p-4"
+              >
+                <a
+                  [routerLink]="action.path"
+                  class="text-brand-navy text-lg font-semibold"
+                >
+                  {{ action.label }}
+                </a>
+                <p class="mt-2 leading-relaxed text-neutral-700">
+                  {{ action.description }}
+                </p>
+              </article>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</section>

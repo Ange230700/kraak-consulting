@@ -5,6 +5,8 @@ import {
   routes,
 } from './app.routes';
 import {
+  adminRoleChildGuard,
+  adminRoleGuard,
   participantRoleGuard,
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
@@ -18,15 +20,19 @@ describe('Web routes', () => {
     'services',
     'faq',
     'programmes',
+    'blog',
+    'blog/:slug',
     'ressources',
     'contact',
     'mentions-legales',
     'politique-de-confidentialite',
   ];
   const aliasRedirectPaths = ['about', 'programs', 'resources'];
+  const adminPaths = ['admin'];
   const frozenPublicPaths = [
     ...marketingPaths,
     ...aliasRedirectPaths,
+    ...adminPaths,
     '401',
     '403',
     '500',
@@ -69,8 +75,11 @@ describe('Web routes', () => {
       }
     });
 
-    it('When inspecting alias routes Then english slugs redirect to french canonical paths', () => {
+    it('When inspecting article and alias routes Then the blog article page is lazy-loaded and english slugs redirect to french canonical paths', () => {
       const builtRoutes = buildRoutes();
+      const blogArticleRoute = builtRoutes.find(
+        (route) => route.path === 'blog/:slug',
+      );
       const aboutAliasRoute = builtRoutes.find(
         (route) => route.path === 'about',
       );
@@ -80,6 +89,13 @@ describe('Web routes', () => {
       const resourcesAliasRoute = builtRoutes.find(
         (route) => route.path === 'resources',
       );
+
+      expect(blogArticleRoute).toBeDefined();
+      expect(blogArticleRoute!.title).toBe(
+        'Article de blog | KRAAK Consulting',
+      );
+      expect(blogArticleRoute!.data?.['seo']).toBeDefined();
+      expect(blogArticleRoute!.loadComponent).toBeDefined();
 
       expect(aboutAliasRoute).toBeDefined();
       expect(aboutAliasRoute?.redirectTo).toBe('a-propos');
@@ -92,6 +108,22 @@ describe('Web routes', () => {
       expect(resourcesAliasRoute).toBeDefined();
       expect(resourcesAliasRoute?.redirectTo).toBe('ressources');
       expect(resourcesAliasRoute?.pathMatch).toBe('full');
+    });
+
+    it('When inspecting the admin route Then it is guarded and exposes a dashboard child', () => {
+      const builtRoutes = buildRoutes();
+      const adminRoute = builtRoutes.find((route) => route.path === 'admin');
+
+      expect(adminRoute).toBeDefined();
+      expect(adminRoute!.canActivate).toContain(adminRoleGuard);
+      expect(adminRoute!.canActivateChild).toContain(adminRoleChildGuard);
+
+      const dashboardRoute = adminRoute!.children?.find(
+        (route) => route.path === 'dashboard',
+      );
+
+      expect(dashboardRoute).toBeDefined();
+      expect(dashboardRoute!.loadComponent).toBeDefined();
     });
   });
 
@@ -167,6 +199,20 @@ describe('Web routes', () => {
       expect(defaultRedirect).toBeDefined();
       expect(defaultRedirect!.redirectTo).toBe('dashboard');
       expect(defaultRedirect!.pathMatch).toBe('full');
+    });
+
+    it('When the admin dashboard child loadComponent is invoked Then it resolves to a component', async () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const adminRoute = builtRoutes.find((route) => route.path === 'admin');
+      const dashboardRoute = adminRoute!.children!.find(
+        (childRoute) => childRoute.path === 'dashboard',
+      );
+
+      const loaded = await (
+        dashboardRoute!.loadComponent as () => Promise<unknown>
+      )();
+
+      expect(loaded).toBeTruthy();
     });
   });
 
@@ -244,6 +290,7 @@ describe('Web routes', () => {
         (route) =>
           route.path !== '**' &&
           route.path !== 'participant' &&
+          route.path !== 'admin' &&
           !route.redirectTo,
       );
 

@@ -23,7 +23,7 @@ export class Footer {
 
   protected readonly navigationLinks: FooterLink[] = [
     { label: '\u00C0 propos', path: '/a-propos' },
-    { label: 'Actualit\u00E9s', path: '/ressources' },
+    { label: 'Blog', path: '/blog' },
     { label: 'Services', path: '/services' },
     { label: 'FAQ', path: '/faq' },
     { label: 'Programmes', path: '/programmes' },

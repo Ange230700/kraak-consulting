@@ -201,6 +201,72 @@ export interface ParticipantProgramDetailDto {
 }
 
 // ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+export interface AuthorDto {
+  id: string;
+  email: string;
+  displayName: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateAuthorDto = Omit<AuthorDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateAuthorDto = Partial<CreateAuthorDto>;
+
+export interface CategoryDto {
+  id: string;
+  slug: string;
+  label: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateCategoryDto = Omit<
+  CategoryDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
+
+export interface TagDto {
+  id: string;
+  slug: string;
+  label: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTagDto = Omit<TagDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateTagDto = Partial<CreateTagDto>;
+
+export interface ArticleDto {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  status: PublicationStatusValue;
+  coverImageUrl: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  publishedAt: string | null;
+  authorId: string;
+  categoryIds: string[];
+  tagIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateArticleDto = Omit<
+  ArticleDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateArticleDto = Partial<CreateArticleDto>;
+
+// ---------------------------------------------------------------------------
 // AppUser
 // ---------------------------------------------------------------------------
 export interface AppUserDto {
