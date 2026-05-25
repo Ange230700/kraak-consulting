@@ -10,7 +10,6 @@ import {
   Param,
   Patch,
   Post,
-  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,7 +20,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
-import { extractAccessToken } from '../auth/auth.dto';
 import { requireAdminAccess } from '../shared/admin-access.utils';
 import {
   validateCreateUserPayload,
@@ -47,9 +45,7 @@ export class UsersController {
     description: 'Non autorisé — accès admin requis',
   })
   async findAll(@Headers('authorization') authHeader: string) {
-    const token = extractAccessToken(authHeader);
-    if (!token) throw new UnauthorizedException('Token manquant');
-    await requireAdminAccess(this.authService, token);
+    await requireAdminAccess(this.authService, authHeader);
     return this.usersService.findAll();
   }
 
@@ -71,9 +67,7 @@ export class UsersController {
     @Param('id') id: string,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = extractAccessToken(authHeader);
-    if (!token) throw new UnauthorizedException('Token manquant');
-    await requireAdminAccess(this.authService, token);
+    await requireAdminAccess(this.authService, authHeader);
     return this.usersService.findOne(id);
   }
 
@@ -111,9 +105,7 @@ export class UsersController {
     @Body() body: unknown,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = extractAccessToken(authHeader);
-    if (!token) throw new UnauthorizedException('Token manquant');
-    await requireAdminAccess(this.authService, token);
+    await requireAdminAccess(this.authService, authHeader);
 
     const validation = validateUpdateUserPayload(body);
     if (!validation.valid) throw new BadRequestException(validation.error);
@@ -139,9 +131,7 @@ export class UsersController {
     @Param('id') id: string,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = extractAccessToken(authHeader);
-    if (!token) throw new UnauthorizedException('Token manquant');
-    await requireAdminAccess(this.authService, token);
+    await requireAdminAccess(this.authService, authHeader);
 
     await this.usersService.remove(id);
   }
@@ -181,9 +171,7 @@ export class UsersController {
     @Body() body: unknown,
     @Headers('authorization') authHeader: string,
   ) {
-    const token = extractAccessToken(authHeader);
-    if (!token) throw new UnauthorizedException('Token manquant');
-    await requireAdminAccess(this.authService, token);
+    await requireAdminAccess(this.authService, authHeader);
 
     const validation = validateCreateUserPayload(body);
     if (!validation.valid) throw new BadRequestException(validation.error);
