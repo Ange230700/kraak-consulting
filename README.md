@@ -59,6 +59,27 @@ pnpm dev:mobile
 
 > `pnpm dev` choisit automatiquement le prochain port libre pour le web et le mobile si `4200` ou `4300` sont déjà occupés. L'API reste attendue sur `3000`.
 
+### Lancer avec Docker Compose (local uniquement)
+
+Le fichier [`compose.local.yml`](compose.local.yml) sert uniquement au workflow de développement local.
+Il ne doit pas être utilisé comme couche d'orchestration en production.
+Pour un profil DB local prêt à l'emploi avec Supabase CLI, voir
+[`docs/runbooks/DEV_MODE.md`](docs/runbooks/DEV_MODE.md) (section
+"Profil DB local prêt à l'emploi (Supabase + Docker Compose)").
+
+```bash
+# Démarrer API + front statique local
+docker compose -f compose.local.yml up --build
+
+# Arrêter et nettoyer les conteneurs
+docker compose -f compose.local.yml down
+```
+
+Services exposés :
+
+- Front (statique) : `http://localhost:4200`
+- API (NestJS) : `http://localhost:3000`
+
 ---
 
 ## Structure du monorepo
