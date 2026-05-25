@@ -2,6 +2,82 @@ import type { CreateAppUserDto, UpdateAppUserDto } from '@kraak/contracts';
 
 export type { CreateAppUserDto, UpdateAppUserDto };
 
+const ALLOWED_ROLES = ['participant', 'admin', 'trainer'] as const;
+type AllowedRole = (typeof ALLOWED_ROLES)[number];
+
+function isAllowedRole(value: unknown): value is AllowedRole {
+  return (
+    typeof value === 'string' && ALLOWED_ROLES.includes(value as AllowedRole)
+  );
+}
+
+function normalizeOptionalText(value: unknown): string | null {
+  return typeof value === 'string' ? value.trim() || null : null;
+}
+
+function normalizeOptionalEmail(
+  value: unknown,
+): { valid: true; value?: string } | { valid: false; error: string } {
+  if (value === undefined) {
+    return { valid: true };
+  }
+
+  if (typeof value !== 'string' || !value.trim()) {
+    return { valid: false, error: "L'adresse email est invalide" };
+  }
+
+  const normalized = value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(normalized)) {
+    return { valid: false, error: "L'adresse email n'est pas valide" };
+  }
+
+  return { valid: true, value: normalized };
+}
+
+function normalizeRequiredName(
+  value: unknown,
+  requiredError: string,
+): { valid: true; value: string } | { valid: false; error: string } {
+  if (typeof value !== 'string' || !value.trim()) {
+    return { valid: false, error: requiredError };
+  }
+
+  return { valid: true, value: value.trim() };
+}
+
+function normalizeOptionalName(
+  value: unknown,
+  invalidError: string,
+): { valid: true; value?: string } | { valid: false; error: string } {
+  if (value === undefined) {
+    return { valid: true };
+  }
+
+  if (typeof value !== 'string' || !value.trim()) {
+    return { valid: false, error: invalidError };
+  }
+
+  return { valid: true, value: value.trim() };
+}
+
+function normalizeOptionalRole(
+  value: unknown,
+): { valid: true; value?: AllowedRole } | { valid: false; error: string } {
+  if (value === undefined) {
+    return { valid: true };
+  }
+
+  if (!isAllowedRole(value)) {
+    return {
+      valid: false,
+      error: `Le rôle doit être l'un des suivants : ${ALLOWED_ROLES.join(', ')}`,
+    };
+  }
+
+  return { valid: true, value };
+}
+
 export function validateCreateUserPayload(
   body: unknown,
 ): { valid: true; data: CreateAppUserDto } | { valid: false; error: string } {
@@ -11,50 +87,53 @@ export function validateCreateUserPayload(
 
   const payload = body as Record<string, unknown>;
 
-  if (typeof payload['email'] !== 'string' || !payload['email'].trim()) {
-    return { valid: false, error: "L'adresse email est obligatoire" };
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(payload['email'])) {
-    return { valid: false, error: "L'adresse email n'est pas valide" };
-  }
-
-  if (
-    typeof payload['firstName'] !== 'string' ||
-    !payload['firstName'].trim()
-  ) {
-    return { valid: false, error: 'Le prénom est obligatoire' };
-  }
-
-  if (typeof payload['lastName'] !== 'string' || !payload['lastName'].trim()) {
-    return { valid: false, error: 'Le nom de famille est obligatoire' };
-  }
-
-  const allowedRoles = ['participant', 'admin', 'trainer'] as const;
-  const role = payload['role'];
-  if (!allowedRoles.includes(role as (typeof allowedRoles)[number])) {
+  const emailValidation = normalizeOptionalEmail(payload['email']);
+  if (!emailValidation.valid || !emailValidation.value) {
     return {
       valid: false,
-      error: `Le rôle doit être l'un des suivants : ${allowedRoles.join(', ')}`,
+      error: emailValidation.valid
+        ? "L'adresse email est obligatoire"
+        : emailValidation.error,
+    };
+  }
+
+  const firstNameValidation = normalizeRequiredName(
+    payload['firstName'],
+    'Le prénom est obligatoire',
+  );
+  if (!firstNameValidation.valid) {
+    return firstNameValidation;
+  }
+
+  const lastNameValidation = normalizeRequiredName(
+    payload['lastName'],
+    'Le nom de famille est obligatoire',
+  );
+  if (!lastNameValidation.valid) {
+    return lastNameValidation;
+  }
+
+  const roleValidation = normalizeOptionalRole(payload['role']);
+  if (!roleValidation.valid || !roleValidation.value) {
+    return {
+      valid: false,
+      error: roleValidation.valid
+        ? `Le rôle doit être l'un des suivants : ${ALLOWED_ROLES.join(', ')}`
+        : roleValidation.error,
     };
   }
 
   return {
     valid: true,
     data: {
-      email: (payload['email'] as string).trim(),
-      firstName: (payload['firstName'] as string).trim(),
-      lastName: (payload['lastName'] as string).trim(),
-      role: role as CreateAppUserDto['role'],
-      phone:
-        typeof payload['phone'] === 'string'
-          ? payload['phone'].trim() || null
-          : null,
-      preferredContactChannel:
-        typeof payload['preferredContactChannel'] === 'string'
-          ? payload['preferredContactChannel'].trim() || null
-          : null,
+      email: emailValidation.value,
+      firstName: firstNameValidation.value,
+      lastName: lastNameValidation.value,
+      role: roleValidation.value,
+      phone: normalizeOptionalText(payload['phone']),
+      preferredContactChannel: normalizeOptionalText(
+        payload['preferredContactChannel'],
+      ),
       isActive: payload['isActive'] !== false,
     },
   };
@@ -70,62 +149,52 @@ export function validateUpdateUserPayload(
   const payload = body as Record<string, unknown>;
   const data: UpdateAppUserDto = {};
 
-  if (payload['email'] !== undefined) {
-    if (typeof payload['email'] !== 'string' || !payload['email'].trim()) {
-      return { valid: false, error: "L'adresse email est invalide" };
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(payload['email'])) {
-      return { valid: false, error: "L'adresse email n'est pas valide" };
-    }
-    data.email = payload['email'].trim();
+  const emailValidation = normalizeOptionalEmail(payload['email']);
+  if (!emailValidation.valid) {
+    return emailValidation;
+  }
+  if (emailValidation.value !== undefined) {
+    data.email = emailValidation.value;
   }
 
-  if (payload['firstName'] !== undefined) {
-    if (
-      typeof payload['firstName'] !== 'string' ||
-      !payload['firstName'].trim()
-    ) {
-      return { valid: false, error: 'Le prénom est invalide' };
-    }
-    data.firstName = payload['firstName'].trim();
+  const firstNameValidation = normalizeOptionalName(
+    payload['firstName'],
+    'Le prénom est invalide',
+  );
+  if (!firstNameValidation.valid) {
+    return firstNameValidation;
+  }
+  if (firstNameValidation.value !== undefined) {
+    data.firstName = firstNameValidation.value;
   }
 
-  if (payload['lastName'] !== undefined) {
-    if (
-      typeof payload['lastName'] !== 'string' ||
-      !payload['lastName'].trim()
-    ) {
-      return { valid: false, error: 'Le nom de famille est invalide' };
-    }
-    data.lastName = payload['lastName'].trim();
+  const lastNameValidation = normalizeOptionalName(
+    payload['lastName'],
+    'Le nom de famille est invalide',
+  );
+  if (!lastNameValidation.valid) {
+    return lastNameValidation;
+  }
+  if (lastNameValidation.value !== undefined) {
+    data.lastName = lastNameValidation.value;
   }
 
-  if (payload['role'] !== undefined) {
-    const allowedRoles = ['participant', 'admin', 'trainer'] as const;
-    if (
-      !allowedRoles.includes(payload['role'] as (typeof allowedRoles)[number])
-    ) {
-      return {
-        valid: false,
-        error: `Le rôle doit être l'un des suivants : ${allowedRoles.join(', ')}`,
-      };
-    }
-    data.role = payload['role'] as UpdateAppUserDto['role'];
+  const roleValidation = normalizeOptionalRole(payload['role']);
+  if (!roleValidation.valid) {
+    return roleValidation;
+  }
+  if (roleValidation.value !== undefined) {
+    data.role = roleValidation.value;
   }
 
   if (payload['phone'] !== undefined) {
-    data.phone =
-      typeof payload['phone'] === 'string'
-        ? payload['phone'].trim() || null
-        : null;
+    data.phone = normalizeOptionalText(payload['phone']);
   }
 
   if (payload['preferredContactChannel'] !== undefined) {
-    data.preferredContactChannel =
-      typeof payload['preferredContactChannel'] === 'string'
-        ? payload['preferredContactChannel'].trim() || null
-        : null;
+    data.preferredContactChannel = normalizeOptionalText(
+      payload['preferredContactChannel'],
+    );
   }
 
   if (payload['isActive'] !== undefined) {

@@ -115,10 +115,7 @@ export default class AdminUserListPage implements OnInit {
     this.submitting.set(true);
     this.errorMessage.set(null);
     try {
-      const updated = await this.usersClient.update(
-        user.id,
-        this.editForm() as UpdateAppUserDto,
-      );
+      const updated = await this.usersClient.update(user.id, this.editForm());
       this.users.update((list) =>
         list.map((u) => (u.id === updated.id ? updated : u)),
       );
