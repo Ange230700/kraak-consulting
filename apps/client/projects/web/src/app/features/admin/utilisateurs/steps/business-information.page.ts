@@ -3,11 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonDirective } from 'primeng/button';
+import type { UserRoleValue } from '@kraak/contracts';
 
-import {
-  UserFormStateService,
-  type UserRoleValue,
-} from '../user-form-state.service';
+import { UserFormStateService } from '../user-form-state.service';
 
 const ROLES: { value: UserRoleValue; label: string }[] = [
   { value: 'participant', label: 'Participant' },
