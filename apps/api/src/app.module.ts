@@ -11,6 +11,7 @@ import { ResourcesModule } from './resources/resources.module';
 import { resolveApiEnvFilePaths } from './config/environment-files';
 import { SupabaseModule } from './supabase/supabase.module';
 import { SupportModule } from './support/support.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SupportModule } from './support/support.module';
     ProgramsModule,
     ResourcesModule,
     SupportModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
