@@ -1,0 +1,119 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    Étape 5 sur 5
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">Statut du compte</h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    Configurez l'état initial du compte et l'envoi de l'invitation.
+  </p>
+
+  @if (errorMessage) {
+    <p-message
+      severity="error"
+      [text]="errorMessage"
+      styleClass="mb-6 w-full"
+    />
+  }
+
+  <div class="flex flex-col gap-5">
+    <div
+      class="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-5"
+    >
+      <label class="flex cursor-pointer items-start gap-4">
+        <input
+          type="checkbox"
+          class="accent-brand-blue mt-0.5 h-5 w-5 shrink-0"
+          [(ngModel)]="isActive"
+          (ngModelChange)="sync()"
+          id="isActive"
+        />
+        <div>
+          <span class="text-brand-navy block text-sm font-medium"
+            >Compte actif</span
+          >
+          <span class="text-xs text-neutral-500">
+            Si activé, l'utilisateur pourra se connecter dès acceptation de
+            l'invitation.
+          </span>
+        </div>
+      </label>
+
+      <label class="flex cursor-pointer items-start gap-4">
+        <input
+          type="checkbox"
+          class="accent-brand-blue mt-0.5 h-5 w-5 shrink-0"
+          [(ngModel)]="sendInvitation"
+          (ngModelChange)="sync()"
+          id="sendInvitation"
+        />
+        <div>
+          <span class="text-brand-navy block text-sm font-medium"
+            >Envoyer une invitation par email</span
+          >
+          <span class="text-xs text-neutral-500">
+            Un email d'invitation sera envoyé à l'adresse renseignée à l'étape
+            1.
+          </span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Récapitulatif -->
+    <div class="bg-brand-blue/5 border-brand-blue/20 rounded-xl border p-5">
+      <p
+        class="text-brand-blue mb-3 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        Récapitulatif
+      </p>
+      <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">Nom complet</dt>
+          <dd class="text-brand-navy font-medium">
+            {{ formState.state().firstName }} {{ formState.state().lastName }}
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">Email</dt>
+          <dd class="text-brand-navy font-medium">
+            {{ formState.state().email }}
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">Rôle</dt>
+          <dd class="text-brand-navy font-medium capitalize">
+            {{ formState.state().role }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button
+      pButton
+      class="kr-button-ghost"
+      type="button"
+      (click)="goPrev()"
+      [disabled]="submitting"
+    >
+      <i class="pi pi-arrow-left mr-2"></i>
+      Précédent
+    </button>
+    <button
+      pButton
+      class="kr-button-primary"
+      type="button"
+      (click)="handleSubmit()"
+      [disabled]="
+        submitting || !formState.isStep1Valid() || !formState.isStep2Valid()
+      "
+    >
+      @if (submitting) {
+        <i class="pi pi-spin pi-spinner mr-2"></i>
+      }
+      Créer l'utilisateur
+    </button>
+  </div>
+</div>

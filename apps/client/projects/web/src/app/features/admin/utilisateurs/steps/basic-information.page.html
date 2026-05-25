@@ -1,0 +1,97 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    Étape 1 sur 5
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">Informations de base</h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    Renseignez l'identité et les coordonnées principales du nouvel utilisateur.
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="firstName">
+          Prénom <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="firstName"
+          type="text"
+          pInputText
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          placeholder="Ex : Alice"
+          [(ngModel)]="firstName"
+          (ngModelChange)="sync()"
+          required
+          aria-required="true"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="lastName">
+          Nom <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="lastName"
+          type="text"
+          pInputText
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          placeholder="Ex : Martin"
+          [(ngModel)]="lastName"
+          (ngModelChange)="sync()"
+          required
+          aria-required="true"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="email">
+        Adresse email <span class="text-red-500">*</span>
+      </label>
+      <input
+        id="email"
+        type="email"
+        pInputText
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : alice@example.com"
+        [(ngModel)]="email"
+        (ngModelChange)="sync()"
+        required
+        aria-required="true"
+      />
+      <p class="text-xs text-neutral-400">
+        Une invitation sera envoyée à cette adresse.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="phone">
+        Téléphone
+      </label>
+      <input
+        id="phone"
+        type="tel"
+        pInputText
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : +243 81 234 5678"
+        [(ngModel)]="phone"
+        (ngModelChange)="sync()"
+      />
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-end">
+    <button
+      pButton
+      class="kr-button-primary"
+      type="button"
+      (click)="goNext()"
+      [disabled]="!formState.isStep1Valid()"
+    >
+      Suivant
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>

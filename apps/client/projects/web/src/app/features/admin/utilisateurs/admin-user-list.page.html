@@ -1,0 +1,384 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 sm:px-6 lg:px-8"
+>
+  <div
+    class="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <p
+        class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        Administration
+      </p>
+      <h1 class="text-brand-navy text-2xl font-bold">Utilisateurs</h1>
+      <p class="mt-1 text-sm text-neutral-600">
+        Gérez les comptes et les rôles des membres de la plateforme.
+      </p>
+    </div>
+    <a
+      routerLink="/admin/utilisateurs/create/basic-information"
+      pButton
+      class="kr-button-primary"
+      type="button"
+    >
+      <i class="pi pi-user-plus mr-2"></i>
+      Nouvel utilisateur
+    </a>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-12">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    @if (successMessage()) {
+      <p-message
+        severity="success"
+        [text]="successMessage()!"
+        styleClass="mb-6 w-full"
+      />
+    }
+
+    @if (errorMessage()) {
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        styleClass="mb-6 w-full"
+      />
+    }
+
+    <!-- Barre de recherche -->
+    <div
+      class="bg-brand-white rounded-card shadow-card mb-6 flex items-center gap-3 p-4"
+    >
+      <i class="pi pi-search text-neutral-400"></i>
+      <input
+        type="text"
+        placeholder="Rechercher par nom, email ou rôle…"
+        class="text-brand-navy flex-1 text-sm placeholder-neutral-400 outline-none"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        aria-label="Rechercher un utilisateur"
+      />
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    @if (loading()) {
+      <div
+        class="bg-brand-white rounded-card shadow-card flex justify-center p-12"
+      >
+        <i
+          class="pi pi-spin pi-spinner text-brand-blue text-3xl"
+          aria-label="Chargement en cours"
+        ></i>
+      </div>
+    } @else if (filteredUsers().length === 0) {
+      <div class="bg-brand-white rounded-card shadow-card p-12 text-center">
+        <i class="pi pi-users mb-4 block text-5xl text-neutral-300"></i>
+        <p class="text-sm text-neutral-600">
+          @if (searchQuery()) {
+            Aucun utilisateur ne correspond à votre recherche.
+          } @else {
+            Aucun utilisateur enregistré pour le moment.
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="bg-brand-white rounded-card shadow-card overflow-hidden">
+        <table class="w-full text-sm" aria-label="Liste des utilisateurs">
+          <thead class="border-b border-neutral-200 bg-neutral-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase"
+              >
+                Nom
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase sm:table-cell"
+              >
+                Email
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase md:table-cell"
+              >
+                Rôle
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase lg:table-cell"
+              >
+                Statut
+              </th>
+              <th
+                class="px-6 py-3 text-right text-xs font-semibold tracking-wider text-neutral-500 uppercase"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-100">
+            @for (user of filteredUsers(); track user.id) {
+              <tr class="transition-colors hover:bg-neutral-50">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="bg-brand-blue/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                    >
+                      <span class="text-brand-blue text-xs font-bold">
+                        {{ user.firstName[0] }}{{ user.lastName[0] }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="text-brand-navy font-medium">
+                        {{ user.firstName }} {{ user.lastName }}
+                      </p>
+                      <p class="text-xs text-neutral-500 sm:hidden">
+                        {{ user.email }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="hidden px-6 py-4 text-neutral-600 sm:table-cell">
+                  {{ user.email }}
+                </td>
+                <td class="hidden px-6 py-4 md:table-cell">
+                  <span
+                    class="bg-brand-blue/10 text-brand-blue inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  >
+                    {{ getRoleLabel(user.role) }}
+                  </span>
+                </td>
+                <td class="hidden px-6 py-4 lg:table-cell">
+                  @if (user.isActive) {
+                    <span
+                      class="inline-flex items-center gap-1 text-xs font-medium text-green-700"
+                    >
+                      <i class="pi pi-check-circle"></i> Actif
+                    </span>
+                  } @else {
+                    <span
+                      class="inline-flex items-center gap-1 text-xs font-medium text-neutral-400"
+                    >
+                      <i class="pi pi-ban"></i> Inactif
+                    </span>
+                  }
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      pButton
+                      class="kr-button-ghost !px-3 !py-1.5 text-xs"
+                      type="button"
+                      (click)="openEdit(user)"
+                      [attr.aria-label]="
+                        'Modifier ' + user.firstName + ' ' + user.lastName
+                      "
+                    >
+                      <i class="pi pi-pencil mr-1"></i>
+                      Modifier
+                    </button>
+                    <button
+                      pButton
+                      class="kr-button-ghost border-red-200 !px-3 !py-1.5 text-xs text-red-600 hover:bg-red-50"
+                      type="button"
+                      (click)="requestDelete(user)"
+                      [attr.aria-label]="
+                        'Supprimer ' + user.firstName + ' ' + user.lastName
+                      "
+                    >
+                      <i class="pi pi-trash mr-1"></i>
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Modal de modification -->
+@if (editingUser()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="
+      'Modifier ' + editingUser()!.firstName + ' ' + editingUser()!.lastName
+    "
+  >
+    <div class="bg-brand-white rounded-card shadow-card w-full max-w-lg p-8">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-brand-navy text-xl font-bold">
+          Modifier l'utilisateur
+        </h2>
+        <button
+          type="button"
+          class="text-neutral-400 hover:text-neutral-600"
+          (click)="closeEdit()"
+          aria-label="Fermer la fenêtre"
+        >
+          <i class="pi pi-times text-xl"></i>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-xs font-medium text-neutral-600"
+              for="edit-firstName"
+              >Prénom</label
+            >
+            <input
+              id="edit-firstName"
+              type="text"
+              class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+              [value]="editForm()['firstName'] ?? ''"
+              (input)="updateEditField('firstName', $any($event.target).value)"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-xs font-medium text-neutral-600"
+              for="edit-lastName"
+              >Nom</label
+            >
+            <input
+              id="edit-lastName"
+              type="text"
+              class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+              [value]="editForm()['lastName'] ?? ''"
+              (input)="updateEditField('lastName', $any($event.target).value)"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-neutral-600" for="edit-email"
+            >Email</label
+          >
+          <input
+            id="edit-email"
+            type="email"
+            class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+            [value]="editForm()['email'] ?? ''"
+            (input)="updateEditField('email', $any($event.target).value)"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-neutral-600" for="edit-role"
+            >Rôle</label
+          >
+          <select
+            id="edit-role"
+            class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+            [value]="editForm()['role'] ?? ''"
+            (change)="updateEditField('role', $any($event.target).value)"
+          >
+            @for (role of availableRoles; track role) {
+              <option [value]="role">{{ getRoleLabel(role) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input
+            id="edit-isActive"
+            type="checkbox"
+            class="accent-brand-blue h-4 w-4"
+            [checked]="editForm()['isActive'] ?? true"
+            (change)="updateEditField('isActive', $any($event.target).checked)"
+          />
+          <label class="text-sm text-neutral-700" for="edit-isActive"
+            >Compte actif</label
+          >
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="mt-4 text-sm text-red-600">{{ errorMessage() }}</p>
+      }
+
+      <div class="mt-8 flex justify-end gap-3">
+        <button
+          pButton
+          class="kr-button-ghost"
+          type="button"
+          (click)="closeEdit()"
+          [disabled]="submitting()"
+        >
+          Annuler
+        </button>
+        <button
+          pButton
+          class="kr-button-primary"
+          type="button"
+          (click)="saveEdit()"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>
+          }
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de confirmation de suppression -->
+@if (userToDelete()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Confirmer la suppression"
+  >
+    <div class="bg-brand-white rounded-card shadow-card w-full max-w-md p-8">
+      <div class="flex flex-col items-center gap-4 text-center">
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full bg-red-50"
+        >
+          <i class="pi pi-trash text-2xl text-red-600"></i>
+        </div>
+        <h2 class="text-brand-navy text-xl font-bold">
+          Supprimer l'utilisateur
+        </h2>
+        <p class="text-sm text-neutral-600">
+          Êtes-vous sûr(e) de vouloir supprimer
+          <strong
+            >{{ userToDelete()!.firstName }}
+            {{ userToDelete()!.lastName }}</strong
+          >
+          ? Cette action est irréversible.
+        </p>
+      </div>
+
+      <div class="mt-8 flex justify-center gap-3">
+        <button
+          pButton
+          class="kr-button-ghost"
+          type="button"
+          (click)="cancelDelete()"
+          [disabled]="submitting()"
+        >
+          Annuler
+        </button>
+        <button
+          pButton
+          class="kr-button-primary !border-red-600 !bg-red-600 hover:!bg-red-700"
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>
+          }
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+}

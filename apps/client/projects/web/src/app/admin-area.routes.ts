@@ -30,6 +30,12 @@ export const adminAreaRoutes: Routes = [
           import('./features/admin/ressources/admin-ressources.page'),
       },
       {
+        path: 'utilisateurs',
+        title: 'Utilisateurs — Admin | KRAAK Consulting',
+        loadChildren: () =>
+          import('./features/admin/utilisateurs/utilisateurs.routes'),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

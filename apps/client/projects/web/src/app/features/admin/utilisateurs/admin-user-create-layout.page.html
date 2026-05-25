@@ -1,0 +1,121 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 sm:px-6 lg:px-8"
+>
+  <div
+    class="mx-auto flex max-w-7xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <p
+        class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        Administration
+      </p>
+      <h1 class="text-brand-navy text-2xl font-bold">Nouvel utilisateur</h1>
+      <p class="mt-1 text-sm text-neutral-600">
+        Invitez un nouveau membre à rejoindre la plateforme KRAAK.
+      </p>
+    </div>
+    <button pButton class="kr-button-ghost" type="button" (click)="cancel()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      Retour à la liste
+    </button>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-12">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    @if (errorMessage()) {
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        styleClass="mb-6 w-full"
+      />
+    }
+
+    <div class="flex flex-col gap-6 lg:flex-row">
+      <!-- Navigation desktop (sidebar) -->
+      <aside class="hidden w-64 shrink-0 lg:block">
+        <nav
+          class="bg-brand-white rounded-card shadow-card flex flex-col gap-1 p-4"
+          aria-label="Étapes de création"
+        >
+          @for (step of steps; track step.path; let i = $index) {
+            <a
+              [routerLink]="getStepRouterLink(step)"
+              class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors"
+              routerLinkActive="bg-brand-blue text-white shadow-sm"
+              [routerLinkActiveOptions]="{ exact: false }"
+              [class.text-neutral-600]="!router.url.includes(step.path)"
+              [class.hover:bg-neutral-100]="!router.url.includes(step.path)"
+              [attr.aria-current]="
+                router.url.includes(step.path) ? 'step' : null
+              "
+            >
+              <i [class]="'pi ' + step.icon + ' text-base'"></i>
+              <span>{{ step.label }}</span>
+            </a>
+          }
+        </nav>
+      </aside>
+
+      <!-- Navigation mobile (onglets défilants) -->
+      <div class="-mx-4 overflow-x-auto px-4 pb-2 lg:hidden">
+        <nav class="flex min-w-max gap-1" aria-label="Étapes de création">
+          @for (step of steps; track step.path; let i = $index) {
+            <a
+              [routerLink]="getStepRouterLink(step)"
+              class="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
+              routerLinkActive="bg-brand-blue text-white shadow-sm"
+              [routerLinkActiveOptions]="{ exact: false }"
+              [class.text-neutral-600]="!router.url.includes(step.path)"
+              [class.hover:bg-neutral-100]="!router.url.includes(step.path)"
+              [attr.aria-current]="
+                router.url.includes(step.path) ? 'step' : null
+              "
+            >
+              <i [class]="'pi ' + step.icon"></i>
+              {{ step.label }}
+            </a>
+          }
+        </nav>
+      </div>
+
+      <!-- Contenu de l'étape courante -->
+      <div class="min-w-0 flex-1">
+        <div class="bg-brand-white rounded-card shadow-card overflow-hidden">
+          <router-outlet />
+        </div>
+
+        <!-- Actions globales -->
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <button
+            pButton
+            class="kr-button-ghost"
+            type="button"
+            (click)="cancel()"
+            [disabled]="submitting()"
+          >
+            Annuler
+          </button>
+
+          <button
+            pButton
+            class="kr-button-primary"
+            type="button"
+            (click)="handleSubmit()"
+            [disabled]="
+              submitting() ||
+              !formState.isStep1Valid() ||
+              !formState.isStep2Valid()
+            "
+          >
+            @if (submitting()) {
+              <i class="pi pi-spin pi-spinner mr-2"></i>
+            }
+            Envoyer l'invitation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,80 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    Étape 2 sur 5
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    Informations professionnelles
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    Définissez le rôle et la position de l'utilisateur au sein de
+    l'organisation.
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="role">
+        Rôle <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="role"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+        [(ngModel)]="role"
+        (ngModelChange)="sync()"
+        required
+        aria-required="true"
+      >
+        <option value="">Sélectionner un rôle…</option>
+        @for (r of roles; track r.value) {
+          <option [value]="r.value">{{ r.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="position">
+        Poste / Fonction
+      </label>
+      <input
+        id="position"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : Chef de projet"
+        [(ngModel)]="position"
+        (ngModelChange)="sync()"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="department">
+        Département / Équipe
+      </label>
+      <input
+        id="department"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : Formation"
+        [(ngModel)]="department"
+        (ngModelChange)="sync()"
+      />
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      Précédent
+    </button>
+    <button
+      pButton
+      class="kr-button-primary"
+      type="button"
+      (click)="goNext()"
+      [disabled]="!formState.isStep2Valid()"
+    >
+      Suivant
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>
