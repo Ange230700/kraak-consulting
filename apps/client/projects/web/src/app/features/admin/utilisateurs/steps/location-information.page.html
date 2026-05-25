@@ -1,0 +1,96 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    Étape 3 sur 5
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">Localisation</h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    Indiquez l'adresse et la localisation géographique de l'utilisateur.
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="country"
+          >Pays</label
+        >
+        <input
+          id="country"
+          type="text"
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          placeholder="Ex : République démocratique du Congo"
+          [(ngModel)]="country"
+          (ngModelChange)="sync()"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="city"
+          >Ville</label
+        >
+        <input
+          id="city"
+          type="text"
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          placeholder="Ex : Kinshasa"
+          [(ngModel)]="city"
+          (ngModelChange)="sync()"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="postalCode"
+        >Code postal</label
+      >
+      <input
+        id="postalCode"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : 00243"
+        [(ngModel)]="postalCode"
+        (ngModelChange)="sync()"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="addressLine1"
+        >Adresse (ligne 1)</label
+      >
+      <input
+        id="addressLine1"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Ex : 12 Avenue de la Paix"
+        [(ngModel)]="addressLine1"
+        (ngModelChange)="sync()"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="addressLine2"
+        >Adresse (ligne 2)</label
+      >
+      <input
+        id="addressLine2"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Appartement, bâtiment…"
+        [(ngModel)]="addressLine2"
+        (ngModelChange)="sync()"
+      />
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      Précédent
+    </button>
+    <button pButton class="kr-button-primary" type="button" (click)="goNext()">
+      Suivant
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    Étape 4 sur 5
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    Autorisations &amp; préférences
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    Indiquez le canal de contact privilégié et toute note utile à la gestion de
+    ce compte.
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label
+        class="text-xs font-medium text-neutral-600"
+        for="preferredContactChannel"
+      >
+        Canal de contact préféré
+      </label>
+      <select
+        id="preferredContactChannel"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+        [(ngModel)]="preferredContactChannel"
+        (ngModelChange)="sync()"
+      >
+        <option value="">Sélectionner un canal…</option>
+        @for (channel of contactChannels; track channel.value) {
+          <option [value]="channel.value">{{ channel.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="notes"
+        >Notes internes</label
+      >
+      <textarea
+        id="notes"
+        rows="4"
+        class="text-brand-navy focus:border-brand-blue w-full resize-none rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        placeholder="Informations complémentaires pour l'équipe…"
+        [(ngModel)]="notes"
+        (ngModelChange)="sync()"
+      ></textarea>
+      <p class="text-xs text-neutral-400">
+        Ces notes sont visibles uniquement par les administrateurs.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      Précédent
+    </button>
+    <button pButton class="kr-button-primary" type="button" (click)="goNext()">
+      Suivant
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>
