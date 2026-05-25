@@ -18,6 +18,18 @@ export const adminAreaRoutes: Routes = [
           import('./features/admin/dashboard/dashboard.page'),
       },
       {
+        path: 'programmes',
+        title: 'Programmes — Admin | KRAAK Consulting',
+        loadComponent: () =>
+          import('./features/admin/programmes/admin-programmes.page'),
+      },
+      {
+        path: 'ressources',
+        title: 'Ressources — Admin | KRAAK Consulting',
+        loadComponent: () =>
+          import('./features/admin/ressources/admin-ressources.page'),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
