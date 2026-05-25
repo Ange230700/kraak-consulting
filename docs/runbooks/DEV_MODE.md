@@ -34,6 +34,80 @@ La configuration Auth locale versionnée pour le MVP est décrite dans
 | `SUPABASE_URL`        | `apps/api/.env` | `http://127.0.0.1:54321`       |
 | `SUPABASE_SECRET_KEY` | `apps/api/.env` | clé fournie par Supabase local |
 
+### Profil DB local prêt à l'emploi (Supabase + Docker Compose)
+
+Ce profil garde Supabase hors de Docker Compose (via Supabase CLI) et utilise
+`compose.local.yml` uniquement pour le front et l'API.
+
+Prérequis :
+
+1. Docker Desktop démarré
+2. Supabase CLI installée et accessible (`supabase --version`)
+
+Étapes :
+
+1. Démarrer Supabase local depuis la racine du dépôt :
+
+```bash
+supabase start
+```
+
+1. Récupérer les valeurs locales (URL + clés) :
+
+```bash
+supabase status
+```
+
+1. Exporter les variables puis démarrer Compose.
+
+Exemple Bash :
+
+```bash
+export SUPABASE_URL="http://host.docker.internal:54321"
+export SUPABASE_SECRET_KEY="<service_role_key_depuis_supabase_status>"
+export SUPABASE_PUBLISHABLE_KEY="<anon_key_depuis_supabase_status>"
+export CLIENT_SUPABASE_URL="$SUPABASE_URL"
+export CLIENT_SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+export CLIENT_API_BASE_URL="http://api:3000"
+docker compose -f compose.local.yml up --build
+```
+
+Exemple PowerShell :
+
+```powershell
+$env:SUPABASE_URL = "http://host.docker.internal:54321"
+$env:SUPABASE_SECRET_KEY = "<service_role_key_depuis_supabase_status>"
+$env:SUPABASE_PUBLISHABLE_KEY = "<anon_key_depuis_supabase_status>"
+$env:CLIENT_SUPABASE_URL = $env:SUPABASE_URL
+$env:CLIENT_SUPABASE_PUBLISHABLE_KEY = $env:SUPABASE_PUBLISHABLE_KEY
+$env:CLIENT_API_BASE_URL = "http://api:3000"
+docker compose -f compose.local.yml up --build
+```
+
+1. Arrêter les services applicatifs puis la DB locale :
+
+```bash
+docker compose -f compose.local.yml down
+supabase stop
+```
+
+Notes importantes :
+
+- Dans un conteneur Docker, `localhost` pointe vers le conteneur lui-même.
+  `host.docker.internal` est donc requis pour joindre Supabase local lancé sur
+  la machine hôte.
+- Le front est servi en statique par Compose et lit les valeurs runtime via
+  `runtime-config.js` généré au build.
+
+Option automatisée (recommandée) :
+
+- Bash : `./scripts/compose-up-with-supabase-local.sh`
+- PowerShell : `./scripts/compose-up-with-supabase-local.ps1`
+
+Ces scripts lancent `supabase start`, récupèrent les clés via
+`supabase status -o env`, exportent les variables nécessaires puis exécutent
+`docker compose -f compose.local.yml up --build`.
+
 ---
 
 ## Lancer le site web (Angular SSR)
