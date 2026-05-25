@@ -15,6 +15,30 @@ function normalizeOptionalText(value: unknown): string | null {
   return typeof value === 'string' ? value.trim() || null : null;
 }
 
+function isLikelyEmail(value: string): boolean {
+  if (value.includes(' ')) {
+    return false;
+  }
+
+  const atIndex = value.indexOf('@');
+  if (atIndex <= 0 || atIndex !== value.lastIndexOf('@')) {
+    return false;
+  }
+
+  const localPart = value.slice(0, atIndex);
+  const domainPart = value.slice(atIndex + 1);
+  if (!localPart || !domainPart) {
+    return false;
+  }
+
+  const dotIndex = domainPart.indexOf('.');
+  if (dotIndex <= 0 || dotIndex === domainPart.length - 1) {
+    return false;
+  }
+
+  return true;
+}
+
 function normalizeOptionalEmail(
   value: unknown,
 ): { valid: true; value?: string } | { valid: false; error: string } {
@@ -27,8 +51,7 @@ function normalizeOptionalEmail(
   }
 
   const normalized = value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(normalized)) {
+  if (!isLikelyEmail(normalized)) {
     return { valid: false, error: "L'adresse email n'est pas valide" };
   }
 
