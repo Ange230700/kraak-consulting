@@ -16,11 +16,6 @@ const mockUsersService = {
 };
 
 const mockRequireAdminAccess = jest.fn();
-const mockExtractAccessToken = jest.fn();
-
-jest.mock('../auth/auth.dto', () => ({
-  extractAccessToken: (header: string) => mockExtractAccessToken(header),
-}));
 
 jest.mock('../shared/admin-access.utils', () => ({
   requireAdminAccess: (...args: unknown[]) => mockRequireAdminAccess(...args),
@@ -29,14 +24,12 @@ jest.mock('../shared/admin-access.utils', () => ({
 const mockAuthService = {};
 
 const validToken = 'Bearer valid-token';
-const extractedToken = 'valid-token';
 
 describe('UsersController', () => {
   let controller: UsersController;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockExtractAccessToken.mockReturnValue(extractedToken);
     mockRequireAdminAccess.mockResolvedValue(undefined);
     controller = new UsersController(
       mockUsersService as never,
@@ -52,12 +45,14 @@ describe('UsersController', () => {
       const result = await controller.findAll(validToken);
 
       expect(result).toEqual(users);
-      expect(mockExtractAccessToken).toHaveBeenCalledWith(validToken);
-      expect(mockRequireAdminAccess).toHaveBeenCalled();
+      expect(mockRequireAdminAccess).toHaveBeenCalledWith(
+        mockAuthService,
+        validToken,
+      );
     });
 
     it('Given a missing token, When findAll is called, Then throws UnauthorizedException', async () => {
-      mockExtractAccessToken.mockReturnValueOnce(null);
+      mockRequireAdminAccess.mockRejectedValueOnce(new UnauthorizedException());
 
       await expect(controller.findAll('')).rejects.toThrow(
         UnauthorizedException,
@@ -76,7 +71,7 @@ describe('UsersController', () => {
     });
 
     it('Given a missing token, When findOne is called, Then throws UnauthorizedException', async () => {
-      mockExtractAccessToken.mockReturnValueOnce(null);
+      mockRequireAdminAccess.mockRejectedValueOnce(new UnauthorizedException());
 
       await expect(controller.findOne('1', '')).rejects.toThrow(
         UnauthorizedException,
