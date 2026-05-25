@@ -199,9 +199,9 @@
 
 <!-- Modal de modification -->
 @if (editingUser()) {
-  <div
+  <dialog
+    open
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-    role="dialog"
     aria-modal="true"
     [attr.aria-label]="
       'Modifier ' + editingUser()!.firstName + ' ' + editingUser()!.lastName
@@ -325,14 +325,14 @@
         </button>
       </div>
     </div>
-  </div>
+  </dialog>
 }
 
 <!-- Modal de confirmation de suppression -->
 @if (userToDelete()) {
-  <div
+  <dialog
+    open
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-    role="dialog"
     aria-modal="true"
     aria-label="Confirmer la suppression"
   >
@@ -380,5 +380,5 @@
         </button>
       </div>
     </div>
-  </div>
+  </dialog>
 }

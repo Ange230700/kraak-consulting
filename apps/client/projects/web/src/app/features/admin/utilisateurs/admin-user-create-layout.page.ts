@@ -69,7 +69,7 @@ export default class AdminUserCreateLayoutPage {
   protected readonly currentStepIndex = computed(() => {
     const url = this.router.url;
     const idx = WIZARD_STEPS.findIndex((s) => url.includes(s.path));
-    return idx >= 0 ? idx : 0;
+    return Math.max(idx, 0);
   });
 
   getStepRouterLink(step: WizardStep): string {
