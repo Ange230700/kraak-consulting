@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { signal } from '@angular/core';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
@@ -50,7 +51,7 @@ const webAuthServiceMock = {
 };
 
 const resourcesClientMock = {
-  list: async () => mockRessources,
+  list: async () => ({ data: mockRessources, total: mockRessources.length }),
   create: async () =>
     ({
       id: 'res-new',
@@ -68,7 +69,7 @@ const resourcesClientMock = {
       createdAt: '',
       updatedAt: '',
     }) as ResourceDto,
-  update: async (id: string) => ({ ...mockRessources[0], id }) as ResourceDto,
+  update: async (id: string) => ({ ...mockRessources[0], id }),
   remove: async () => undefined,
 };
 
@@ -121,7 +122,7 @@ describe('AdminRessourcesPage', () => {
     const fixture = TestBed.createComponent(AdminRessourcesPage);
     fixture.componentInstance.resourcesClient = {
       ...resourcesClientMock,
-      list: async () => [],
+      list: async () => ({ data: [], total: 0 }),
     };
     fixture.detectChanges();
     await fixture.whenStable();

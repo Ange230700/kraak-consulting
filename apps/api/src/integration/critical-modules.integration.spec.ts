@@ -118,11 +118,16 @@ describe('Critical API Modules Integration', () => {
       markSessionProgress: jest.fn(),
     };
 
+    const authServiceMock: jest.Mocked<Pick<AuthService, 'getSession'>> = {
+      getSession: jest.fn(),
+    };
+
     beforeAll(async () => {
       app = await buildHttpApp({
         controllers: [ProgramsController],
         providers: [
           { provide: ProgramsService, useValue: programsServiceMock },
+          { provide: AuthService, useValue: authServiceMock },
         ],
       });
     });
@@ -197,11 +202,16 @@ describe('Critical API Modules Integration', () => {
       trackResourceConsultation: jest.fn(),
     };
 
+    const authServiceMock: jest.Mocked<Pick<AuthService, 'getSession'>> = {
+      getSession: jest.fn(),
+    };
+
     beforeAll(async () => {
       app = await buildHttpApp({
         controllers: [ResourcesController],
         providers: [
           { provide: ResourcesService, useValue: resourcesServiceMock },
+          { provide: AuthService, useValue: authServiceMock },
         ],
       });
     });

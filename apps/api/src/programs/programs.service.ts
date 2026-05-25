@@ -14,6 +14,7 @@ import type {
   AudienceTypeValue,
   CohortDto,
   CohortStatusValue,
+  CreateProgramDto,
   EnrollmentStatusValue,
   MarkProgramSessionProgressRequestDto,
   MarkProgramSessionProgressResponseDto,
@@ -27,6 +28,7 @@ import type {
   SessionDto,
   SessionStatusValue,
   LocationTypeValue,
+  UpdateProgramDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
@@ -116,6 +118,8 @@ const sessionProgressPageSize = 200;
 const programNotFoundMessage = 'Programme introuvable pour ce participant.';
 const resourcesReadErrorMessage =
   'Impossible de charger les ressources du programme.';
+const programSelectFields =
+  'id, slug, title, summary, description, status, visibility, created_at, updated_at';
 
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
@@ -250,9 +254,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('program')
-      .select(
-        'id, slug, title, summary, description, status, visibility, created_at, updated_at',
-      )
+      .select(programSelectFields)
       .eq('status', 'published')
       .order('updated_at', { ascending: false })
       .limit(20);
@@ -267,6 +269,116 @@ export class ProgramsService {
     return ((data as ProgramRow[] | null) ?? []).map((row) =>
       this.mapProgram(row),
     );
+  }
+
+  async listAllPrograms(): Promise<ProgramDto[]> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select(programSelectFields)
+      .order('updated_at', { ascending: false })
+      .limit(1000);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger la liste des programmes.',
+      });
+    }
+
+    return ((data as ProgramRow[] | null) ?? []).map((row) =>
+      this.mapProgram(row),
+    );
+  }
+
+  async createProgram(payload: CreateProgramDto): Promise<ProgramDto> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .insert({
+        slug: payload.slug,
+        title: payload.title,
+        summary: payload.summary,
+        description: payload.description,
+        status: payload.status,
+        visibility: payload.visibility,
+      })
+      .select(programSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de créer le programme.',
+      });
+    }
+
+    return this.mapProgram(data as ProgramRow);
+  }
+
+  async updateProgram(
+    programId: string,
+    payload: UpdateProgramDto,
+  ): Promise<ProgramDto> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.slug !== undefined) {
+      updatePayload['slug'] = payload.slug;
+    }
+
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+
+    if (payload.summary !== undefined) {
+      updatePayload['summary'] = payload.summary;
+    }
+
+    if (payload.description !== undefined) {
+      updatePayload['description'] = payload.description;
+    }
+
+    if (payload.status !== undefined) {
+      updatePayload['status'] = payload.status;
+    }
+
+    if (payload.visibility !== undefined) {
+      updatePayload['visibility'] = payload.visibility;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .update(updatePayload)
+      .eq('id', programId)
+      .select(programSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable.',
+      });
+    }
+
+    return this.mapProgram(data as ProgramRow);
+  }
+
+  async deleteProgram(programId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .update({ status: 'archived' })
+      .eq('id', programId)
+      .select('id')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable.',
+      });
+    }
   }
 
   async getProgramDetail(

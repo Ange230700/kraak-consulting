@@ -87,8 +87,8 @@ export default class AdminProgrammesPage implements OnInit {
     }),
   });
 
-  async ngOnInit(): Promise<void> {
-    await this.loadProgrammes();
+  ngOnInit(): void {
+    void this.loadProgrammes();
   }
 
   async loadProgrammes(): Promise<void> {
@@ -160,7 +160,21 @@ export default class AdminProgrammesPage implements OnInit {
 
     try {
       const id = this.editingId();
-      if (id !== null) {
+      if (id === null) {
+        const body: CreateProgramDto = {
+          slug: values.slug,
+          title: values.title,
+          summary: values.summary,
+          description: values.description,
+          status: values.status as CreateProgramDto['status'],
+          visibility: values.visibility as CreateProgramDto['visibility'],
+        };
+        const created = await this.programsClient.create(body);
+        this.programmes.update((list) => [...list, created]);
+        this.successMessage.set(
+          `Programme « ${created.title} » créé avec succès.`,
+        );
+      } else {
         const body: UpdateProgramDto = {
           slug: values.slug,
           title: values.title,
@@ -175,20 +189,6 @@ export default class AdminProgrammesPage implements OnInit {
         );
         this.successMessage.set(
           `Programme « ${updated.title} » mis à jour avec succès.`,
-        );
-      } else {
-        const body: CreateProgramDto = {
-          slug: values.slug,
-          title: values.title,
-          summary: values.summary,
-          description: values.description,
-          status: values.status as CreateProgramDto['status'],
-          visibility: values.visibility as CreateProgramDto['visibility'],
-        };
-        const created = await this.programsClient.create(body);
-        this.programmes.update((list) => [...list, created]);
-        this.successMessage.set(
-          `Programme « ${created.title} » créé avec succès.`,
         );
       }
       this.showForm.set(false);
@@ -208,11 +208,10 @@ export default class AdminProgrammesPage implements OnInit {
   }
 
   async deleteProgramme(programme: ProgramDto): Promise<void> {
-    if (
-      !confirm(
-        `Supprimer le programme « ${programme.title} » ? Cette action est irréversible.`,
-      )
-    ) {
+    const shouldDelete = confirm(
+      `Supprimer le programme « ${programme.title} » ? Cette action est irréversible.`,
+    );
+    if (shouldDelete === false) {
       return;
     }
 
