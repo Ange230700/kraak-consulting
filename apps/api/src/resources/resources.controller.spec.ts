@@ -4,6 +4,7 @@ import type {
   ResourceDto,
   ResourceThemeValue,
 } from '@kraak/contracts';
+import { AuthService } from '../auth/auth.service';
 import { ResourcesController } from './resources.controller';
 import { ResourcesService } from './resources.service';
 
@@ -36,8 +37,16 @@ describe('ResourcesController', () => {
 
   const mockResourcesService = {
     listResources: jest.fn(),
+    listAllResources: jest.fn(),
     getResourceById: jest.fn(),
+    createResource: jest.fn(),
+    updateResource: jest.fn(),
+    deleteResource: jest.fn(),
     trackResourceConsultation: jest.fn(),
+  };
+
+  const authService = {
+    getSession: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -48,10 +57,22 @@ describe('ResourcesController', () => {
           provide: ResourcesService,
           useValue: mockResourcesService,
         },
+        {
+          provide: AuthService,
+          useValue: authService,
+        },
       ],
     }).compile();
 
     controller = module.get<ResourcesController>(ResourcesController);
+
+    authService.getSession.mockResolvedValue({
+      profile: {
+        appUser: {
+          role: 'participant',
+        },
+      },
+    });
   });
 
   afterEach(() => {
@@ -85,6 +106,35 @@ describe('ResourcesController', () => {
     expect(result).toEqual(mockListResponse);
   });
 
+  it('Given an admin Authorization header, When listResources is called, Then it returns the admin listing', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+    mockResourcesService.listAllResources.mockResolvedValue(mockListResponse);
+
+    const result = await controller.listResources(
+      'training',
+      'all',
+      'prog-001',
+      1,
+      10,
+      'Bearer access-token',
+    );
+
+    expect(mockResourcesService.listAllResources).toHaveBeenCalledWith({
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      programId: 'prog-001',
+      page: 1,
+      limit: 10,
+    });
+    expect(result).toEqual(mockListResponse);
+  });
+
   it('Given a resource id, When getResourceById is called, Then it delegates to service and returns the resource', async () => {
     const resourceId = 'res-001';
     mockResourcesService.getResourceById.mockResolvedValue(mockResource);
@@ -108,5 +158,48 @@ describe('ResourcesController', () => {
     expect(mockResourcesService.trackResourceConsultation).toHaveBeenCalledWith(
       resourceId,
     );
+  });
+
+  it('Given un payload création valide, When createResource is called, Then it delegates to the service', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+    mockResourcesService.createResource.mockResolvedValue(mockResource);
+
+    const result = await controller.createResource(
+      {
+        title: 'TypeScript Basics',
+        description: 'Learn TypeScript fundamentals',
+        resourceType: 'video',
+        resourceTheme: 'training',
+        resourceAudience: 'all',
+        url: 'https://example.com/resource',
+        filePath: null,
+        status: 'published',
+        publishedAt: null,
+        programId: null,
+        cohortId: null,
+      },
+      'Bearer access-token',
+    );
+
+    expect(mockResourcesService.createResource).toHaveBeenCalledWith({
+      title: 'TypeScript Basics',
+      description: 'Learn TypeScript fundamentals',
+      resourceType: 'video',
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      url: 'https://example.com/resource',
+      filePath: null,
+      status: 'published',
+      publishedAt: null,
+      programId: null,
+      cohortId: null,
+    });
+    expect(result).toEqual(mockResource);
   });
 });

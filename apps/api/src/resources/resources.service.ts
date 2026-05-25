@@ -1,8 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import type {
+  CreateResourceDto,
   ResourceAudienceValue,
   ResourceDto,
   ResourceThemeValue,
+  UpdateResourceDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
@@ -22,17 +28,14 @@ type ResourceTrackingRow = {
 export class ResourcesService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
-  /**
-   * List published resources with optional filtering and pagination.
-   * @param options - Filter options (theme, audience) and pagination (page, limit)
-   */
-  async listResources(options?: {
+  private buildResourceQuery(options?: {
     resourceTheme?: ResourceThemeValue;
     resourceAudience?: ResourceAudienceValue;
     programId?: string;
     page?: number;
     limit?: number;
-  }): Promise<{ data: ResourceDto[]; total: number }> {
+    includeUnpublished?: boolean;
+  }) {
     const adminClient = this.supabaseService.getClient();
     const limit = Math.min(options?.limit ?? 20, 100);
     const page = Math.max(options?.page ?? 1, 1);
@@ -41,9 +44,12 @@ export class ResourcesService {
     let query = adminClient
       .from('resource')
       .select(RESOURCE_SELECT_FIELDS, { count: 'exact' })
-      .eq('status', 'published')
       .order('published_at', { ascending: false })
       .range(offset, offset + limit - 1);
+
+    if (!options?.includeUnpublished) {
+      query = query.eq('status', 'published');
+    }
 
     if (options?.programId) {
       query = query.eq('program_id', options.programId);
@@ -57,6 +63,21 @@ export class ResourcesService {
       query = query.eq('resource_audience', options.resourceAudience);
     }
 
+    return query;
+  }
+
+  /**
+   * List published resources with optional filtering and pagination.
+   * @param options - Filter options (theme, audience) and pagination (page, limit)
+   */
+  async listResources(options?: {
+    resourceTheme?: ResourceThemeValue;
+    resourceAudience?: ResourceAudienceValue;
+    programId?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ data: ResourceDto[]; total: number }> {
+    const query = this.buildResourceQuery(options);
     const { data, error, count } = await query;
 
     if (error) {
@@ -68,6 +89,35 @@ export class ResourcesService {
         data: [],
         total: 0,
       };
+    }
+
+    const resources = ((data as ResourceRow[] | null) ?? []).map((row) =>
+      this.mapResource(row),
+    );
+
+    return {
+      data: resources,
+      total: count ?? 0,
+    };
+  }
+
+  async listAllResources(options?: {
+    resourceTheme?: ResourceThemeValue;
+    resourceAudience?: ResourceAudienceValue;
+    programId?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ data: ResourceDto[]; total: number }> {
+    const { data, error, count } = await this.buildResourceQuery({
+      ...options,
+      includeUnpublished: true,
+    });
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Failed to fetch resources.',
+      });
     }
 
     const resources = ((data as ResourceRow[] | null) ?? []).map((row) =>
@@ -100,6 +150,124 @@ export class ResourcesService {
     }
 
     return this.mapResource(data as ResourceRow);
+  }
+
+  async createResource(payload: CreateResourceDto): Promise<ResourceDto> {
+    const adminClient = this.supabaseService.getClient();
+    const publishedAt =
+      payload.publishedAt ??
+      (payload.status === 'published' ? new Date().toISOString() : null);
+
+    const { data, error } = await adminClient
+      .from('resource')
+      .insert({
+        program_id: payload.programId,
+        cohort_id: payload.cohortId,
+        title: payload.title,
+        description: payload.description,
+        resource_type: payload.resourceType,
+        resource_theme: payload.resourceTheme,
+        resource_audience: payload.resourceAudience,
+        url: payload.url,
+        file_path: payload.filePath,
+        status: payload.status,
+        published_at: publishedAt,
+      })
+      .select(RESOURCE_SELECT_FIELDS)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Failed to create resource.',
+      });
+    }
+
+    return this.mapResource(data as ResourceRow);
+  }
+
+  async updateResource(
+    id: string,
+    payload: UpdateResourceDto,
+  ): Promise<ResourceDto> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.programId !== undefined) {
+      updatePayload['program_id'] = payload.programId;
+    }
+
+    if (payload.cohortId !== undefined) {
+      updatePayload['cohort_id'] = payload.cohortId;
+    }
+
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+
+    if (payload.description !== undefined) {
+      updatePayload['description'] = payload.description;
+    }
+
+    if (payload.resourceType !== undefined) {
+      updatePayload['resource_type'] = payload.resourceType;
+    }
+
+    if (payload.resourceTheme !== undefined) {
+      updatePayload['resource_theme'] = payload.resourceTheme;
+    }
+
+    if (payload.resourceAudience !== undefined) {
+      updatePayload['resource_audience'] = payload.resourceAudience;
+    }
+
+    if (payload.url !== undefined) {
+      updatePayload['url'] = payload.url;
+    }
+
+    if (payload.filePath !== undefined) {
+      updatePayload['file_path'] = payload.filePath;
+    }
+
+    if (payload.status !== undefined) {
+      updatePayload['status'] = payload.status;
+      updatePayload['published_at'] =
+        payload.publishedAt ??
+        (payload.status === 'published' ? new Date().toISOString() : null);
+    } else if (payload.publishedAt !== undefined) {
+      updatePayload['published_at'] = payload.publishedAt;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('resource')
+      .update(updatePayload)
+      .eq('id', id)
+      .select(RESOURCE_SELECT_FIELDS)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException(
+        `Resource with ID ${id} not found or is not published.`,
+      );
+    }
+
+    return this.mapResource(data as ResourceRow);
+  }
+
+  async deleteResource(id: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('resource')
+      .update({ status: 'archived', published_at: null })
+      .eq('id', id)
+      .select('id')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException(
+        `Resource with ID ${id} not found or is not published.`,
+      );
+    }
   }
 
   /**

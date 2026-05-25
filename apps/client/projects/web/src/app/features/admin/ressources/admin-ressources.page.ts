@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { createApiClient, type ApiClient } from '@kraak/api-client';
+import { createApiClient } from '@kraak/api-client';
 import type {
   CreateResourceDto,
   ResourceDto,
@@ -36,6 +36,20 @@ interface ResourceFormModel {
   status: FormControl<string>;
 }
 
+type ResourceListResponse =
+  | ResourceDto[]
+  | {
+      data: ResourceDto[];
+      total: number;
+    };
+
+interface AdminResourcesClient {
+  list(): Promise<ResourceListResponse>;
+  create(body: CreateResourceDto): Promise<ResourceDto>;
+  update(id: string, body: UpdateResourceDto): Promise<ResourceDto>;
+  remove(id: string): Promise<void>;
+}
+
 @Component({
   selector: 'kraak-admin-ressources-page',
   standalone: true,
@@ -45,10 +59,7 @@ interface ResourceFormModel {
 export default class AdminRessourcesPage implements OnInit {
   private readonly authService = inject(WebAuthService);
   private readonly messageService = inject(MessageService);
-  resourcesClient: Pick<
-    ApiClient['resources'],
-    'list' | 'create' | 'update' | 'remove'
-  > = createApiClient({
+  resourcesClient: AdminResourcesClient = createApiClient({
     baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
     getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
   }).resources;
@@ -93,8 +104,8 @@ export default class AdminRessourcesPage implements OnInit {
     }),
   });
 
-  async ngOnInit(): Promise<void> {
-    await this.loadRessources();
+  ngOnInit(): void {
+    void this.loadRessources();
   }
 
   async loadRessources(): Promise<void> {
@@ -102,7 +113,7 @@ export default class AdminRessourcesPage implements OnInit {
     this.errorMessage.set(null);
     try {
       const list = await this.resourcesClient.list();
-      this.ressources.set(list);
+      this.ressources.set(Array.isArray(list) ? list : list.data);
     } catch (err) {
       console.error(
         '[AdminRessourcesPage] Erreur lors du chargement des ressources',
@@ -168,27 +179,7 @@ export default class AdminRessourcesPage implements OnInit {
 
     try {
       const id = this.editingId();
-      if (id !== null) {
-        const body: UpdateResourceDto = {
-          title: values.title,
-          description: values.description || null,
-          resourceType:
-            values.resourceType as CreateResourceDto['resourceType'],
-          resourceTheme:
-            values.resourceTheme as CreateResourceDto['resourceTheme'],
-          resourceAudience:
-            values.resourceAudience as CreateResourceDto['resourceAudience'],
-          url: values.url || null,
-          status: values.status as CreateResourceDto['status'],
-        };
-        const updated = await this.resourcesClient.update(id, body);
-        this.ressources.update((list) =>
-          list.map((r) => (r.id === id ? updated : r)),
-        );
-        this.successMessage.set(
-          `Ressource « ${updated.title} » mise à jour avec succès.`,
-        );
-      } else {
+      if (id === null) {
         const body: CreateResourceDto = {
           title: values.title,
           description: values.description || null,
@@ -209,6 +200,26 @@ export default class AdminRessourcesPage implements OnInit {
         this.ressources.update((list) => [...list, created]);
         this.successMessage.set(
           `Ressource « ${created.title} » créée avec succès.`,
+        );
+      } else {
+        const body: UpdateResourceDto = {
+          title: values.title,
+          description: values.description || null,
+          resourceType:
+            values.resourceType as CreateResourceDto['resourceType'],
+          resourceTheme:
+            values.resourceTheme as CreateResourceDto['resourceTheme'],
+          resourceAudience:
+            values.resourceAudience as CreateResourceDto['resourceAudience'],
+          url: values.url || null,
+          status: values.status as CreateResourceDto['status'],
+        };
+        const updated = await this.resourcesClient.update(id, body);
+        this.ressources.update((list) =>
+          list.map((r) => (r.id === id ? updated : r)),
+        );
+        this.successMessage.set(
+          `Ressource « ${updated.title} » mise à jour avec succès.`,
         );
       }
       this.showForm.set(false);

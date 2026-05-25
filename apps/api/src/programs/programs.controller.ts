@@ -2,17 +2,21 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   HttpCode,
   HttpStatus,
+  ForbiddenException,
   Param,
+  Patch,
   Post,
+  Put,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
-  ApiBody,
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -23,8 +27,13 @@ import type {
   ParticipantProgramListItemDto,
   ProgramDto,
 } from '@kraak/contracts';
+import { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
-import { validateMarkSessionProgressPayload } from './programs.dto';
+import {
+  validateCreateProgramPayload,
+  validateMarkSessionProgressPayload,
+  validateUpdateProgramPayload,
+} from './programs.dto';
 import { ProgramsService } from './programs.service';
 
 const apiErrorSchema = {
@@ -274,10 +283,58 @@ const markProgressResponseSchema = {
   },
 };
 
+const createProgramBodySchema = {
+  type: 'object',
+  required: ['slug', 'title', 'summary', 'description', 'status', 'visibility'],
+  properties: {
+    slug: { type: 'string' },
+    title: { type: 'string' },
+    summary: { type: 'string' },
+    description: { type: 'string' },
+    status: { type: 'string', enum: ['draft', 'published', 'archived'] },
+    visibility: {
+      type: 'string',
+      enum: ['private', 'participants', 'public'],
+    },
+  },
+};
+
+const updateProgramBodySchema = {
+  type: 'object',
+  properties: createProgramBodySchema.properties,
+};
+
 @ApiTags('Programs')
 @Controller('programs')
 export class ProgramsController {
-  constructor(private readonly programsService: ProgramsService) {}
+  constructor(
+    private readonly programsService: ProgramsService,
+    private readonly authService: AuthService,
+  ) {}
+
+  private async requireAdminAccess(
+    authorizationHeader?: string,
+  ): Promise<string> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const session = await this.authService.getSession(accessToken.data);
+
+    if (session.profile.appUser.role !== 'admin') {
+      throw new ForbiddenException({
+        success: false,
+        message: 'Accès admin requis.',
+      });
+    }
+
+    return accessToken.data;
+  }
 
   @Get()
   @ApiOperation({
@@ -321,7 +378,113 @@ export class ProgramsController {
       });
     }
 
+    const session = await this.authService.getSession(accessToken.data);
+
+    if (session.profile.appUser.role === 'admin') {
+      return this.programsService.listAllPrograms();
+    }
+
     return this.programsService.listPrograms(accessToken.data);
+  }
+
+  @Post()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Créer un programme' })
+  @ApiBody({ schema: createProgramBodySchema })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Programme créé avec succès',
+    schema: programSchema,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Payload invalide pour la création',
+    schema: apiErrorSchema,
+  })
+  async createProgram(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramDto> {
+    await this.requireAdminAccess(authorizationHeader);
+
+    const validated = validateCreateProgramPayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.programsService.createProgram(validated.data);
+  }
+
+  @Put(':programId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour un programme' })
+  @ApiBody({ schema: updateProgramBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Programme mis à jour avec succès',
+    schema: programSchema,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Payload invalide pour la mise à jour',
+    schema: apiErrorSchema,
+  })
+  async updateProgram(
+    @Param('programId') programId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramDto> {
+    await this.requireAdminAccess(authorizationHeader);
+
+    const validated = validateUpdateProgramPayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.programsService.updateProgram(programId, validated.data);
+  }
+
+  @Patch(':programId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour un programme (compatibilité PATCH)' })
+  @ApiBody({ schema: updateProgramBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Programme mis à jour avec succès',
+    schema: programSchema,
+  })
+  async patchProgram(
+    @Param('programId') programId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramDto> {
+    return this.updateProgram(programId, body, authorizationHeader);
+  }
+
+  @Delete(':programId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver un programme' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Programme archivé avec succès',
+  })
+  async deleteProgram(
+    @Param('programId') programId: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    await this.requireAdminAccess(authorizationHeader);
+    await this.programsService.deleteProgram(programId);
   }
 
   @Get(':programId')

@@ -36,6 +36,18 @@ function createUpdateQuery(result: { error: unknown }) {
   };
 }
 
+function createProgramMutationQuery(result: { data: unknown; error: unknown }) {
+  const query = {
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue(result),
+  };
+
+  return query;
+}
+
 describe('ProgramsService', () => {
   let service: ProgramsService;
 
@@ -163,6 +175,128 @@ describe('ProgramsService', () => {
         },
       },
     ]);
+  });
+
+  it('Given une session admin, When listAllPrograms est appelé, Then tous les programmes sont renvoyés', async () => {
+    const adminQuery = createListQuery({
+      data: [
+        {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'draft',
+          visibility: 'private',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      ],
+      error: null,
+      count: 1,
+    });
+
+    adminClient.from.mockReturnValue(adminQuery);
+
+    const result = await service.listAllPrograms();
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      id: 'program-1',
+      status: 'draft',
+    });
+  });
+
+  it('Given un payload création programme, When createProgram est appelé, Then le programme est inséré et mappé', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'program-2',
+        slug: 'new-program',
+        title: 'New Program',
+        summary: 'Summary',
+        description: 'Description',
+        status: 'draft',
+        visibility: 'private',
+        created_at: '2026-04-10T10:00:00.000Z',
+        updated_at: '2026-04-10T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.createProgram({
+        slug: 'new-program',
+        title: 'New Program',
+        summary: 'Summary',
+        description: 'Description',
+        status: 'draft',
+        visibility: 'private',
+      }),
+    ).resolves.toMatchObject({
+      id: 'program-2',
+      slug: 'new-program',
+    });
+
+    expect(mutationQuery.insert).toHaveBeenCalledWith({
+      slug: 'new-program',
+      title: 'New Program',
+      summary: 'Summary',
+      description: 'Description',
+      status: 'draft',
+      visibility: 'private',
+    });
+  });
+
+  it('Given un payload mise à jour programme, When updateProgram est appelé, Then le programme est mis à jour', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'program-1',
+        slug: 'leadership-essentials',
+        title: 'Leadership Essentials',
+        summary: 'Bases du leadership.',
+        description: 'Parcours complet.',
+        status: 'published',
+        visibility: 'participants',
+        created_at: '2026-04-01T00:00:00.000Z',
+        updated_at: '2026-04-10T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateProgram('program-1', {
+        title: 'Leadership Essentials',
+        status: 'published',
+        visibility: 'participants',
+      }),
+    ).resolves.toMatchObject({
+      id: 'program-1',
+      status: 'published',
+    });
+
+    expect(mutationQuery.update).toHaveBeenCalledWith({
+      title: 'Leadership Essentials',
+      status: 'published',
+      visibility: 'participants',
+    });
+    expect(mutationQuery.eq).toHaveBeenCalledWith('id', 'program-1');
+  });
+
+  it('Given un programme existant, When deleteProgram est appelé, Then le programme est archivé', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: { id: 'program-1' },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(service.deleteProgram('program-1')).resolves.toBeUndefined();
+
+    expect(mutationQuery.update).toHaveBeenCalledWith({ status: 'archived' });
   });
 
   // Given plus de 200 sessions visibles sur une cohorte

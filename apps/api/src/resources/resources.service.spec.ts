@@ -148,6 +148,30 @@ describe('ResourcesService', () => {
     return query;
   };
 
+  const createResourceMutationQuery = (result: {
+    data: unknown;
+    error: Error | null;
+    count?: number | null;
+  }) => {
+    const query = {
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      range: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({
+        data: result.data,
+        error: result.error,
+      }),
+    };
+
+    return {
+      from: jest.fn().mockReturnValue(query),
+      ...query,
+    };
+  };
+
   describe('listResources', () => {
     it('Given default options, When listResources is called, Then it returns a paginated list of published resources', async () => {
       const mockClient = createListQuery({
@@ -214,6 +238,108 @@ describe('ResourcesService', () => {
       await expect(service.listResources()).resolves.toEqual({
         data: [],
         total: 0,
+      });
+    });
+  });
+
+  describe('listAllResources', () => {
+    it('Given admin filters, When listAllResources is called, Then unpublished resources are also returned', async () => {
+      const mockClient = createListQuery({
+        data: [mockResourceRow],
+        error: null,
+        count: 1,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      const result = await service.listAllResources({
+        programId: 'prog-001',
+        resourceTheme: 'training',
+        resourceAudience: 'all',
+      });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(mockClient.eq).not.toHaveBeenCalledWith('status', 'published');
+    });
+  });
+
+  describe('create/update/delete resource', () => {
+    it('Given un payload création, When createResource is called, Then the resource is inserted', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: mockResourceRow,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(
+        service.createResource({
+          programId: null,
+          cohortId: null,
+          title: 'TypeScript Basics',
+          description: 'Learn TypeScript fundamentals',
+          resourceType: 'video',
+          resourceTheme: 'training',
+          resourceAudience: 'all',
+          url: 'https://example.com/ts-basics',
+          filePath: null,
+          status: 'published',
+          publishedAt: null,
+        }),
+      ).resolves.toEqual(mockResourceDto);
+
+      expect(mutationClient.insert).toHaveBeenCalledWith({
+        program_id: null,
+        cohort_id: null,
+        title: 'TypeScript Basics',
+        description: 'Learn TypeScript fundamentals',
+        resource_type: 'video',
+        resource_theme: 'training',
+        resource_audience: 'all',
+        url: 'https://example.com/ts-basics',
+        file_path: null,
+        status: 'published',
+        published_at: expect.any(String),
+      });
+    });
+
+    it('Given un payload mise à jour, When updateResource is called, Then the resource is updated', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: mockResourceRow,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(
+        service.updateResource('res-001', {
+          title: 'TypeScript Basics',
+          status: 'published',
+        }),
+      ).resolves.toEqual(mockResourceDto);
+
+      expect(mutationClient.update).toHaveBeenCalledWith({
+        title: 'TypeScript Basics',
+        status: 'published',
+        published_at: expect.any(String),
+      });
+      expect(mutationClient.eq).toHaveBeenCalledWith('id', 'res-001');
+    });
+
+    it('Given a resource id, When deleteResource is called, Then the resource is archived', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: { id: 'res-001' },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(service.deleteResource('res-001')).resolves.toBeUndefined();
+
+      expect(mutationClient.update).toHaveBeenCalledWith({
+        status: 'archived',
+        published_at: null,
       });
     });
   });
