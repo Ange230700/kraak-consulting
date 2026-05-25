@@ -51,6 +51,28 @@ describe('validateCreateUserPayload', () => {
     expect(result.valid).toBe(false);
   });
 
+  it('Given an email with space, When validating, Then returns invalid', () => {
+    const result = validateCreateUserPayload({
+      email: 'alice @example.com',
+      firstName: 'Alice',
+      lastName: 'Martin',
+      role: 'participant',
+    });
+
+    expect(result.valid).toBe(false);
+  });
+
+  it('Given an email without top-level domain, When validating, Then returns invalid', () => {
+    const result = validateCreateUserPayload({
+      email: 'alice@example',
+      firstName: 'Alice',
+      lastName: 'Martin',
+      role: 'participant',
+    });
+
+    expect(result.valid).toBe(false);
+  });
+
   it('Given an unknown role, When validating, Then returns invalid', () => {
     const result = validateCreateUserPayload({
       email: 'bob@example.com',
@@ -181,6 +203,11 @@ describe('validateUpdateUserPayload', () => {
       valid: false,
       error: expect.stringContaining('email'),
     });
+  });
+
+  it('Given an email with multiple @ in update payload, When validating, Then returns invalid', () => {
+    const result = validateUpdateUserPayload({ email: 'a@@example.com' });
+    expect(result.valid).toBe(false);
   });
 
   it('Given blank first name in update payload, When validating, Then returns invalid', () => {
