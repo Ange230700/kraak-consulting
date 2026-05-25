@@ -101,6 +101,20 @@ function normalizeOptionalRole(
   return { valid: true, value };
 }
 
+function normalizeOptionalIsActive(
+  value: unknown,
+): { valid: true; value?: boolean } | { valid: false; error: string } {
+  if (value === undefined) {
+    return { valid: true };
+  }
+
+  if (typeof value !== 'boolean') {
+    return { valid: false, error: 'Le statut actif doit être un booléen' };
+  }
+
+  return { valid: true, value };
+}
+
 export function validateCreateUserPayload(
   body: unknown,
 ): { valid: true; data: CreateAppUserDto } | { valid: false; error: string } {
@@ -146,6 +160,11 @@ export function validateCreateUserPayload(
     };
   }
 
+  const isActiveValidation = normalizeOptionalIsActive(payload['isActive']);
+  if (!isActiveValidation.valid) {
+    return isActiveValidation;
+  }
+
   return {
     valid: true,
     data: {
@@ -157,7 +176,7 @@ export function validateCreateUserPayload(
       preferredContactChannel: normalizeOptionalText(
         payload['preferredContactChannel'],
       ),
-      isActive: payload['isActive'] !== false,
+      isActive: isActiveValidation.value ?? true,
     },
   };
 }
@@ -220,8 +239,12 @@ export function validateUpdateUserPayload(
     );
   }
 
-  if (payload['isActive'] !== undefined) {
-    data.isActive = Boolean(payload['isActive']);
+  const isActiveValidation = normalizeOptionalIsActive(payload['isActive']);
+  if (!isActiveValidation.valid) {
+    return isActiveValidation;
+  }
+  if (isActiveValidation.value !== undefined) {
+    data.isActive = isActiveValidation.value;
   }
 
   return { valid: true, data };

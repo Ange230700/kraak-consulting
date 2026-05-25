@@ -130,6 +130,21 @@ describe('validateCreateUserPayload', () => {
     });
   });
 
+  it('Given non-boolean isActive in create payload, When validating, Then returns invalid', () => {
+    const result = validateCreateUserPayload({
+      email: 'alice@example.com',
+      firstName: 'Alice',
+      lastName: 'Martin',
+      role: 'participant',
+      isActive: 'false',
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      error: expect.stringContaining('booléen'),
+    });
+  });
+
   it('Given missing first name, When validating, Then returns required error', () => {
     const result = validateCreateUserPayload({
       email: 'alice@example.com',
@@ -231,7 +246,7 @@ describe('validateUpdateUserPayload', () => {
       role: 'trainer',
       phone: '  0708091011  ',
       preferredContactChannel: '  phone  ',
-      isActive: 0,
+      isActive: false,
     });
 
     expect(result).toMatchObject({
@@ -242,6 +257,17 @@ describe('validateUpdateUserPayload', () => {
         preferredContactChannel: 'phone',
         isActive: false,
       },
+    });
+  });
+
+  it('Given non-boolean isActive in update payload, When validating, Then returns invalid', () => {
+    const result = validateUpdateUserPayload({
+      isActive: 0,
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      error: expect.stringContaining('booléen'),
     });
   });
 

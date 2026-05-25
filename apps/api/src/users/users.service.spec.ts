@@ -61,6 +61,7 @@ describe('UsersService', () => {
 
       const result = await service.findAll();
 
+      expect(mockClient.from).toHaveBeenCalledWith('app_user');
       expect(result).toHaveLength(1);
       expect(result[0].email).toBe('alice@example.com');
       expect(result[0].firstName).toBe('Alice');
@@ -91,11 +92,22 @@ describe('UsersService', () => {
     it('Given an unknown user ID, When findOne is called, Then throws NotFoundException', async () => {
       mockSingle.mockResolvedValueOnce({
         data: null,
-        error: { message: 'Not found' },
+        error: { code: 'PGRST116', message: 'Not found' },
       });
 
       await expect(service.findOne('unknown-id')).rejects.toThrow(
         NotFoundException,
+      );
+    });
+
+    it('Given a non-not-found Supabase error, When findOne is called, Then throws InternalServerErrorException', async () => {
+      mockSingle.mockResolvedValueOnce({
+        data: null,
+        error: { code: 'PGRST001', message: 'Unexpected' },
+      });
+
+      await expect(service.findOne('user-1')).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });
@@ -145,6 +157,52 @@ describe('UsersService', () => {
       await expect(service.remove('unknown-id')).rejects.toThrow(
         NotFoundException,
       );
+    });
+
+    describe('invite', () => {
+      it('Given valid payload, When invite is called, Then creates invited user profile and returns DTO', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: { user: { id: 'user-1' } },
+          error: null,
+        });
+        mockSingle.mockResolvedValueOnce({ data: mockUserRow, error: null });
+
+        const result = await service.invite({
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Martin',
+          role: 'participant',
+          isActive: true,
+        });
+
+        expect(mockClient.from).toHaveBeenCalledWith('app_user');
+        expect(mockInviteUser).toHaveBeenCalledWith('alice@example.com', {
+          data: {
+            first_name: 'Alice',
+            last_name: 'Martin',
+            role: 'participant',
+          },
+        });
+        expect(result.id).toBe('user-1');
+        expect(result.email).toBe('alice@example.com');
+      });
+
+      it('Given an auth invite error, When invite is called, Then throws InternalServerErrorException', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: null,
+          error: { message: 'Auth error' },
+        });
+
+        await expect(
+          service.invite({
+            email: 'alice@example.com',
+            firstName: 'Alice',
+            lastName: 'Martin',
+            role: 'participant',
+            isActive: true,
+          }),
+        ).rejects.toThrow(InternalServerErrorException);
+      });
     });
   });
 });

@@ -91,29 +91,9 @@
   </div>
 
   <div class="mt-10 flex justify-between">
-    <button
-      pButton
-      class="kr-button-ghost"
-      type="button"
-      (click)="goPrev()"
-      [disabled]="submitting"
-    >
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
       <i class="pi pi-arrow-left mr-2"></i>
       Précédent
-    </button>
-    <button
-      pButton
-      class="kr-button-primary"
-      type="button"
-      (click)="handleSubmit()"
-      [disabled]="
-        submitting || !formState.isStep1Valid() || !formState.isStep2Valid()
-      "
-    >
-      @if (submitting) {
-        <i class="pi pi-spin pi-spinner mr-2"></i>
-      }
-      Créer l'utilisateur
     </button>
   </div>
 </div>

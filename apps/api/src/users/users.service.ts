@@ -24,6 +24,9 @@ type AppUserRow = {
   updated_at: string;
 };
 
+const APP_USER_TABLE = 'app_user';
+const notFoundSupabaseErrorCodes = new Set(['PGRST116']);
+
 function mapRowToDto(row: AppUserRow): AppUserDto {
   return {
     id: row.id,
@@ -45,10 +48,23 @@ export class UsersService {
 
   constructor(private readonly supabaseService: SupabaseService) {}
 
+  private readSupabaseErrorCode(error: unknown): string | null {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof error.code === 'string'
+    ) {
+      return error.code;
+    }
+
+    return null;
+  }
+
   async findAll(): Promise<AppUserDto[]> {
     const client = this.supabaseService.getClient();
     const { data, error } = await client
-      .from('app_users')
+      .from(APP_USER_TABLE)
       .select(
         'id, email, role, first_name, last_name, phone, preferred_contact_channel, is_active, created_at, updated_at',
       )
@@ -70,14 +86,29 @@ export class UsersService {
   async findOne(id: string): Promise<AppUserDto> {
     const client = this.supabaseService.getClient();
     const { data, error } = await client
-      .from('app_users')
+      .from(APP_USER_TABLE)
       .select(
         'id, email, role, first_name, last_name, phone, preferred_contact_channel, is_active, created_at, updated_at',
       )
       .eq('id', id)
       .single();
 
-    if (error || !data) {
+    if (
+      error &&
+      notFoundSupabaseErrorCodes.has(this.readSupabaseErrorCode(error) ?? '')
+    ) {
+      throw new NotFoundException(`Utilisateur introuvable : ${id}`);
+    }
+    if (error) {
+      this.logger.error(
+        `Erreur lors de la récupération de l'utilisateur ${id}`,
+        error,
+      );
+      throw new InternalServerErrorException(
+        "Impossible de récupérer l'utilisateur",
+      );
+    }
+    if (!data) {
       throw new NotFoundException(`Utilisateur introuvable : ${id}`);
     }
 
@@ -100,7 +131,7 @@ export class UsersService {
     updateData['updated_at'] = new Date().toISOString();
 
     const { data, error } = await client
-      .from('app_users')
+      .from(APP_USER_TABLE)
       .update(updateData)
       .eq('id', id)
       .select(
@@ -125,7 +156,7 @@ export class UsersService {
     const client = this.supabaseService.getClient();
 
     const existing = await client
-      .from('app_users')
+      .from(APP_USER_TABLE)
       .select('id')
       .eq('id', id)
       .single();
@@ -134,7 +165,7 @@ export class UsersService {
       throw new NotFoundException(`Utilisateur introuvable : ${id}`);
     }
 
-    const { error } = await client.from('app_users').delete().eq('id', id);
+    const { error } = await client.from(APP_USER_TABLE).delete().eq('id', id);
 
     if (error) {
       this.logger.error(
@@ -172,7 +203,7 @@ export class UsersService {
     const userId = authData.user.id;
 
     const upsertResult = await client
-      .from('app_users')
+      .from(APP_USER_TABLE)
       .upsert(
         {
           id: userId,
