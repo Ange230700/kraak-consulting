@@ -3,26 +3,11 @@ import type {
   MarkProgramSessionProgressRequestDto,
   UpdateProgramDto,
 } from '@kraak/contracts';
-
-type ValidationSuccess<T> = {
-  valid: true;
-  data: T;
-};
-
-type ValidationFailure = {
-  valid: false;
-  errors: string[];
-};
-
-type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
-
-function isObjectPayload(body: unknown): body is Record<string, unknown> {
-  return Boolean(body) && typeof body === 'object' && !Array.isArray(body);
-}
-
-function readTrimmedString(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
+import {
+  isObjectPayload,
+  readTrimmedString,
+} from '../shared/dto-validation.utils';
+import type { ValidationResult } from '../shared/validation-result.type';
 
 const publicationStatuses = new Set(['draft', 'published', 'archived']);
 const programVisibilities = new Set(['private', 'participants', 'public']);
