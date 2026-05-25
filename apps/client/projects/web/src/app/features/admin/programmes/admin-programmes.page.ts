@@ -7,11 +7,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { createApiClient, type ApiClient } from '@kraak/api-client';
-import type {
-  CreateProgramDto,
-  ProgramDto,
-  UpdateProgramDto,
-} from '@kraak/contracts';
+import type { CreateProgramDto, ProgramDto } from '@kraak/contracts';
 import { PublicationStatus, ProgramVisibility } from '@kraak/contracts';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
@@ -146,6 +142,19 @@ export default class AdminProgrammesPage implements OnInit {
     this.form.reset();
   }
 
+  private buildProgramPayload(): CreateProgramDto {
+    const values = this.form.getRawValue();
+
+    return {
+      slug: values.slug,
+      title: values.title,
+      summary: values.summary,
+      description: values.description,
+      status: values.status as CreateProgramDto['status'],
+      visibility: values.visibility as CreateProgramDto['visibility'],
+    };
+  }
+
   async submitForm(): Promise<void> {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
@@ -155,35 +164,18 @@ export default class AdminProgrammesPage implements OnInit {
     this.submitting.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-
-    const values = this.form.getRawValue();
+    const payload = this.buildProgramPayload();
 
     try {
       const id = this.editingId();
       if (id === null) {
-        const body: CreateProgramDto = {
-          slug: values.slug,
-          title: values.title,
-          summary: values.summary,
-          description: values.description,
-          status: values.status as CreateProgramDto['status'],
-          visibility: values.visibility as CreateProgramDto['visibility'],
-        };
-        const created = await this.programsClient.create(body);
+        const created = await this.programsClient.create(payload);
         this.programmes.update((list) => [...list, created]);
         this.successMessage.set(
           `Programme « ${created.title} » créé avec succès.`,
         );
       } else {
-        const body: UpdateProgramDto = {
-          slug: values.slug,
-          title: values.title,
-          summary: values.summary,
-          description: values.description,
-          status: values.status as CreateProgramDto['status'],
-          visibility: values.visibility as CreateProgramDto['visibility'],
-        };
-        const updated = await this.programsClient.update(id, body);
+        const updated = await this.programsClient.update(id, payload);
         this.programmes.update((list) =>
           list.map((p) => (p.id === id ? updated : p)),
         );
@@ -191,9 +183,7 @@ export default class AdminProgrammesPage implements OnInit {
           `Programme « ${updated.title} » mis à jour avec succès.`,
         );
       }
-      this.showForm.set(false);
-      this.editingId.set(null);
-      this.form.reset();
+      this.cancelForm();
     } catch (err) {
       console.error(
         '[AdminProgrammesPage] Erreur lors de la sauvegarde du programme',

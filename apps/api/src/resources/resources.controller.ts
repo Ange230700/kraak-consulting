@@ -12,7 +12,6 @@ import {
   HttpCode,
   HttpStatus,
   Headers,
-  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -31,6 +30,7 @@ import type {
 } from '@kraak/contracts';
 import { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
+import { requireAdminAccess } from '../shared/admin-access.utils';
 import {
   validateCreateResourcePayload,
   validateUpdateResourcePayload,
@@ -54,6 +54,32 @@ const RESOURCE_AUDIENCE_ENUM = [
 const RESOURCE_TYPE_ENUM = ['link', 'file', 'video', 'document'];
 const PUBLICATION_STATUS_ENUM = ['draft', 'published', 'archived'];
 
+const resourceTypedProperties = {
+  resourceType: {
+    type: 'string',
+    enum: RESOURCE_TYPE_ENUM,
+  },
+  resourceTheme: {
+    type: 'string',
+    enum: RESOURCE_THEME_ENUM,
+  },
+  resourceAudience: {
+    type: 'string',
+    enum: RESOURCE_AUDIENCE_ENUM,
+  },
+  url: { type: 'string', nullable: true },
+  filePath: { type: 'string', nullable: true },
+  status: {
+    type: 'string',
+    enum: PUBLICATION_STATUS_ENUM,
+  },
+  publishedAt: {
+    type: 'string',
+    format: 'date-time',
+    nullable: true,
+  },
+};
+
 const RESOURCE_SCHEMA = {
   type: 'object',
   properties: {
@@ -62,29 +88,7 @@ const RESOURCE_SCHEMA = {
     cohortId: { type: 'string', nullable: true },
     title: { type: 'string' },
     description: { type: 'string', nullable: true },
-    resourceType: {
-      type: 'string',
-      enum: RESOURCE_TYPE_ENUM,
-    },
-    resourceTheme: {
-      type: 'string',
-      enum: RESOURCE_THEME_ENUM,
-    },
-    resourceAudience: {
-      type: 'string',
-      enum: RESOURCE_AUDIENCE_ENUM,
-    },
-    url: { type: 'string', nullable: true },
-    filePath: { type: 'string', nullable: true },
-    status: {
-      type: 'string',
-      enum: PUBLICATION_STATUS_ENUM,
-    },
-    publishedAt: {
-      type: 'string',
-      format: 'date-time',
-      nullable: true,
-    },
+    ...resourceTypedProperties,
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },
   },
@@ -124,25 +128,7 @@ const createResourceBodySchema = {
     cohortId: { type: 'string', nullable: true },
     title: { type: 'string' },
     description: { type: 'string', nullable: true },
-    resourceType: {
-      type: 'string',
-      enum: RESOURCE_TYPE_ENUM,
-    },
-    resourceTheme: {
-      type: 'string',
-      enum: RESOURCE_THEME_ENUM,
-    },
-    resourceAudience: {
-      type: 'string',
-      enum: RESOURCE_AUDIENCE_ENUM,
-    },
-    url: { type: 'string', nullable: true },
-    filePath: { type: 'string', nullable: true },
-    status: {
-      type: 'string',
-      enum: PUBLICATION_STATUS_ENUM,
-    },
-    publishedAt: { type: 'string', format: 'date-time', nullable: true },
+    ...resourceTypedProperties,
   },
 };
 
@@ -158,30 +144,6 @@ export class ResourcesController {
     private readonly resourcesService: ResourcesService,
     private readonly authService: AuthService,
   ) {}
-
-  private async requireAdminAccess(
-    authorizationHeader?: string,
-  ): Promise<string> {
-    const accessToken = extractAccessToken(authorizationHeader);
-
-    if (!accessToken.valid) {
-      throw new UnauthorizedException({
-        success: false,
-        message: accessToken.error,
-      });
-    }
-
-    const session = await this.authService.getSession(accessToken.data);
-
-    if (session.profile.appUser.role !== 'admin') {
-      throw new ForbiddenException({
-        success: false,
-        message: 'Accès admin requis.',
-      });
-    }
-
-    return accessToken.data;
-  }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -282,7 +244,7 @@ export class ResourcesController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<ResourceDto> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
 
     const validated = validateCreateResourcePayload(body);
 
@@ -311,7 +273,7 @@ export class ResourcesController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<ResourceDto> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
 
     const validated = validateUpdateResourcePayload(body);
 
@@ -355,7 +317,7 @@ export class ResourcesController {
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<void> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
     await this.resourcesService.deleteResource(id);
   }
 

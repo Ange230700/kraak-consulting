@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { signal } from '@angular/core';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
@@ -53,11 +54,15 @@ const programsClientMock = {
       createdAt: '',
       updatedAt: '',
     }) as ProgramDto,
-  update: async (id: string) => ({ ...mockProgrammes[0], id }) as ProgramDto,
+  update: async (id: string) => ({ ...mockProgrammes[0], id }),
   remove: async () => undefined,
 };
 
 describe('AdminProgrammesPage', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminProgrammesPage],
@@ -166,5 +171,186 @@ describe('AdminProgrammesPage', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance['showForm']()).toBe(false);
+  });
+
+  it('Given a valid creation form When submitForm is called Then a program is created and success feedback is shown', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    const createSpy = vi.fn(
+      async () =>
+        ({
+          id: 'prog-created',
+          slug: 'leadership-niveau-2',
+          title: 'Leadership Niveau 2',
+          summary: 'Résumé',
+          description: 'Description',
+          status: 'draft',
+          visibility: 'private',
+          createdAt: '2025-03-01T00:00:00Z',
+          updatedAt: '2025-03-01T00:00:00Z',
+        }) as ProgramDto,
+    );
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      create: createSpy,
+      list: async () => [],
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].setValue({
+      slug: 'leadership-niveau-2',
+      title: 'Leadership Niveau 2',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+      visibility: 'private',
+    });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(fixture.componentInstance['programmes']()).toHaveLength(1);
+    expect(fixture.componentInstance['successMessage']()).toContain('créé');
+    expect(fixture.componentInstance['showForm']()).toBe(false);
+  });
+
+  it('Given a valid edit form When submitForm is called Then the program is updated', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    const updateSpy = vi.fn(async (id: string) => ({
+      ...mockProgrammes[0],
+      id,
+      title: 'Titre modifié',
+    }));
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      update: updateSpy,
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openEditForm(mockProgrammes[0]);
+    fixture.componentInstance['form'].patchValue({ title: 'Titre modifié' });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      mockProgrammes[0].id,
+      expect.objectContaining({ title: 'Titre modifié' }),
+    );
+    expect(fixture.componentInstance['programmes']()[0]?.title).toBe(
+      'Titre modifié',
+    );
+    expect(fixture.componentInstance['successMessage']()).toContain(
+      'mis à jour',
+    );
+  });
+
+  it('Given an invalid form When submitForm is called Then no API call is performed', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    const createSpy = vi.fn(programsClientMock.create);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      create: createSpy,
+    };
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].patchValue({
+      slug: '',
+      title: '',
+    });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given a save error When submitForm is called Then an explicit error message is shown', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      create: vi.fn(async () => {
+        throw new Error('save failed');
+      }),
+      list: async () => [],
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].setValue({
+      slug: 'slug-valide',
+      title: 'Titre',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+      visibility: 'private',
+    });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('sauvegarde');
+    expect(fixture.componentInstance['submitting']()).toBe(false);
+  });
+
+  it('Given a deletion confirmation refusal When deleteProgramme is called Then no deletion occurs', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    const removeSpy = vi.fn(async () => undefined);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(false);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      remove: removeSpy,
+    };
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteProgramme(mockProgrammes[0]);
+
+    expect(removeSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given a deletion confirmation acceptance When deleteProgramme is called Then the item is removed', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      remove: vi.fn(async () => undefined),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteProgramme(mockProgrammes[0]);
+
+    expect(fixture.componentInstance['programmes']()).toHaveLength(1);
+    expect(fixture.componentInstance['successMessage']()).toContain('supprimé');
+  });
+
+  it('Given an API load failure When the page initializes Then an explicit loading error is shown', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      list: vi.fn(async () => {
+        throw new Error('network');
+      }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('charger');
+    expect(fixture.componentInstance['loading']()).toBe(false);
   });
 });

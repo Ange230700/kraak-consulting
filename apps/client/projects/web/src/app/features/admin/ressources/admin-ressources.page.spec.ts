@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { signal } from '@angular/core';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
@@ -74,6 +74,10 @@ const resourcesClientMock = {
 };
 
 describe('AdminRessourcesPage', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminRessourcesPage],
@@ -182,5 +186,192 @@ describe('AdminRessourcesPage', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance['showForm']()).toBe(false);
+  });
+
+  it('Given a valid creation form When submitForm is called Then the resource is created', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    const createSpy = vi.fn(
+      async () =>
+        ({
+          id: 'res-created',
+          title: 'Ressource créée',
+          description: null,
+          resourceType: 'link',
+          resourceTheme: 'training',
+          resourceAudience: 'all',
+          url: null,
+          filePath: null,
+          status: 'draft',
+          publishedAt: null,
+          programId: null,
+          cohortId: null,
+          createdAt: '2025-03-01T00:00:00Z',
+          updatedAt: '2025-03-01T00:00:00Z',
+        }) as ResourceDto,
+    );
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      create: createSpy,
+      list: async () => ({ data: [], total: 0 }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].setValue({
+      title: 'Ressource créée',
+      description: '',
+      resourceType: 'link',
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      url: '',
+      status: 'draft',
+    });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(fixture.componentInstance['ressources']()).toHaveLength(1);
+    expect(fixture.componentInstance['successMessage']()).toContain('créée');
+  });
+
+  it('Given a valid edit form When submitForm is called Then the resource is updated', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    const updateSpy = vi.fn(async (id: string) => ({
+      ...mockRessources[0],
+      id,
+      title: 'Guide mis à jour',
+    }));
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      update: updateSpy,
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openEditForm(mockRessources[0]);
+    fixture.componentInstance['form'].patchValue({ title: 'Guide mis à jour' });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      mockRessources[0].id,
+      expect.objectContaining({ title: 'Guide mis à jour' }),
+    );
+    expect(fixture.componentInstance['ressources']()[0]?.title).toBe(
+      'Guide mis à jour',
+    );
+    expect(fixture.componentInstance['successMessage']()).toContain(
+      'mise à jour',
+    );
+  });
+
+  it('Given an invalid form When submitForm is called Then no creation request is sent', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    const createSpy = vi.fn(resourcesClientMock.create);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      create: createSpy,
+    };
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].patchValue({ title: '' });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given a save failure When submitForm is called Then an explicit error message is displayed', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      create: vi.fn(async () => {
+        throw new Error('save failed');
+      }),
+      list: async () => ({ data: [], total: 0 }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.openCreateForm();
+    fixture.componentInstance['form'].setValue({
+      title: 'Ressource',
+      description: '',
+      resourceType: 'link',
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      url: '',
+      status: 'draft',
+    });
+
+    await fixture.componentInstance.submitForm();
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('sauvegarde');
+    expect(fixture.componentInstance['submitting']()).toBe(false);
+  });
+
+  it('Given a refusal in the confirmation dialog When deleteRessource is called Then nothing is deleted', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    const removeSpy = vi.fn(async () => undefined);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(false);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      remove: removeSpy,
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteRessource(mockRessources[0]);
+
+    expect(removeSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given a confirmed deletion When deleteRessource is called Then the resource is removed from state', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      remove: vi.fn(async () => undefined),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteRessource(mockRessources[0]);
+
+    expect(fixture.componentInstance['ressources']()).toHaveLength(1);
+    expect(fixture.componentInstance['successMessage']()).toContain(
+      'supprimée',
+    );
+  });
+
+  it('Given a loading failure When the page initializes Then the load error is exposed', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      list: vi.fn(async () => {
+        throw new Error('network');
+      }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('charger');
+    expect(fixture.componentInstance['loading']()).toBe(false);
   });
 });

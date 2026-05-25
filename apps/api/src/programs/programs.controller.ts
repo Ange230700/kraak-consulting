@@ -7,7 +7,6 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
   Param,
   Patch,
   Post,
@@ -29,6 +28,7 @@ import type {
 } from '@kraak/contracts';
 import { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
+import { requireAdminAccess } from '../shared/admin-access.utils';
 import {
   validateCreateProgramPayload,
   validateMarkSessionProgressPayload,
@@ -312,30 +312,6 @@ export class ProgramsController {
     private readonly authService: AuthService,
   ) {}
 
-  private async requireAdminAccess(
-    authorizationHeader?: string,
-  ): Promise<string> {
-    const accessToken = extractAccessToken(authorizationHeader);
-
-    if (!accessToken.valid) {
-      throw new UnauthorizedException({
-        success: false,
-        message: accessToken.error,
-      });
-    }
-
-    const session = await this.authService.getSession(accessToken.data);
-
-    if (session.profile.appUser.role !== 'admin') {
-      throw new ForbiddenException({
-        success: false,
-        message: 'Accès admin requis.',
-      });
-    }
-
-    return accessToken.data;
-  }
-
   @Get()
   @ApiOperation({
     summary:
@@ -405,7 +381,7 @@ export class ProgramsController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<ProgramDto> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
 
     const validated = validateCreateProgramPayload(body);
 
@@ -439,7 +415,7 @@ export class ProgramsController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<ProgramDto> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
 
     const validated = validateUpdateProgramPayload(body);
 
@@ -483,7 +459,7 @@ export class ProgramsController {
     @Param('programId') programId: string,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<void> {
-    await this.requireAdminAccess(authorizationHeader);
+    await requireAdminAccess(this.authService, authorizationHeader);
     await this.programsService.deleteProgram(programId);
   }
 
