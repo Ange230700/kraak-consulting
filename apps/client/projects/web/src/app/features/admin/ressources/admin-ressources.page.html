@@ -267,12 +267,17 @@
                 <td class="px-4 py-3">
                   <span
                     class="rounded-full px-2 py-0.5 text-xs font-semibold"
-                    [class]="
-                      ressource.status === 'published'
-                        ? 'bg-green-100 text-green-800'
-                        : ressource.status === 'draft'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-neutral-100 text-neutral-600'
+                    [class.bg-green-100]="ressource.status === 'published'"
+                    [class.text-green-800]="ressource.status === 'published'"
+                    [class.bg-yellow-100]="ressource.status === 'draft'"
+                    [class.text-yellow-800]="ressource.status === 'draft'"
+                    [class.bg-neutral-100]="
+                      ressource.status !== 'published' &&
+                      ressource.status !== 'draft'
+                    "
+                    [class.text-neutral-600]="
+                      ressource.status !== 'published' &&
+                      ressource.status !== 'draft'
                     "
                   >
                     {{ ressource.status }}

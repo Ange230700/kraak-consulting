@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import {
   FormControl,
@@ -9,7 +10,6 @@ import { RouterLink } from '@angular/router';
 import { createApiClient, type ApiClient } from '@kraak/api-client';
 import type { CreateProgramDto, ProgramDto } from '@kraak/contracts';
 import { PublicationStatus, ProgramVisibility } from '@kraak/contracts';
-import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
 
@@ -29,12 +29,11 @@ interface ProgramFormModel {
 @Component({
   selector: 'kraak-admin-programmes-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, ButtonDirective, Message],
   templateUrl: './admin-programmes.page.html',
 })
 export default class AdminProgrammesPage implements OnInit {
   private readonly authService = inject(WebAuthService);
-  private readonly messageService = inject(MessageService);
   programsClient: Pick<
     ApiClient['programs'],
     'list' | 'create' | 'update' | 'remove'
