@@ -1,0 +1,318 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 md:px-8 lg:px-12"
+>
+  <div class="mx-auto max-w-6xl">
+    <div
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <p
+          class="text-brand-blue text-xs font-semibold tracking-[0.3em] uppercase"
+        >
+          Administration
+        </p>
+        <h1 class="mt-2 text-3xl font-bold lg:text-4xl">Programmes</h1>
+        <p class="mt-2 text-neutral-600">
+          Gérez les programmes KRAAK : création, modification, statut de
+          publication.
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <a
+          pButton
+          routerLink="/admin/dashboard"
+          icon="pi pi-arrow-left"
+          label="Tableau de bord"
+          class="kr-button-ghost"
+          aria-label="Retour au tableau de bord"
+        ></a>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          label="Nouveau programme"
+          class="kr-button-primary"
+          (click)="openCreateForm()"
+          aria-label="Créer un nouveau programme"
+        ></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-12">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    @if (successMessage()) {
+      <p-message
+        severity="success"
+        [text]="successMessage()!"
+        class="mb-6 block"
+      />
+    }
+
+    @if (errorMessage()) {
+      <p-message severity="error" [text]="errorMessage()!" class="mb-6 block" />
+    }
+
+    @if (showForm()) {
+      <section class="rounded-card bg-brand-white mb-8 p-8 shadow-sm">
+        <h2 class="mb-6 text-2xl font-bold">
+          {{ isEditing() ? 'Modifier le programme' : 'Nouveau programme' }}
+        </h2>
+
+        <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="flex flex-col gap-1">
+              <label
+                for="prog-slug"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Slug <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="prog-slug"
+                type="text"
+                formControlName="slug"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                placeholder="ex : formation-leadership"
+                aria-required="true"
+              />
+              @if (form.controls.slug.invalid && form.controls.slug.touched) {
+                <p class="text-sm text-red-600">
+                  Le slug est requis et ne doit contenir que des lettres
+                  minuscules, chiffres et tirets.
+                </p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="prog-title"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Titre <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="prog-title"
+                type="text"
+                formControlName="title"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                placeholder="Titre du programme"
+                aria-required="true"
+              />
+              @if (form.controls.title.invalid && form.controls.title.touched) {
+                <p class="text-sm text-red-600">Le titre est requis.</p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1 md:col-span-2">
+              <label
+                for="prog-summary"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Résumé <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="prog-summary"
+                formControlName="summary"
+                rows="2"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                placeholder="Résumé court visible sur la liste"
+                aria-required="true"
+              ></textarea>
+              @if (
+                form.controls.summary.invalid && form.controls.summary.touched
+              ) {
+                <p class="text-sm text-red-600">Le résumé est requis.</p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1 md:col-span-2">
+              <label
+                for="prog-description"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Description
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="prog-description"
+                formControlName="description"
+                rows="4"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                placeholder="Description complète du programme"
+                aria-required="true"
+              ></textarea>
+              @if (
+                form.controls.description.invalid &&
+                form.controls.description.touched
+              ) {
+                <p class="text-sm text-red-600">La description est requise.</p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="prog-status"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Statut <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="prog-status"
+                formControlName="status"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (s of publicationStatuses; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="prog-visibility"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                Visibilité
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="prog-visibility"
+                formControlName="visibility"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (v of programVisibilities; track v) {
+                  <option [value]="v">{{ v }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-8 flex gap-3">
+            <button
+              type="submit"
+              pButton
+              icon="pi pi-check"
+              [label]="
+                isEditing()
+                  ? 'Enregistrer les modifications'
+                  : 'Créer le programme'
+              "
+              class="kr-button-primary"
+              [disabled]="submitting()"
+              [attr.aria-label]="
+                isEditing()
+                  ? 'Enregistrer les modifications'
+                  : 'Créer le programme'
+              "
+            ></button>
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              label="Annuler"
+              class="kr-button-ghost"
+              (click)="cancelForm()"
+              aria-label="Annuler et fermer le formulaire"
+            ></button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="rounded-card bg-brand-white p-8 text-center shadow-sm">
+        <p class="text-neutral-600">Chargement des programmes…</p>
+      </div>
+    } @else if (programmes().length === 0) {
+      <div class="rounded-card bg-brand-white p-8 text-center shadow-sm">
+        <p class="mb-4 text-neutral-600">Aucun programme pour le moment.</p>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          label="Créer le premier programme"
+          class="kr-button-primary"
+          (click)="openCreateForm()"
+          aria-label="Créer le premier programme"
+        ></button>
+      </div>
+    } @else {
+      <div class="rounded-card bg-brand-white overflow-x-auto shadow-sm">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-200 text-left">
+              <th class="px-4 py-3 font-semibold text-neutral-700">Titre</th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">Slug</th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">Statut</th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">
+                Visibilité
+              </th>
+              <th class="px-4 py-3 text-right font-semibold text-neutral-700">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (programme of programmes(); track programme.id) {
+              <tr
+                class="border-b border-neutral-100 transition-colors hover:bg-neutral-50"
+              >
+                <td class="px-4 py-3 font-medium">{{ programme.title }}</td>
+                <td class="px-4 py-3 font-mono text-xs text-neutral-600">
+                  {{ programme.slug }}
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                    [class]="
+                      programme.status === 'published'
+                        ? 'bg-green-100 text-green-800'
+                        : programme.status === 'draft'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-neutral-100 text-neutral-600'
+                    "
+                  >
+                    {{ programme.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-neutral-600">
+                  {{ programme.visibility }}
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-pencil"
+                      label="Modifier"
+                      class="kr-button-ghost text-xs"
+                      (click)="openEditForm(programme)"
+                      [attr.aria-label]="
+                        'Modifier le programme ' + programme.title
+                      "
+                    ></button>
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-trash"
+                      label="Supprimer"
+                      class="text-xs text-red-600"
+                      (click)="deleteProgramme(programme)"
+                      [attr.aria-label]="
+                        'Supprimer le programme ' + programme.title
+                      "
+                    ></button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
