@@ -44,6 +44,30 @@ const initialState: UserFormState = {
   sendInvitation: true,
 };
 
+function isLikelyEmail(value: string): boolean {
+  if (value.includes(' ')) {
+    return false;
+  }
+
+  const atIndex = value.indexOf('@');
+  if (atIndex <= 0 || atIndex !== value.lastIndexOf('@')) {
+    return false;
+  }
+
+  const localPart = value.slice(0, atIndex);
+  const domainPart = value.slice(atIndex + 1);
+  if (!localPart || !domainPart) {
+    return false;
+  }
+
+  const dotIndex = domainPart.indexOf('.');
+  if (dotIndex <= 0 || dotIndex === domainPart.length - 1) {
+    return false;
+  }
+
+  return true;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,7 +81,7 @@ export class UserFormStateService {
     return (
       s.firstName.trim().length > 0 &&
       s.lastName.trim().length > 0 &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email)
+      isLikelyEmail(s.email)
     );
   });
 
