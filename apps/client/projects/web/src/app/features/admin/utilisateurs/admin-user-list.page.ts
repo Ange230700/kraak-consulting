@@ -122,6 +122,7 @@ export default class AdminUserListPage implements OnInit {
       this.closeEdit();
       this.successMessage.set('Utilisateur mis à jour avec succès.');
       this.messageService.add({
+        key: 'app-feedback',
         severity: 'success',
         summary: 'Mis à jour',
         detail: 'Utilisateur mis à jour avec succès.',
@@ -154,6 +155,7 @@ export default class AdminUserListPage implements OnInit {
       this.userToDelete.set(null);
       this.successMessage.set('Utilisateur supprimé avec succès.');
       this.messageService.add({
+        key: 'app-feedback',
         severity: 'success',
         summary: 'Supprimé',
         detail: 'Utilisateur supprimé avec succès.',

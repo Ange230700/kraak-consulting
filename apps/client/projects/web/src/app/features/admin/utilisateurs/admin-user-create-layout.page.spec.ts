@@ -40,4 +40,21 @@ describe('AdminUserCreateLayoutPage', () => {
 
     expect(comp['errorMessage']()).toBeTruthy();
   });
+
+  it('Given invitation disabled, When submit is attempted, Then blocks submission with explicit message', async () => {
+    const formState = TestBed.inject(UserFormStateService);
+    formState.patch({
+      firstName: 'Alice',
+      lastName: 'Martin',
+      email: 'alice@example.com',
+      role: 'participant',
+      sendInvitation: false,
+    });
+    const fixture = TestBed.createComponent(AdminUserCreateLayoutPage);
+    const comp = fixture.componentInstance;
+
+    await comp.handleSubmit();
+
+    expect(comp['errorMessage']()).toContain('obligatoire');
+  });
 });

@@ -35,12 +35,16 @@ describe('AccountStatusPage', () => {
     expect(fixture.componentInstance['isActive']).toBe(false);
   });
 
-  it('Given incomplete form state, When handleSubmit is called, Then sets errorMessage', async () => {
+  it('Given toggled values, When sync is called, Then state is updated', () => {
     const fixture = TestBed.createComponent(AccountStatusPage);
     const comp = fixture.componentInstance;
+    const formState = TestBed.inject(UserFormStateService);
 
-    await comp.handleSubmit();
+    comp['isActive'] = false;
+    comp['sendInvitation'] = false;
+    comp['sync']();
 
-    expect(comp['errorMessage']).toBeTruthy();
+    expect(formState.state().isActive).toBe(false);
+    expect(formState.state().sendInvitation).toBe(false);
   });
 });

@@ -93,6 +93,12 @@ export default class AdminUserCreateLayoutPage {
       );
       return;
     }
+    if (!state.sendInvitation) {
+      this.errorMessage.set(
+        "L'option d'envoi de l'invitation est obligatoire pour créer un utilisateur.",
+      );
+      return;
+    }
 
     const payload: CreateAppUserDto = {
       email: state.email,
@@ -110,6 +116,7 @@ export default class AdminUserCreateLayoutPage {
       await this.usersClient.create(payload);
       this.formState.reset();
       this.messageService.add({
+        key: 'app-feedback',
         severity: 'success',
         summary: 'Invitation envoyée',
         detail: `L'invitation a été envoyée à ${payload.email}.`,
