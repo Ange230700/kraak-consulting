@@ -1,5 +1,5 @@
-export function getPnpmCommand() {
-  return process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+export function getPnpmCommand(platform = process.platform) {
+  return platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 }
 
 export function createWorkflows() {

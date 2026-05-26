@@ -180,6 +180,7 @@ publique de contenu. Voir
 | `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local           |
 | `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging         |
 | `pnpm test:api`             | Tests unitaires API                                       |
+| `pnpm sonar`                | Lancer l'analyse SonarCloud locale avec `.env.local`      |
 | `pnpm typecheck`            | Vérifier le typage web, mobile et API                     |
 | `pnpm test:unit`            | Tests unitaires client                                    |
 | `pnpm test:e2e`             | Tests E2E (Playwright)                                    |

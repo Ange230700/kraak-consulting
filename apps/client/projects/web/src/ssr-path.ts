@@ -31,11 +31,11 @@ function trimRouteSlashes(routePath: string): string {
   let startIndex = 0;
   let endIndex = routePath.length;
 
-  while (startIndex < endIndex && routePath.charCodeAt(startIndex) === 47) {
+  while (startIndex < endIndex && routePath.codePointAt(startIndex) === 47) {
     startIndex += 1;
   }
 
-  while (endIndex > startIndex && routePath.charCodeAt(endIndex - 1) === 47) {
+  while (endIndex > startIndex && routePath.codePointAt(endIndex - 1) === 47) {
     endIndex -= 1;
   }
 
@@ -47,8 +47,8 @@ function trimTrailingSlashes(pathValue: string): string {
 
   while (
     endIndex > 0 &&
-    (pathValue.charCodeAt(endIndex - 1) === 47 ||
-      pathValue.charCodeAt(endIndex - 1) === 92)
+    (pathValue.codePointAt(endIndex - 1) === 47 ||
+      pathValue.codePointAt(endIndex - 1) === 92)
   ) {
     endIndex -= 1;
   }
