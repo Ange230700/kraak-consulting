@@ -10,6 +10,7 @@ import {
 
 const DEFAULT_SITE_URL = 'https://kraak-consulting.vercel.app';
 const EXAMPLE_SITE_URL = 'https://example.com';
+const RUNTIME_CONFIG_SITE_URL = 'https://render-staging.kraak.example';
 
 describe('site-seo', () => {
   it('should expose every public marketing page as a single source of truth', () => {
@@ -76,7 +77,22 @@ describe('site-seo', () => {
   // When resolvePublicSiteUrl is called
   // Then it returns the default site URL
   it('Given no siteUrl argument, when resolvePublicSiteUrl is called, then the default site URL is returned', () => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
+
     expect(resolvePublicSiteUrl()).toBe(DEFAULT_SITE_URL);
+  });
+
+  // Given runtime config defines siteUrl and no PUBLIC_SITE_URL env var
+  // When resolvePublicSiteUrl is called
+  // Then runtime config siteUrl is used as canonical host
+  it('Given runtime config siteUrl, when resolvePublicSiteUrl is called, then runtime siteUrl is returned', () => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = {
+      siteUrl: `${RUNTIME_CONFIG_SITE_URL}/`,
+    };
+
+    expect(resolvePublicSiteUrl()).toBe(RUNTIME_CONFIG_SITE_URL);
+
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
   });
 
   // Given a siteUrl with trailing slash

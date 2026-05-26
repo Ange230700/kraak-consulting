@@ -119,6 +119,11 @@ export function loadClientRuntimeConfig(
     fileVariables,
     processEnv,
   );
+  const siteUrl = readRuntimeVariable(
+    'CLIENT_SITE_URL',
+    fileVariables,
+    processEnv,
+  );
   const supabaseUrl = readRuntimeVariable(
     'SUPABASE_URL',
     fileVariables,
@@ -137,11 +142,15 @@ export function loadClientRuntimeConfig(
     ) === 'true';
 
   if (!apiBaseUrl && (!supabaseUrl || !supabasePublishableKey)) {
-    return { enableParticipantArea };
+    return {
+      ...(siteUrl ? { siteUrl } : {}),
+      enableParticipantArea,
+    };
   }
 
   return {
     ...(apiBaseUrl ? { apiBaseUrl } : {}),
+    ...(siteUrl ? { siteUrl } : {}),
     ...(supabaseUrl && supabasePublishableKey
       ? {
           supabaseUrl,

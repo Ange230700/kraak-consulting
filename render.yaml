@@ -1,7 +1,11 @@
 # Configuration Render — déploiement de l'API NestJS via Docker
 # Documentation : https://docs.render.com/blueprint-spec
 #
-# Deux services distincts :
+# Quatre services distincts :
+#   - kraak-web-staging : front web statique Angular prerender. Auto-deploy
+#                         sur push de `staging`.
+#   - kraak-web-prod    : front web statique Angular prerender. Déploiement
+#                         manuel uniquement (autoDeploy: false).
 #   - kraak-api-staging : auto-deploy sur push de la branche longue `staging`.
 #                         La promotion `main -> staging` se fait par
 #                         fast-forward manuel. Voir
@@ -13,6 +17,36 @@
 #                         et docs/runbooks/RELEASE_PROD.md.
 
 services:
+  - type: web
+    name: kraak-web-staging
+    runtime: static
+    plan: free
+    branch: staging
+    autoDeploy: true
+    buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web:staging && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
+    envVars:
+      - key: CLIENT_API_BASE_URL
+        value: https://kraak-api-staging.onrender.com
+      - key: CLIENT_FEATURE_PARTICIPANT_AREA
+        value: 'true'
+      - key: CLIENT_SITE_URL
+        sync: false
+
+  - type: web
+    name: kraak-web-prod
+    runtime: static
+    plan: free
+    branch: main
+    autoDeploy: false
+    buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
+    envVars:
+      - key: CLIENT_API_BASE_URL
+        value: https://kraak-api-prod.onrender.com
+      - key: CLIENT_FEATURE_PARTICIPANT_AREA
+        value: 'false'
+      - key: CLIENT_SITE_URL
+        sync: false
+
   - type: web
     name: kraak-api-staging
     runtime: docker
