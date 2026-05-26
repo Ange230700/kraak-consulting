@@ -40,8 +40,10 @@ function createProgramMutationQuery(result: { data: unknown; error: unknown }) {
   const query = {
     insert: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
+    maybeSingle: jest.fn().mockResolvedValue(result),
     single: jest.fn().mockResolvedValue(result),
   };
 
@@ -297,6 +299,123 @@ describe('ProgramsService', () => {
     await expect(service.deleteProgram('program-1')).resolves.toBeUndefined();
 
     expect(mutationQuery.update).toHaveBeenCalledWith({ status: 'archived' });
+  });
+
+  it('Given des fonctionnalités programme existantes, When listProgramFeatures est appelé, Then la liste triée est mappée', async () => {
+    const featureQuery = createListQuery({
+      data: [
+        {
+          id: 'feature-1',
+          program_id: 'program-1',
+          title: 'Mentorat',
+          sort_order: 1,
+          created_at: '2026-04-29T10:00:00.000Z',
+          updated_at: '2026-04-29T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(featureQuery);
+
+    await expect(service.listProgramFeatures('program-1')).resolves.toEqual([
+      {
+        id: 'feature-1',
+        programId: 'program-1',
+        title: 'Mentorat',
+        sortOrder: 1,
+        createdAt: '2026-04-29T10:00:00.000Z',
+        updatedAt: '2026-04-29T10:00:00.000Z',
+      },
+    ]);
+  });
+
+  it('Given un programme existant, When createProgramFeature est appelé, Then la fonctionnalité est créée', async () => {
+    const programLookupQuery = createProgramMutationQuery({
+      data: { id: 'program-1' },
+      error: null,
+    });
+    const featureMutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'feature-1',
+        program_id: 'program-1',
+        title: 'Mentorat',
+        sort_order: 2,
+        created_at: '2026-04-29T10:00:00.000Z',
+        updated_at: '2026-04-29T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programLookupQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureMutationQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.createProgramFeature('program-1', {
+        title: 'Mentorat',
+        sortOrder: 2,
+      }),
+    ).resolves.toMatchObject({
+      id: 'feature-1',
+      programId: 'program-1',
+    });
+  });
+
+  it('Given une fonctionnalité programme existante, When updateProgramFeature est appelé, Then la fonctionnalité est mise à jour', async () => {
+    const featureMutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'feature-1',
+        program_id: 'program-1',
+        title: 'Mentorat avancé',
+        sort_order: 3,
+        created_at: '2026-04-29T10:00:00.000Z',
+        updated_at: '2026-04-30T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(featureMutationQuery);
+
+    await expect(
+      service.updateProgramFeature('program-1', 'feature-1', {
+        title: 'Mentorat avancé',
+        sortOrder: 3,
+      }),
+    ).resolves.toMatchObject({
+      id: 'feature-1',
+      sortOrder: 3,
+    });
+
+    expect(featureMutationQuery.eq).toHaveBeenNthCalledWith(
+      1,
+      'program_id',
+      'program-1',
+    );
+    expect(featureMutationQuery.eq).toHaveBeenNthCalledWith(2, 'id', 'feature-1');
+  });
+
+  it('Given une fonctionnalité programme existante, When deleteProgramFeature est appelé, Then la suppression est effectuée', async () => {
+    const featureMutationQuery = createProgramMutationQuery({
+      data: { id: 'feature-1' },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(featureMutationQuery);
+
+    await expect(
+      service.deleteProgramFeature('program-1', 'feature-1'),
+    ).resolves.toBeUndefined();
+
+    expect(featureMutationQuery.delete).toHaveBeenCalledTimes(1);
   });
 
   // Given plus de 200 sessions visibles sur une cohorte

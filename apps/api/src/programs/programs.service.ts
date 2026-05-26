@@ -37,6 +37,11 @@ import {
   readSupabaseQueryWithFallback,
   type SupabaseQueryResult,
 } from '../shared/supabase-query-fallback.utils';
+import type {
+  CreateProgramFeatureDto,
+  ProgramFeatureDto,
+  UpdateProgramFeatureDto,
+} from './programs.dto';
 
 type ParticipantRow = {
   id: string;
@@ -107,6 +112,15 @@ type AnnouncementPreviewRow = Pick<
   'id' | 'title' | 'audience_type' | 'program_id' | 'cohort_id' | 'published_at'
 >;
 
+type ProgramFeatureRow = {
+  id: string;
+  program_id: string;
+  title: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 const enrollmentProgramSelect =
   'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
 const enrollmentProgramSelectWithoutProgress =
@@ -120,6 +134,8 @@ const resourcesReadErrorMessage =
   'Impossible de charger les ressources du programme.';
 const programSelectFields =
   'id, slug, title, summary, description, status, visibility, created_at, updated_at';
+const programFeatureSelectFields =
+  'id, program_id, title, sort_order, created_at, updated_at';
 
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
@@ -377,6 +393,106 @@ export class ProgramsService {
       throw new NotFoundException({
         success: false,
         message: 'Programme introuvable.',
+      });
+    }
+  }
+
+  async listProgramFeatures(programId: string): Promise<ProgramFeatureDto[]> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .select(programFeatureSelectFields)
+      .eq('program_id', programId)
+      .order('sort_order', { ascending: true })
+      .limit(1000);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de charger les fonctionnalités du programme.',
+      });
+    }
+
+    return ((data as ProgramFeatureRow[] | null) ?? []).map((row) =>
+      this.mapProgramFeature(row),
+    );
+  }
+
+  async createProgramFeature(
+    programId: string,
+    payload: CreateProgramFeatureDto,
+  ): Promise<ProgramFeatureDto> {
+    await this.ensureProgramExists(programId);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .insert({
+        program_id: programId,
+        title: payload.title,
+        sort_order: payload.sortOrder ?? 0,
+      })
+      .select(programFeatureSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de créer la fonctionnalité du programme.',
+      });
+    }
+
+    return this.mapProgramFeature(data as ProgramFeatureRow);
+  }
+
+  async updateProgramFeature(
+    programId: string,
+    featureId: string,
+    payload: UpdateProgramFeatureDto,
+  ): Promise<ProgramFeatureDto> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+
+    if (payload.sortOrder !== undefined) {
+      updatePayload['sort_order'] = payload.sortOrder;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .update(updatePayload)
+      .eq('program_id', programId)
+      .eq('id', featureId)
+      .select(programFeatureSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Fonctionnalité de programme introuvable.',
+      });
+    }
+
+    return this.mapProgramFeature(data as ProgramFeatureRow);
+  }
+
+  async deleteProgramFeature(programId: string, featureId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .delete()
+      .eq('program_id', programId)
+      .eq('id', featureId)
+      .select('id')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Fonctionnalité de programme introuvable.',
       });
     }
   }
@@ -814,6 +930,22 @@ export class ProgramsService {
     return (data as ResourceRow[] | null) ?? [];
   }
 
+  private async ensureProgramExists(programId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select('id')
+      .eq('id', programId)
+      .maybeSingle();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable.',
+      });
+    }
+  }
+
   private isVisibleAnnouncement(
     announcement: AnnouncementPreviewRow,
     programId: string,
@@ -880,6 +1012,17 @@ export class ProgramsService {
       locationLabel: row.location_label,
       meetingLink: row.meeting_link,
       trainerUserId: row.trainer_user_id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
+
+  private mapProgramFeature(row: ProgramFeatureRow): ProgramFeatureDto {
+    return {
+      id: row.id,
+      programId: row.program_id,
+      title: row.title,
+      sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

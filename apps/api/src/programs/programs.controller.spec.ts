@@ -16,10 +16,14 @@ describe('ProgramsController', () => {
   const programsService = {
     listPrograms: jest.fn(),
     listAllPrograms: jest.fn(),
+    listProgramFeatures: jest.fn(),
     getProgramDetail: jest.fn(),
     createProgram: jest.fn(),
+    createProgramFeature: jest.fn(),
     updateProgram: jest.fn(),
+    updateProgramFeature: jest.fn(),
     deleteProgram: jest.fn(),
+    deleteProgramFeature: jest.fn(),
     markSessionProgress: jest.fn(),
   };
 
@@ -30,15 +34,20 @@ describe('ProgramsController', () => {
   beforeEach(async () => {
     programsService.listPrograms.mockReset();
     programsService.listAllPrograms.mockReset();
+    programsService.listProgramFeatures.mockReset();
     programsService.getProgramDetail.mockReset();
     programsService.createProgram.mockReset();
+    programsService.createProgramFeature.mockReset();
     programsService.updateProgram.mockReset();
+    programsService.updateProgramFeature.mockReset();
     programsService.deleteProgram.mockReset();
+    programsService.deleteProgramFeature.mockReset();
     programsService.markSessionProgress.mockReset();
     authService.getSession.mockReset();
 
     programsService.listPrograms.mockResolvedValue([]);
     programsService.listAllPrograms.mockResolvedValue([]);
+    programsService.listProgramFeatures.mockResolvedValue([]);
     programsService.getProgramDetail.mockResolvedValue({
       enrollmentId: 'enrollment-1',
       enrollmentStatus: 'active',
@@ -77,6 +86,22 @@ describe('ProgramsController', () => {
         completedSessionIds: ['session-1'],
         updatedAt: '2026-04-29T10:00:00.000Z',
       },
+    });
+    programsService.createProgramFeature.mockResolvedValue({
+      id: 'feature-1',
+      programId: 'program-1',
+      title: 'Mentorat',
+      sortOrder: 0,
+      createdAt: '2026-04-29T10:00:00.000Z',
+      updatedAt: '2026-04-29T10:00:00.000Z',
+    });
+    programsService.updateProgramFeature.mockResolvedValue({
+      id: 'feature-1',
+      programId: 'program-1',
+      title: 'Mentorat avancé',
+      sortOrder: 1,
+      createdAt: '2026-04-29T10:00:00.000Z',
+      updatedAt: '2026-04-30T10:00:00.000Z',
     });
 
     const module: TestingModule = await Test.createTestingModule({
@@ -303,6 +328,89 @@ describe('ProgramsController', () => {
     ).resolves.toBeUndefined();
 
     expect(programsService.deleteProgram).toHaveBeenCalledWith('program-1');
+  });
+
+  it('Given un programId valide, When listProgramFeatures est appelé, Then le service listProgramFeatures est invoqué', async () => {
+    await controller.listProgramFeatures('program-1');
+
+    expect(programsService.listProgramFeatures).toHaveBeenCalledWith(
+      'program-1',
+    );
+  });
+
+  it('Given un token admin valide, When createProgramFeature est appelé, Then le service createProgramFeature est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.createProgramFeature(
+      'program-1',
+      {
+        title: 'Mentorat',
+        sortOrder: 2,
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.createProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      {
+        title: 'Mentorat',
+        sortOrder: 2,
+      },
+    );
+  });
+
+  it('Given un token admin valide, When patchProgramFeature est appelé, Then la route PUT est réutilisée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.patchProgramFeature(
+      'program-1',
+      'feature-1',
+      {
+        title: 'Mentorat avancé',
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.updateProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      'feature-1',
+      {
+        title: 'Mentorat avancé',
+      },
+    );
+  });
+
+  it('Given un token admin valide, When deleteProgramFeature est appelé, Then le service deleteProgramFeature est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.deleteProgramFeature(
+      'program-1',
+      'feature-1',
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.deleteProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      'feature-1',
+    );
   });
 
   // Given un programId inaccessible

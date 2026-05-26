@@ -31,8 +31,11 @@ import { extractAccessToken } from '../auth/auth.dto';
 import { requireAdminAccess } from '../shared/admin-access.utils';
 import {
   validateCreateProgramPayload,
+  validateCreateProgramFeaturePayload,
   validateMarkSessionProgressPayload,
+  validateUpdateProgramFeaturePayload,
   validateUpdateProgramPayload,
+  type ProgramFeatureDto,
 } from './programs.dto';
 import { ProgramsService } from './programs.service';
 
@@ -304,6 +307,33 @@ const updateProgramBodySchema = {
   properties: createProgramBodySchema.properties,
 };
 
+const programFeatureSchema = {
+  type: 'object',
+  required: ['id', 'programId', 'title', 'sortOrder', 'createdAt', 'updatedAt'],
+  properties: {
+    id: { type: 'string' },
+    programId: { type: 'string' },
+    title: { type: 'string' },
+    sortOrder: { type: 'integer' },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
+  },
+};
+
+const createProgramFeatureBodySchema = {
+  type: 'object',
+  required: ['title'],
+  properties: {
+    title: { type: 'string' },
+    sortOrder: { type: 'integer' },
+  },
+};
+
+const updateProgramFeatureBodySchema = {
+  type: 'object',
+  properties: createProgramFeatureBodySchema.properties,
+};
+
 @ApiTags('Programs')
 @Controller('programs')
 export class ProgramsController {
@@ -461,6 +491,125 @@ export class ProgramsController {
   ): Promise<void> {
     await requireAdminAccess(this.authService, authorizationHeader);
     await this.programsService.deleteProgram(programId);
+  }
+
+  @Get(':programId/features')
+  @ApiOperation({ summary: 'Lister les fonctionnalités d’un programme' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Liste des fonctionnalités du programme',
+    schema: {
+      type: 'array',
+      items: programFeatureSchema,
+    },
+  })
+  async listProgramFeatures(
+    @Param('programId') programId: string,
+  ): Promise<ProgramFeatureDto[]> {
+    return this.programsService.listProgramFeatures(programId);
+  }
+
+  @Post(':programId/features')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Créer une fonctionnalité de programme' })
+  @ApiBody({ schema: createProgramFeatureBodySchema })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Fonctionnalité créée avec succès',
+    schema: programFeatureSchema,
+  })
+  async createProgramFeature(
+    @Param('programId') programId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramFeatureDto> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    const validated = validateCreateProgramFeaturePayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.programsService.createProgramFeature(programId, validated.data);
+  }
+
+  @Put(':programId/features/:featureId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour une fonctionnalité de programme' })
+  @ApiBody({ schema: updateProgramFeatureBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Fonctionnalité mise à jour avec succès',
+    schema: programFeatureSchema,
+  })
+  async updateProgramFeature(
+    @Param('programId') programId: string,
+    @Param('featureId') featureId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramFeatureDto> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    const validated = validateUpdateProgramFeaturePayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.programsService.updateProgramFeature(
+      programId,
+      featureId,
+      validated.data,
+    );
+  }
+
+  @Patch(':programId/features/:featureId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Mettre à jour une fonctionnalité de programme (compatibilité PATCH)',
+  })
+  @ApiBody({ schema: updateProgramFeatureBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Fonctionnalité mise à jour avec succès',
+    schema: programFeatureSchema,
+  })
+  async patchProgramFeature(
+    @Param('programId') programId: string,
+    @Param('featureId') featureId: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ProgramFeatureDto> {
+    return this.updateProgramFeature(
+      programId,
+      featureId,
+      body,
+      authorizationHeader,
+    );
+  }
+
+  @Delete(':programId/features/:featureId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Supprimer une fonctionnalité de programme' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Fonctionnalité supprimée avec succès',
+  })
+  async deleteProgramFeature(
+    @Param('programId') programId: string,
+    @Param('featureId') featureId: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    await this.programsService.deleteProgramFeature(programId, featureId);
   }
 
   @Get(':programId')

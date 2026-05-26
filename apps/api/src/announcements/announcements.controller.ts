@@ -1,12 +1,18 @@
 import {
+  BadRequestException,
   Controller,
+  Delete,
   Get,
   Param,
   Query,
   HttpCode,
   HttpStatus,
   Headers,
+  Post,
+  Put,
+  Patch,
   UnauthorizedException,
+  Body,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,9 +21,16 @@ import {
   ApiQuery,
   ApiParam,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import type { AnnouncementDto } from '@kraak/contracts';
+import { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
+import { requireAdminAccess } from '../shared/admin-access.utils';
+import {
+  validateCreateAnnouncementPayload,
+  validateUpdateAnnouncementPayload,
+} from './announcements.dto';
 import { AnnouncementsService } from './announcements.service';
 
 const ANNOUNCEMENT_PRIORITY_ENUM = ['low', 'normal', 'high', 'critical'];
@@ -66,6 +79,39 @@ const ANNOUNCEMENT_LIST_SCHEMA = {
   },
 };
 
+const ANNOUNCEMENT_BODY_SCHEMA = {
+  type: 'object',
+  required: ['title', 'body', 'audienceType'],
+  properties: {
+    title: { type: 'string' },
+    body: { type: 'string' },
+    priority: {
+      type: 'string',
+      enum: ANNOUNCEMENT_PRIORITY_ENUM,
+    },
+    audienceType: {
+      type: 'string',
+      enum: AUDIENCE_TYPE_ENUM,
+    },
+    programId: { type: 'string', nullable: true },
+    cohortId: { type: 'string', nullable: true },
+    status: {
+      type: 'string',
+      enum: PUBLICATION_STATUS_ENUM,
+    },
+    publishedAt: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true,
+    },
+  },
+};
+
+const ANNOUNCEMENT_UPDATE_BODY_SCHEMA = {
+  type: 'object',
+  properties: ANNOUNCEMENT_BODY_SCHEMA.properties,
+};
+
 const apiErrorSchema = {
   type: 'object',
   properties: {
@@ -78,7 +124,10 @@ const apiErrorSchema = {
 @ApiTags('Announcements')
 @Controller('announcements')
 export class AnnouncementsController {
-  constructor(private readonly announcementsService: AnnouncementsService) {}
+  constructor(
+    private readonly announcementsService: AnnouncementsService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -121,11 +170,7 @@ export class AnnouncementsController {
     @Query('limit') limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
     if (!authorizationHeader) {
-      return this.announcementsService.listAnnouncements(
-        undefined,
-        page,
-        limit,
-      );
+      return this.announcementsService.listAnnouncements(undefined, page, limit);
     }
 
     const accessToken = extractAccessToken(authorizationHeader);
@@ -191,5 +236,101 @@ export class AnnouncementsController {
     }
 
     return this.announcementsService.getAnnouncementById(id, accessToken.data);
+  }
+
+  @Post()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Créer une annonce' })
+  @ApiBody({ schema: ANNOUNCEMENT_BODY_SCHEMA })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Annonce créée avec succès',
+    schema: ANNOUNCEMENT_SCHEMA,
+  })
+  async createAnnouncement(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<AnnouncementDto> {
+    const accessToken = await requireAdminAccess(
+      this.authService,
+      authorizationHeader,
+    );
+    const validated = validateCreateAnnouncementPayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    const session = await this.authService.getSession(accessToken);
+
+    return this.announcementsService.createAnnouncement(
+      validated.data,
+      session.profile.appUser.id,
+    );
+  }
+
+  @Put(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour une annonce' })
+  @ApiBody({ schema: ANNOUNCEMENT_UPDATE_BODY_SCHEMA })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Annonce mise à jour avec succès',
+    schema: ANNOUNCEMENT_SCHEMA,
+  })
+  async updateAnnouncement(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<AnnouncementDto> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    const validated = validateUpdateAnnouncementPayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Payload invalide.',
+        errors: validated.errors,
+      });
+    }
+
+    return this.announcementsService.updateAnnouncement(id, validated.data);
+  }
+
+  @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Mettre à jour une annonce (compatibilité PATCH)' })
+  @ApiBody({ schema: ANNOUNCEMENT_UPDATE_BODY_SCHEMA })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Annonce mise à jour avec succès',
+    schema: ANNOUNCEMENT_SCHEMA,
+  })
+  async patchAnnouncement(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<AnnouncementDto> {
+    return this.updateAnnouncement(id, body, authorizationHeader);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Supprimer une annonce' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Annonce supprimée avec succès',
+  })
+  async deleteAnnouncement(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    await this.announcementsService.deleteAnnouncement(id);
   }
 }
