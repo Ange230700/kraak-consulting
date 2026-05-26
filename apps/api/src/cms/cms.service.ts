@@ -509,6 +509,10 @@ export class CmsService {
       .limit(200);
 
     if (error) {
+      console.error('CMS published statistics query failed', {
+        context: 'cms.listPublishedStatistics',
+        message: error.message,
+      });
       return [];
     }
 
@@ -528,6 +532,10 @@ export class CmsService {
       .limit(200);
 
     if (error) {
+      console.error('CMS published partners query failed', {
+        context: 'cms.listPublishedPartners',
+        message: error.message,
+      });
       return [];
     }
 
@@ -547,6 +555,10 @@ export class CmsService {
       .limit(200);
 
     if (error) {
+      console.error('CMS published testimonials query failed', {
+        context: 'cms.listPublishedTestimonials',
+        message: error.message,
+      });
       return [];
     }
 
@@ -566,6 +578,10 @@ export class CmsService {
       .limit(200);
 
     if (error) {
+      console.error('CMS published team members query failed', {
+        context: 'cms.listPublishedTeamMembers',
+        message: error.message,
+      });
       return [];
     }
 
