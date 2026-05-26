@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Controller,
   Delete,
   Get,
@@ -255,10 +256,24 @@ export class AnnouncementsController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<AnnouncementDto> {
-    const accessToken = await requireAdminAccess(
-      this.authService,
-      authorizationHeader,
-    );
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const session = await this.authService.getSession(accessToken.data);
+
+    if (session.profile.appUser.role !== 'admin') {
+      throw new ForbiddenException({
+        success: false,
+        message: 'Accès admin requis.',
+      });
+    }
+
     const validated = validateCreateAnnouncementPayload(body);
 
     if (!validated.valid) {
@@ -268,8 +283,6 @@ export class AnnouncementsController {
         errors: validated.errors,
       });
     }
-
-    const session = await this.authService.getSession(accessToken);
 
     return this.announcementsService.createAnnouncement(
       validated.data,

@@ -2909,6 +2909,88 @@ describe('AnnouncementsService', () => {
       });
     });
 
+    it('Given un statut draft avec publishedAt fourni, When createAnnouncement est appelé, Then published_at est forcé à null', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-011',
+          title: 'Brouillon',
+          body: 'Contenu',
+          priority: 'normal',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'draft',
+          published_at: null,
+          created_by_user_id: 'user-1',
+          created_at: '2026-05-26T12:00:00.000Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await service.createAnnouncement(
+        {
+          title: 'Brouillon',
+          body: 'Contenu',
+          audienceType: 'all_participants',
+          status: 'draft',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        },
+        'user-1',
+      );
+
+      expect(mutationQuery.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'draft',
+          published_at: null,
+        }),
+      );
+    });
+
+    it('Given un statut non draft avec publishedAt null, When updateAnnouncement est appelé, Then published_at est forcé à une date', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Important Update',
+          body: 'Contenu modifié',
+          priority: 'high',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await service.updateAnnouncement('ann-001', {
+        status: 'published',
+        publishedAt: null,
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'published',
+          published_at: expect.any(String),
+        }),
+      );
+    });
+
     it('Given une annonce existante, When deleteAnnouncement est appelé, Then la suppression est effectuée', async () => {
       const deleteQuery = createAsyncQuery({
         data: { id: 'ann-001' },
