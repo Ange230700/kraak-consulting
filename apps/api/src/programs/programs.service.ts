@@ -479,7 +479,10 @@ export class ProgramsService {
     return this.mapProgramFeature(data as ProgramFeatureRow);
   }
 
-  async deleteProgramFeature(programId: string, featureId: string): Promise<void> {
+  async deleteProgramFeature(
+    programId: string,
+    featureId: string,
+  ): Promise<void> {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('program_feature')

@@ -184,7 +184,9 @@ function validateAudienceScope(
 
   if (data.audienceType === 'program') {
     if (!data.programId) {
-      errors.push('Le champ programId est requis lorsque audienceType vaut program.');
+      errors.push(
+        'Le champ programId est requis lorsque audienceType vaut program.',
+      );
     }
 
     if (data.cohortId !== undefined && data.cohortId !== null) {
@@ -197,11 +199,15 @@ function validateAudienceScope(
   }
 
   if (!data.programId) {
-    errors.push('Le champ programId est requis lorsque audienceType vaut cohort.');
+    errors.push(
+      'Le champ programId est requis lorsque audienceType vaut cohort.',
+    );
   }
 
   if (!data.cohortId) {
-    errors.push('Le champ cohortId est requis lorsque audienceType vaut cohort.');
+    errors.push(
+      'Le champ cohortId est requis lorsque audienceType vaut cohort.',
+    );
   }
 }
 

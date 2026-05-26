@@ -573,7 +573,8 @@ export class ProgramsController {
   @Patch(':programId/features/:featureId')
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Mettre à jour une fonctionnalité de programme (compatibilité PATCH)',
+    summary:
+      'Mettre à jour une fonctionnalité de programme (compatibilité PATCH)',
   })
   @ApiBody({ schema: updateProgramFeatureBodySchema })
   @ApiResponse({

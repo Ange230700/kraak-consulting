@@ -2926,7 +2926,9 @@ describe('AnnouncementsService', () => {
         from: jest.fn(() => deleteQuery),
       });
 
-      await expect(service.deleteAnnouncement('ann-001')).resolves.toBeUndefined();
+      await expect(
+        service.deleteAnnouncement('ann-001'),
+      ).resolves.toBeUndefined();
       expect(deleteQuery.delete).toHaveBeenCalledTimes(1);
     });
 
@@ -2954,5 +2956,4 @@ describe('AnnouncementsService', () => {
       ).rejects.toBeInstanceOf(InternalServerErrorException);
     });
   });
-
 });

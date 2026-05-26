@@ -63,7 +63,9 @@ function readNullableString(value: unknown): string | null {
   return normalized.length > 0 ? normalized : null;
 }
 
-function assignRequiredString<T extends { title?: string; description?: string }>(
+function assignRequiredString<
+  T extends { title?: string; description?: string },
+>(
   body: Record<string, unknown>,
   field: 'title' | 'description',
   errors: string[],
@@ -84,7 +86,9 @@ function assignRequiredString<T extends { title?: string; description?: string }
   (updates as Record<string, unknown>)[field] = value;
 }
 
-function assignOptionalString<T extends { title?: string; description?: string }>(
+function assignOptionalString<
+  T extends { title?: string; description?: string },
+>(
   body: Record<string, unknown>,
   field: 'title' | 'description',
   errors: string[],

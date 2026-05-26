@@ -170,7 +170,11 @@ export class AnnouncementsController {
     @Query('limit') limit?: number,
   ): Promise<{ data: AnnouncementDto[]; total: number }> {
     if (!authorizationHeader) {
-      return this.announcementsService.listAnnouncements(undefined, page, limit);
+      return this.announcementsService.listAnnouncements(
+        undefined,
+        page,
+        limit,
+      );
     }
 
     const accessToken = extractAccessToken(authorizationHeader);

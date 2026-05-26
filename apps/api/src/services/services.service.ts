@@ -250,7 +250,10 @@ export class ServicesService {
     return this.mapServiceDetail(data as ServiceDetailRow);
   }
 
-  async deleteServiceDetail(serviceId: string, detailId: string): Promise<void> {
+  async deleteServiceDetail(
+    serviceId: string,
+    detailId: string,
+  ): Promise<void> {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('service_detail')

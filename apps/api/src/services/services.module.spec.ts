@@ -7,7 +7,10 @@ import { ServicesService } from './services.service';
 
 describe('ServicesModule', () => {
   it('Given the services module metadata, When it is inspected, Then imports controllers and providers are registered', () => {
-    const imports = Reflect.getMetadata(MODULE_METADATA.IMPORTS, ServicesModule);
+    const imports = Reflect.getMetadata(
+      MODULE_METADATA.IMPORTS,
+      ServicesModule,
+    );
     const controllers = Reflect.getMetadata(
       MODULE_METADATA.CONTROLLERS,
       ServicesModule,
