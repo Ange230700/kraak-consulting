@@ -616,6 +616,51 @@ describe('WebAuthService', () => {
         environment.supabaseUrl = originalSupabaseUrl;
       }
     });
+
+    it('when running on server without an explicit URL, then recovery token resolution returns null', async () => {
+      TestBed.configureTestingModule({
+        providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+      });
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+      expect(token).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when Supabase publishable key is configured, then verify call includes apikey header', async () => {
+      const originalPublishableKey = environment.supabasePublishableKey;
+
+      environment.supabasePublishableKey = 'pk-test-public-key';
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: 'exchanged-token' }),
+      } satisfies Partial<Response>);
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await service.resolveRecoveryAccessTokenFromUrl(
+          new URL(
+            'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+          ),
+        );
+
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining('/auth/v1/verify'),
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              apikey: 'pk-test-public-key',
+            }),
+          }),
+        );
+      } finally {
+        environment.supabasePublishableKey = originalPublishableKey;
+      }
+    });
   });
 
   describe('Given completePasswordRecovery', () => {
