@@ -40,16 +40,14 @@ describe('cms.dto validators', () => {
     });
 
     expect(result.valid).toBe(false);
-    if (!result.valid) {
-      expect(result.errors).toEqual(
-        expect.arrayContaining([
-          'Le champ name est requis.',
-          'Le champ logoUrl est requis et doit être une URL valide.',
-          'Le champ sortOrder doit être un entier positif ou nul.',
-          'Le champ status est invalide.',
-        ]),
-      );
-    }
+    expect((result as { errors: string[] }).errors).toEqual(
+      expect.arrayContaining([
+        'Le champ name est requis.',
+        'Le champ logoUrl est requis et doit être une URL valide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ]),
+    );
   });
 
   it('validates update testimonial payload', () => {
@@ -113,16 +111,14 @@ describe('cms.dto validators', () => {
     });
 
     expect(result.valid).toBe(false);
-    if (!result.valid) {
-      expect(result.errors).toEqual(
-        expect.arrayContaining([
-          'Le champ quote est requis.',
-          'Le champ authorName est requis.',
-          'Le champ avatarUrl est invalide.',
-          'Le champ sortOrder doit être un entier positif ou nul.',
-        ]),
-      );
-    }
+    expect((result as { errors: string[] }).errors).toEqual(
+      expect.arrayContaining([
+        'Le champ quote est requis.',
+        'Le champ authorName est requis.',
+        'Le champ avatarUrl est invalide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+      ]),
+    );
   });
 
   it('validates update statistic payload', () => {
