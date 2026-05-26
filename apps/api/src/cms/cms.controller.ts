@@ -49,6 +49,7 @@ export class CmsController {
 
   @Get('admin/cms/statistics')
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister toutes les statistiques (admin)' })
   async listStatistics(
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<StatisticDto[]> {
@@ -112,6 +113,7 @@ export class CmsController {
 
   @Get('admin/cms/partners')
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister tous les partenaires (admin)' })
   async listPartners(
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<PartnerDto[]> {
@@ -175,6 +177,7 @@ export class CmsController {
 
   @Get('admin/cms/testimonials')
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister tous les témoignages (admin)' })
   async listTestimonials(
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<TestimonialDto[]> {
@@ -238,6 +241,7 @@ export class CmsController {
 
   @Get('admin/cms/team-members')
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Lister tous les membres d’équipe (admin)' })
   async listTeamMembers(
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<TeamMemberDto[]> {
