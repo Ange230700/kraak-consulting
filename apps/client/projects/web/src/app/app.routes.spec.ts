@@ -26,6 +26,7 @@ describe('Web routes', () => {
     'contact',
     'mentions-legales',
     'politique-de-confidentialite',
+    'auth/reset',
   ];
   const aliasRedirectPaths = ['about', 'programs', 'resources'];
   const adminPaths = ['admin'];

@@ -27,7 +27,7 @@ export interface SeoPageDefinition {
   };
 }
 
-const DEFAULT_SITE_URL = 'https://kraak-consulting.vercel.app';
+const DEFAULT_SITE_URL = 'https://kraak-web-prod.onrender.com';
 const DEFAULT_SITE_NAME = 'KRAAK';
 const DEFAULT_LOCALE = 'fr_FR';
 const DEFAULT_ROBOTS = 'index, follow';
