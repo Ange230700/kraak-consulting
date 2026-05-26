@@ -271,11 +271,16 @@ describe('Critical API Modules Integration', () => {
       getAnnouncementById: jest.fn(),
     };
 
+    const authServiceMock: jest.Mocked<Pick<AuthService, 'getSession'>> = {
+      getSession: jest.fn(),
+    };
+
     beforeAll(async () => {
       app = await buildHttpApp({
         controllers: [AnnouncementsController],
         providers: [
           { provide: AnnouncementsService, useValue: announcementsServiceMock },
+          { provide: AuthService, useValue: authServiceMock },
         ],
       });
     });
