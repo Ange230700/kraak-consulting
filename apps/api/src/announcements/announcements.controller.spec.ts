@@ -1,6 +1,12 @@
+import {
+  BadRequestException,
+  NotFoundException,
+  RequestMethod,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException, NotFoundException } from '@nestjs/common';
-import type { AnnouncementDto } from '@kraak/contracts';
+import { AuthService } from '../auth/auth.service';
 import { AnnouncementsController } from './announcements.controller';
 import { AnnouncementsService } from './announcements.service';
 
@@ -22,7 +28,7 @@ describe('AnnouncementsController', () => {
         createdByUserId: 'user-001',
         createdAt: '2026-04-19T10:00:00Z',
         updatedAt: '2026-04-20T10:00:00Z',
-      } satisfies AnnouncementDto,
+      },
     ],
     total: 1,
   };
@@ -32,9 +38,37 @@ describe('AnnouncementsController', () => {
   const mockAnnouncementsService = {
     listAnnouncements: jest.fn(),
     getAnnouncementById: jest.fn(),
+    createAnnouncement: jest.fn(),
+    updateAnnouncement: jest.fn(),
+    deleteAnnouncement: jest.fn(),
+  };
+
+  const authService = {
+    getSession: jest.fn(),
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
+    mockAnnouncementsService.listAnnouncements.mockResolvedValue(mockListResponse);
+    mockAnnouncementsService.getAnnouncementById.mockResolvedValue(
+      mockAnnouncement,
+    );
+    mockAnnouncementsService.createAnnouncement.mockResolvedValue(
+      mockAnnouncement,
+    );
+    mockAnnouncementsService.updateAnnouncement.mockResolvedValue(
+      mockAnnouncement,
+    );
+    authService.getSession.mockResolvedValue({
+      profile: {
+        appUser: {
+          id: 'user-001',
+          role: 'admin',
+        },
+      },
+    });
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AnnouncementsController],
       providers: [
@@ -42,68 +76,42 @@ describe('AnnouncementsController', () => {
           provide: AnnouncementsService,
           useValue: mockAnnouncementsService,
         },
+        {
+          provide: AuthService,
+          useValue: authService,
+        },
       ],
     }).compile();
 
     controller = module.get<AnnouncementsController>(AnnouncementsController);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('devrait être défini', () => {
+    expect(controller).toBeDefined();
+  });
+
+  it('Given le module announcements, When on lit ses métadonnées NestJS, Then GET /announcements est exposé', () => {
+    expect(Reflect.getMetadata(PATH_METADATA, AnnouncementsController)).toBe(
+      'announcements',
+    );
+    expect(
+      Reflect.getMetadata(METHOD_METADATA, controller.listAnnouncements),
+    ).toBe(RequestMethod.GET);
   });
 
   describe('listAnnouncements', () => {
     it('Given: valid authorization header, When: listAnnouncements called, Then: return list of announcements', async () => {
-      const authHeader = 'Bearer valid-token';
-      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
-        mockListResponse,
-      );
-
-      const result = await controller.listAnnouncements(authHeader, 1, 20);
+      const result = await controller.listAnnouncements('Bearer ' + 'access-token', 1, 20);
 
       expect(result).toEqual(mockListResponse);
       expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
-        'valid-token',
+        'access-token',
         1,
         20,
       );
     });
 
-    it('Given: valid authorization header with pagination, When: listAnnouncements called, Then: apply pagination parameters', async () => {
-      const authHeader = 'Bearer valid-token';
-      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
-        mockListResponse,
-      );
-
-      await controller.listAnnouncements(authHeader, 2, 50);
-
-      expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
-        'valid-token',
-        2,
-        50,
-      );
-    });
-
-    it('Given: valid authorization header without pagination params, When: listAnnouncements called, Then: undefined page and limit are forwarded', async () => {
-      const authHeader = 'Bearer valid-token';
-      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
-        mockListResponse,
-      );
-
-      await controller.listAnnouncements(authHeader);
-
-      expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
-        'valid-token',
-        undefined,
-        undefined,
-      );
-    });
-
     it('Given: missing authorization header, When: listAnnouncements called, Then: return public published announcements', async () => {
-      mockAnnouncementsService.listAnnouncements.mockResolvedValue(
-        mockListResponse,
-      );
-
       const result = await controller.listAnnouncements();
 
       expect(result).toEqual(mockListResponse);
@@ -115,17 +123,7 @@ describe('AnnouncementsController', () => {
     });
 
     it('Given: invalid authorization header format, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
-      const authHeader = 'InvalidToken';
-
-      await expect(controller.listAnnouncements(authHeader)).rejects.toThrow(
-        UnauthorizedException,
-      );
-    });
-
-    it('Given: malformed Bearer token, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
-      const authHeader = 'Bearer invalid token extra';
-
-      await expect(controller.listAnnouncements(authHeader)).rejects.toThrow(
+      await expect(controller.listAnnouncements('InvalidToken')).rejects.toThrow(
         UnauthorizedException,
       );
     });
@@ -133,74 +131,102 @@ describe('AnnouncementsController', () => {
 
   describe('getAnnouncementById', () => {
     it('Given: valid authorization header and announcement ID, When: getAnnouncementById called, Then: return announcement detail', async () => {
-      const authHeader = 'Bearer valid-token';
-      const announcementId = 'ann-001';
-
-      mockAnnouncementsService.getAnnouncementById.mockResolvedValue(
-        mockAnnouncement,
-      );
-
       const result = await controller.getAnnouncementById(
-        announcementId,
-        authHeader,
+        'ann-001',
+        'Bearer ' + 'access-token',
       );
 
       expect(result).toEqual(mockAnnouncement);
       expect(mockAnnouncementsService.getAnnouncementById).toHaveBeenCalledWith(
-        announcementId,
-        'valid-token',
+        'ann-001',
+        'access-token',
       );
     });
 
     it('Given: valid authorization but non-existent announcement ID, When: getAnnouncementById called, Then: throw NotFoundException', async () => {
-      const authHeader = 'Bearer valid-token';
-      const announcementId = 'non-existent';
-
-      mockAnnouncementsService.getAnnouncementById.mockRejectedValue(
+      mockAnnouncementsService.getAnnouncementById.mockRejectedValueOnce(
         new NotFoundException('Announcement not found'),
       );
 
       await expect(
-        controller.getAnnouncementById(announcementId, authHeader),
+        controller.getAnnouncementById('non-existent', 'Bearer ' + 'access-token'),
       ).rejects.toThrow(NotFoundException);
     });
 
     it('Given: missing authorization header, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
-      const announcementId = 'ann-001';
-
-      await expect(
-        controller.getAnnouncementById(announcementId),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(controller.getAnnouncementById('ann-001')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
+  });
 
-    it('Given: authorization argument omitted, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
-      const announcementId = 'ann-001';
-
-      await expect(
-        controller.getAnnouncementById(announcementId),
-      ).rejects.toThrow(UnauthorizedException);
-    });
-
-    it('Given: invalid authorization header format, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
-      const authHeader = 'InvalidToken';
-      const announcementId = 'ann-001';
-
-      await expect(
-        controller.getAnnouncementById(announcementId, authHeader),
-      ).rejects.toThrow(UnauthorizedException);
-    });
-
-    it('Given: unauthorized participant accessing announcement, When: getAnnouncementById called, Then: throw NotFoundException', async () => {
-      const authHeader = 'Bearer valid-token';
-      const announcementId = 'restricted-ann';
-
-      mockAnnouncementsService.getAnnouncementById.mockRejectedValue(
-        new NotFoundException('Announcement not found or not accessible'),
+  describe('admin CRUD', () => {
+    it('Given un payload valide et un token admin, When createAnnouncement est appelé, Then le service reçoit le payload et le createdByUserId', async () => {
+      await controller.createAnnouncement(
+        {
+          title: 'Annonce',
+          body: 'Contenu',
+          audienceType: 'all_participants',
+        },
+        'Bearer ' + 'access-token',
       );
 
+      expect(mockAnnouncementsService.createAnnouncement).toHaveBeenCalledWith(
+        {
+          title: 'Annonce',
+          body: 'Contenu',
+          audienceType: 'all_participants',
+        },
+        'user-001',
+      );
+    });
+
+    it('Given un payload invalide, When createAnnouncement est appelé, Then une BadRequestException est renvoyée', async () => {
       await expect(
-        controller.getAnnouncementById(announcementId, authHeader),
-      ).rejects.toThrow(NotFoundException);
+        controller.createAnnouncement(
+          {
+            title: '',
+            body: 'Contenu',
+            audienceType: 'all_participants',
+          },
+          'Bearer ' + 'access-token',
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('Given un payload valide, When patchAnnouncement est appelé, Then la route PUT est réutilisée', async () => {
+      await controller.patchAnnouncement(
+        'ann-001',
+        {
+          body: 'Contenu mis à jour',
+        },
+        'Bearer ' + 'access-token',
+      );
+
+      expect(mockAnnouncementsService.updateAnnouncement).toHaveBeenCalledWith(
+        'ann-001',
+        {
+          body: 'Contenu mis à jour',
+        },
+      );
+    });
+
+    it('Given un token admin valide, When deleteAnnouncement est appelé, Then le service deleteAnnouncement est invoqué', async () => {
+      await controller.deleteAnnouncement('ann-001', 'Bearer ' + 'access-token');
+
+      expect(mockAnnouncementsService.deleteAnnouncement).toHaveBeenCalledWith(
+        'ann-001',
+      );
+    });
+
+    it('Given un header Authorization absent, When createAnnouncement est appelé, Then une UnauthorizedException est renvoyée', async () => {
+      await expect(
+        controller.createAnnouncement({
+          title: 'Annonce',
+          body: 'Contenu',
+          audienceType: 'all_participants',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
   });
 });

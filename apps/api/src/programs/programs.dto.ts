@@ -12,6 +12,25 @@ import type { ValidationResult } from '../shared/validation-result.type';
 const publicationStatuses = new Set(['draft', 'published', 'archived']);
 const programVisibilities = new Set(['private', 'participants', 'public']);
 
+export interface ProgramFeatureDto {
+  id: string;
+  programId: string;
+  title: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProgramFeatureDto {
+  title: string;
+  sortOrder?: number;
+}
+
+export interface UpdateProgramFeatureDto {
+  title?: string;
+  sortOrder?: number;
+}
+
 function isValidSlug(value: string): boolean {
   return /^[a-z0-9-]+$/.test(value);
 }
@@ -87,6 +106,62 @@ function assignVisibility(
   (updates as Record<string, unknown>).visibility = visibility;
 }
 
+function assignFeatureRequiredTitle(
+  body: Record<string, unknown>,
+  errors: string[],
+  updates: Partial<CreateProgramFeatureDto>,
+): void {
+  if (!('title' in body)) {
+    errors.push('Le champ title est requis.');
+    return;
+  }
+
+  const title = readTrimmedString(body['title']);
+
+  if (!title) {
+    errors.push('Le champ title est requis.');
+    return;
+  }
+
+  updates.title = title;
+}
+
+function assignFeatureOptionalTitle(
+  body: Record<string, unknown>,
+  errors: string[],
+  updates: UpdateProgramFeatureDto,
+): void {
+  if (!('title' in body)) {
+    return;
+  }
+
+  const title = readTrimmedString(body['title']);
+
+  if (!title) {
+    errors.push('Le champ title est requis.');
+    return;
+  }
+
+  updates.title = title;
+}
+
+function assignFeatureSortOrder<T extends { sortOrder?: number }>(
+  body: Record<string, unknown>,
+  errors: string[],
+  updates: T,
+): void {
+  if (!('sortOrder' in body)) {
+    return;
+  }
+
+  if (!Number.isInteger(body['sortOrder'])) {
+    errors.push('Le champ sortOrder doit être un entier.');
+    return;
+  }
+
+  updates.sortOrder = body['sortOrder'] as number;
+}
+
 export function validateCreateProgramPayload(
   body: unknown,
 ): ValidationResult<CreateProgramDto> {
@@ -150,6 +225,65 @@ export function validateUpdateProgramPayload(
   assignOptionalString(body, 'description', data);
   assignStatus(body, errors, data);
   assignVisibility(body, errors, data);
+
+  if (Object.keys(data).length === 0 && errors.length === 0) {
+    return {
+      valid: false,
+      errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    };
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    data,
+  };
+}
+
+export function validateCreateProgramFeaturePayload(
+  body: unknown,
+): ValidationResult<CreateProgramFeatureDto> {
+  if (!isObjectPayload(body)) {
+    return {
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    };
+  }
+
+  const errors: string[] = [];
+  const data: Partial<CreateProgramFeatureDto> = {};
+
+  assignFeatureRequiredTitle(body, errors, data);
+  assignFeatureSortOrder(body, errors, data);
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    data: data as CreateProgramFeatureDto,
+  };
+}
+
+export function validateUpdateProgramFeaturePayload(
+  body: unknown,
+): ValidationResult<UpdateProgramFeatureDto> {
+  if (!isObjectPayload(body)) {
+    return {
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    };
+  }
+
+  const errors: string[] = [];
+  const data: UpdateProgramFeatureDto = {};
+
+  assignFeatureOptionalTitle(body, errors, data);
+  assignFeatureSortOrder(body, errors, data);
 
   if (Object.keys(data).length === 0 && errors.length === 0) {
     return {

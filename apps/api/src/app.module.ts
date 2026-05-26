@@ -10,6 +10,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { ProgramsModule } from './programs/programs.module';
 import { ResourcesModule } from './resources/resources.module';
 import { resolveApiEnvFilePaths } from './config/environment-files';
+import { ServicesModule } from './services/services.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { SupportModule } from './support/support.module';
 import { UsersModule } from './users/users.module';
@@ -28,6 +29,7 @@ import { UsersModule } from './users/users.module';
     DashboardModule,
     ProgramsModule,
     ResourcesModule,
+    ServicesModule,
     SupportModule,
     UsersModule,
   ],

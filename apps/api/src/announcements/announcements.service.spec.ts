@@ -1,4 +1,8 @@
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import type { AnnouncementDto } from '@kraak/contracts';
 import * as domainUtils from '@kraak/domain';
 import { AnnouncementsService } from './announcements.service';
@@ -72,6 +76,9 @@ describe('AnnouncementsService', () => {
   ) => {
     const base = Promise.resolve(terminalResult) as Promise<TResult> & {
       from?: ReturnType<typeof jest.fn>;
+      insert?: ReturnType<typeof jest.fn>;
+      update?: ReturnType<typeof jest.fn>;
+      delete?: ReturnType<typeof jest.fn>;
       select?: ReturnType<typeof jest.fn>;
       eq?: ReturnType<typeof jest.fn>;
       in?: ReturnType<typeof jest.fn>;
@@ -80,6 +87,9 @@ describe('AnnouncementsService', () => {
       single?: ReturnType<typeof jest.fn>;
     };
 
+    base.insert = jest.fn().mockReturnValue(base);
+    base.update = jest.fn().mockReturnValue(base);
+    base.delete = jest.fn().mockReturnValue(base);
     base.select = jest.fn().mockReturnValue(base);
     base.eq = jest.fn().mockReturnValue(base);
 
@@ -2798,4 +2808,151 @@ describe('AnnouncementsService', () => {
       ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
+
+  describe('admin CRUD', () => {
+    it('Given un payload de création valide, When createAnnouncement est appelé, Then l’annonce est insérée et mappée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-010',
+          title: 'Nouvelle annonce',
+          body: 'Contenu',
+          priority: 'critical',
+          audience_type: 'program',
+          program_id: 'program-1',
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-1',
+          created_at: '2026-05-26T12:00:00.000Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.createAnnouncement(
+          {
+            title: 'Nouvelle annonce',
+            body: 'Contenu',
+            priority: 'critical',
+            audienceType: 'program',
+            programId: 'program-1',
+            status: 'published',
+            publishedAt: '2026-05-26T12:00:00.000Z',
+          },
+          'user-1',
+        ),
+      ).resolves.toMatchObject({
+        id: 'ann-010',
+        audienceType: 'program',
+      });
+
+      expect(mutationQuery.insert).toHaveBeenCalledWith({
+        title: 'Nouvelle annonce',
+        body: 'Contenu',
+        priority: 'critical',
+        audience_type: 'program',
+        program_id: 'program-1',
+        cohort_id: null,
+        status: 'published',
+        published_at: '2026-05-26T12:00:00.000Z',
+        created_by_user_id: 'user-1',
+      });
+    });
+
+    it('Given un payload de mise à jour valide, When updateAnnouncement est appelé, Then l’annonce est mise à jour', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Important Update',
+          body: 'Contenu modifié',
+          priority: 'high',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'archived',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-001', {
+          body: 'Contenu modifié',
+          status: 'archived',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        }),
+      ).resolves.toMatchObject({
+        id: 'ann-001',
+        status: 'archived',
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith({
+        body: 'Contenu modifié',
+        status: 'archived',
+        published_at: '2026-05-26T12:00:00.000Z',
+      });
+    });
+
+    it('Given une annonce existante, When deleteAnnouncement est appelé, Then la suppression est effectuée', async () => {
+      const deleteQuery = createAsyncQuery({
+        data: { id: 'ann-001' },
+        error: null,
+      });
+      deleteQuery.delete = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.select = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.eq = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.single = jest.fn().mockResolvedValue({
+        data: { id: 'ann-001' },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn(() => deleteQuery),
+      });
+
+      await expect(service.deleteAnnouncement('ann-001')).resolves.toBeUndefined();
+      expect(deleteQuery.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given une insertion en erreur, When createAnnouncement est appelé, Then une InternalServerErrorException est levée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: null,
+        error: { message: 'db-error' },
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.createAnnouncement(
+          {
+            title: 'Annonce',
+            body: 'Contenu',
+            audienceType: 'all_participants',
+          },
+          'user-1',
+        ),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+  });
+
 });

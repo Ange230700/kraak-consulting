@@ -1,6 +1,8 @@
 import {
   validateCreateProgramPayload,
+  validateCreateProgramFeaturePayload,
   validateMarkSessionProgressPayload,
+  validateUpdateProgramFeaturePayload,
   validateUpdateProgramPayload,
 } from './programs.dto';
 
@@ -115,6 +117,33 @@ describe('Programs DTO validation', () => {
     expect(result).toEqual({
       valid: false,
       errors: ['Corps de requête invalide.'],
+    });
+  });
+
+  it('Given un payload feature valide, When validateCreateProgramFeaturePayload est appelé, Then le DTO normalisé est renvoyé', () => {
+    const result = validateCreateProgramFeaturePayload({
+      title: ' Session mentorée ',
+      sortOrder: 2,
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        title: 'Session mentorée',
+        sortOrder: 2,
+      },
+    });
+  });
+
+  it('Given un payload feature invalide, When validateUpdateProgramFeaturePayload est appelé, Then les erreurs attendues sont renvoyées', () => {
+    const result = validateUpdateProgramFeaturePayload({
+      title: '',
+      sortOrder: 1.5,
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ title est requis.', 'Le champ sortOrder doit être un entier.'],
     });
   });
 
