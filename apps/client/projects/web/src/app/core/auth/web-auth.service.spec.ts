@@ -1,6 +1,7 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { environment } from '../../../environments/environment';
 import { WebAuthService, WEB_AUTH_STORAGE_KEY } from './web-auth.service';
 
 describe('WebAuthService', () => {
@@ -527,9 +528,151 @@ describe('WebAuthService', () => {
         expect.objectContaining({ method: 'POST' }),
       );
     });
+
+    it('when URL query contains access_token with recovery type, then token is returned directly', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?access_token=query-token-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('query-token-123');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when URL includes token_hash but type is not recovery, then null is returned without verify call', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=signup',
+        ),
+      );
+
+      expect(token).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when verify endpoint responds with a non-ok status, then null is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ message: 'invalid token hash' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBeNull();
+    });
+
+    it('when verify endpoint returns an empty access_token, then null is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: '   ' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBeNull();
+    });
+
+    it('when Supabase URL is missing, then token hash exchange returns null without calling verify', async () => {
+      const originalSupabaseUrl = environment.supabaseUrl;
+
+      environment.supabaseUrl = '';
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl(
+          new URL(
+            'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+          ),
+        );
+
+        expect(token).toBeNull();
+        expect(fetchMock).not.toHaveBeenCalled();
+      } finally {
+        environment.supabaseUrl = originalSupabaseUrl;
+      }
+    });
   });
 
   describe('Given completePasswordRecovery', () => {
+    it('when access token is blank, then an explicit validation error is thrown before any HTTP call', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: '   ',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Le jeton de réinitialisation est requis.');
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when new password length is below 8 characters, then an explicit validation error is thrown', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'short',
+        }),
+      ).rejects.toThrow(
+        'Le mot de passe doit contenir entre 8 et 128 caractères.',
+      );
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when Supabase URL is missing, then an explicit configuration error is thrown', async () => {
+      const originalSupabaseUrl = environment.supabaseUrl;
+
+      environment.supabaseUrl = '';
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await expect(
+          service.completePasswordRecovery({
+            accessToken: 'access-token',
+            newPassword: 'NouveauMotDePasse123!',
+          }),
+        ).rejects.toThrow(
+          'Configuration Supabase manquante pour finaliser la réinitialisation.',
+        );
+
+        expect(fetchMock).not.toHaveBeenCalled();
+      } finally {
+        environment.supabaseUrl = originalSupabaseUrl;
+      }
+    });
+
     it('when Supabase update password succeeds, then success response is returned', async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -568,6 +711,26 @@ describe('WebAuthService', () => {
           newPassword: 'NouveauMotDePasse123!',
         }),
       ).rejects.toThrow('Token invalide ou expiré.');
+    });
+
+    it('when Supabase error response is not JSON, then a fallback error message is thrown', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => {
+          throw new Error('invalid json');
+        },
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Impossible de mettre à jour le mot de passe.');
     });
   });
 
