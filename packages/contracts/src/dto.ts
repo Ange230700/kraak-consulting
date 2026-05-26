@@ -266,6 +266,85 @@ export type CreateArticleDto = Omit<
 >;
 export type UpdateArticleDto = Partial<CreateArticleDto>;
 
+export interface StatisticDto {
+  id: string;
+  label: string;
+  value: string;
+  suffix: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateStatisticDto = Omit<
+  StatisticDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateStatisticDto = Partial<CreateStatisticDto>;
+
+export interface PartnerDto {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreatePartnerDto = Omit<
+  PartnerDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdatePartnerDto = Partial<CreatePartnerDto>;
+
+export interface TestimonialDto {
+  id: string;
+  quote: string;
+  authorName: string;
+  authorRole: string | null;
+  company: string | null;
+  avatarUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTestimonialDto = Omit<
+  TestimonialDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateTestimonialDto = Partial<CreateTestimonialDto>;
+
+export interface TeamMemberDto {
+  id: string;
+  fullName: string;
+  role: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  linkedinUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTeamMemberDto = Omit<
+  TeamMemberDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateTeamMemberDto = Partial<CreateTeamMemberDto>;
+
+export interface CmsHomepageContentDto {
+  statistics: StatisticDto[];
+  partners: PartnerDto[];
+  testimonials: TestimonialDto[];
+  teamMembers: TeamMemberDto[];
+}
+
 // ---------------------------------------------------------------------------
 // AppUser
 // ---------------------------------------------------------------------------

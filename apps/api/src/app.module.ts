@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AnnouncementsModule } from './announcements/announcements.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AuthModule } from './auth/auth.module';
+import { CmsModule } from './cms/cms.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ProgramsModule } from './programs/programs.module';
 import { ResourcesModule } from './resources/resources.module';
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module';
     }),
     SupabaseModule,
     AuthModule,
+    CmsModule,
     AnnouncementsModule,
     ArticlesModule,
     DashboardModule,
