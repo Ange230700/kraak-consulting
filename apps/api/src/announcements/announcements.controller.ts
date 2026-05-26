@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Controller,
   Delete,
   Get,
@@ -27,7 +26,10 @@ import {
 import type { AnnouncementDto } from '@kraak/contracts';
 import { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
-import { requireAdminAccess } from '../shared/admin-access.utils';
+import {
+  requireAdminAccess,
+  requireAdminSession,
+} from '../shared/admin-access.utils';
 import {
   validateCreateAnnouncementPayload,
   validateUpdateAnnouncementPayload,
@@ -256,23 +258,10 @@ export class AnnouncementsController {
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
   ): Promise<AnnouncementDto> {
-    const accessToken = extractAccessToken(authorizationHeader);
-
-    if (!accessToken.valid) {
-      throw new UnauthorizedException({
-        success: false,
-        message: accessToken.error,
-      });
-    }
-
-    const session = await this.authService.getSession(accessToken.data);
-
-    if (session.profile.appUser.role !== 'admin') {
-      throw new ForbiddenException({
-        success: false,
-        message: 'Accès admin requis.',
-      });
-    }
+    const { session } = await requireAdminSession(
+      this.authService,
+      authorizationHeader,
+    );
 
     const validated = validateCreateAnnouncementPayload(body);
 

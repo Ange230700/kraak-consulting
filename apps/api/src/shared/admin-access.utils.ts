@@ -2,10 +2,14 @@ import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import type { AuthService } from '../auth/auth.service';
 import { extractAccessToken } from '../auth/auth.dto';
 
-export async function requireAdminAccess(
+type AdminSession = Awaited<
+  ReturnType<Pick<AuthService, 'getSession'>['getSession']>
+>;
+
+export async function requireAdminSession(
   authService: Pick<AuthService, 'getSession'>,
   authorizationHeader?: string,
-): Promise<string> {
+): Promise<{ accessToken: string; session: AdminSession }> {
   const accessToken = extractAccessToken(authorizationHeader);
 
   if (!accessToken.valid) {
@@ -24,5 +28,19 @@ export async function requireAdminAccess(
     });
   }
 
-  return accessToken.data;
+  return {
+    accessToken: accessToken.data,
+    session,
+  };
+}
+
+export async function requireAdminAccess(
+  authService: Pick<AuthService, 'getSession'>,
+  authorizationHeader?: string,
+): Promise<string> {
+  const { accessToken } = await requireAdminSession(
+    authService,
+    authorizationHeader,
+  );
+  return accessToken;
 }
