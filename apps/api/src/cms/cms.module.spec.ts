@@ -13,9 +13,14 @@ describe('CmsModule', () => {
       CmsModule,
     );
     const providers = Reflect.getMetadata(MODULE_METADATA.PROVIDERS, CmsModule);
-    const exportsMetadata = Reflect.getMetadata(MODULE_METADATA.EXPORTS, CmsModule);
+    const exportsMetadata = Reflect.getMetadata(
+      MODULE_METADATA.EXPORTS,
+      CmsModule,
+    );
 
-    expect(imports).toEqual(expect.arrayContaining([AuthModule, SupabaseModule]));
+    expect(imports).toEqual(
+      expect.arrayContaining([AuthModule, SupabaseModule]),
+    );
     expect(controllers).toEqual(expect.arrayContaining([CmsController]));
     expect(providers).toEqual(expect.arrayContaining([CmsService]));
     expect(exportsMetadata).toEqual(expect.arrayContaining([CmsService]));

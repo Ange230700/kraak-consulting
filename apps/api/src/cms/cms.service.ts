@@ -84,12 +84,14 @@ export class CmsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   async getHomepageContent(): Promise<CmsHomepageContentDto> {
-    const [statistics, partners, testimonials, teamMembers] = await Promise.all([
-      this.listPublishedStatistics(),
-      this.listPublishedPartners(),
-      this.listPublishedTestimonials(),
-      this.listPublishedTeamMembers(),
-    ]);
+    const [statistics, partners, testimonials, teamMembers] = await Promise.all(
+      [
+        this.listPublishedStatistics(),
+        this.listPublishedPartners(),
+        this.listPublishedTestimonials(),
+        this.listPublishedTeamMembers(),
+      ],
+    );
 
     return {
       statistics,
@@ -240,7 +242,10 @@ export class CmsService {
     return this.mapPartnerRow(data as PartnerRow);
   }
 
-  async updatePartner(id: string, payload: UpdatePartnerDto): Promise<PartnerDto> {
+  async updatePartner(
+    id: string,
+    payload: UpdatePartnerDto,
+  ): Promise<PartnerDto> {
     const adminClient = this.supabaseService.getClient();
     const updatePayload: Record<string, unknown> = {};
 
