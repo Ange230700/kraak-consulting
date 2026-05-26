@@ -366,9 +366,9 @@ describe('ProgramsService', () => {
       throw new Error(`Unexpected table ${table}`);
     });
 
-    await expect(service.listProgramFeatures('program-1')).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
+    await expect(
+      service.listProgramFeatures('program-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('Given un programme existant, When createProgramFeature est appelé, Then la fonctionnalité est créée', async () => {
