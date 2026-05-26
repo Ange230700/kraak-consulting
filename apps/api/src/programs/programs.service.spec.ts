@@ -400,7 +400,11 @@ describe('ProgramsService', () => {
       'program_id',
       'program-1',
     );
-    expect(featureMutationQuery.eq).toHaveBeenNthCalledWith(2, 'id', 'feature-1');
+    expect(featureMutationQuery.eq).toHaveBeenNthCalledWith(
+      2,
+      'id',
+      'feature-1',
+    );
   });
 
   it('Given une fonctionnalité programme existante, When deleteProgramFeature est appelé, Then la suppression est effectuée', async () => {

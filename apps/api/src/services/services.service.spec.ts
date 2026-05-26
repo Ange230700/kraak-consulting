@@ -315,7 +315,11 @@ describe('ServicesService', () => {
       sortOrder: 2,
     });
 
-    expect(mutationQuery.eq).toHaveBeenNthCalledWith(1, 'service_id', 'service-1');
+    expect(mutationQuery.eq).toHaveBeenNthCalledWith(
+      1,
+      'service_id',
+      'service-1',
+    );
     expect(mutationQuery.eq).toHaveBeenNthCalledWith(2, 'id', 'detail-1');
   });
 

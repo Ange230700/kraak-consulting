@@ -143,7 +143,46 @@ describe('Programs DTO validation', () => {
 
     expect(result).toEqual({
       valid: false,
-      errors: ['Le champ title est requis.', 'Le champ sortOrder doit être un entier.'],
+      errors: [
+        'Le champ title est requis.',
+        'Le champ sortOrder doit être un entier.',
+      ],
+    });
+  });
+
+  it('Given un payload feature création invalide, When validateCreateProgramFeaturePayload est appelé, Then les erreurs sont renvoyées', () => {
+    const result = validateCreateProgramFeaturePayload({
+      title: ' ',
+      sortOrder: 2.5,
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ title est requis.',
+        'Le champ sortOrder doit être un entier.',
+      ],
+    });
+  });
+
+  it('Given un payload feature update vide, When validateUpdateProgramFeaturePayload est appelé, Then une erreur métier est renvoyée', () => {
+    const result = validateUpdateProgramFeaturePayload({});
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    });
+  });
+
+  it('Given un body non objet feature, When les validateurs feature sont appelés, Then une erreur corps invalide est renvoyée', () => {
+    expect(validateCreateProgramFeaturePayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+
+    expect(validateUpdateProgramFeaturePayload('invalid')).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
     });
   });
 
@@ -189,6 +228,17 @@ describe('Programs DTO validation', () => {
     expect(result).toEqual({
       valid: false,
       errors: ['Corps de requête invalide.'],
+    });
+  });
+
+  it('Given un slug vide en mise à jour, When validateUpdateProgramPayload est appelé, Then une erreur slug requis est renvoyée', () => {
+    const result = validateUpdateProgramPayload({
+      slug: '   ',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ slug est requis.'],
     });
   });
 });

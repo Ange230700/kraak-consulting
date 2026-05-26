@@ -50,7 +50,9 @@ describe('AnnouncementsController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    mockAnnouncementsService.listAnnouncements.mockResolvedValue(mockListResponse);
+    mockAnnouncementsService.listAnnouncements.mockResolvedValue(
+      mockListResponse,
+    );
     mockAnnouncementsService.getAnnouncementById.mockResolvedValue(
       mockAnnouncement,
     );
@@ -101,7 +103,11 @@ describe('AnnouncementsController', () => {
 
   describe('listAnnouncements', () => {
     it('Given: valid authorization header, When: listAnnouncements called, Then: return list of announcements', async () => {
-      const result = await controller.listAnnouncements('Bearer ' + 'access-token', 1, 20);
+      const result = await controller.listAnnouncements(
+        'Bearer ' + 'access-token',
+        1,
+        20,
+      );
 
       expect(result).toEqual(mockListResponse);
       expect(mockAnnouncementsService.listAnnouncements).toHaveBeenCalledWith(
@@ -123,9 +129,9 @@ describe('AnnouncementsController', () => {
     });
 
     it('Given: invalid authorization header format, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
-      await expect(controller.listAnnouncements('InvalidToken')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        controller.listAnnouncements('InvalidToken'),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -149,7 +155,10 @@ describe('AnnouncementsController', () => {
       );
 
       await expect(
-        controller.getAnnouncementById('non-existent', 'Bearer ' + 'access-token'),
+        controller.getAnnouncementById(
+          'non-existent',
+          'Bearer ' + 'access-token',
+        ),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -212,7 +221,10 @@ describe('AnnouncementsController', () => {
     });
 
     it('Given un token admin valide, When deleteAnnouncement est appelé, Then le service deleteAnnouncement est invoqué', async () => {
-      await controller.deleteAnnouncement('ann-001', 'Bearer ' + 'access-token');
+      await controller.deleteAnnouncement(
+        'ann-001',
+        'Bearer ' + 'access-token',
+      );
 
       expect(mockAnnouncementsService.deleteAnnouncement).toHaveBeenCalledWith(
         'ann-001',

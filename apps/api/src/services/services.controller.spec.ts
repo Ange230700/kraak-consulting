@@ -241,7 +241,10 @@ describe('ServicesController', () => {
 
   it('Given un header Authorization absent, When createService est appelé, Then une UnauthorizedException est renvoyée', async () => {
     await expect(
-      controller.createService({ title: 'Conseil', description: 'Description' }),
+      controller.createService({
+        title: 'Conseil',
+        description: 'Description',
+      }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });
