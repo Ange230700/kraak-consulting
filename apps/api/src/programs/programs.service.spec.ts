@@ -302,6 +302,14 @@ describe('ProgramsService', () => {
   });
 
   it('Given des fonctionnalités programme existantes, When listProgramFeatures est appelé, Then la liste triée est mappée', async () => {
+    const programQuery = createSingleRowQuery({
+      data: {
+        id: 'program-1',
+        status: 'published',
+        visibility: 'public',
+      },
+      error: null,
+    });
     const featureQuery = createListQuery({
       data: [
         {
@@ -316,7 +324,17 @@ describe('ProgramsService', () => {
       error: null,
     });
 
-    adminClient.from.mockReturnValue(featureQuery);
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
 
     await expect(service.listProgramFeatures('program-1')).resolves.toEqual([
       {
@@ -328,6 +346,29 @@ describe('ProgramsService', () => {
         updatedAt: '2026-04-29T10:00:00.000Z',
       },
     ]);
+  });
+
+  it('Given un programme non public, When listProgramFeatures est appelé, Then une NotFoundException est renvoyée', async () => {
+    const programQuery = createSingleRowQuery({
+      data: {
+        id: 'program-1',
+        status: 'draft',
+        visibility: 'private',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(service.listProgramFeatures('program-1')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('Given un programme existant, When createProgramFeature est appelé, Then la fonctionnalité est créée', async () => {

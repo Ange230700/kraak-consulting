@@ -266,6 +266,17 @@ export function validateUpdateAnnouncementPayload(
   assignEnumField(body, 'status', publicationStatuses, errors, data);
   assignNullableDateTimeField(body, errors, data);
 
+  const hasAudienceScopeField =
+    data.audienceType !== undefined ||
+    data.programId !== undefined ||
+    data.cohortId !== undefined;
+
+  if (hasAudienceScopeField && !data.audienceType) {
+    errors.push(
+      'Le champ audienceType est requis lorsque programId ou cohortId sont fournis.',
+    );
+  }
+
   if (data.audienceType) {
     validateAudienceScope(data, errors);
   }

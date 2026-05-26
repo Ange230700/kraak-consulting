@@ -398,6 +398,8 @@ export class ProgramsService {
   }
 
   async listProgramFeatures(programId: string): Promise<ProgramFeatureDto[]> {
+    await this.ensureProgramIsPublic(programId);
+
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('program_feature')
@@ -942,6 +944,31 @@ export class ProgramsService {
       .maybeSingle();
 
     if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable.',
+      });
+    }
+  }
+
+  private async ensureProgramIsPublic(programId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select('id, status, visibility')
+      .eq('id', programId)
+      .maybeSingle();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Programme introuvable.',
+      });
+    }
+
+    const program = data as Pick<ProgramRow, 'status' | 'visibility'>;
+
+    if (program.status !== 'published' || program.visibility !== 'public') {
       throw new NotFoundException({
         success: false,
         message: 'Programme introuvable.',

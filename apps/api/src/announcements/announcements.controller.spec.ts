@@ -188,6 +188,7 @@ describe('AnnouncementsController', () => {
         },
         'user-001',
       );
+      expect(authService.getSession).toHaveBeenCalledTimes(1);
     });
 
     it('Given un payload invalide, When createAnnouncement est appelé, Then une BadRequestException est renvoyée', async () => {

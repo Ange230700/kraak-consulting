@@ -73,4 +73,17 @@ describe('Announcements DTO validation', () => {
       errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
     });
   });
+
+  it('Given un programId sans audienceType, When validateUpdateAnnouncementPayload est appelé, Then une erreur de cohérence est renvoyée', () => {
+    const result = validateUpdateAnnouncementPayload({
+      programId: 'program-1',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ audienceType est requis lorsque programId ou cohortId sont fournis.',
+      ],
+    });
+  });
 });

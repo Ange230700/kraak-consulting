@@ -522,12 +522,12 @@ export class AnnouncementsService {
     status: PublicationStatusValue;
     publishedAt?: string | null;
   }): string | null {
-    if (params.publishedAt !== undefined) {
-      return params.publishedAt;
-    }
-
     if (params.status === 'draft') {
       return null;
+    }
+
+    if (params.publishedAt) {
+      return params.publishedAt;
     }
 
     return new Date().toISOString();
