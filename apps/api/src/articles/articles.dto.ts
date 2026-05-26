@@ -326,6 +326,14 @@ type TaxonomyUpdatePayload = UpdateCategoryDto | UpdateTagDto;
 
 function validateTaxonomyCreatePayload(
   body: unknown,
+  options: { allowDescription: true },
+): ValidationResult<CreateCategoryDto>;
+function validateTaxonomyCreatePayload(
+  body: unknown,
+  options: { allowDescription: false },
+): ValidationResult<CreateTagDto>;
+function validateTaxonomyCreatePayload(
+  body: unknown,
   options: { allowDescription: boolean },
 ): ValidationResult<TaxonomyCreatePayload> {
   if (!isObjectPayload(body)) {
@@ -365,6 +373,14 @@ function validateTaxonomyCreatePayload(
   };
 }
 
+function validateTaxonomyUpdatePayload(
+  body: unknown,
+  options: { allowDescription: true },
+): ValidationResult<UpdateCategoryDto>;
+function validateTaxonomyUpdatePayload(
+  body: unknown,
+  options: { allowDescription: false },
+): ValidationResult<UpdateTagDto>;
 function validateTaxonomyUpdatePayload(
   body: unknown,
   options: { allowDescription: boolean },
@@ -425,7 +441,7 @@ export function validateCreateCategoryPayload(
 ): ValidationResult<CreateCategoryDto> {
   return validateTaxonomyCreatePayload(body, {
     allowDescription: true,
-  }) as ValidationResult<CreateCategoryDto>;
+  });
 }
 
 export function validateUpdateCategoryPayload(
@@ -433,7 +449,7 @@ export function validateUpdateCategoryPayload(
 ): ValidationResult<UpdateCategoryDto> {
   return validateTaxonomyUpdatePayload(body, {
     allowDescription: true,
-  }) as ValidationResult<UpdateCategoryDto>;
+  });
 }
 
 export function validateCreateTagPayload(
@@ -441,7 +457,7 @@ export function validateCreateTagPayload(
 ): ValidationResult<CreateTagDto> {
   return validateTaxonomyCreatePayload(body, {
     allowDescription: false,
-  }) as ValidationResult<CreateTagDto>;
+  });
 }
 
 export function validateUpdateTagPayload(
@@ -449,5 +465,5 @@ export function validateUpdateTagPayload(
 ): ValidationResult<UpdateTagDto> {
   return validateTaxonomyUpdatePayload(body, {
     allowDescription: false,
-  }) as ValidationResult<UpdateTagDto>;
+  });
 }

@@ -62,8 +62,41 @@ ignore simplement les chemins absents.
 ```bash
 # Avec un token local (ne jamais committer)
 SONAR_TOKEN=*** SONAR_HOST_URL=https://sonarcloud.io \
-  npx @sonar/scan
+  pnpm sonar
 ```
+
+## Bootstrap local automatique du token (recommande)
+
+Objectif: charger automatiquement `SONAR_TOKEN` sans variable globale Windows.
+
+1. Creer un fichier local non versionne a la racine:
+   - Copier `.env.local.example` vers `.env.local`
+   - Renseigner `SONAR_TOKEN`
+2. Ajouter le chargement au profil shell.
+
+La commande `pnpm sonar` utilise ensuite `scripts/sonarcloud-scan.mjs`, qui
+lit `.env.local` automatiquement et lance `sonar-scanner` via `pnpm`.
+
+### Git Bash (`~/.bashrc`)
+
+```bash
+if [[ -f "$HOME/kraak-consulting/scripts/local/load-env-local.sh" ]]; then
+  source "$HOME/kraak-consulting/scripts/local/load-env-local.sh"
+fi
+```
+
+### PowerShell (`$PROFILE`)
+
+```powershell
+$loader = Join-Path $HOME "kraak-consulting/scripts/local/load-env-local.ps1"
+if (Test-Path $loader) {
+  . $loader
+}
+```
+
+1. Redemarrer le terminal (ou VS Code) puis verifier:
+   - Git Bash: `echo "$SONAR_TOKEN"`
+   - PowerShell: `echo $env:SONAR_TOKEN`
 
 ## Points d'attention
 
