@@ -138,4 +138,225 @@ describe('cms.dto validators', () => {
       errors: ['Le champ logoUrl est requis et doit être une URL valide.'],
     });
   });
+
+  it('rejects invalid request body shape for all CMS validators', () => {
+    expect(validateCreateStatisticPayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateUpdateStatisticPayload('invalid')).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateCreatePartnerPayload(undefined)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateUpdatePartnerPayload(42)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateCreateTestimonialPayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateUpdateTestimonialPayload('invalid')).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateCreateTeamMemberPayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+    expect(validateUpdateTeamMemberPayload('invalid')).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+  });
+
+  it('rejects malformed create statistic payload', () => {
+    const result = validateCreateStatisticPayload({
+      label: ' ',
+      value: ' ',
+      sortOrder: -1,
+      status: 'invalid',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ label est requis.',
+        'Le champ value est requis.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ],
+    });
+  });
+
+  it('rejects empty update statistic payload', () => {
+    const result = validateUpdateStatisticPayload({});
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    });
+  });
+
+  it('validates create partner payload with nullable website', () => {
+    const result = validateCreatePartnerPayload({
+      name: 'KRAAK Partner',
+      logoUrl: 'https://cdn.kraak.test/logo.png',
+      websiteUrl: null,
+      sortOrder: 3,
+      status: 'draft',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        name: 'KRAAK Partner',
+        logoUrl: 'https://cdn.kraak.test/logo.png',
+        websiteUrl: null,
+        sortOrder: 3,
+        status: 'draft',
+      },
+    });
+  });
+
+  it('rejects invalid update partner payload fields', () => {
+    const result = validateUpdatePartnerPayload({
+      name: ' ',
+      websiteUrl: 'not-a-url',
+      sortOrder: -3,
+      status: 'invalid',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ name est requis.',
+        'Le champ websiteUrl est invalide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ],
+    });
+  });
+
+  it('validates create testimonial payload with nullable profile fields', () => {
+    const result = validateCreateTestimonialPayload({
+      quote: 'Programme transformateur',
+      authorName: 'Awa',
+      authorRole: null,
+      company: null,
+      avatarUrl: null,
+      sortOrder: 0,
+      status: 'published',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        quote: 'Programme transformateur',
+        authorName: 'Awa',
+        authorRole: null,
+        company: null,
+        avatarUrl: null,
+        sortOrder: 0,
+        status: 'published',
+      },
+    });
+  });
+
+  it('rejects empty and malformed update testimonial payload', () => {
+    expect(validateUpdateTestimonialPayload({})).toEqual({
+      valid: false,
+      errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    });
+
+    const result = validateUpdateTestimonialPayload({
+      quote: ' ',
+      authorName: ' ',
+      avatarUrl: 'not-a-url',
+      sortOrder: -1,
+      status: 'invalid',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ quote est requis.',
+        'Le champ authorName est requis.',
+        'Le champ avatarUrl est invalide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ],
+    });
+  });
+
+  it('rejects malformed create team member payload', () => {
+    const result = validateCreateTeamMemberPayload({
+      fullName: ' ',
+      role: ' ',
+      avatarUrl: 'not-a-url',
+      linkedinUrl: 'not-a-url',
+      sortOrder: -1,
+      status: 'invalid',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ fullName est requis.',
+        'Le champ role est requis.',
+        'Le champ avatarUrl est invalide.',
+        'Le champ linkedinUrl est invalide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ],
+    });
+  });
+
+  it('validates update team member payload nullable fields', () => {
+    const result = validateUpdateTeamMemberPayload({
+      bio: null,
+      avatarUrl: null,
+      linkedinUrl: null,
+      sortOrder: 10,
+      status: 'archived',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        bio: null,
+        avatarUrl: null,
+        linkedinUrl: null,
+        sortOrder: 10,
+        status: 'archived',
+      },
+    });
+  });
+
+  it('rejects malformed update team member payload', () => {
+    const result = validateUpdateTeamMemberPayload({
+      fullName: ' ',
+      role: ' ',
+      avatarUrl: 'bad-url',
+      linkedinUrl: 'bad-url',
+      sortOrder: -1,
+      status: 'invalid',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ fullName est requis.',
+        'Le champ role est requis.',
+        'Le champ avatarUrl est invalide.',
+        'Le champ linkedinUrl est invalide.',
+        'Le champ sortOrder doit être un entier positif ou nul.',
+        'Le champ status est invalide.',
+      ],
+    });
+  });
 });
