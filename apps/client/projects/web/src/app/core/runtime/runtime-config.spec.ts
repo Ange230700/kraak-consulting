@@ -3,10 +3,13 @@ import {
   getRuntimeConfig,
   isParticipantAreaEnabled,
   resolveApiBaseUrl,
+  resolveSiteUrl,
 } from './runtime-config';
 
 const TEST_RUNTIME_API_BASE_URL = 'https://api.kraak.example';
 const TEST_FALLBACK_API_BASE_URL = 'https://fallback.example';
+const TEST_RUNTIME_SITE_URL = 'https://site.kraak.example';
+const TEST_FALLBACK_SITE_URL = 'https://fallback-site.example';
 
 describe('Runtime config helpers', () => {
   const originalConfig = globalThis.__KRAAK_RUNTIME_CONFIG__;
@@ -90,6 +93,34 @@ describe('Runtime config helpers', () => {
       expect(resolveApiBaseUrl(`${TEST_FALLBACK_API_BASE_URL}/`)).toBe(
         TEST_FALLBACK_API_BASE_URL,
       );
+    });
+  });
+
+  describe('Given the runtime config exposes siteUrl', () => {
+    it('When resolveSiteUrl is called Then it returns the runtime value without trailing slash', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = {
+        siteUrl: `${TEST_RUNTIME_SITE_URL}/`,
+      };
+
+      expect(resolveSiteUrl(TEST_FALLBACK_SITE_URL)).toBe(
+        TEST_RUNTIME_SITE_URL,
+      );
+    });
+  });
+
+  describe('Given the runtime config has no siteUrl', () => {
+    it('When resolveSiteUrl is called Then it returns the fallback value', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
+
+      expect(resolveSiteUrl(`${TEST_FALLBACK_SITE_URL}/`)).toBe(
+        TEST_FALLBACK_SITE_URL,
+      );
+    });
+
+    it('When resolveSiteUrl is called without fallback Then it returns an empty string', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
+
+      expect(resolveSiteUrl()).toBe('');
     });
   });
 });

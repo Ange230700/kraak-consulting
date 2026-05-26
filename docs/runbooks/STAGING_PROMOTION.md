@@ -6,7 +6,8 @@
 
 Voir aussi : [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environment.md),
 [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md),
-[`RELEASE_PROD`](RELEASE_PROD.md), [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md).
+[`RELEASE_PROD`](RELEASE_PROD.md), [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md),
+[`RENDER_WEB_TRANSITION`](RENDER_WEB_TRANSITION.md).
 
 ---
 
@@ -118,8 +119,9 @@ Si `git merge --ff-only` échoue :
 
 - **Render** : `https://kraak-api-staging.onrender.com/health` retourne
   `status: ok` et le `version` attendu.
-- **Vercel** : la home staging répond HTTP 200, marque KRAAK visible, pas
-  d'erreur console bloquante.
+- **Web staging actif** : la home staging répond HTTP 200, marque KRAAK
+  visible, pas d'erreur console bloquante (Vercel ou Render selon la phase de
+  transition).
 - **Supabase** : aucune migration en attente
   (`pnpm supabase db diff --linked` doit être vide).
 

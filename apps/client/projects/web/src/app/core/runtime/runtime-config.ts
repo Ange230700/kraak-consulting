@@ -2,6 +2,7 @@ import { environment } from '../../../environments/environment';
 
 interface KraakRuntimeConfig {
   readonly apiBaseUrl?: string;
+  readonly siteUrl?: string;
   readonly supabaseUrl?: string;
   readonly supabasePublishableKey?: string;
   readonly enableParticipantArea?: boolean;
@@ -45,6 +46,16 @@ export function resolveApiBaseUrl(fallback = ''): string {
 
   if (runtimeApiBaseUrl) {
     return stripTrailingSlashes(runtimeApiBaseUrl);
+  }
+
+  return stripTrailingSlashes(fallback);
+}
+
+export function resolveSiteUrl(fallback = ''): string {
+  const runtimeSiteUrl = getRuntimeConfig().siteUrl?.trim();
+
+  if (runtimeSiteUrl) {
+    return stripTrailingSlashes(runtimeSiteUrl);
   }
 
   return stripTrailingSlashes(fallback);

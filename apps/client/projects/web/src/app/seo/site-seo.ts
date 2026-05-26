@@ -1,5 +1,6 @@
 import siteSeoDefinitions from './site-seo.json';
 import blogSitemapDefinitions from './blog-sitemap-pages.json';
+import { resolveSiteUrl } from '../core/runtime/runtime-config';
 
 export type SitemapChangeFrequency =
   | 'always'
@@ -62,8 +63,11 @@ export const normalizeSiteUrl = (siteUrl: string): string =>
 
 export const resolvePublicSiteUrl = (siteUrl?: string): string => {
   const runtimeSiteUrl = runtimeGlobals.process?.env?.['PUBLIC_SITE_URL'] ?? '';
+  const runtimeConfigSiteUrl = resolveSiteUrl('');
 
-  return normalizeSiteUrl(runtimeSiteUrl || siteUrl || DEFAULT_SITE_URL);
+  return normalizeSiteUrl(
+    runtimeSiteUrl || runtimeConfigSiteUrl || siteUrl || DEFAULT_SITE_URL,
+  );
 };
 
 export const buildAbsoluteUrl = (path: string, siteUrl: string): string => {
