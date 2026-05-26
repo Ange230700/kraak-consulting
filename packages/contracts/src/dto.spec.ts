@@ -37,13 +37,26 @@ import type {
   CreateNotificationDto,
   SupportRequestDto,
   CreateSupportRequestDto,
+  CreatePartnerDto,
+  CreateStatisticDto,
   CreateTagDto,
+  CreateTeamMemberDto,
+  CreateTestimonialDto,
+  CmsHomepageContentDto,
+  PartnerDto,
+  StatisticDto,
   TagDto,
+  TeamMemberDto,
+  TestimonialDto,
   UpdateSupportRequestDto,
   UpdateAuthorDto,
   UpdateArticleDto,
   UpdateCategoryDto,
+  UpdatePartnerDto,
+  UpdateStatisticDto,
   UpdateTagDto,
+  UpdateTeamMemberDto,
+  UpdateTestimonialDto,
   DashboardAggregateDto,
   DashboardProgramSummaryDto,
   DashboardSessionReminderDto,
@@ -368,6 +381,109 @@ describe('ArticleDto', () => {
       .toEqualTypeOf<string[]>();
     expectTypeOf<CreateArticleDto>().not.toHaveProperty('id');
     expectTypeOf<UpdateArticleDto>().toMatchTypeOf<Partial<CreateArticleDto>>();
+  });
+});
+
+describe('StatisticDto', () => {
+  it('Given a homepage statistic contract When inspected Then required fields are exposed', () => {
+    expectTypeOf<StatisticDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<StatisticDto>().toHaveProperty('label').toBeString();
+    expectTypeOf<StatisticDto>().toHaveProperty('value').toBeString();
+    expectTypeOf<StatisticDto>()
+      .toHaveProperty('suffix')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<StatisticDto>().toHaveProperty('sortOrder').toBeNumber();
+    expectTypeOf<StatisticDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<PublicationStatusValue>();
+  });
+
+  it('Given create and update statistic DTOs Then update stays partial', () => {
+    expectTypeOf<CreateStatisticDto>().toHaveProperty('label').toBeString();
+    expectTypeOf<UpdateStatisticDto>().toMatchTypeOf<
+      Partial<CreateStatisticDto>
+    >();
+  });
+});
+
+describe('PartnerDto', () => {
+  it('Given a homepage partner contract When inspected Then required fields are exposed', () => {
+    expectTypeOf<PartnerDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<PartnerDto>().toHaveProperty('name').toBeString();
+    expectTypeOf<PartnerDto>().toHaveProperty('logoUrl').toBeString();
+    expectTypeOf<PartnerDto>()
+      .toHaveProperty('websiteUrl')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<PartnerDto>().toHaveProperty('sortOrder').toBeNumber();
+    expectTypeOf<PartnerDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<PublicationStatusValue>();
+  });
+
+  it('Given create and update partner DTOs Then update stays partial', () => {
+    expectTypeOf<CreatePartnerDto>().toHaveProperty('name').toBeString();
+    expectTypeOf<UpdatePartnerDto>().toMatchTypeOf<Partial<CreatePartnerDto>>();
+  });
+});
+
+describe('TestimonialDto', () => {
+  it('Given a homepage testimonial contract When inspected Then required fields are exposed', () => {
+    expectTypeOf<TestimonialDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<TestimonialDto>().toHaveProperty('quote').toBeString();
+    expectTypeOf<TestimonialDto>().toHaveProperty('authorName').toBeString();
+    expectTypeOf<TestimonialDto>()
+      .toHaveProperty('avatarUrl')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<TestimonialDto>().toHaveProperty('sortOrder').toBeNumber();
+    expectTypeOf<TestimonialDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<PublicationStatusValue>();
+  });
+
+  it('Given create and update testimonial DTOs Then update stays partial', () => {
+    expectTypeOf<CreateTestimonialDto>().toHaveProperty('quote').toBeString();
+    expectTypeOf<UpdateTestimonialDto>().toMatchTypeOf<
+      Partial<CreateTestimonialDto>
+    >();
+  });
+});
+
+describe('TeamMemberDto', () => {
+  it('Given a team member contract When inspected Then required fields are exposed', () => {
+    expectTypeOf<TeamMemberDto>().toHaveProperty('id').toBeString();
+    expectTypeOf<TeamMemberDto>().toHaveProperty('fullName').toBeString();
+    expectTypeOf<TeamMemberDto>().toHaveProperty('role').toBeString();
+    expectTypeOf<TeamMemberDto>()
+      .toHaveProperty('linkedinUrl')
+      .toEqualTypeOf<string | null>();
+    expectTypeOf<TeamMemberDto>().toHaveProperty('sortOrder').toBeNumber();
+    expectTypeOf<TeamMemberDto>()
+      .toHaveProperty('status')
+      .toEqualTypeOf<PublicationStatusValue>();
+  });
+
+  it('Given create and update team member DTOs Then update stays partial', () => {
+    expectTypeOf<CreateTeamMemberDto>().toHaveProperty('fullName').toBeString();
+    expectTypeOf<UpdateTeamMemberDto>().toMatchTypeOf<
+      Partial<CreateTeamMemberDto>
+    >();
+  });
+});
+
+describe('CmsHomepageContentDto', () => {
+  it('Given homepage content DTO When inspected Then all sections are typed as lists', () => {
+    expectTypeOf<CmsHomepageContentDto>()
+      .toHaveProperty('statistics')
+      .toEqualTypeOf<StatisticDto[]>();
+    expectTypeOf<CmsHomepageContentDto>()
+      .toHaveProperty('partners')
+      .toEqualTypeOf<PartnerDto[]>();
+    expectTypeOf<CmsHomepageContentDto>()
+      .toHaveProperty('testimonials')
+      .toEqualTypeOf<TestimonialDto[]>();
+    expectTypeOf<CmsHomepageContentDto>()
+      .toHaveProperty('teamMembers')
+      .toEqualTypeOf<TeamMemberDto[]>();
   });
 });
 
