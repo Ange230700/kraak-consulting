@@ -104,13 +104,15 @@ export function validateCreateStatisticPayload(
     return { valid: false, errors };
   }
 
+  const normalizedSortOrder = sortOrder as number;
+
   return {
     valid: true,
     data: {
       label,
       value,
       suffix,
-      sortOrder,
+      sortOrder: normalizedSortOrder,
       status: status as CreateStatisticDto['status'],
     },
   };
@@ -218,13 +220,16 @@ export function validateCreatePartnerPayload(
     return { valid: false, errors };
   }
 
+  const normalizedSortOrder = sortOrder as number;
+  const normalizedLogoUrl = logoUrlResult.value as string;
+
   return {
     valid: true,
     data: {
       name,
-      logoUrl: logoUrlResult.value,
+      logoUrl: normalizedLogoUrl,
       websiteUrl: websiteUrlResult.value,
-      sortOrder,
+      sortOrder: normalizedSortOrder,
       status: status as CreatePartnerDto['status'],
     },
   };
@@ -339,6 +344,8 @@ export function validateCreateTestimonialPayload(
     return { valid: false, errors };
   }
 
+  const normalizedSortOrder = sortOrder as number;
+
   return {
     valid: true,
     data: {
@@ -347,7 +354,7 @@ export function validateCreateTestimonialPayload(
       authorRole,
       company,
       avatarUrl: avatarUrlResult.value,
-      sortOrder,
+      sortOrder: normalizedSortOrder,
       status: status as CreateTestimonialDto['status'],
     },
   };
@@ -474,6 +481,8 @@ export function validateCreateTeamMemberPayload(
     return { valid: false, errors };
   }
 
+  const normalizedSortOrder = sortOrder as number;
+
   return {
     valid: true,
     data: {
@@ -482,7 +491,7 @@ export function validateCreateTeamMemberPayload(
       bio,
       avatarUrl: avatarUrlResult.value,
       linkedinUrl: linkedinUrlResult.value,
-      sortOrder,
+      sortOrder: normalizedSortOrder,
       status: status as CreateTeamMemberDto['status'],
     },
   };
