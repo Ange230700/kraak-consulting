@@ -80,6 +80,31 @@ const marketingRoutes: Routes = [
     () => import('./features/legal/politique-de-confidentialite.page'),
   ),
   {
+    path: 'auth/reset',
+    title: 'Finaliser la réinitialisation | KRAAK Consulting',
+    data: {
+      seo: {
+        path: 'auth/reset',
+        title: 'Finaliser la réinitialisation | KRAAK Consulting',
+        description:
+          'Définissez un nouveau mot de passe pour sécuriser votre accès à l’espace KRAAK.',
+        openGraph: {
+          title: 'Finaliser la réinitialisation | KRAAK Consulting',
+          description:
+            'Définissez un nouveau mot de passe pour sécuriser votre accès à l’espace KRAAK.',
+          imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
+          imageAlt:
+            "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
+        },
+        sitemap: {
+          changeFrequency: 'never',
+          priority: 0.1,
+        },
+      },
+    },
+    loadComponent: () => import('./features/auth/auth-reset.page'),
+  },
+  {
     path: 'about',
     redirectTo: 'a-propos',
     pathMatch: 'full',

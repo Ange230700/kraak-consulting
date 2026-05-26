@@ -61,10 +61,7 @@ export default class PasswordResetPage {
       const { email } = this.form.getRawValue();
       const response = await this.authService.requestPasswordReset({
         email: normalizeRequiredText(email),
-        redirectTo: resolveWebRedirectUrl(
-          '/mot-de-passe-oublie',
-          environment.siteUrl,
-        ),
+        redirectTo: resolveWebRedirectUrl('/auth/reset', environment.siteUrl),
       });
 
       this.successMessage.set(response.message);

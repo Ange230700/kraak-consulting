@@ -1,67 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kraak-web-prod.onrender.com/</loc>
+    <loc>https://kraak-consulting.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/a-propos</loc>
+    <loc>https://kraak-consulting.vercel.app/a-propos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/services</loc>
+    <loc>https://kraak-consulting.vercel.app/services</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/programmes</loc>
+    <loc>https://kraak-consulting.vercel.app/programmes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/blog</loc>
+    <loc>https://kraak-consulting.vercel.app/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/ressources</loc>
+    <loc>https://kraak-consulting.vercel.app/ressources</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/contact</loc>
+    <loc>https://kraak-consulting.vercel.app/contact</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/faq</loc>
+    <loc>https://kraak-consulting.vercel.app/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/mentions-legales</loc>
+    <loc>https://kraak-consulting.vercel.app/mentions-legales</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/politique-de-confidentialite</loc>
+    <loc>https://kraak-consulting.vercel.app/politique-de-confidentialite</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/blog/clarifier-son-projet-avant-de-candidater</loc>
+    <loc>https://kraak-consulting.vercel.app/blog/clarifier-son-projet-avant-de-candidater</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/blog/choisir-un-format-de-formation-utile</loc>
+    <loc>https://kraak-consulting.vercel.app/blog/choisir-un-format-de-formation-utile</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/blog/preparer-un-dossier-immigration-sans-perdre-le-fil</loc>
+    <loc>https://kraak-consulting.vercel.app/blog/preparer-un-dossier-immigration-sans-perdre-le-fil</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

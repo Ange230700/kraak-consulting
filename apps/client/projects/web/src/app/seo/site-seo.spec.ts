@@ -8,7 +8,7 @@ import {
   seoPages,
 } from './site-seo';
 
-const DEFAULT_SITE_URL = 'https://kraak-consulting.vercel.app';
+const DEFAULT_SITE_URL = 'https://kraak-web-prod.onrender.com';
 const EXAMPLE_SITE_URL = 'https://example.com';
 const RUNTIME_CONFIG_SITE_URL = 'https://render-staging.kraak.example';
 

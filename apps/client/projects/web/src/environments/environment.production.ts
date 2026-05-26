@@ -1,4 +1,4 @@
-const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
+const defaultSiteUrl = 'https://kraak-web-prod.onrender.com';
 const runtimeGlobals = globalThis as typeof globalThis & {
   process?: {
     env?: Record<string, string | undefined>;

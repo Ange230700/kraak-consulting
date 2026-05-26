@@ -50,10 +50,7 @@ describe('Web PasswordResetPage', () => {
 
     expect(authService.requestPasswordReset).toHaveBeenCalledWith({
       email: 'alice@example.com',
-      redirectTo: resolveWebRedirectUrl(
-        '/mot-de-passe-oublie',
-        environment.siteUrl,
-      ),
+      redirectTo: resolveWebRedirectUrl('/auth/reset', environment.siteUrl),
     });
     expect(fixture.componentInstance.successMessage()).toContain('email');
     expect(messageServiceAddSpy).toHaveBeenCalledWith(

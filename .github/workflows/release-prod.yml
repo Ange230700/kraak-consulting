@@ -8,11 +8,11 @@ name: Release Prod
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag SemVer à (re)déployer en prod (ex. v1.2.0)'
+        description: "Tag SemVer à (re)déployer en prod (ex. v1.2.0)"
         required: true
         type: string
 
@@ -23,8 +23,8 @@ concurrency:
 env:
   # Versions CLI épinglées : reproductibilité de la release et des rollbacks.
   # Toute mise à jour doit faire l'objet d'une PR dédiée.
-  SUPABASE_CLI_VERSION: '1.200.3'
-  VERCEL_CLI_VERSION: '53.1.0'
+  SUPABASE_CLI_VERSION: "1.200.3"
+  VERCEL_CLI_VERSION: "53.1.0"
 
 jobs:
   # ──────────────────────────────────────────────
