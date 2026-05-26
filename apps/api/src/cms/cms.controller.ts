@@ -60,6 +60,7 @@ export class CmsController {
   @Post('admin/cms/statistics')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Créer une nouvelle statistique (admin)' })
   async createStatistic(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -81,6 +82,7 @@ export class CmsController {
   @Patch('admin/cms/statistics/:id')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Mettre à jour une statistique (admin)' })
   async updateStatistic(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -103,6 +105,7 @@ export class CmsController {
   @Delete('admin/cms/statistics/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver une statistique (admin)' })
   async deleteStatistic(
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
@@ -124,6 +127,7 @@ export class CmsController {
   @Post('admin/cms/partners')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Créer un nouveau partenaire (admin)' })
   async createPartner(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -145,6 +149,7 @@ export class CmsController {
   @Patch('admin/cms/partners/:id')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Mettre à jour un partenaire (admin)' })
   async updatePartner(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -167,6 +172,7 @@ export class CmsController {
   @Delete('admin/cms/partners/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver un partenaire (admin)' })
   async deletePartner(
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
@@ -188,6 +194,7 @@ export class CmsController {
   @Post('admin/cms/testimonials')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Créer un nouveau témoignage (admin)' })
   async createTestimonial(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -209,6 +216,7 @@ export class CmsController {
   @Patch('admin/cms/testimonials/:id')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Mettre à jour un témoignage (admin)' })
   async updateTestimonial(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -231,6 +239,7 @@ export class CmsController {
   @Delete('admin/cms/testimonials/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver un témoignage (admin)' })
   async deleteTestimonial(
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
@@ -252,6 +261,7 @@ export class CmsController {
   @Post('admin/cms/team-members')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Créer un nouveau membre d’équipe (admin)' })
   async createTeamMember(
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
@@ -273,6 +283,7 @@ export class CmsController {
   @Patch('admin/cms/team-members/:id')
   @ApiBearerAuth('access-token')
   @ApiBody({ type: Object })
+  @ApiOperation({ summary: 'Mettre à jour un membre d’équipe (admin)' })
   async updateTeamMember(
     @Param('id') id: string,
     @Body() body: unknown,
@@ -295,6 +306,7 @@ export class CmsController {
   @Delete('admin/cms/team-members/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archiver un membre d’équipe (admin)' })
   async deleteTeamMember(
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
