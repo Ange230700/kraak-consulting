@@ -60,7 +60,8 @@ export async function requireEmployeSession(
   }
 
   const session = await authService.getSession(accessToken.data);
-  const role = session.profile.appUser.role;
+  // `employe` can be persisted by auth metadata before contracts expose it in the role union.
+  const role = session.profile.appUser.role as string;
 
   if (role !== 'admin' && role !== 'employe') {
     throw new ForbiddenException({
