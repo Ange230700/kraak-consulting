@@ -187,7 +187,7 @@ export class SupportRequestsController {
 
   @Patch(':id/read')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: "Marquer une demande de support comme lue" })
+  @ApiOperation({ summary: 'Marquer une demande de support comme lue' })
   @ApiResponse({
     status: 200,
     description: 'Demande marquée comme lue',

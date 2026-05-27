@@ -99,7 +99,9 @@ export class SupportService {
     };
   }
 
-  async listSupportRequests(accessToken: string): Promise<SupportRequestWithReadDto[]> {
+  async listSupportRequests(
+    accessToken: string,
+  ): Promise<SupportRequestWithReadDto[]> {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const adminClient = this.supabaseService.getClient();
     let query = adminClient

@@ -20,10 +20,7 @@ function makeAuthService(role: string) {
 describe('requireAdminSession', () => {
   it('Given un token admin valide, When requireAdminSession est appelé, Then la session est renvoyée', async () => {
     const authService = makeAuthService('admin');
-    const result = await requireAdminSession(
-      authService,
-      'Bearer admin-token',
-    );
+    const result = await requireAdminSession(authService, 'Bearer admin-token');
     expect(result.accessToken).toBe('admin-token');
   });
 
@@ -53,10 +50,7 @@ describe('requireAdminAccess', () => {
 describe('requireEmployeAccess', () => {
   it('Given un rôle admin, When requireEmployeAccess est appelé, Then le token est renvoyé', async () => {
     const authService = makeAuthService('admin');
-    const token = await requireEmployeAccess(
-      authService,
-      'Bearer admin-token',
-    );
+    const token = await requireEmployeAccess(authService, 'Bearer admin-token');
     expect(token).toBe('admin-token');
   });
 
@@ -121,10 +115,7 @@ describe('requireEmployeSession', () => {
 describe('requireTrainerAccess', () => {
   it('Given un rôle admin, When requireTrainerAccess est appelé, Then le token est renvoyé', async () => {
     const authService = makeAuthService('admin');
-    const token = await requireTrainerAccess(
-      authService,
-      'Bearer admin-token',
-    );
+    const token = await requireTrainerAccess(authService, 'Bearer admin-token');
     expect(token).toBe('admin-token');
   });
 
