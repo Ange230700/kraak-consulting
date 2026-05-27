@@ -15,6 +15,7 @@ export interface SeoPageDefinition {
   path: string;
   title: string;
   description: string;
+  robots?: string;
   openGraph: {
     title: string;
     description: string;
@@ -96,9 +97,12 @@ export const findSeoPageByPath = (
   );
 };
 
+const isIndexablePage = (page: SeoPageDefinition): boolean =>
+  !(page.robots ?? '').toLowerCase().includes('noindex');
+
 export const buildSitemapXml = (siteUrl: string): string => {
   const normalizedSiteUrl = resolvePublicSiteUrl(siteUrl);
-  const urls = [...seoPages, ...blogSitemapPages]
+  const urls = [...seoPages.filter(isIndexablePage), ...blogSitemapPages]
     .map(
       (page) => `  <url>
     <loc>${buildAbsoluteUrl(page.path, normalizedSiteUrl)}</loc>

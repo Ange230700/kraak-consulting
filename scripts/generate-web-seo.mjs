@@ -67,6 +67,9 @@ const buildAbsoluteUrl = (path, siteUrl) => {
   return new URL(pathname, `${normalizeSiteUrl(siteUrl)}/`).toString();
 };
 
+const isIndexablePage = (page) =>
+  !`${page.robots ?? ''}`.toLowerCase().includes('noindex');
+
 const buildSitemapXml = (pages, siteUrl) => {
   const urls = pages
     .map(
@@ -97,7 +100,7 @@ const main = async () => {
   const rawBlogSitemapConfig = await readFile(blogSitemapSourcePath, 'utf8');
   const seoPages = JSON.parse(rawSeoConfig);
   const blogSitemapPages = JSON.parse(rawBlogSitemapConfig);
-  const sitemapPages = [...seoPages, ...blogSitemapPages];
+  const sitemapPages = [...seoPages.filter(isIndexablePage), ...blogSitemapPages];
   const siteUrl = normalizeSiteUrl(
     process.env['PUBLIC_SITE_URL'] || defaultSiteUrl,
   );
