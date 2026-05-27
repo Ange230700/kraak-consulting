@@ -31,7 +31,7 @@ export class SeoService {
     });
     this.meta.updateTag({
       name: 'robots',
-      content: seoDefaults.robots,
+      content: page.robots ?? seoDefaults.robots,
     });
     this.meta.updateTag({
       property: 'og:title',

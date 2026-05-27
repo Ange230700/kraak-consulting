@@ -76,6 +76,16 @@ describe('Web routes', () => {
       }
     });
 
+    it('When inspecting the auth reset marketing route Then robots blocks indexing', () => {
+      const builtRoutes = buildRoutes();
+      const authResetRoute = builtRoutes.find(
+        (route) => route.path === 'auth/reset',
+      );
+
+      expect(authResetRoute).toBeDefined();
+      expect(authResetRoute?.data?.['seo']?.robots).toBe('noindex, nofollow');
+    });
+
     it('When inspecting article and alias routes Then the blog article page is lazy-loaded and english slugs redirect to french canonical paths', () => {
       const builtRoutes = buildRoutes();
       const blogArticleRoute = builtRoutes.find(
@@ -159,6 +169,20 @@ describe('Web routes', () => {
 
       for (const route of gatedRoutes) {
         expect(route.canMatch).toContain(participantAreaCanMatch);
+      }
+    });
+
+    it('When inspecting participant auth routes Then SEO metadata blocks indexing', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: true });
+      const participantSeoRoutes = builtRoutes.filter((route) =>
+        participantPaths.includes(route.path ?? ''),
+      );
+
+      expect(participantSeoRoutes.length).toBe(participantPaths.length);
+
+      for (const route of participantSeoRoutes) {
+        expect(route.data?.['seo']).toBeDefined();
+        expect(route.data?.['seo']?.robots).toBe('noindex, nofollow');
       }
     });
 
