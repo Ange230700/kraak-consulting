@@ -6,7 +6,10 @@ import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DashboardPage from './dashboard.page';
-import { WebAuthService } from '../../../core/auth/web-auth.service';
+import {
+  WEB_AUTH_STORAGE_KEY,
+  WebAuthService,
+} from '../../../core/auth/web-auth.service';
 import {
   participantRoleGuard,
   participantRoleChildGuard,
@@ -110,6 +113,8 @@ async function flush(
 
 describe('Web Participant Dashboard Page', () => {
   beforeEach(async () => {
+    globalThis.localStorage?.removeItem(WEB_AUTH_STORAGE_KEY);
+
     await TestBed.configureTestingModule({
       imports: [DashboardPage],
       providers: [WebAuthService, provideRouter([]), MessageService],
