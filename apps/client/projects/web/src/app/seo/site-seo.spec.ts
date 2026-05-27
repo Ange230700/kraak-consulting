@@ -25,6 +25,7 @@ describe('site-seo', () => {
       'faq',
       'mentions-legales',
       'politique-de-confidentialite',
+      'auth/reset',
     ]);
   });
 
@@ -47,6 +48,7 @@ describe('site-seo', () => {
     );
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/ressources</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/contact</loc>`);
+    expect(sitemap).not.toContain(`<loc>${DEFAULT_SITE_URL}/auth/reset</loc>`);
   });
 
   it('should build robots.txt pointing crawlers to the sitemap', () => {

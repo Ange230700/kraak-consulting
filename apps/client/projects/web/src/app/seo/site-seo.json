@@ -148,5 +148,21 @@
       "changeFrequency": "yearly",
       "priority": 0.2
     }
+  },
+  {
+    "path": "auth/reset",
+    "title": "Finaliser la r\u00e9initialisation | KRAAK Consulting",
+    "description": "D\u00e9finissez un nouveau mot de passe pour s\u00e9curiser votre acc\u00e8s \u00e0 l'espace KRAAK.",
+    "robots": "noindex, nofollow",
+    "openGraph": {
+      "title": "Finaliser la r\u00e9initialisation | KRAAK Consulting",
+      "description": "D\u00e9finissez un nouveau mot de passe pour s\u00e9curiser votre acc\u00e8s \u00e0 l'espace KRAAK.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
+    },
+    "sitemap": {
+      "changeFrequency": "never",
+      "priority": 0.1
+    }
   }
 ]
