@@ -29,7 +29,7 @@ describe('site-seo', () => {
     ]);
   });
 
-  it('should build an XML sitemap with absolute URLs for every public page', () => {
+  it('should build an XML sitemap with absolute URLs for indexable public pages only', () => {
     const sitemap = buildSitemapXml(DEFAULT_SITE_URL);
 
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/</loc>`);
