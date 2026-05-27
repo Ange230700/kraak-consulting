@@ -19,7 +19,7 @@ env:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   sonarcloud:
@@ -54,3 +54,5 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
+          # Requis pour la résolution du contexte PR et la décoration des pull requests
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
