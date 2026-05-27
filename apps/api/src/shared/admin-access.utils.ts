@@ -44,3 +44,71 @@ export async function requireAdminAccess(
   );
   return accessToken;
 }
+
+// Allows admin OR employe — for support inbox, enrollment management
+export async function requireEmployeSession(
+  authService: Pick<AuthService, 'getSession'>,
+  authorizationHeader?: string,
+): Promise<{ accessToken: string; session: AdminSession }> {
+  const accessToken = extractAccessToken(authorizationHeader);
+
+  if (!accessToken.valid) {
+    throw new UnauthorizedException({
+      success: false,
+      message: accessToken.error,
+    });
+  }
+
+  const session = await authService.getSession(accessToken.data);
+  const role = session.profile.appUser.role;
+
+  if (role !== 'admin' && role !== 'employe') {
+    throw new ForbiddenException({
+      success: false,
+      message: 'Accès réservé aux employés et administrateurs.',
+    });
+  }
+
+  return {
+    accessToken: accessToken.data,
+    session,
+  };
+}
+
+export async function requireEmployeAccess(
+  authService: Pick<AuthService, 'getSession'>,
+  authorizationHeader?: string,
+): Promise<string> {
+  const { accessToken } = await requireEmployeSession(
+    authService,
+    authorizationHeader,
+  );
+  return accessToken;
+}
+
+// Allows admin OR trainer — for session/cohort read operations
+export async function requireTrainerAccess(
+  authService: Pick<AuthService, 'getSession'>,
+  authorizationHeader?: string,
+): Promise<string> {
+  const accessToken = extractAccessToken(authorizationHeader);
+
+  if (!accessToken.valid) {
+    throw new UnauthorizedException({
+      success: false,
+      message: accessToken.error,
+    });
+  }
+
+  const session = await authService.getSession(accessToken.data);
+  const role = session.profile.appUser.role;
+
+  if (role !== 'admin' && role !== 'trainer') {
+    throw new ForbiddenException({
+      success: false,
+      message: 'Accès réservé aux formateurs et administrateurs.',
+    });
+  }
+
+  return accessToken.data;
+}

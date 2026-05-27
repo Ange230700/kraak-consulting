@@ -1048,4 +1048,259 @@ describe('SupportService', () => {
       ),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
+
+  it('Given un rôle employe, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'employe-1' } },
+      error: null,
+    });
+
+    let eqCalled = false;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'employe-1', role: 'employe' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          { data: [], error: null },
+          {
+            onEq: () => {
+              eqCalled = true;
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+    expect(eqCalled).toBe(false);
+    expect(results).toEqual([]);
+  });
+
+  it('Given un rôle trainer, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'trainer-1' } },
+      error: null,
+    });
+
+    let eqCalled = false;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'trainer-1', role: 'trainer' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          { data: [], error: null },
+          {
+            onEq: () => {
+              eqCalled = true;
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+    expect(eqCalled).toBe(false);
+    expect(results).toEqual([]);
+  });
+
+  it('Given un admin et une demande existante, When markSupportRequestAsRead est appelé, Then la demande est marquée lue et renvoyée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    const updatedRow = {
+      id: 'req-1',
+      user_id: 'user-1',
+      participant_id: null,
+      subject: 'Problème connexion',
+      message: 'Je ne peux pas me connecter.',
+      status: 'open',
+      category: 'technical',
+      assigned_to_user_id: null,
+      is_read: true,
+      created_at: '2026-01-01T00:00:00.000Z',
+      updated_at: '2026-01-01T00:00:00.000Z',
+    };
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: updatedRow, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.markSupportRequestAsRead(
+      'req-1',
+      'access-token',
+    );
+    expect(result.isRead).toBe(true);
+    expect(result.id).toBe('req-1');
+  });
+
+  it('Given une demande introuvable, When markSupportRequestAsRead est appelé, Then une NotFoundException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: null, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.markSupportRequestAsRead('req-inexistant', 'access-token'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un participant, When markSupportRequestAsRead est appelé avec sa propre demande, Then la demande est marquée lue', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    let capturedEqCalls: Array<{ column: string; value: unknown }> = [];
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        const eqMock = jest.fn((col: string, val: unknown) => {
+          capturedEqCalls = [...capturedEqCalls, { column: col, value: val }];
+          return eqMock as unknown as typeof eqMock & {
+            select: jest.Mock;
+          };
+        });
+        (eqMock as unknown as { select: jest.Mock }).select = jest.fn(() => ({
+          maybeSingle: jest.fn().mockResolvedValue({
+            data: {
+              id: 'req-1',
+              user_id: 'user-1',
+              participant_id: null,
+              subject: 's',
+              message: 'm',
+              status: 'open',
+              category: 'other',
+              assigned_to_user_id: null,
+              is_read: true,
+              created_at: '2026-01-01T00:00:00.000Z',
+              updated_at: '2026-01-01T00:00:00.000Z',
+            },
+            error: null,
+          }),
+        }));
+
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn((col: string, val: unknown) => {
+              capturedEqCalls.push({ column: col, value: val });
+              return {
+                eq: jest.fn((col2: string, val2: unknown) => {
+                  capturedEqCalls.push({ column: col2, value: val2 });
+                  return {
+                    select: jest.fn(() => ({
+                      maybeSingle: jest.fn().mockResolvedValue({
+                        data: {
+                          id: 'req-1',
+                          user_id: 'user-1',
+                          participant_id: null,
+                          subject: 's',
+                          message: 'm',
+                          status: 'open',
+                          category: 'other',
+                          assigned_to_user_id: null,
+                          is_read: true,
+                          created_at: '2026-01-01T00:00:00.000Z',
+                          updated_at: '2026-01-01T00:00:00.000Z',
+                        },
+                        error: null,
+                      }),
+                    })),
+                  };
+                }),
+              };
+            }),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.markSupportRequestAsRead(
+      'req-1',
+      'access-token',
+    );
+    expect(result.isRead).toBe(true);
+    const userIdFilter = capturedEqCalls.find(
+      (c) => c.column === 'user_id',
+    );
+    expect(userIdFilter).toBeDefined();
+    expect(userIdFilter?.value).toBe('user-1');
+  });
 });

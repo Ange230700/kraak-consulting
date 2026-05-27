@@ -21,7 +21,7 @@ import {
   resolveContactTriagePlan,
 } from './contact-triage.config';
 
-type UserRole = 'participant' | 'admin' | 'trainer';
+type UserRole = 'participant' | 'admin' | 'trainer' | 'employe';
 
 type SessionUserContext = {
   userId: string;
@@ -37,6 +37,7 @@ type SupportRequestRow = {
   status: SupportRequestStatusValue;
   category: ContactFormDto['category'];
   assigned_to_user_id: string | null;
+  is_read: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -45,6 +46,7 @@ type ParticipantRow = {
   id: string;
 };
 
+type SupportRequestWithReadDto = SupportRequestDto & { isRead: boolean };
 const allowedStatusTransitions: Record<
   SupportRequestStatusValue,
   SupportRequestStatusValue[]
@@ -97,18 +99,21 @@ export class SupportService {
     };
   }
 
-  async listSupportRequests(accessToken: string): Promise<SupportRequestDto[]> {
+  async listSupportRequests(accessToken: string): Promise<SupportRequestWithReadDto[]> {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const adminClient = this.supabaseService.getClient();
     let query = adminClient
       .from('support_request')
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (sessionUser.role === 'participant') {
+    const isPrivilegedRole = ['admin', 'employe', 'trainer'].includes(
+      sessionUser.role,
+    );
+    if (!isPrivilegedRole) {
       query = query.eq('user_id', sessionUser.userId);
     }
 
@@ -130,7 +135,7 @@ export class SupportService {
     requestId: string,
     payload: UpdateSupportRequestStatusDto,
     accessToken: string,
-  ): Promise<SupportRequestDto> {
+  ): Promise<SupportRequestWithReadDto> {
     const sessionUser = await this.resolveSessionUser(accessToken);
 
     if (sessionUser.role === 'participant') {
@@ -145,7 +150,7 @@ export class SupportService {
     const { data: existing, error: readError } = await adminClient
       .from('support_request')
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .eq('id', requestId)
       .maybeSingle();
@@ -182,7 +187,7 @@ export class SupportService {
       })
       .eq('id', requestId)
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .maybeSingle();
 
@@ -196,10 +201,53 @@ export class SupportService {
     return this.mapSupportRequest(updated as SupportRequestRow);
   }
 
+  async markSupportRequestAsRead(
+    requestId: string,
+    accessToken: string,
+  ): Promise<SupportRequestWithReadDto> {
+    const sessionUser = await this.resolveSessionUser(accessToken);
+    const adminClient = this.supabaseService.getClient();
+
+    const isPrivilegedRole = ['admin', 'employe', 'trainer'].includes(
+      sessionUser.role,
+    );
+
+    let updateQuery = adminClient
+      .from('support_request')
+      .update({ is_read: true })
+      .eq('id', requestId);
+
+    if (!isPrivilegedRole) {
+      updateQuery = updateQuery.eq('user_id', sessionUser.userId);
+    }
+
+    const { data: updated, error: updateError } = await updateQuery
+      .select(
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
+      )
+      .maybeSingle();
+
+    if (updateError) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: 'Impossible de marquer la demande comme lue.',
+      });
+    }
+
+    if (!updated) {
+      throw new NotFoundException({
+        success: false,
+        message: 'Demande de support introuvable.',
+      });
+    }
+
+    return this.mapSupportRequest(updated as SupportRequestRow);
+  }
+
   private async createTrackedSupportRequest(
     dto: ContactFormDto,
     accessToken: string,
-  ): Promise<SupportRequestDto> {
+  ): Promise<SupportRequestWithReadDto> {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const participantId = await this.resolveParticipantId(sessionUser.userId);
     const adminClient = this.supabaseService.getClient();
@@ -215,7 +263,7 @@ export class SupportService {
         status: 'open',
       })
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .maybeSingle();
 
@@ -282,7 +330,7 @@ export class SupportService {
     return (data as ParticipantRow | null)?.id ?? null;
   }
 
-  private mapSupportRequest(row: SupportRequestRow): SupportRequestDto {
+  private mapSupportRequest(row: SupportRequestRow): SupportRequestWithReadDto {
     return {
       id: row.id,
       userId: row.user_id,
@@ -292,6 +340,7 @@ export class SupportService {
       status: row.status,
       category: row.category,
       assignedToUserId: row.assigned_to_user_id,
+      isRead: row.is_read,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
