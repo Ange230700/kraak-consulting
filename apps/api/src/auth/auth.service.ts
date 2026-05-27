@@ -275,9 +275,11 @@ export class AuthService {
     if (
       normalized === 'participant' ||
       normalized === 'admin' ||
-      normalized === 'trainer'
+      normalized === 'trainer' ||
+      normalized === 'employe'
     ) {
-      return normalized;
+      // 'employe' is not yet in @kraak/contracts AppUserDto['role']; cast until contracts are updated
+      return normalized as AppUserDto['role'];
     }
 
     return 'participant';

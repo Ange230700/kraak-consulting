@@ -20,6 +20,8 @@ import { extractAccessToken } from '../auth/auth.dto';
 import { validateSupportStatusUpdatePayload } from './support.dto';
 import { SupportService } from './support.service';
 
+type SupportRequestWithReadDto = SupportRequestDto & { isRead: boolean };
+
 const apiErrorSchema = {
   type: 'object',
   properties: {
@@ -40,6 +42,7 @@ const supportRequestSchema = {
     'status',
     'category',
     'assignedToUserId',
+    'isRead',
     'createdAt',
     'updatedAt',
   ],
@@ -58,6 +61,7 @@ const supportRequestSchema = {
       enum: ['technical', 'program', 'session', 'billing', 'other'],
     },
     assignedToUserId: { type: 'string', nullable: true },
+    isRead: { type: 'boolean' },
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },
   },
@@ -91,7 +95,7 @@ export class SupportRequestsController {
   })
   async list(
     @Headers('authorization') authorizationHeader?: string,
-  ): Promise<SupportRequestDto[]> {
+  ): Promise<SupportRequestWithReadDto[]> {
     const accessToken = extractAccessToken(authorizationHeader);
 
     if (!accessToken.valid) {
@@ -155,7 +159,7 @@ export class SupportRequestsController {
     @Param('id') requestId: string,
     @Body() body: unknown,
     @Headers('authorization') authorizationHeader?: string,
-  ): Promise<SupportRequestDto> {
+  ): Promise<SupportRequestWithReadDto> {
     const accessToken = extractAccessToken(authorizationHeader);
 
     if (!accessToken.valid) {
@@ -177,6 +181,48 @@ export class SupportRequestsController {
     return this.supportService.updateSupportRequestStatus(
       requestId,
       payload.data,
+      accessToken.data,
+    );
+  }
+
+  @Patch(':id/read')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: "Marquer une demande de support comme lue" })
+  @ApiResponse({
+    status: 200,
+    description: 'Demande marquée comme lue',
+    schema: supportRequestSchema,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Session invalide ou header Authorization manquant',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Demande introuvable',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erreur serveur lors de la mise à jour',
+    schema: apiErrorSchema,
+  })
+  async markAsRead(
+    @Param('id') requestId: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<SupportRequestWithReadDto> {
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    return this.supportService.markSupportRequestAsRead(
+      requestId,
       accessToken.data,
     );
   }
