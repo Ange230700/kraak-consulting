@@ -1297,9 +1297,7 @@ describe('SupportService', () => {
       'access-token',
     );
     expect(result.isRead).toBe(true);
-    const userIdFilter = capturedEqCalls.find(
-      (c) => c.column === 'user_id',
-    );
+    const userIdFilter = capturedEqCalls.find((c) => c.column === 'user_id');
     expect(userIdFilter).toBeDefined();
     expect(userIdFilter?.value).toBe('user-1');
   });
