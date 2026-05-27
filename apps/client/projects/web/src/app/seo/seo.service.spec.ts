@@ -1,7 +1,7 @@
 import { Meta, Title } from '@angular/platform-browser';
 import { TestBed } from '@angular/core/testing';
 
-import { findSeoPageByPath } from './site-seo';
+import { SeoPageDefinition, findSeoPageByPath } from './site-seo';
 import { SeoService } from './seo.service';
 
 const LOCAL_BASE_URL = 'http://localhost:4200';
@@ -81,6 +81,34 @@ describe('SeoService', () => {
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe(LOCAL_HOME_URL);
+  });
+
+  it('Given a page-specific robots directive, when applyPageSeo is called, then robots meta uses the page value', () => {
+    const service = TestBed.inject(SeoService);
+    const meta = TestBed.inject(Meta);
+    const resetPageSeo: SeoPageDefinition = {
+      path: 'auth/reset',
+      title: 'Finaliser la réinitialisation | KRAAK Consulting',
+      description:
+        'Définissez un nouveau mot de passe pour sécuriser votre accès à l’espace KRAAK.',
+      robots: 'noindex, nofollow',
+      openGraph: {
+        title: 'Finaliser la réinitialisation | KRAAK Consulting',
+        description:
+          'Définissez un nouveau mot de passe pour sécuriser votre accès à l’espace KRAAK.',
+        imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
+        imageAlt:
+          "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
+      },
+      sitemap: {
+        changeFrequency: 'never',
+        priority: 0.1,
+      },
+    };
+
+    service.applyPageSeo(resetPageSeo, LOCAL_BASE_URL);
+
+    expect(meta.getTag('name="robots"')?.content).toBe('noindex, nofollow');
   });
 
   // Given the canonical link already exists in the document head

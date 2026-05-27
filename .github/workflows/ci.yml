@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install -g --ignore-scripts pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -83,7 +83,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -109,7 +109,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -147,7 +147,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -190,7 +190,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install pnpm
-        run: npm install -g pnpm@10.23.0
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
