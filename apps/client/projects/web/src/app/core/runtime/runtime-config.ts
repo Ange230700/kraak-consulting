@@ -28,7 +28,9 @@ export function isProductionEnvironment(): boolean {
 }
 
 export function canShowPreviewContent(): boolean {
-  return !isProductionEnvironment();
+  // Preview content should follow the environment-level participant-space flag.
+  // This keeps staging preview-friendly while production remains stable.
+  return isParticipantAreaEnabled();
 }
 
 function stripTrailingSlashes(value: string): string {

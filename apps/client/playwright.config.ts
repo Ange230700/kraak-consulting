@@ -6,7 +6,13 @@ import { defineConfig, devices } from '@playwright/test';
  */
 const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
 const localWebBaseUrl = `http://localhost:${localWebPort}`;
+const configuredBaseUrl = process.env['KRAAK_E2E_BASE_URL']?.trim();
+const resolvedBaseUrl =
+  configuredBaseUrl && configuredBaseUrl.length > 0
+    ? configuredBaseUrl
+    : localWebBaseUrl;
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+const shouldUseLocalWebServer = resolvedBaseUrl === localWebBaseUrl;
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -19,7 +25,7 @@ export default defineConfig({
     ? 'github'
     : [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: localWebBaseUrl,
+    baseURL: resolvedBaseUrl,
     navigationTimeout: 60_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -38,14 +44,16 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
   ],
-  webServer: {
-    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort} --prebundle=false --live-reload=false`,
-    url: localWebBaseUrl,
-    reuseExistingServer,
-    timeout: 180_000,
-    env: {
-      CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
-      CLIENT_API_BASE_URL: localWebBaseUrl,
-    },
-  },
+  webServer: shouldUseLocalWebServer
+    ? {
+        command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort} --prebundle=false --live-reload=false`,
+        url: localWebBaseUrl,
+        reuseExistingServer,
+        timeout: 180_000,
+        env: {
+          CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
+          CLIENT_API_BASE_URL: localWebBaseUrl,
+        },
+      }
+    : undefined,
 });
