@@ -1,5 +1,6 @@
 import { environment } from '../../../environments/environment';
 import {
+  canShowPreviewContent,
   getRuntimeConfig,
   isParticipantAreaEnabled,
   resolveApiBaseUrl,
@@ -47,6 +48,20 @@ describe('Runtime config helpers', () => {
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
 
       expect(isParticipantAreaEnabled()).toBe(false);
+    });
+
+    it('When canShowPreviewContent is called Then it returns false', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
+
+      expect(canShowPreviewContent()).toBe(false);
+    });
+  });
+
+  describe('Given enableParticipantArea is true at runtime', () => {
+    it('When canShowPreviewContent is called Then it returns true', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
+
+      expect(canShowPreviewContent()).toBe(true);
     });
   });
 

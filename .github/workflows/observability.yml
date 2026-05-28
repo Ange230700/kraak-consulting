@@ -18,11 +18,9 @@ jobs:
       matrix:
         include:
           - environment: staging
-            # Pas d'URL web staging stable (les previews Vercel changent a chaque commit
-            # et le branch alias a la protection SSO activée). On utilise la meme home
-            # production pour le check web ; la valeur distincte de ce job est le check
-            # de l'API staging.
-            web_url: https://kraak-consulting.vercel.app
+            # Le front staging Render fournit l'URL internet stable de prévalidation.
+            # On le checke directement pour garantir une validation séparée de la prod.
+            web_url: https://kraak-web-staging.onrender.com
             api_url: https://kraak-api-staging.onrender.com
             alert_issue_title: "[ALERT][DEP-05][staging] Observability check failure"
           - environment: production

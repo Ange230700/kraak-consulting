@@ -1,8 +1,8 @@
 # STAGING_PROMOTION — Procédure de promotion vers l'environnement staging
 
 > Document de référence pour exposer un commit de `main` à l'environnement
-> staging (Render `kraak-api-staging`, projet Vercel staging, projet Supabase
-> `kraak-staging`).
+> staging (Render `kraak-api-staging`, Render `kraak-web-staging`, projet
+> Supabase `kraak-staging`).
 
 Voir aussi : [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environment.md),
 [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md),
@@ -18,7 +18,7 @@ Voir aussi : [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environm
 - **`staging` n'avance que par fast-forward** depuis un commit de `main`. Si
   le fast-forward échoue, c'est un incident.
 - **Pousser sur `staging` déclenche un déploiement complet** : API Render +
-  Web Vercel + (si nécessaire) migrations Supabase staging.
+  Web Render + (si nécessaire) migrations Supabase staging.
 - **Aucune promotion vers prod** ne dépend de `staging` : la prod est
   déclenchée exclusivement par tag SemVer (ARC-07).
 
@@ -58,15 +58,18 @@ Configuré par [`render.yaml`](../../render.yaml) :
   `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, etc. — cf.
   [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md)).
 
-### 2.4 Vercel — projet web staging
+### 2.4 Render — service `kraak-web-staging`
 
-Dans l'UI Vercel, projet staging :
+Configuré par [`render.yaml`](../../render.yaml) :
 
-- `Settings → Git → Production Branch` : `staging`
-- Variables d'env staging renseignées sur la cible `Production` du projet
-  staging (≠ projet prod).
-- Domaine stable : `https://client-six-indol-58.vercel.app` (à remplacer par
-  un sous-domaine `staging.kraak.*` quand le DNS sera prêt).
+- `branch: staging`
+- `autoDeploy: true`
+- URL stable de prévalidation : `https://kraak-web-staging.onrender.com`
+- Variables d'env web staging renseignées dans l'UI Render, en particulier
+  `CLIENT_SITE_URL=https://kraak-web-staging.onrender.com`.
+
+Vercel peut rester disponible en rollback court terme pendant la transition
+web, mais ne constitue plus la cible primaire de validation staging.
 
 ### 2.5 Supabase — projet `kraak-staging`
 
@@ -119,9 +122,8 @@ Si `git merge --ff-only` échoue :
 
 - **Render** : `https://kraak-api-staging.onrender.com/health` retourne
   `status: ok` et le `version` attendu.
-- **Web staging actif** : la home staging répond HTTP 200, marque KRAAK
-  visible, pas d'erreur console bloquante (Vercel ou Render selon la phase de
-  transition).
+- **Web staging actif** : `https://kraak-web-staging.onrender.com` répond HTTP
+  200, la marque KRAAK est visible, pas d'erreur console bloquante.
 - **Supabase** : aucune migration en attente
   (`pnpm supabase db diff --linked` doit être vide).
 
@@ -129,7 +131,8 @@ Si `git merge --ff-only` échoue :
 
 - Exécuter les E2E Playwright critiques contre l'URL staging (au minimum
   smoke des parcours MVP — cf. exigences AGENTS.md).
-- Vérifier les logs Render et Vercel staging (pas d'erreur au démarrage).
+- Vérifier les logs Render staging (API + web) ; consulter Vercel seulement si
+  le rollback temporaire est encore maintenu.
 - Si tout est vert, le commit pointé par `staging` est candidat à un tag prod
   (procédure : [`RELEASE_PROD`](RELEASE_PROD.md)).
 
@@ -169,7 +172,7 @@ git reset --hard <sha-commit-main-stable>
 git push --force-with-lease origin staging
 ```
 
-Render et Vercel staging redéploient automatiquement le commit pointé.
+Les services Render staging redéploient automatiquement le commit pointé.
 
 ### 5.2 Réalignement après commit accidentel sur `staging`
 
