@@ -12,9 +12,10 @@ const resolvedBaseUrl =
     ? configuredBaseUrl
     : localWebBaseUrl;
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
-const normalizeBaseUrl = (url: string): string => url.replace(/\/+$/, '');
+const stripTrailingSlashes = (url: string): string => url.replace(/\/+$/, '');
 const shouldUseLocalWebServer =
-  normalizeBaseUrl(resolvedBaseUrl) === normalizeBaseUrl(localWebBaseUrl);
+  stripTrailingSlashes(resolvedBaseUrl) ===
+  stripTrailingSlashes(localWebBaseUrl);
 
 export default defineConfig({
   testDir: './tests/e2e',
