@@ -57,16 +57,13 @@ describe('Runtime config helpers', () => {
     });
   });
 
-  describe(
-    'Given enableParticipantArea is true at runtime for canShowPreviewContent',
-    () => {
-      it('When canShowPreviewContent is called Then it returns true', () => {
-        globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
+  describe('Given enableParticipantArea is true at runtime for canShowPreviewContent', () => {
+    it('When canShowPreviewContent is called Then it returns true', () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
 
-        expect(canShowPreviewContent()).toBe(true);
-      });
-    },
-  );
+      expect(canShowPreviewContent()).toBe(true);
+    });
+  });
 
   describe('Given the runtime config exposes apiBaseUrl', () => {
     it('When resolveApiBaseUrl is called Then it returns the runtime value without trailing slash', () => {
