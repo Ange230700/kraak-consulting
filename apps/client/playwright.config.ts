@@ -12,7 +12,14 @@ const resolvedBaseUrl =
     ? configuredBaseUrl
     : localWebBaseUrl;
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
-const stripTrailingSlashes = (url: string): string => url.replace(/\/+$/, '');
+const stripTrailingSlashes = (url: string): string => {
+  let normalizedUrl = url;
+  while (normalizedUrl.endsWith('/')) {
+    normalizedUrl = normalizedUrl.slice(0, -1);
+  }
+
+  return normalizedUrl;
+};
 const shouldUseLocalWebServer =
   stripTrailingSlashes(resolvedBaseUrl) ===
   stripTrailingSlashes(localWebBaseUrl);
