@@ -62,7 +62,7 @@ describe('BasicInformationPage', () => {
     comp['email'] = 'alice@example.com';
     comp['phone'] = '+243000000';
 
-    comp.goNext();
+    comp['goNext']();
 
     expect(formState.state().firstName).toBe('Alice');
     expect(formState.state().phone).toBe('+243000000');

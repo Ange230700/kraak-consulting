@@ -17,4 +17,40 @@ describe('admin-area.routes', () => {
     expect(childPaths).toContain('ressources');
     expect(childPaths).toContain('');
   });
+
+  it('Given la route dashboard admin, When son loadComponent est invoqué, Then le module de page est résolu', async () => {
+    const adminRoot = adminAreaRoutes.find((route) => route.path === 'admin');
+    const dashboardRoute = adminRoot?.children?.find(
+      (child) => child.path === 'dashboard',
+    );
+
+    expect(dashboardRoute?.loadComponent).toBeTypeOf('function');
+
+    const module = await dashboardRoute?.loadComponent?.();
+    expect(module).toBeDefined();
+  });
+
+  it('Given la route programmes admin, When son loadComponent est invoqué, Then le module de page est résolu', async () => {
+    const adminRoot = adminAreaRoutes.find((route) => route.path === 'admin');
+    const programmesRoute = adminRoot?.children?.find(
+      (child) => child.path === 'programmes',
+    );
+
+    expect(programmesRoute?.loadComponent).toBeTypeOf('function');
+
+    const module = await programmesRoute?.loadComponent?.();
+    expect(module).toBeDefined();
+  });
+
+  it('Given la route utilisateurs admin, When son loadChildren est invoqué, Then le module de routes enfants est résolu', async () => {
+    const adminRoot = adminAreaRoutes.find((route) => route.path === 'admin');
+    const usersRoute = adminRoot?.children?.find(
+      (child) => child.path === 'utilisateurs',
+    );
+
+    expect(usersRoute?.loadChildren).toBeTypeOf('function');
+
+    const module = await usersRoute?.loadChildren?.();
+    expect(module).toBeDefined();
+  });
 });

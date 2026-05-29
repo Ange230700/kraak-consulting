@@ -19,7 +19,7 @@ jobs:
         include:
           - environment: staging
             # Le front staging Render fournit l'URL internet stable de prévalidation.
-            # On le checke directement pour garantir une validation séparée de la prod.
+            # On le check directement pour garantir une validation séparée de la prod.
             web_url: https://kraak-web-staging.onrender.com
             api_url: https://kraak-api-staging.onrender.com
             alert_issue_title: "[ALERT][DEP-05][staging] Observability check failure"

@@ -54,6 +54,84 @@ const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/services-coaching.avif',
 );
 
+type ServiceOptionDefinition = readonly [
+  label: string,
+  value: ServiceType,
+  category: ContactFormDto['category'],
+  triagePath: string,
+  responseWorkflow: string,
+  fallbackWorkflow: string,
+];
+
+function createServiceOption([
+  label,
+  value,
+  category,
+  triagePath,
+  responseWorkflow,
+  fallbackWorkflow,
+]: ServiceOptionDefinition): ServiceOption {
+  return {
+    label,
+    value,
+    category,
+    triagePath,
+    responseWorkflow,
+    fallbackWorkflow,
+  };
+}
+
+const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
+  [
+    'Formation',
+    'formation',
+    'training',
+    'formation/orientation-public',
+    'orientation formation sous 48h ouvrées',
+    'e-mail direct ou WhatsApp',
+  ],
+  [
+    'Gestion de projets',
+    'project',
+    'project_management',
+    'conseil/gestion-de-projets',
+    'cadrage projet sous 48h ouvrées',
+    'e-mail direct ou WhatsApp',
+  ],
+  [
+    'Conseil en immigration',
+    'immigration',
+    'immigration',
+    'conseil/mobilite-internationale',
+    'orientation mobilité sans dépôt de dossier sensible',
+    'WhatsApp ou e-mail direct',
+  ],
+  [
+    'Solutions entreprises',
+    'business',
+    'business',
+    'partenariats/organisations-et-entreprises',
+    'qualification organisation sous 48h ouvrées',
+    'e-mail direct',
+  ],
+  [
+    'Partenariat',
+    'program',
+    'partnership',
+    'partenariats/institutionnel',
+    'qualification partenariat sous 48h ouvrées',
+    'e-mail direct ou WhatsApp',
+  ],
+  [
+    'Autre demande',
+    'other',
+    'other',
+    'intake/general',
+    'triage général puis réorientation sous 48h ouvrées',
+    'e-mail direct ou WhatsApp',
+  ],
+];
+
 @Component({
   selector: 'kraak-contact-page',
   standalone: true,
@@ -90,56 +168,8 @@ export default class ContactPage implements OnInit, OnDestroy {
   private readonly gsapService = inject(GsapAnimationsService);
   private readonly analyticsService = inject(AnalyticsService);
 
-  protected readonly serviceOptions: ServiceOption[] = [
-    {
-      label: 'Formation',
-      value: 'formation',
-      category: 'training',
-      triagePath: 'formation/orientation-public',
-      responseWorkflow: 'orientation formation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Gestion de projets',
-      value: 'project',
-      category: 'project_management',
-      triagePath: 'conseil/gestion-de-projets',
-      responseWorkflow: 'cadrage projet sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Conseil en immigration',
-      value: 'immigration',
-      category: 'immigration',
-      triagePath: 'conseil/mobilite-internationale',
-      responseWorkflow: 'orientation mobilité sans dépôt de dossier sensible',
-      fallbackWorkflow: 'WhatsApp ou e-mail direct',
-    },
-    {
-      label: 'Solutions entreprises',
-      value: 'business',
-      category: 'business',
-      triagePath: 'partenariats/organisations-et-entreprises',
-      responseWorkflow: 'qualification organisation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct',
-    },
-    {
-      label: 'Partenariat',
-      value: 'program',
-      category: 'partnership',
-      triagePath: 'partenariats/institutionnel',
-      responseWorkflow: 'qualification partenariat sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Autre demande',
-      value: 'other',
-      category: 'other',
-      triagePath: 'intake/general',
-      responseWorkflow: 'triage général puis réorientation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-  ];
+  protected readonly serviceOptions =
+    SERVICE_OPTION_DEFINITIONS.map(createServiceOption);
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
   protected readonly whatsappLink =
