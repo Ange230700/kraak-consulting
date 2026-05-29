@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Router } from '@angular/router';
 import { vi } from 'vitest';
 import BusinessInformationPage from './business-information.page';
 import { UserFormStateService } from '../user-form-state.service';
@@ -48,16 +47,15 @@ describe('BusinessInformationPage', () => {
     const fixture = TestBed.createComponent(BusinessInformationPage);
     const comp = fixture.componentInstance;
     const formState = TestBed.inject(UserFormStateService);
-    const router = TestBed.inject(Router);
     const navigateSpy = vi
-      .spyOn(router, 'navigate')
+      .spyOn(comp['router'], 'navigate')
       .mockImplementation(async () => true);
 
     comp['role'] = 'trainer';
     comp['position'] = 'Coach';
     comp['department'] = 'Formation';
 
-    comp.goPrev();
+    comp['goPrev']();
 
     expect(formState.state().role).toBe('trainer');
     expect(formState.state().department).toBe('Formation');
@@ -70,15 +68,14 @@ describe('BusinessInformationPage', () => {
     const fixture = TestBed.createComponent(BusinessInformationPage);
     const comp = fixture.componentInstance;
     const formState = TestBed.inject(UserFormStateService);
-    const router = TestBed.inject(Router);
     const navigateSpy = vi
-      .spyOn(router, 'navigate')
+      .spyOn(comp['router'], 'navigate')
       .mockImplementation(async () => true);
 
     comp['role'] = 'participant';
     comp['position'] = 'Apprenant';
 
-    comp.goNext();
+    comp['goNext']();
 
     expect(formState.state().position).toBe('Apprenant');
     expect(navigateSpy).toHaveBeenCalledWith([

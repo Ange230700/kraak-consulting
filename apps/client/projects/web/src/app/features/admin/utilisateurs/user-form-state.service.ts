@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import type { UserRoleValue } from '@kraak/contracts';
+import { isValidEmail } from '../../../../../../../../api/src/shared/dto-validation.utils';
 
 export interface UserFormState {
   // Step 1 — Informations de base
@@ -44,30 +45,6 @@ const initialState: UserFormState = {
   sendInvitation: true,
 };
 
-function isLikelyEmail(value: string): boolean {
-  if (value.includes(' ')) {
-    return false;
-  }
-
-  const atIndex = value.indexOf('@');
-  if (atIndex <= 0 || atIndex !== value.lastIndexOf('@')) {
-    return false;
-  }
-
-  const localPart = value.slice(0, atIndex);
-  const domainPart = value.slice(atIndex + 1);
-  if (!localPart || !domainPart) {
-    return false;
-  }
-
-  const dotIndex = domainPart.indexOf('.');
-  if (dotIndex <= 0 || dotIndex === domainPart.length - 1) {
-    return false;
-  }
-
-  return true;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -81,7 +58,7 @@ export class UserFormStateService {
     return (
       s.firstName.trim().length > 0 &&
       s.lastName.trim().length > 0 &&
-      isLikelyEmail(s.email)
+      isValidEmail(s.email)
     );
   });
 

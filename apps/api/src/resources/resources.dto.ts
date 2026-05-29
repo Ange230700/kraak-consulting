@@ -1,32 +1,12 @@
 import type { CreateResourceDto, UpdateResourceDto } from '@kraak/contracts';
 import {
+  assignRequiredTrimmedString,
   isObjectPayload,
+  readNullableDateTime,
+  readNullableString,
   readTrimmedString,
 } from '../shared/dto-validation.utils';
 import type { ValidationResult } from '../shared/validation-result.type';
-
-function readNullableString(value: unknown): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  const normalized = readTrimmedString(value);
-  return normalized.length > 0 ? normalized : null;
-}
-
-function readNullableDateTime(value: unknown): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  const normalized = readTrimmedString(value);
-  if (!normalized) {
-    return null;
-  }
-
-  const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
-}
 
 const publicationStatuses = new Set(['draft', 'published', 'archived']);
 const resourceTypes = new Set(['link', 'file', 'video', 'document']);
@@ -42,27 +22,6 @@ const resourceAudiences = new Set([
   'organizations',
   'international_candidates',
 ]);
-
-function assignRequiredString(
-  body: Record<string, unknown>,
-  field: keyof CreateResourceDto,
-  errors: string[],
-  updates: Partial<CreateResourceDto>,
-): void {
-  if (!(field in body)) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  const value = readTrimmedString(body[field]);
-
-  if (!value) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  (updates as Record<string, unknown>)[field] = value;
-}
 
 function assignNullableString(
   body: Record<string, unknown>,
@@ -122,6 +81,41 @@ function assignEnumField<T extends string>(
   (updates as Record<string, unknown>)[field] = value;
 }
 
+function assignOptionalTitle(
+  body: Record<string, unknown>,
+  errors: string[],
+  updates: UpdateResourceDto,
+): void {
+  if (!('title' in body)) {
+    return;
+  }
+
+  const title = readTrimmedString(body.title);
+  if (title.length === 0) {
+    errors.push('Le champ title est requis.');
+    return;
+  }
+
+  updates.title = title;
+}
+
+function assignSharedResourceFields(
+  body: Record<string, unknown>,
+  errors: string[],
+  updates: Partial<CreateResourceDto>,
+): void {
+  assignNullableString(body, 'description', updates);
+  assignEnumField(body, 'resourceType', resourceTypes, errors, updates);
+  assignEnumField(body, 'resourceTheme', resourceThemes, errors, updates);
+  assignEnumField(body, 'resourceAudience', resourceAudiences, errors, updates);
+  assignNullableString(body, 'url', updates);
+  assignNullableString(body, 'filePath', updates);
+  assignEnumField(body, 'status', publicationStatuses, errors, updates);
+  assignNullableDateTime(body, 'publishedAt', errors, updates);
+  assignNullableString(body, 'programId', updates);
+  assignNullableString(body, 'cohortId', updates);
+}
+
 export function validateCreateResourcePayload(
   body: unknown,
 ): ValidationResult<CreateResourceDto> {
@@ -135,17 +129,8 @@ export function validateCreateResourcePayload(
   const errors: string[] = [];
   const data: Partial<CreateResourceDto> = {};
 
-  assignRequiredString(body, 'title', errors, data);
-  assignNullableString(body, 'description', data);
-  assignEnumField(body, 'resourceType', resourceTypes, errors, data);
-  assignEnumField(body, 'resourceTheme', resourceThemes, errors, data);
-  assignEnumField(body, 'resourceAudience', resourceAudiences, errors, data);
-  assignNullableString(body, 'url', data);
-  assignNullableString(body, 'filePath', data);
-  assignEnumField(body, 'status', publicationStatuses, errors, data);
-  assignNullableDateTime(body, 'publishedAt', errors, data);
-  assignNullableString(body, 'programId', data);
-  assignNullableString(body, 'cohortId', data);
+  assignRequiredTrimmedString(body, 'title', errors, data);
+  assignSharedResourceFields(body, errors, data);
 
   if (errors.length > 0) {
     return { valid: false, errors };
@@ -170,25 +155,8 @@ export function validateUpdateResourcePayload(
   const errors: string[] = [];
   const data: UpdateResourceDto = {};
 
-  if ('title' in body) {
-    const title = readTrimmedString(body.title);
-    if (title.length === 0) {
-      errors.push('Le champ title est requis.');
-    } else {
-      data.title = title;
-    }
-  }
-
-  assignNullableString(body, 'description', data);
-  assignEnumField(body, 'resourceType', resourceTypes, errors, data);
-  assignEnumField(body, 'resourceTheme', resourceThemes, errors, data);
-  assignEnumField(body, 'resourceAudience', resourceAudiences, errors, data);
-  assignNullableString(body, 'url', data);
-  assignNullableString(body, 'filePath', data);
-  assignEnumField(body, 'status', publicationStatuses, errors, data);
-  assignNullableDateTime(body, 'publishedAt', errors, data);
-  assignNullableString(body, 'programId', data);
-  assignNullableString(body, 'cohortId', data);
+  assignOptionalTitle(body, errors, data);
+  assignSharedResourceFields(body, errors, data);
 
   if (Object.keys(data).length === 0 && errors.length === 0) {
     return {

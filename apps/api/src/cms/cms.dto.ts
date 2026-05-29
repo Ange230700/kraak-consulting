@@ -69,6 +69,106 @@ function readStatus(value: unknown): string | null {
   return publicationStatuses.has(status) ? status : null;
 }
 
+function assignOptionalRequiredStringField<T extends Record<string, unknown>>(
+  body: Record<string, unknown>,
+  field: string,
+  errors: string[],
+  data: T,
+): void {
+  if (!(field in body)) {
+    return;
+  }
+
+  const value = readTrimmedString(body[field]);
+
+  if (value.length > 0) {
+    data[field as keyof T] = value as T[keyof T];
+    return;
+  }
+
+  errors.push(`Le champ ${field} est requis.`);
+}
+
+function assignOptionalNullableStringField<T extends Record<string, unknown>>(
+  body: Record<string, unknown>,
+  field: string,
+  data: T,
+): void {
+  if (!(field in body)) {
+    return;
+  }
+
+  data[field as keyof T] = readNullableString(body[field]) as T[keyof T];
+}
+
+function assignOptionalNonNegativeIntegerField<
+  T extends Record<string, unknown>,
+>(
+  body: Record<string, unknown>,
+  field: string,
+  errors: string[],
+  data: T,
+): void {
+  if (!(field in body)) {
+    return;
+  }
+
+  const value = readNonNegativeInteger(body[field]);
+
+  if (value !== null) {
+    data[field as keyof T] = value as T[keyof T];
+    return;
+  }
+
+  errors.push(`Le champ ${field} doit être un entier positif ou nul.`);
+}
+
+function assignOptionalStatusField<T extends Record<string, unknown>>(
+  body: Record<string, unknown>,
+  errors: string[],
+  data: T,
+): void {
+  if (!('status' in body)) {
+    return;
+  }
+
+  const status = readStatus(body['status']);
+
+  if (status !== null) {
+    (data as Record<string, unknown>)['status'] = status;
+    return;
+  }
+
+  errors.push('Le champ status est invalide.');
+}
+
+function assignOptionalUrlField<T extends Record<string, unknown>>(
+  body: Record<string, unknown>,
+  field: string,
+  errors: string[],
+  data: T,
+  options?: { requiredWhenPresent?: boolean },
+): void {
+  if (!(field in body)) {
+    return;
+  }
+
+  const url = readNullableUrl(body[field]);
+  const requiresValue = options?.requiredWhenPresent === true;
+
+  if (url.isInvalid || (requiresValue && url.value === null)) {
+    if (requiresValue) {
+      errors.push(`Le champ ${field} est requis et doit être une URL valide.`);
+      return;
+    }
+
+    errors.push(`Le champ ${field} est invalide.`);
+    return;
+  }
+
+  data[field as keyof T] = url.value as T[keyof T];
+}
+
 export function validateCreateStatisticPayload(
   body: unknown,
 ): ValidationResult<CreateStatisticDto> {
@@ -128,45 +228,11 @@ export function validateUpdateStatisticPayload(
   const data: UpdateStatisticDto = {};
   const errors: string[] = [];
 
-  if ('label' in body) {
-    const label = readTrimmedString(body['label']);
-    if (!label) {
-      errors.push('Le champ label est requis.');
-    } else {
-      data.label = label;
-    }
-  }
-
-  if ('value' in body) {
-    const value = readTrimmedString(body['value']);
-    if (!value) {
-      errors.push('Le champ value est requis.');
-    } else {
-      data.value = value;
-    }
-  }
-
-  if ('suffix' in body) {
-    data.suffix = readNullableString(body['suffix']);
-  }
-
-  if ('sortOrder' in body) {
-    const sortOrder = readNonNegativeInteger(body['sortOrder']);
-    if (sortOrder === null) {
-      errors.push('Le champ sortOrder doit être un entier positif ou nul.');
-    } else {
-      data.sortOrder = sortOrder;
-    }
-  }
-
-  if ('status' in body) {
-    const status = readStatus(body['status']);
-    if (!status) {
-      errors.push('Le champ status est invalide.');
-    } else {
-      data.status = status as UpdateStatisticDto['status'];
-    }
-  }
+  assignOptionalRequiredStringField(body, 'label', errors, data);
+  assignOptionalRequiredStringField(body, 'value', errors, data);
+  assignOptionalNullableStringField(body, 'suffix', data);
+  assignOptionalNonNegativeIntegerField(body, 'sortOrder', errors, data);
+  assignOptionalStatusField(body, errors, data);
 
   if (errors.length > 0) {
     return { valid: false, errors };
@@ -245,50 +311,13 @@ export function validateUpdatePartnerPayload(
   const data: UpdatePartnerDto = {};
   const errors: string[] = [];
 
-  if ('name' in body) {
-    const name = readTrimmedString(body['name']);
-    if (!name) {
-      errors.push('Le champ name est requis.');
-    } else {
-      data.name = name;
-    }
-  }
-
-  if ('logoUrl' in body) {
-    const logoUrl = readNullableUrl(body['logoUrl']);
-    if (logoUrl.value === null || logoUrl.isInvalid) {
-      errors.push('Le champ logoUrl est requis et doit être une URL valide.');
-    } else {
-      data.logoUrl = logoUrl.value;
-    }
-  }
-
-  if ('websiteUrl' in body) {
-    const websiteUrl = readNullableUrl(body['websiteUrl']);
-    if (websiteUrl.isInvalid) {
-      errors.push('Le champ websiteUrl est invalide.');
-    } else {
-      data.websiteUrl = websiteUrl.value;
-    }
-  }
-
-  if ('sortOrder' in body) {
-    const sortOrder = readNonNegativeInteger(body['sortOrder']);
-    if (sortOrder === null) {
-      errors.push('Le champ sortOrder doit être un entier positif ou nul.');
-    } else {
-      data.sortOrder = sortOrder;
-    }
-  }
-
-  if ('status' in body) {
-    const status = readStatus(body['status']);
-    if (!status) {
-      errors.push('Le champ status est invalide.');
-    } else {
-      data.status = status as UpdatePartnerDto['status'];
-    }
-  }
+  assignOptionalRequiredStringField(body, 'name', errors, data);
+  assignOptionalUrlField(body, 'logoUrl', errors, data, {
+    requiredWhenPresent: true,
+  });
+  assignOptionalUrlField(body, 'websiteUrl', errors, data);
+  assignOptionalNonNegativeIntegerField(body, 'sortOrder', errors, data);
+  assignOptionalStatusField(body, errors, data);
 
   if (errors.length > 0) {
     return { valid: false, errors };
@@ -370,58 +399,13 @@ export function validateUpdateTestimonialPayload(
   const data: UpdateTestimonialDto = {};
   const errors: string[] = [];
 
-  if ('quote' in body) {
-    const quote = readTrimmedString(body['quote']);
-    if (!quote) {
-      errors.push('Le champ quote est requis.');
-    } else {
-      data.quote = quote;
-    }
-  }
-
-  if ('authorName' in body) {
-    const authorName = readTrimmedString(body['authorName']);
-    if (!authorName) {
-      errors.push('Le champ authorName est requis.');
-    } else {
-      data.authorName = authorName;
-    }
-  }
-
-  if ('authorRole' in body) {
-    data.authorRole = readNullableString(body['authorRole']);
-  }
-
-  if ('company' in body) {
-    data.company = readNullableString(body['company']);
-  }
-
-  if ('avatarUrl' in body) {
-    const avatarUrl = readNullableUrl(body['avatarUrl']);
-    if (avatarUrl.isInvalid) {
-      errors.push('Le champ avatarUrl est invalide.');
-    } else {
-      data.avatarUrl = avatarUrl.value;
-    }
-  }
-
-  if ('sortOrder' in body) {
-    const sortOrder = readNonNegativeInteger(body['sortOrder']);
-    if (sortOrder === null) {
-      errors.push('Le champ sortOrder doit être un entier positif ou nul.');
-    } else {
-      data.sortOrder = sortOrder;
-    }
-  }
-
-  if ('status' in body) {
-    const status = readStatus(body['status']);
-    if (!status) {
-      errors.push('Le champ status est invalide.');
-    } else {
-      data.status = status as UpdateTestimonialDto['status'];
-    }
-  }
+  assignOptionalRequiredStringField(body, 'quote', errors, data);
+  assignOptionalRequiredStringField(body, 'authorName', errors, data);
+  assignOptionalNullableStringField(body, 'authorRole', data);
+  assignOptionalNullableStringField(body, 'company', data);
+  assignOptionalUrlField(body, 'avatarUrl', errors, data);
+  assignOptionalNonNegativeIntegerField(body, 'sortOrder', errors, data);
+  assignOptionalStatusField(body, errors, data);
 
   if (errors.length > 0) {
     return { valid: false, errors };
@@ -507,63 +491,13 @@ export function validateUpdateTeamMemberPayload(
   const data: UpdateTeamMemberDto = {};
   const errors: string[] = [];
 
-  if ('fullName' in body) {
-    const fullName = readTrimmedString(body['fullName']);
-    if (!fullName) {
-      errors.push('Le champ fullName est requis.');
-    } else {
-      data.fullName = fullName;
-    }
-  }
-
-  if ('role' in body) {
-    const role = readTrimmedString(body['role']);
-    if (!role) {
-      errors.push('Le champ role est requis.');
-    } else {
-      data.role = role;
-    }
-  }
-
-  if ('bio' in body) {
-    data.bio = readNullableString(body['bio']);
-  }
-
-  if ('avatarUrl' in body) {
-    const avatarUrl = readNullableUrl(body['avatarUrl']);
-    if (avatarUrl.isInvalid) {
-      errors.push('Le champ avatarUrl est invalide.');
-    } else {
-      data.avatarUrl = avatarUrl.value;
-    }
-  }
-
-  if ('linkedinUrl' in body) {
-    const linkedinUrl = readNullableUrl(body['linkedinUrl']);
-    if (linkedinUrl.isInvalid) {
-      errors.push('Le champ linkedinUrl est invalide.');
-    } else {
-      data.linkedinUrl = linkedinUrl.value;
-    }
-  }
-
-  if ('sortOrder' in body) {
-    const sortOrder = readNonNegativeInteger(body['sortOrder']);
-    if (sortOrder === null) {
-      errors.push('Le champ sortOrder doit être un entier positif ou nul.');
-    } else {
-      data.sortOrder = sortOrder;
-    }
-  }
-
-  if ('status' in body) {
-    const status = readStatus(body['status']);
-    if (!status) {
-      errors.push('Le champ status est invalide.');
-    } else {
-      data.status = status as UpdateTeamMemberDto['status'];
-    }
-  }
+  assignOptionalRequiredStringField(body, 'fullName', errors, data);
+  assignOptionalRequiredStringField(body, 'role', errors, data);
+  assignOptionalNullableStringField(body, 'bio', data);
+  assignOptionalUrlField(body, 'avatarUrl', errors, data);
+  assignOptionalUrlField(body, 'linkedinUrl', errors, data);
+  assignOptionalNonNegativeIntegerField(body, 'sortOrder', errors, data);
+  assignOptionalStatusField(body, errors, data);
 
   if (errors.length > 0) {
     return { valid: false, errors };

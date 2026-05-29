@@ -1,6 +1,8 @@
 import {
+  assignOptionalTrimmedString,
+  assignRequiredTrimmedString,
   isObjectPayload,
-  readTrimmedString,
+  readNullableString,
 } from '../shared/dto-validation.utils';
 import type { ValidationResult } from '../shared/validation-result.type';
 
@@ -54,60 +56,6 @@ export interface UpdateServiceDetailDto {
   sortOrder?: number;
 }
 
-function readNullableString(value: unknown): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  const normalized = readTrimmedString(value);
-  return normalized.length > 0 ? normalized : null;
-}
-
-function assignRequiredString<
-  T extends { title?: string; description?: string },
->(
-  body: Record<string, unknown>,
-  field: 'title' | 'description',
-  errors: string[],
-  updates: Partial<T>,
-): void {
-  if (!(field in body)) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  const value = readTrimmedString(body[field]);
-
-  if (!value) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  (updates as Record<string, unknown>)[field] = value;
-}
-
-function assignOptionalString<
-  T extends { title?: string; description?: string },
->(
-  body: Record<string, unknown>,
-  field: 'title' | 'description',
-  errors: string[],
-  updates: T,
-): void {
-  if (!(field in body)) {
-    return;
-  }
-
-  const value = readTrimmedString(body[field]);
-
-  if (!value) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  (updates as Record<string, unknown>)[field] = value;
-}
-
 function assignNullableIcon(
   body: Record<string, unknown>,
   updates: Partial<CreateServiceDto> | UpdateServiceDto,
@@ -151,8 +99,8 @@ export function validateCreateServicePayload(
   const errors: string[] = [];
   const data: Partial<CreateServiceDto> = {};
 
-  assignRequiredString(body, 'title', errors, data);
-  assignRequiredString(body, 'description', errors, data);
+  assignRequiredTrimmedString(body, 'title', errors, data);
+  assignRequiredTrimmedString(body, 'description', errors, data);
   assignNullableIcon(body, data);
   assignOptionalSortOrder(body, errors, data);
 
@@ -179,8 +127,8 @@ export function validateUpdateServicePayload(
   const errors: string[] = [];
   const data: UpdateServiceDto = {};
 
-  assignOptionalString(body, 'title', errors, data);
-  assignOptionalString(body, 'description', errors, data);
+  assignOptionalTrimmedString(body, 'title', errors, data);
+  assignOptionalTrimmedString(body, 'description', errors, data);
   assignNullableIcon(body, data);
   assignOptionalSortOrder(body, errors, data);
 
@@ -214,8 +162,8 @@ export function validateCreateServiceDetailPayload(
   const errors: string[] = [];
   const data: Partial<CreateServiceDetailDto> = {};
 
-  assignRequiredString(body, 'title', errors, data);
-  assignRequiredString(body, 'description', errors, data);
+  assignRequiredTrimmedString(body, 'title', errors, data);
+  assignRequiredTrimmedString(body, 'description', errors, data);
   assignOptionalSortOrder(body, errors, data);
 
   if (errors.length > 0) {
@@ -241,8 +189,8 @@ export function validateUpdateServiceDetailPayload(
   const errors: string[] = [];
   const data: UpdateServiceDetailDto = {};
 
-  assignOptionalString(body, 'title', errors, data);
-  assignOptionalString(body, 'description', errors, data);
+  assignOptionalTrimmedString(body, 'title', errors, data);
+  assignOptionalTrimmedString(body, 'description', errors, data);
   assignOptionalSortOrder(body, errors, data);
 
   if (Object.keys(data).length === 0 && errors.length === 0) {

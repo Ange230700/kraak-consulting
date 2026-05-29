@@ -1,10 +1,17 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { createApiClient } from '@kraak/api-client';
+import { Injectable } from '@angular/core';
+import {
+  clearAuthBundle,
+  createApiClient,
+  createAuthSessionActions,
+  type AuthSessionActions,
+  createAuthSessionState,
+  persistAuthBundle,
+  readStoredAuthBundle,
+  storeAuthBundle,
+} from '@kraak/api-client';
 import type {
-  AuthProfileDto,
   AuthSessionBundleDto,
   AuthSessionContextDto,
-  AuthSessionTokensDto,
   PasswordResetRequestDto,
   PasswordResetResponseDto,
   SignInRequestDto,
@@ -23,6 +30,7 @@ export const MOBILE_AUTH_STORAGE_KEY = 'kraak.mobile.session';
 })
 export class MobileAuthService {
   private readonly restoredBundle = this.readStoredBundle();
+  private readonly authState = createAuthSessionState(this.restoredBundle);
   private _client: ReturnType<typeof createApiClient> | null = null;
   private get client(): ReturnType<typeof createApiClient> {
     this._client ??= createApiClient({
@@ -32,135 +40,100 @@ export class MobileAuthService {
     return this._client;
   }
 
-  private readonly sessionState = signal<AuthSessionTokensDto | null>(
-    this.restoredBundle?.session ?? null,
-  );
-  private readonly profileState = signal<AuthProfileDto | null>(
-    this.restoredBundle?.profile ?? null,
-  );
+  private readonly sessionState = this.authState.sessionState;
+  private readonly profileState = this.authState.profileState;
 
-  readonly currentSession = this.sessionState.asReadonly();
-  readonly currentProfile = this.profileState.asReadonly();
-  readonly currentRole = computed<UserRoleValue | null>(
-    () => this.currentProfile()?.appUser.role ?? null,
-  );
-  readonly isAuthenticated = computed(
-    () => this.currentSession() !== null && this.currentProfile() !== null,
-  );
-  readonly isParticipant = computed(() => this.currentRole() === 'participant');
-  readonly isAdmin = computed(() => this.currentRole() === 'admin');
+  readonly currentSession = this.authState.currentSession;
+  readonly currentProfile = this.authState.currentProfile;
+  readonly currentRole = this.authState.currentRole;
+  readonly isAuthenticated = this.authState.isAuthenticated;
+  readonly isParticipant = this.authState.isParticipant;
+  readonly isAdmin = this.authState.isAdmin;
+
+  private readonly mobileAuthClient = {
+    signIn: (body: SignInRequestDto) => this.client.auth.signIn(body),
+    signUp: (body: SignUpRequestDto) => this.client.auth.signUp(body),
+    refreshSession: (body: { refreshToken: string }) =>
+      this.client.auth.refreshSession(body),
+    requestPasswordReset: (body: PasswordResetRequestDto) =>
+      this.client.auth.requestPasswordReset(body),
+    getSession: () => this.client.auth.getSession(),
+  };
+
+  private readonly authActions = createAuthSessionActions({
+    currentRole: this.currentRole,
+    currentSession: this.currentSession,
+    authClient: this.mobileAuthClient,
+    storeBundle: this.storeBundle.bind(this),
+    setProfile: this.profileState.set,
+    persistBundle: this.persistBundle.bind(this),
+  });
 
   hasRole(...roles: UserRoleValue[]): boolean {
-    const role = this.currentRole();
-    return role !== null && roles.includes(role);
+    const hasRole = this.authActions.hasRole;
+    return hasRole(...roles);
   }
 
   async signIn(body: SignInRequestDto): Promise<AuthSessionBundleDto> {
-    const bundle = await this.client.auth.signIn(body);
-    this.storeBundle(bundle);
-    return bundle;
+    const signIn = this.authActions.signIn;
+    return signIn(body);
   }
 
   async signUp(body: SignUpRequestDto): Promise<SignUpResponseDto> {
-    const response = await this.client.auth.signUp(body);
-
-    if (response.session && response.profile) {
-      this.storeBundle({
-        session: response.session,
-        profile: response.profile,
-      });
-    }
-
-    return response;
+    const signUp = this.authActions.signUp;
+    return signUp(body);
   }
 
   async refreshSession(): Promise<AuthSessionBundleDto | null> {
-    const session = this.currentSession();
-
-    if (!session) {
-      return null;
-    }
-
-    const bundle = await this.client.auth.refreshSession({
-      refreshToken: session.refreshToken,
-    });
-
-    this.storeBundle(bundle);
-    return bundle;
+    return this.runAuthAction((actions) => actions.refreshSession());
   }
 
   async requestPasswordReset(
     body: PasswordResetRequestDto,
   ): Promise<PasswordResetResponseDto> {
-    return this.client.auth.requestPasswordReset(body);
+    return this.runAuthAction((actions) => actions.requestPasswordReset(body));
   }
 
   async getSession(): Promise<AuthSessionContextDto | null> {
-    if (!this.currentSession()) {
-      return null;
-    }
-
-    const context = await this.client.auth.getSession();
-    this.profileState.set(context.profile);
-    this.persistBundle();
-
-    return context;
+    return this.runAuthAction((actions) => actions.getSession());
   }
 
   clearSession(): void {
-    this.sessionState.set(null);
-    this.profileState.set(null);
-    localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY);
+    clearAuthBundle(this.sessionState.set, this.profileState.set, () =>
+      localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY),
+    );
   }
 
   private storeBundle(bundle: AuthSessionBundleDto): void {
-    this.sessionState.set(bundle.session);
-    this.profileState.set(bundle.profile);
-    this.persistBundle();
+    storeAuthBundle(
+      bundle,
+      this.sessionState.set,
+      this.profileState.set,
+      this.persistBundle.bind(this),
+    );
   }
 
   private persistBundle(): void {
-    const session = this.currentSession();
-    const profile = this.currentProfile();
-
-    if (!session || !profile) {
-      localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY);
-      return;
-    }
-
-    localStorage.setItem(
-      MOBILE_AUTH_STORAGE_KEY,
-      JSON.stringify({
-        session,
-        profile,
-      }),
+    persistAuthBundle(
+      this.currentSession,
+      this.currentProfile,
+      (serializedBundle) =>
+        localStorage.setItem(MOBILE_AUTH_STORAGE_KEY, serializedBundle),
+      () => localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY),
     );
   }
 
   private readStoredBundle(): AuthSessionBundleDto | null {
-    const rawValue = localStorage.getItem(MOBILE_AUTH_STORAGE_KEY);
+    return readStoredAuthBundle(
+      localStorage.getItem(MOBILE_AUTH_STORAGE_KEY),
+      () => localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY),
+    );
+  }
 
-    if (!rawValue) {
-      return null;
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as AuthSessionBundleDto;
-
-      if (
-        !parsedValue.session?.accessToken ||
-        !parsedValue.session?.refreshToken ||
-        !parsedValue.profile?.appUser?.id
-      ) {
-        localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY);
-        return null;
-      }
-
-      return parsedValue;
-    } catch {
-      localStorage.removeItem(MOBILE_AUTH_STORAGE_KEY);
-      return null;
-    }
+  private runAuthAction<TResult>(
+    action: (actions: AuthSessionActions) => TResult,
+  ): TResult {
+    return action(this.authActions);
   }
 }
 

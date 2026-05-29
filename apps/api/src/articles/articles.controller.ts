@@ -36,93 +36,12 @@ import {
   validateUpdateTagPayload,
   validateUpdateArticlePayload,
 } from './articles.dto';
+import {
+  articleSchema,
+  createArticleBodySchema,
+  updateArticleBodySchema,
+} from './articles.swagger';
 import { ArticlesService } from './articles.service';
-
-const publicationStatusEnum = ['draft', 'published', 'archived'];
-
-const articleSchema = {
-  type: 'object',
-  required: [
-    'id',
-    'slug',
-    'title',
-    'excerpt',
-    'content',
-    'status',
-    'coverImageUrl',
-    'seoTitle',
-    'seoDescription',
-    'publishedAt',
-    'authorId',
-    'categoryIds',
-    'tagIds',
-    'createdAt',
-    'updatedAt',
-  ],
-  properties: {
-    id: { type: 'string' },
-    slug: { type: 'string' },
-    title: { type: 'string' },
-    excerpt: { type: 'string' },
-    content: { type: 'string' },
-    status: { type: 'string', enum: publicationStatusEnum },
-    coverImageUrl: { type: 'string', nullable: true },
-    seoTitle: { type: 'string', nullable: true },
-    seoDescription: { type: 'string', nullable: true },
-    publishedAt: { type: 'string', format: 'date-time', nullable: true },
-    authorId: { type: 'string' },
-    categoryIds: { type: 'array', items: { type: 'string' } },
-    tagIds: { type: 'array', items: { type: 'string' } },
-    createdAt: { type: 'string', format: 'date-time' },
-    updatedAt: { type: 'string', format: 'date-time' },
-  },
-};
-
-const createArticleBodySchema = {
-  type: 'object',
-  required: [
-    'slug',
-    'title',
-    'excerpt',
-    'content',
-    'status',
-    'authorId',
-    'categoryIds',
-    'tagIds',
-  ],
-  properties: {
-    slug: { type: 'string' },
-    title: { type: 'string' },
-    excerpt: { type: 'string' },
-    content: { type: 'string' },
-    status: { type: 'string', enum: publicationStatusEnum },
-    coverImageUrl: { type: 'string', nullable: true },
-    seoTitle: { type: 'string', nullable: true },
-    seoDescription: { type: 'string', nullable: true },
-    publishedAt: { type: 'string', format: 'date-time', nullable: true },
-    authorId: { type: 'string' },
-    categoryIds: { type: 'array', items: { type: 'string' } },
-    tagIds: { type: 'array', items: { type: 'string' } },
-  },
-};
-
-const updateArticleBodySchema = {
-  type: 'object',
-  properties: {
-    slug: { type: 'string' },
-    title: { type: 'string' },
-    excerpt: { type: 'string' },
-    content: { type: 'string' },
-    status: { type: 'string', enum: publicationStatusEnum },
-    coverImageUrl: { type: 'string', nullable: true },
-    seoTitle: { type: 'string', nullable: true },
-    seoDescription: { type: 'string', nullable: true },
-    publishedAt: { type: 'string', format: 'date-time', nullable: true },
-    authorId: { type: 'string' },
-    categoryIds: { type: 'array', items: { type: 'string' } },
-    tagIds: { type: 'array', items: { type: 'string' } },
-  },
-};
 
 const apiErrorSchema = {
   type: 'object',

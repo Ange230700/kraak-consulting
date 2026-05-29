@@ -54,7 +54,7 @@ describe('LocationInformationPage', () => {
     comp['city'] = 'Kinshasa';
     comp['addressLine1'] = '12 Avenue de la Paix';
 
-    comp.goPrev();
+    comp['goPrev']();
 
     expect(formState.state().addressLine1).toBe('12 Avenue de la Paix');
     expect(navigateSpy).toHaveBeenCalledWith([
@@ -74,7 +74,7 @@ describe('LocationInformationPage', () => {
     comp['postalCode'] = '00243';
     comp['addressLine2'] = 'B3';
 
-    comp.goNext();
+    comp['goNext']();
 
     expect(formState.state().postalCode).toBe('00243');
     expect(formState.state().addressLine2).toBe('B3');

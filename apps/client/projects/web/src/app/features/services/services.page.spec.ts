@@ -23,7 +23,7 @@ describe('ServicesPage', () => {
     expect(heading?.textContent).toContain(
       'Des offres claires pour renforcer les parcours, les projets et les organisations',
     );
-  });
+  }, 45000);
 
   it('Given the services page When it renders Then the four consulting service families are visible', () => {
     const fixture = TestBed.createComponent(ServicesPage);

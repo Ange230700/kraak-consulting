@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
+import type { AppUserDto } from '@kraak/contracts';
 import { MessageService } from 'primeng/api';
 import { vi } from 'vitest';
 import AdminUserListPage from './admin-user-list.page';
@@ -10,7 +11,7 @@ interface UsersClientMock {
   remove: ReturnType<typeof vi.fn>;
 }
 
-const baseUser = {
+const baseUser: AppUserDto = {
   id: '1',
   firstName: 'Alice',
   lastName: 'Martin',
@@ -26,8 +27,8 @@ const baseUser = {
 describe('AdminUserListPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminUserListPage, RouterTestingModule],
-      providers: [MessageService],
+      imports: [AdminUserListPage],
+      providers: [provideRouter([]), MessageService],
     }).compileComponents();
   });
 
@@ -119,7 +120,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.loadUsers();
 
@@ -136,7 +140,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.loadUsers();
 
@@ -160,7 +167,10 @@ describe('AdminUserListPage', () => {
         .mockResolvedValue({ ...baseUser, firstName: 'Alicia', role: 'admin' }),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.saveEdit();
 
@@ -181,7 +191,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn().mockRejectedValue(new Error('update failed')),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.saveEdit();
 
@@ -205,7 +218,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn().mockResolvedValue(undefined),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.confirmDelete();
 
@@ -225,7 +241,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn().mockRejectedValue(new Error('delete failed')),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.confirmDelete();
 
@@ -243,7 +262,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.saveEdit();
 
@@ -260,7 +282,10 @@ describe('AdminUserListPage', () => {
       update: vi.fn(),
       remove: vi.fn(),
     };
-    comp['usersClient'] = usersClient as never;
+    Object.defineProperty(comp, 'usersClient', {
+      value: usersClient,
+      configurable: true,
+    });
 
     await comp.confirmDelete();
 

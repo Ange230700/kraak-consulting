@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router, provideRouter } from '@angular/router';
+import { vi } from 'vitest';
 import AuthorizationPage from './authorization.page';
 import { UserFormStateService } from '../user-form-state.service';
 
 describe('AuthorizationPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthorizationPage, RouterTestingModule],
-      providers: [UserFormStateService],
+      imports: [AuthorizationPage],
+      providers: [provideRouter([]), UserFormStateService],
     }).compileComponents();
   });
 
@@ -46,5 +47,54 @@ describe('AuthorizationPage', () => {
 
     expect(formState.state().preferredContactChannel).toBe('whatsapp');
     expect(formState.state().notes).toBe('Rappel le lundi');
+  });
+
+  it('Given selected values, When goPrev is called, Then state is synced and previous route is requested', () => {
+    const fixture = TestBed.createComponent(AuthorizationPage);
+    const comp = fixture.componentInstance;
+    const formState = TestBed.inject(UserFormStateService);
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi
+      .spyOn(router, 'navigate')
+      .mockImplementation(async () => true);
+
+    comp['preferredContactChannel'] = 'phone';
+    comp['notes'] = 'Appeler le matin';
+
+    comp['goPrev']();
+
+    expect(formState.state().preferredContactChannel).toBe('phone');
+    expect(navigateSpy).toHaveBeenCalledWith([
+      '/admin/utilisateurs/create/location-information',
+    ]);
+  });
+
+  it('Given selected values, When goNext is called, Then state is synced and next route is requested', () => {
+    const fixture = TestBed.createComponent(AuthorizationPage);
+    const comp = fixture.componentInstance;
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi
+      .spyOn(router, 'navigate')
+      .mockImplementation(async () => true);
+
+    comp['preferredContactChannel'] = 'email';
+    comp['notes'] = 'Niveau prioritaire';
+
+    comp['goNext']();
+
+    expect(navigateSpy).toHaveBeenCalledWith([
+      '/admin/utilisateurs/create/account-status',
+    ]);
+  });
+
+  it('Given contact channels, When template is rendered, Then all selectable options are present', () => {
+    const fixture = TestBed.createComponent(AuthorizationPage);
+    fixture.detectChanges();
+
+    const options = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      '#preferredContactChannel option',
+    );
+
+    expect(options.length).toBe(4);
   });
 });

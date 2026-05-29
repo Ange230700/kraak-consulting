@@ -1,17 +1,17 @@
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import {
-  computed,
-  Injectable,
-  inject,
-  PLATFORM_ID,
-  signal,
-} from '@angular/core';
-import { createApiClient } from '@kraak/api-client';
+  clearAuthBundle,
+  createApiClient,
+  createAuthSessionActions,
+  createAuthSessionState,
+  persistAuthBundle,
+  readStoredAuthBundle,
+  storeAuthBundle,
+} from '@kraak/api-client';
 import type {
-  AuthProfileDto,
   AuthSessionBundleDto,
   AuthSessionContextDto,
-  AuthSessionTokensDto,
   PasswordResetRequestDto,
   PasswordResetResponseDto,
   SignInRequestDto,
@@ -54,72 +54,39 @@ export { ApiError } from '@kraak/api-client';
 export class WebAuthService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly restoredBundle = this.readStoredBundle();
+  private readonly authState = createAuthSessionState(this.restoredBundle);
   private readonly client = createApiClient({
     baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
     getAuthToken: () => this.currentSession()?.accessToken ?? null,
   });
-  private readonly sessionState = signal<AuthSessionTokensDto | null>(
-    this.restoredBundle?.session ?? null,
-  );
-  private readonly profileState = signal<AuthProfileDto | null>(
-    this.restoredBundle?.profile ?? null,
-  );
+  private readonly sessionState = this.authState.sessionState;
+  private readonly profileState = this.authState.profileState;
 
-  readonly currentSession = this.sessionState.asReadonly();
-  readonly currentProfile = this.profileState.asReadonly();
-  readonly currentRole = computed<UserRoleValue | null>(
-    () => this.currentProfile()?.appUser.role ?? null,
-  );
-  readonly isAuthenticated = computed(
-    () => this.currentSession() !== null && this.currentProfile() !== null,
-  );
-  readonly isParticipant = computed(() => this.currentRole() === 'participant');
-  readonly isAdmin = computed(() => this.currentRole() === 'admin');
+  readonly currentSession = this.authState.currentSession;
+  readonly currentProfile = this.authState.currentProfile;
+  readonly currentRole = this.authState.currentRole;
+  readonly isAuthenticated = this.authState.isAuthenticated;
+  readonly isParticipant = this.authState.isParticipant;
+  readonly isAdmin = this.authState.isAdmin;
 
-  hasRole(...roles: UserRoleValue[]): boolean {
-    const role = this.currentRole();
-    return role !== null && roles.includes(role);
-  }
+  private readonly authActions = this.createAuthActions();
 
-  async signIn(body: SignInRequestDto): Promise<AuthSessionBundleDto> {
-    const bundle = await this.client.auth.signIn(body);
-    this.storeBundle(bundle);
-    return bundle;
-  }
+  readonly hasRole = (...roles: UserRoleValue[]): boolean =>
+    this.authActions.hasRole(...roles);
 
-  async signUp(body: SignUpRequestDto): Promise<SignUpResponseDto> {
-    const response = await this.client.auth.signUp(body);
+  readonly signIn = (body: SignInRequestDto): Promise<AuthSessionBundleDto> =>
+    this.authActions.signIn(body);
 
-    if (response.session && response.profile) {
-      this.storeBundle({
-        session: response.session,
-        profile: response.profile,
-      });
-    }
+  readonly signUp = (body: SignUpRequestDto): Promise<SignUpResponseDto> =>
+    this.authActions.signUp(body);
 
-    return response;
-  }
+  readonly refreshSession = (): Promise<AuthSessionBundleDto | null> =>
+    this.authActions.refreshSession();
 
-  async refreshSession(): Promise<AuthSessionBundleDto | null> {
-    const session = this.currentSession();
-
-    if (!session) {
-      return null;
-    }
-
-    const bundle = await this.client.auth.refreshSession({
-      refreshToken: session.refreshToken,
-    });
-
-    this.storeBundle(bundle);
-    return bundle;
-  }
-
-  async requestPasswordReset(
+  readonly requestPasswordReset = (
     body: PasswordResetRequestDto,
-  ): Promise<PasswordResetResponseDto> {
-    return this.client.auth.requestPasswordReset(body);
-  }
+  ): Promise<PasswordResetResponseDto> =>
+    this.authActions.requestPasswordReset(body);
 
   async resolveRecoveryAccessTokenFromUrl(url?: URL): Promise<string | null> {
     const currentUrl = this.resolveUrl(url);
@@ -199,74 +166,47 @@ export class WebAuthService {
   }
 
   async getSession(): Promise<AuthSessionContextDto | null> {
-    if (!this.currentSession()) {
-      return null;
-    }
-
-    const context = await this.client.auth.getSession();
-    this.profileState.set(context.profile);
-    this.persistBundle();
-
-    return context;
+    return this.authActions.getSession();
   }
 
   clearSession(): void {
-    this.sessionState.set(null);
-    this.profileState.set(null);
-    this.getStorage()?.removeItem(WEB_AUTH_STORAGE_KEY);
+    clearAuthBundle(this.sessionState.set, this.profileState.set, () =>
+      this.getStorage()?.removeItem(WEB_AUTH_STORAGE_KEY),
+    );
   }
 
   private storeBundle(bundle: AuthSessionBundleDto): void {
-    this.sessionState.set(bundle.session);
-    this.profileState.set(bundle.profile);
-    this.persistBundle();
+    storeAuthBundle(
+      bundle,
+      this.sessionState.set,
+      this.profileState.set,
+      this.persistBundle.bind(this),
+    );
   }
 
   private persistBundle(): void {
     const storage = this.getStorage();
-    const session = this.currentSession();
-    const profile = this.currentProfile();
-
-    if (!session || !profile) {
-      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-      return;
-    }
-
-    storage?.setItem(
-      WEB_AUTH_STORAGE_KEY,
-      JSON.stringify({ session, profile }),
+    persistAuthBundle(
+      this.currentSession,
+      this.currentProfile,
+      (serializedBundle) =>
+        storage?.setItem(WEB_AUTH_STORAGE_KEY, serializedBundle),
+      () => storage?.removeItem(WEB_AUTH_STORAGE_KEY),
     );
   }
 
   private readStoredBundle(): AuthSessionBundleDto | null {
     const storage = this.getStorage();
-    const rawValue = storage?.getItem(WEB_AUTH_STORAGE_KEY) ?? null;
-
-    if (!rawValue) {
-      return null;
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as AuthSessionBundleDto;
-
-      if (
-        !parsedValue.session?.accessToken ||
-        !parsedValue.session?.refreshToken ||
-        !parsedValue.profile?.appUser?.id
-      ) {
-        storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-        return null;
-      }
-
-      return parsedValue;
-    } catch (error) {
-      console.warn(
-        '[WebAuthService] Impossible de parser la session locale, suppression du cache.',
-        error,
-      );
-      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-      return null;
-    }
+    return readStoredAuthBundle(
+      storage?.getItem(WEB_AUTH_STORAGE_KEY) ?? null,
+      () => storage?.removeItem(WEB_AUTH_STORAGE_KEY),
+      (error) => {
+        console.warn(
+          '[WebAuthService] Impossible de parser la session locale, suppression du cache.',
+          error,
+        );
+      },
+    );
   }
 
   private getStorage(): Storage | null {
@@ -309,6 +249,17 @@ export class WebAuthService {
       );
       return null;
     }
+  }
+
+  private createAuthActions() {
+    return createAuthSessionActions({
+      currentRole: this.currentRole,
+      currentSession: this.currentSession,
+      authClient: this.client.auth,
+      storeBundle: this.storeBundle.bind(this),
+      setProfile: this.profileState.set,
+      persistBundle: this.persistBundle.bind(this),
+    });
   }
 
   private readDirectRecoveryToken(

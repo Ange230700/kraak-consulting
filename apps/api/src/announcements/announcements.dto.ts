@@ -1,5 +1,9 @@
 import {
+  assignOptionalTrimmedString,
+  assignRequiredTrimmedString,
   isObjectPayload,
+  readNullableDateTime,
+  readNullableString,
   readTrimmedString,
 } from '../shared/dto-validation.utils';
 import type { ValidationResult } from '../shared/validation-result.type';
@@ -29,71 +33,6 @@ export interface UpdateAnnouncementDto {
 const announcementPriorities = new Set(['low', 'normal', 'high', 'critical']);
 const audienceTypes = new Set(['all_participants', 'program', 'cohort']);
 const publicationStatuses = new Set(['draft', 'published', 'archived']);
-
-function readNullableString(value: unknown): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  const normalized = readTrimmedString(value);
-  return normalized.length > 0 ? normalized : null;
-}
-
-function readNullableDateTime(value: unknown): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  const normalized = readTrimmedString(value);
-
-  if (!normalized) {
-    return null;
-  }
-
-  const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
-}
-
-function assignRequiredString<T extends { title?: string; body?: string }>(
-  body: Record<string, unknown>,
-  field: 'title' | 'body',
-  errors: string[],
-  updates: Partial<T>,
-): void {
-  if (!(field in body)) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  const value = readTrimmedString(body[field]);
-
-  if (!value) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  (updates as Record<string, unknown>)[field] = value;
-}
-
-function assignOptionalString<T extends { title?: string; body?: string }>(
-  body: Record<string, unknown>,
-  field: 'title' | 'body',
-  errors: string[],
-  updates: T,
-): void {
-  if (!(field in body)) {
-    return;
-  }
-
-  const value = readTrimmedString(body[field]);
-
-  if (!value) {
-    errors.push(`Le champ ${field} est requis.`);
-    return;
-  }
-
-  (updates as Record<string, unknown>)[field] = value;
-}
 
 function assignEnumField<T extends string>(
   body: Record<string, unknown>,
@@ -167,37 +106,69 @@ function validateAudienceScope(
   }
 
   if (data.audienceType === 'all_participants') {
-    if (data.programId !== undefined && data.programId !== null) {
-      errors.push(
-        'Le champ programId doit être absent lorsque audienceType vaut all_participants.',
-      );
-    }
-
-    if (data.cohortId !== undefined && data.cohortId !== null) {
-      errors.push(
-        'Le champ cohortId doit être absent lorsque audienceType vaut all_participants.',
-      );
-    }
-
+    validateAllParticipantsAudienceScope(data, errors);
     return;
   }
 
   if (data.audienceType === 'program') {
-    if (!data.programId) {
-      errors.push(
-        'Le champ programId est requis lorsque audienceType vaut program.',
-      );
-    }
-
-    if (data.cohortId !== undefined && data.cohortId !== null) {
-      errors.push(
-        'Le champ cohortId doit être absent lorsque audienceType vaut program.',
-      );
-    }
-
+    validateProgramAudienceScope(data, errors);
     return;
   }
 
+  validateCohortAudienceScope(data, errors);
+}
+
+function hasProvidedScopeId(value: string | null | undefined): boolean {
+  return value !== undefined && value !== null;
+}
+
+function validateAllParticipantsAudienceScope(
+  data: {
+    programId?: string | null;
+    cohortId?: string | null;
+  },
+  errors: string[],
+): void {
+  if (hasProvidedScopeId(data.programId)) {
+    errors.push(
+      'Le champ programId doit être absent lorsque audienceType vaut all_participants.',
+    );
+  }
+
+  if (hasProvidedScopeId(data.cohortId)) {
+    errors.push(
+      'Le champ cohortId doit être absent lorsque audienceType vaut all_participants.',
+    );
+  }
+}
+
+function validateProgramAudienceScope(
+  data: {
+    programId?: string | null;
+    cohortId?: string | null;
+  },
+  errors: string[],
+): void {
+  if (!data.programId) {
+    errors.push(
+      'Le champ programId est requis lorsque audienceType vaut program.',
+    );
+  }
+
+  if (hasProvidedScopeId(data.cohortId)) {
+    errors.push(
+      'Le champ cohortId doit être absent lorsque audienceType vaut program.',
+    );
+  }
+}
+
+function validateCohortAudienceScope(
+  data: {
+    programId?: string | null;
+    cohortId?: string | null;
+  },
+  errors: string[],
+): void {
   if (!data.programId) {
     errors.push(
       'Le champ programId est requis lorsque audienceType vaut cohort.',
@@ -224,8 +195,8 @@ export function validateCreateAnnouncementPayload(
   const errors: string[] = [];
   const data: Partial<CreateAnnouncementDto> = {};
 
-  assignRequiredString(body, 'title', errors, data);
-  assignRequiredString(body, 'body', errors, data);
+  assignRequiredTrimmedString(body, 'title', errors, data);
+  assignRequiredTrimmedString(body, 'body', errors, data);
   assignEnumField(body, 'priority', announcementPriorities, errors, data);
   assignEnumField(body, 'audienceType', audienceTypes, errors, data);
   assignNullableStringField(body, 'programId', data);
@@ -257,8 +228,8 @@ export function validateUpdateAnnouncementPayload(
   const errors: string[] = [];
   const data: UpdateAnnouncementDto = {};
 
-  assignOptionalString(body, 'title', errors, data);
-  assignOptionalString(body, 'body', errors, data);
+  assignOptionalTrimmedString(body, 'title', errors, data);
+  assignOptionalTrimmedString(body, 'body', errors, data);
   assignEnumField(body, 'priority', announcementPriorities, errors, data);
   assignEnumField(body, 'audienceType', audienceTypes, errors, data);
   assignNullableStringField(body, 'programId', data);
