@@ -661,6 +661,78 @@ describe('WebAuthService', () => {
         environment.supabasePublishableKey = originalPublishableKey;
       }
     });
+
+    it('when token_hash and type are only present in URL hash fragment, then exchange is attempted and token is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: 'hash-fragment-token' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset#token_hash=hash-abc&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('hash-fragment-token');
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/v1/verify'),
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('when called without explicit URL in browser mode, then current window URL is parsed and direct query token is returned', async () => {
+      const replaceStateSpy = vi.spyOn(globalThis.history, 'replaceState');
+      globalThis.history.replaceState(
+        {},
+        '',
+        '/auth/reset?access_token=browser-query-token&type=recovery',
+      );
+
+      TestBed.configureTestingModule({
+        providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+      });
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+      expect(token).toBe('browser-query-token');
+      expect(fetchMock).not.toHaveBeenCalled();
+      replaceStateSpy.mockRestore();
+    });
+
+    it('when window access throws in browser mode and no explicit URL is provided, then null is returned safely', async () => {
+      const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'window',
+      );
+
+      Object.defineProperty(globalThis, 'window', {
+        configurable: true,
+        get: () => {
+          throw new Error('window unavailable');
+        },
+      });
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        });
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+        expect(token).toBeNull();
+      } finally {
+        if (originalWindowDescriptor) {
+          Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+        }
+      }
+    });
   });
 
   describe('Given completePasswordRecovery', () => {
@@ -756,6 +828,74 @@ describe('WebAuthService', () => {
           newPassword: 'NouveauMotDePasse123!',
         }),
       ).rejects.toThrow('Token invalide ou expiré.');
+    });
+
+    it('when Supabase publishable key is configured, then password update call includes apikey header', async () => {
+      const originalPublishableKey = environment.supabasePublishableKey;
+      environment.supabasePublishableKey = 'pk-test-public-key';
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({}),
+      } satisfies Partial<Response>);
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining('/auth/v1/user'),
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              apikey: 'pk-test-public-key',
+            }),
+          }),
+        );
+      } finally {
+        environment.supabasePublishableKey = originalPublishableKey;
+      }
+    });
+
+    it('when Supabase error payload provides msg only, then msg is used as thrown error message', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ msg: 'Erreur msg prioritaire.' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Erreur msg prioritaire.');
+    });
+
+    it('when Supabase error payload has no explicit message fields, then default fallback message is used', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Impossible de mettre à jour le mot de passe.');
     });
 
     it('when Supabase error response is not JSON, then a fallback error message is thrown', async () => {
