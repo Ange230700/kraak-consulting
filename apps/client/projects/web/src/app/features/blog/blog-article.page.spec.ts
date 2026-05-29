@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRoute,
+  ParamMap,
   convertToParamMap,
   provideRouter,
 } from '@angular/router';
@@ -200,5 +201,26 @@ describe('BlogArticlePage', () => {
     expect(
       document.head.querySelector('#kraak-blog-article-jsonld'),
     ).toBeNull();
+  });
+
+  it('Given an unknown article slug, When template is rendered, Then empty-state copy and navigation actions are visible', () => {
+    const missingSlug = convertToParamMap({
+      slug: 'article-inexistant',
+    });
+    paramMapSubject.next(missingSlug);
+    const route = TestBed.inject(ActivatedRoute) as {
+      snapshot: { paramMap: ParamMap };
+    };
+    route.snapshot.paramMap = missingSlug;
+
+    const fixture = TestBed.createComponent(BlogArticlePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Article introuvable');
+    expect(content).toContain('Cet article n’est pas disponible.');
+    expect(content).toContain('Retour au blog');
+    expect(content).toContain('Nous contacter');
   });
 });

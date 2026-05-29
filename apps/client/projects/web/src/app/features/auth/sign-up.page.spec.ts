@@ -164,4 +164,75 @@ describe('Web SignUpPage', () => {
     expect(fixture.componentInstance.errorMessage()).not.toBeNull();
     expect(fixture.componentInstance.submitting()).toBe(false);
   });
+
+  it('Given firstName and lastName are touched and invalid, when template renders, then name validation message is displayed', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    const component = fixture.componentInstance;
+
+    component.form.controls.firstName.markAsTouched();
+    component.form.controls.lastName.markAsTouched();
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent ?? '').toContain(
+      'Renseignez votre prénom et votre nom.',
+    );
+  });
+
+  it('Given email is touched and invalid, when template renders, then email validation message is displayed', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    const component = fixture.componentInstance;
+
+    component.form.controls.email.markAsTouched();
+    component.form.controls.email.setValue('invalide');
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent ?? '').toContain(
+      'Saisissez une adresse email valide.',
+    );
+  });
+
+  it('Given password is touched and invalid, when template renders, then password validation message is displayed', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    const component = fixture.componentInstance;
+
+    component.form.controls.password.markAsTouched();
+    component.form.controls.password.setValue('123');
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent ?? '').toContain(
+      'Le mot de passe doit contenir au moins 8 caractères.',
+    );
+  });
+
+  it('Given success and error feedback are present, when template renders, then both messages are visible', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    const component = fixture.componentInstance;
+    component.successMessage.set('Compte créé.');
+    component.errorMessage.set('Erreur temporaire.');
+
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Compte créé.');
+    expect(text).toContain('Erreur temporaire.');
+  });
+
+  it('Given submitting state toggles, when template renders, then submit button label and disabled state follow submitting signal', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    const component = fixture.componentInstance;
+
+    component.submitting.set(false);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const button = host.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+    expect(button.getAttribute('aria-label')).toBe('Créer mon compte');
+    expect(button.disabled).toBe(false);
+
+    component.submitting.set(true);
+    fixture.detectChanges();
+    expect(button.getAttribute('aria-label')).toBe('Création en cours...');
+    expect(button.disabled).toBe(true);
+  });
 });
