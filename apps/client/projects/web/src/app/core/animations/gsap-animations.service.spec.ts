@@ -3,8 +3,20 @@ import gsap from 'gsap';
 import { GsapAnimationsService } from './gsap-animations.service';
 import { afterEach, vi } from 'vitest';
 
-interface AnimatableServiceLike {
-  canAnimate: () => boolean;
+function mockReducedMotion(matches: boolean): void {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn().mockImplementation(() => ({
+      matches,
+      media: '(prefers-reduced-motion: reduce)',
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  );
 }
 
 describe('GsapAnimationsService', () => {
@@ -15,6 +27,7 @@ describe('GsapAnimationsService', () => {
       providers: [GsapAnimationsService],
     });
     service = TestBed.inject(GsapAnimationsService);
+    mockReducedMotion(false);
   });
 
   afterEach(() => {
@@ -28,16 +41,7 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeFigureAnimations', () => {
     it('Given reduced motion is enabled, When figure animations initialize, Then no transform is applied', () => {
-      vi.spyOn(globalThis, 'matchMedia').mockReturnValue({
-        matches: true,
-        media: '(prefers-reduced-motion: reduce)',
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      });
+      mockReducedMotion(true);
 
       const div = document.createElement('div');
       const figure = document.createElement('figure');
@@ -79,11 +83,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given animations actives et des figures ciblées, When initializeFigureAnimations est invoqué, Then les tweens GSAP sont créés pour chaque figure', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const fromSpy = vi.spyOn(gsap, 'from');
       const container = document.createElement('div');
       const first = document.createElement('figure');
@@ -210,11 +209,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given un bouton animé et canAnimate actif, When mouseenter, mouseleave, mousedown et mouseup sont déclenchés, Then toutes les transitions GSAP prévues sont demandées', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const killTweensSpy = vi.spyOn(gsap, 'killTweensOf');
       const toSpy = vi.spyOn(gsap, 'to');
       const button = document.createElement('button');
@@ -252,11 +246,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given un champ animé et canAnimate actif, When focus puis blur sont émis, Then les transitions GSAP de focus et blur sont demandées', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const toSpy = vi.spyOn(gsap, 'to');
       const input = document.createElement('input');
       document.body.appendChild(input);
@@ -289,11 +278,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given des items de liste et animations activées, When initializeListItemAnimations est appelé, Then gsap.from est invoqué pour chaque item', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const fromSpy = vi.spyOn(gsap, 'from');
       const first = document.createElement('li');
       const second = document.createElement('li');
@@ -329,11 +313,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given des paragraphes ciblés et animations activées, When initializeTextRevealAnimations est appelé, Then gsap.from est déclenché', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const fromSpy = vi.spyOn(gsap, 'from');
       const p = document.createElement('p');
       p.classList.add('branch-text');
@@ -379,11 +358,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given des icônes et animations activées, When mouseenter puis mouseleave sont déclenchés, Then les tweens GSAP d entrée et sortie sont demandés', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const toSpy = vi.spyOn(gsap, 'to');
       const icon = document.createElement('svg');
       document.body.appendChild(icon);
@@ -416,10 +390,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given animations actives et un main présent, When createPageTransition est appelé, Then gsap.to est invoqué avec onComplete', async () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
       const main = document.createElement('main');
       document.body.appendChild(main);
 
@@ -435,11 +405,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given animations actives et aucun main, When createPageTransition est appelé, Then la promesse est résolue immédiatement', async () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const mainElements = document.querySelectorAll('main');
       mainElements.forEach((element) => element.remove());
 
@@ -457,11 +422,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given animations actives et un main présent, When animatePageIn est appelé, Then gsap.from est invoqué pour la nouvelle page', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const main = document.createElement('main');
       document.body.appendChild(main);
       const fromSpy = vi.spyOn(gsap, 'from');
@@ -538,11 +498,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given un badge ciblé et animations activées, When initializeBadgeAnimations est appelé, Then GSAP from et to sont tous les deux invoqués', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const fromSpy = vi.spyOn(gsap, 'from');
       const toSpy = vi.spyOn(gsap, 'to');
       const badge = document.createElement('span');
@@ -575,11 +530,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given un élément interactif et animations activées, When mouseenter et mouseleave sont déclenchés, Then les transitions GSAP de luminosité sont demandées', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const toSpy = vi.spyOn(gsap, 'to');
       const button = document.createElement('button');
       document.body.appendChild(button);
@@ -613,11 +563,6 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given un image parallax ciblé et animations activées, When initializeImageParallaxAnimations est appelé, Then les animations reveal et parallax sont déclenchées', () => {
-      vi.spyOn(
-        service as unknown as AnimatableServiceLike,
-        'canAnimate',
-      ).mockReturnValue(true);
-
       const fromSpy = vi.spyOn(gsap, 'from');
       const toSpy = vi.spyOn(gsap, 'to');
       const img = document.createElement('img');
