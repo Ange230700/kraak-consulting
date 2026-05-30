@@ -170,17 +170,20 @@ jobs:
 
       - name: Installer les navigateurs Playwright
         # Note: playwright install exécute une commande officielle Playwright (non pnpm install),
-        # donc --ignore-scripts ne s'applique pas. On installe explicitement les 3 moteurs
-        # utilisés par les suites web/mobile, uniquement quand le cache est absent.
+        # donc --ignore-scripts ne s'applique pas. En CI PR, on exécute la matrice
+        # E2E allégée (Chromium seulement), pour éviter les téléchargements lourds
+        # firefox/webkit qui provoquent des timeouts intermittents.
         # NOSONAR
         run: |
           ./apps/client/node_modules/.bin/playwright --version
           if [[ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]]; then
-            ./apps/client/node_modules/.bin/playwright install chromium firefox webkit
+            ./apps/client/node_modules/.bin/playwright install chromium
           fi
 
       - name: Exécuter les tests E2E
-        run: pnpm test:e2e:all
+        run: |
+          pnpm --filter @kraak/client exec playwright test --project=chromium
+          pnpm --filter @kraak/client exec playwright test --config=playwright.mobile.config.ts --project=chrome-android
 
       - name: Sauvegarder les rapports Playwright
         if: ${{ !cancelled() }}
