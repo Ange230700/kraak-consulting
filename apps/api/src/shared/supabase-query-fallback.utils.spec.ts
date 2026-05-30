@@ -118,4 +118,56 @@ describe('readSupabaseQueryWithFallback', () => {
 
     expect(loadQuery).toHaveBeenCalledTimes(1);
   });
+
+  it('Given un fallback en erreur, When readSupabaseQueryWithFallback est appele, Then le resultat fallback est retourne et l erreur est loggee', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    const loadQuery = jest
+      .fn()
+      .mockResolvedValueOnce({
+        data: null,
+        error: {
+          code: '42703',
+          message: 'column announcement.priority does not exist',
+        },
+      })
+      .mockResolvedValueOnce({
+        data: null,
+        error: {
+          code: '42501',
+          message: 'permission denied during fallback',
+        },
+      });
+
+    await expect(
+      readSupabaseQueryWithFallback({
+        loadQuery,
+        primarySelect: 'priority',
+        fallbackSelect: 'without-priority',
+        shouldRetry: (error) =>
+          isSupabaseColumnMissingError(error, ['announcement.priority']),
+        context: 'announcements.list',
+        retryNotice: 'Announcement priority column missing; retrying fallback',
+        fallbackFailureNotice: 'Announcement fallback query failed',
+      }),
+    ).resolves.toEqual({
+      data: null,
+      error: {
+        code: '42501',
+        message: 'permission denied during fallback',
+      },
+    });
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Announcement fallback query failed',
+      expect.objectContaining({
+        context: 'announcements.list',
+        code: '42501',
+      }),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
 });

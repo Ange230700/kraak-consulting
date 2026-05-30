@@ -1,4 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
+import { RequestMethod } from '@nestjs/common/enums/request-method.enum';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ArticlesPublicController } from './articles-public.controller';
 import { ArticlesService } from './articles.service';
@@ -51,6 +53,18 @@ describe('ArticlesPublicController', () => {
     expect(articlesService.listPublicArticles).toHaveBeenCalledTimes(1);
   });
 
+  it('Given le module public articles, When on lit les metadonnees NestJS, Then les routes GET sont exposees', () => {
+    expect(Reflect.getMetadata(PATH_METADATA, ArticlesPublicController)).toBe(
+      'articles',
+    );
+    expect(
+      Reflect.getMetadata(METHOD_METADATA, controller.listPublishedArticles),
+    ).toBe(RequestMethod.GET);
+    expect(
+      Reflect.getMetadata(METHOD_METADATA, controller.getArticleBySlug),
+    ).toBe(RequestMethod.GET);
+  });
+
   it('Given un slug valide, When getArticleBySlug est appele, Then le detail public est renvoye', async () => {
     await expect(
       controller.getArticleBySlug('article-1'),
@@ -75,5 +89,27 @@ describe('ArticlesPublicController', () => {
     await expect(controller.getArticleBySlug('missing')).rejects.toBeInstanceOf(
       NotFoundException,
     );
+  });
+
+  it('Given Reflect decorate/metadata indisponibles, When le module public controller est charge, Then le controleur reste chargeable', async () => {
+    const originalDecorate = Reflect.decorate;
+    const originalMetadata = Reflect.metadata;
+
+    try {
+      jest.resetModules();
+      Reflect.decorate = undefined;
+      Reflect.metadata = undefined;
+
+      await jest.isolateModulesAsync(async () => {
+        const reloaded = (await import('./articles-public.controller')) as {
+          ArticlesPublicController: unknown;
+        };
+
+        expect(reloaded.ArticlesPublicController).toBeDefined();
+      });
+    } finally {
+      Reflect.decorate = originalDecorate;
+      Reflect.metadata = originalMetadata;
+    }
   });
 });

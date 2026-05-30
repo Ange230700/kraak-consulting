@@ -21,6 +21,7 @@ describe('ScrollToTop', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllGlobals();
   });
 
   describe('Rendering', () => {
@@ -49,7 +50,7 @@ describe('ScrollToTop', () => {
 
   describe('Scroll to top functionality', () => {
     it('should scroll to top when button is clicked', () => {
-      const scrollToSpy = vi.spyOn(window, 'scrollTo');
+      const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
 
       component.scrollToTop();
 
@@ -62,11 +63,20 @@ describe('ScrollToTop', () => {
       scrollToSpy.mockRestore();
     });
 
+    it('Given no browser window, When scrollToTop is called, Then it exits without calling scrollTo', () => {
+      const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
+      vi.stubGlobal('window', undefined);
+
+      component.scrollToTop();
+
+      expect(scrollToSpy).not.toHaveBeenCalled();
+    });
+
     it('should update visibility on window scroll', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
       // Simulate scroll event
-      window.dispatchEvent(new Event('scroll'));
+      globalThis.dispatchEvent(new Event('scroll'));
 
       expect(updateVisibilitySpy).toHaveBeenCalled();
 
@@ -75,7 +85,7 @@ describe('ScrollToTop', () => {
 
     it('should set isVisible to true when scrollY > threshold', () => {
       // Mock window.scrollY
-      Object.defineProperty(window, 'scrollY', {
+      Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
         configurable: true,
         value: 500,
@@ -87,7 +97,7 @@ describe('ScrollToTop', () => {
     });
 
     it('should set isVisible to false when scrollY < threshold', () => {
-      Object.defineProperty(window, 'scrollY', {
+      Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
         configurable: true,
         value: 100,
@@ -101,7 +111,7 @@ describe('ScrollToTop', () => {
 
   describe('Lifecycle', () => {
     it('should attach scroll listener on init', () => {
-      const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
 
       component.ngOnInit();
 
@@ -113,8 +123,20 @@ describe('ScrollToTop', () => {
       addEventListenerSpy.mockRestore();
     });
 
+    it('Given no browser window, When ngOnInit runs, Then it exits without attaching a scroll listener', () => {
+      const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
+      vi.stubGlobal('window', undefined);
+
+      component.ngOnInit();
+
+      expect(addEventListenerSpy).not.toHaveBeenCalled();
+    });
+
     it('should remove scroll listener on destroy', () => {
-      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+      const removeEventListenerSpy = vi.spyOn(
+        globalThis,
+        'removeEventListener',
+      );
 
       component.ngOnDestroy();
 
@@ -124,6 +146,18 @@ describe('ScrollToTop', () => {
       );
 
       removeEventListenerSpy.mockRestore();
+    });
+
+    it('Given no scroll listener is registered, When ngOnDestroy runs, Then removeEventListener is not called', () => {
+      const removeEventListenerSpy = vi.spyOn(
+        globalThis,
+        'removeEventListener',
+      );
+      component['scrollListener'] = null;
+
+      component.ngOnDestroy();
+
+      expect(removeEventListenerSpy).not.toHaveBeenCalled();
     });
   });
 });

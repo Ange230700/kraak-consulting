@@ -1,6 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import {
+  Event as RouterEvent,
+  NavigationEnd,
+  Router,
+  provideRouter,
+} from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { vi } from 'vitest';
 import { App } from './app.component';
 
 describe('App', () => {
@@ -40,5 +47,51 @@ describe('App', () => {
     expect(skipLink?.textContent).toContain('contenu principal');
     expect(main).toBeTruthy();
     expect(main?.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('Given un environnement SSR simulé, When ngOnInit est appelé, Then le composant retourne sans souscrire aux événements du routeur', () => {
+    const fixture = TestBed.createComponent(App);
+    const component = fixture.componentInstance;
+    const router = TestBed.inject(Router);
+    const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+      globalThis,
+      'window',
+    );
+
+    Object.defineProperty(globalThis, 'window', {
+      value: undefined,
+      configurable: true,
+    });
+
+    try {
+      const routerEventsSpy = vi.spyOn(router, 'events', 'get');
+      component.ngOnInit();
+      expect(routerEventsSpy).not.toHaveBeenCalled();
+    } finally {
+      if (originalWindowDescriptor) {
+        Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+      }
+    }
+  });
+
+  it('Given un événement NavigationEnd, When ngOnInit écoute les événements, Then la page revient en haut en scroll fluide', () => {
+    const fixture = TestBed.createComponent(App);
+    const component = fixture.componentInstance;
+    const router = TestBed.inject(Router);
+    const routerEvents$ = new Subject<RouterEvent>();
+
+    vi.spyOn(router, 'events', 'get').mockReturnValue(
+      routerEvents$.asObservable(),
+    );
+    const scrollToSpy = vi.spyOn(globalThis.window, 'scrollTo');
+
+    component.ngOnInit();
+    routerEvents$.next(new NavigationEnd(1, '/debut', '/cible'));
+
+    expect(scrollToSpy).toHaveBeenCalledWith({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
   });
 });

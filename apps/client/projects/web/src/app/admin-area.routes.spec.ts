@@ -42,6 +42,18 @@ describe('admin-area.routes', () => {
     expect(module).toBeDefined();
   });
 
+  it('Given la route ressources admin, When son loadComponent est invoqué, Then le module de page est résolu', async () => {
+    const adminRoot = adminAreaRoutes.find((route) => route.path === 'admin');
+    const ressourcesRoute = adminRoot?.children?.find(
+      (child) => child.path === 'ressources',
+    );
+
+    expect(ressourcesRoute?.loadComponent).toBeTypeOf('function');
+
+    const module = await ressourcesRoute?.loadComponent?.();
+    expect(module).toBeDefined();
+  });
+
   it('Given la route utilisateurs admin, When son loadChildren est invoqué, Then le module de routes enfants est résolu', async () => {
     const adminRoot = adminAreaRoutes.find((route) => route.path === 'admin');
     const usersRoute = adminRoot?.children?.find(

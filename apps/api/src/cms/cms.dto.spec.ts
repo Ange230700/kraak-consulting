@@ -139,6 +139,24 @@ describe('cms.dto validators', () => {
     });
   });
 
+  it('Given un logoUrl vide pour une mise à jour partner, When validateUpdatePartnerPayload est appelé, Then une erreur required URL est renvoyée', () => {
+    const result = validateUpdatePartnerPayload({ logoUrl: '   ' });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ logoUrl est requis et doit être une URL valide.'],
+    });
+  });
+
+  it('Given un payload update partner vide, When validateUpdatePartnerPayload est appelé, Then une erreur de payload vide est renvoyée', () => {
+    const result = validateUpdatePartnerPayload({});
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    });
+  });
+
   it('rejects invalid request body shape for all CMS validators', () => {
     expect(validateCreateStatisticPayload(null)).toEqual({
       valid: false,
@@ -193,6 +211,20 @@ describe('cms.dto validators', () => {
     });
   });
 
+  it('Given un sortOrder négatif en chaîne, When validateCreateStatisticPayload est appelé, Then sortOrder est rejeté comme entier positif ou nul', () => {
+    const result = validateCreateStatisticPayload({
+      label: 'Participants',
+      value: '250',
+      sortOrder: '-1',
+      status: 'published',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ sortOrder doit être un entier positif ou nul.'],
+    });
+  });
+
   it('rejects empty update statistic payload', () => {
     const result = validateUpdateStatisticPayload({});
 
@@ -220,6 +252,21 @@ describe('cms.dto validators', () => {
         sortOrder: 3,
         status: 'draft',
       },
+    });
+  });
+
+  it('Given un websiteUrl invalide à la création partner, When validateCreatePartnerPayload est appelé, Then websiteUrl est signalé invalide', () => {
+    const result = validateCreatePartnerPayload({
+      name: 'KRAAK Partner',
+      logoUrl: 'https://cdn.kraak.test/logo.png',
+      websiteUrl: 'not-a-url',
+      sortOrder: 1,
+      status: 'published',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ websiteUrl est invalide.'],
     });
   });
 

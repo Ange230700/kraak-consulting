@@ -35,4 +35,20 @@ describe('SectionTitleComponent', () => {
     expect(title).toBeTruthy();
     expect(subtitle).toBeTruthy();
   });
+
+  it('Given only the required title, when the component renders, then optional overline and subtitle are hidden', () => {
+    const fixture = TestBed.createComponent(SectionTitleComponent);
+    fixture.componentRef.setInput('title', 'Titre seul');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    const overline = fixture.nativeElement.querySelector('p.kraak-overline');
+    const subtitle = fixture.nativeElement.querySelector(
+      'p.kraak-section-subtitle',
+    );
+
+    expect(text).toContain('Titre seul');
+    expect(overline).toBeFalsy();
+    expect(subtitle).toBeFalsy();
+  });
 });

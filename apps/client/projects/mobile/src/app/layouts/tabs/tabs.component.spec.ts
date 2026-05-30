@@ -95,4 +95,13 @@ describe('TabsLayout', () => {
     const expected = MOBILE_PRIMARY_TABS.map((t) => t.icon);
     expect(icons).toEqual(expected);
   });
+
+  it('Given a direct class instantiation, when TabsLayout is constructed, then it exposes primary tabs from shell config', () => {
+    const instance = new TabsLayout() as unknown as {
+      tabs: readonly { href: string }[];
+    };
+
+    expect(instance.tabs).toEqual(MOBILE_PRIMARY_TABS);
+    expect(instance.tabs.length).toBe(4);
+  });
 });

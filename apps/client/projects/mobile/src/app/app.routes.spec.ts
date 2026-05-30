@@ -35,6 +35,44 @@ describe('Mobile routes', () => {
     expect(wildcard?.redirectTo).toBe('tabs/accueil');
   });
 
+  it('Given the lazy mobile entry points, when each route loader is resolved, then every top-level route exposes a component', async () => {
+    const lazyTopLevelRoutes = routes.filter(
+      (route) => typeof route.loadComponent === 'function',
+    );
+
+    const resolvedComponents: {
+      path: string | undefined;
+      component: unknown;
+    }[] = [];
+
+    for (const route of lazyTopLevelRoutes) {
+      resolvedComponents.push({
+        path: route.path,
+        component: await route.loadComponent?.(),
+      });
+    }
+
+    expect(resolvedComponents).toEqual([
+      expect.objectContaining({
+        path: 'welcome',
+        component: expect.anything(),
+      }),
+      expect.objectContaining({
+        path: 'sign-in',
+        component: expect.anything(),
+      }),
+      expect.objectContaining({
+        path: 'sign-up',
+        component: expect.anything(),
+      }),
+      expect.objectContaining({
+        path: 'password-reset',
+        component: expect.anything(),
+      }),
+      expect.objectContaining({ path: 'tabs', component: expect.anything() }),
+    ]);
+  }, 15000);
+
   it('Given the participant shell, when the tabs route loads, then it exposes only the four frozen MVP tabs', () => {
     const tabsRoute = routes.find((r) => r.path === 'tabs');
     const childPaths = tabsRoute?.children?.map((c) => c.path);

@@ -112,6 +112,32 @@ describe('SupabaseService', () => {
     );
   });
 
+  // Given la clé publishable est absente mais la clé secret existe
+  // When createAuthClient est appelé
+  // Then le fallback sur SUPABASE_SECRET_KEY est utilisé
+  it('Given la clé publishable absente, When createAuthClient est appelé, Then la clé secret est utilisée en fallback', async () => {
+    jest.mocked(createClient).mockReturnValue(mockClient as never);
+
+    const service = await buildService({
+      SUPABASE_URL: 'https://example.supabase.co',
+      SUPABASE_SECRET_KEY: 'service-role-key',
+      SUPABASE_PUBLISHABLE_KEY: undefined,
+    });
+
+    expect(service.createAuthClient()).toBe(mockClient);
+    expect(createClient).toHaveBeenCalledWith(
+      'https://example.supabase.co',
+      'service-role-key',
+      {
+        auth: {
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+          persistSession: false,
+        },
+      },
+    );
+  });
+
   // Given aucune clé auth Supabase n'est disponible
   // When createAuthClient est appelé
   // Then une erreur explicite est levée

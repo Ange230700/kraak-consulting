@@ -43,6 +43,15 @@ describe('Mobile PasswordResetPage', () => {
     expect(element.textContent).toContain('Retour \u00E0 la connexion');
   });
 
+  it('Given a reset submission in progress, when the page renders, then the loading button label is shown', () => {
+    const fixture = TestBed.createComponent(PasswordResetPage);
+    fixture.componentInstance.submitting.set(true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Envoi en cours...');
+  });
+
   it('Given a valid email, when the form is submitted, then the auth service is called and the acknowledgement is shown', async () => {
     const fixture = TestBed.createComponent(PasswordResetPage);
     fixture.componentInstance.form.setValue({

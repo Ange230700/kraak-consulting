@@ -411,6 +411,48 @@ describe('MobileAuthService', () => {
       expect(service.isAuthenticated()).toBe(false);
       expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).toBeNull();
     });
+
+    it('when persistBundle runs with an incomplete in-memory state, then the stored mobile session is removed', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(MobileAuthService);
+
+      await service.signIn({ email: 'alice@example.com', password: 'pass' });
+      expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).not.toBeNull();
+
+      service['profileState'].set(null);
+      service['persistBundle']();
+
+      expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).toBeNull();
+    });
   });
 
   describe('Given a stored session with missing required fields', () => {

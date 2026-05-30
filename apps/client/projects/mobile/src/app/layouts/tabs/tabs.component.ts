@@ -16,13 +16,6 @@ import {
 } from 'ionicons/icons';
 import { MOBILE_PRIMARY_TABS } from '../../core/navigation/mobile-shell.config';
 
-interface MobileTabLink {
-  readonly label: string;
-  readonly tab: string;
-  readonly href: string;
-  readonly icon: string;
-}
-
 addIcons({
   homeOutline,
   bookOutline,
@@ -44,5 +37,5 @@ addIcons({
   templateUrl: './tabs.component.html',
 })
 export class TabsLayout {
-  protected readonly tabs: MobileTabLink[] = MOBILE_PRIMARY_TABS;
+  protected readonly tabs = MOBILE_PRIMARY_TABS;
 }

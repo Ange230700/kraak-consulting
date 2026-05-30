@@ -532,6 +532,30 @@ describe('gestion des erreurs', () => {
     await expect(client.programs.list()).rejects.toThrow(ApiError);
   });
 
+  it('lance ApiError avec body null quand json et text échouent tous les deux', async () => {
+    const badFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      statusText: 'Bad Gateway',
+      json: () => Promise.reject(new Error('invalid json')),
+      text: () => Promise.reject(new Error('text unavailable')),
+    });
+    vi.stubGlobal('fetch', badFetch);
+
+    const client = createApiClient(baseConfig());
+
+    try {
+      await client.programs.list();
+      throw new Error('Expected programs.list to throw');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiError);
+      const apiErr = err as ApiError;
+      expect(apiErr.status).toBe(502);
+      expect(apiErr.statusText).toBe('Bad Gateway');
+      expect(apiErr.body).toBeNull();
+    }
+  });
+
   it('ApiError.message contient status et statusText', () => {
     const err = new ApiError(403, 'Forbidden', null);
     expect(err.message).toBe('403 Forbidden');

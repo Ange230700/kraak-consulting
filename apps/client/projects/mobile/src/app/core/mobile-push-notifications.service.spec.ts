@@ -26,6 +26,7 @@ describe('MobilePushNotificationsService', () => {
   const getPlatformMock = vi.fn();
   const originalPushNotificationsEnabled = environment.pushNotificationsEnabled;
   const navigateByUrlMock = vi.fn();
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     getPlatformMock.mockReset();
@@ -42,6 +43,9 @@ describe('MobilePushNotificationsService', () => {
     pushNotificationsMock.register.mockReset();
     navigateByUrlMock.mockReset();
     navigateByUrlMock.mockResolvedValue(true);
+    consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
 
     TestBed.configureTestingModule({
       providers: [
@@ -59,6 +63,7 @@ describe('MobilePushNotificationsService', () => {
     environment.pushNotificationsEnabled = originalPushNotificationsEnabled;
 
     vi.useRealTimers();
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
     TestBed.resetTestingModule();
   });
@@ -285,6 +290,60 @@ describe('MobilePushNotificationsService', () => {
     expect(service.lastPriorityAnnouncementPush()).toBeNull();
   });
 
+  it('Given a priority payload without announcement id fields, when a notification is received, then the payload is ignored', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-missing-id-fields',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: {
+        priority: 'high',
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
+  });
+
+  it('Given a payload with announcementId but no priority field, when a notification is received, then the payload is ignored', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-missing-priority',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: {
+        announcementId: 'ann-no-priority',
+      },
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
+  });
+
   it('Given a critical announcement action payload, when the user taps the push notification, then the app navigates to the announcement detail route', async () => {
     getPlatformMock.mockReturnValue('android');
 
@@ -350,6 +409,69 @@ describe('MobilePushNotificationsService', () => {
 
     expect(service.lastPriorityAnnouncementPush()).toBeNull();
     expect(navigateByUrlMock).not.toHaveBeenCalled();
+  });
+
+  it('Given a valid priority action and a failing navigation, when the user taps the notification, then a warning is logged', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-priority-action-warning',
+      });
+    });
+    navigateByUrlMock.mockRejectedValue(new Error('navigation-failed'));
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationActionPerformed')?.({
+      notification: {
+        data: {
+          announcementId: 'ann-critical-warning',
+          priority: 'critical',
+        },
+      },
+    });
+
+    await Promise.resolve();
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Mobile push notification navigation failed.',
+      expect.objectContaining({
+        target: '/tabs/annonces/:announcementId',
+      }),
+    );
+  });
+
+  it('Given a notification payload with null data, when a notification is received, then priority state remains unchanged', async () => {
+    getPlatformMock.mockReturnValue('android');
+
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { listeners } = mockPushListeners();
+
+    pushNotificationsMock.register.mockImplementation(async () => {
+      listeners.get('registration')?.({
+        value: 'fcm-token-null-data',
+      });
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    await service.initialize();
+
+    listeners.get('pushNotificationReceived')?.({
+      data: null,
+    });
+
+    expect(service.lastPriorityAnnouncementPush()).toBeNull();
   });
 
   it('Given a priority payload with an empty announcement id, when a notification is received, then the payload is ignored', async () => {
@@ -470,6 +592,31 @@ describe('MobilePushNotificationsService', () => {
     expect(service.currentReason()).toBe('registration-timeout');
   });
 
+  it('Given registration timeout uses a timer handle that resolves to undefined, when initialization completes, then fallback token is still returned', async () => {
+    getPlatformMock.mockReturnValue('android');
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { removers } = mockPushListeners();
+    pushNotificationsMock.register.mockResolvedValue(undefined);
+
+    vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback) => {
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return undefined as unknown as ReturnType<typeof setTimeout>;
+    });
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    const result = await service.initialize();
+
+    expect(result.status).toBe('stub');
+    expect(result.reason).toBe('registration-timeout');
+    expect(removers.get('registration')).toHaveBeenCalledOnce();
+    expect(removers.get('registrationError')).toHaveBeenCalledOnce();
+  });
+
   it('Given push plugin throws during initialization, when initializing, then a generic stub token is returned', async () => {
     getPlatformMock.mockReturnValue('android');
     pushNotificationsMock.checkPermissions.mockRejectedValue(
@@ -486,6 +633,28 @@ describe('MobilePushNotificationsService', () => {
     expect(service.currentToken()).toBe(result.token);
     expect(service.currentStatus()).toBe('stub');
     expect(service.currentReason()).toBe('initialization-error');
+  });
+
+  it('Given register throws before token race setup, when initializing, then initialization error fallback is returned', async () => {
+    getPlatformMock.mockReturnValue('android');
+    pushNotificationsMock.checkPermissions.mockResolvedValue({
+      receive: 'granted',
+    });
+
+    const { removers } = mockPushListeners();
+    pushNotificationsMock.register.mockRejectedValue(
+      new Error('register-failed'),
+    );
+
+    const service = TestBed.inject(MobilePushNotificationsService);
+    const result = await service.initialize();
+
+    expect(result.status).toBe('stub');
+    expect(result.reason).toBe('initialization-error');
+    expect(result.token).toBe('stub-mobile-token-local-initialization-error');
+
+    expect(removers.get('registration')).toHaveBeenCalledOnce();
+    expect(removers.get('registrationError')).toHaveBeenCalledOnce();
   });
 
   it('Given initialize is called more than once, when the first initialization is pending, then the same initialization result is reused', async () => {
@@ -535,5 +704,23 @@ describe('MobilePushNotificationsService', () => {
     await TestBed.runInInjectionContext(initializer);
 
     expect(initializeSpy).toHaveBeenCalledOnce();
+  });
+
+  it('Given the initialization provider fails, when Angular injection context executes it, then a warning is logged', async () => {
+    const service = TestBed.inject(MobilePushNotificationsService);
+
+    vi.spyOn(service, 'initialize').mockRejectedValue(
+      new Error('bootstrap-failure'),
+    );
+
+    const initializer = provideMobilePushNotificationsInitialization();
+
+    await TestBed.runInInjectionContext(initializer);
+    await Promise.resolve();
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Mobile push notifications initialization failed during app bootstrap.',
+      expect.any(Error),
+    );
   });
 });

@@ -2,6 +2,7 @@ import '@angular/compiler';
 import { FormControl } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  createSharedSubmitSignInOptions,
   createSignInForm,
   normalizeRequiredText,
   normalizeTextControl,
@@ -35,6 +36,18 @@ describe('sign-in-form helpers', () => {
 
     form.setValue({ email: 'user@example.com', password: 'password123' });
     expect(form.valid).toBe(true);
+  });
+
+  it('Given shared submit options, When createSharedSubmitSignInOptions is called, Then it returns the same object reference', () => {
+    const options = {
+      form: createSignInForm(),
+      isSubmitting: () => false,
+      setSubmitting: vi.fn(),
+      setErrorMessage: vi.fn(),
+      signIn: vi.fn(),
+    };
+
+    expect(createSharedSubmitSignInOptions(options)).toBe(options);
   });
 
   it('Given an invalid form, When submitSignInForm is called, Then nothing is submitted', async () => {
@@ -95,6 +108,28 @@ describe('sign-in-form helpers', () => {
     expect(setErrorMessage).toHaveBeenCalledWith(null);
   });
 
+  it('Given a valid form without onSuccess, When submitSignInForm succeeds, Then navigation still executes', async () => {
+    const form = createSignInForm();
+    form.setValue({ email: 'user@example.com', password: 'password123' });
+
+    const signIn = vi.fn().mockResolvedValue(undefined);
+    const navigateAfterSuccess = vi.fn().mockResolvedValue(undefined);
+
+    await submitSignInForm({
+      form,
+      isSubmitting: () => false,
+      setSubmitting: vi.fn(),
+      setErrorMessage: vi.fn(),
+      signIn,
+      navigateAfterSuccess,
+      logContext: 'test.sign-in',
+      route: '/connexion',
+    });
+
+    expect(signIn).toHaveBeenCalledTimes(1);
+    expect(navigateAfterSuccess).toHaveBeenCalledTimes(1);
+  });
+
   it('Given isSubmitting true, When submitSignInForm is called, Then it exits early', async () => {
     const form = createSignInForm();
     form.setValue({ email: 'user@example.com', password: 'password123' });
@@ -139,5 +174,32 @@ describe('sign-in-form helpers', () => {
     });
 
     expect(setErrorMessage).toHaveBeenLastCalledWith('Connexion indisponible');
+  });
+
+  it('Given sign-in throws without custom fallback, When submitSignInForm is called, Then the default fallback error message is set', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.spyOn(console, 'groupCollapsed').mockImplementation(() => undefined);
+    vi.spyOn(console, 'groupEnd').mockImplementation(() => undefined);
+    vi.spyOn(console, 'debug').mockImplementation(() => undefined);
+
+    const form = createSignInForm();
+    form.setValue({ email: 'user@example.com', password: 'password123' });
+
+    const setErrorMessage = vi.fn();
+
+    await submitSignInForm({
+      form,
+      isSubmitting: () => false,
+      setSubmitting: vi.fn(),
+      setErrorMessage,
+      signIn: vi.fn().mockRejectedValue({}),
+      navigateAfterSuccess: vi.fn(),
+      logContext: 'test.sign-in',
+      route: '/connexion',
+    });
+
+    expect(setErrorMessage).toHaveBeenLastCalledWith(
+      'Impossible de vous connecter pour le moment.',
+    );
   });
 });

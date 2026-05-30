@@ -41,6 +41,20 @@ describe('validateCreateUserPayload', () => {
     });
   });
 
+  it('Given a non-string email, When validating create payload, Then returns invalid', () => {
+    const result = validateCreateUserPayload({
+      email: 123,
+      firstName: 'Bob',
+      lastName: 'Dupont',
+      role: 'admin',
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      error: expect.stringContaining('email'),
+    });
+  });
+
   it('Given an invalid email format, When validating, Then returns invalid', () => {
     const result = validateCreateUserPayload({
       email: 'not-an-email',
@@ -83,6 +97,19 @@ describe('validateCreateUserPayload', () => {
     expect(result).toMatchObject({
       valid: false,
       error: expect.stringContaining('rôle'),
+    });
+  });
+
+  it('Given a missing role, When validating create payload, Then returns invalid with allowed roles message', () => {
+    const result = validateCreateUserPayload({
+      email: 'bob@example.com',
+      firstName: 'Bob',
+      lastName: 'Dupont',
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      error: expect.stringContaining("Le rôle doit être l'un des suivants"),
     });
   });
 
@@ -238,6 +265,17 @@ describe('validateUpdateUserPayload', () => {
     expect(result).toMatchObject({
       valid: false,
       error: expect.stringContaining('nom de famille'),
+    });
+  });
+
+  it('Given a valid last name in update payload, When validating, Then lastName is set in data', () => {
+    const result = validateUpdateUserPayload({ lastName: ' Durand ' });
+
+    expect(result).toMatchObject({
+      valid: true,
+      data: {
+        lastName: 'Durand',
+      },
     });
   });
 

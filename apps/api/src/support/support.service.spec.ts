@@ -1212,6 +1212,44 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
+  it('Given une erreur de mise à jour lors du marquage lu, When markSupportRequestAsRead est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'update read failed' },
+                }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.markSupportRequestAsRead('req-1', 'access-token'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
   it('Given un participant, When markSupportRequestAsRead est appelé avec sa propre demande, Then la demande est marquée lue', async () => {
     configService.get.mockReturnValue(undefined);
     authGetUserMock.mockResolvedValue({
@@ -1220,6 +1258,55 @@ describe('SupportService', () => {
     });
 
     let capturedEqCalls: Array<{ column: string; value: unknown }> = [];
+    const updatedSupportRequest = {
+      id: 'req-1',
+      user_id: 'user-1',
+      participant_id: null,
+      subject: 's',
+      message: 'm',
+      status: 'open',
+      category: 'other',
+      assigned_to_user_id: null,
+      is_read: true,
+      created_at: '2026-01-01T00:00:00.000Z',
+      updated_at: '2026-01-01T00:00:00.000Z',
+    };
+
+    const supportReadQuery = createQueryChain(
+      {
+        data: updatedSupportRequest,
+        error: null,
+      },
+      {
+        onEq: (column: string, value: unknown) => {
+          capturedEqCalls = [...capturedEqCalls, { column, value }];
+        },
+      },
+    );
+
+    const updateSecondFilter = {
+      select: jest.fn(() => ({
+        maybeSingle: jest
+          .fn()
+          .mockResolvedValue({ data: updatedSupportRequest, error: null }),
+      })),
+    };
+
+    const updateFirstFilter = {
+      eq: jest.fn((column: string, value: unknown) => {
+        capturedEqCalls.push({ column, value });
+        return {
+          eq: jest.fn((innerColumn: string, innerValue: unknown) => {
+            capturedEqCalls.push({ column: innerColumn, value: innerValue });
+            return updateSecondFilter;
+          }),
+        };
+      }),
+    };
+
+    const supportUpdateQuery = {
+      update: jest.fn(() => updateFirstFilter),
+    };
 
     fromMock.mockImplementation((table: string) => {
       if (table === 'app_user') {
@@ -1230,63 +1317,11 @@ describe('SupportService', () => {
       }
 
       if (table === 'support_request') {
-        const eqMock = jest.fn((col: string, val: unknown) => {
-          capturedEqCalls = [...capturedEqCalls, { column: col, value: val }];
-          return eqMock as unknown as typeof eqMock & {
-            select: jest.Mock;
-          };
-        });
-        (eqMock as unknown as { select: jest.Mock }).select = jest.fn(() => ({
-          maybeSingle: jest.fn().mockResolvedValue({
-            data: {
-              id: 'req-1',
-              user_id: 'user-1',
-              participant_id: null,
-              subject: 's',
-              message: 'm',
-              status: 'open',
-              category: 'other',
-              assigned_to_user_id: null,
-              is_read: true,
-              created_at: '2026-01-01T00:00:00.000Z',
-              updated_at: '2026-01-01T00:00:00.000Z',
-            },
-            error: null,
-          }),
-        }));
-
-        return {
-          update: jest.fn(() => ({
-            eq: jest.fn((col: string, val: unknown) => {
-              capturedEqCalls.push({ column: col, value: val });
-              return {
-                eq: jest.fn((col2: string, val2: unknown) => {
-                  capturedEqCalls.push({ column: col2, value: val2 });
-                  return {
-                    select: jest.fn(() => ({
-                      maybeSingle: jest.fn().mockResolvedValue({
-                        data: {
-                          id: 'req-1',
-                          user_id: 'user-1',
-                          participant_id: null,
-                          subject: 's',
-                          message: 'm',
-                          status: 'open',
-                          category: 'other',
-                          assigned_to_user_id: null,
-                          is_read: true,
-                          created_at: '2026-01-01T00:00:00.000Z',
-                          updated_at: '2026-01-01T00:00:00.000Z',
-                        },
-                        error: null,
-                      }),
-                    })),
-                  };
-                }),
-              };
-            }),
-          })),
+        const supportRequestRoute = {
+          ...supportReadQuery,
+          update: supportUpdateQuery.update,
         };
+        return supportRequestRoute;
       }
 
       throw new Error(`Unexpected table: ${table}`);

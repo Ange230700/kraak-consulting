@@ -306,6 +306,64 @@ describe('Web Participant Dashboard Page', () => {
       );
     });
 
+    it('Given a stored authenticated session, When the real dashboard client loads data, Then the bearer token is forwarded to the API request', async () => {
+      globalThis.localStorage?.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: {
+            accessToken: 'participant-access-token',
+            refreshToken: 'participant-refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-29T11:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'participant@example.com',
+              role: 'participant',
+              firstName: 'Awa',
+              lastName: 'Konate',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-29T11:00:00.000Z',
+              updatedAt: '2026-04-29T11:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      );
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => POPULATED_AGGREGATE,
+      } satisfies Partial<Response>);
+      vi.stubGlobal('fetch', fetchMock);
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [DashboardPage],
+        providers: [WebAuthService, provideRouter([]), MessageService],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(DashboardPage);
+      await flush(fixture);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/dashboard'),
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer participant-access-token',
+          }),
+        }),
+      );
+
+      vi.unstubAllGlobals();
+    });
+
     it('Given a session with an invalid startsAt date, When the page loads, Then nextSessionSummary falls back to raw date string', async () => {
       const fixture = TestBed.createComponent(DashboardPage);
       configureDashboardClient(

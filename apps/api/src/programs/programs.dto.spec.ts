@@ -165,6 +165,17 @@ describe('Programs DTO validation', () => {
     });
   });
 
+  it('Given un payload feature création sans title, When validateCreateProgramFeaturePayload est appelé, Then une erreur title requis est renvoyée', () => {
+    const result = validateCreateProgramFeaturePayload({
+      sortOrder: 1,
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ title est requis.'],
+    });
+  });
+
   it('Given un payload feature update vide, When validateUpdateProgramFeaturePayload est appelé, Then une erreur métier est renvoyée', () => {
     const result = validateUpdateProgramFeaturePayload({});
 

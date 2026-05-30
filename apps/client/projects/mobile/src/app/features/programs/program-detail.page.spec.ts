@@ -123,6 +123,28 @@ describe('Mobile ProgramDetailPage', () => {
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('API Error');
     });
+
+    it('Given no program id in route on init, when the page initializes, then no detail loading is triggered', async () => {
+      activatedRoute.snapshot.paramMap.get.mockReturnValue(null);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(service.getProgramDetail).not.toHaveBeenCalled();
+    });
+
+    it('Given a program id is present, when reloadProgram is called, then detail loading is triggered again', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+
+      await fixture.componentInstance['reloadProgram']();
+
+      expect(service.getProgramDetail).toHaveBeenCalledWith('prog-1');
+      expect(fixture.componentInstance['programDetail']()).toEqual(
+        mockProgramDetail,
+      );
+    });
   });
 
   describe('Rich content', () => {
@@ -224,6 +246,38 @@ describe('Mobile ProgramDetailPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).not.toContain('Cohorte');
+    });
+
+    it('Given optional cohort and session fields are absent, when the page loads, then optional badges are not rendered', async () => {
+      service.getProgramDetail.mockResolvedValue({
+        ...mockProgramDetail,
+        cohort: {
+          ...mockCohort,
+          code: null,
+          capacity: null,
+        },
+        sessions: [
+          {
+            ...mockSession,
+            id: 'session-no-location-type',
+            locationType: undefined as unknown as SessionDto['locationType'],
+          },
+        ],
+        resources: [],
+        announcements: [],
+      } satisfies ParticipantProgramDetailDto);
+
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Cohorte');
+      expect(element.textContent).toContain('Sessions (1)');
+      expect(element.textContent).not.toContain('Code:');
+      expect(element.textContent).not.toContain('Capacité:');
+      expect(element.textContent).not.toContain('Type:');
     });
 
     it('Given a loaded program, when reloadProgram is called, then the service is called again', async () => {

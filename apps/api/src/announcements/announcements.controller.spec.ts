@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   NotFoundException,
   RequestMethod,
   UnauthorizedException,
@@ -167,6 +168,12 @@ describe('AnnouncementsController', () => {
         UnauthorizedException,
       );
     });
+
+    it('Given: invalid authorization header format, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
+      await expect(
+        controller.getAnnouncementById('ann-001', 'InvalidToken'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
   });
 
   describe('admin CRUD', () => {
@@ -204,6 +211,69 @@ describe('AnnouncementsController', () => {
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
+    it('Given un token participant, When createAnnouncement est appelé, Then une ForbiddenException est renvoyée', async () => {
+      authService.getSession.mockResolvedValueOnce({
+        profile: {
+          appUser: {
+            id: 'user-002',
+            role: 'participant',
+          },
+        },
+      });
+
+      await expect(
+        controller.createAnnouncement(
+          {
+            title: 'Annonce',
+            body: 'Contenu',
+            audienceType: 'all_participants',
+          },
+          'Bearer access-token',
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('Given un payload update invalide admin, When updateAnnouncement est appelé, Then une BadRequestException est renvoyée', async () => {
+      await expect(
+        controller.updateAnnouncement(
+          'ann-001',
+          {
+            title: '',
+          },
+          'Bearer access-token',
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('Given un header Authorization absent, When updateAnnouncement est appelé, Then une UnauthorizedException est renvoyée', async () => {
+      await expect(
+        controller.updateAnnouncement('ann-001', {
+          body: 'Contenu mis à jour',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('Given un token participant, When updateAnnouncement est appelé, Then une ForbiddenException est renvoyée', async () => {
+      authService.getSession.mockResolvedValueOnce({
+        profile: {
+          appUser: {
+            id: 'user-002',
+            role: 'participant',
+          },
+        },
+      });
+
+      await expect(
+        controller.updateAnnouncement(
+          'ann-001',
+          {
+            body: 'Contenu mis à jour',
+          },
+          'Bearer access-token',
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
     it('Given un payload valide, When patchAnnouncement est appelé, Then la route PUT est réutilisée', async () => {
       await controller.patchAnnouncement(
         'ann-001',
@@ -230,6 +300,27 @@ describe('AnnouncementsController', () => {
       expect(mockAnnouncementsService.deleteAnnouncement).toHaveBeenCalledWith(
         'ann-001',
       );
+    });
+
+    it('Given un header Authorization absent, When deleteAnnouncement est appelé, Then une UnauthorizedException est renvoyée', async () => {
+      await expect(
+        controller.deleteAnnouncement('ann-001'),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('Given un token participant, When deleteAnnouncement est appelé, Then une ForbiddenException est renvoyée', async () => {
+      authService.getSession.mockResolvedValueOnce({
+        profile: {
+          appUser: {
+            id: 'user-002',
+            role: 'participant',
+          },
+        },
+      });
+
+      await expect(
+        controller.deleteAnnouncement('ann-001', 'Bearer access-token'),
+      ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('Given un header Authorization absent, When createAnnouncement est appelé, Then une UnauthorizedException est renvoyée', async () => {

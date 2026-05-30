@@ -352,6 +352,19 @@ describe('DashboardService', () => {
     });
   });
 
+  // Given enrollmentData null sans erreur
+  // When l'agrégat dashboard est demandé
+  // Then programs est une liste vide via le fallback de lecture
+  it('Given enrollmentData null sans erreur, When getAggregate est appelé, Then programs vaut []', async () => {
+    mockDashboardQueries({
+      enrollmentData: null,
+      enrollmentError: null,
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.programs).toEqual([]);
+  });
+
   // Given une erreur de lecture des sessions
   // When l'agrégat dashboard est demandé
   // Then une erreur serveur explicite est renvoyée
@@ -367,6 +380,19 @@ describe('DashboardService', () => {
         message: 'Impossible de charger les sessions à venir du dashboard.',
       },
     });
+  });
+
+  // Given sessionData null sans erreur
+  // When l'agrégat dashboard est demandé
+  // Then upcomingSessions est une liste vide via le fallback de lecture
+  it('Given sessionData null sans erreur, When getAggregate est appelé, Then upcomingSessions vaut []', async () => {
+    mockDashboardQueries({
+      sessionData: null,
+      sessionError: null,
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.upcomingSessions).toEqual([]);
   });
 
   // Given un enrollment avec program et cohort null (relations absentes)

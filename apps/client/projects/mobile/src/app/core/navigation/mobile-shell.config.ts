@@ -111,18 +111,24 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   },
 ] as const;
 
-export const MOBILE_PRIMARY_TABS = MOBILE_SHELL_SECTIONS.flatMap((section) =>
-  section.tab
-    ? [
-        {
-          label: section.tab.label,
-          tab: section.tab.tab,
-          href: section.tab.href,
-          icon: section.tab.icon,
-        },
-      ]
-    : [],
-);
+export function getMobilePrimaryTabs(
+  sections: readonly MobileShellSectionConfig[],
+): readonly NonNullable<MobileShellSectionConfig['tab']>[] {
+  return sections.flatMap((section) =>
+    section.tab
+      ? [
+          {
+            label: section.tab.label,
+            tab: section.tab.tab,
+            href: section.tab.href,
+            icon: section.tab.icon,
+          },
+        ]
+      : [],
+  );
+}
+
+export const MOBILE_PRIMARY_TABS = getMobilePrimaryTabs(MOBILE_SHELL_SECTIONS);
 
 export const MOBILE_SHELL_CHILD_ROUTES: readonly Route[] =
   MOBILE_SHELL_SECTIONS.map((section) => ({

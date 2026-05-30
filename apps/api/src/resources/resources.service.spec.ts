@@ -262,6 +262,35 @@ describe('ResourcesService', () => {
       expect(result.total).toBe(1);
       expect(mockClient.eq).not.toHaveBeenCalledWith('status', 'published');
     });
+
+    it('Given an admin query failure, When listAllResources is called, Then it throws an explicit internal error', async () => {
+      const mockClient = createListQuery({
+        data: null,
+        error: new Error('DB unavailable'),
+        count: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(service.listAllResources()).rejects.toThrow(
+        'Failed to fetch resources.',
+      );
+    });
+
+    it('Given null data and null count, When listAllResources is called, Then it returns an empty payload with total 0', async () => {
+      const mockClient = createListQuery({
+        data: null,
+        error: null,
+        count: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(service.listAllResources()).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
+    });
   });
 
   describe('create/update/delete resource', () => {
@@ -341,6 +370,167 @@ describe('ResourcesService', () => {
         status: 'archived',
         published_at: null,
       });
+    });
+
+    it('Given an explicit publishedAt value, When createResource is called, Then published_at keeps the provided timestamp', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: {
+          ...mockResourceRow,
+          published_at: '2026-04-22T09:00:00Z',
+          status: 'draft',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(
+        service.createResource({
+          programId: 'prog-001',
+          cohortId: null,
+          title: 'Draft Resource',
+          description: 'Draft description',
+          resourceType: 'video',
+          resourceTheme: 'training',
+          resourceAudience: 'all',
+          url: 'https://example.com/draft-resource',
+          filePath: null,
+          status: 'draft',
+          publishedAt: '2026-04-22T09:00:00Z',
+        }),
+      ).resolves.toMatchObject({ id: 'res-001' });
+
+      expect(mutationClient.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'draft',
+          published_at: '2026-04-22T09:00:00Z',
+        }),
+      );
+    });
+
+    it('Given a full update payload without status, When updateResource is called, Then all optional fields are propagated and published_at comes from payload', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: {
+          ...mockResourceRow,
+          cohort_id: 'coh-001',
+          title: 'Updated Full Resource',
+          description: 'Updated description',
+          resource_type: 'document',
+          resource_theme: 'immigration',
+          resource_audience: 'participant',
+          url: 'https://example.com/updated',
+          file_path: 'files/updated.pdf',
+          published_at: '2026-04-25T10:00:00Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(
+        service.updateResource('res-001', {
+          programId: 'prog-002',
+          cohortId: 'coh-001',
+          title: 'Updated Full Resource',
+          description: 'Updated description',
+          resourceType: 'document',
+          resourceTheme: 'immigration',
+          resourceAudience: 'participant',
+          url: 'https://example.com/updated',
+          filePath: 'files/updated.pdf',
+          publishedAt: '2026-04-25T10:00:00Z',
+        }),
+      ).resolves.toMatchObject({
+        id: 'res-001',
+        title: 'Updated Full Resource',
+      });
+
+      expect(mutationClient.update).toHaveBeenCalledWith({
+        program_id: 'prog-002',
+        cohort_id: 'coh-001',
+        title: 'Updated Full Resource',
+        description: 'Updated description',
+        resource_type: 'document',
+        resource_theme: 'immigration',
+        resource_audience: 'participant',
+        url: 'https://example.com/updated',
+        file_path: 'files/updated.pdf',
+        published_at: '2026-04-25T10:00:00Z',
+      });
+    });
+
+    it('Given a draft status without explicit publishedAt, When updateResource is called, Then published_at is set to null', async () => {
+      const mutationClient = createResourceMutationQuery({
+        data: {
+          ...mockResourceRow,
+          status: 'draft',
+          published_at: null,
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mutationClient);
+
+      await expect(
+        service.updateResource('res-001', {
+          status: 'draft',
+          title: 'Draft title',
+        }),
+      ).resolves.toMatchObject({ id: 'res-001', status: 'draft' });
+
+      expect(mutationClient.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'draft',
+          title: 'Draft title',
+          published_at: null,
+        }),
+      );
+    });
+
+    it('Given null data without query error, When create/update/delete resource are called, Then create throws InternalServerErrorException and update/delete throw NotFoundException', async () => {
+      mockSupabaseService.getClient
+        .mockReturnValueOnce(
+          createResourceMutationQuery({
+            data: null,
+            error: null,
+          }),
+        )
+        .mockReturnValueOnce(
+          createResourceMutationQuery({
+            data: null,
+            error: null,
+          }),
+        )
+        .mockReturnValueOnce(
+          createResourceMutationQuery({
+            data: null,
+            error: null,
+          }),
+        );
+
+      await expect(
+        service.createResource({
+          programId: null,
+          cohortId: null,
+          title: 'x',
+          description: 'x',
+          resourceType: 'video',
+          resourceTheme: 'training',
+          resourceAudience: 'all',
+          url: 'https://example.com/x',
+          filePath: null,
+          status: 'draft',
+          publishedAt: null,
+        }),
+      ).rejects.toThrow('Failed to create resource');
+
+      await expect(
+        service.updateResource('missing', { title: 'x' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+
+      await expect(service.deleteResource('missing')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 
@@ -497,6 +687,22 @@ describe('ResourcesService', () => {
       expect(result[0]).toEqual(mockResourceDto);
     });
 
+    it('Given null program rows without error, When getResourcesByProgram is called, Then it returns an empty list', async () => {
+      const programQuery = createProgramQuery({
+        data: null,
+        error: null,
+      });
+      const mockClient = {
+        from: jest.fn().mockImplementation(() => programQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(service.getResourcesByProgram('prog-001')).resolves.toEqual(
+        [],
+      );
+    });
+
     it('Given program and cohort data with duplicates, When getResourcesByProgram is called, Then it merges, deduplicates and sorts by publishedAt desc', async () => {
       const programRow = {
         ...mockResourceRow,
@@ -561,6 +767,43 @@ describe('ResourcesService', () => {
         'res-100',
         'res-101',
         'res-103',
+      ]);
+    });
+
+    it('Given cohort query with null data and no error, When getResourcesByProgram is called with cohortId, Then cohort fallback uses an empty list', async () => {
+      const datedProgramRow = {
+        ...mockResourceRow,
+        id: 'res-dated',
+        published_at: '2026-05-21T10:00:00Z',
+      };
+      const nullDateProgramRow = {
+        ...mockResourceRow,
+        id: 'res-null-date',
+        published_at: null,
+      };
+      const programQuery = createProgramQuery({
+        data: [nullDateProgramRow, datedProgramRow],
+        error: null,
+      });
+      const cohortQuery = createCohortQuery({
+        data: null,
+        error: null,
+      });
+
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementationOnce(() => programQuery)
+          .mockImplementationOnce(() => cohortQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      const result = await service.getResourcesByProgram('prog-001', 'coh-001');
+
+      expect(result.map((resource) => resource.id)).toEqual([
+        'res-dated',
+        'res-null-date',
       ]);
     });
 

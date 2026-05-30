@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -326,6 +327,99 @@ describe('AuthService', () => {
     ).rejects.toMatchObject({
       response: {
         message: 'Impossible de créer le compte avec ces informations.',
+      },
+    });
+  });
+
+  it('Given un signup avec message already, When signUp est appelé, Then le message email déjà utilisé est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'A user already exists' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Un compte existe déjà pour cette adresse email.',
+      },
+    });
+  });
+
+  it('Given un signup avec message password, When signUp est appelé, Then le message exigences mot de passe est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Password should be at least 8 characters' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'court',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: 'Le mot de passe ne respecte pas les exigences minimales.',
+      },
+    });
+  });
+
+  it('Given un signup avec message invalid email, When signUp est appelé, Then le message email invalide est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Invalid email format' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice-at-example',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: "L'adresse email fournie est invalide.",
+      },
+    });
+  });
+
+  it('Given un signup avec message rate limit, When signUp est appelé, Then le message indisponibilité temporaire est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Rate limit exceeded' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message:
+          "Le service d'inscription est temporairement indisponible. Réessayez plus tard.",
       },
     });
   });
@@ -686,6 +780,123 @@ describe('AuthService', () => {
 
     await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
       InternalServerErrorException,
+    );
+  });
+
+  it('Given un app_user toujours introuvable après provisionnement, When getSession est appelé, Then une NotFoundException est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-404',
+          email: '   ',
+          user_metadata: null,
+        },
+      },
+      error: null,
+    });
+
+    const missingForeverQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: null }),
+      maybeSingle: jest
+        .fn()
+        .mockResolvedValueOnce({ data: null, error: null })
+        .mockResolvedValueOnce({ data: null, error: null }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return missingForeverQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+
+    expect(missingForeverQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'user-404',
+        email: 'user-404',
+        first_name: 'user-404',
+        last_name: 'Participant',
+        role: 'participant',
+      }),
+      { onConflict: 'id' },
+    );
+  });
+
+  it('Given un user auth malformé avec split sans local-part, When getSession provisionne le profil, Then first_name fallback sur Participant', async () => {
+    const malformedId = {
+      split: jest.fn(() => [undefined]),
+      toString: () => 'malformed-id',
+    } as unknown as string;
+
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: malformedId,
+          email: '   ',
+          user_metadata: {},
+        },
+      },
+      error: null,
+    });
+
+    const malformedProvisionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: null }),
+      maybeSingle: jest
+        .fn()
+        .mockResolvedValueOnce({ data: null, error: null })
+        .mockResolvedValueOnce({
+          data: {
+            id: 'user-fixed',
+            email: 'fallback@example.com',
+            role: 'participant',
+            first_name: 'Participant',
+            last_name: 'Participant',
+            phone: null,
+            preferred_contact_channel: null,
+            is_active: true,
+            created_at: '2026-04-14T12:00:00.000Z',
+            updated_at: '2026-04-14T12:00:00.000Z',
+          },
+          error: null,
+        }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return malformedProvisionQuery;
+      }
+
+      if (tableName === 'participant') {
+        return createSingleRowQuery({ data: null, error: null });
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).resolves.toMatchObject({
+      profile: {
+        appUser: {
+          id: 'user-fixed',
+        },
+      },
+    });
+
+    expect(malformedProvisionQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        first_name: 'Participant',
+        last_name: 'Participant',
+        role: 'participant',
+      }),
+      { onConflict: 'id' },
     );
   });
 

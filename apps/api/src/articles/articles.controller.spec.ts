@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
   NotFoundException,
   RequestMethod,
   UnauthorizedException,
@@ -269,5 +270,252 @@ describe('ArticlesController', () => {
         'Bearer access-token',
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un header Authorization absent, When createArticle est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.createArticle({
+        slug: 'article-1',
+        title: 'Title',
+        excerpt: 'Résumé suffisamment long.',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un payload update invalide, When updateArticle est appelé, Then une BadRequestException est renvoyée', async () => {
+    await expect(
+      controller.updateArticle(
+        'article-1',
+        {
+          slug: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un patch valide, When patchArticle est appelé, Then updateArticle est utilisé', async () => {
+    const updateSpy = jest.spyOn(controller, 'updateArticle');
+
+    await controller.patchArticle(
+      'article-1',
+      {
+        title: 'Titre mis à jour',
+      },
+      'Bearer access-token',
+    );
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      'article-1',
+      { title: 'Titre mis à jour' },
+      'Bearer access-token',
+    );
+  });
+
+  it('Given un header Authorization absent, When publishArticle est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.publishArticle('article-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un fichier manquant, When uploadCoverImage est appelé, Then une BadRequestException est renvoyée', async () => {
+    await expect(
+      controller.uploadCoverImage(undefined, 'Bearer access-token'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given une erreur non HttpException du service upload, When uploadCoverImage est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    articlesService.uploadCoverImage.mockRejectedValueOnce(
+      new Error('unexpected storage failure'),
+    );
+
+    await expect(
+      controller.uploadCoverImage(
+        {
+          buffer: Buffer.from('image'),
+          originalname: 'cover.jpg',
+          mimetype: 'image/jpeg',
+          size: 120,
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un token admin valide, When listCategories est appelée, Then le service listCategories est invoqué', async () => {
+    await controller.listCategories('Bearer access-token');
+
+    expect(articlesService.listCategories).toHaveBeenCalledWith('access-token');
+  });
+
+  it('Given un header Authorization absent, When listCategories est appelée, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.listCategories()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un payload categorie valide, When createCategory est appelée, Then le service createCategory est invoqué', async () => {
+    await controller.createCategory(
+      {
+        slug: 'categorie-1',
+        label: 'Categorie 1',
+        description: null,
+      },
+      'Bearer access-token',
+    );
+
+    expect(articlesService.createCategory).toHaveBeenCalledWith(
+      'access-token',
+      {
+        slug: 'categorie-1',
+        label: 'Categorie 1',
+        description: null,
+      },
+    );
+  });
+
+  it('Given un payload categorie invalide, When updateCategory est appelée, Then une BadRequestException est renvoyée', async () => {
+    await expect(
+      controller.updateCategory(
+        'category-1',
+        {
+          slug: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un token admin valide, When deleteCategory est appelée, Then le service deleteCategory est invoqué', async () => {
+    await controller.deleteCategory('category-1', 'Bearer access-token');
+
+    expect(articlesService.deleteCategory).toHaveBeenCalledWith(
+      'access-token',
+      'category-1',
+    );
+  });
+
+  it('Given un header Authorization absent, When deleteCategory est appelée, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.deleteCategory('category-1'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un token admin valide, When listTags est appelé, Then le service listTags est invoqué', async () => {
+    await controller.listTags('Bearer access-token');
+
+    expect(articlesService.listTags).toHaveBeenCalledWith('access-token');
+  });
+
+  it('Given un header Authorization absent, When listTags est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.listTags()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un payload tag invalide, When updateTag est appelé, Then une BadRequestException est renvoyée', async () => {
+    await expect(
+      controller.updateTag(
+        'tag-1',
+        {
+          slug: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un token admin valide, When deleteTag est appelé, Then le service deleteTag est invoqué', async () => {
+    await controller.deleteTag('tag-1', 'Bearer access-token');
+
+    expect(articlesService.deleteTag).toHaveBeenCalledWith(
+      'access-token',
+      'tag-1',
+    );
+  });
+
+  it('Given un header Authorization absent, When getArticleById est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.getArticleById('article-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un token admin valide, When deleteArticle est appelé, Then le service deleteArticle est invoqué', async () => {
+    await controller.deleteArticle('article-1', 'Bearer access-token');
+
+    expect(articlesService.deleteArticle).toHaveBeenCalledWith(
+      'access-token',
+      'article-1',
+    );
+  });
+
+  it('Given un header Authorization absent, When deleteArticle est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.deleteArticle('article-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un header Authorization absent, When updateArticle est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateArticle('article-1', {
+        title: 'Titre',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When uploadCoverImage est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.uploadCoverImage({
+        buffer: Buffer.from('image'),
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 120,
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When createCategory est appelée, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.createCategory({
+        slug: 'categorie-1',
+        label: 'Categorie 1',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When updateCategory est appelée, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateCategory('category-1', {
+        label: 'Categorie 1',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When createTag est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.createTag({
+        slug: 'tag-1',
+        label: 'Tag 1',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When updateTag est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateTag('tag-1', {
+        label: 'Tag 1',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When deleteTag est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.deleteTag('tag-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
   });
 });

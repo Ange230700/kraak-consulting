@@ -50,6 +50,16 @@ describe('ParticipantNavCta', () => {
 
       expect(emitSpy).toHaveBeenCalled();
     });
+
+    it('When the wrapper notifies activation directly Then it emits the activation event', () => {
+      const fixture = TestBed.createComponent(ParticipantNavCta);
+      const emitSpy = vi.fn();
+
+      fixture.componentInstance.activated.subscribe(emitSpy);
+      fixture.componentInstance['notifyActivated']();
+
+      expect(emitSpy).toHaveBeenCalled();
+    });
   });
 
   describe('Given the participant area feature flag is disabled at runtime', () => {
