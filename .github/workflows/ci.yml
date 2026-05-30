@@ -171,13 +171,13 @@ jobs:
       - name: Installer les navigateurs Playwright
         # Note: playwright install exécute une commande officielle Playwright (non pnpm install),
         # donc --ignore-scripts ne s'applique pas. En CI PR, on exécute la matrice
-        # E2E allégée (Chromium seulement), pour éviter les téléchargements lourds
-        # firefox/webkit qui provoquent des timeouts intermittents.
+        # E2E allégée (Chromium headless shell), pour réduire fortement
+        # les téléchargements et limiter les timeouts intermittents.
         # NOSONAR
         run: |
           ./apps/client/node_modules/.bin/playwright --version
           if [[ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]]; then
-            ./apps/client/node_modules/.bin/playwright install chromium
+            ./apps/client/node_modules/.bin/playwright install --only-shell chromium
           fi
 
       - name: Exécuter les tests E2E
