@@ -21,6 +21,7 @@
     "@kraak/contracts": "workspace:*"
   },
   "devDependencies": {
+    "@angular/compiler": "21.2.11",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
     "@eslint/js": "^10.0.1",
