@@ -19,7 +19,7 @@ function mockFetch(status: number, body: unknown = null, statusText = 'OK') {
     statusText,
     json: () => Promise.resolve(body),
     text: () => Promise.resolve(JSON.stringify(body)),
-  } satisfies Partial<Response> as unknown as Response);
+  } satisfies Partial<Response>);
 }
 
 function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
