@@ -16,6 +16,8 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
+    "@angular/core": "21.2.11",
+    "@angular/forms": "21.2.11",
     "@kraak/contracts": "workspace:*"
   },
   "devDependencies": {
