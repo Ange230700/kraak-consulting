@@ -69,6 +69,64 @@ describe('Mobile ProgramListPage', () => {
       expect(element.textContent).toContain('Un programme de test');
     });
 
+    it('Given a program has cohort metadata, when programs load successfully, then cohort name and start date are displayed', async () => {
+      service.listPrograms.mockResolvedValue([
+        {
+          ...mockProgramListItem,
+          cohort: {
+            id: 'cohort-1',
+            programId: 'prog-1',
+            name: 'Cohorte pilote',
+            code: 'COH-001',
+            status: 'active',
+            startDate: '2026-01-15T09:00:00.000Z',
+            endDate: null,
+            capacity: 20,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      ]);
+
+      const fixture = TestBed.createComponent(ProgramListPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Cohorte: Cohorte pilote');
+      expect(element.textContent).toContain('Début:');
+    });
+
+    it('Given a program has cohort metadata without start date, when programs load successfully, then cohort is shown without start date line', async () => {
+      service.listPrograms.mockResolvedValue([
+        {
+          ...mockProgramListItem,
+          cohort: {
+            id: 'cohort-2',
+            programId: 'prog-1',
+            name: 'Cohorte sans date',
+            code: 'COH-002',
+            status: 'active',
+            startDate: null,
+            endDate: null,
+            capacity: 20,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      ]);
+
+      const fixture = TestBed.createComponent(ProgramListPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Cohorte: Cohorte sans date');
+      expect(element.textContent).not.toContain('Début:');
+    });
+
     it('Given the page is initialized, when no programs are available, then empty state is displayed', async () => {
       service.listPrograms.mockResolvedValue([]);
       const fixture = TestBed.createComponent(ProgramListPage);
@@ -91,6 +149,19 @@ describe('Mobile ProgramListPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('API Error');
+    });
+
+    it('Given the user retries, when reloadPrograms is called, then programs are requested again', async () => {
+      service.listPrograms.mockResolvedValue([mockProgramListItem]);
+      const fixture = TestBed.createComponent(ProgramListPage);
+
+      await fixture.componentInstance['reloadPrograms']();
+
+      expect(service.listPrograms).toHaveBeenCalledTimes(1);
+      expect(fixture.componentInstance['loading']()).toBe(false);
+      expect(fixture.componentInstance['programs']()).toEqual([
+        mockProgramListItem,
+      ]);
     });
   });
 });

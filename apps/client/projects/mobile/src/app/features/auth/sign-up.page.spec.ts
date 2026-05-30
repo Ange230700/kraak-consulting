@@ -45,6 +45,25 @@ describe('Mobile SignUpPage', () => {
     expect(element.textContent).toContain('Se connecter');
   });
 
+  it('Given untouched valid defaults, when the page renders, then the generic form validation warning is not shown', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).not.toContain(
+      'V\u00E9rifiez vos informations avant de continuer.',
+    );
+  });
+
+  it('Given a signup submission in progress, when the page renders, then the loading button label is shown', () => {
+    const fixture = TestBed.createComponent(SignUpPage);
+    fixture.componentInstance.submitting.set(true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Cr\u00E9ation en cours...');
+  });
+
   it('Given valid participant data, when the form is submitted, then the auth service is called and a success message is exposed', async () => {
     const fixture = TestBed.createComponent(SignUpPage);
     fixture.componentInstance.form.setValue({

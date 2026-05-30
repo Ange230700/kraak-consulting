@@ -1,4 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import type {
   ResourceAudienceValue,
   ResourceDto,
@@ -201,5 +206,178 @@ describe('ResourcesController', () => {
       cohortId: null,
     });
     expect(result).toEqual(mockResource);
+  });
+
+  it('Given an invalid Authorization header, When listResources is called, Then an UnauthorizedException is thrown', async () => {
+    await expect(
+      controller.listResources('training', 'all', 'prog-001', 1, 10, 'Bearer '),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given a non-admin Authorization header, When listResources is called, Then it falls back to public listing', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'participant',
+        },
+      },
+    });
+    mockResourcesService.listResources.mockResolvedValueOnce(mockListResponse);
+
+    const result = await controller.listResources(
+      'training',
+      'all',
+      'prog-001',
+      1,
+      10,
+      'Bearer access-token',
+    );
+
+    expect(mockResourcesService.listAllResources).not.toHaveBeenCalled();
+    expect(mockResourcesService.listResources).toHaveBeenCalledWith({
+      resourceTheme: 'training',
+      resourceAudience: 'all',
+      programId: 'prog-001',
+      page: 1,
+      limit: 10,
+    });
+    expect(result).toEqual(mockListResponse);
+  });
+
+  it('Given a valid admin token, When updateResource is called, Then it delegates to updateResource service', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+    mockResourcesService.updateResource.mockResolvedValueOnce(mockResource);
+
+    const result = await controller.updateResource(
+      'res-001',
+      {
+        title: 'TypeScript Basics',
+      },
+      'Bearer access-token',
+    );
+
+    expect(mockResourcesService.updateResource).toHaveBeenCalledWith(
+      'res-001',
+      {
+        title: 'TypeScript Basics',
+      },
+    );
+    expect(result).toEqual(mockResource);
+  });
+
+  it('Given a valid admin token, When patchResource is called, Then it reuses updateResource logic', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+    mockResourcesService.updateResource.mockResolvedValueOnce(mockResource);
+
+    await controller.patchResource(
+      'res-001',
+      {
+        description: 'Updated description',
+      },
+      'Bearer access-token',
+    );
+
+    expect(mockResourcesService.updateResource).toHaveBeenCalledWith(
+      'res-001',
+      {
+        description: 'Updated description',
+      },
+    );
+  });
+
+  it('Given an invalid create payload, When createResource is called, Then a BadRequestException is thrown', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.createResource(
+        {
+          title: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given an invalid update payload, When updateResource is called, Then a BadRequestException is thrown', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.updateResource(
+        'res-001',
+        {
+          title: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given a participant token, When createResource is called, Then a ForbiddenException is thrown', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'participant',
+        },
+      },
+    });
+
+    await expect(
+      controller.createResource(
+        {
+          title: 'TypeScript Basics',
+          resourceType: 'video',
+          resourceTheme: 'training',
+          resourceAudience: 'all',
+          status: 'published',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given a valid admin token, When deleteResource is called, Then it delegates to deleteResource service', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.deleteResource('res-001', 'Bearer access-token'),
+    ).resolves.toBeUndefined();
+
+    expect(mockResourcesService.deleteResource).toHaveBeenCalledWith('res-001');
+  });
+
+  it('Given no Authorization header, When deleteResource is called, Then an UnauthorizedException is thrown', async () => {
+    await expect(controller.deleteResource('res-001')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
   });
 });

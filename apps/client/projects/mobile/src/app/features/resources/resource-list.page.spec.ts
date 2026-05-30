@@ -100,6 +100,38 @@ describe('Mobile ResourceListPage', () => {
     expect(element.textContent).not.toContain('Boite a outils projet');
   });
 
+  it('Given a resource with null description, when searching by its type, then filtering still works with the fallback empty description', async () => {
+    const resourcesWithNullDescription: ResourceDto[] = [
+      {
+        ...resources[0],
+        id: 'resource-null-description',
+        title: 'Document sans description',
+        description: null,
+        resourceType: 'video',
+      },
+    ];
+
+    service.listResources.mockResolvedValue({
+      data: resourcesWithNullDescription,
+      total: 1,
+    });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const searchInput = element.querySelector(
+      'input[type="search"]',
+    ) as HTMLInputElement;
+
+    searchInput.value = 'video';
+    searchInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(element.textContent).toContain('Document sans description');
+  });
+
   it('Given a load error, when page initializes, then the error state is displayed', async () => {
     service.listResources.mockRejectedValue(new Error('Erreur API test'));
     const fixture = TestBed.createComponent(ResourceListPage);
@@ -109,6 +141,27 @@ describe('Mobile ResourceListPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Erreur API test');
+  });
+
+  it('Given loaded resources and a non-matching search, when filtering is applied, then empty filtered state message is displayed', async () => {
+    service.listResources.mockResolvedValue({ data: resources, total: 2 });
+    const fixture = TestBed.createComponent(ResourceListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const searchInput = element.querySelector(
+      'input[type="search"]',
+    ) as HTMLInputElement;
+
+    searchInput.value = 'inexistant-xyz';
+    searchInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(element.textContent).toContain(
+      'Aucune ressource ne correspond à vos critères.',
+    );
   });
 
   it('Given a loaded page, when reloadResources is called, then the API is called again', async () => {
@@ -286,5 +339,96 @@ describe('Mobile ResourceListPage', () => {
     ).onAudienceChange({ target: null } as unknown as Event);
 
     expect(service.listResources).toHaveBeenCalled();
+  });
+
+  it('Given two concurrent loads, when the older success resolves after the newer one, then stale success is ignored', async () => {
+    const fixture = TestBed.createComponent(ResourceListPage);
+    let resolveOlderLoad!: (value: unknown) => void;
+
+    const olderLoad = new Promise<unknown>((resolve) => {
+      resolveOlderLoad = resolve;
+    });
+
+    const newerResources: ResourceDto[] = [
+      {
+        ...resources[0],
+        id: 'resource-newer',
+        title: 'Ressource la plus récente',
+      },
+    ];
+    const staleResources: ResourceDto[] = [
+      {
+        ...resources[0],
+        id: 'resource-stale',
+        title: 'Ressource obsolète',
+      },
+    ];
+
+    const listMock = vi
+      .fn()
+      .mockReturnValueOnce(olderLoad)
+      .mockResolvedValueOnce({ data: newerResources, total: 1 });
+
+    const component = fixture.componentInstance as unknown as {
+      resourcesService: { listResources: () => Promise<unknown> };
+      reloadResources: () => Promise<void>;
+      resources: () => ResourceDto[];
+      errorMessage: () => string | null;
+      loading: () => boolean;
+    };
+    component.resourcesService = { listResources: listMock };
+
+    const olderRun = component.reloadResources();
+    const newerRun = component.reloadResources();
+
+    await newerRun;
+    resolveOlderLoad({ data: staleResources, total: 1 });
+    await olderRun;
+
+    expect(component.resources()).toEqual(newerResources);
+    expect(component.errorMessage()).toBeNull();
+    expect(component.loading()).toBe(false);
+  });
+
+  it('Given two concurrent loads, when the older one fails after a newer success, then stale error state is ignored', async () => {
+    const fixture = TestBed.createComponent(ResourceListPage);
+    let rejectOlderLoad!: (reason?: unknown) => void;
+
+    const olderLoad = new Promise<unknown>((_, reject) => {
+      rejectOlderLoad = reject;
+    });
+
+    const newerResources: ResourceDto[] = [
+      {
+        ...resources[0],
+        id: 'resource-stable',
+        title: 'Ressource stable',
+      },
+    ];
+
+    const listMock = vi
+      .fn()
+      .mockReturnValueOnce(olderLoad)
+      .mockResolvedValueOnce({ data: newerResources, total: 1 });
+
+    const component = fixture.componentInstance as unknown as {
+      resourcesService: { listResources: () => Promise<unknown> };
+      reloadResources: () => Promise<void>;
+      resources: () => ResourceDto[];
+      errorMessage: () => string | null;
+      loading: () => boolean;
+    };
+    component.resourcesService = { listResources: listMock };
+
+    const olderRun = component.reloadResources();
+    const newerRun = component.reloadResources();
+
+    await newerRun;
+    rejectOlderLoad(new Error('stale failure'));
+    await olderRun;
+
+    expect(component.resources()).toEqual(newerResources);
+    expect(component.errorMessage()).toBeNull();
+    expect(component.loading()).toBe(false);
   });
 });

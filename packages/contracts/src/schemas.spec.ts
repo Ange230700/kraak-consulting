@@ -207,6 +207,26 @@ describe('SignUpRequestSchema', () => {
         .success,
     ).toBe(false);
   });
+
+  it('should normalize an omitted redirect target to null', () => {
+    const result = SignUpRequestSchema.safeParse({
+      email: valid.email,
+      password: valid.password,
+      firstName: valid.firstName,
+      lastName: valid.lastName,
+      phone: valid.phone,
+      preferredContactChannel: valid.preferredContactChannel,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error(
+        'Expected SignUpRequestSchema to accept omitted redirectTo.',
+      );
+    }
+
+    expect(result.data.redirectTo).toBeNull();
+  });
 });
 
 describe('RefreshSessionRequestSchema', () => {
@@ -468,6 +488,31 @@ describe('CreateArticleSchema', () => {
     expect(
       UpdateArticleSchema.safeParse({ title: 'Nouveau titre' }).success,
     ).toBe(true);
+  });
+
+  it('Given article payload without optional coverImageUrl When parsed Then the schema normalizes it to null', () => {
+    const result = CreateArticleSchema.safeParse({
+      slug: valid.slug,
+      title: valid.title,
+      excerpt: valid.excerpt,
+      content: valid.content,
+      status: valid.status,
+      seoTitle: valid.seoTitle,
+      seoDescription: valid.seoDescription,
+      publishedAt: valid.publishedAt,
+      authorId: valid.authorId,
+      categoryIds: valid.categoryIds,
+      tagIds: valid.tagIds,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error(
+        'Expected CreateArticleSchema to accept omitted coverImageUrl.',
+      );
+    }
+
+    expect(result.data.coverImageUrl).toBeNull();
   });
 });
 

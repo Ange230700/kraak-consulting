@@ -16,6 +16,7 @@ export { logDebugError } from './console-debug.js';
 export { resolveAuthErrorMessage } from './resolve-auth-error.js';
 export {
   createSignInForm,
+  createSharedSubmitSignInOptions,
   normalizeRequiredText,
   normalizeTextControl,
   submitSignInForm,

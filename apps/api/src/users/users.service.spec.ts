@@ -52,6 +52,25 @@ describe('UsersService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSelect.mockReset().mockReturnThis();
+    mockOrder.mockReset().mockReturnThis();
+    mockEq.mockReset().mockReturnThis();
+    mockSingle.mockReset();
+    mockUpdate.mockReset().mockReturnThis();
+    mockDelete.mockReset().mockReturnThis();
+    mockUpsert.mockReset().mockReturnThis();
+    mockInviteUser.mockReset();
+
+    mockClient.from.mockImplementation(() => ({
+      select: mockSelect,
+      order: mockOrder,
+      eq: mockEq,
+      single: mockSingle,
+      update: mockUpdate,
+      delete: mockDelete,
+      upsert: mockUpsert,
+    }));
+
     service = new UsersService(mockSupabaseService as never);
   });
 
@@ -110,6 +129,28 @@ describe('UsersService', () => {
         InternalServerErrorException,
       );
     });
+
+    it('Given a Supabase error without string code, When findOne is called, Then throws InternalServerErrorException', async () => {
+      mockSingle.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Unexpected without code' },
+      });
+
+      await expect(service.findOne('user-1')).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('Given no row and no Supabase error, When findOne is called, Then throws NotFoundException', async () => {
+      mockSingle.mockResolvedValueOnce({
+        data: null,
+        error: null,
+      });
+
+      await expect(service.findOne('user-1')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
   describe('update', () => {
@@ -136,6 +177,32 @@ describe('UsersService', () => {
         service.update('user-1', { firstName: 'X' }),
       ).rejects.toThrow(InternalServerErrorException);
     });
+
+    it('Given all optional fields, When update is called, Then snake_case payload fields are sent to Supabase', async () => {
+      mockSingle.mockResolvedValueOnce({ data: mockUserRow, error: null });
+
+      await service.update('user-1', {
+        email: 'alice+update@example.com',
+        firstName: 'Alicia',
+        lastName: 'Martin-Dupont',
+        role: 'admin',
+        phone: '+33123456789',
+        preferredContactChannel: 'email',
+        isActive: false,
+      });
+
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'alice+update@example.com',
+          first_name: 'Alicia',
+          last_name: 'Martin-Dupont',
+          role: 'admin',
+          phone: '+33123456789',
+          preferred_contact_channel: 'email',
+          is_active: false,
+        }),
+      );
+    });
   });
 
   describe('remove', () => {
@@ -156,6 +223,29 @@ describe('UsersService', () => {
 
       await expect(service.remove('unknown-id')).rejects.toThrow(
         NotFoundException,
+      );
+    });
+
+    it('Given an existing user but delete fails, When remove is called, Then throws InternalServerErrorException', async () => {
+      const existingQuery = {
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest
+          .fn()
+          .mockResolvedValue({ data: { id: 'user-1' }, error: null }),
+      };
+
+      const deleteQuery = {
+        delete: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockResolvedValue({ error: { message: 'Delete error' } }),
+      };
+
+      mockClient.from
+        .mockImplementationOnce(() => existingQuery)
+        .mockImplementationOnce(() => deleteQuery);
+
+      await expect(service.remove('user-1')).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
 
@@ -191,6 +281,68 @@ describe('UsersService', () => {
         mockInviteUser.mockResolvedValueOnce({
           data: null,
           error: { message: 'Auth error' },
+        });
+
+        await expect(
+          service.invite({
+            email: 'alice@example.com',
+            firstName: 'Alice',
+            lastName: 'Martin',
+            role: 'participant',
+            isActive: true,
+          }),
+        ).rejects.toThrow(InternalServerErrorException);
+      });
+
+      it('Given invite response without user, When invite is called, Then throws InternalServerErrorException', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: {},
+          error: null,
+        });
+
+        await expect(
+          service.invite({
+            email: 'alice@example.com',
+            firstName: 'Alice',
+            lastName: 'Martin',
+            role: 'participant',
+            isActive: true,
+          }),
+        ).rejects.toThrow(InternalServerErrorException);
+      });
+
+      it('Given a successful invite with optional fields omitted, When invite is called, Then defaults are applied in upsert payload', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: { user: { id: 'user-1' } },
+          error: null,
+        });
+        mockSingle.mockResolvedValueOnce({ data: mockUserRow, error: null });
+
+        await service.invite({
+          email: 'alice@example.com',
+          firstName: 'Alice',
+          lastName: 'Martin',
+          role: 'participant',
+        });
+
+        expect(mockUpsert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            phone: null,
+            preferred_contact_channel: null,
+            is_active: true,
+          }),
+          { onConflict: 'id' },
+        );
+      });
+
+      it('Given invite succeeds but profile upsert fails, When invite is called, Then throws InternalServerErrorException', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: { user: { id: 'user-1' } },
+          error: null,
+        });
+        mockSingle.mockResolvedValueOnce({
+          data: null,
+          error: { message: 'Upsert error' },
         });
 
         await expect(

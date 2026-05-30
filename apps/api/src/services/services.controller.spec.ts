@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   RequestMethod,
   UnauthorizedException,
@@ -166,6 +167,27 @@ describe('ServicesController', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
+  it('Given un token admin valide, When createService est appelé avec un payload invalide, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.createService(
+        {
+          title: '',
+          description: 'Description',
+        },
+        'Bearer ' + 'access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
   it('Given un token admin valide, When patchService est appelé, Then la route PUT est réutilisée', async () => {
     authService.getSession.mockResolvedValueOnce({
       profile: {
@@ -245,6 +267,271 @@ describe('ServicesController', () => {
         title: 'Conseil',
         description: 'Description',
       }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un token admin valide, When updateService est appelé avec un payload valide, Then le service updateService est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.updateService(
+      'service-1',
+      {
+        title: 'Conseil modifié',
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(servicesService.updateService).toHaveBeenCalledWith('service-1', {
+      title: 'Conseil modifié',
+    });
+  });
+
+  it('Given un token admin valide, When updateService est appelé avec un payload invalide, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.updateService(
+        'service-1',
+        {
+          title: '',
+        },
+        'Bearer ' + 'access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When updateService est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateService('service-1', {
+        title: 'Conseil modifié',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un utilisateur non admin, When updateService est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.updateService(
+        'service-1',
+        {
+          title: 'Conseil modifié',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un token admin valide, When deleteService est appelé, Then le service deleteService est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.deleteService('service-1', 'Bearer ' + 'access-token');
+
+    expect(servicesService.deleteService).toHaveBeenCalledWith('service-1');
+  });
+
+  it('Given un utilisateur non admin, When deleteService est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.deleteService('service-1', 'Bearer access-token'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un header Authorization absent, When deleteService est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.deleteService('service-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un token admin valide, When createServiceDetail est appelé avec un payload invalide, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.createServiceDetail(
+        'service-1',
+        {
+          title: '',
+        },
+        'Bearer ' + 'access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When createServiceDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.createServiceDetail('service-1', {
+        title: 'Audit',
+        description: 'Analyse',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un utilisateur non admin, When createServiceDetail est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.createServiceDetail(
+        'service-1',
+        {
+          title: 'Audit',
+          description: 'Analyse',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un token admin valide, When updateServiceDetail est appelé avec un payload valide, Then le service updateServiceDetail est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.updateServiceDetail(
+      'service-1',
+      'detail-1',
+      {
+        description: 'Description mise à jour',
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(servicesService.updateServiceDetail).toHaveBeenCalledWith(
+      'service-1',
+      'detail-1',
+      {
+        description: 'Description mise à jour',
+      },
+    );
+  });
+
+  it('Given un token admin valide, When updateServiceDetail est appelé avec un payload invalide, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.updateServiceDetail(
+        'service-1',
+        'detail-1',
+        {
+          title: '',
+        },
+        'Bearer ' + 'access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When updateServiceDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateServiceDetail('service-1', 'detail-1', {
+        description: 'Description mise à jour',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un utilisateur non admin, When updateServiceDetail est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.updateServiceDetail(
+        'service-1',
+        'detail-1',
+        {
+          description: 'Description mise à jour',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un token admin valide, When patchServiceDetail est appelé, Then la route PUT de détail est réutilisée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          id: 'user-1',
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.patchServiceDetail(
+      'service-1',
+      'detail-1',
+      {
+        description: 'Description patchée',
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(servicesService.updateServiceDetail).toHaveBeenCalledWith(
+      'service-1',
+      'detail-1',
+      {
+        description: 'Description patchée',
+      },
+    );
+  });
+
+  it('Given un header Authorization absent, When patchService est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.patchService('service-1', {
+        description: 'Description patchée',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Authorization absent, When patchServiceDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.patchServiceDetail('service-1', 'detail-1', {
+        description: 'Description patchée',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un utilisateur non admin, When deleteServiceDetail est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.deleteServiceDetail(
+        'service-1',
+        'detail-1',
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un header Authorization absent, When deleteServiceDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.deleteServiceDetail('service-1', 'detail-1'),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });

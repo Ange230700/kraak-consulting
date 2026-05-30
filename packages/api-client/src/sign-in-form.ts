@@ -42,6 +42,17 @@ export interface SubmitSignInFormOptions {
   fallbackMessage?: string;
 }
 
+type SharedSubmitSignInOptions = Pick<
+  SubmitSignInFormOptions,
+  'form' | 'isSubmitting' | 'setSubmitting' | 'setErrorMessage' | 'signIn'
+>;
+
+export function createSharedSubmitSignInOptions(
+  options: SharedSubmitSignInOptions,
+): SharedSubmitSignInOptions {
+  return options;
+}
+
 export async function submitSignInForm(
   options: SubmitSignInFormOptions,
 ): Promise<void> {

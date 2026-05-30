@@ -132,6 +132,22 @@ describe('validateAnnouncementPublicationForMvp', () => {
       'Une annonce en brouillon ne doit pas avoir publishedAt.',
     );
   });
+
+  it('Given an invalid MVP audience scope, When validating publication, Then it reports an audience-scope violation', () => {
+    const result = validateAnnouncementPublicationForMvp({
+      audienceType: 'program',
+      programId: null,
+      cohortId: null,
+      status: PublicationStatus.DRAFT,
+      publishedAt: null,
+      priority: AnnouncementPriority.NORMAL,
+    });
+
+    expect(result.isValid).toBe(false);
+    expect(result.violations).toContain(
+      'Le ciblage MVP est invalide: all_participants sans parent, program avec programId uniquement, cohort avec programId + cohortId.',
+    );
+  });
 });
 
 describe('getAnnouncementPriorityWeight', () => {

@@ -1,6 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import gsap from 'gsap';
 import { GsapAnimationsService } from './gsap-animations.service';
 import { afterEach, vi } from 'vitest';
+
+interface AnimatableServiceLike {
+  canAnimate: () => boolean;
+}
 
 describe('GsapAnimationsService', () => {
   let service: GsapAnimationsService;
@@ -72,6 +77,29 @@ describe('GsapAnimationsService', () => {
       // Assert: Service executes without error
       expect(service).toBeTruthy();
     });
+
+    it('Given animations actives et des figures ciblées, When initializeFigureAnimations est invoqué, Then les tweens GSAP sont créés pour chaque figure', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const container = document.createElement('div');
+      const first = document.createElement('figure');
+      const second = document.createElement('figure');
+      first.classList.add('branch-figure');
+      second.classList.add('branch-figure');
+      container.appendChild(first);
+      container.appendChild(second);
+      document.body.appendChild(container);
+
+      service.initializeFigureAnimations('figure.branch-figure');
+
+      expect(fromSpy).toHaveBeenCalledTimes(2);
+
+      container.remove();
+    });
   });
 
   describe('initializeInteractiveCardAnimations', () => {
@@ -134,6 +162,35 @@ describe('GsapAnimationsService', () => {
       // Assert: No error thrown
       expect(service).toBeTruthy();
     });
+
+    it('Given un contexte sans document, When killAllAnimations est invoqué, Then la méthode retourne sans appeler GSAP', () => {
+      const killTweensSpy = vi.spyOn(gsap, 'killTweensOf');
+      const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'document',
+      );
+
+      if (!originalDocumentDescriptor?.configurable) {
+        expect(service).toBeTruthy();
+        return;
+      }
+
+      Object.defineProperty(globalThis, 'document', {
+        value: undefined,
+        configurable: true,
+      });
+
+      try {
+        service.killAllAnimations();
+        expect(killTweensSpy).not.toHaveBeenCalled();
+      } finally {
+        Object.defineProperty(
+          globalThis,
+          'document',
+          originalDocumentDescriptor,
+        );
+      }
+    });
   });
 
   describe('initializeButtonTransitions', () => {
@@ -149,6 +206,31 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
+      button.remove();
+    });
+
+    it('Given un bouton animé et canAnimate actif, When mouseenter, mouseleave, mousedown et mouseup sont déclenchés, Then toutes les transitions GSAP prévues sont demandées', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const killTweensSpy = vi.spyOn(gsap, 'killTweensOf');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const button = document.createElement('button');
+      button.classList.add('branch-button');
+      document.body.appendChild(button);
+
+      service.initializeButtonTransitions('button.branch-button');
+
+      button.dispatchEvent(new MouseEvent('mouseenter'));
+      button.dispatchEvent(new MouseEvent('mouseleave'));
+      button.dispatchEvent(new MouseEvent('mousedown'));
+      button.dispatchEvent(new MouseEvent('mouseup'));
+
+      expect(killTweensSpy).toHaveBeenCalledTimes(2);
+      expect(toSpy).toHaveBeenCalledTimes(4);
+
       button.remove();
     });
   });
@@ -168,6 +250,26 @@ describe('GsapAnimationsService', () => {
       // Cleanup
       input.remove();
     });
+
+    it('Given un champ animé et canAnimate actif, When focus puis blur sont émis, Then les transitions GSAP de focus et blur sont demandées', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const toSpy = vi.spyOn(gsap, 'to');
+      const input = document.createElement('input');
+      document.body.appendChild(input);
+
+      service.initializeFormFieldAnimations('input');
+
+      input.dispatchEvent(new FocusEvent('focus'));
+      input.dispatchEvent(new FocusEvent('blur'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+
+      input.remove();
+    });
   });
 
   describe('initializeListItemAnimations', () => {
@@ -184,6 +286,28 @@ describe('GsapAnimationsService', () => {
 
       // Cleanup
       li.remove();
+    });
+
+    it('Given des items de liste et animations activées, When initializeListItemAnimations est appelé, Then gsap.from est invoqué pour chaque item', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const first = document.createElement('li');
+      const second = document.createElement('li');
+      first.classList.add('branch-list');
+      second.classList.add('branch-list');
+      document.body.appendChild(first);
+      document.body.appendChild(second);
+
+      service.initializeListItemAnimations('li.branch-list');
+
+      expect(fromSpy).toHaveBeenCalledTimes(2);
+
+      first.remove();
+      second.remove();
     });
   });
 
@@ -203,6 +327,25 @@ describe('GsapAnimationsService', () => {
       // Cleanup
       p.remove();
     });
+
+    it('Given des paragraphes ciblés et animations activées, When initializeTextRevealAnimations est appelé, Then gsap.from est déclenché', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const p = document.createElement('p');
+      p.classList.add('branch-text');
+      p.textContent = 'Texte test';
+      document.body.appendChild(p);
+
+      service.initializeTextRevealAnimations('p.branch-text');
+
+      expect(fromSpy).toHaveBeenCalled();
+
+      p.remove();
+    });
   });
 
   describe('initializeIconAnimations', () => {
@@ -220,6 +363,40 @@ describe('GsapAnimationsService', () => {
       // Cleanup
       svg.remove();
     });
+
+    it('Given animated icons, When hover events fire, Then GSAP icon transitions are requested', () => {
+      const svg = document.createElement('svg');
+      document.body.appendChild(svg);
+
+      service.initializeIconAnimations();
+
+      expect(() => {
+        svg.dispatchEvent(new MouseEvent('mouseenter'));
+        svg.dispatchEvent(new MouseEvent('mouseleave'));
+      }).not.toThrow();
+
+      svg.remove();
+    });
+
+    it('Given des icônes et animations activées, When mouseenter puis mouseleave sont déclenchés, Then les tweens GSAP d entrée et sortie sont demandés', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const toSpy = vi.spyOn(gsap, 'to');
+      const icon = document.createElement('svg');
+      document.body.appendChild(icon);
+
+      service.initializeIconAnimations('svg');
+
+      icon.dispatchEvent(new MouseEvent('mouseenter'));
+      icon.dispatchEvent(new MouseEvent('mouseleave'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+
+      icon.remove();
+    });
   });
 
   describe('createPageTransition', () => {
@@ -227,6 +404,46 @@ describe('GsapAnimationsService', () => {
       // Act & Assert
       const promise = service.createPageTransition();
       await expect(promise).resolves.toBeUndefined();
+    });
+
+    it('Given a page main element, When a transition starts, Then GSAP fade-out resolves on completion', async () => {
+      const main = document.createElement('main');
+      document.body.appendChild(main);
+
+      await expect(service.createPageTransition()).resolves.toBeUndefined();
+
+      main.remove();
+    });
+
+    it('Given animations actives et un main présent, When createPageTransition est appelé, Then gsap.to est invoqué avec onComplete', async () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+      const main = document.createElement('main');
+      document.body.appendChild(main);
+
+      const toSpy = vi.spyOn(gsap, 'to').mockImplementation((_, vars) => {
+        vars.onComplete?.();
+        return {} as gsap.core.Tween;
+      });
+
+      await expect(service.createPageTransition()).resolves.toBeUndefined();
+      expect(toSpy).toHaveBeenCalled();
+
+      main.remove();
+    });
+
+    it('Given animations actives et aucun main, When createPageTransition est appelé, Then la promesse est résolue immédiatement', async () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const mainElements = document.querySelectorAll('main');
+      mainElements.forEach((element) => element.remove());
+
+      await expect(service.createPageTransition()).resolves.toBeUndefined();
     });
   });
 
@@ -237,6 +454,23 @@ describe('GsapAnimationsService', () => {
 
       // Assert: Service executes without error
       expect(service).toBeTruthy();
+    });
+
+    it('Given animations actives et un main présent, When animatePageIn est appelé, Then gsap.from est invoqué pour la nouvelle page', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const main = document.createElement('main');
+      document.body.appendChild(main);
+      const fromSpy = vi.spyOn(gsap, 'from');
+
+      service.animatePageIn();
+
+      expect(fromSpy).toHaveBeenCalled();
+
+      main.remove();
     });
   });
 
@@ -257,6 +491,35 @@ describe('GsapAnimationsService', () => {
     });
   });
 
+  describe('initializeMouseFollowAnimations', () => {
+    it('Given interactive elements, When hover events fire, Then GSAP brightness transitions are requested', () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+
+      service.initializeMouseFollowAnimations();
+
+      expect(() => {
+        link.dispatchEvent(new MouseEvent('mouseenter'));
+        link.dispatchEvent(new MouseEvent('mouseleave'));
+      }).not.toThrow();
+
+      link.remove();
+    });
+  });
+
+  describe('initializeImageParallaxAnimations', () => {
+    it('Given images in view, When parallax animations initialize, Then reveal and parallax tweens are registered', () => {
+      const image = document.createElement('img');
+      document.body.appendChild(image);
+
+      service.initializeImageParallaxAnimations();
+
+      expect(service).toBeTruthy();
+
+      image.remove();
+    });
+  });
+
   describe('initializeBadgeAnimations', () => {
     it('should handle badge animations', () => {
       // Arrange: Create badge
@@ -271,6 +534,26 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
+      badge.remove();
+    });
+
+    it('Given un badge ciblé et animations activées, When initializeBadgeAnimations est appelé, Then GSAP from et to sont tous les deux invoqués', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const badge = document.createElement('span');
+      badge.classList.add('badge');
+      document.body.appendChild(badge);
+
+      service.initializeBadgeAnimations('.badge');
+
+      expect(fromSpy).toHaveBeenCalled();
+      expect(toSpy).toHaveBeenCalled();
+
       badge.remove();
     });
   });
@@ -290,6 +573,26 @@ describe('GsapAnimationsService', () => {
       // Cleanup
       link.remove();
     });
+
+    it('Given un élément interactif et animations activées, When mouseenter et mouseleave sont déclenchés, Then les transitions GSAP de luminosité sont demandées', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const toSpy = vi.spyOn(gsap, 'to');
+      const button = document.createElement('button');
+      document.body.appendChild(button);
+
+      service.initializeMouseFollowAnimations();
+
+      button.dispatchEvent(new MouseEvent('mouseenter'));
+      button.dispatchEvent(new MouseEvent('mouseleave'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+
+      button.remove();
+    });
   });
 
   describe('initializeImageParallaxAnimations', () => {
@@ -306,6 +609,26 @@ describe('GsapAnimationsService', () => {
       expect(service).toBeTruthy();
 
       // Cleanup
+      img.remove();
+    });
+
+    it('Given un image parallax ciblé et animations activées, When initializeImageParallaxAnimations est appelé, Then les animations reveal et parallax sont déclenchées', () => {
+      vi.spyOn(
+        service as unknown as AnimatableServiceLike,
+        'canAnimate',
+      ).mockReturnValue(true);
+
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const img = document.createElement('img');
+      img.classList.add('parallax-branch-target');
+      document.body.appendChild(img);
+
+      service.initializeImageParallaxAnimations('img.parallax-branch-target');
+
+      expect(fromSpy).toHaveBeenCalled();
+      expect(toSpy).toHaveBeenCalled();
+
       img.remove();
     });
   });

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 
 import { ParticipantNavCta } from './participant-nav-cta.prod.component';
 
@@ -14,5 +15,14 @@ describe('ParticipantNavCta prod variant', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement.textContent as string).trim()).toBe('');
+  });
+
+  it('Given the production CTA wrapper When it is activated programmatically Then it emits the activated output', () => {
+    const fixture = TestBed.createComponent(ParticipantNavCta);
+    const emitSpy = vi.spyOn(fixture.componentInstance.activated, 'emit');
+
+    fixture.componentInstance['notifyActivated']();
+
+    expect(emitSpy).toHaveBeenCalled();
   });
 });

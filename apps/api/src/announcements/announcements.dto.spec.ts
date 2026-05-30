@@ -4,6 +4,15 @@ import {
 } from './announcements.dto';
 
 describe('Announcements DTO validation', () => {
+  it('Given un corps non objet, When validateCreateAnnouncementPayload est appelé, Then une erreur de corps invalide est renvoyée', () => {
+    const result = validateCreateAnnouncementPayload(null);
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+  });
+
   it('Given un payload de création valide, When validateCreateAnnouncementPayload est appelé, Then le DTO normalisé est renvoyé', () => {
     const result = validateCreateAnnouncementPayload({
       title: ' Mise à jour ',
@@ -31,6 +40,23 @@ describe('Announcements DTO validation', () => {
     });
   });
 
+  it('Given un payload création sans audienceType, When validateCreateAnnouncementPayload est appelé, Then la validation retourne un DTO valide sans scope', () => {
+    const result = validateCreateAnnouncementPayload({
+      title: 'Annonce générale',
+      body: 'Contenu général',
+      priority: 'normal',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        title: 'Annonce générale',
+        body: 'Contenu général',
+        priority: 'normal',
+      },
+    });
+  });
+
   it('Given un payload de création invalide, When validateCreateAnnouncementPayload est appelé, Then les erreurs de périmètre sont renvoyées', () => {
     const result = validateCreateAnnouncementPayload({
       title: 'Annonce',
@@ -44,6 +70,42 @@ describe('Announcements DTO validation', () => {
       errors: [
         'Le champ programId est requis lorsque audienceType vaut program.',
         'Le champ cohortId doit être absent lorsque audienceType vaut program.',
+      ],
+    });
+  });
+
+  it('Given un payload all_participants avec scope explicite, When validateCreateAnnouncementPayload est appelé, Then les erreurs de scope sont renvoyées', () => {
+    const result = validateCreateAnnouncementPayload({
+      title: 'Annonce',
+      body: 'Contenu',
+      audienceType: 'all_participants',
+      programId: 'program-1',
+      cohortId: 'cohort-1',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ programId doit être absent lorsque audienceType vaut all_participants.',
+        'Le champ cohortId doit être absent lorsque audienceType vaut all_participants.',
+      ],
+    });
+  });
+
+  it('Given un payload de création avec enums invalides, When validateCreateAnnouncementPayload est appelé, Then les erreurs enum sont renvoyées', () => {
+    const result = validateCreateAnnouncementPayload({
+      title: 'Annonce',
+      body: 'Contenu',
+      audienceType: 'all_participants',
+      priority: 'urgent',
+      status: 'live',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: [
+        'Le champ priority est invalide.',
+        'Le champ status est invalide.',
       ],
     });
   });
@@ -71,6 +133,34 @@ describe('Announcements DTO validation', () => {
     expect(result).toEqual({
       valid: false,
       errors: ['Le payload de mise à jour doit contenir au moins un champ.'],
+    });
+  });
+
+  it('Given un payload de mise à jour valide avec audience program, When validateUpdateAnnouncementPayload est appelé, Then le DTO partiel normalisé est renvoyé', () => {
+    const result = validateUpdateAnnouncementPayload({
+      audienceType: 'program',
+      programId: ' program-1 ',
+      cohortId: null,
+      publishedAt: null,
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        audienceType: 'program',
+        programId: 'program-1',
+        cohortId: null,
+        publishedAt: null,
+      },
+    });
+  });
+
+  it('Given un corps non objet en mise à jour, When validateUpdateAnnouncementPayload est appelé, Then une erreur de corps invalide est renvoyée', () => {
+    const result = validateUpdateAnnouncementPayload(null);
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
     });
   });
 

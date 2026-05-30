@@ -644,6 +644,34 @@ describe('AnnouncementsService', () => {
       );
     });
 
+    it('Given: une erreur announcements sans message, When: listAnnouncements appelé, Then: unknown error est utilisé dans le message', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: { code: 'PGRST999' } },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+        'Failed to list announcements: unknown error',
+      );
+    });
+
     it('Given: une erreur DB sur enrollments, When: listAnnouncements appelé, Then: une erreur est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
@@ -2056,6 +2084,44 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements — cas limites', () => {
+    it('Given: une erreur DB sur les annonces publiques sans token, When: listAnnouncements appelé, Then: une liste vide est renvoyée', async () => {
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: { message: 'public-db-error' } },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(service.listAnnouncements()).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
+    });
+
+    it('Given: des annonces publiques null sans erreur, When: listAnnouncements est appelé sans token, Then: une pagination vide est renvoyée', async () => {
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: null },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(
+        service.listAnnouncements(undefined, 3, 10),
+      ).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
+    });
+
     it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: null },
@@ -2909,6 +2975,77 @@ describe('AnnouncementsService', () => {
       });
     });
 
+    it('Given un payload de mise à jour complet, When updateAnnouncement est appelé, Then tous les champs sont mappés vers Supabase', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Titre mis à jour',
+          body: 'Corps mis à jour',
+          priority: 'critical',
+          audience_type: 'cohort',
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-001', {
+          title: 'Titre mis à jour',
+          body: 'Corps mis à jour',
+          priority: 'critical',
+          audienceType: 'cohort',
+          programId: 'program-1',
+          cohortId: 'cohort-1',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        }),
+      ).resolves.toMatchObject({
+        id: 'ann-001',
+        priority: 'critical',
+        audienceType: 'cohort',
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith({
+        title: 'Titre mis à jour',
+        body: 'Corps mis à jour',
+        priority: 'critical',
+        audience_type: 'cohort',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        published_at: '2026-05-26T12:00:00.000Z',
+      });
+    });
+
+    it('Given une annonce introuvable sans erreur technique, When updateAnnouncement est appelé, Then une NotFoundException est levée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-missing', {
+          title: 'Titre',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
     it('Given un statut draft avec publishedAt fourni, When createAnnouncement est appelé, Then published_at est forcé à null', async () => {
       const mutationQuery = createAsyncQuery({
         data: {
@@ -3012,6 +3149,28 @@ describe('AnnouncementsService', () => {
         service.deleteAnnouncement('ann-001'),
       ).resolves.toBeUndefined();
       expect(deleteQuery.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given une annonce absente sans erreur technique, When deleteAnnouncement est appelé, Then une NotFoundException est levée', async () => {
+      const deleteQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+      deleteQuery.delete = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.select = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.eq = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.single = jest.fn().mockResolvedValue({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn(() => deleteQuery),
+      });
+
+      await expect(
+        service.deleteAnnouncement('ann-missing'),
+      ).rejects.toBeInstanceOf(NotFoundException);
     });
 
     it('Given une insertion en erreur, When createAnnouncement est appelé, Then une InternalServerErrorException est levée', async () => {

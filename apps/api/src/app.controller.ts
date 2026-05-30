@@ -7,6 +7,19 @@ import { AppService, HealthStatus } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  private normalizeNonEmptyString(value: string, fallback: string): string {
+    return value.trim().length > 0 ? value : fallback;
+  }
+
+  private normalizeUptimeSeconds(value: number): number {
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  }
+
+  private normalizeTimestamp(value: string): string {
+    const parsedDate = Date.parse(value);
+    return Number.isNaN(parsedDate) ? new Date(0).toISOString() : value;
+  }
+
   @Get('health')
   @ApiOperation({ summary: "Vérifier l'état de l'API" })
   @ApiResponse({
@@ -24,6 +37,18 @@ export class AppController {
     },
   })
   getHealth(): HealthStatus {
-    return this.appService.getHealth();
+    const health = this.appService.getHealth();
+
+    return {
+      status: 'ok',
+      service: this.normalizeNonEmptyString(health.service, 'kraak-api'),
+      environment: this.normalizeNonEmptyString(
+        health.environment,
+        'development',
+      ),
+      timestamp: this.normalizeTimestamp(health.timestamp),
+      version: this.normalizeNonEmptyString(health.version, '0.0.0'),
+      uptimeSeconds: this.normalizeUptimeSeconds(health.uptimeSeconds),
+    };
   }
 }

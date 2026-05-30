@@ -179,6 +179,61 @@ describe('ProgramsService', () => {
     ]);
   });
 
+  it('Given aucune session utilisateur, When listPrograms est appelé sans token, Then les programmes publiés sont renvoyés', async () => {
+    const publishedQuery = createListQuery({
+      data: [
+        {
+          id: 'program-public-1',
+          slug: 'leadership-public',
+          title: 'Leadership Public',
+          summary: 'Résumé public',
+          description: 'Description publique',
+          status: 'published',
+          visibility: 'public',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(publishedQuery);
+
+    await expect(service.listPrograms()).resolves.toMatchObject([
+      {
+        id: 'program-public-1',
+        slug: 'leadership-public',
+        status: 'published',
+      },
+    ]);
+
+    expect(publishedQuery.eq).toHaveBeenCalledWith('status', 'published');
+  });
+
+  it('Given une erreur DB sur les programmes publiés, When listPrograms est appelé sans token, Then une InternalServerErrorException est renvoyée', async () => {
+    const publishedQuery = createListQuery({
+      data: null,
+      error: { message: 'db-error' },
+    });
+
+    adminClient.from.mockReturnValue(publishedQuery);
+
+    await expect(service.listPrograms()).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given aucun programme publié avec data null sans erreur, When listPrograms est appelé sans token, Then une liste vide est renvoyée', async () => {
+    const publishedQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(publishedQuery);
+
+    await expect(service.listPrograms()).resolves.toEqual([]);
+  });
+
   it('Given une session admin, When listAllPrograms est appelé, Then tous les programmes sont renvoyés', async () => {
     const adminQuery = createListQuery({
       data: [
@@ -207,6 +262,30 @@ describe('ProgramsService', () => {
       id: 'program-1',
       status: 'draft',
     });
+  });
+
+  it('Given une erreur DB, When listAllPrograms est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const adminQuery = createListQuery({
+      data: null,
+      error: { message: 'db-error' },
+    });
+
+    adminClient.from.mockReturnValue(adminQuery);
+
+    await expect(service.listAllPrograms()).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given aucun programme en base, When listAllPrograms est appelé, Then une liste vide est renvoyée', async () => {
+    const adminQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(adminQuery);
+
+    await expect(service.listAllPrograms()).resolves.toEqual([]);
   });
 
   it('Given un payload création programme, When createProgram est appelé, Then le programme est inséré et mappé', async () => {
@@ -251,6 +330,26 @@ describe('ProgramsService', () => {
     });
   });
 
+  it('Given une erreur de création programme, When createProgram est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'insert error' },
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.createProgram({
+        slug: 'new-program',
+        title: 'New Program',
+        summary: 'Summary',
+        description: 'Description',
+        status: 'draft',
+        visibility: 'private',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
   it('Given un payload mise à jour programme, When updateProgram est appelé, Then le programme est mis à jour', async () => {
     const mutationQuery = createProgramMutationQuery({
       data: {
@@ -288,6 +387,60 @@ describe('ProgramsService', () => {
     expect(mutationQuery.eq).toHaveBeenCalledWith('id', 'program-1');
   });
 
+  it('Given un payload complet, When updateProgram est appelé, Then tous les champs modifiables sont transmis', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'program-1',
+        slug: 'leadership-advanced',
+        title: 'Leadership Advanced',
+        summary: 'Résumé avancé',
+        description: 'Description avancée',
+        status: 'published',
+        visibility: 'participants',
+        created_at: '2026-04-01T00:00:00.000Z',
+        updated_at: '2026-04-10T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateProgram('program-1', {
+        slug: 'leadership-advanced',
+        title: 'Leadership Advanced',
+        summary: 'Résumé avancé',
+        description: 'Description avancée',
+        status: 'published',
+        visibility: 'participants',
+      }),
+    ).resolves.toMatchObject({ id: 'program-1', slug: 'leadership-advanced' });
+
+    expect(mutationQuery.update).toHaveBeenCalledWith({
+      slug: 'leadership-advanced',
+      title: 'Leadership Advanced',
+      summary: 'Résumé avancé',
+      description: 'Description avancée',
+      status: 'published',
+      visibility: 'participants',
+    });
+  });
+
+  it('Given un update sans erreur technique mais sans data, When updateProgram est appelé, Then une NotFoundException est renvoyée', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateProgram('program-missing', {
+        title: 'Programme mis à jour',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
   it('Given un programme existant, When deleteProgram est appelé, Then le programme est archivé', async () => {
     const mutationQuery = createProgramMutationQuery({
       data: { id: 'program-1' },
@@ -299,6 +452,19 @@ describe('ProgramsService', () => {
     await expect(service.deleteProgram('program-1')).resolves.toBeUndefined();
 
     expect(mutationQuery.update).toHaveBeenCalledWith({ status: 'archived' });
+  });
+
+  it('Given un programme introuvable, When deleteProgram est appelé, Then une NotFoundException est renvoyée', async () => {
+    const mutationQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'not-found' },
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.deleteProgram('program-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('Given des fonctionnalités programme existantes, When listProgramFeatures est appelé, Then la liste triée est mappée', async () => {
@@ -346,6 +512,66 @@ describe('ProgramsService', () => {
         updatedAt: '2026-04-29T10:00:00.000Z',
       },
     ]);
+  });
+
+  it('Given une erreur DB sur les fonctionnalités, When listProgramFeatures est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const programQuery = createSingleRowQuery({
+      data: {
+        id: 'program-1',
+        status: 'published',
+        visibility: 'public',
+      },
+      error: null,
+    });
+    const featureQuery = createListQuery({
+      data: null,
+      error: { message: 'feature-db-error' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.listProgramFeatures('program-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given des fonctionnalités nulles sans erreur, When listProgramFeatures est appelé, Then une liste vide est renvoyée', async () => {
+    const programQuery = createSingleRowQuery({
+      data: {
+        id: 'program-1',
+        status: 'published',
+        visibility: 'public',
+      },
+      error: null,
+    });
+    const featureQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(service.listProgramFeatures('program-1')).resolves.toEqual([]);
   });
 
   it('Given un programme non public, When listProgramFeatures est appelé, Then une NotFoundException est renvoyée', async () => {
@@ -411,6 +637,98 @@ describe('ProgramsService', () => {
     });
   });
 
+  it('Given un payload sans sortOrder, When createProgramFeature est appelé, Then sort_order par défaut vaut 0', async () => {
+    const programLookupQuery = createProgramMutationQuery({
+      data: { id: 'program-1' },
+      error: null,
+    });
+    const featureMutationQuery = createProgramMutationQuery({
+      data: {
+        id: 'feature-1',
+        program_id: 'program-1',
+        title: 'Mentorat',
+        sort_order: 0,
+        created_at: '2026-04-29T10:00:00.000Z',
+        updated_at: '2026-04-29T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programLookupQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureMutationQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.createProgramFeature('program-1', {
+        title: 'Mentorat',
+      }),
+    ).resolves.toMatchObject({ id: 'feature-1', sortOrder: 0 });
+
+    expect(featureMutationQuery.insert).toHaveBeenCalledWith({
+      program_id: 'program-1',
+      title: 'Mentorat',
+      sort_order: 0,
+    });
+  });
+
+  it('Given une erreur à la création de fonctionnalité, When createProgramFeature est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const programLookupQuery = createProgramMutationQuery({
+      data: { id: 'program-1' },
+      error: null,
+    });
+    const featureMutationQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'feature insert error' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programLookupQuery;
+      }
+
+      if (table === 'program_feature') {
+        return featureMutationQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.createProgramFeature('program-1', {
+        title: 'Mentorat',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un programme introuvable, When createProgramFeature est appelé, Then une NotFoundException est renvoyée', async () => {
+    const programLookupQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'program-not-found' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programLookupQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.createProgramFeature('program-missing', {
+        title: 'Mentorat',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
   it('Given une fonctionnalité programme existante, When updateProgramFeature est appelé, Then la fonctionnalité est mise à jour', async () => {
     const featureMutationQuery = createProgramMutationQuery({
       data: {
@@ -448,6 +766,21 @@ describe('ProgramsService', () => {
     );
   });
 
+  it('Given une fonctionnalité introuvable, When updateProgramFeature est appelé, Then une NotFoundException est renvoyée', async () => {
+    const featureMutationQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'feature not found' },
+    });
+
+    adminClient.from.mockReturnValue(featureMutationQuery);
+
+    await expect(
+      service.updateProgramFeature('program-1', 'feature-missing', {
+        title: 'Nouveau titre',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
   it('Given une fonctionnalité programme existante, When deleteProgramFeature est appelé, Then la suppression est effectuée', async () => {
     const featureMutationQuery = createProgramMutationQuery({
       data: { id: 'feature-1' },
@@ -461,6 +794,38 @@ describe('ProgramsService', () => {
     ).resolves.toBeUndefined();
 
     expect(featureMutationQuery.delete).toHaveBeenCalledTimes(1);
+  });
+
+  it('Given une fonctionnalité introuvable, When deleteProgramFeature est appelé, Then une NotFoundException est renvoyée', async () => {
+    const featureMutationQuery = createProgramMutationQuery({
+      data: null,
+      error: { message: 'feature not found' },
+    });
+
+    adminClient.from.mockReturnValue(featureMutationQuery);
+
+    await expect(
+      service.deleteProgramFeature('program-1', 'feature-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un programme introuvable, When listProgramFeatures est appelé, Then une NotFoundException est renvoyée', async () => {
+    const programQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'program-not-found' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'program') {
+        return programQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.listProgramFeatures('program-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   // Given plus de 200 sessions visibles sur une cohorte
@@ -620,6 +985,31 @@ describe('ProgramsService', () => {
     await expect(service.listPrograms('access-token')).rejects.toBeInstanceOf(
       InternalServerErrorException,
     );
+  });
+
+  it('Given un fallback enrollment sans données, When listPrograms est appelé, Then une liste vide est renvoyée', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') {
+        return participantQuery;
+      }
+
+      if (tableName === 'enrollment') {
+        return enrollmentQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toEqual([]);
   });
 
   // Given un schéma staging sans colonnes de progression enrollment
@@ -1387,6 +1777,72 @@ describe('ProgramsService', () => {
     ]);
   });
 
+  it('Given des sessions cohort paginées avec data null, When listPrograms est appelé, Then le fallback de pagination produit une progression à zéro', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentQuery = createListQuery({
+      data: [
+        {
+          id: 'enrollment-1',
+          status: 'active',
+          completed_at: null,
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          progress_completed_session_ids: ['session-unknown'],
+          progress_updated_at: null,
+          program: {
+            id: 'program-1',
+            slug: 'leadership-essentials',
+            title: 'Leadership Essentials',
+            summary: 'Bases du leadership.',
+            description: 'Parcours complet.',
+            status: 'published',
+            visibility: 'participants',
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+          cohort: {
+            id: 'cohort-1',
+            program_id: 'program-1',
+            name: 'Cohorte Avril',
+            code: 'APR-26',
+            status: 'active',
+            start_date: '2026-04-10',
+            end_date: null,
+            capacity: 25,
+            created_at: '2026-04-01T00:00:00.000Z',
+            updated_at: '2026-04-01T00:00:00.000Z',
+          },
+        },
+      ],
+      error: null,
+    });
+    const sessionsByCohortQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentQuery;
+      if (tableName === 'session') return sessionsByCohortQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPrograms('access-token')).resolves.toMatchObject([
+      {
+        enrollmentId: 'enrollment-1',
+        progress: {
+          totalSessions: 0,
+          completedSessions: 0,
+        },
+      },
+    ]);
+  });
+
   // Given une erreur DB sur le participant dans resolveParticipantId
   // When listPrograms est appelé
   // Then une InternalServerErrorException est renvoyée
@@ -1592,6 +2048,76 @@ describe('ProgramsService', () => {
     });
   });
 
+  // Given une requête sessions avec data null sans erreur
+  // When getProgramDetail est appelé
+  // Then les sessions sont vides et la progression reste calculée
+  it('Given des sessions null sans erreur, When getProgramDetail est appelé, Then le détail renvoie une liste de sessions vide', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: null,
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const resourcesQuery = createListQuery({ data: [], error: null });
+    const announcementsQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'session') return sessionsQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).resolves.toMatchObject({
+      enrollmentId: 'enrollment-1',
+      sessions: [],
+      progress: {
+        totalSessions: 0,
+        completedSessions: 0,
+      },
+    });
+  });
+
   // Given une erreur DB sur sessions dans getProgramDetail
   // When getProgramDetail est appelé
   // Then une InternalServerErrorException est renvoyée
@@ -1786,6 +2312,159 @@ describe('ProgramsService', () => {
     const result = await service.getProgramDetail('access-token', 'program-1');
     expect(result.resources).toHaveLength(2);
     expect(result.resources[0].id).toBe('resource-newer');
+  });
+
+  it('Given des ressources nulles sans erreur et des annonces nulles, When getProgramDetail est appelé, Then resources et announcements sont des listes vides', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: null,
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: null,
+      },
+      error: null,
+    });
+    const resourcesQuery = createListQuery({ data: null, error: null });
+    const announcementsQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'resource') return resourcesQuery;
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getProgramDetail('access-token', 'program-1'),
+    ).resolves.toMatchObject({
+      resources: [],
+      announcements: [],
+    });
+  });
+
+  it('Given des ressources programme et cohorte avec dates mixtes, When getProgramDetail est appelé, Then le tri merged gère published_at null', async () => {
+    const participantQuery = createSingleRowQuery({
+      data: { id: 'participant-1' },
+      error: null,
+    });
+    const enrollmentDetailQuery = createSingleRowQuery({
+      data: {
+        id: 'enrollment-1',
+        status: 'active',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        progress_completed_session_ids: [],
+        progress_updated_at: null,
+        program: {
+          id: 'program-1',
+          slug: 'leadership-essentials',
+          title: 'Leadership Essentials',
+          summary: 'Bases du leadership.',
+          description: 'Parcours complet.',
+          status: 'published',
+          visibility: 'participants',
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+        cohort: {
+          id: 'cohort-1',
+          program_id: 'program-1',
+          name: 'Cohorte Avril',
+          code: 'APR-26',
+          status: 'active',
+          start_date: '2026-04-10',
+          end_date: null,
+          capacity: 25,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      },
+      error: null,
+    });
+    const sessionsQuery = createListQuery({ data: [], error: null });
+    const programResourcesQuery = createListQuery({
+      data: [
+        {
+          id: 'resource-null-date',
+          program_id: 'program-1',
+          cohort_id: null,
+          title: 'Ressource sans date',
+          description: null,
+          resource_type: 'document',
+          resource_theme: null,
+          resource_audience: null,
+          url: null,
+          file_path: '/resources/null-date.pdf',
+          status: 'published',
+          published_at: null,
+          created_at: '2026-04-01T00:00:00.000Z',
+          updated_at: '2026-04-01T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const cohortResourcesQuery = createListQuery({
+      data: [
+        {
+          id: 'resource-with-date',
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          title: 'Ressource datée',
+          description: null,
+          resource_type: 'document',
+          resource_theme: null,
+          resource_audience: null,
+          url: null,
+          file_path: '/resources/with-date.pdf',
+          status: 'published',
+          published_at: '2026-05-01T00:00:00.000Z',
+          created_at: '2026-04-30T00:00:00.000Z',
+          updated_at: '2026-04-30T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const announcementsQuery = createListQuery({ data: [], error: null });
+
+    let resourceCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'participant') return participantQuery;
+      if (tableName === 'enrollment') return enrollmentDetailQuery;
+      if (tableName === 'session') return sessionsQuery;
+      if (tableName === 'resource') {
+        resourceCalls += 1;
+        return resourceCalls === 1
+          ? programResourcesQuery
+          : cohortResourcesQuery;
+      }
+      if (tableName === 'announcement') return announcementsQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    const result = await service.getProgramDetail('access-token', 'program-1');
+    expect(result.resources.map((resource) => resource.id)).toEqual([
+      'resource-with-date',
+      'resource-null-date',
+    ]);
   });
 
   // Given un utilisateur sans participant

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getMobilePrimaryTabs,
   MOBILE_PRIMARY_TABS,
   MOBILE_SHELL_CHILD_ROUTES,
   MOBILE_SHELL_SECTIONS,
@@ -52,5 +53,58 @@ describe('mobile shell config', () => {
       ':programId/sessions/:sessionId',
       ':programId',
     ]);
+  });
+
+  it('Given the lazy participant shell, when each child loader is resolved, then every nested route exposes a component', async () => {
+    const lazyChildRoutes = MOBILE_SHELL_CHILD_ROUTES.flatMap((route) =>
+      (route.children ?? []).map((childRoute) => ({
+        parentPath: route.path,
+        childPath: childRoute.path,
+        loadComponent: childRoute.loadComponent,
+      })),
+    );
+
+    const resolvedChildren: {
+      parentPath: string | undefined;
+      childPath: string | undefined;
+      component: unknown;
+    }[] = [];
+
+    for (const route of lazyChildRoutes) {
+      resolvedChildren.push({
+        parentPath: route.parentPath,
+        childPath: route.childPath,
+        component: await route.loadComponent?.(),
+      });
+    }
+
+    expect(resolvedChildren).toHaveLength(10);
+    expect(
+      resolvedChildren.every((route) => route.component !== undefined),
+    ).toBe(true);
+    expect(resolvedChildren).toContainEqual(
+      expect.objectContaining({
+        parentPath: 'programmes',
+        childPath: 'ressources/:resourceId',
+      }),
+    );
+    expect(resolvedChildren).toContainEqual(
+      expect.objectContaining({
+        parentPath: 'support',
+        childPath: 'demande',
+      }),
+    );
+  }, 30000);
+
+  it('Given a section without tab metadata, when primary tabs are computed, then that section is excluded from the tab list', () => {
+    const primaryTabs = getMobilePrimaryTabs([
+      ...MOBILE_SHELL_SECTIONS,
+      {
+        path: 'hidden-stack',
+        children: [],
+      },
+    ]);
+
+    expect(primaryTabs).toEqual(MOBILE_PRIMARY_TABS);
   });
 });

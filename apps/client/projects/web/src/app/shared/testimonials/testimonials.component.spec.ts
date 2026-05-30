@@ -37,6 +37,15 @@ describe('Testimonials', () => {
     expect(text).toBe('');
   });
 
+  it('Given aucun item et placeholder désactivé, When visibleCards est évalué, Then une liste vide est renvoyée', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', []);
+    fixture.componentRef.setInput('placeholder', false);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.visibleCards()).toEqual([]);
+  });
+
   it('Given des témoignages fournis, When le composant est rendu, Then nom et métier sont affichés', () => {
     const fixture = TestBed.createComponent(Testimonials);
     fixture.componentRef.setInput('items', [
@@ -237,6 +246,56 @@ describe('Testimonials', () => {
     expect(component.getCardStyles(1)['transform']).toContain(
       'translateX(-120px)',
     );
+  });
+
+  it('Given des index hors pile, When getCardStyles est appelé dans chaque état, Then les styles par défaut sont renvoyés', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    component.isAnimating.set(true);
+    component.animationDirection.set('next');
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+
+    component.animationDirection.set('prev');
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+
+    component.isAnimating.set(false);
+    component.animationDirection.set(null);
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
   });
 
   it('Given le composant anime déjà, When nextCard ou prevCard est déclenché, Then l état reste inchangé', () => {

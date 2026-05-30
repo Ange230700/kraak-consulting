@@ -75,6 +75,15 @@ describe('Services DTO validation', () => {
     });
   });
 
+  it('Given un body non objet service update, When validateUpdateServicePayload est appelé, Then une erreur corps invalide est renvoyée', () => {
+    const result = validateUpdateServicePayload(null);
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+  });
+
   it('Given un payload de création service invalide, When validateCreateServicePayload est appelé, Then les erreurs attendues sont renvoyées', () => {
     const result = validateCreateServicePayload({
       title: ' ',
@@ -139,6 +148,15 @@ describe('Services DTO validation', () => {
         'Le champ description est requis.',
         'Le champ sortOrder doit être un entier.',
       ],
+    });
+  });
+
+  it('Given un body non objet détail création, When validateCreateServiceDetailPayload est appelé, Then une erreur corps invalide est renvoyée', () => {
+    const result = validateCreateServiceDetailPayload(null);
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
     });
   });
 

@@ -63,4 +63,33 @@ describe('Mobile SupportPage', () => {
     expect(element.textContent).toContain('Connexion impossible');
     expect(element.textContent).toContain('En cours');
   });
+
+  it('Given each support status, when getStatusLabel is called, then the localized label is returned', () => {
+    const fixture = TestBed.createComponent(SupportPage);
+
+    expect(fixture.componentInstance.getStatusLabel('open')).toBe('Ouverte');
+    expect(fixture.componentInstance.getStatusLabel('in_progress')).toBe(
+      'En cours',
+    );
+    expect(fixture.componentInstance.getStatusLabel('resolved')).toBe(
+      'R\u00E9solue',
+    );
+    expect(fixture.componentInstance.getStatusLabel('closed')).toBe(
+      'Cl\u00F4tur\u00E9e',
+    );
+  });
+
+  it('Given the support tracking API fails, when the page initializes, then a fallback error message is displayed', async () => {
+    supportService.listMyRequests.mockRejectedValue(new Error('API down'));
+
+    const fixture = TestBed.createComponent(SupportPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Impossible de charger le suivi de vos demandes pour le moment.',
+    );
+  });
 });

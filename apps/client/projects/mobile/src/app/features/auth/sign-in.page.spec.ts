@@ -48,6 +48,15 @@ describe('Mobile SignInPage', () => {
     expect(element.textContent).toContain('Mot de passe oubli\u00E9');
   });
 
+  it('Given a sign-in submission in progress, when the page renders, then the loading button label is shown', () => {
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.submitting.set(true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Connexion en cours...');
+  });
+
   it('Given valid credentials, when the form is submitted, then the auth service is called and the app navigates to the shell', async () => {
     const fixture = TestBed.createComponent(SignInPage);
     fixture.componentInstance.form.setValue({

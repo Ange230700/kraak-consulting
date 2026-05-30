@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { RequestMethod } from '@nestjs/common/enums/request-method.enum';
 
@@ -314,5 +318,78 @@ describe('CmsController', () => {
     await expect(
       controller.listStatistics('Bearer access-token'),
     ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given Reflect.metadata indisponible, When cms controller module est chargé, Then les décorateurs restent chargeables', async () => {
+    const originalMetadata = Reflect.metadata;
+
+    try {
+      jest.resetModules();
+      Reflect.metadata = undefined;
+
+      await jest.isolateModulesAsync(async () => {
+        const reloaded = (await import('./cms.controller')) as {
+          CmsController: unknown;
+        };
+
+        expect(reloaded.CmsController).toBeDefined();
+      });
+    } finally {
+      Reflect.metadata = originalMetadata;
+    }
+  });
+
+  it('Given missing Authorization header, When admin routes are called, Then UnauthorizedException is thrown', async () => {
+    await expect(controller.listStatistics()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(controller.createStatistic({})).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(
+      controller.updateStatistic('stat-1', {}),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(controller.deleteStatistic('stat-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+
+    await expect(controller.listPartners()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(controller.createPartner({})).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(
+      controller.updatePartner('partner-1', {}),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(controller.deletePartner('partner-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+
+    await expect(controller.listTestimonials()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(controller.createTestimonial({})).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(
+      controller.updateTestimonial('testimonial-1', {}),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(
+      controller.deleteTestimonial('testimonial-1'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+
+    await expect(controller.listTeamMembers()).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(controller.createTeamMember({})).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(
+      controller.updateTeamMember('member-1', {}),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(
+      controller.deleteTeamMember('member-1'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });

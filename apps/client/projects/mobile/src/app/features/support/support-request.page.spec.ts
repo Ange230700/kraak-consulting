@@ -65,6 +65,69 @@ describe('Mobile SupportRequestPage', () => {
     expect(element.querySelector('#support-message')).toBeTruthy();
   });
 
+  it('Given untouched empty fields, when the page renders, then inline validation messages are hidden', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).not.toContain(
+      'Le nom est requis (2 à 80 caractères).',
+    );
+    expect(element.textContent).not.toContain(
+      'Saisissez une adresse email valide.',
+    );
+    expect(element.textContent).not.toContain(
+      "L'objet est requis (3 à 120 caractères).",
+    );
+    expect(element.textContent).not.toContain(
+      'Le message est requis (10 à 2 000 caractères).',
+    );
+  });
+
+  it('Given touched invalid fields, when the page renders, then all inline validation messages are displayed', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    const { form } = fixture.componentInstance;
+    form.controls.name.setValue('');
+    form.controls.email.setValue('not-an-email');
+    form.controls.subject.setValue('');
+    form.controls.message.setValue('court');
+    form.markAllAsTouched();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Le nom est requis (2 à 80 caractères).',
+    );
+    expect(element.textContent).toContain(
+      'Saisissez une adresse email valide.',
+    );
+    expect(element.textContent).toContain(
+      "L'objet est requis (3 à 120 caractères).",
+    );
+    expect(element.textContent).toContain(
+      'Le message est requis (10 à 2 000 caractères).',
+    );
+  });
+
+  it('Given a submit in progress and an error message, when the page renders, then loading button label and error banner are shown', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    fixture.componentInstance.submitting.set(true);
+    fixture.componentInstance.errorMessage.set(
+      'Une erreur test utilisateur est survenue.',
+    );
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Envoi en cours...');
+    expect(element.textContent).toContain(
+      'Une erreur test utilisateur est survenue.',
+    );
+  });
+
   it('Given a fully valid form, when submit is called, then the support service is called with trimmed values and the app navigates back', async () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     fixture.componentInstance.form.setValue({
@@ -302,6 +365,96 @@ describe('Mobile SupportRequestPage', () => {
 
     expect(fixture.componentInstance.errorMessage()).toBe(
       '422 Unprocessable Entity',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError 400 without usable body or message, when submit is called, then the invalid-form fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(400, '', { errors: {} });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Les informations saisies sont invalides. Veuillez vérifier le formulaire.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError non-400 without usable body or message, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(422, '', { errors: {} });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with errors array containing only blank or non-string values, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(500, '', {
+      errors: ['   ', 42, null],
+    });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError body without errors field and no usable message, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(500, '', { message: '   ' });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });

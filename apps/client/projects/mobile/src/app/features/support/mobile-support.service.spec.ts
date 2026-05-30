@@ -8,7 +8,9 @@ const fetchMock = vi.fn();
 
 describe('MobileSupportService', () => {
   const authServiceMock = {
-    currentSession: vi.fn(() => ({ accessToken: 'test-token' })),
+    currentSession: vi.fn<() => { accessToken: string } | null>(() => ({
+      accessToken: 'test-token',
+    })),
   };
 
   beforeEach(() => {
@@ -104,5 +106,29 @@ describe('MobileSupportService', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toContain('/support/requests');
     expect(result).toHaveLength(1);
     expect(result[0]?.status).toBe('open');
+  });
+
+  it('Given no mobile session, when listMyRequests is called, then it sends the request without Authorization header', async () => {
+    authServiceMock.currentSession.mockReturnValue(null);
+    const service = TestBed.inject(MobileSupportService);
+
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => [],
+    });
+
+    const result = await service.listMyRequests();
+    const call = fetchMock.mock.calls[0];
+
+    expect(call?.[0]).toContain('/support/requests');
+    expect(call?.[1]).toEqual(
+      expect.objectContaining({
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
+        }),
+      }),
+    );
+    expect(result).toEqual([]);
   });
 });

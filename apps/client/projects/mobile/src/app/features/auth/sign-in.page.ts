@@ -2,7 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
-import { createSignInForm, submitSignInForm } from '@kraak/api-client';
+import {
+  createSharedSubmitSignInOptions,
+  createSignInForm,
+  submitSignInForm,
+} from '@kraak/api-client';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileAuthService } from './mobile-auth.service';
 
@@ -22,12 +26,20 @@ export default class SignInPage {
   readonly submitting = signal(false);
 
   async submit(): Promise<void> {
-    await submitSignInForm({
+    const sharedOptions = createSharedSubmitSignInOptions({
       form: this.form,
       isSubmitting: this.submitting,
-      setSubmitting: this.submitting.set,
-      setErrorMessage: this.errorMessage.set,
-      signIn: this.authService.signIn.bind(this.authService),
+      setSubmitting: (value: boolean) => {
+        this.submitting.set(value);
+      },
+      setErrorMessage: (message: string | null) => {
+        this.errorMessage.set(message);
+      },
+      signIn: async (body) => this.authService.signIn(body),
+    });
+
+    await submitSignInForm({
+      ...sharedOptions,
       navigateAfterSuccess: () => this.router.navigateByUrl('/tabs/accueil'),
       logContext: 'mobile.auth.sign-in.submit',
       route: '/connexion',

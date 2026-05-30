@@ -190,6 +190,25 @@ describe('participantRoleChildGuard (mobile)', () => {
 
     expect(result).toBe(true);
   });
+
+  it('Given an unauthenticated user, when the child role guard is triggered, then the user is redirected to sign-in', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'sign-in', component: DummyComponent }]),
+        {
+          provide: MobileAuthService,
+          useValue: mockAuthService(false),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      participantRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    const router = TestBed.inject(Router);
+    expect(result).toEqual(router.createUrlTree(['/sign-in']));
+  });
 });
 
 describe('adminRoleGuard (mobile)', () => {
@@ -256,5 +275,24 @@ describe('adminRoleChildGuard (mobile)', () => {
     );
 
     expect(result).toBe(true);
+  });
+
+  it('Given an unauthenticated user, when the child admin role guard is triggered, then the user is redirected to sign-in', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'sign-in', component: DummyComponent }]),
+        {
+          provide: MobileAuthService,
+          useValue: mockAuthService(false),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      adminRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    const router = TestBed.inject(Router);
+    expect(result).toEqual(router.createUrlTree(['/sign-in']));
   });
 });

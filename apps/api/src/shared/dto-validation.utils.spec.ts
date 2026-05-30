@@ -1,6 +1,7 @@
 import {
   isObjectPayload,
   isValidEmail,
+  readNullableDateTime,
   readTrimmedString,
   validateEmail,
 } from './dto-validation.utils';
@@ -14,6 +15,16 @@ describe('readTrimmedString', () => {
     expect(readTrimmedString(42)).toBe('');
     expect(readTrimmedString(null)).toBe('');
     expect(readTrimmedString(undefined)).toBe('');
+  });
+});
+
+describe('readNullableDateTime', () => {
+  it('Given une valeur null, When readNullableDateTime est appelé, Then retourne null', () => {
+    expect(readNullableDateTime(null)).toBeNull();
+  });
+
+  it('Given une chaîne vide après trim, When readNullableDateTime est appelé, Then retourne null', () => {
+    expect(readNullableDateTime('   ')).toBeNull();
   });
 });
 

@@ -105,6 +105,17 @@ describe('ServicesService', () => {
     ]);
   });
 
+  it('Given une liste services null sans erreur, When listServices est appelé, Then une liste vide est renvoyée', async () => {
+    const listQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(listQuery);
+
+    await expect(service.listServices()).resolves.toEqual([]);
+  });
+
   it('Given un service avec des détails, When getServiceById est appelé, Then le service enrichi est renvoyé', async () => {
     const serviceQuery = createSingleRowQuery({
       data: {
@@ -164,6 +175,42 @@ describe('ServicesService', () => {
           updatedAt: '2026-05-26T10:00:00.000Z',
         },
       ],
+    });
+  });
+
+  it('Given des détails null sans erreur, When getServiceById est appelé, Then details est une liste vide', async () => {
+    const serviceQuery = createSingleRowQuery({
+      data: {
+        id: 'service-1',
+        title: 'Conseil',
+        description: 'Description',
+        icon: null,
+        sort_order: 0,
+        created_at: '2026-05-26T10:00:00.000Z',
+        updated_at: '2026-05-26T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const detailQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'service') {
+        return serviceQuery;
+      }
+
+      if (table === 'service_detail') {
+        return detailQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(service.getServiceById('service-1')).resolves.toMatchObject({
+      id: 'service-1',
+      details: [],
     });
   });
 
@@ -361,5 +408,227 @@ describe('ServicesService', () => {
     await expect(service.getServiceById('missing')).rejects.toBeInstanceOf(
       NotFoundException,
     );
+  });
+
+  it('Given un détail en erreur, When getServiceById est appelé, Then une InternalServerErrorException est levée', async () => {
+    const serviceQuery = createSingleRowQuery({
+      data: {
+        id: 'service-1',
+        title: 'Conseil',
+        description: 'Description',
+        icon: null,
+        sort_order: 0,
+        created_at: '2026-05-26T10:00:00.000Z',
+        updated_at: '2026-05-26T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const detailQuery = createListQuery({
+      data: null,
+      error: { message: 'detail-error' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'service') {
+        return serviceQuery;
+      }
+
+      if (table === 'service_detail') {
+        return detailQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(service.getServiceById('service-1')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given un payload création sans options, When createService est appelé, Then les valeurs par défaut null et 0 sont envoyées', async () => {
+    const mutationQuery = createMutationQuery({
+      data: {
+        id: 'service-2',
+        title: 'Formation',
+        description: 'Formation sur mesure',
+        icon: null,
+        sort_order: 0,
+        created_at: '2026-05-26T10:00:00.000Z',
+        updated_at: '2026-05-26T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.createService({
+        title: 'Formation',
+        description: 'Formation sur mesure',
+      }),
+    ).resolves.toMatchObject({
+      id: 'service-2',
+      icon: null,
+      sortOrder: 0,
+    });
+
+    expect(mutationQuery.insert).toHaveBeenCalledWith({
+      title: 'Formation',
+      description: 'Formation sur mesure',
+      icon: null,
+      sort_order: 0,
+    });
+  });
+
+  it('Given une création service en échec, When createService est appelé, Then une InternalServerErrorException est levée', async () => {
+    const mutationQuery = createMutationQuery({
+      data: null,
+      error: { message: 'insert-error' },
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.createService({
+        title: 'Formation',
+        description: 'Formation sur mesure',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une mise à jour complète, When updateService est appelé, Then title, icon et sort_order sont propagés', async () => {
+    const mutationQuery = createMutationQuery({
+      data: {
+        id: 'service-1',
+        title: 'Nouveau titre',
+        description: 'Description',
+        icon: 'school',
+        sort_order: 5,
+        created_at: '2026-05-26T10:00:00.000Z',
+        updated_at: '2026-05-27T10:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateService('service-1', {
+        title: 'Nouveau titre',
+        icon: 'school',
+        sortOrder: 5,
+      }),
+    ).resolves.toMatchObject({
+      id: 'service-1',
+      title: 'Nouveau titre',
+      icon: 'school',
+      sortOrder: 5,
+    });
+
+    expect(mutationQuery.update).toHaveBeenCalledWith({
+      title: 'Nouveau titre',
+      icon: 'school',
+      sort_order: 5,
+    });
+  });
+
+  it('Given un service introuvable, When updateService est appelé, Then une NotFoundException est levée', async () => {
+    const mutationQuery = createMutationQuery({
+      data: null,
+      error: { message: 'not-found' },
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateService('service-404', { title: 'x' }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un service introuvable, When deleteService est appelé, Then une NotFoundException est levée', async () => {
+    const deleteQuery = createDeleteQuery({
+      data: null,
+      error: { message: 'not-found' },
+    });
+
+    adminClient.from.mockReturnValue(deleteQuery);
+
+    await expect(service.deleteService('service-404')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+  });
+
+  it('Given un service absent, When createServiceDetail est appelé, Then une NotFoundException est levée', async () => {
+    const serviceLookupQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'missing-service' },
+    });
+
+    adminClient.from.mockReturnValue(serviceLookupQuery);
+
+    await expect(
+      service.createServiceDetail('missing', {
+        title: 'Diagnostic',
+        description: 'Analyse complète',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une création détail en échec, When createServiceDetail est appelé, Then une InternalServerErrorException est levée', async () => {
+    const serviceLookupQuery = createSingleRowQuery({
+      data: { id: 'service-1' },
+      error: null,
+    });
+    const mutationQuery = createMutationQuery({
+      data: null,
+      error: { message: 'insert-error' },
+    });
+
+    adminClient.from.mockImplementation((table: string) => {
+      if (table === 'service') {
+        return serviceLookupQuery;
+      }
+
+      if (table === 'service_detail') {
+        return mutationQuery;
+      }
+
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    await expect(
+      service.createServiceDetail('service-1', {
+        title: 'Diagnostic',
+        description: 'Analyse complète',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un détail introuvable, When updateServiceDetail est appelé, Then une NotFoundException est levée', async () => {
+    const mutationQuery = createMutationQuery({
+      data: null,
+      error: { message: 'not-found' },
+    });
+
+    adminClient.from.mockReturnValue(mutationQuery);
+
+    await expect(
+      service.updateServiceDetail('service-1', 'detail-404', {
+        description: 'x',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un détail introuvable, When deleteServiceDetail est appelé, Then une NotFoundException est levée', async () => {
+    const deleteQuery = createDeleteQuery({
+      data: null,
+      error: { message: 'not-found' },
+    });
+
+    adminClient.from.mockReturnValue(deleteQuery);
+
+    await expect(
+      service.deleteServiceDetail('service-1', 'detail-404'),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 });

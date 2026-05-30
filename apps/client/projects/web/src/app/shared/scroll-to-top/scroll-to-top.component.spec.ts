@@ -62,6 +62,18 @@ describe('ScrollToTop', () => {
       scrollToSpy.mockRestore();
     });
 
+    it('Given a non-browser environment, when scrollToTop is called, then it exits without scrolling', () => {
+      const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
+      Object.defineProperty(component, 'isBrowser', {
+        value: false,
+        configurable: true,
+      });
+
+      component.scrollToTop();
+
+      expect(scrollToSpy).not.toHaveBeenCalled();
+    });
+
     it('should update visibility on globalThis scroll', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
@@ -111,6 +123,18 @@ describe('ScrollToTop', () => {
       );
 
       addEventListenerSpy.mockRestore();
+    });
+
+    it('Given a non-browser environment, when ngOnInit runs, then no listener is attached', () => {
+      const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
+      Object.defineProperty(component, 'isBrowser', {
+        value: false,
+        configurable: true,
+      });
+
+      component.ngOnInit();
+
+      expect(addEventListenerSpy).not.toHaveBeenCalled();
     });
 
     it('should remove scroll listener on destroy', () => {

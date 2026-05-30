@@ -161,6 +161,42 @@ describe('Articles DTO validation', () => {
     });
   });
 
+  it('Given une date publiée valide en création, When validateCreateArticlePayload est appelé, Then publishedAt est normalisé au format ISO', () => {
+    const result = validateCreateArticlePayload({
+      slug: 'nouvel-article',
+      title: 'Titre',
+      excerpt: 'Résumé',
+      content: '<p>Contenu</p>',
+      status: 'draft',
+      authorId: 'author-1',
+      categoryIds: ['category-1'],
+      tagIds: ['tag-1'],
+      publishedAt: '2026-05-01T08:30:00.000Z',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: expect.objectContaining({
+        publishedAt: '2026-05-01T08:30:00.000Z',
+      }),
+    });
+  });
+
+  it('Given des champs coverImageUrl et publishedAt à null en mise à jour, When validateUpdateArticlePayload est appelé, Then ils restent explicitement à null', () => {
+    const result = validateUpdateArticlePayload({
+      coverImageUrl: null,
+      publishedAt: null,
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        coverImageUrl: null,
+        publishedAt: null,
+      },
+    });
+  });
+
   it('Given des valeurs nullable invalides en création, When validateCreateArticlePayload est appelé, Then des erreurs explicites sont renvoyées', () => {
     const result = validateCreateArticlePayload({
       slug: 'nouvel-article',
@@ -219,6 +255,43 @@ describe('Articles DTO validation', () => {
     expect(result).toEqual({
       valid: false,
       errors: ['Au moins un champ doit être fourni pour la mise à jour.'],
+    });
+  });
+
+  it('Given un corps non objet pour categorie et tag, When validateCreateCategoryPayload et validateUpdateCategoryPayload sont appeles, Then une erreur corps invalide est renvoyee', () => {
+    expect(validateCreateCategoryPayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+
+    expect(validateUpdateCategoryPayload(null)).toEqual({
+      valid: false,
+      errors: ['Corps de requête invalide.'],
+    });
+  });
+
+  it('Given un update categorie avec label vide, When validateUpdateCategoryPayload est appele, Then une erreur explicite sur label est renvoyee', () => {
+    const result = validateUpdateCategoryPayload({
+      slug: 'immigration',
+      label: '   ',
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      errors: ['Le champ label est requis.'],
+    });
+  });
+
+  it('Given un update categorie avec description nullable, When validateUpdateCategoryPayload est appele, Then description est normalisee', () => {
+    const result = validateUpdateCategoryPayload({
+      description: '   ',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        description: null,
+      },
     });
   });
 

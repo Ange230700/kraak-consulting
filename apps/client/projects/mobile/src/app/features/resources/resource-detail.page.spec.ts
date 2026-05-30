@@ -155,6 +155,50 @@ describe('Mobile ResourceDetailPage', () => {
     expect(element.textContent).not.toContain('Tracking unavailable');
   });
 
+  it('Given a resource with filePath, when detail loads, then file path information is displayed', async () => {
+    service.getResourceById.mockResolvedValue({
+      ...mockResource,
+      id: 'resource-file',
+      filePath: '/files/guide-detail.pdf',
+      url: null,
+    });
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Fichier: /files/guide-detail.pdf');
+  });
+
+  it('Given a resource without description, when detail loads, then description block is not rendered', async () => {
+    service.getResourceById.mockResolvedValue({
+      ...mockResource,
+      id: 'resource-no-description',
+      description: null,
+    });
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Guide detail');
+    expect(element.textContent).not.toContain('Description detail');
+  });
+
   it('Given no resourceId in route params, when the component initializes, then errorMessage is set and resource is null', async () => {
     service.getResourceById.mockResolvedValue(mockResource);
     paramMapSubject.next(convertToParamMap({}));
