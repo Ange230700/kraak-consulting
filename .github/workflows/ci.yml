@@ -142,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
+      PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -174,9 +174,9 @@ jobs:
         # utilisés par les suites web/mobile, uniquement quand le cache est absent.
         # NOSONAR
         run: |
-          pnpm --filter @kraak/client exec playwright --version
+          ./apps/client/node_modules/.bin/playwright --version
           if [[ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]]; then
-            pnpm --ignore-scripts --filter @kraak/client exec playwright install chromium firefox webkit
+            ./apps/client/node_modules/.bin/playwright install chromium firefox webkit
           fi
 
       - name: Exécuter les tests E2E
