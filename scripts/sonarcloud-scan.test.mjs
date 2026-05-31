@@ -85,7 +85,7 @@ test('Given a trusted SystemRoot, When resolving taskkill path, Then an explicit
       SystemRoot: fakeSystemRoot,
     });
 
-    assert.equal(taskkillPath, path.win32.join(fakeSystemRoot, 'System32', 'taskkill.exe'));
+    assert.equal(taskkillPath, path.join(fakeSystemRoot, 'System32', 'taskkill.exe'));
   } finally {
     rmSync(tempDirectory, { force: true, recursive: true });
   }
