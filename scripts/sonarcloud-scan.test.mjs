@@ -10,6 +10,7 @@ import {
   normalizeLcovContent,
   readLocalSonarEnvironment,
   releaseScanLock,
+  resolveTaskkillExecutablePath,
   resolveStrictDiagnosticOptions,
   resetScannerReportDirectory,
   resolveSonarEnvironment,
@@ -68,6 +69,33 @@ test('Given no strict diagnostic env flag, When options are resolved, Then stric
 
   assert.equal(options.enabled, false);
   assert.match(options.logPath, /\.scannerwork[\\/]sonar-strict-diagnostic\.log$/);
+});
+
+test('Given a trusted SystemRoot, When resolving taskkill path, Then an explicit System32 executable path is returned', () => {
+  const tempDirectory = mkdtempSync(path.join(os.tmpdir(), 'kraak-systemroot-'));
+  const fakeSystemRoot = path.join(tempDirectory, 'Windows');
+  const fakeSystem32 = path.join(fakeSystemRoot, 'System32');
+  const fakeTaskkill = path.join(fakeSystem32, 'taskkill.exe');
+
+  try {
+    mkdirSync(fakeSystem32, { recursive: true });
+    writeFileSync(fakeTaskkill, 'fake-taskkill');
+
+    const taskkillPath = resolveTaskkillExecutablePath({
+      SystemRoot: fakeSystemRoot,
+    });
+
+    assert.equal(taskkillPath, path.win32.join(fakeSystemRoot, 'System32', 'taskkill.exe'));
+  } finally {
+    rmSync(tempDirectory, { force: true, recursive: true });
+  }
+});
+
+test('Given missing SystemRoot and WINDIR, When resolving taskkill path, Then an explicit error is thrown', () => {
+  assert.throws(
+    () => resolveTaskkillExecutablePath({}),
+    /SystemRoot\/WINDIR manquant/,
+  );
 });
 
 test('Given a Windows-style LCOV report, When content is normalized, Then SF paths become repo-relative POSIX paths', () => {

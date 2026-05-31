@@ -110,9 +110,48 @@ function toPosixPath(value) {
   return value.replaceAll('\\', '/');
 }
 
+function trimTrailingSlashes(value) {
+  let endIndex = value.length;
+
+  while (endIndex > 0 && value.charAt(endIndex - 1) === '/') {
+    endIndex -= 1;
+  }
+
+  return endIndex === value.length ? value : value.slice(0, endIndex);
+}
+
+function trimLeadingDotSlash(value) {
+  if (!value.startsWith('./')) {
+    return value;
+  }
+
+  return value.slice(2);
+}
+
+function collapseConsecutiveSlashes(value) {
+  let result = '';
+  let previousWasSlash = false;
+
+  for (const character of value) {
+    if (character === '/') {
+      if (!previousWasSlash) {
+        result += character;
+      }
+
+      previousWasSlash = true;
+      continue;
+    }
+
+    previousWasSlash = false;
+    result += character;
+  }
+
+  return result;
+}
+
 function normalizeSourcePathForReport(sourcePath, sourcePrefix) {
-  const normalizedPrefix = toPosixPath(sourcePrefix).replace(/\/+$/u, '');
-  const normalizedSourcePath = toPosixPath(sourcePath).replace(/^\.\//u, '');
+  const normalizedPrefix = trimTrailingSlashes(toPosixPath(sourcePrefix));
+  const normalizedSourcePath = trimLeadingDotSlash(toPosixPath(sourcePath));
 
   if (path.isAbsolute(normalizedSourcePath)) {
     const relativeSourcePath = toPosixPath(path.relative(repositoryRoot, normalizedSourcePath));
@@ -126,7 +165,7 @@ function normalizeSourcePathForReport(sourcePath, sourcePrefix) {
     return normalizedSourcePath;
   }
 
-  return `${normalizedPrefix}/${normalizedSourcePath}`.replace(/\/+/gu, '/');
+  return collapseConsecutiveSlashes(`${normalizedPrefix}/${normalizedSourcePath}`);
 }
 
 export function normalizeLcovContent(content, sourcePrefix) {
@@ -141,6 +180,51 @@ export function normalizeLcovContent(content, sourcePrefix) {
   });
 
   return `${normalizedLines.join('\n')}\n`;
+}
+
+function shouldDropCoverageLine(line, currentSourcePath, lineCountCache) {
+  if (!currentSourcePath) {
+    return false;
+  }
+
+  if (!line.startsWith('DA:') && !line.startsWith('BRDA:')) {
+    return false;
+  }
+
+  const separatorIndex = line.indexOf(':');
+  const payload = line.slice(separatorIndex + 1);
+  const firstField = payload.split(',')[0];
+  const parsedLine = Number.parseInt(firstField, 10);
+  const sourceLineCount = getSourceLineCount(currentSourcePath, lineCountCache);
+
+  if (!Number.isInteger(parsedLine) || !sourceLineCount) {
+    return false;
+  }
+
+  return parsedLine < 1 || parsedLine > sourceLineCount;
+}
+
+function sanitizeNormalizedLcovContent(content, lineCountCache) {
+  const state = {
+    currentSourcePath: null,
+    lines: [],
+  };
+
+  for (const line of content.split(/\r?\n/u)) {
+    if (line.startsWith('SF:')) {
+      state.currentSourcePath = line.slice(3);
+      state.lines.push(line);
+      continue;
+    }
+
+    if (shouldDropCoverageLine(line, state.currentSourcePath, lineCountCache)) {
+      continue;
+    }
+
+    state.lines.push(line);
+  }
+
+  return state.lines.join('\n');
 }
 
 export function normalizeLcovReports(reportPaths = lcovReportPaths) {
@@ -160,48 +244,10 @@ export function normalizeLcovReports(reportPaths = lcovReportPaths) {
     }
 
     const reportContent = readFileSync(absoluteReportPath, 'utf8');
-    const normalizedReportContent = normalizeLcovContent(reportContent, sourcePrefix)
-      .split(/\r?\n/u)
-      .reduce(
-        (state, line) => {
-          if (line.startsWith('SF:')) {
-            const sourcePath = line.slice(3);
-            return {
-              currentSourcePath: sourcePath,
-              lines: [...state.lines, line],
-            };
-          }
-
-          if (
-            state.currentSourcePath &&
-            (line.startsWith('DA:') || line.startsWith('BRDA:'))
-          ) {
-            const separatorIndex = line.indexOf(':');
-            const payload = line.slice(separatorIndex + 1);
-            const firstField = payload.split(',')[0];
-            const parsedLine = Number.parseInt(firstField, 10);
-            const sourceLineCount = getSourceLineCount(
-              state.currentSourcePath,
-              lineCountCache,
-            );
-
-            if (
-              Number.isInteger(parsedLine) &&
-              sourceLineCount &&
-              (parsedLine < 1 || parsedLine > sourceLineCount)
-            ) {
-              return state;
-            }
-          }
-
-          return {
-            currentSourcePath: state.currentSourcePath,
-            lines: [...state.lines, line],
-          };
-        },
-        { currentSourcePath: null, lines: [] },
-      )
-      .lines.join('\n');
+    const normalizedReportContent = sanitizeNormalizedLcovContent(
+      normalizeLcovContent(reportContent, sourcePrefix),
+      lineCountCache,
+    );
 
     if (normalizedReportContent !== reportContent) {
       writeFileSync(absoluteReportPath, normalizedReportContent);
@@ -385,13 +431,21 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
   }
 
   if (process.platform === 'win32') {
-    const taskkillResult = spawnSync('taskkill', ['/PID', `${childPid}`, '/T', '/F'], {
-      stdio: 'ignore',
-    });
-    diagnosticLogger.log(
-      'ABORT_TASKKILL',
-      `pid=${childPid} status=${taskkillResult.status ?? 'null'}`,
-    );
+    try {
+      const taskkillExecutablePath = resolveTaskkillExecutablePath();
+      const taskkillResult = spawnSync(taskkillExecutablePath, ['/PID', `${childPid}`, '/T', '/F'], {
+        stdio: 'ignore',
+      });
+      diagnosticLogger.log(
+        'ABORT_TASKKILL',
+        `pid=${childPid} status=${taskkillResult.status ?? 'null'}`,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      diagnosticLogger.log('ABORT_TASKKILL_ERROR', message);
+      const wasKilled = childProcess.kill('SIGKILL');
+      diagnosticLogger.log('ABORT_FALLBACK_SIGKILL', `pid=${childPid} killed=${wasKilled}`);
+    }
     return;
   }
 
@@ -399,16 +453,90 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
   diagnosticLogger.log('ABORT_SIGKILL', `pid=${childPid} killed=${wasKilled}`);
 }
 
+export function resolveTaskkillExecutablePath(baseEnvironment = process.env) {
+  const systemRoot = baseEnvironment.SystemRoot?.trim() || baseEnvironment.WINDIR?.trim();
+
+  if (!systemRoot) {
+    throw new Error('Impossible de determiner le chemin systeme Windows (SystemRoot/WINDIR manquant).');
+  }
+
+  const taskkillExecutablePath = path.win32.join(systemRoot, 'System32', 'taskkill.exe');
+
+  if (!existsSync(taskkillExecutablePath)) {
+    throw new Error(`Executable taskkill introuvable: ${taskkillExecutablePath}`);
+  }
+
+  return taskkillExecutablePath;
+}
+
+function createScannerReportMonitor(
+  strictDiagnosticOptions,
+  diagnosticLogger,
+  childProcess,
+) {
+  if (!strictDiagnosticOptions.enabled) {
+    return {
+      stop: () => {},
+      shouldAbort: () => false,
+    };
+  }
+
+  const monitorIntervalMs = 250;
+  const missingPersistenceMs = 1500;
+  let hasAbortedForMissingReport = false;
+  let hasSeenScannerReportDirectory = false;
+  let missingSinceTimestamp = null;
+
+  const handle = setInterval(() => {
+    if (hasAbortedForMissingReport) {
+      return;
+    }
+
+    const scannerReportExists = existsSync(scannerReportDirectory);
+
+    if (scannerReportExists) {
+      if (!hasSeenScannerReportDirectory) {
+        hasSeenScannerReportDirectory = true;
+        diagnosticLogger.log('SCANNER_REPORT_PRESENT', `path=${scannerReportDirectory}`);
+      }
+
+      missingSinceTimestamp = null;
+      return;
+    }
+
+    if (!hasSeenScannerReportDirectory) {
+      return;
+    }
+
+    const now = Date.now();
+
+    if (missingSinceTimestamp === null) {
+      missingSinceTimestamp = now;
+      return;
+    }
+
+    if (now - missingSinceTimestamp < missingPersistenceMs) {
+      return;
+    }
+
+    hasAbortedForMissingReport = true;
+    diagnosticLogger.log('SCANNER_REPORT_MISSING', `path=${scannerReportDirectory}`);
+    abortScannerProcess(childProcess, diagnosticLogger);
+  }, monitorIntervalMs);
+
+  return {
+    stop: () => {
+      clearInterval(handle);
+    },
+    shouldAbort: () => hasAbortedForMissingReport,
+  };
+}
+
 function runSonarScan(command, environment, strictDiagnosticOptions) {
   return new Promise((resolve) => {
     const childProcess = spawnSonarCommand(command, environment);
     const diagnosticLogger = createDiagnosticLogger(strictDiagnosticOptions);
-    const monitorIntervalMs = 250;
-    const missingPersistenceMs = 1500;
     let isSettled = false;
-    let hasAbortedForMissingReport = false;
-    let hasSeenScannerReportDirectory = false;
-    let missingSinceTimestamp = null;
 
     diagnosticLogger.log(
       'STRICT_MODE',
@@ -416,49 +544,11 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
     );
     diagnosticLogger.log('SCAN_STARTED', `pid=${childProcess.pid ?? 'unknown'}`);
 
-    const monitorHandle = strictDiagnosticOptions.enabled
-      ? setInterval(() => {
-          if (hasAbortedForMissingReport || isSettled) {
-            return;
-          }
-
-          const scannerReportExists = existsSync(scannerReportDirectory);
-
-          if (scannerReportExists) {
-            if (!hasSeenScannerReportDirectory) {
-              hasSeenScannerReportDirectory = true;
-              diagnosticLogger.log('SCANNER_REPORT_PRESENT', `path=${scannerReportDirectory}`);
-            }
-
-            missingSinceTimestamp = null;
-            return;
-          }
-
-          if (!hasSeenScannerReportDirectory) {
-            return;
-          }
-
-          const now = Date.now();
-
-          if (missingSinceTimestamp === null) {
-            missingSinceTimestamp = now;
-            return;
-          }
-
-          if (now - missingSinceTimestamp < missingPersistenceMs) {
-            return;
-          }
-
-          if (!scannerReportExists) {
-            hasAbortedForMissingReport = true;
-            diagnosticLogger.log(
-              'SCANNER_REPORT_MISSING',
-              `path=${scannerReportDirectory}`,
-            );
-            abortScannerProcess(childProcess, diagnosticLogger);
-          }
-        }, monitorIntervalMs)
-      : null;
+    const monitor = createScannerReportMonitor(
+      strictDiagnosticOptions,
+      diagnosticLogger,
+      childProcess,
+    );
 
     const finalize = (exitCode, signal = null) => {
       if (isSettled) {
@@ -467,8 +557,10 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
 
       isSettled = true;
 
-      if (monitorHandle) {
-        clearInterval(monitorHandle);
+      monitor.stop();
+
+      if (monitor.shouldAbort()) {
+        diagnosticLogger.log('SCAN_ABORTED', 'scanner-report a disparu pendant le run');
       }
 
       if (signal) {
