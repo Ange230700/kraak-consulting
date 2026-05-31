@@ -236,11 +236,6 @@ export class WebAuthService {
 
     try {
       const browserWindow = globalThis.window;
-
-      if (!browserWindow) {
-        return null;
-      }
-
       return new URL(browserWindow.location.href);
     } catch (error) {
       console.warn(
