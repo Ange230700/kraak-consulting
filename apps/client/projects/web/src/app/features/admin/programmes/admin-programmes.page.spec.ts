@@ -337,6 +337,45 @@ describe('AdminProgrammesPage', () => {
     expect(fixture.componentInstance['successMessage']()).toContain('supprimé');
   });
 
+  it('Given a deletion API failure When deleteProgramme is called Then an explicit error is shown', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+
+    fixture.componentInstance.programsClient = {
+      ...programsClientMock,
+      remove: vi.fn(async () => {
+        throw new Error('delete failed');
+      }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteProgramme(mockProgrammes[0]);
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('supprimer');
+  });
+
+  it('Given an authenticated admin session When default programmes client is used Then the token supplier is consumed', async () => {
+    const fixture = TestBed.createComponent(AdminProgrammesPage);
+    webAuthServiceMock.currentSession = signal({
+      accessToken: 'admin-token',
+    } as never);
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify([]), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+    );
+
+    await fixture.componentInstance.programsClient.list();
+
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
   it('Given an API load failure When the page initializes Then an explicit loading error is shown', async () => {
     const fixture = TestBed.createComponent(AdminProgrammesPage);
 

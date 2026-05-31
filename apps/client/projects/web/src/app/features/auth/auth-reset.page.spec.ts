@@ -86,6 +86,22 @@ describe('Web AuthResetPage', () => {
     expect(fixture.componentInstance.errorMessage()).toContain('identiques');
   });
 
+  it('Given a submit is already in progress, when submit is called, then recovery completion is not requested again', async () => {
+    const fixture = TestBed.createComponent(AuthResetPage);
+    fixture.componentInstance.ngOnInit();
+    await flushPromises();
+
+    fixture.componentInstance.form.setValue({
+      password: 'NouveauMotDePasse123!',
+      confirmPassword: 'NouveauMotDePasse123!',
+    });
+    fixture.componentInstance.submitting.set(true);
+
+    await fixture.componentInstance.submit();
+
+    expect(authService.completePasswordRecovery).not.toHaveBeenCalled();
+  });
+
   it('Given no recovery token in URL, when ngOnInit is called, then an invalid-link error is shown and tokenReady is true', async () => {
     authService.resolveRecoveryAccessTokenFromUrl.mockResolvedValueOnce(null);
     const fixture = TestBed.createComponent(AuthResetPage);

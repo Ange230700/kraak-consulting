@@ -29,6 +29,19 @@ describe('Given the web SSR prerender lookup', () => {
     expect(fileExists).not.toHaveBeenCalled();
   });
 
+  it('When the browser dist and route have extra separators, Then the normalized index path is returned', () => {
+    const fileExists = vi.fn(() => true);
+
+    const prerenderedHtmlPath = buildPrerenderedHtmlPath(
+      '/',
+      '/app/browser///',
+      fileExists,
+    );
+
+    expect(prerenderedHtmlPath).toBe('/app/browser/index.html');
+    expect(fileExists).toHaveBeenCalledWith('/app/browser/index.html');
+  });
+
   it('When the root route is provided and no fileExists callback is given, Then index.html path is returned by default', () => {
     const prerenderedHtmlPath = buildPrerenderedHtmlPath('/', '/app/browser');
 
@@ -56,6 +69,19 @@ describe('Given the web SSR prerender lookup', () => {
     );
 
     expect(prerenderedHtmlPath).toBe('C:/dist/browser/services/index.html');
+  });
+
+  it('When the route has trailing slashes, Then the route segment is trimmed before building the index path', () => {
+    const fileExists = vi.fn(() => true);
+
+    const prerenderedHtmlPath = buildPrerenderedHtmlPath(
+      '/a-propos///',
+      '/app/browser',
+      fileExists,
+    );
+
+    expect(prerenderedHtmlPath).toBe('/app/browser/a-propos/index.html');
+    expect(fileExists).toHaveBeenCalledWith('/app/browser/a-propos/index.html');
   });
 
   it('When a route contains backslashes, Then the lookup is rejected as unsafe', () => {

@@ -358,6 +358,45 @@ describe('AdminRessourcesPage', () => {
     );
   });
 
+  it('Given a deletion API failure When deleteRessource is called Then an explicit error is shown', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+
+    fixture.componentInstance.resourcesClient = {
+      ...resourcesClientMock,
+      remove: vi.fn(async () => {
+        throw new Error('delete failed');
+      }),
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    await fixture.componentInstance.deleteRessource(mockRessources[0]);
+
+    expect(fixture.componentInstance['errorMessage']()).toContain('supprimer');
+  });
+
+  it('Given an authenticated admin session When default resources client is used Then the token supplier is consumed', async () => {
+    const fixture = TestBed.createComponent(AdminRessourcesPage);
+    webAuthServiceMock.currentSession = signal({
+      accessToken: 'admin-token',
+    } as never);
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ data: [], total: 0 }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+    );
+
+    await fixture.componentInstance.resourcesClient.list();
+
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
   it('Given a loading failure When the page initializes Then the load error is exposed', async () => {
     const fixture = TestBed.createComponent(AdminRessourcesPage);
 
