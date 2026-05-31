@@ -24,7 +24,12 @@ function allowAnimations(): void {
 }
 
 function mockGsapEffects() {
-  const fromSpy = vi.spyOn(gsap, 'from').mockReturnValue({} as gsap.core.Tween);
+  const originalGsapTo = gsap.to.bind(gsap);
+  const fromSpy = vi
+    .spyOn(gsap, 'from')
+    .mockImplementation(() =>
+      originalGsapTo(document.createElement('div'), { duration: 0 }),
+    );
   const toSpy = vi.spyOn(gsap, 'to').mockImplementation((_target, vars) => {
     (vars as { onComplete?: () => void } | undefined)?.onComplete?.();
     return {} as gsap.core.Tween;

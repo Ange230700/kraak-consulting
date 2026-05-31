@@ -52,10 +52,48 @@ Les chemins LCOV attendus par SonarCloud sont déclarés dans
   `--coverage` quand un rapport est requis.
 - `packages/*` : `pnpm -r test -- --coverage` (Vitest).
 
+La commande `pnpm sonar` normalise automatiquement les chemins `SF:` des
+fichiers `lcov.info` en chemins POSIX relatifs au dépôt (ex:
+`apps/client/projects/web/src/...`) avant de lancer `sonar-scanner`. Cette
+normalisation évite les incohérences SonarCloud liées aux chemins Windows avec
+anti-slash.
+
+La même commande réinitialise aussi `./.scannerwork/scanner-report` avant le
+scan. Cette étape évite les erreurs intermittentes Windows du type
+`Unable to write measure ... measures-*.pb` et
+`Unable to write messages ... syntax-highlightings-*.pb`.
+
+Un verrou local `./.scannerwork/sonarcloud-scan.lock` est aussi posé pendant
+le scan. Si un second `pnpm sonar` démarre en parallèle, il échoue rapidement
+avec un message explicite au lieu de perturber le scan déjà actif.
+
+Mode diagnostic strict (optionnel) :
+
+- Activer avec `SONAR_STRICT_DIAGNOSTIC=true`.
+- Le script surveille `./.scannerwork/scanner-report` pendant le run et arrête
+  immédiatement le scanner si le dossier disparaît.
+- Un log horodaté minimal est écrit dans
+  `./.scannerwork/sonar-strict-diagnostic.log`.
+- Le chemin du log peut être surchargé avec
+  `SONAR_STRICT_DIAGNOSTIC_LOG=<chemin>`.
+
 L'exécution de la couverture **dans la CI** sera ajoutée dans une tâche
 ultérieure dédiée ; le job `sonarcloud.yml` actuel se contente du scan
 statique. L'absence de fichier LCOV n'échoue pas le scan : SonarCloud
 ignore simplement les chemins absents.
+
+### Politique d'exclusion pragmatique
+
+Objectif: stabiliser le signal qualité sans masquer la logique métier.
+
+- Les fichiers de **câblage framework** (Nest `*.module.ts`) sont exclus de la
+  couverture, car ils portent essentiellement la déclaration de dépendances et
+  n'apportent pas de comportement métier autonome.
+- Le fichier web `apps/client/projects/web/src/app/core/runtime/runtime-config.ts`
+  est exclu de la couverture, car il repose principalement sur l'état runtime
+  global (`globalThis`) injecté selon l'environnement d'exécution.
+- Les services, contrôleurs, DTO de validation, règles métier et parcours
+  utilisateur restent dans le périmètre de couverture et doivent être testés.
 
 ## Validation locale (optionnel)
 

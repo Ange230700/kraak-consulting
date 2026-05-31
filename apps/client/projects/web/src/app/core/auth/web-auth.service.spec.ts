@@ -733,6 +733,33 @@ describe('WebAuthService', () => {
         }
       }
     });
+
+    it('when window is undefined in browser mode and no explicit URL is provided, then null is returned safely', async () => {
+      const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'window',
+      );
+
+      Object.defineProperty(globalThis, 'window', {
+        configurable: true,
+        get: () => undefined,
+      });
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        });
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+        expect(token).toBeNull();
+      } finally {
+        if (originalWindowDescriptor) {
+          Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+        }
+      }
+    });
   });
 
   describe('Given completePasswordRecovery', () => {

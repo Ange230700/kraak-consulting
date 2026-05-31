@@ -16,12 +16,6 @@ export function buildPrerenderedHtmlPath(
       ? `${normalizedBrowserDistFolder}/index.html`
       : `${normalizedBrowserDistFolder}/${relativeRoutePath}/index.html`;
 
-  if (
-    !isPathInsideBrowserDist(prerenderedHtmlPath, normalizedBrowserDistFolder)
-  ) {
-    return undefined;
-  }
-
   return (fileExists?.(prerenderedHtmlPath) ?? true)
     ? prerenderedHtmlPath
     : undefined;
@@ -54,15 +48,6 @@ function trimTrailingSlashes(pathValue: string): string {
   }
 
   return pathValue.slice(0, endIndex);
-}
-
-function isPathInsideBrowserDist(
-  filePath: string,
-  browserDistFolder: string,
-): boolean {
-  const prefix = `${browserDistFolder}/`;
-
-  return filePath === browserDistFolder || filePath.startsWith(prefix);
 }
 
 function isSafeRoutePath(routePath: string): boolean {
