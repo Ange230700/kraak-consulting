@@ -307,6 +307,22 @@ describe('ContactPage', () => {
     );
   });
 
+  it('Given an unknown service type, When selection fallback is resolved, Then the default other option is used', () => {
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as {
+      form: { patchValue: (value: { serviceType: string }) => void };
+      getSelectedServiceOption: () => { value: string; category: string };
+    };
+
+    component.form.patchValue({ serviceType: 'inexistant' });
+    const selected = component.getSelectedServiceOption();
+
+    expect(selected.value).toBe('other');
+    expect(selected.category).toBe('other');
+  });
+
   // Given l'\u00E9tat initial de chargement
   // When le composant est cr\u00E9\u00E9
   // Then loading doit \u00EAtre false
@@ -578,5 +594,41 @@ describe('ContactPage', () => {
       'Une erreur est survenue. Veuillez réessayer plus tard.',
     ]);
     expect(consoleErrorSpy).toHaveBeenCalled();
+  });
+
+  it("Given un formulaire valide When l'API renvoie un message texte Then ce message est affiche apres trim", () => {
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@exemple.com',
+      subject: 'Obtenir un accompagnement',
+      country: 'Côte d’Ivoire',
+      serviceType: 'formation',
+      message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+    });
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne((req) =>
+      req.url.endsWith('/contact'),
+    );
+    request.flush(
+      { message: '  Le service est temporairement indisponible.  ' },
+      { status: 500, statusText: 'Internal Server Error' },
+    );
+
+    fixture.detectChanges();
+
+    expect(component.success()).toBe(false);
+    expect(component.loading()).toBe(false);
+    expect(component.apiErrors()).toEqual([
+      'Le service est temporairement indisponible.',
+    ]);
+    expect(fixture.nativeElement.textContent).toContain(
+      'Le service est temporairement indisponible.',
+    );
   });
 });

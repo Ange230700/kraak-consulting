@@ -115,4 +115,43 @@ describe('BlogPublicService', () => {
     httpController.verify();
     expect(received).toBeNull();
   });
+
+  it('Given a slug with leading and trailing slashes, When loading by slug, Then the API path is normalized before request', () => {
+    const service = TestBed.inject(BlogPublicService);
+    const httpController = TestBed.inject(HttpTestingController);
+
+    let receivedSlug = '';
+
+    service
+      .getPublishedArticleBySlug('///article-api///')
+      .subscribe((article) => {
+        receivedSlug = article?.slug ?? '';
+      });
+
+    const request = httpController.expectOne(
+      'http://localhost:3000/articles/article-api',
+    );
+    expect(request.request.method).toBe('GET');
+
+    request.flush({
+      id: 'article-1',
+      slug: 'article-api',
+      title: 'Article API',
+      excerpt: 'Résumé API',
+      content: '<p>Contenu</p>',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: '2026-05-24T09:00:00.000Z',
+      authorId: 'author-1',
+      categoryIds: [],
+      tagIds: [],
+      createdAt: '2026-05-24T09:00:00.000Z',
+      updatedAt: '2026-05-24T09:00:00.000Z',
+    });
+
+    httpController.verify();
+    expect(receivedSlug).toBe('article-api');
+  });
 });

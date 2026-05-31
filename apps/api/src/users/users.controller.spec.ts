@@ -128,4 +128,18 @@ describe('UsersController', () => {
       ).rejects.toThrow(BadRequestException);
     });
   });
+
+  describe('remove', () => {
+    it('Given a valid admin token, When remove is called, Then the user is deleted', async () => {
+      mockRemove.mockResolvedValueOnce(undefined);
+
+      await controller.remove('1', validToken);
+
+      expect(mockRequireAdminAccess).toHaveBeenCalledWith(
+        mockAuthService,
+        validToken,
+      );
+      expect(mockRemove).toHaveBeenCalledWith('1');
+    });
+  });
 });

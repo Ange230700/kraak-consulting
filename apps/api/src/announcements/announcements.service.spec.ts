@@ -117,6 +117,59 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements', () => {
+    it('Given no access token, When public announcements are listed, Then mapped results are returned', async () => {
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: mockAnnouncement.id,
+              title: mockAnnouncement.title,
+              body: mockAnnouncement.body,
+              priority: mockAnnouncement.priority,
+              audience_type: mockAnnouncement.audienceType,
+              program_id: mockAnnouncement.programId,
+              cohort_id: mockAnnouncement.cohortId,
+              status: mockAnnouncement.status,
+              published_at: mockAnnouncement.publishedAt,
+              created_by_user_id: mockAnnouncement.createdByUserId,
+              created_at: mockAnnouncement.createdAt,
+              updated_at: mockAnnouncement.updatedAt,
+            },
+            {
+              id: mockProgramAnnouncement.id,
+              title: mockProgramAnnouncement.title,
+              body: mockProgramAnnouncement.body,
+              priority: mockProgramAnnouncement.priority,
+              audience_type: mockProgramAnnouncement.audienceType,
+              program_id: mockProgramAnnouncement.programId,
+              cohort_id: mockProgramAnnouncement.cohortId,
+              status: mockProgramAnnouncement.status,
+              published_at: mockProgramAnnouncement.publishedAt,
+              created_by_user_id: mockProgramAnnouncement.createdByUserId,
+              created_at: mockProgramAnnouncement.createdAt,
+              updated_at: mockProgramAnnouncement.updatedAt,
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      const result = await service.listAnnouncements(undefined, 1, 20);
+
+      expect(result.total).toBe(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0]).toEqual(
+        expect.objectContaining({ id: mockAnnouncement.id }),
+      );
+    });
+
     it('Given: valid access token and enrolled participant, When: listAnnouncements called, Then: return filtered announcements', async () => {
       const accessToken = 'valid-token';
       const participantId = 'participant-001';

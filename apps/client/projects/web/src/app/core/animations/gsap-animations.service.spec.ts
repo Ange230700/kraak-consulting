@@ -19,6 +19,27 @@ function mockReducedMotion(matches: boolean): void {
   );
 }
 
+function allowAnimations(): void {
+  mockReducedMotion(false);
+}
+
+function mockGsapEffects() {
+  const fromSpy = vi.spyOn(gsap, 'from').mockReturnValue({} as gsap.core.Tween);
+  const toSpy = vi.spyOn(gsap, 'to').mockImplementation((_target, vars) => {
+    (vars as { onComplete?: () => void } | undefined)?.onComplete?.();
+    return {} as gsap.core.Tween;
+  });
+  const killTweensSpy = vi
+    .spyOn(gsap, 'killTweensOf')
+    .mockReturnValue(undefined);
+
+  return { fromSpy, toSpy, killTweensSpy };
+}
+
+function setReducedMotionPreference(): void {
+  mockReducedMotion(true);
+}
+
 describe('GsapAnimationsService', () => {
   let service: GsapAnimationsService;
 
@@ -31,8 +52,12 @@ describe('GsapAnimationsService', () => {
   });
 
   afterEach(() => {
-    service.killAllAnimations();
+    service?.killAllAnimations();
+    if (typeof document !== 'undefined') {
+      document.body.innerHTML = '';
+    }
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('should be created', () => {
@@ -40,6 +65,18 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeFigureAnimations', () => {
+    it('Given document is unavailable, When animations initialize, Then execution exits safely', () => {
+      vi.stubGlobal('document', undefined);
+
+      expect(() => service.initializeFigureAnimations()).not.toThrow();
+    });
+
+    it('Given matchMedia is unavailable, When animations initialize, Then browser defaults allow animation setup', () => {
+      vi.stubGlobal('matchMedia', undefined);
+
+      expect(() => service.initializeFigureAnimations()).not.toThrow();
+    });
+
     it('Given reduced motion is enabled, When figure animations initialize, Then no transform is applied', () => {
       mockReducedMotion(true);
 
@@ -102,6 +139,21 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeInteractiveCardAnimations', () => {
+    it('Given card hover events, When mouseenter and mouseleave are dispatched, Then gsap receives both transitions', () => {
+      allowAnimations();
+      const { toSpy } = mockGsapEffects();
+
+      const article = document.createElement('article');
+      document.body.appendChild(article);
+
+      service.initializeInteractiveCardAnimations();
+      article.dispatchEvent(new Event('mouseenter'));
+      article.dispatchEvent(new Event('mouseleave'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+      article.remove();
+    });
+
     it('should handle selector when articles exist', () => {
       // Arrange: Create article element
       const div = document.createElement('div');
@@ -129,6 +181,23 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializePageEntranceAnimations', () => {
+    it('Given a first section and headings, When page entrance initializes, Then hero and heading animations are triggered', () => {
+      allowAnimations();
+      const { fromSpy } = mockGsapEffects();
+
+      const section = document.createElement('section');
+      const heading = document.createElement('h1');
+      const subHeading = document.createElement('h2');
+      document.body.append(section, heading, subHeading);
+
+      service.initializePageEntranceAnimations();
+
+      expect(fromSpy).toHaveBeenCalledTimes(2);
+      section.remove();
+      heading.remove();
+      subHeading.remove();
+    });
+
     it('should initialize page entrance animations', () => {
       // Act: Initialize page entrance
       service.initializePageEntranceAnimations();
@@ -193,6 +262,24 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeButtonTransitions', () => {
+    it('Given button interaction events, When hover and click events are dispatched, Then tween updates are requested', () => {
+      allowAnimations();
+      const { killTweensSpy, toSpy } = mockGsapEffects();
+
+      const button = document.createElement('button');
+      document.body.appendChild(button);
+
+      service.initializeButtonTransitions();
+      button.dispatchEvent(new Event('mouseenter'));
+      button.dispatchEvent(new Event('mouseleave'));
+      button.dispatchEvent(new Event('mousedown'));
+      button.dispatchEvent(new Event('mouseup'));
+
+      expect(killTweensSpy).toHaveBeenCalledTimes(2);
+      expect(toSpy).toHaveBeenCalledTimes(4);
+      button.remove();
+    });
+
     it('should handle button animations', () => {
       // Arrange: Create button
       const button = document.createElement('button');
@@ -230,6 +317,21 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeFormFieldAnimations', () => {
+    it('Given focus transitions, When focus and blur events are dispatched, Then form field tweens are requested', () => {
+      allowAnimations();
+      const { toSpy } = mockGsapEffects();
+
+      const input = document.createElement('input');
+      document.body.appendChild(input);
+
+      service.initializeFormFieldAnimations();
+      input.dispatchEvent(new Event('focus'));
+      input.dispatchEvent(new Event('blur'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+      input.remove();
+    });
+
     it('should handle form field animations', () => {
       // Arrange: Create input
       const input = document.createElement('input');
@@ -263,6 +365,9 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeListItemAnimations', () => {
     it('should handle list item animations', () => {
+      allowAnimations();
+      const { fromSpy } = mockGsapEffects();
+
       // Arrange: Create list items
       const li = document.createElement('li');
       document.body.appendChild(li);
@@ -271,7 +376,7 @@ describe('GsapAnimationsService', () => {
       service.initializeListItemAnimations();
 
       // Assert: Service executes without error
-      expect(service).toBeTruthy();
+      expect(fromSpy).toHaveBeenCalledTimes(1);
 
       // Cleanup
       li.remove();
@@ -297,6 +402,9 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeTextRevealAnimations', () => {
     it('should handle text reveal animations', () => {
+      allowAnimations();
+      const { fromSpy } = mockGsapEffects();
+
       // Arrange: Create paragraph
       const p = document.createElement('p');
       p.textContent = 'Test text';
@@ -306,7 +414,7 @@ describe('GsapAnimationsService', () => {
       service.initializeTextRevealAnimations();
 
       // Assert: Service executes without error
-      expect(service).toBeTruthy();
+      expect(fromSpy).toHaveBeenCalledTimes(1);
 
       // Cleanup
       p.remove();
@@ -328,6 +436,21 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeIconAnimations', () => {
+    it('Given icon hover events, When mouseenter and mouseleave are dispatched, Then icon animation tweens are requested', () => {
+      allowAnimations();
+      const { toSpy } = mockGsapEffects();
+
+      const svg = document.createElement('svg');
+      document.body.appendChild(svg);
+
+      service.initializeIconAnimations();
+      svg.dispatchEvent(new Event('mouseenter'));
+      svg.dispatchEvent(new Event('mouseleave'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+      svg.remove();
+    });
+
     it('should handle icon animations', () => {
       // Arrange: Create SVG icon
       const svg = document.createElement('svg');
@@ -374,10 +497,28 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('createPageTransition', () => {
-    it('should create a page transition promise', async () => {
-      // Act & Assert
+    it('should create a page transition promise when main exists', async () => {
+      allowAnimations();
+      const { toSpy } = mockGsapEffects();
+      const main = document.createElement('main');
+      document.body.appendChild(main);
+
       const promise = service.createPageTransition();
+
       await expect(promise).resolves.toBeUndefined();
+      expect(toSpy).toHaveBeenCalledWith(
+        main,
+        expect.objectContaining({ opacity: 0 }),
+      );
+
+      main.remove();
+    });
+
+    it('should resolve immediately when main is absent', async () => {
+      allowAnimations();
+      mockGsapEffects();
+
+      await expect(service.createPageTransition()).resolves.toBeUndefined();
     });
 
     it('Given a page main element, When a transition starts, Then GSAP fade-out resolves on completion', async () => {
@@ -413,6 +554,22 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('animatePageIn', () => {
+    it('Given a main element exists, When animatePageIn runs, Then gsap.from animates the main container', () => {
+      allowAnimations();
+      const { fromSpy } = mockGsapEffects();
+
+      const main = document.createElement('main');
+      document.body.appendChild(main);
+
+      service.animatePageIn();
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        main,
+        expect.objectContaining({ opacity: 0 }),
+      );
+      main.remove();
+    });
+
     it('should animate page entrance', () => {
       // Act: Animate page in
       service.animatePageIn();
@@ -436,6 +593,9 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeSectionAnimations', () => {
     it('should handle section animations', () => {
+      allowAnimations();
+      const { fromSpy } = mockGsapEffects();
+
       // Arrange: Create section
       const section = document.createElement('section');
       document.body.appendChild(section);
@@ -444,7 +604,7 @@ describe('GsapAnimationsService', () => {
       service.initializeSectionAnimations();
 
       // Assert: Service executes without error
-      expect(service).toBeTruthy();
+      expect(fromSpy).toHaveBeenCalledTimes(1);
 
       // Cleanup
       section.remove();
@@ -482,6 +642,9 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeBadgeAnimations', () => {
     it('should handle badge animations', () => {
+      allowAnimations();
+      const { fromSpy, toSpy } = mockGsapEffects();
+
       // Arrange: Create badge
       const badge = document.createElement('span');
       badge.classList.add('badge');
@@ -491,7 +654,8 @@ describe('GsapAnimationsService', () => {
       service.initializeBadgeAnimations();
 
       // Assert: Service executes without error
-      expect(service).toBeTruthy();
+      expect(fromSpy).toHaveBeenCalledTimes(1);
+      expect(toSpy).toHaveBeenCalledTimes(1);
 
       // Cleanup
       badge.remove();
@@ -514,6 +678,21 @@ describe('GsapAnimationsService', () => {
   });
 
   describe('initializeMouseFollowAnimations', () => {
+    it('Given interactive element hover events, When mouseenter and mouseleave are dispatched, Then brightness tween is requested', () => {
+      allowAnimations();
+      const { toSpy } = mockGsapEffects();
+
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+
+      service.initializeMouseFollowAnimations();
+      link.dispatchEvent(new Event('mouseenter'));
+      link.dispatchEvent(new Event('mouseleave'));
+
+      expect(toSpy).toHaveBeenCalledTimes(2);
+      link.remove();
+    });
+
     it('should handle mouse follow animations', () => {
       // Arrange: Create interactive element
       const link = document.createElement('a');
@@ -547,6 +726,9 @@ describe('GsapAnimationsService', () => {
 
   describe('initializeImageParallaxAnimations', () => {
     it('should handle image parallax animations', () => {
+      allowAnimations();
+      const { fromSpy, toSpy } = mockGsapEffects();
+
       // Arrange: Create image
       const img = document.createElement('img');
       img.src = 'test.jpg';
@@ -556,7 +738,8 @@ describe('GsapAnimationsService', () => {
       service.initializeImageParallaxAnimations();
 
       // Assert: Service executes without error
-      expect(service).toBeTruthy();
+      expect(fromSpy).toHaveBeenCalledTimes(1);
+      expect(toSpy).toHaveBeenCalledTimes(1);
 
       // Cleanup
       img.remove();
@@ -575,6 +758,31 @@ describe('GsapAnimationsService', () => {
       expect(toSpy).toHaveBeenCalled();
 
       img.remove();
+    });
+  });
+
+  describe('reduced motion guards', () => {
+    it('Given reduced motion is enabled, When guarded methods are called, Then all related animations are skipped safely', async () => {
+      setReducedMotionPreference();
+      const { fromSpy, toSpy, killTweensSpy } = mockGsapEffects();
+
+      service.initializeInteractiveCardAnimations();
+      service.initializePageEntranceAnimations();
+      service.initializeButtonTransitions();
+      service.initializeFormFieldAnimations();
+      service.initializeListItemAnimations();
+      service.initializeTextRevealAnimations();
+      service.initializeIconAnimations();
+      await expect(service.createPageTransition()).resolves.toBeUndefined();
+      service.animatePageIn();
+      service.initializeSectionAnimations();
+      service.initializeBadgeAnimations();
+      service.initializeMouseFollowAnimations();
+      service.initializeImageParallaxAnimations();
+
+      expect(fromSpy).not.toHaveBeenCalled();
+      expect(toSpy).not.toHaveBeenCalled();
+      expect(killTweensSpy).not.toHaveBeenCalled();
     });
   });
 });

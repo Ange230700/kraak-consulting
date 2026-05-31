@@ -130,6 +130,27 @@ describe('cms.dto validators', () => {
     });
   });
 
+  it('Given sortOrder as a numeric string When create statistic is validated Then sortOrder is parsed as an integer', () => {
+    const result = validateCreateStatisticPayload({
+      label: 'Apprenants',
+      value: '120',
+      suffix: null,
+      sortOrder: '7',
+      status: 'published',
+    });
+
+    expect(result).toEqual({
+      valid: true,
+      data: {
+        label: 'Apprenants',
+        value: '120',
+        suffix: null,
+        sortOrder: 7,
+        status: 'published',
+      },
+    });
+  });
+
   it('rejects invalid update partner url', () => {
     const result = validateUpdatePartnerPayload({ logoUrl: 'x' });
 
