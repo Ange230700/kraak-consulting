@@ -65,6 +65,7 @@ tmp/
 
 # SonarQube / SonarLint (cache local, ne pas committer)
 .scannerwork/
+.scannerwork-isolated-*/
 .sonarlint/connectedMode.local.json
 
 
