@@ -93,4 +93,32 @@ describe('ParticipantNavCtaLink', () => {
       }
     });
   });
+
+  describe('Given the runtime config arrives after the component is created', () => {
+    beforeEach(async () => {
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
+      await compile();
+    });
+
+    it('When the CTA initially renders hidden Then it becomes visible after the config is provided', () => {
+      const fixture = TestBed.createComponent(ParticipantNavCtaLink);
+
+      fixture.detectChanges();
+      expect(
+        (fixture.nativeElement as HTMLElement).querySelector(
+          'a[aria-label="Espace participant"]',
+        ),
+      ).toBeNull();
+
+      globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
+
+      fixture.detectChanges();
+
+      expect(
+        (fixture.nativeElement as HTMLElement).querySelector(
+          'a[aria-label="Espace participant"]',
+        ),
+      ).toBeTruthy();
+    });
+  });
 });
