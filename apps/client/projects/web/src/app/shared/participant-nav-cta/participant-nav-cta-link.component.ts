@@ -10,7 +10,9 @@ import { isParticipantAreaEnabled } from '../../core/runtime/runtime-config';
   templateUrl: './participant-nav-cta-link.component.html',
 })
 export class ParticipantNavCtaLink {
-  protected readonly participantAreaEnabled = isParticipantAreaEnabled();
+  protected get participantAreaEnabled(): boolean {
+    return isParticipantAreaEnabled();
+  }
 
   readonly activated = output<void>();
 

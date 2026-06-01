@@ -2,7 +2,17 @@
  * Vitest setup file to mock browser APIs required by GSAP and other libraries
  */
 
+import {
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting,
+} from '@angular/platform-browser-dynamic/testing';
+import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+
+TestBed.initTestEnvironment(
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting(),
+);
 
 // Mock matchMedia for ScrollTrigger
 Object.defineProperty(globalThis, 'matchMedia', {
