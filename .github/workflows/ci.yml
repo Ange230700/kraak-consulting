@@ -141,8 +141,10 @@ jobs:
     name: Tests E2E
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 45
     env:
       PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
+      PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 120000
     steps:
       - name: Désactiver les E2E longs sur PR
         if: ${{ github.event_name == 'pull_request' }}
@@ -188,7 +190,16 @@ jobs:
         run: |
           ./apps/client/node_modules/.bin/playwright --version
           if [[ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]]; then
-            ./apps/client/node_modules/.bin/playwright install --only-shell chromium
+            install_playwright() {
+              # Timeout strict pour éviter les téléchargements Playwright bloqués en CI.
+              timeout 15m ./apps/client/node_modules/.bin/playwright install --only-shell chromium
+            }
+
+            if ! install_playwright; then
+              echo "Premier essai d'installation Playwright échoué; nettoyage du cache partiel puis nouvelle tentative."
+              rm -rf ~/.cache/ms-playwright/*
+              install_playwright
+            fi
           fi
 
       - name: Exécuter les tests E2E
