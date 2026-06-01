@@ -170,15 +170,18 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: pnpm -r --filter "./packages/**" build
 
+      - name: Calculer la clé de cache Playwright du jour
+        if: ${{ github.event_name != 'pull_request' }}
+        id: playwright-cache-date
+        run: echo "value=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
       - name: Restaurer le cache des navigateurs Playwright
         if: ${{ github.event_name != 'pull_request' }}
         id: playwright-cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml', 'apps/client/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-cache-date.outputs.value }}-${{ hashFiles('pnpm-lock.yaml', 'apps/client/package.json') }}
 
       - name: Installer les navigateurs Playwright
         if: ${{ github.event_name != 'pull_request' }}
