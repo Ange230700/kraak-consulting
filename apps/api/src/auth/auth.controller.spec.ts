@@ -192,6 +192,31 @@ describe('AuthController', () => {
     });
   });
 
+  // Given un payload signup valide
+  // When POST /auth/sign-up est appelé
+  // Then le service reçoit le payload normalisé
+  it('Given un payload signup valide, When signUp est appelé, Then le service reçoit le payload normalisé', async () => {
+    await controller.signUp({
+      email: '  alice@example.com  ',
+      password: 'motdepasse-securise',
+      firstName: '  Alice  ',
+      lastName: '  Dupont  ',
+      phone: '  +2250700000000  ',
+      preferredContactChannel: '  email  ',
+      redirectTo: 'https://kraak.example/auth/callback',
+    });
+
+    expect(authService.signUp).toHaveBeenCalledWith({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      phone: '+2250700000000',
+      preferredContactChannel: 'email',
+      redirectTo: 'https://kraak.example/auth/callback',
+    });
+  });
+
   // Given un header Authorization Bearer valide
   // When GET /auth/session est appelé
   // Then le token d'accès est transmis au service

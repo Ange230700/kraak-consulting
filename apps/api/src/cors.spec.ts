@@ -131,6 +131,17 @@ describe('buildCorsOptions', () => {
       expect(result.err).toBeInstanceOf(Error);
       expect(result.allow).toBeFalsy();
     });
+
+    it('When Origin is malformed Then it is rejected safely', async () => {
+      const options = buildCorsOptions(env);
+      const result = await callOrigin(
+        options.origin as OriginFn,
+        '::not-a-url::',
+      );
+
+      expect(result.err).toBeInstanceOf(Error);
+      expect(result.allow).toBeFalsy();
+    });
   });
 
   describe('Given an invalid regex pattern', () => {

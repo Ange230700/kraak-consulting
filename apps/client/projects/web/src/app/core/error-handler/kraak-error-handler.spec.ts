@@ -42,4 +42,15 @@ describe('KraakErrorHandler', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
+
+  it('Given a cyclic error-like object, when handleError is called, then it does not loop and logs once', () => {
+    const cyclic: { message: string; cause?: unknown } = {
+      message: 'Erreur non bénigne',
+    };
+    cyclic.cause = cyclic;
+
+    handler.handleError(cyclic);
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+  });
 });

@@ -1,0 +1,13 @@
+{
+  "paging": { "pageIndex": 1, "pageSize": 500, "total": 0 },
+  "baseComponent": {
+    "id": "AZ6ArGm9r9ikloCU9CMT",
+    "key": "Ange230700_kraak-group",
+    "name": "kraak-group",
+    "description": "KRAAK — Monorepo for the web platform, API, and shared packages",
+    "qualifier": "TRK",
+    "measures": [],
+    "pullRequest": "524"
+  },
+  "components": []
+}

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
@@ -25,7 +26,11 @@ function resetGtagGlobals(): void {
     .forEach((node) => node.remove());
 }
 
-function setupAnalyticsTestBed(measurementId: string): {
+function setupAnalyticsTestBed(
+  measurementId: string,
+  platformId: 'browser' | 'server' = 'browser',
+  documentRef: Document = document,
+): {
   router: { events: Subject<NavigationEnd> };
 } {
   const events = new Subject<NavigationEnd>();
@@ -36,7 +41,8 @@ function setupAnalyticsTestBed(measurementId: string): {
       AnalyticsService,
       { provide: GA4_MEASUREMENT_ID, useValue: measurementId },
       { provide: Router, useValue: routerStub },
-      { provide: DOCUMENT, useValue: document },
+      { provide: PLATFORM_ID, useValue: platformId },
+      { provide: DOCUMENT, useValue: documentRef },
     ],
   });
 
@@ -106,6 +112,53 @@ describe('AnalyticsService', () => {
     ).toHaveLength(1);
   });
 
+  it('Given an existing analytics loader, when initialize is called, then no additional loader is injected', () => {
+    setupAnalyticsTestBed('G-ABC123');
+
+    const existing = document.createElement('script');
+    existing.setAttribute('data-kraak-analytics', 'loader');
+    document.head.appendChild(existing);
+
+    const service = TestBed.inject(AnalyticsService);
+    service.initialize();
+
+    expect(
+      document.head.querySelectorAll('script[data-kraak-analytics="loader"]'),
+    ).toHaveLength(1);
+  });
+
+  it('reuses existing analytics globals when dataLayer and gtag are already defined', () => {
+    setupAnalyticsTestBed('G-ABC123');
+
+    const existingDataLayer: unknown[] = [];
+    const existingGtag = vi.fn();
+    getWindow().dataLayer = existingDataLayer;
+    getWindow().gtag = existingGtag;
+
+    const service = TestBed.inject(AnalyticsService);
+    service.initialize();
+
+    expect(getWindow().dataLayer).toBe(existingDataLayer);
+    expect(getWindow().gtag).toBe(existingGtag);
+    expect(existingGtag).toHaveBeenCalledWith('js', expect.any(Date));
+    expect(existingGtag).toHaveBeenCalledWith('config', 'G-ABC123', {
+      anonymize_ip: true,
+      send_page_view: false,
+    });
+  });
+
+  it('does not initialize analytics outside the browser even with a valid measurement ID', () => {
+    setupAnalyticsTestBed('G-ABC123', 'server');
+
+    const service = TestBed.inject(AnalyticsService);
+    service.initialize();
+
+    expect(
+      document.head.querySelector('script[data-kraak-analytics="loader"]'),
+    ).toBeNull();
+    expect(getWindow().gtag).toBeUndefined();
+  });
+
   // Given le service activé
   // When le router émet une navigation terminée
   // Then un événement page_view est envoyé à GA4 avec le chemin courant
@@ -167,5 +220,40 @@ describe('AnalyticsService', () => {
       'contact_form_submitted',
       { result: 'ok' },
     ]);
+  });
+
+  it('does not fail when trackEvent is called without a gtag function on window', () => {
+    setupAnalyticsTestBed('G-ABC123');
+    const service = TestBed.inject(AnalyticsService);
+
+    expect(() =>
+      service.trackEvent('contact_form_submitted', { result: 'ok' }),
+    ).not.toThrow();
+  });
+
+  it('falls back to globalThis when the injected document has no defaultView', () => {
+    const globalGtag = vi.fn();
+    const customDocument = {
+      ...document,
+      defaultView: null,
+      head: document.head,
+      createElement: document.createElement.bind(document),
+    } as Document;
+
+    setupAnalyticsTestBed('G-ABC123', 'browser', customDocument);
+    getWindow().gtag = globalGtag;
+
+    const service = TestBed.inject(AnalyticsService);
+    service.initialize();
+    service.trackEvent('contact_form_submitted', { result: 'ok' });
+
+    expect(globalGtag).toHaveBeenCalledWith('js', expect.any(Date));
+    expect(globalGtag).toHaveBeenCalledWith('config', 'G-ABC123', {
+      anonymize_ip: true,
+      send_page_view: false,
+    });
+    expect(globalGtag).toHaveBeenCalledWith('event', 'contact_form_submitted', {
+      result: 'ok',
+    });
   });
 });
