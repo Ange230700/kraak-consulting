@@ -9,10 +9,25 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
-TestBed.initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting(),
-);
+try {
+  TestBed.initTestEnvironment(
+    BrowserDynamicTestingModule,
+    platformBrowserDynamicTesting(),
+  );
+} catch (error) {
+  if (
+    !(error instanceof Error) ||
+    !error.message.includes(
+      'Cannot set base providers because it has already been called',
+    )
+  ) {
+    throw error;
+  }
+
+  console.warn(
+    '[vitest.setup] Angular TestBed was already initialized; reusing the existing test environment.',
+  );
+}
 
 // Mock matchMedia for ScrollTrigger
 Object.defineProperty(globalThis, 'matchMedia', {
