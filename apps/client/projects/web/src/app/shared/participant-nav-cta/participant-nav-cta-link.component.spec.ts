@@ -100,7 +100,7 @@ describe('ParticipantNavCtaLink', () => {
       await compile();
     });
 
-    it('When the CTA initially renders hidden Then it becomes visible after the config is provided', () => {
+    it('When the CTA renders before runtime config is available Then it stays visible once the config arrives', () => {
       const fixture = TestBed.createComponent(ParticipantNavCtaLink);
 
       fixture.detectChanges();
@@ -108,7 +108,7 @@ describe('ParticipantNavCtaLink', () => {
         (fixture.nativeElement as HTMLElement).querySelector(
           'a[aria-label="Espace participant"]',
         ),
-      ).toBeNull();
+      ).toBeTruthy();
 
       globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
 
