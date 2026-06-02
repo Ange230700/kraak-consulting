@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
+import {
+  CONTACT_EMAIL,
+  buildHeroBackgroundStyle,
+} from '../../shared/brand/brand-constants';
 import {
   FaqAccordion,
   type FaqItem,
@@ -30,7 +33,7 @@ export default class FaqPage {
     {
       question: 'Comment démarrer avec KRAAK ?',
       answer:
-        "Vous pouvez envoyer une demande via le formulaire de contact, écrire à kraakconsulting@gmail.com ou ouvrir un premier échange sur WhatsApp. Pour accélérer l'orientation, indiquez votre objectif, votre pays, votre calendrier et le type d'appui recherché.",
+        `Vous pouvez envoyer une demande via le formulaire de contact, écrire à ${CONTACT_EMAIL} ou ouvrir un premier échange sur WhatsApp. Pour accélérer l'orientation, indiquez votre objectif, votre pays, votre calendrier et le type d'appui recherché.`,
     },
     {
       question: 'Les accompagnements KRAAK sont-ils disponibles à distance ?',
