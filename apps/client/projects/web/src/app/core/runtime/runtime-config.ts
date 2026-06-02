@@ -2,6 +2,14 @@ import { environment } from '../../../environments/environment';
 
 interface KraakRuntimeConfig {
   readonly apiBaseUrl?: string;
+  readonly publicAssetBaseUrl?: string;
+  readonly contactPhoneE164?: string;
+  readonly contactPhoneDisplay?: string;
+  readonly contactEmail?: string;
+  readonly whatsappContactHref?: string;
+  readonly facebookUrl?: string;
+  readonly instagramUrl?: string;
+  readonly tiktokUrl?: string;
   readonly siteUrl?: string;
   readonly supabaseUrl?: string;
   readonly supabasePublishableKey?: string;
