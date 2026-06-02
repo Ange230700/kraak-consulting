@@ -21,9 +21,4 @@ wait "$lint_pid" || status=$?
 
 [ "$status" -eq 0 ] || exit "$status"
 
-# Exécuter toutes les suites de tests locales hors E2E.
-# Les E2E restent exécutés dans GitHub Actions.
-pnpm test:libs
-pnpm test:api
-pnpm test:unit
-pnpm test:workspace
+pnpm test

@@ -55,7 +55,6 @@ des étapes migration ou smoke test.
   - `Format & Lint`
   - `Build`
   - `Tests unitaires`
-  - `Tests E2E`
   - `Workspace Checks`
 - Linear history (rebase only — déjà aligné avec le workflow Git du repo)
 - Restrict who can push : mainteneurs uniquement
