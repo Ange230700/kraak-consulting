@@ -107,6 +107,61 @@ function readRuntimeVariable(key, fileVariables, processEnv) {
   return processEnv[key]?.trim();
 }
 
+function addRuntimeVariable(runtimeConfig, key, value) {
+  if (value) {
+    runtimeConfig[key] = value;
+  }
+}
+
+function buildRuntimeConfig(runtimeValues) {
+  const runtimeConfig = {
+    enableParticipantArea: runtimeValues.enableParticipantArea,
+  };
+
+  addRuntimeVariable(runtimeConfig, 'apiBaseUrl', runtimeValues.apiBaseUrl);
+  addRuntimeVariable(
+    runtimeConfig,
+    'publicAssetBaseUrl',
+    runtimeValues.publicAssetBaseUrl,
+  );
+  addRuntimeVariable(
+    runtimeConfig,
+    'contactPhoneE164',
+    runtimeValues.contactPhoneE164,
+  );
+  addRuntimeVariable(
+    runtimeConfig,
+    'contactPhoneDisplay',
+    runtimeValues.contactPhoneDisplay,
+  );
+  addRuntimeVariable(
+    runtimeConfig,
+    'contactEmail',
+    runtimeValues.contactEmail,
+  );
+  addRuntimeVariable(
+    runtimeConfig,
+    'whatsappContactHref',
+    runtimeValues.whatsappContactHref,
+  );
+  addRuntimeVariable(runtimeConfig, 'facebookUrl', runtimeValues.facebookUrl);
+  addRuntimeVariable(
+    runtimeConfig,
+    'instagramUrl',
+    runtimeValues.instagramUrl,
+  );
+  addRuntimeVariable(runtimeConfig, 'tiktokUrl', runtimeValues.tiktokUrl);
+  addRuntimeVariable(runtimeConfig, 'siteUrl', runtimeValues.siteUrl);
+  addRuntimeVariable(runtimeConfig, 'supabaseUrl', runtimeValues.supabaseUrl);
+  addRuntimeVariable(
+    runtimeConfig,
+    'supabasePublishableKey',
+    runtimeValues.supabasePublishableKey,
+  );
+
+  return runtimeConfig;
+}
+
 export function loadClientRuntimeConfig(
   environmentName,
   { clientRootPath = clientRoot, processEnv = process.env } = {},
@@ -116,6 +171,46 @@ export function loadClientRuntimeConfig(
   const fileVariables = existsSync(envPath) ? parseEnvFile(envPath) : {};
   const apiBaseUrl = readRuntimeVariable(
     'CLIENT_API_BASE_URL',
+    fileVariables,
+    processEnv,
+  );
+  const publicAssetBaseUrl = readRuntimeVariable(
+    'KRAAK_PUBLIC_ASSET_BASE_URL',
+    fileVariables,
+    processEnv,
+  );
+  const contactPhoneE164 = readRuntimeVariable(
+    'KRAAK_CONTACT_PHONE_E164',
+    fileVariables,
+    processEnv,
+  );
+  const contactPhoneDisplay = readRuntimeVariable(
+    'KRAAK_CONTACT_PHONE_DISPLAY',
+    fileVariables,
+    processEnv,
+  );
+  const contactEmail = readRuntimeVariable(
+    'KRAAK_CONTACT_EMAIL',
+    fileVariables,
+    processEnv,
+  );
+  const whatsappContactHref = readRuntimeVariable(
+    'KRAAK_WHATSAPP_CONTACT_HREF',
+    fileVariables,
+    processEnv,
+  );
+  const facebookUrl = readRuntimeVariable(
+    'KRAAK_FACEBOOK_URL',
+    fileVariables,
+    processEnv,
+  );
+  const instagramUrl = readRuntimeVariable(
+    'KRAAK_INSTAGRAM_URL',
+    fileVariables,
+    processEnv,
+  );
+  const tiktokUrl = readRuntimeVariable(
+    'KRAAK_TIKTOK_URL',
     fileVariables,
     processEnv,
   );
@@ -141,24 +236,21 @@ export function loadClientRuntimeConfig(
       processEnv,
     ) === 'true';
 
-  if (!apiBaseUrl && (!supabaseUrl || !supabasePublishableKey)) {
-    return {
-      ...(siteUrl ? { siteUrl } : {}),
-      enableParticipantArea,
-    };
-  }
-
-  return {
-    ...(apiBaseUrl ? { apiBaseUrl } : {}),
-    ...(siteUrl ? { siteUrl } : {}),
-    ...(supabaseUrl && supabasePublishableKey
-      ? {
-          supabaseUrl,
-          supabasePublishableKey,
-        }
-      : {}),
+  return buildRuntimeConfig({
+    apiBaseUrl,
+    publicAssetBaseUrl,
+    contactPhoneE164,
+    contactPhoneDisplay,
+    contactEmail,
+    whatsappContactHref,
+    facebookUrl,
+    instagramUrl,
+    tiktokUrl,
+    siteUrl,
+    supabaseUrl,
+    supabasePublishableKey,
     enableParticipantArea,
-  };
+  });
 }
 
 export function serializeRuntimeConfig(runtimeConfig) {

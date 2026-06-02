@@ -4,8 +4,13 @@ export interface SocialLink {
   icon: string;
 }
 
+import { resolveRuntimeClientConfig } from '../../../../../shared/runtime-client-config';
+import { CLIENT_DEFAULTS } from '../client-defaults';
+
+const runtimeClientConfig = resolveRuntimeClientConfig();
+
 export const KRAAK_PUBLIC_ASSET_BASE_URL =
-  'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images';
+  runtimeClientConfig.publicAssetBaseUrl || CLIENT_DEFAULTS.publicAssetBaseUrl;
 
 export const KRAAK_AVATAR_CIRCLE_BASE_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/avatars/circle`;
 
@@ -19,10 +24,15 @@ export const CONTACT_VISUAL_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/contact
 
 export const FAQ_BACKGROUND_IMAGE_URL = `${KRAAK_PUBLIC_ASSET_BASE_URL}/blocks/faq/glassmorphic-accordion-bg.jpg`;
 
-export const CONTACT_PHONE_E164 = '+2250502741818';
-export const CONTACT_PHONE_DISPLAY = '+225 05 02 74 18 18';
+export const CONTACT_PHONE_E164 =
+  runtimeClientConfig.contactPhoneE164 || CLIENT_DEFAULTS.contactPhoneE164;
+export const CONTACT_PHONE_DISPLAY =
+  runtimeClientConfig.contactPhoneDisplay ||
+  CLIENT_DEFAULTS.contactPhoneDisplay;
 export const CONTACT_PHONE_HREF = `tel:${CONTACT_PHONE_E164}`;
-export const WHATSAPP_CONTACT_HREF = 'https://wa.me/2250502741818';
+export const WHATSAPP_CONTACT_HREF =
+  runtimeClientConfig.whatsappContactHref ||
+  CLIENT_DEFAULTS.whatsappContactHref;
 
 export function buildHeroBackgroundStyle(imageUrl: string) {
   return {
@@ -38,12 +48,12 @@ export const HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 export const KRAAK_SOCIAL_LINKS: readonly SocialLink[] = [
   {
     label: 'Facebook',
-    href: 'https://www.facebook.com/kraakconsulting/',
+    href: runtimeClientConfig.facebookUrl || CLIENT_DEFAULTS.facebookUrl,
     icon: 'pi-facebook',
   },
   {
     label: 'Instagram',
-    href: 'https://www.instagram.com/kraakconsulting/',
+    href: runtimeClientConfig.instagramUrl || CLIENT_DEFAULTS.instagramUrl,
     icon: 'pi-instagram',
   },
   {
@@ -53,9 +63,10 @@ export const KRAAK_SOCIAL_LINKS: readonly SocialLink[] = [
   },
   {
     label: 'TikTok',
-    href: 'https://www.tiktok.com/@kraakconsulting',
+    href: runtimeClientConfig.tiktokUrl || CLIENT_DEFAULTS.tiktokUrl,
     icon: 'pi-tiktok',
   },
 ] as const;
 
-export const CONTACT_EMAIL = 'kraakconsulting@gmail.com';
+export const CONTACT_EMAIL =
+  runtimeClientConfig.contactEmail || CLIENT_DEFAULTS.contactEmail;

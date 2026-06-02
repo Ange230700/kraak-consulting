@@ -1,6 +1,7 @@
 import siteSeoDefinitions from './site-seo.json';
 import blogSitemapDefinitions from './blog-sitemap-pages.json';
 import { resolveSiteUrl } from '../core/runtime/runtime-config';
+import { CLIENT_DEFAULTS } from '../shared/client-defaults';
 
 export type SitemapChangeFrequency =
   | 'always'
@@ -28,10 +29,6 @@ export interface SeoPageDefinition {
   };
 }
 
-const DEFAULT_SITE_URL = 'https://kraak-web-prod.onrender.com';
-const DEFAULT_SITE_NAME = 'KRAAK';
-const DEFAULT_LOCALE = 'fr_FR';
-const DEFAULT_ROBOTS = 'index, follow';
 const runtimeGlobals = globalThis as typeof globalThis & {
   process?: {
     env?: Record<string, string | undefined>;
@@ -60,14 +57,17 @@ const normalizeRoutePath = (path: string): string =>
   trimTrailingSlashes(trimLeadingSlashes(path));
 
 export const normalizeSiteUrl = (siteUrl: string): string =>
-  trimTrailingSlashes(siteUrl) || DEFAULT_SITE_URL;
+  trimTrailingSlashes(siteUrl) || CLIENT_DEFAULTS.siteUrl;
 
 export const resolvePublicSiteUrl = (siteUrl?: string): string => {
   const runtimeSiteUrl = runtimeGlobals.process?.env?.['PUBLIC_SITE_URL'] ?? '';
   const runtimeConfigSiteUrl = resolveSiteUrl('');
 
   return normalizeSiteUrl(
-    runtimeSiteUrl || runtimeConfigSiteUrl || siteUrl || DEFAULT_SITE_URL,
+    runtimeSiteUrl ||
+      runtimeConfigSiteUrl ||
+      siteUrl ||
+      CLIENT_DEFAULTS.siteUrl,
   );
 };
 
@@ -127,7 +127,7 @@ Sitemap: ${buildAbsoluteUrl('sitemap.xml', resolvePublicSiteUrl(siteUrl))}
 `;
 
 export const seoDefaults = {
-  locale: DEFAULT_LOCALE,
-  robots: DEFAULT_ROBOTS,
-  siteName: DEFAULT_SITE_NAME,
+  locale: CLIENT_DEFAULTS.locale,
+  robots: CLIENT_DEFAULTS.robots,
+  siteName: CLIENT_DEFAULTS.siteName,
 };

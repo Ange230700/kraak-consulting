@@ -12,6 +12,58 @@ import {
 } from './generate-client-runtime-config.mjs';
 
 test(
+  'le runtime client expose aussi les URLs publiques de marque et contact quand elles sont definies',
+  () => {
+    const tempRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
+    );
+
+    try {
+      const envFilePath = path.join(tempRoot, '.env');
+      writeFileSync(
+        envFilePath,
+        [
+          'CLIENT_API_BASE_URL=http://localhost:3000',
+          'SUPABASE_URL=http://127.0.0.1:54321',
+          'SUPABASE_PUBLISHABLE_KEY=local-publishable-key',
+          'KRAAK_PUBLIC_ASSET_BASE_URL=https://cdn.kraak.example/assets',
+          'KRAAK_CONTACT_PHONE_E164=+225000000001',
+          'KRAAK_CONTACT_PHONE_DISPLAY=+225 00 00 00 00 01',
+          'KRAAK_CONTACT_EMAIL=contact@kraak.example',
+          'KRAAK_WHATSAPP_CONTACT_HREF=https://wa.me/225000000001',
+          'KRAAK_FACEBOOK_URL=https://www.facebook.com/kraak.example',
+          'KRAAK_INSTAGRAM_URL=https://www.instagram.com/kraak.example',
+          'KRAAK_TIKTOK_URL=https://www.tiktok.com/@kraak.example',
+          '',
+        ].join('\n'),
+      );
+
+      const runtimeConfig = loadClientRuntimeConfig('local', {
+        clientRootPath: tempRoot,
+        processEnv: {},
+      });
+
+      assert.deepEqual(runtimeConfig, {
+        apiBaseUrl: 'http://localhost:3000',
+        publicAssetBaseUrl: 'https://cdn.kraak.example/assets',
+        contactPhoneE164: '+225000000001',
+        contactPhoneDisplay: '+225 00 00 00 00 01',
+        contactEmail: 'contact@kraak.example',
+        whatsappContactHref: 'https://wa.me/225000000001',
+        facebookUrl: 'https://www.facebook.com/kraak.example',
+        instagramUrl: 'https://www.instagram.com/kraak.example',
+        tiktokUrl: 'https://www.tiktok.com/@kraak.example',
+        supabaseUrl: 'http://127.0.0.1:54321',
+        supabasePublishableKey: 'local-publishable-key',
+        enableParticipantArea: false,
+      });
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
+  },
+);
+
+test(
   'le runtime client peut lire les variables locales depuis apps/client/.env quand le fichier existe',
   () => {
     const tempRoot = mkdtempSync(
