@@ -55,7 +55,7 @@ test(
         tiktokUrl: 'https://www.tiktok.com/@kraak.example',
         supabaseUrl: 'http://127.0.0.1:54321',
         supabasePublishableKey: 'local-publishable-key',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -91,7 +91,7 @@ test(
         apiBaseUrl: 'http://localhost:3000',
         supabaseUrl: 'http://127.0.0.1:54321',
         supabasePublishableKey: 'local-publishable-key',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -122,7 +122,7 @@ test(
         supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
         supabasePublishableKey:
           'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -143,7 +143,7 @@ test(
         processEnv: {},
       });
 
-      assert.deepEqual(runtimeConfig, { enableParticipantArea: false });
+      assert.deepEqual(runtimeConfig, { enableParticipantArea: true });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
     }
@@ -178,7 +178,7 @@ test(
         apiBaseUrl: 'https://api.kraak.example',
         supabaseUrl: 'https://kraak.supabase.co',
         supabasePublishableKey: 'production-publishable-key',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -218,7 +218,7 @@ test(
         apiBaseUrl: 'https://from-file.example',
         supabaseUrl: 'https://from-file.supabase.co',
         supabasePublishableKey: 'from-file-key',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -254,7 +254,7 @@ test(
         apiBaseUrl: 'https://quoted.example',
         supabaseUrl: 'https://quoted.supabase.co',
         supabasePublishableKey: 'line-1\nline-2',
-        enableParticipantArea: false,
+        enableParticipantArea: true,
       });
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
@@ -295,7 +295,7 @@ test(
 );
 
 test(
-  'le runtime client expose enableParticipantArea=false par defaut quand la variable est absente',
+  'le runtime client expose enableParticipantArea=true par defaut quand la variable est absente',
   () => {
     const tempRoot = mkdtempSync(
       path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
@@ -318,7 +318,7 @@ test(
         processEnv: {},
       });
 
-      assert.equal(runtimeConfig.enableParticipantArea, false);
+      assert.equal(runtimeConfig.enableParticipantArea, true);
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
     }

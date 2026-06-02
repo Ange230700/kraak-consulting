@@ -65,14 +65,6 @@
                 {
                   "replace": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.component.ts",
                   "with": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.prod.component.ts"
-                },
-                {
-                  "replace": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.component.ts",
-                  "with": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.prod.component.ts"
-                },
-                {
-                  "replace": "projects/web/src/app/participant-area.routes.ts",
-                  "with": "projects/web/src/app/participant-area.prod.routes.ts"
                 }
               ],
               "budgets": [

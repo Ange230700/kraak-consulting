@@ -229,12 +229,15 @@ export function loadClientRuntimeConfig(
     fileVariables,
     processEnv,
   );
+  const participantAreaRawValue = readRuntimeVariable(
+    'CLIENT_FEATURE_PARTICIPANT_AREA',
+    fileVariables,
+    processEnv,
+  );
   const enableParticipantArea =
-    readRuntimeVariable(
-      'CLIENT_FEATURE_PARTICIPANT_AREA',
-      fileVariables,
-      processEnv,
-    ) === 'true';
+    participantAreaRawValue === undefined
+      ? true
+      : participantAreaRawValue === 'true';
 
   return buildRuntimeConfig({
     apiBaseUrl,
