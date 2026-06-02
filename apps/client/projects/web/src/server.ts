@@ -8,6 +8,7 @@ import express from 'express';
 import { existsSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
 
+import { registerSeoRoutes } from './seo-routes';
 import { buildPrerenderedHtmlPath } from './ssr-path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -17,6 +18,7 @@ const participantAreaEnabled =
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+registerSeoRoutes(app);
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -107,6 +109,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
  * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
  */
 export const reqHandler = createNodeRequestHandler(app);
+export { app };
 
 function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
   if (!['GET', 'HEAD'].includes(req.method) || !req.accepts('html')) {
