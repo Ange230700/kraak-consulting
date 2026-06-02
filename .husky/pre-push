@@ -21,9 +21,23 @@ wait "$lint_pid" || status=$?
 
 [ "$status" -eq 0 ] || exit "$status"
 
-# Exécuter toutes les suites de tests locales hors E2E.
-# Les E2E restent exécutés manuellement selon le contexte d'environnement.
-pnpm test:libs
-pnpm test:api
-pnpm test:unit
-pnpm test:workspace
+# Force des defaults stables pour éviter qu'un shell local (ex: profile=local)
+# fausse des tests SEO sensibles au profil runtime.
+: "${KRAAK_E2E_BASE_URL:=http://localhost:4200}"
+: "${KRAAK_E2E_START_WEB_SERVER:=true}"
+: "${KRAAK_E2E_WEB_SERVER_URL:=http://localhost:4200}"
+: "${CLIENT_API_BASE_URL:=http://localhost:3000}"
+: "${CLIENT_SITE_URL:=http://localhost:4200}"
+if [[ -z "${KRAAK_E2E_WEB_SERVER_COMMAND:-}" ]]; then
+	KRAAK_E2E_WEB_SERVER_COMMAND='node ../../scripts/generate-client-runtime-config.mjs --env local && npx ng serve web --port 4200 --prebundle=false --live-reload=false'
+fi
+
+KRAAK_DEFAULTS_PROFILE=production \
+CLIENT_RUNTIME_ENV=production \
+KRAAK_E2E_BASE_URL="$KRAAK_E2E_BASE_URL" \
+KRAAK_E2E_START_WEB_SERVER="$KRAAK_E2E_START_WEB_SERVER" \
+KRAAK_E2E_WEB_SERVER_URL="$KRAAK_E2E_WEB_SERVER_URL" \
+CLIENT_API_BASE_URL="$CLIENT_API_BASE_URL" \
+CLIENT_SITE_URL="$CLIENT_SITE_URL" \
+KRAAK_E2E_WEB_SERVER_COMMAND="$KRAAK_E2E_WEB_SERVER_COMMAND" \
+pnpm test
