@@ -132,7 +132,29 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Construire l'image Docker API
-        run: docker build -f apps/api/Dockerfile -t kraak-api:ci .
+        run: |
+          node_image="mirror.gcr.io/library/node:22-bookworm-slim"
+
+          if ! docker pull "$node_image"; then
+            echo "Miroir Docker indisponible; bascule sur Docker Hub pour ce build."
+            node_image="node:22-bookworm-slim"
+          fi
+
+          retry_docker_build() {
+            local attempt=1
+
+            until docker build --build-arg NODE_IMAGE="$node_image" -f apps/api/Dockerfile -t kraak-api:ci .; do
+              if [[ "$attempt" -ge 3 ]]; then
+                return 1
+              fi
+
+              echo "Nouvelle tentative du build Docker API après un échec transitoire (${attempt}/3)."
+              attempt=$((attempt + 1))
+              sleep 20
+            done
+          }
+
+          retry_docker_build
 
   # ──────────────────────────────────────────────
   # Tests E2E (Playwright — Chromium)
