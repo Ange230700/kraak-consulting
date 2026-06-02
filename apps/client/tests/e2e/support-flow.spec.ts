@@ -1,14 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:4200';
-
 test.describe('Support flow - FAQ + 404 navigation', () => {
   test.describe('Given user lands on invalid page', () => {
     test('When navigating to 404 page Then displays FAQ link as help entry point', async ({
       page,
     }) => {
       // Given: User navigates to non-existent route
-      await page.goto(`${BASE_URL}/route-invalide-xyz`, {
+      await page.goto(`/route-invalide-xyz`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -28,7 +26,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on 404 page
-      await page.goto(`${BASE_URL}/page-inexistante`, {
+      await page.goto(`/page-inexistante`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -52,7 +50,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on 404 page
-      await page.goto(`${BASE_URL}/chemin-invalide`, {
+      await page.goto(`/chemin-invalide`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -84,7 +82,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User navigates to FAQ
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: Page is loaded
       await expect(page).toHaveTitle(/FAQ/i);
@@ -100,7 +98,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: User clicks first contact button
       const contactButton = page.locator('a[routerLink="/contact"]').first();
@@ -122,7 +120,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: Looking for accordion items
       const faqAccordion = page.locator('kraak-faq-accordion');
@@ -143,7 +141,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: User clicks services button
       const servicesButton = page.getByRole('link', {
@@ -160,7 +158,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: User targets the CTA placed at the end of the FAQ page
       const programsButton = page.getByRole('link', {
@@ -180,7 +178,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on home page
-      await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
 
       // When: User scrolls to footer
       const footer = page.locator('footer');
@@ -204,7 +202,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User navigates to a marketing page
-      await page.goto(`${BASE_URL}/a-propos`, {
+      await page.goto(`/a-propos`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -218,7 +216,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
     test('Given un visiteur sur la FAQ, When il ouvre la page contact, Then le formulaire de support est visible et actionnable', async ({
       page,
     }) => {
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       await page
         .getByRole('link', { name: 'Parler à un conseiller KRAAK' })
@@ -252,7 +250,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User navigates to FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: Page is loaded
       // Then: Page title should be set
@@ -271,7 +269,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User navigates to invalid page
-      await page.goto(`${BASE_URL}/notexist-xyz-404`, {
+      await page.goto(`/notexist-xyz-404`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -303,7 +301,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       ];
 
       for (const route of routes) {
-        await page.goto(`${BASE_URL}${route.path}`, {
+        await page.goto(`${route.path}`, {
           waitUntil: 'domcontentloaded',
         });
 
@@ -334,7 +332,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on 404 page
-      await page.goto(`${BASE_URL}/page-not-found-404`, {
+      await page.goto(`/page-not-found-404`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -352,7 +350,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on FAQ page
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: Finding first accordion button
       const firstAccordionButton = page.locator('[role="button"]').first();
@@ -374,7 +372,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
     }) => {
       // Given: User navigates to 404 page
       const startTime = Date.now();
-      await page.goto(`${BASE_URL}/invalid-page-perf-test`, {
+      await page.goto(`/invalid-page-perf-test`, {
         waitUntil: 'domcontentloaded',
       });
       const loadTime = Date.now() - startTime;
@@ -390,7 +388,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
     }) => {
       // Given: User navigates to FAQ page
       const startTime = Date.now();
-      await page.goto(`${BASE_URL}/faq`, { waitUntil: 'domcontentloaded' });
+      await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
       const loadTime = Date.now() - startTime;
       const loadThresholdMs = 8000;
 
