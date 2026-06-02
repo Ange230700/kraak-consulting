@@ -13,8 +13,13 @@ out/
 
 # Environnement
 .env
-.env.staging
-.env.prod
+.env.*
+.envrc
+.envrc.local
+!.env.example
+!.env.*.example
+!**/.env.example
+!**/.env.*.example
 
 # IDE / Éditeurs
 .idea/
@@ -75,3 +80,15 @@ apps/client/android/
 
 .vercel
 .env*.local
+
+# Secrets / credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cert
+
+# Local security scan outputs
+hardcoded-audit*.txt
+*secrets*.txt
