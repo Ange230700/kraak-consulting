@@ -5,7 +5,7 @@ const runtimeGa4Id = process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 
 export const environment = {
   production: true,
-  enableParticipantArea: false,
+  enableParticipantArea: true,
   siteUrl: runtimeClientConfig.siteUrl,
   apiBaseUrl: runtimeClientConfig.apiBaseUrl,
   supabaseUrl: runtimeClientConfig.supabaseUrl,
