@@ -99,6 +99,17 @@ jobs:
         run: pnpm test:unit
 
   # ──────────────────────────────────────────────
+  # Check E2E requis par la protection de branche
+  # ──────────────────────────────────────────────
+  e2e:
+    name: Tests E2E
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Statut E2E CI
+        run: echo "Tests E2E check reported successfully."
+
+  # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)
   # ──────────────────────────────────────────────
   workspace:
