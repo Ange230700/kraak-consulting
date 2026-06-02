@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, signal } from '@angular/core';
-import { buildAvatarCircleUrl } from '../brand/brand-constants';
+import {
+  TESTIMONIALS_PREVIEW,
+  TESTIMONIALS_PREVIEW_SECTION,
+  type TestimonialPreview,
+} from '../preview-content';
 
-export interface Testimonial {
-  id: number;
-  name: string;
-  job: string;
-  avatar: string;
-  comment: string;
-}
+export type Testimonial = TestimonialPreview;
 
 @Component({
   selector: 'kraak-testimonials',
@@ -19,32 +17,8 @@ export interface Testimonial {
 export class Testimonials {
   @Input() items: Testimonial[] = [];
   @Input() placeholder = true;
-  readonly fallbackTestimonials: Testimonial[] = [
-    {
-      id: 1,
-      name: 'Aïcha K.',
-      job: 'Jeune professionnelle',
-      avatar: buildAvatarCircleUrl('avatar-m-16.png'),
-      comment:
-        "Grâce à KRAAK, j'ai clarifié mon objectif de mobilité et identifié les étapes concrètes pour renforcer mon profil avant de lancer mes démarches.",
-    },
-    {
-      id: 2,
-      name: 'Moussa T.',
-      job: 'Entrepreneur',
-      avatar: buildAvatarCircleUrl('avatar-f-18.png'),
-      comment:
-        "L'accompagnement projet nous a permis de transformer une idée floue en feuille de route structurée, avec des priorités lisibles et des actions réalistes.",
-    },
-    {
-      id: 3,
-      name: 'Clarisse N.',
-      job: 'Responsable RH',
-      avatar: buildAvatarCircleUrl('avatar-m-1.png'),
-      comment:
-        'Le format entreprise est sobre, utile et orienté terrain. Il aide vraiment à travailler la cohésion, le leadership et la montée en compétences.',
-    },
-  ];
+  readonly previewSection = TESTIMONIALS_PREVIEW_SECTION;
+  readonly fallbackTestimonials: Testimonial[] = TESTIMONIALS_PREVIEW;
 
   readonly currentIndex = signal(0);
   readonly isAnimating = signal(false);

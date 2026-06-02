@@ -6,14 +6,15 @@
           <p
             class="border-secondary/20 bg-brand-white text-secondary inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase"
           >
-            Prévisualisation de l'équipe KRAAK
+            {{ previewSection.badge }}
           </p>
         }
 
-        <h2 class="mt-4 text-3xl font-bold lg:text-4xl">L'équipe KRAAK</h2>
+        <h2 class="mt-4 text-3xl font-bold lg:text-4xl">
+          {{ previewSection.title }}
+        </h2>
         <p class="mt-4 text-lg text-neutral-700">
-          En attendant la liste officielle, voici un aperçu du format de
-          présentation des membres de l'équipe.
+          {{ previewSection.description }}
         </p>
       </div>
 

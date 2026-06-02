@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-
-interface ImpactStat {
-  title: string;
-  label: string;
-}
+import {
+  IMPACT_STATS_PREVIEW,
+  IMPACT_STATS_PREVIEW_SECTION,
+  type ImpactStat,
+} from '../preview-content';
 
 @Component({
   selector: 'kraak-impact-stats',
@@ -13,18 +13,6 @@ interface ImpactStat {
   templateUrl: './impact-stats.component.html',
 })
 export class ImpactStats {
-  protected readonly stats: ImpactStat[] = [
-    {
-      title: '1M+',
-      label: 'Compétences activées vers des opportunités concrètes',
-    },
-    {
-      title: '72K+',
-      label: 'Parcours structurés lancés avec accompagnement ciblé',
-    },
-    {
-      title: '2.5M+',
-      label: 'Participants orientés vers emploi, projet ou mobilité',
-    },
-  ];
+  protected readonly previewSection = IMPACT_STATS_PREVIEW_SECTION;
+  protected readonly stats: ImpactStat[] = IMPACT_STATS_PREVIEW;
 }
