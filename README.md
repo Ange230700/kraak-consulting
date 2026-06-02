@@ -40,6 +40,10 @@ Remplir les valeurs manquantes — voir
 Le provider email/password local et les templates email du MVP sont versionnés
 dans [`supabase/config.toml`](supabase/config.toml) et documentés dans
 [`docs/runbooks/SUPABASE_AUTH_SETUP.md`](docs/runbooks/SUPABASE_AUTH_SETUP.md).
+La procédure de rotation manuelle des clés secrètes Supabase est documentée dans
+[`docs/runbooks/SUPABASE_SECRET_ROTATION.md`](docs/runbooks/SUPABASE_SECRET_ROTATION.md).
+La finalisation manuelle des variables d'environnement Render est documentée
+dans [`docs/runbooks/RENDER_ENV_FINALIZATION.md`](docs/runbooks/RENDER_ENV_FINALIZATION.md).
 
 ### Lancer en mode développement
 

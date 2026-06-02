@@ -1,4 +1,4 @@
-type ClientDefaults = {
+interface ClientDefaults {
   siteUrl: string;
   siteName: string;
   locale: string;
@@ -11,7 +11,7 @@ type ClientDefaults = {
   facebookUrl: string;
   instagramUrl: string;
   tiktokUrl: string;
-};
+}
 
 type DefaultsProfile = 'local' | 'staging' | 'production';
 
@@ -81,5 +81,6 @@ const DEFAULTS_BY_PROFILE: Record<DefaultsProfile, ClientDefaults> = {
   },
 };
 
-export const CLIENT_DEFAULTS =
-  DEFAULTS_BY_PROFILE[resolveDefaultsProfile()] as const;
+export const CLIENT_DEFAULTS = DEFAULTS_BY_PROFILE[
+  resolveDefaultsProfile()
+] as const;

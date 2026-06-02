@@ -140,7 +140,8 @@ sont déclarées directement dans `apps/api/.env` et `apps/client/.env`.
 La configuration Auth email/password versionnée du MVP ne vit pas dans ces
 fichiers `.env` mais dans `supabase/config.toml`, avec ses templates email
 locaux dans `supabase/templates/auth/`. Voir aussi
-[`SUPABASE_AUTH_SETUP.md`](SUPABASE_AUTH_SETUP.md).
+[`SUPABASE_AUTH_SETUP.md`](SUPABASE_AUTH_SETUP.md) et
+[`SUPABASE_SECRET_ROTATION.md`](SUPABASE_SECRET_ROTATION.md).
 
 Variables attendues :
 
@@ -180,6 +181,9 @@ Le fichier `render.yaml` déclare les variables d'environnement de production
 pour l'API : `NODE_ENV`, `PORT`, `APP_VERSION`, `SUPABASE_URL`,
 `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`,
 `CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`, `CORS_ALLOWED_ORIGIN_PATTERNS`.
+La procédure de vérification et de finalisation manuelle dans le dashboard
+Render est documentée dans
+[`RENDER_ENV_FINALIZATION.md`](RENDER_ENV_FINALIZATION.md).
 
 ## Convention de gestion
 
