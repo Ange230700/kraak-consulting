@@ -4,25 +4,28 @@ import { defineConfig, devices } from '@playwright/test';
  * Configuration Playwright pour les tests E2E du site web KRAAK.
  * Voir https://playwright.dev/docs/test-configuration
  */
-const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
-const localWebBaseUrl = `http://localhost:${localWebPort}`;
-const configuredBaseUrl = process.env['KRAAK_E2E_BASE_URL']?.trim();
-const resolvedBaseUrl =
-  configuredBaseUrl && configuredBaseUrl.length > 0
-    ? configuredBaseUrl
-    : localWebBaseUrl;
-const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
-const stripTrailingSlashes = (url: string): string => {
-  let normalizedUrl = url;
-  while (normalizedUrl.endsWith('/')) {
-    normalizedUrl = normalizedUrl.slice(0, -1);
+const requireEnv = (key: string): string => {
+  const value = process.env[key]?.trim();
+  if (!value) {
+    throw new Error(
+      `Variable d'environnement requise pour Playwright web: ${key}`,
+    );
   }
 
-  return normalizedUrl;
+  return value;
 };
-const shouldUseLocalWebServer =
-  stripTrailingSlashes(resolvedBaseUrl) ===
-  stripTrailingSlashes(localWebBaseUrl);
+const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+const shouldStartWebServer =
+  process.env['KRAAK_E2E_START_WEB_SERVER'] === 'true';
+const resolvedBaseUrl = requireEnv('KRAAK_E2E_BASE_URL');
+const resolvedClientApiBaseUrl = requireEnv('CLIENT_API_BASE_URL');
+const resolvedClientSiteUrl = requireEnv('CLIENT_SITE_URL');
+const resolvedWebServerUrl = shouldStartWebServer
+  ? requireEnv('KRAAK_E2E_WEB_SERVER_URL')
+  : '';
+const resolvedWebServerCommand = shouldStartWebServer
+  ? requireEnv('KRAAK_E2E_WEB_SERVER_COMMAND')
+  : '';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -54,15 +57,16 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
   ],
-  webServer: shouldUseLocalWebServer
+  webServer: shouldStartWebServer
     ? {
-        command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort} --prebundle=false --live-reload=false`,
-        url: localWebBaseUrl,
+        command: resolvedWebServerCommand,
+        url: resolvedWebServerUrl,
         reuseExistingServer,
         timeout: 180_000,
         env: {
           CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
-          CLIENT_API_BASE_URL: localWebBaseUrl,
+          CLIENT_API_BASE_URL: resolvedClientApiBaseUrl,
+          CLIENT_SITE_URL: resolvedClientSiteUrl,
         },
       }
     : undefined,

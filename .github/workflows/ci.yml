@@ -145,6 +145,16 @@ jobs:
     env:
       PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
       PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 120000
+      KRAAK_WEB_PORT: "4200"
+      KRAAK_E2E_BASE_URL: http://localhost:4200
+      KRAAK_E2E_WEB_SERVER_URL: http://localhost:4200
+      KRAAK_E2E_START_WEB_SERVER: "true"
+      KRAAK_E2E_WEB_SERVER_COMMAND: >-
+        node ../../scripts/generate-client-runtime-config.mjs --env local
+        && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })"
+        && npx ng serve web --port 4200 --prebundle=false --live-reload=false
+      CLIENT_API_BASE_URL: http://localhost:4200
+      CLIENT_SITE_URL: http://localhost:4200
     steps:
       - name: Désactiver les E2E longs sur PR
         if: ${{ github.event_name == 'pull_request' }}
