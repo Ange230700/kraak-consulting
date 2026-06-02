@@ -7,7 +7,8 @@
 Voir aussi : [`ARC-08-staging-environment`](../decisions/ARC-08-staging-environment.md),
 [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md),
 [`RELEASE_PROD`](RELEASE_PROD.md), [`ENVIRONMENT_VARIABLES`](ENVIRONMENT_VARIABLES.md),
-[`RENDER_WEB_TRANSITION`](RENDER_WEB_TRANSITION.md).
+[`RENDER_WEB_TRANSITION`](RENDER_WEB_TRANSITION.md),
+[`STAGING_PROD_SEPARATION_30MIN`](STAGING_PROD_SEPARATION_30MIN.md) (addendum RACI d'exploitation).
 
 ---
 
