@@ -8,6 +8,24 @@ const portInUsePattern = /Port \d+ is already in use/i;
 const addressInUsePattern = /EADDRINUSE|address already in use/i;
 const maxViteCacheLockLineLength = 16_384;
 
+function parsePortFromEnv(key, fallbackPort) {
+  const rawValue = process.env[key]?.trim();
+  if (!rawValue) {
+    return fallbackPort;
+  }
+
+  const parsed = Number.parseInt(rawValue, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0 || parsed > 65535) {
+    return fallbackPort;
+  }
+
+  return parsed;
+}
+
+const webPort = parsePortFromEnv('KRAAK_WEB_PORT', 4200);
+const mobilePort = parsePortFromEnv('KRAAK_MOBILE_PORT', 4300);
+const apiPort = parsePortFromEnv('API_PORT', 3000);
+
 function isViteCacheLockLine(line) {
   if (typeof line !== 'string') {
     return false;
@@ -40,7 +58,7 @@ const services = [
   {
     name: 'web',
     color: '\x1b[36m',
-    preferredPort: 4200,
+    preferredPort: webPort,
     cwd: process.cwd(),
     command: ['pnpm.cmd', '--filter', '@kraak/client', 'run', 'dev:web'],
     portArg: true,
@@ -48,7 +66,7 @@ const services = [
   {
     name: 'mobile',
     color: '\x1b[35m',
-    preferredPort: 4300,
+    preferredPort: mobilePort,
     cwd: process.cwd(),
     command: ['pnpm.cmd', '--filter', '@kraak/client', 'run', 'dev:mobile'],
     portArg: true,
@@ -57,7 +75,7 @@ const services = [
   {
     name: 'api',
     color: '\x1b[32m',
-    preferredPort: 3000,
+    preferredPort: apiPort,
     cwd: process.cwd(),
     command: ['pnpm.cmd', '--filter', '@kraak/api', 'run', 'dev'],
     portArg: false,

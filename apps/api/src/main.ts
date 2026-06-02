@@ -4,6 +4,17 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { buildCorsOptions } from './cors';
 
+function resolvePort(): number {
+  const rawPort = process.env['PORT'] ?? process.env['API_PORT'] ?? '3000';
+  const parsed = Number.parseInt(rawPort, 10);
+
+  if (Number.isFinite(parsed) && parsed > 0 && parsed <= 65535) {
+    return parsed;
+  }
+
+  return 3000;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -71,7 +82,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api-docs', app, document);
 
-  const port = process.env['PORT'] ?? 3000;
+  const port = resolvePort();
   await app.listen(port);
 }
 
