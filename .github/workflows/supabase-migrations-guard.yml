@@ -1,0 +1,111 @@
+name: Supabase Migrations Guard
+
+on:
+  push:
+    branches: [staging, main]
+    paths:
+      - "supabase/migrations/**"
+      - ".github/workflows/supabase-migrations-guard.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-migrations-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: Guard Branch Mapping
+    runs-on: ubuntu-latest
+    outputs:
+      target_environment: ${{ steps.map.outputs.target_environment }}
+    steps:
+      - name: Fail fast on unsupported events
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" != "push" ]]; then
+            echo "Only push events are allowed for database applies."
+            exit 1
+          fi
+
+      - name: Resolve environment from branch
+        id: map
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          case "${GITHUB_REF_NAME}" in
+            staging)
+              echo "target_environment=staging" >> "$GITHUB_OUTPUT"
+              ;;
+            main)
+              echo "target_environment=production" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Branch '${GITHUB_REF_NAME}' is not allowed to apply Supabase migrations."
+              exit 1
+              ;;
+          esac
+
+  apply-migrations:
+    name: Apply Supabase Migrations
+    needs: guard
+    runs-on: ubuntu-latest
+    environment: ${{ needs.guard.outputs.target_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate environment-scoped secrets
+        id: secrets
+        shell: bash
+        env:
+          STAGING_DB_URL: ${{ secrets.SUPABASE_DB_URL_STAGING }}
+          PRODUCTION_DB_URL: ${{ secrets.SUPABASE_DB_URL_PRODUCTION }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF_NAME}" == "staging" ]]; then
+            if [[ -z "${STAGING_DB_URL}" ]]; then
+              echo "Missing SUPABASE_DB_URL_STAGING in staging environment secrets."
+              exit 1
+            fi
+            if [[ -n "${PRODUCTION_DB_URL}" ]]; then
+              echo "SUPABASE_DB_URL_PRODUCTION must not be set in staging environment secrets."
+              exit 1
+            fi
+            echo "db_url=${STAGING_DB_URL}" >> "$GITHUB_OUTPUT"
+            echo "target=staging" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            if [[ -z "${PRODUCTION_DB_URL}" ]]; then
+              echo "Missing SUPABASE_DB_URL_PRODUCTION in production environment secrets."
+              exit 1
+            fi
+            if [[ -n "${STAGING_DB_URL}" ]]; then
+              echo "SUPABASE_DB_URL_STAGING must not be set in production environment secrets."
+              exit 1
+            fi
+            echo "db_url=${PRODUCTION_DB_URL}" >> "$GITHUB_OUTPUT"
+            echo "target=production" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Unsupported branch '${GITHUB_REF_NAME}'."
+          exit 1
+
+      - name: Apply migrations to mapped database
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Applying migrations to '${{ steps.secrets.outputs.target }}' from branch '${GITHUB_REF_NAME}'."
+          supabase db push --db-url "${{ steps.secrets.outputs.db_url }}"
