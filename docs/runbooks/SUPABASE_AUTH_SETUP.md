@@ -65,6 +65,13 @@ Avant de considérer `AUT-01` comme prêt :
 3. Les templates de confirmation et de récupération utilisent un lien Supabase valide
 4. Les politiques RLS de base du schéma initial restent actives
 
+Les tables sensibles du socle `app_user`, `participant`, `support_request`,
+`session`, `announcement`, `cohort`, `enrollment`, `notification`, `program`
+et `resource` utilisent maintenant une policy permissive unique par action
+(`SELECT`, `INSERT`, `UPDATE`, `DELETE`) pour supprimer les warnings
+`multiple_permissive_policies` du linter Supabase tout en conservant les droits
+admin, formateur, utilisateur et lecture publique attendus.
+
 ## Politique de rate-limit email (staging)
 
 Objectif staging : éviter les blocages du flux mot de passe oublié pendant les
