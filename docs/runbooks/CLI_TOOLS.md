@@ -225,7 +225,7 @@ supabase functions list                # edge functions
 
 - Le mode `--local` nécessite la stack locale Supabase démarrée.
 - Le mode `--linked` s'exécute contre le projet Supabase lié (staging ou prod selon le `project-ref` actif).
-- `--fail-on warn` est recommandé en CI pour faire échouer le job dès qu'un problème significatif est détecté.
+- Le script racine `pnpm splinter:linked` est bloquant sur les erreurs seulement ; `pnpm splinter:linked:warnings` sert à relire les advisories de niveau warning.
 
 Scripts racine prêts à l'emploi:
 
