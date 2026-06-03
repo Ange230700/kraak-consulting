@@ -154,9 +154,9 @@ publique de contenu. Voir
 
 ## Statut de phase
 
-- Statut actuel: **vitrine publique close** (scope gele).
+- Statut actuel: **vitrine publique close** (scope gelé).
 - Prochaine phase: implementation et durcissement des **routes protegees**.
-- Regle de gouvernance: aucune nouvelle route publique sans decision ARC
+- Règle de gouvernance: aucune nouvelle route publique sans decision ARC
   explicite.
 
 ---
@@ -184,6 +184,10 @@ publique de contenu. Voir
 | `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local           |
 | `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging         |
 | `pnpm test:api`             | Tests unitaires API                                       |
+| `pnpm splinter:local`       | Lancer Splinter (Supabase Advisors) sur la DB locale      |
+| `pnpm splinter:linked`      | Lancer Splinter (Supabase Advisors) sur le projet lié     |
+| `pnpm splinter:sec`         | Lancer les checks sécurité Splinter sur le projet lié     |
+| `pnpm splinter:perf`        | Lancer les checks performance Splinter sur le projet lié  |
 | `pnpm sonar`                | Lancer l'analyse SonarCloud locale avec `.env.local`      |
 | `pnpm typecheck`            | Vérifier le typage web, mobile et API                     |
 | `pnpm test:unit`            | Tests unitaires client                                    |

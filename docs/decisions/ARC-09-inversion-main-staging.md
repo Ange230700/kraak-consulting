@@ -41,7 +41,7 @@ KRAAK **inverse les rôles** des deux branches longues posés par ARC-08 :
 
 | Branche   | Rôle                                                                                                         |
 | --------- | ------------------------------------------------------------------------------------------------------------ |
-| `staging` | **Branche d'intégration longue.** Toutes les branches courtes en sont issues et y sont mergées par PR.       |
+| `staging` | **Branche d'intégration longue.** Toutes les branches courtes en sont issues et y sont mergée par PR.        |
 | `main`    | **Branche de release uniquement.** Avance par PR depuis `staging` ; sert d'ancrage aux tags SemVer (ARC-07). |
 
 ### 2.1 Règles de branchage (remplace ARC-02 § Workflow Git)

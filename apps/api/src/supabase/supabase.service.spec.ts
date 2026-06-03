@@ -138,6 +138,60 @@ describe('SupabaseService', () => {
     );
   });
 
+  // Given SUPABASE_ANON_KEY est fourni à la place de SUPABASE_PUBLISHABLE_KEY
+  // When createAuthClient est appelé
+  // Then la clé anon legacy est acceptée
+  it('Given la clé anon legacy, When createAuthClient est appelé, Then SUPABASE_ANON_KEY est utilisé', async () => {
+    jest.mocked(createClient).mockReturnValue(mockClient as never);
+
+    const service = await buildService({
+      SUPABASE_URL: 'https://example.supabase.co',
+      SUPABASE_SECRET_KEY: 'service-role-key',
+      SUPABASE_PUBLISHABLE_KEY: undefined,
+      SUPABASE_ANON_KEY: 'legacy-anon-key',
+    });
+
+    expect(service.createAuthClient()).toBe(mockClient);
+    expect(createClient).toHaveBeenCalledWith(
+      'https://example.supabase.co',
+      'legacy-anon-key',
+      {
+        auth: {
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+          persistSession: false,
+        },
+      },
+    );
+  });
+
+  // Given SUPABASE_SERVICE_ROLE_KEY est fourni à la place de SUPABASE_SECRET_KEY
+  // When createAuthClient est appelé sans clé publishable
+  // Then la clé service-role legacy est utilisée en fallback
+  it('Given la clé service-role legacy, When createAuthClient est appelé, Then SUPABASE_SERVICE_ROLE_KEY est utilisé', async () => {
+    jest.mocked(createClient).mockReturnValue(mockClient as never);
+
+    const service = await buildService({
+      SUPABASE_URL: 'https://example.supabase.co',
+      SUPABASE_SECRET_KEY: undefined,
+      SUPABASE_SERVICE_ROLE_KEY: 'legacy-service-role-key',
+      SUPABASE_PUBLISHABLE_KEY: undefined,
+    });
+
+    expect(service.createAuthClient()).toBe(mockClient);
+    expect(createClient).toHaveBeenCalledWith(
+      'https://example.supabase.co',
+      'legacy-service-role-key',
+      {
+        auth: {
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+          persistSession: false,
+        },
+      },
+    );
+  });
+
   // Given aucune clé auth Supabase n'est disponible
   // When createAuthClient est appelé
   // Then une erreur explicite est levée

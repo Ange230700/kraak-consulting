@@ -321,6 +321,12 @@ export class AuthController {
     schema: apiErrorSchema,
   })
   @ApiResponse({
+    status: 429,
+    description:
+      'Trop de demandes de réinitialisation envoyées dans une fenêtre courte',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
     status: 500,
     description: 'Erreur serveur lors de la demande de réinitialisation',
     schema: apiErrorSchema,

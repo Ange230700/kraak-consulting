@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -152,6 +154,32 @@ export class AuthService {
     });
 
     if (error) {
+      const errorCode =
+        (error as { code?: string; error_code?: string }).code ??
+        (error as { code?: string; error_code?: string }).error_code ??
+        null;
+      const isRateLimited =
+        (error as { status?: number }).status === 429 ||
+        errorCode === 'over_email_send_rate_limit' ||
+        (error.message ?? '').toLowerCase().includes('rate limit');
+
+      console.warn('[AuthService] Password reset request failed.', {
+        status: (error as { status?: number }).status ?? null,
+        code: errorCode,
+        message: error.message ?? null,
+      });
+
+      if (isRateLimited) {
+        throw new HttpException(
+          {
+            success: false,
+            message:
+              'Trop de demandes de réinitialisation ont été envoyées récemment. Réessayez dans quelques minutes.',
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+
       throw new BadRequestException({
         success: false,
         message: "Impossible d'envoyer l'email de réinitialisation.",

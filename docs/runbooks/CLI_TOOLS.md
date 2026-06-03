@@ -209,8 +209,31 @@ render logs <service-id> --tail
 supabase migration list                # historique migrations local vs distant
 supabase db push                       # appliquer les migrations en attente
 supabase db pull                       # récupérer le schéma distant
+supabase db advisors --local           # Splinter local (sécurité + performance)
+supabase db advisors --linked          # Splinter sur le projet Supabase lié
+supabase db advisors --linked --type security --level warn --fail-on warn
+                                       # Splinter sécurité (échec si WARN/ERROR)
+supabase db advisors --linked --type performance --level warn --fail-on warn
+                                       # Splinter performance (échec si WARN/ERROR)
 supabase gen types typescript --linked > packages/contracts/src/db.types.ts
 supabase functions list                # edge functions
+```
+
+### Splinter (Supabase Postgres LINTER)
+
+`supabase db advisors` est le point d'entrée CLI pour les contrôles Splinter.
+
+- Le mode `--local` nécessite la stack locale Supabase démarrée.
+- Le mode `--linked` s'exécute contre le projet Supabase lié (staging ou prod selon le `project-ref` actif).
+- `--fail-on warn` est recommandé en CI pour faire échouer le job dès qu'un problème significatif est détecté.
+
+Scripts racine prêts à l'emploi:
+
+```bash
+pnpm splinter:local
+pnpm splinter:linked
+pnpm splinter:security:linked
+pnpm splinter:performance:linked
 ```
 
 ### 5.4 Newman / régression API

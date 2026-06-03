@@ -457,7 +457,7 @@ export function resolveTaskkillExecutablePath(baseEnvironment = process.env) {
   const systemRoot = baseEnvironment.SystemRoot?.trim() || baseEnvironment.WINDIR?.trim();
 
   if (!systemRoot) {
-    throw new Error('Impossible de determiner le chemin systeme Windows (SystemRoot/WINDIR manquant).');
+    throw new Error('Impossible de determiner le chemin système Windows (SystemRoot/WINDIR manquant).');
   }
 
   const taskkillExecutablePath = path.join(systemRoot, 'System32', 'taskkill.exe');

@@ -1,12 +1,12 @@
 # Audit complet des pages vitrine KRAAK — Status MVP v1.0.0
 
 > Statut documentaire (PR-06): ce fichier est conserve comme **historique
-> d'audit**. Il ne fait plus foi pour le statut courant du perimetre vitrine.
-> La reference active est desormais:
+> d'audit**. Il ne fait plus foi pour le statut courant du périmètre vitrine.
+> La référence active est désormais:
 >
-> - `README.md` (surface publique gelee)
+> - `README.md` (surface publique gelée)
 > - `docs/decisions/ARC-14-freeze-surface-vitrine-publique.md`
-> - `docs/runbooks/STAGING_PROMOTION.md` (Definition of Done vitrine fermee)
+> - `docs/runbooks/STAGING_PROMOTION.md` (Definition of Done vitrine fermée)
 
 **Date du rapport:** 9 mai 2026  
 **Périmètre:** Pages publiques de marketing/vitrine (`apps/client/projects/web/src/app/features/`)  
@@ -453,7 +453,7 @@ duplicatedPartners = [...this.partners, ...this.partners]; // ← Duplication po
 ```html
 <!-- fading-partners.html -->
 <h2 class="...">Partenaires et clients de confiance</h2>
-<!-- ← TITRE SUGÈRE VRAIS PARTENAIRES, MAIS LES 5 SONT PLACEHOLDER -->
+<!-- ← TITRE SUGGÈRE VRAIS PARTENAIRES, MAIS LES 5 SONT PLACEHOLDER -->
 
 @for (partner of duplicatedPartners; track $index) {
 <div class="...">

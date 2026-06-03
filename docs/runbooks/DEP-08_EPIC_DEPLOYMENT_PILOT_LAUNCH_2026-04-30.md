@@ -10,7 +10,7 @@ Consolider la clôture de l'epic Deployment en validant les prérequis DEP-01 à
 en rejouant les contrôles techniques critiques, et en statuant de manière explicite
 sur la capacité de lancement pilote maîtrisé.
 
-## Etat des taches DEP
+## État des taches DEP
 
 - DEP-01: CLOSED
 - DEP-02: CLOSED
@@ -63,17 +63,17 @@ Justification:
 
 ## Addendum PR-06 - Cloture vitrine et handoff
 
-Etat de reference post-cloture vitrine:
+État de reference post-cloture vitrine:
 
-- le perimetre vitrine publique est ferme et gele
-- les evolutions prioritaires sont redirigees vers routes protegees
-- aucune extension de surface publique sans decision ARC explicite
+- le périmètre vitrine publique est ferme et gelé
+- les évolutions prioritaires sont redirigées vers routes protégées
+- aucune extension de surface publique sans décision ARC explicite
 
 Checklist de handoff:
 
-- [ ] runbooks DEP/QAT alignees avec le statut vitrine close
-- [ ] README + backlog sans contradiction de perimetre
-- [ ] criteres de transition vers routes protegees explicitement traces
+- [ ] runbooks DEP/QAT alignées avec le statut vitrine close
+- [ ] README + backlog sans contradiction de périmètre
+- [ ] critères de transition vers routes protégées explicitement tracés
 
 ## Blocages PR et contraintes de review
 

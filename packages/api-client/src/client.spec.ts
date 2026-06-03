@@ -332,11 +332,11 @@ describe('HTTP behaviour', () => {
 
     const client = createApiClient(baseConfig());
     await client.contact.submit({
-      firstName: 'Alice',
-      lastName: 'Dupont',
+      name: 'Alice Dupont',
       email: 'alice@example.com',
-      subject: 'question',
+      subject: 'Question',
       message: 'Bonjour',
+      category: 'other',
     });
 
     const [url, init] = fetchSpy.mock.calls[0];

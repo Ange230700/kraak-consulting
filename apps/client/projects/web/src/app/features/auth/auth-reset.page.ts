@@ -29,6 +29,8 @@ interface AuthResetFormModel {
 export default class AuthResetPage implements OnInit {
   private readonly authService = inject(WebAuthService);
   private readonly messageService = inject(MessageService);
+  private readonly invalidRecoveryLinkMessage =
+    'Le lien de réinitialisation est invalide ou expiré. Demandez un nouveau lien.';
 
   readonly form = new FormGroup<AuthResetFormModel>({
     password: new FormControl('', {
@@ -57,9 +59,7 @@ export default class AuthResetPage implements OnInit {
       this.recoveryToken.set(token);
 
       if (!token) {
-        this.errorMessage.set(
-          'Le lien de réinitialisation est invalide ou expiré. Demandez un nouveau lien.',
-        );
+        this.errorMessage.set(this.invalidRecoveryLinkMessage);
       }
 
       this.clearSensitiveUrlFragments();
@@ -86,9 +86,7 @@ export default class AuthResetPage implements OnInit {
     }
 
     if (!this.recoveryToken()) {
-      this.errorMessage.set(
-        'Le lien de réinitialisation est invalide ou expiré. Demandez un nouveau lien.',
-      );
+      this.errorMessage.set(this.invalidRecoveryLinkMessage);
       return;
     }
 
@@ -106,9 +104,8 @@ export default class AuthResetPage implements OnInit {
     const token = this.recoveryToken();
 
     if (!token) {
-      this.errorMessage.set(
-        'Le lien de réinitialisation est invalide ou expiré. Demandez un nouveau lien.',
-      );
+      this.errorMessage.set(this.invalidRecoveryLinkMessage);
+      this.submitting.set(false);
       return;
     }
 

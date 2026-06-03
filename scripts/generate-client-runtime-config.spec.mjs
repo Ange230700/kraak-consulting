@@ -12,7 +12,7 @@ import {
 } from './generate-client-runtime-config.mjs';
 
 test(
-  'le runtime client expose aussi les URLs publiques de marque et contact quand elles sont definies',
+  'le runtime client expose aussi les URLs publiques de marque et contact quand elles sont définies',
   () => {
     const tempRoot = mkdtempSync(
       path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
@@ -227,7 +227,7 @@ test(
 );
 
 test(
-  'le runtime client supporte la syntaxe export, les guillemets et les sauts de ligne echappes depuis le fichier env',
+  'le runtime client supporte la syntaxe export, les guillemets et les sauts de ligne échappés depuis le fichier env',
   () => {
     const tempRoot = mkdtempSync(
       path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
@@ -295,7 +295,7 @@ test(
 );
 
 test(
-  'le runtime client expose enableParticipantArea=true par defaut quand la variable est absente',
+  'le runtime client expose enableParticipantArea=true par défaut quand la variable est absente',
   () => {
     const tempRoot = mkdtempSync(
       path.join(os.tmpdir(), 'kraak-client-runtime-config-'),

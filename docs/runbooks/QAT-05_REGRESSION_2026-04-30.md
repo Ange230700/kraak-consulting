@@ -8,15 +8,15 @@ Issue: #116
 
 Executer une campagne de regression complete et identifier les blockers critiques avant poursuite vers QAT-06.
 
-## Dependances
+## Dépendances
 
 - QAT-02: couverture unitaire composants critiques
 - QAT-03: couverture integration API modules critiques
 - QAT-04: couverture E2E Given/When/Then parcours coeur participant
 
-Etat constate pendant la campagne: satisfaites (les suites associees passent).
+État constate pendant la campagne: satisfaites (les suites associées passent).
 
-## Commandes executees
+## Commandes exécutées
 
 1. `pnpm typecheck`
 2. `pnpm format:check`
@@ -33,7 +33,7 @@ Le dépôt expose désormais deux modes Newman pour la collection `api-user-jour
 
 Le workflow nocturne dédié `Nightly Regression` exécute le job Newman strict contre `https://kraak-api-staging.onrender.com` afin de garder un signal de régression sans alourdir la CI principale.
 
-## Resultats
+## Résultats
 
 - Typecheck: OK (web, mobile, api)
 - Format check: OK
@@ -46,12 +46,12 @@ Le workflow nocturne dédié `Nightly Regression` exécute le job Newman strict 
 - Tests API (Jest): 21 suites, 138 tests passes
 - Tests client web (Vitest): 22 fichiers, 84 tests passes
 - Tests client mobile (Vitest): 26 fichiers, 114 tests passes
-- Tests E2E Playwright: 19 passes, 0 echec
+- Tests E2E Playwright: 19 passes, 0 échec
 
 ## Blockers
 
-Aucun blocker detecte pendant cette campagne.
+Aucun blocker détecté pendant cette campagne.
 
 ## Conclusion
 
-QAT-05 est valide pour le scope regression/correction blockers: la campagne est complete et verte, sans correction applicative necessaire a cette date.
+QAT-05 est valide pour le scope regression/correction blockers: la campagne est complete et verte, sans correction applicative nécessaire a cette date.

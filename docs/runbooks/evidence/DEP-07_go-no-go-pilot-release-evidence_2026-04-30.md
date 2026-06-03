@@ -64,7 +64,7 @@ Issue: #124
 | 8   | Tests unitaires critiques API passés          | ✅ GO    | QAT-03               |
 | 9   | Tests de régression passés                    | ✅ GO    | QAT-05               |
 
-**Tous les critères P0 : ✅ GO**
+## Résumé critères P0 : ✅ GO
 
 ---
 
@@ -124,7 +124,7 @@ Résultat : 2 tests passés en ~34s
 
 ## 4. Tag Git de release
 
-```
+```text
 Tag : pilot-2026-04-30
 Branche source : main
 Commit : afb9ee2 (merge DEP-07)
