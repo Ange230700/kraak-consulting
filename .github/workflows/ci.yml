@@ -42,6 +42,13 @@ jobs:
         with:
           version: latest
 
+      - name: Link Supabase staging project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_STAGING_PROJECT_REF: ${{ secrets.SUPABASE_STAGING_PROJECT_REF }}
+        run: |
+          supabase link --project-ref "$SUPABASE_STAGING_PROJECT_REF"
+
       - name: Vérifier le formatage (Prettier)
         run: pnpm format:check
 
