@@ -4,8 +4,8 @@ on:
   push:
     branches: [staging, main]
     paths:
-      - 'supabase/migrations/**'
-      - '.github/workflows/supabase-migrations-guard.yml'
+      - "supabase/migrations/**"
+      - ".github/workflows/supabase-migrations-guard.yml"
 
 concurrency:
   group: supabase-migrations-${{ github.ref_name }}
