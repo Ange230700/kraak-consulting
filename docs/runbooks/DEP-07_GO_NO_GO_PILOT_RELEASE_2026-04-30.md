@@ -267,9 +267,9 @@ Avant d'ouvrir la phase routes protegees, verifier explicitement:
 
 - [ ] PR de cloture vitrine mergee sur `staging`
 - [ ] Surface vitrine gelee alignee dans README + ARC-14
-- [ ] Aucun P0/P1 vitrine ouvert dans le backlog operationnel
+- [ ] Aucun P0/P1 vitrine ouvert dans le backlog opérationnel
 - [ ] Dry-run release prod execute et documente
-- [ ] Observabilite staging revalidee sur les URLs cibles finales
+- [ ] Observabilité staging revalidée sur les URLs cibles finales
 
 Decision attendue:
 

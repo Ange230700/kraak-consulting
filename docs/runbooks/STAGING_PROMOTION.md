@@ -248,20 +248,20 @@ synchroniser l'historique des migrations versionnées.
 Cet addendum verrouille la fin de phase vitrine publique et sert de garde-fou
 avant bascule vers les routes protegees.
 
-### Definition of Done vitrine fermee
+### Definition of Done vitrine fermée
 
 - [ ] Toutes les routes vitrine gelees ont au moins un test E2E de presence
       et un test SEO head.
 - [ ] Les pages de support `401`, `403`, `404`, `500` ont une couverture E2E
       complete (rendu, SEO, CTA).
-- [ ] Les checks accessibilite/performance publics sont verts et stables sur 3
-      executions CI consecutives.
-- [ ] Promotion staging executee et tracee (preuves datees et reproductibles).
-- [ ] Dry-run release prod execute et documente.
-- [ ] Documentation alignee sans contradiction sur le perimetre vitrine final.
+- [ ] Les checks accessibilité/performance publics sont verts et stables sur 3
+      executions CI consécutives.
+- [ ] Promotion staging exécutée et tracée (preuves datées et reproductibles).
+- [ ] Dry-run release prod exécuté et documenté.
+- [ ] Documentation alignée sans contradiction sur le périmètre vitrine final.
 
-### Regle de gouvernance post-cloture
+### Règle de gouvernance post-clôture
 
-- Toute nouvelle route publique est interdite sans decision ARC explicite.
-- Le backlog actif doit prioriser les routes protegees et les parcours
+- Toute nouvelle route publique est interdite sans décision ARC explicite.
+- Le backlog actif doit prioriser les routes protégées et les parcours
   participants.

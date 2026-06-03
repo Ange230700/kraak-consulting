@@ -1,4 +1,4 @@
-# Modele de commentaire d'issue — preuve d'execution
+# Modèle de commentaire d'issue — preuve d'execution
 
 Copier-coller ce bloc dans un commentaire d'issue GitHub pour tracer officiellement la separation staging/prod.
 
@@ -6,7 +6,7 @@ Copier-coller ce bloc dans un commentaire d'issue GitHub pour tracer officiellem
 ## Preuve d'execution — separation staging/prod
 
 Date: YYYY-MM-DD
-Operateur: @Ange230700
+Opérateur: @Ange230700
 Depot: Ange230700/kraak-consulting
 Runbook applique: docs/runbooks/STAGING_PROD_SEPARATION_30MIN.md
 
@@ -17,10 +17,10 @@ Runbook applique: docs/runbooks/STAGING_PROD_SEPARATION_30MIN.md
   - `Ange230700` conserve ses droits admin
   - Capture: <ajouter image ou lien>
 - [ ] Ruleset tags `v*` actif
-  - Creation/update tag SemVer autorisee pour `kraakconsulting` et `Ange230700`
+  - Creation/update tag SemVer autorisée pour `kraakconsulting` et `Ange230700`
   - Capture: <ajouter image ou lien>
-- [ ] Protection de branche: `Require review from Code Owners` activee
-  - Branches verifiees: `staging` (et `main` si applicable)
+- [ ] Protection de branche: `Require review from Code Owners` activée
+  - Branches vérifiées: `staging` (et `main` si applicable)
   - Capture: <ajouter image ou lien>
 
 ### 2) Render
@@ -42,34 +42,34 @@ Runbook applique: docs/runbooks/STAGING_PROD_SEPARATION_30MIN.md
 
 ### 3) Vercel
 
-- [ ] Droit de deploiement Production verifie
-  - Projet prod rattache a `kraakconsulting`
-  - Projet staging rattache a `Ange230700`
+- [ ] Droit de déploiement Production vérifié
+  - Projet prod rattaché à `kraakconsulting`
+  - Projet staging rattaché à `Ange230700`
   - `Ange230700` conserve les droits admin
   - Capture: <ajouter image ou lien>
-- [ ] Verification `Production Branch`
+- [ ] Vérification `Production Branch`
   - Conforme au flux actuel (pas de changement disruptif)
   - Capture: <ajouter image ou lien>
 
-### 4) Validation operationnelle
+### 4) Validation opérationnelle
 
-- [ ] Test gate release prod effectue
+- [ ] Test gate release prod effectué
   - Workflow: `Release Prod`
   - Statut attendu: bloque sur l'approbation environment `production`
-  - `kraakconsulting` est approbateur present
+  - `kraakconsulting` est approbateur présent
   - `Ange230700` conserve les droits admin sur l'environnement
   - Lien Action: <coller URL du run GitHub Actions>
-- [ ] Test staging non regressif effectue
-  - Auto-deploiement OK sur `kraak-web-staging` et `kraak-api-staging`
+- [ ] Test staging non regressif effectué
+  - Auto-déploiement OK sur `kraak-web-staging` et `kraak-api-staging`
   - Healthcheck OK: https://kraak-api-staging.onrender.com/health
-  - Liens de deploiement: <Render web staging>, <Render api staging>
+  - Liens de déploiement: <Render web staging>, <Render api staging>
 
-### 5) Resultat
+### 5) Résultat
 
-- [ ] Separation appliquee sans rupture de flux.
-- [ ] Exploitation staging pilotee par `Ange230700`.
-- [ ] Exploitation prod pilotee par `kraakconsulting`.
-- [ ] Droits admin globaux conserves pour `Ange230700`.
+- [ ] Separation appliquée sans rupture de flux.
+- [ ] Exploitation staging pilotée par `Ange230700`.
+- [ ] Exploitation prod pilotée par `kraakconsulting`.
+- [ ] Droits admin globaux conservés pour `Ange230700`.
 
 ### 6) Liens utiles
 

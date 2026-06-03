@@ -16,8 +16,8 @@ Evidence:
   - Local: `apps/api/.env.local`, `apps/client/.env.local`, `supabase/.env.local`
   - Staging: `apps/api/.env.staging`, `apps/client/.env.staging`, `supabase/.env.staging`
   - Production-pilot: Variables configured in deployment platforms
-    - Vercel: https://vercel.com/dashboard/kraak-group (Environment Variables)
-    - Render: https://dashboard.render.com > kraak-api > Environment
+    - Vercel: <https://vercel.com/dashboard/kraak-group> (Environment Variables)
+    - Render: <https://dashboard.render.com> > kraak-api > Environment
 - Deployment URLs stable and documented:
   - Web (pilot): `https://kraak-consulting.vercel.app`
   - API (pilot): `https://kraak-api-staging.onrender.com`
@@ -36,7 +36,7 @@ Evidence:
   - GitHub Actions workflow `observability.yml` runs every 15 minutes
   - Automatic GitHub issue creation/closure on health status changes
 - Validation evidence stored: `docs/runbooks/evidence/DEP-05_observability-alerting-evidence_2026-04-30.md`
-- Workflow status: https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml
+- Workflow status: <https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml>
 
 ### QAT-06: Checks accessibilité/performance pré-pilot
 

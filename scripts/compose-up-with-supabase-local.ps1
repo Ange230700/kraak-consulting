@@ -1,5 +1,5 @@
 # scripts/compose-up-with-supabase-local.ps1
-# Lance Supabase local, exporte les variables requises et demarre Docker Compose.
+# Lance Supabase local, exporte les variables requises et démarre Docker Compose.
 
 [CmdletBinding()]
 param(
@@ -17,12 +17,12 @@ if (-not (Get-Command supabase -ErrorAction SilentlyContinue)) {
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    throw "docker est requis et doit etre disponible dans le PATH."
+    throw "docker est requis et doit être disponible dans le PATH."
 }
 
 Set-Location $repoRoot
 
-Write-Host "[compose-helper] Demarrage de Supabase local..."
+Write-Host "[compose-helper] Démarrage de Supabase local..."
 supabase start | Out-Host
 
 Write-Host "[compose-helper] Lecture des variables Supabase..."
@@ -45,7 +45,7 @@ if ([string]::IsNullOrWhiteSpace($supabaseUrl) -or
     throw "Impossible de lire API_URL, ANON_KEY et SERVICE_ROLE_KEY depuis 'supabase status -o env'."
 }
 
-# Docker Desktop expose l'hote via host.docker.internal depuis les conteneurs.
+# Docker Desktop expose l’hôte via host.docker.internal depuis les conteneurs.
 $containerSupabaseUrl = $supabaseUrl.Replace("127.0.0.1", "host.docker.internal").Replace("localhost", "host.docker.internal")
 
 $env:SUPABASE_URL = $containerSupabaseUrl
@@ -55,5 +55,5 @@ $env:CLIENT_SUPABASE_URL = $env:SUPABASE_URL
 $env:CLIENT_SUPABASE_PUBLISHABLE_KEY = $env:SUPABASE_PUBLISHABLE_KEY
 $env:CLIENT_API_BASE_URL = "http://api:3000"
 
-Write-Host "[compose-helper] Variables exportees. Lancement de Docker Compose..."
+Write-Host "[compose-helper] Variables exportées. Lancement de Docker Compose..."
 docker compose -f compose.local.yml up --build @ComposeArgs

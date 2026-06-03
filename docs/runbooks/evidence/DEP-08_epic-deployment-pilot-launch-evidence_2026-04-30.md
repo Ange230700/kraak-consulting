@@ -13,9 +13,9 @@ Commande:
 pnpm lint
 ```
 
-Resultat:
+Résultat:
 
-- succes sur les 6 projets du workspace (`apps/client`, `apps/api`, `packages/*`)
+- succès sur les 6 projets du workspace (`apps/client`, `apps/api`, `packages/*`)
 
 ### 2) Typecheck
 
@@ -25,9 +25,9 @@ Commande:
 pnpm typecheck
 ```
 
-Resultat:
+Résultat:
 
-- succes sur web, mobile et api
+- succès sur web, mobile et api
 
 ### 3) Tests scripts workspace
 
@@ -37,13 +37,13 @@ Commande:
 pnpm test:workspace
 ```
 
-Resultat:
+Résultat:
 
 - 15 tests
 - 15 passes
-- 0 echec
+- 0 échec
 
-### 4) Check observabilite pilote
+### 4) Check observabilité pilote
 
 Commande:
 
@@ -51,11 +51,11 @@ Commande:
 KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability
 ```
 
-Resultat:
+Résultat:
 
-- echec: `web-home a retourne le statut HTTP 401 au lieu de 200.`
+- échec: `web-home a retourné le statut HTTP 401 au lieu de 200.`
 
-### 5) Verification directe API health
+### 5) Vérification directe API health
 
 Commande:
 
@@ -64,13 +64,13 @@ curl -sS -o /tmp/api_health.json -w "%{http_code}\n" https://kraak-api-staging.o
 cat /tmp/api_health.json
 ```
 
-Resultat:
+Résultat:
 
 - HTTP: `200`
 - payload: `{"status":"ok"}`
 
 ## Conclusion evidence
 
-1. Le socle de qualite local est valide pour l epic DEP.
+1. Le socle de qualité local est valide pour l'epic DEP.
 2. Le check runtime API est accessible.
 3. Le check runtime web public est bloqué (401) et doit être corrigé avant validation finale sans réserve.

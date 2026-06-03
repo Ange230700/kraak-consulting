@@ -551,13 +551,39 @@ describe('AuthService', () => {
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  // Given une erreur Supabase lors du reset
+  // Given une erreur Supabase de type rate limit lors du reset
   // When requestPasswordReset est appelé
-  // Then une BadRequestException explicite est renvoyée
-  it('Given une erreur Supabase lors du reset, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+  // Then une HttpException 429 explicite est renvoyée
+  it('Given un rate limit Supabase lors du reset, When requestPasswordReset est appelé, Then une HttpException 429 est renvoyée', async () => {
     authClient.auth.resetPasswordForEmail.mockResolvedValue({
       data: null,
-      error: { message: 'Email rate limit exceeded' },
+      error: {
+        message: 'email rate limit exceeded',
+        status: 429,
+        code: 'over_email_send_rate_limit',
+      },
+    });
+
+    await expect(
+      service.requestPasswordReset({
+        email: 'alice@example.com',
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      status: 429,
+      response: {
+        success: false,
+      },
+    });
+  });
+
+  // Given une erreur Supabase générique lors du reset
+  // When requestPasswordReset est appelé
+  // Then une BadRequestException explicite est renvoyée
+  it('Given une erreur Supabase générique lors du reset, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({
+      data: null,
+      error: { message: 'invalid email' },
     });
 
     await expect(

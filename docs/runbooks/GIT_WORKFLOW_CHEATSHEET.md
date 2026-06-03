@@ -1,9 +1,3 @@
----
-layout: cheatsheet
-title: Git Workflow Cheatsheet
-description: Quick reference for KRAAK development workflow
----
-
 # GIT WORKFLOW — Cheat Sheet
 
 > Commandes et étapes rapides pour développer dans KRAAK.

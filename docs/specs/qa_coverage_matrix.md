@@ -17,7 +17,7 @@ La matrice impose 3 vues de couverture pour chaque flux critique:
 - Composant: une preuve unitaire/composant sur les blocs critiques
 - Comportement: un scénario orienté utilisateur en Given/When/Then
 
-## 2) Preconditions (dépendencies)
+## 2) Preconditions (dépendances)
 
 QAT-01 dépend de SET-04 et SET-05.
 
@@ -64,18 +64,18 @@ Une fonctionnalité est considérée couverte si les 3 conditions sont vraies:
 
 ## 5) Scénarios critiques prioritaires
 
-Liste des scénarios a traiter en priorite (base QAT-04):
+Liste des scénarios a traiter en priorité (base QAT-04):
 
-1. Given un visiteur non authentifié, When il accède a une route participant, Then il est redirige vers un ecran autorise.
+1. Given un visiteur non authentifié, When il accède a une route participant, Then il est redirige vers un écran autorise.
 2. Given un participant authentifié, When il ouvre son dashboard, Then ses informations essentielles sont visibles.
 3. Given un participant sur la page ressources, When aucune ressource n'est disponible, Then un état vide lisible est affiche.
-4. Given un participant tente une route non autorisée, When la vérification d'accès s'applique, Then aucune donnée sensible n'est exposee.
+4. Given un participant tente une route non autorisée, When la vérification d'accès s'applique, Then aucune donnée sensible n'est exposée.
 5. Given un utilisateur envoie le formulaire contact/support avec des données valides, When l'envoi aboutit, Then un message de confirmation est affiche.
 6. Given une session expirée, When l'utilisateur relance une action protégée, Then le flux de reconnexion est déclenché de façon contrôlée.
 
 ## 6) Mapping vers les suites existantes (état au 30/04/2026)
 
-| Surface              | Suites détectées                                                                                                        | Etat     |
+| Surface              | Suites détectées                                                                                                        | État     |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- |
 | E2E web comportement | `apps/client/tests/e2e/*.spec.ts` (analytics, contact-form, design-system, participant-dashboard, programs, seo, smoke) | En place |
 | Unit web             | `apps/client/projects/web/src/app/**/*.spec.ts`                                                                         | En place |
@@ -87,16 +87,16 @@ Liste des scénarios a traiter en priorite (base QAT-04):
 Checks exécutés le 30/04/2026:
 
 1. `pnpm test:workspace` -> 11/11 tests pass.
-2. `pnpm --filter @kraak/client exec playwright test --list` -> 16 scénarios detectes dans 7 fichiers, avec titres Given/When/Then.
+2. `pnpm --filter @kraak/client exec playwright test --list` -> 16 scénarios détectés dans 7 fichiers, avec titres Given/When/Then.
 
-Resultat:
+Résultat:
 
 - Scope QAT-01 implémenté: Oui (matrice page/composant/comportement définie)
 - Dependencies SET-04/SET-05 satisfaites: Oui (runners et suites vérifiés)
-- Validation evidence ajoutee: Oui (checks listes ci-dessus)
+- Validation evidence ajoutée: Oui (checks listes ci-dessus)
 
 ## 8) Utilisation opérationnelle pour les prochaines tâches
 
-- QAT-02: couvrir les composants critiques listes en colonne "Composants critiques".
-- QAT-03: couvrir les endpoints associes pour auth, dashboard, programs, resources, announcements, support.
+- QAT-02: couvrir les composants critiques listés en colonne "Composants critiques".
+- QAT-03: couvrir les endpoints associés pour auth, dashboard, programs, resources, announcements, support.
 - QAT-04: aligner les scénarios E2E sur les 6 scénarios critiques prioritaires.

@@ -5,17 +5,17 @@ Objectif: séparer proprement les responsabilités opérationnelles.
 - Ange230700: conserve tous les droits sur tous les environnements.
 - Ownership des ressources staging: compte GitHub Ange230700.
 - Ownership des ressources prod: compte GitHub kraakconsulting.
-- Responsabilite d'exploitation: staging pilote par Ange230700, prod pilotee par kraakconsulting.
+- Responsabilité d'exploitation: staging pilote par Ange230700, prod pilotée par kraakconsulting.
 
-Cette procedure est volontairement peu disruptive: elle ne change ni l'architecture de deploiement, ni les workflows principaux. Elle verrouille surtout les droits et les validations.
+Cette procedure est volontairement peu disruptive: elle ne change ni l'architecture de déploiement, ni les workflows principaux. Elle verrouille surtout les droits et les validations.
 
 ---
 
-## Prerequis
+## Prérequis
 
-- Etre connecte a GitHub avec un compte administrateur du depot.
-- Etre connecte a Render avec un compte ayant les droits de gestion des services.
-- Etre connecte a Vercel avec les droits de gestion du projet.
+- Être connecte a GitHub avec un compte administrateur du depot.
+- Être connecte a Render avec un compte ayant les droits de gestion des services.
+- Être connecte a Vercel avec les droits de gestion du projet.
 - Avoir les deux collaborateurs deja invites et actifs sur le repo.
 
 ---
@@ -54,24 +54,24 @@ Résultat attendu:
 2. Cliquer `New ruleset` puis `New tag ruleset`.
 3. Nommer le ruleset: `Protect SemVer tags`.
 4. Dans `Target tags`, saisir le pattern: `v*`.
-5. Activer la restriction des acteurs autorises a creer/mettre a jour ces tags.
+5. Activer la restriction des acteurs autorises a créer/mettre a jour ces tags.
 6. Autoriser `kraakconsulting` et `Ange230700` (plus un compte break-glass si politique interne).
 7. Cliquer `Create`.
 
-Resultat attendu:
+Résultat attendu:
 
-- Les tags SemVer de prod sont controles sans retirer les droits admin de `Ange230700`.
+- Les tags SemVer de prod sont contrôlés sans retirer les droits admin de `Ange230700`.
 
 ### A3. Activer les validations CODEOWNERS en PR (3 min)
 
 1. Dans `Settings`, cliquer `Branches`.
-2. Ouvrir la regle de protection de `staging`.
+2. Ouvrir la règle de protection de `staging`.
 3. Cocher `Require review from Code Owners`.
-4. Verifier que les checks obligatoires restent inchanges.
+4. Vérifier que les checks obligatoires restent inchangés.
 5. Cliquer `Save changes`.
-6. Refaire la meme verification sur la regle de `main` si elle existe.
+6. Refaire la même vérification sur la règle de `main` si elle existe.
 
-Resultat attendu:
+Résultat attendu:
 
 - Les fichiers sensibles demandent automatiquement la bonne revue selon CODEOWNERS.
 
@@ -85,18 +85,18 @@ Resultat attendu:
 2. Aller dans le workspace KRAAK.
 3. Ouvrir `kraak-web-staging`.
 4. Cliquer `Settings` puis `Members` (ou `Team`, selon UI).
-5. Verifier que `Ange230700` a les droits de gestion sur staging.
+5. Vérifier que `Ange230700` a les droits de gestion sur staging.
 6. Refaire pour `kraak-api-staging`.
 
 ### B2. Figer l'ownership compte staging/prod (4 min)
 
 1. Ouvrir `kraak-web-prod` puis `Settings` > `Members`.
-2. Verifier que le service prod est rattache au compte/organisation GitHub `kraakconsulting`.
+2. Vérifier que le service prod est rattaché au compte/organisation GitHub `kraakconsulting`.
 3. Conserver les droits admin de `Ange230700` (ne pas les retirer).
-4. Refaire la meme operation pour `kraak-api-prod`.
-5. Verifier que les services staging restent rattaches au compte/organisation GitHub `Ange230700`.
+4. Refaire la même opération pour `kraak-api-prod`.
+5. Vérifier que les services staging restent rattachés au compte/organisation GitHub `Ange230700`.
 
-Resultat attendu:
+Résultat attendu:
 
 - Ownership staging: `Ange230700`.
 - Ownership prod: `kraakconsulting`.
@@ -110,21 +110,21 @@ Resultat attendu:
 
 1. Ouvrir le projet Vercel correspondant au web KRAAK.
 2. Cliquer `Settings` puis `Members` (ou `Team Members`).
-3. Verifier que le projet de production est rattache a l'equipe/compte `kraakconsulting`.
-4. Conserver les droits admin de `Ange230700` si deja attribues.
-5. Verifier que le projet staging reste rattache a l'equipe/compte `Ange230700`.
+3. Vérifier que le projet de production est rattaché à l'équipe/compte `kraakconsulting`.
+4. Conserver les droits admin de `Ange230700` si déjà attribués.
+5. Vérifier que le projet staging reste rattaché à l'équipe/compte `Ange230700`.
 
-### C2. Verifier la branche de prod (2 min)
+### C2. Vérifier la branche de prod (2 min)
 
-1. Dans `Settings` > `Git`, verifier la `Production Branch`.
-2. Confirmer qu'elle n'introduit pas de deploiement auto non souhaite.
-3. Ne rien changer si votre flux actuel par tag/workflow est deja stable.
+1. Dans `Settings` > `Git`, vérifier la `Production Branch`.
+2. Confirmer qu'elle n'introduit pas de déploiement auto non souhaité.
+3. Ne rien changer si votre flux actuel par tag/workflow est déjà stable.
 
-Resultat attendu:
+Résultat attendu:
 
 - Ownership prod web: `kraakconsulting`.
 - Ownership staging web: `Ange230700`.
-- Droits admin de `Ange230700` conserves.
+- Droits admin de `Ange230700` conservés.
 
 ---
 
@@ -134,16 +134,16 @@ Resultat attendu:
 
 1. Ouvrir `Actions` dans GitHub.
 2. Lancer `Release Prod` via `Run workflow` (reference de test).
-3. Verifier que le job s'arrete sur la gate `production` en attente d'approbation.
-4. Verifier que `kraakconsulting` est bien approbateur de la gate.
-5. Verifier que `Ange230700` conserve les droits admin sur l'environnement.
+3. Vérifier que le job s'arrête sur la gate `production` en attente d'approbation.
+4. Vérifier que `kraakconsulting` est bien approbateur de la gate.
+5. Vérifier que `Ange230700` conserve les droits admin sur l'environnement.
 6. Annuler le run de test.
 
 ### D2. Test staging non regressif
 
 1. Pousser un petit commit non critique sur `staging`.
-2. Verifier auto-deploiement de `kraak-api-staging` et `kraak-web-staging`.
-3. Verifier `https://kraak-api-staging.onrender.com/health`.
+2. Vérifier auto-déploiement de `kraak-api-staging` et `kraak-web-staging`.
+3. Vérifier `https://kraak-api-staging.onrender.com/health`.
 
 ---
 
@@ -155,42 +155,42 @@ Resultat attendu:
 - Capture Vercel des droits production.
 - Lien du run `Release Prod` en attente d'approbation.
 
-Modele pret a coller dans une issue:
+Modèle prêt à coller dans une issue:
 
 - `docs/runbooks/STAGING_PROD_SEPARATION_ISSUE_COMMENT_TEMPLATE.md`
 
 ---
 
-## Addendum — RACI d'exploitation (regle figee)
+## Addendum — RACI d'exploitation (règle figée)
 
-Perimetre: exploitation des environnements `staging` et `production`.
+Périmètre: exploitation des environnements `staging` et `production`.
 
-| Activite                                          | Ange230700 | kraakconsulting |
+| Activité                                          | Ange230700 | kraakconsulting |
 | ------------------------------------------------- | ---------- | --------------- |
-| Administration des acces (staging + prod)         | A/R        | C               |
+| Administration des accès (staging + prod)         | A/R        | C               |
 | Ownership compte Render/Supabase staging          | A/R        | I               |
 | Ownership compte Render/Supabase production       | C/I        | A/R             |
-| Deploiement staging (`staging` -> Render staging) | A/R        | C/I             |
+| Déploiement staging (`staging` -> Render staging) | A/R        | C/I             |
 | Validation fonctionnelle staging                  | A/R        | C/I             |
 | Approbation gate GitHub `production`              | C/I        | A/R             |
-| Creation et promotion tag SemVer prod (`v*`)      | C/I        | A/R             |
-| Deploiement production (Render/Vercel)            | C/I        | A/R             |
+| Création et promotion tag SemVer prod (`v*`)      | C/I        | A/R             |
+| Déploiement production (Render/Vercel)            | C/I        | A/R             |
 | Rollback staging                                  | A/R        | C/I             |
 | Rollback production                               | C/I        | A/R             |
 
 Legend:
 
-- R = Responsible (execute)
-- A = Accountable (decisionnaire)
-- C = Consulted (consulte)
-- I = Informed (informe)
+- R = Responsible (exécute)
+- A = Accountable (décisionnaire)
+- C = Consulted (consulté)
+- I = Informed (informé)
 
-Regle d'arbitrage:
+Règle d'arbitrage:
 
-- Aucun changement de responsabilite n'est effectif sans mise a jour de ce runbook et preuve d'execution dans l'issue de suivi.
+- Aucun changement de responsabilité n'est effectif sans mise à jour de ce runbook et preuve d'exécution dans l'issue de suivi.
 - En cas d'incident cross-environnements, `kraakconsulting` tranche pour la production et `Ange230700` tranche pour le staging.
 - Les droits administrateur de `Ange230700` restent conserves sur tous les environnements.
-- La separation est basee sur l'ownership des comptes de ressources (staging compte `Ange230700`, production compte `kraakconsulting`) et non sur un retrait de droits admin de `Ange230700`.
+- La separation est basée sur l'ownership des comptes de ressources (staging compte `Ange230700`, production compte `kraakconsulting`) et non sur un retrait de droits admin de `Ange230700`.
 
 ---
 
@@ -198,8 +198,8 @@ Regle d'arbitrage:
 
 Si un verrouillage bloque trop:
 
-1. Revenir dans GitHub `Settings` > `Environments` > `production` et restaurer les reviewers precedents.
-2. Desactiver temporairement le ruleset tags `v*`.
-3. Restaurer les droits precedents dans Render/Vercel.
+1. Revenir dans GitHub `Settings` > `Environments` > `production` et restaurer les reviewers précédents.
+2. Désactiver temporairement le ruleset tags `v*`.
+3. Restaurer les droits précédents dans Render/Vercel.
 
-Temps de retour arriere estime: 5 a 10 minutes.
+Temps de retour arrière estimé: 5 à 10 minutes.

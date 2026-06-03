@@ -13,7 +13,7 @@ Jusqu'ici, deux projets Vercel coexistaient pour ce dépôt :
 
 | Projet                     | Branche prod | Rôle                         |
 | -------------------------- | ------------ | ---------------------------- |
-| `kraak-consulting`         | `main`       | Production (déploy CLI prod) |
+| `kraak-consulting`         | `main`       | Production (deploy CLI prod) |
 | `kraak-consulting-staging` | `staging`    | Staging auto-deploy sur push |
 
 Cette duplication a été motivée historiquement par le besoin d'environnements
@@ -131,7 +131,7 @@ Exemple `CLIENT_FEATURE_PARTICIPANT_AREA` :
   pour un gain d'isolation que le MVP n'exploite pas.
 - **Trois projets ou plus (par feature env)** : sur-ingénierie, hors périmètre
   MVP.
-- **Un projet sans `ignoreCommand`** : Vercel auto-déployerait toutes les
+- **Un projet sans `ignoreCommand`** : Vercel auto-déploierait toutes les
   branches → coût et bruit inutiles, et créerait une race condition possible
   avec le déploiement prod CLI sur `main`.
 

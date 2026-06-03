@@ -117,8 +117,8 @@ pnpm --filter @kraak/client cap:open:ios
 
 - [x] Procédure APK interne documentée
 - [x] Procédure TestFlight interne documentée
-- [x] Dependance MOB-04 reliée à des commandes/scripts effectifs
-- [x] Dependance QAT-04 vérifiée sur une suite E2E cœur participant
+- [x] Dépendance MOB-04 reliée à des commandes/scripts effectifs
+- [x] Dépendance QAT-04 vérifiée sur une suite E2E cœur participant
 - [x] Preuves de validation ajoutées
 
 ## Artefacts de preuve

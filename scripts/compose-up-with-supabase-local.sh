@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # scripts/compose-up-with-supabase-local.sh
-# Lance Supabase local, exporte les variables requises et demarre Docker Compose.
+# Lance Supabase local, exporte les variables requises et démarre Docker Compose.
 
 set -euo pipefail
 
@@ -13,13 +13,13 @@ if ! command -v supabase >/dev/null 2>&1; then
 fi
 
 if ! command -v docker >/dev/null 2>&1; then
-  echo "docker est requis et doit etre disponible dans le PATH."
+  echo "docker est requis et doit être disponible dans le PATH."
   exit 1
 fi
 
 cd "$REPO_ROOT"
 
-echo "[compose-helper] Demarrage de Supabase local..."
+echo "[compose-helper] Démarrage de Supabase local..."
 supabase start
 
 echo "[compose-helper] Lecture des variables Supabase..."
@@ -39,7 +39,7 @@ if [[ -z "$supabase_url" || -z "$supabase_publishable_key" || -z "$supabase_secr
   exit 1
 fi
 
-# Docker Desktop expose l'hote via host.docker.internal depuis les conteneurs.
+# Docker Desktop expose l’hôte via host.docker.internal depuis les conteneurs.
 container_supabase_url="${supabase_url/127.0.0.1/host.docker.internal}"
 container_supabase_url="${container_supabase_url/localhost/host.docker.internal}"
 
@@ -50,5 +50,5 @@ export CLIENT_SUPABASE_URL="$SUPABASE_URL"
 export CLIENT_SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
 export CLIENT_API_BASE_URL="http://api:3000"
 
-echo "[compose-helper] Variables exportees. Lancement de Docker Compose..."
+echo "[compose-helper] Variables exportées. Lancement de Docker Compose..."
 docker compose -f compose.local.yml up --build "$@"

@@ -21,7 +21,7 @@ Voir aussi:
 
 ## Grandes lignes du flux
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │ 1. FEATURE BRANCH (développeur)                                 │
 │    • git checkout -b feat/user-auth                             │
@@ -248,7 +248,7 @@ git fetch --tags
 git log --oneline --decorate | head -20
 
 # Voir release-prod en cours
-# GitHub Actions → release-prod → observerles logs
+# GitHub Actions → release-prod → observer les logs
 ```
 
 ---
@@ -265,6 +265,7 @@ git log --oneline --decorate | head -20
 
 - Lint, format, tests, type-check ont échoué
 - **Solution** :
+
   ```bash
   git checkout feat/my-feature
   pnpm lint:fix
@@ -282,6 +283,7 @@ git log --oneline --decorate | head -20
 - Vérifier : commit doit être `"chore: bump versions..."`
 - Vérifier : GitHub Actions permissions (contents: write)
 - **Solution** : relancer manuellement
+
   ```bash
   GitHub Actions → publish-release → Run workflow
   ```
@@ -290,6 +292,7 @@ git log --oneline --decorate | head -20
 
 - `main` requiert : CI verte + approvals + linear history
 - **Solution** :
+
   ```bash
   # Rebase sur main (rebase-only strategy)
   git fetch origin main
@@ -303,6 +306,7 @@ git log --oneline --decorate | head -20
 - `staging` doit toujours rester en fast-forward de `main`
 - Si conflict : **c'est un incident**
 - **Solution** :
+
   ```bash
   # Rollback
   git reset --hard origin/main
@@ -403,7 +407,7 @@ git push -u origin feat/email-verification
 
 ## 8 · Diagramme complet
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │ DÉVELOPPEUR                                                      │
 │ ┌────────────────────────────────────────────────────────────┐  │
@@ -500,7 +504,7 @@ git push -u origin feat/email-verification
 | Merge      | Dev+CI              | Approve + merge          | Commit sur main      |
 | Version PR | changesets.yml      | auto                     | PR version vers main |
 | Staging    | promote-to-main.yml | auto                     | Déploiement staging  |
-| Tag        | publish-release.yml | auto                     | `v*.*.* ` créé       |
+| Tag        | publish-release.yml | auto                     | `v*.*.*` créé        |
 | Prod       | release-prod.yml    | auto + humain            | Déploiement prod     |
 
 ---

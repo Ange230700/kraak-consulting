@@ -98,7 +98,7 @@ test('Given le schéma initial, When on vérifie la sécurité de base, Then les
   ]) {
     assert.match(
       schema,
-      new RegExp(`ALTER TABLE ${tableName}\\s+ENABLE ROW LEVEL SECURITY;`),
+      new RegExp(String.raw`ALTER TABLE ${tableName}\s+ENABLE ROW LEVEL SECURITY;`),
     );
   }
 
@@ -112,6 +112,6 @@ test('Given le schéma initial, When on vérifie la sécurité de base, Then les
     'notification_select_own',
     'support_request_select_own',
   ]) {
-    assert.match(schema, new RegExp(`CREATE POLICY ${policyName}\\b`));
+    assert.match(schema, new RegExp(String.raw`CREATE POLICY ${policyName}\b`));
   }
 });

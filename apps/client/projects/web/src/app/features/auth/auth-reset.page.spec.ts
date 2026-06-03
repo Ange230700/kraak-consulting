@@ -240,6 +240,7 @@ describe('Web AuthResetPage', () => {
 
     expect(component.errorMessage()).toContain('invalide');
     expect(authService.completePasswordRecovery).not.toHaveBeenCalled();
+    expect(component.submitting()).toBe(false);
   });
 
   it('Given browser window is unavailable, when initialization clears sensitive fragments, then it exits without rewriting history', async () => {

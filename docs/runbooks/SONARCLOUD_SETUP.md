@@ -107,7 +107,7 @@ SONAR_TOKEN=*** SONAR_HOST_URL=https://sonarcloud.io \
 
 Objectif: charger automatiquement `SONAR_TOKEN` sans variable globale Windows.
 
-1. Creer un fichier local non versionne a la racine:
+1. Créer un fichier local non versionne a la racine:
    - Copier `.env.local.example` vers `.env.local`
    - Renseigner `SONAR_TOKEN`
 2. Ajouter le chargement au profil shell.
@@ -132,7 +132,7 @@ if (Test-Path $loader) {
 }
 ```
 
-1. Redemarrer le terminal (ou VS Code) puis verifier:
+1. Redémarrer le terminal (ou VS Code) puis verifier:
    - Git Bash: `echo "$SONAR_TOKEN"`
    - PowerShell: `echo $env:SONAR_TOKEN`
 

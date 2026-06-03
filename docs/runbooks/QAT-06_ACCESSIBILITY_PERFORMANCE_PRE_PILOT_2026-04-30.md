@@ -8,23 +8,23 @@ Scope: vérification pré-pilot web (surface vitrine publique complète + pages 
 
 Exécuter des checks accessibilité et performance sur les pages critiques MVP avant passage pilote, puis produire un plan d'action pour les écarts détectés.
 
-## Dependances
+## Dépendances
 
 - QAT-05: validé (campagne de régression exécutée et verte, voir `docs/runbooks/QAT-05_REGRESSION_2026-04-30.md`)
 - WEB-05: checks a11y/performance exécutés sur les routes coeur web et evidence capturée dans ce runbook
 
-## Commande executee
+## Commande exécutée
 
 1. `pnpm check:prepilot:web`
 
-Implementation technique associee:
+Implementation technique associée:
 
 - script npm: `check:prepilot:web` (workspace root)
 - test Playwright dédié: `apps/client/tests/e2e/accessibility-performance.spec.ts`
 - artefact JSON généré: `apps/client/test-results/qat-06/accessibility-performance-summary.json`
 - artefact JSON conservé pour suivi: `docs/runbooks/evidence/QAT-06_accessibility-performance-summary_2026-04-30.json`
 
-## Resultats par route
+## Résultats par route
 
 | Route                           | Axe critical | Axe serious | Axe moderate | DCL (ms) | Load (ms) | FCP (ms) |
 | ------------------------------- | -----------: | ----------: | -----------: | -------: | --------: | -------: |
@@ -42,7 +42,7 @@ Implementation technique associee:
 | `/404`                          |            0 |           0 |            0 |      509 |       591 |      168 |
 | `/500`                          |            0 |           0 |            0 |      564 |       623 |      210 |
 
-## Ecart detecte
+## Écart détecté
 
 Aucun écart `critical` ou `serious` détecté sur les routes couvertes.
 
@@ -51,7 +51,7 @@ Aucun écart `critical` ou `serious` détecté sur les routes couvertes.
 1. `/mentions-legales`: 3 violations landmarks (`landmark-main-is-top-level`, `landmark-no-duplicate-main`, `landmark-unique`).
 2. `/politique-de-confidentialite`: 3 violations landmarks (`landmark-main-is-top-level`, `landmark-no-duplicate-main`, `landmark-unique`).
 
-## Plan d'action ecarts
+## Plan d'action écarts
 
 1. Maintenir le seuil bloquant déjà ajouté dans le test (`critical + serious = 0` requis).
 2. Corriger la structure landmarks des pages légales pour éliminer les violations `moderate` sans régression SEO/UI.

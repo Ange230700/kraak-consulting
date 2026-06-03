@@ -10,7 +10,7 @@ test('Given un script .cmd sous Windows, When on prepare la commande, Then cmd.e
   assert.deepEqual(resolved.args, ['/d', '/s', '/c', 'pnpm.cmd', '--version']);
 });
 
-test('Given une commande non .cmd hors Windows, When on prepare la commande, Then elle est conservee telle quelle', () => {
+test('Given une commande non .cmd hors Windows, When on prepare la commande, Then elle est conservée telle quelle', () => {
   const resolved = resolveSpawnCommand('pnpm', ['--version'], 'linux');
 
   assert.equal(resolved.command, 'pnpm');

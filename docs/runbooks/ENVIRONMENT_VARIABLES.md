@@ -33,7 +33,9 @@ Variables lues par `process.env` dans le code NestJS :
 - `PORT` : port d'écoute de l'API. Exemple local : `3000`
 - `SUPABASE_URL` : URL du projet Supabase. Exemple local : `http://127.0.0.1:54321`
 - `SUPABASE_PUBLISHABLE_KEY` : clé publique Supabase pour les flux auth API
+  (alias legacy accepté : `SUPABASE_ANON_KEY`)
 - `SUPABASE_SECRET_KEY` : clé service role secrète
+  (alias legacy accepté : `SUPABASE_SERVICE_ROLE_KEY`)
 - `RESEND_API_KEY` : clé API Resend secrète
 - `CONTACT_FROM_EMAIL` : expéditeur des emails transactionnels. Exemple : `onboarding@resend.dev`
 - `CONTACT_TO_EMAIL` : email destinataire interne des formulaires. Exemple : `contact@kraak.org`. Les demandes publiques y arrivent déjà enrichies avec la file de triage, le workflow de réponse et le fallback opérationnel.
@@ -61,8 +63,8 @@ Scripts utiles côté `apps/api/package.json` :
 
 Note Auth API :
 
-- `SUPABASE_SECRET_KEY` reste nécessaire pour lire les profils et les tables MVP
-- `SUPABASE_PUBLISHABLE_KEY` est recommandé pour les endpoints `auth/*`
+- `SUPABASE_SECRET_KEY` (ou alias `SUPABASE_SERVICE_ROLE_KEY`) reste nécessaire pour lire les profils et les tables MVP
+- `SUPABASE_PUBLISHABLE_KEY` (ou alias `SUPABASE_ANON_KEY`) est recommandé pour les endpoints `auth/*`
   exposés par l'API ; si elle manque, l'API retombe sur `SUPABASE_SECRET_KEY`
 
 Alias utiles à la racine :
@@ -150,6 +152,11 @@ Variables attendues :
 | `SUPABASE_URL`             | URL du projet Supabase ciblé               |
 | `SUPABASE_PUBLISHABLE_KEY` | Clé publique du projet Supabase ciblé      |
 | `SUPABASE_SECRET_KEY`      | Clé serveur / service role du projet ciblé |
+
+Aliases legacy acceptés par l'API :
+
+- `SUPABASE_ANON_KEY` pour `SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` pour `SUPABASE_SECRET_KEY`
 
 ## Domaines publics documentés
 

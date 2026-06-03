@@ -64,3 +64,49 @@ Avant de considérer `AUT-01` comme prêt :
 2. Un signup local crée bien une entrée `public.app_user`
 3. Les templates de confirmation et de récupération utilisent un lien Supabase valide
 4. Les politiques RLS de base du schéma initial restent actives
+
+## Politique de rate-limit email (staging)
+
+Objectif staging : éviter les blocages du flux mot de passe oublié pendant les
+tests, tout en gardant une protection anti-abus minimale.
+
+Politique cible :
+
+- `auth.email.max_frequency = "30s"` (cooldown par utilisateur)
+- `auth.rate_limit.email_sent = 30` (quota global par heure)
+
+Important : sur un projet Supabase hébergé avec le provider email natif,
+le quota global d'emails reste plafonné à 2/h. Pour appliquer un quota plus
+élevé en staging, il faut configurer un SMTP personnalisé.
+
+Application sur staging (Dashboard) :
+
+1. Ouvrir `Authentication > SMTP Settings` et activer un SMTP personnalisé.
+2. Ouvrir `Authentication > Rate Limits`.
+3. Définir le cooldown email utilisateur à `30s`.
+4. Définir `Emails sent` à `30` par heure.
+5. Sauvegarder puis attendre la propagation (quelques secondes).
+
+Application sur staging (Management API) :
+
+1. Récupérer un token personnel Supabase (Dashboard account tokens).
+2. Exécuter un `PATCH /v1/projects/{project_ref}/config/auth` avec
+   `rate_limit_email_sent: 30` et `smtp_max_frequency: 30`.
+
+Exemple :
+
+```bash
+curl -X PATCH "https://api.supabase.com/v1/projects/${PROJECT_REF}/config/auth" \
+  -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rate_limit_email_sent": 30,
+    "smtp_max_frequency": 30
+  }'
+```
+
+Vérification recommandée :
+
+1. Faire deux demandes de réinitialisation à plus de 30s d'intervalle.
+2. Vérifier que l'API KRAAK ne remonte plus de `429 over_email_send_rate_limit`
+   dans ce volume nominal de test.

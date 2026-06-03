@@ -215,7 +215,7 @@ gh run list --workflow release-prod.yml
 - déploiement Render/Vercel (ou simulation explicite)
 - smoke final
 
-### Criteres go/no-go de process
+### Critères go/no-go de process
 
 - aucune ambiguïté dans la sequence `tag -> validation -> déploiement`
 - aucun secret manquant ou variable non résolue
