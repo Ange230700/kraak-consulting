@@ -37,6 +37,11 @@ jobs:
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1
+        with:
+          version: latest
+
       - name: Vérifier le formatage (Prettier)
         run: pnpm format:check
 
@@ -166,7 +171,7 @@ jobs:
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
