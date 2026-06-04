@@ -1,51 +1,58 @@
 <section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
 >
   <div
     aria-hidden="true"
-    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
+    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
   ></div>
 
-  <div class="relative z-10 mx-auto max-w-4xl px-6">
-    <div
-      class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
-    >
-      <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
-        Parlez-nous de votre objectif.
-      </h1>
-      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
-        Vous souhaitez suivre une formation, structurer un projet,
-        pr&eacute;parer une mobilit&eacute; internationale ou discuter d'un
-        partenariat ? L'&eacute;quipe KRAAK est disponible pour vous orienter
-        vers l'accompagnement le plus adapt&eacute;.
+  <div
+    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+  >
+    <div class="max-w-3xl text-left">
+      <p
+        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
+      >
+        Contact KRAAK
       </p>
+      <h1
+        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
+      >
+        Parlez-nous de votre <span class="text-brand-cyan">objectif</span>.
+      </h1>
+      <p
+        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
+      >
+        Vous souhaitez suivre une formation, structurer un projet, préparer une
+        mobilité internationale ou discuter d'un partenariat ? L'équipe KRAAK
+        est disponible pour vous orienter vers l'accompagnement le plus adapté.
+      </p>
+      <div
+        class="mt-8 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-4"
+      >
+        <a
+          pButton
+          href="#contact-form"
+          label="Envoyer une demande"
+          icon="pi pi-send"
+          aria-label="Aller au formulaire de contact"
+          class="kr-button-primary w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase sm:w-auto"
+        ></a>
+        <a
+          pButton
+          routerLink="/services"
+          label="Voir les services"
+          icon="pi pi-compass"
+          aria-label="Voir les services"
+          class="kr-button-ghost border-brand-white/20 bg-brand-white/10 w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md sm:w-auto"
+        ></a>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="kr-perf-section bg-brand-white py-10">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <figure
-      class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
-    >
-      <img
-        src="/assets/site-visuals/photos/services-immigration.avif"
-        alt="Discussion d'accompagnement avec documents pour orienter une demande"
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        class="h-60 w-full object-cover"
-      />
-      <figcaption class="text-brand-navy p-4 text-center text-sm">
-        Un parcours simple pour clarifier votre besoin et activer la bonne
-        solution.
-      </figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="kr-perf-section bg-neutral-50 py-16 lg:py-20">
+<section id="contact-form" class="kr-perf-section bg-neutral-50 py-16 lg:py-20">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div
       class="border-brand-blue/15 bg-brand-white overflow-hidden rounded-3xl border shadow-[0_24px_60px_rgb(18_43_74/12%)]"

@@ -1,14 +1,13 @@
 import { Component, Input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
-import { Card } from 'primeng/card';
 
 import { AnalyticsService } from '../../core/analytics/analytics.service';
 
 @Component({
   selector: 'kraak-cta-banner',
   standalone: true,
-  imports: [RouterLink, ButtonDirective, Card],
+  imports: [RouterLink, ButtonDirective],
   templateUrl: './cta-banner.component.html',
 })
 export class CtaBanner {

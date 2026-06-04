@@ -1,49 +1,54 @@
 <section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
 >
   <div
     aria-hidden="true"
-    class="via-brand-navy/30 to-brand-navy/80 absolute inset-0 bg-linear-to-b from-transparent"
+    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
   ></div>
 
-  <div class="relative z-10 mx-auto max-w-5xl px-4 text-center lg:px-6">
-    <p
-      class="text-brand-white/85 text-xs font-semibold tracking-[0.3em] uppercase"
-    >
-      Blog KRAAK
-    </p>
-    <h1
-      class="text-brand-white mt-4 text-4xl leading-tight font-bold lg:text-5xl"
-    >
-      Actualités, repères et analyses pour avancer avec clarté.
-    </h1>
-    <p
-      class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg leading-relaxed"
-    >
-      Nous publions des articles courts et utiles pour aider les jeunes
-      professionnels, les porteurs de projets et les organisations à prendre une
-      prochaine décision plus lisible.
-    </p>
-    <div
-      class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
-    >
-      <a
-        pButton
-        routerLink="/contact"
-        label="Demander un accompagnement"
-        icon="pi pi-comments"
-        aria-label="Demander un accompagnement"
-        class="kr-button-primary"
-      ></a>
-      <a
-        pButton
-        routerLink="/services"
-        label="Voir les services"
-        icon="pi pi-compass"
-        aria-label="Voir les services"
-        class="kr-button-ghost"
-      ></a>
+  <div
+    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+  >
+    <div class="max-w-3xl text-left">
+      <p
+        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
+      >
+        Blog KRAAK
+      </p>
+      <h1
+        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
+      >
+        Actualités, repères et
+        <span class="text-brand-cyan">analyses</span> pour avancer avec clarté.
+      </h1>
+      <p
+        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
+      >
+        Nous publions des articles courts et utiles pour aider les jeunes
+        professionnels, les porteurs de projets et les organisations à prendre
+        une prochaine décision plus lisible.
+      </p>
+      <div
+        class="mt-8 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-4"
+      >
+        <a
+          pButton
+          routerLink="/contact"
+          label="Demander un accompagnement"
+          icon="pi pi-comments"
+          aria-label="Demander un accompagnement"
+          class="kr-button-primary w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase sm:w-auto"
+        ></a>
+        <a
+          pButton
+          routerLink="/services"
+          label="Voir les services"
+          icon="pi pi-compass"
+          aria-label="Voir les services"
+          class="kr-button-ghost border-brand-white/20 bg-brand-white/10 w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md sm:w-auto"
+        ></a>
+      </div>
     </div>
   </div>
 </section>

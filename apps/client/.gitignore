@@ -16,3 +16,5 @@ ios/DerivedData/
 
 .vercel
 .env*.local
+
+.vercel
