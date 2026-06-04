@@ -47,7 +47,7 @@ describe('HomePage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'Transformez votre potentiel en trajectoire concr\u00e8te.',
+      'D\u00e9veloppez vos comp\u00e9tences.',
     );
   });
 
@@ -56,8 +56,8 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('Parler \u00e0 un conseiller');
-    expect(element.textContent).toContain('Explorer nos services');
+    expect(element.textContent).toContain('R\u00e9server une consultation');
+    expect(element.textContent).toContain('D\u00e9couvrir nos programmes');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -66,7 +66,7 @@ describe('HomePage', () => {
     const component = fixture.componentInstance;
 
     expect(component.heroBackgroundStyle.background).toContain(
-      'home-hero-workshop.avif',
+      'programs-workshop.avif',
     );
     expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
       'normal, multiply, lighten, normal',
@@ -113,15 +113,38 @@ describe('HomePage', () => {
     expect(content).toContain('Accompagnement structur\u00e9');
   });
 
+  it('Given the home page When it renders Then it highlights why to choose KRAAK with concrete differentiators', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Pourquoi choisir KRAAK ?');
+    expect(content).toContain("Expertise reconnue \u00e0 l'international");
+    expect(content).toContain('R\u00e9sultats concrets et mesurables');
+    expect(content).not.toContain('Réseau de partenaires stratégiques');
+  });
+
+  it('Given the home page When it renders Then it reprises the final conversion block with the collaborator wording', () => {
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain('Vous savez où vous voulez aller.');
+    expect(content).toContain('Nous savons comment vous y amener.');
+    expect(content).toContain('Prendre rendez-vous maintenant');
+  });
+
   it('should render home-specific FAQ section', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain('Questions fréquentes');
     expect(content).toContain(
-      'Je ne sais pas par o\u00F9 commencer, quelle est la premi\u00E8re \u00E9tape ?',
+      'Je ne sais pas par où commencer, quelle est la première étape ?',
     );
   });
 });

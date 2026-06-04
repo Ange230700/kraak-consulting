@@ -1,52 +1,72 @@
 <section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
 >
   <div
     aria-hidden="true"
-    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
+    class="from-brand-navy-soft/95 to-brand-navy/40 absolute inset-0 bg-linear-to-r"
   ></div>
 
-  <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6">
-    <p
-      class="text-brand-white/90 mb-4 text-xs font-semibold tracking-[0.3em] uppercase"
-    >
-      Formation &bull; Projets &bull; Mobilit&eacute; internationale
-    </p>
+  <div
+    class="relative z-10 mx-auto grid min-h-[82vh] max-w-7xl items-center gap-10 px-6 py-16 lg:min-h-screen lg:grid-cols-2 lg:gap-12 lg:py-22"
+  >
+    <div class="hero-copy text-left lg:self-center lg:pr-4">
+      <h1
+        class="text-brand-white text-4xl leading-[1.08] font-black md:text-6xl lg:leading-[1.05]"
+      >
+        D&eacute;veloppez vos
+        <span class="text-brand-cyan">comp&eacute;tences</span>.
+        <br />
+        Lancez vos <span class="text-brand-cyan">projets</span>.
+        <br />
+        Acc&eacute;dez aux
+        <span class="text-brand-cyan">opportunit&eacute;s</span>
+        internationales.
+      </h1>
 
-    <h1 class="text-brand-white text-4xl leading-tight font-bold md:text-5xl">
-      Transformez votre potentiel en trajectoire concr&egrave;te.
-    </h1>
+      <p
+        class="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-200 md:text-xl lg:mt-9"
+      >
+        KRAAK Consulting accompagne &eacute;tudiants, professionnels,
+        entreprises et diaspora avec des solutions concr&egrave;tes en
+        formation, gestion de projets et immigration.
+      </p>
 
-    <p
-      class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg leading-relaxed"
-    >
-      KRAAK Consulting accompagne les jeunes, les professionnels, les
-      entreprises et les institutions avec des solutions concr&egrave;tes en
-      employabilit&eacute;, gestion de projets et mobilit&eacute;
-      internationale.
-    </p>
+      <div class="mt-10 flex flex-wrap gap-4 lg:mt-10 lg:gap-5 xl:mt-[42px]">
+        <a
+          pButton
+          routerLink="/contact"
+          label="R&eacute;server une consultation"
+          icon="pi pi-calendar"
+          aria-label="R&eacute;server une consultation"
+          class="kr-button-primary rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase"
+        ></a>
+        <a
+          pButton
+          routerLink="/programmes"
+          label="D&eacute;couvrir nos programmes"
+          icon="pi pi-bolt"
+          aria-label="D&eacute;couvrir nos programmes"
+          class="kr-button-ghost border-brand-white/20 bg-brand-white/10 rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md"
+        ></a>
+      </div>
+    </div>
 
     <div
-      class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+      class="hero-media relative hidden lg:flex lg:items-center lg:justify-end"
     >
-      <a
-        pButton
-        routerLink="/contact"
-        label="Parler &agrave; un conseiller"
-        icon="pi pi-comments"
-        size="large"
-        aria-label="Parler &agrave; un conseiller"
-        class="kr-button-primary"
-      ></a>
-      <a
-        pButton
-        routerLink="/services"
-        label="Explorer nos services"
-        icon="pi pi-compass"
-        aria-label="Explorer nos services"
-        class="kr-button-ghost"
-      ></a>
+      <figure
+        class="reveal-on-scroll border-brand-white/10 bg-brand-white/5 shadow-brand-navy/40 aspect-square w-full max-w-[560px] overflow-hidden rounded-[3rem] border-8 shadow-2xl lg:ml-auto"
+      >
+        <img
+          src="/kraak-logo.avif"
+          alt="Logo KRAAK grand format"
+          class="h-full w-full object-contain"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </figure>
     </div>
   </div>
 </section>
@@ -298,6 +318,47 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
+        Diff&eacute;renciation
+      </p>
+      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        Pourquoi choisir KRAAK ?
+      </h2>
+      <p class="text-brand-navy mx-auto mt-4 max-w-3xl text-lg">
+        Un accompagnement exigeant, concret et ancr&eacute; dans vos objectifs
+        r&eacute;els.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      @for (item of whyChooseItems; track item.title) {
+        <article class="rounded-card bg-neutral-50 p-6">
+          <div class="flex items-start gap-4">
+            <span
+              class="bg-brand-blue/10 text-brand-blue flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+            >
+              {{ $index + 1 }}
+            </span>
+            <div>
+              <h3 class="text-brand-navy text-lg font-bold">
+                {{ item.title }}
+              </h3>
+              <p class="text-brand-navy mt-2 text-sm leading-6">
+                {{ item.description }}
+              </p>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-white py-16">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <div class="mx-auto max-w-3xl text-center">
+      <p
+        class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
+      >
         Questions fr&eacute;quentes
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
@@ -316,10 +377,29 @@
   </div>
 </section>
 
-<kraak-cta-banner
-  heading="Pr&ecirc;t &agrave; faire avancer votre objectif ?"
-  body="Parlez-nous de votre besoin et identifions ensemble le bon point d'entr&eacute;e."
-  ctaLabel="R&eacute;server une consultation"
-  ctaLink="/contact"
-  ctaContext="home_main_cta"
-/>
+<section class="py-16 lg:py-24">
+  <div class="mx-auto max-w-5xl px-4 lg:px-6">
+    <div
+      class="from-brand-navy via-brand-blue to-brand-cyan text-brand-white shadow-brand-navy/20 overflow-hidden rounded-[3rem] bg-linear-to-r px-8 py-14 text-center shadow-2xl md:px-12 md:py-18 lg:px-20 lg:py-20"
+    >
+      <h2 class="text-3xl leading-tight font-black text-white md:text-5xl">
+        Vous savez où vous voulez aller.<br />
+        Nous savons comment vous y amener.
+      </h2>
+
+      <a
+        routerLink="/contact"
+        kraakPublicConversion="conversion_cta_click"
+        [kraakPublicConversionPayload]="{
+          cta_context: 'home_main_cta',
+          cta_label: 'Prendre rendez-vous maintenant',
+          cta_link: '/contact',
+        }"
+        class="bg-brand-white text-brand-navy hover:bg-brand-cyan hover:text-brand-white mt-8 inline-flex items-center justify-center rounded-2xl px-12 py-5 text-sm font-black tracking-widest uppercase shadow-xl transition-all duration-300"
+        aria-label="Prendre rendez-vous maintenant"
+      >
+        Prendre rendez-vous maintenant
+      </a>
+    </div>
+  </div>
+</section>

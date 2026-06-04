@@ -22,11 +22,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/blog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://kraak-consulting.vercel.app/ressources</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -50,20 +45,5 @@
     <loc>https://kraak-consulting.vercel.app/politique-de-confidentialite</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
-  </url>
-  <url>
-    <loc>https://kraak-consulting.vercel.app/blog/clarifier-son-projet-avant-de-candidater</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kraak-consulting.vercel.app/blog/choisir-un-format-de-formation-utile</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://kraak-consulting.vercel.app/blog/preparer-un-dossier-immigration-sans-perdre-le-fil</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>

@@ -33,12 +33,14 @@ describe('Navbar', () => {
     const navLinks = Array.from(host.querySelectorAll('a.kr-nav-link'));
 
     expect(navLinks.map((link) => link.textContent?.trim())).toEqual([
-      'À propos',
-      'Services',
-      'Programmes',
-      'Blog',
-      'Contact',
+      'ACCUEIL',
+      'SERVICES',
+      'PROGRAMMES',
+      'À PROPOS',
+      'CONTACT',
     ]);
+
+    expect(host.textContent).toContain('KRAAK Consulting');
   });
 
   it('Given le menu mobile est fermé, When on clique sur le bouton menu, Then il s ouvre puis se referme au clic sur un lien', () => {

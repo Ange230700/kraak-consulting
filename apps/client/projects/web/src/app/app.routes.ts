@@ -3,7 +3,6 @@ import { Route, Routes } from '@angular/router';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 import { adminAreaRoutes } from './admin-area.routes';
 import { participantAreaRoutes } from './participant-area.routes';
-import { environment } from '../environments/environment';
 
 export { participantAreaCanMatch } from './participant-area.routes';
 
@@ -37,32 +36,6 @@ const marketingRoutes: Routes = [
     'programmes',
     () => import('./features/programs/programs.page'),
   ),
-  buildMarketingRoute('blog', () => import('./features/blog/blog.page')),
-  {
-    path: 'blog/:slug',
-    title: 'Article de blog | KRAAK Consulting',
-    data: {
-      seo: {
-        path: 'blog',
-        title: 'Article de blog | KRAAK Consulting',
-        description:
-          'Consultez les articles KRAAK pour avancer plus clairement dans vos choix de formation, projet ou mobilité.',
-        openGraph: {
-          title: 'Article de blog | KRAAK Consulting',
-          description:
-            'Consultez les articles KRAAK pour avancer plus clairement dans vos choix de formation, projet ou mobilité.',
-          imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-          imageAlt:
-            "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
-        },
-        sitemap: {
-          changeFrequency: 'never',
-          priority: 0.1,
-        },
-      },
-    },
-    loadComponent: () => import('./features/blog/blog-article.page'),
-  },
   buildMarketingRoute(
     'ressources',
     () => import('./features/resources/resources.page'),
@@ -181,8 +154,8 @@ interface BuildRoutesOptions {
 }
 
 export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
-  const includeParticipantArea =
-    options.includeParticipantArea ?? environment.enableParticipantArea;
+  // Keep participant routes opt-in only for explicit previews/tests.
+  const includeParticipantArea = options.includeParticipantArea ?? false;
 
   return [
     ...marketingRoutes,
