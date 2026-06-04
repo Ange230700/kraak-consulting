@@ -1,41 +1,32 @@
 <aside class="py-16 lg:py-24">
-  <div class="mx-auto w-full max-w-6xl px-4 lg:px-6">
-    <p-card
-      class="shadow-card block"
-      [style]="{
-        background: 'var(--kr-brand-navy)',
-        color: 'var(--kr-brand-white)',
-        border: 'none',
-      }"
+  <div class="mx-auto max-w-5xl px-4 lg:px-6">
+    <div
+      class="from-brand-navy via-brand-blue to-brand-cyan text-brand-white shadow-brand-navy/20 overflow-hidden rounded-[3rem] bg-linear-to-r px-8 py-14 text-center shadow-2xl md:px-12 md:py-18 lg:px-20 lg:py-20"
     >
-      <ng-template #content>
-        <div class="px-2 py-2 sm:px-4 lg:px-6">
-          <h2
-            class="text-brand-white max-w-3xl text-3xl font-semibold text-balance lg:text-4xl"
-          >
-            {{ heading }}
-          </h2>
-          @if (body) {
-            <p
-              class="text-brand-white/90 mt-4 max-w-2xl text-base leading-7 text-balance"
-            >
-              {{ body }}
-            </p>
-          }
-          <ng-content />
-          @if (ctaLabel && ctaLink) {
-            <a
-              pButton
-              [routerLink]="ctaLink"
-              [label]="ctaLabel"
-              [attr.aria-label]="ctaLabel"
-              (click)="onCtaClick()"
-              class="kr-button-contrast mt-8 text-sm"
-              severity="contrast"
-            ></a>
-          }
-        </div>
-      </ng-template>
-    </p-card>
+      <h2 class="text-3xl leading-tight font-black text-white md:text-5xl">
+        {{ heading }}
+      </h2>
+      @if (body) {
+        <p
+          class="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/90 md:text-lg"
+        >
+          {{ body }}
+        </p>
+      }
+
+      <ng-content />
+
+      @if (ctaLabel && ctaLink) {
+        <a
+          pButton
+          [routerLink]="ctaLink"
+          [attr.aria-label]="ctaLabel"
+          (click)="onCtaClick()"
+          class="bg-brand-white text-brand-navy hover:bg-brand-cyan hover:text-brand-white mt-8 inline-flex items-center justify-center rounded-2xl px-10 py-4 text-sm font-black tracking-widest uppercase shadow-xl transition-all duration-300"
+        >
+          {{ ctaLabel }}
+        </a>
+      }
+    </div>
   </div>
 </aside>

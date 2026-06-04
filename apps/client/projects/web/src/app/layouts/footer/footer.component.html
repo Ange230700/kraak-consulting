@@ -1,109 +1,172 @@
-<footer
-  class="from-brand-white to-brand-cream mt-16 bg-linear-to-b px-6 py-16 md:px-12 lg:px-20"
->
+<footer #footerRoot class="mt-20 bg-neutral-900 text-neutral-400">
   <div
-    class="border-brand-blue/10 bg-brand-white/55 mx-auto flex max-w-6xl flex-col items-center gap-8 rounded-3xl border p-8 shadow-sm backdrop-blur-sm"
+    class="border-brand-white/5 mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 border-b px-6 py-14 text-center md:flex-row md:gap-10 md:py-14 md:text-left lg:gap-12 lg:py-16"
   >
-    <div class="w-full max-w-5xl">
-      <div class="bg-brand-blue/20 h-px w-full"></div>
-    </div>
-
-    <a
-      routerLink="/"
-      class="group flex items-center gap-3 rounded-full px-4 py-2 transition-colors hover:bg-white"
-      aria-label="Retour &agrave; l'accueil KRAAK"
-    >
-      <div
-        class="bg-brand-navy shadow-card inline-flex h-12 w-12 items-center justify-center rounded-2xl"
+    <div class="kr-footer-fade-right">
+      <h3
+        class="text-brand-white text-3xl font-black tracking-tight md:text-4xl"
       >
-        <img
-          src="/kraak-symbol.png"
-          alt="Symbole KRAAK Consulting"
-          width="28"
-          height="28"
-          loading="lazy"
-          decoding="async"
-          class="h-7 w-7"
-        />
-      </div>
-      <div>
-        <span
-          class="text-primary block text-base font-semibold tracking-[0.18em]"
-          >KRAAK</span
-        >
-        <p class="text-secondary text-xs font-medium">
-          Impact local, vision internationale.
-        </p>
-      </div>
-    </a>
-
-    <p class="text-secondary text-center text-sm leading-7">
-      KRAAK Consulting &mdash; Expertise internationale au service de votre
-      croissance.
-    </p>
-
-    <nav
-      class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 px-2"
-      aria-label="Liens du pied de page"
-    >
-      @for (link of navigationLinks; track link.path + link.label) {
-        <a
-          [routerLink]="link.path"
-          class="text-secondary hover:text-primary text-sm leading-tight transition-colors"
-        >
-          {{ link.label }}
-        </a>
-      }
-    </nav>
-
-    <div class="text-center">
-      <p
-        class="text-secondary mb-3 text-xs font-semibold tracking-[0.18em] uppercase"
-      >
-        R&eacute;seaux sociaux
+        Pr&ecirc;t &agrave; passer &agrave; l'action ?
+      </h3>
+      <p class="mt-3 text-lg text-neutral-400">
+        Rejoignez l'&eacute;cosyst&egrave;me KRAAK et propulsez vos ambitions.
       </p>
     </div>
 
-    <nav
-      class="flex items-center justify-center gap-4"
-      aria-label="R&eacute;seaux sociaux"
+    <a
+      routerLink="/contact"
+      kraakPublicConversion="footer_cta_click"
+      [kraakPublicConversionPayload]="{
+        cta_label: 'Nous contacter',
+        cta_surface: 'footer_top_band',
+        cta_path: '/contact',
+      }"
+      class="kr-footer-fade-left bg-brand-cyan shadow-brand-cyan/20 hover:bg-brand-white hover:shadow-brand-cyan/30 inline-flex items-center rounded-full px-10 py-4 text-sm font-black tracking-widest text-neutral-900 uppercase shadow-xl transition-all duration-300 hover:scale-[1.035] hover:shadow-2xl"
     >
-      @for (social of socialLinks; track social.label) {
-        <a
-          [href]="social.href"
-          target="_blank"
-          rel="noopener noreferrer"
-          [kraakPublicConversion]="
-            social.label === 'WhatsApp' ? 'whatsapp_click' : ''
-          "
-          [kraakPublicConversionPayload]="{
-            contact_method: 'whatsapp',
-            contact_surface: 'footer_social',
-            link_label: social.label,
-            link_url: social.href,
-          }"
-          class="border-brand-blue/20 hover:border-brand-blue/35 text-secondary hover:text-primary bg-brand-white hover:bg-brand-cream/90 flex h-12 w-12 items-center justify-center rounded-full border p-2.5 shadow-sm transition-all hover:-translate-y-px hover:scale-[1.03]"
-          [attr.aria-label]="social.label"
-          [attr.title]="social.label"
-        >
-          <i [class]="'pi ' + social.icon + ' text-xl'"></i>
-        </a>
-      }
-    </nav>
+      Nous contacter
+    </a>
+  </div>
 
-    <div class="flex flex-wrap items-center justify-center gap-4">
-      @for (link of policyLinks; track link.path + link.label) {
-        <a
-          [routerLink]="link.path"
-          class="text-secondary hover:text-primary text-xs leading-tight transition-colors"
+  <div
+    class="mx-auto grid max-w-7xl gap-y-10 px-6 py-14 md:grid-cols-2 md:gap-x-12 lg:grid-cols-4 lg:gap-x-14 lg:py-16"
+  >
+    <div class="space-y-6">
+      <a
+        routerLink="/"
+        class="group inline-flex items-center gap-3"
+        aria-label="Retour &agrave; l'accueil KRAAK"
+      >
+        <img
+          src="/kraak-symbol.png"
+          alt="Symbole KRAAK"
+          width="40"
+          height="40"
+          loading="lazy"
+          decoding="async"
+          class="h-10 w-10 transition-transform duration-300 group-hover:scale-105"
+        />
+        <span class="text-brand-white text-xl font-black tracking-widest"
+          >KRAAK</span
         >
-          {{ link.label }}
-        </a>
-      }
+      </a>
+
+      <p class="text-sm leading-relaxed text-neutral-500">
+        L'excellence op&eacute;rationnelle au service du d&eacute;veloppement
+        humain. Expertise strat&eacute;gique en Afrique et accompagnement
+        international.
+      </p>
+
+      <nav class="flex gap-4" aria-label="R&eacute;seaux sociaux">
+        @for (social of socialLinks; track social.label) {
+          <a
+            [href]="social.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            [kraakPublicConversion]="
+              social.label === 'WhatsApp' ? 'whatsapp_click' : ''
+            "
+            [kraakPublicConversionPayload]="{
+              contact_method: 'whatsapp',
+              contact_surface: 'footer_social',
+              link_label: social.label,
+              link_url: social.href,
+            }"
+            class="bg-brand-white/5 hover:bg-brand-cyan flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:text-neutral-900"
+            [attr.aria-label]="social.label"
+            [attr.title]="social.label"
+          >
+            <i [class]="'pi ' + social.icon + ' text-lg'"></i>
+          </a>
+        }
+      </nav>
     </div>
 
-    <p class="text-secondary text-xs">
-      &copy; {{ currentYear }} KRAAK. Tous droits r&eacute;serv&eacute;s.
-    </p>
+    <div>
+      <h4
+        class="text-brand-white mb-8 text-xs font-black tracking-[0.3em] uppercase"
+      >
+        Navigation
+      </h4>
+      <ul class="space-y-4 text-sm font-medium">
+        @for (link of navigationLinks; track link.path + link.label) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              class="hover:text-brand-cyan transition-all duration-200 hover:translate-x-[1px]"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h4
+        class="text-brand-white mb-8 text-xs font-black tracking-[0.3em] uppercase"
+      >
+        Expertises
+      </h4>
+      <ul class="space-y-4 text-sm font-medium">
+        @for (item of expertiseItems; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h4
+        class="text-brand-white mb-8 text-xs font-black tracking-[0.3em] uppercase"
+      >
+        Bureaux
+      </h4>
+      <ul class="space-y-5 text-sm font-medium">
+        @for (item of officeItems; track item.label) {
+          <li class="flex items-center gap-4">
+            <span
+              class="bg-brand-white/5 text-brand-cyan inline-flex h-8 w-8 items-center justify-center rounded-lg"
+            >
+              <i
+                [class]="'pi ' + item.icon + ' text-sm'"
+                aria-hidden="true"
+              ></i>
+            </span>
+
+            @if (item.href) {
+              <a
+                [href]="item.href"
+                class="hover:text-brand-cyan transition-all duration-200 hover:translate-x-[1px]"
+              >
+                {{ item.label }}
+              </a>
+            } @else {
+              <span>{{ item.label }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-brand-white/5 border-t">
+    <div
+      class="mx-auto grid max-w-7xl gap-4 px-6 py-8 text-[11px] font-bold tracking-[0.14em] text-neutral-600 uppercase md:grid-cols-[1fr_auto] md:items-center md:py-7 lg:py-8"
+    >
+      <p class="text-center md:text-left">
+        &copy; {{ currentYear }} KRAAK. Tous droits r&eacute;serv&eacute;s.
+      </p>
+      <div
+        class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 md:justify-end"
+      >
+        @for (link of policyLinks; track link.path + link.label) {
+          <a
+            [routerLink]="link.path"
+            class="hover:text-brand-white transition-colors duration-200"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </div>
+    </div>
   </div>
 </footer>

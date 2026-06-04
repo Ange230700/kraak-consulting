@@ -23,7 +23,7 @@ describe('CtaBanner', () => {
       .compileComponents();
   });
 
-  it('should render a PrimeNG card surface and CTA button', () => {
+  it('should render a gradient surface and CTA button', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('heading', 'Parlons de votre projet');
     fixture.componentRef.setInput(
@@ -36,7 +36,7 @@ describe('CtaBanner', () => {
 
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('.p-card')).toBeTruthy();
+    expect(element.querySelector('.bg-linear-to-r')).toBeTruthy();
     expect(element.querySelector('.p-button')).toBeTruthy();
   });
 
