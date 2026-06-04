@@ -19,7 +19,6 @@ describe('site-seo', () => {
       'a-propos',
       'services',
       'programmes',
-      'blog',
       'ressources',
       'contact',
       'faq',
@@ -36,14 +35,14 @@ describe('site-seo', () => {
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/a-propos</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/services</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/programmes</loc>`);
-    expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/blog</loc>`);
-    expect(sitemap).toContain(
+    expect(sitemap).not.toContain(`<loc>${DEFAULT_SITE_URL}/blog</loc>`);
+    expect(sitemap).not.toContain(
       `<loc>${DEFAULT_SITE_URL}/blog/clarifier-son-projet-avant-de-candidater</loc>`,
     );
-    expect(sitemap).toContain(
+    expect(sitemap).not.toContain(
       `<loc>${DEFAULT_SITE_URL}/blog/choisir-un-format-de-formation-utile</loc>`,
     );
-    expect(sitemap).toContain(
+    expect(sitemap).not.toContain(
       `<loc>${DEFAULT_SITE_URL}/blog/preparer-un-dossier-immigration-sans-perdre-le-fil</loc>`,
     );
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/ressources</loc>`);
