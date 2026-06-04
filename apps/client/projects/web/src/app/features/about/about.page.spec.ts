@@ -40,24 +40,13 @@ describe('AboutPage', () => {
     expect(content).toContain('Ouverture et connexion globale');
   });
 
-  it('Given the about page When it renders Then it shows real organizational proof instead of a generic team preview', () => {
+  it('Given the about page When it renders Then it keeps the mission-first narrative without a team block', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('jeunes professionnels');
-    expect(content).toContain('engagement citoyen');
-    expect(content).toContain('Canada');
-    expect(content).toContain("C\u00f4te d'Ivoire");
-  });
-
-  it('should render the team preview section', () => {
-    const fixture = TestBed.createComponent(AboutPage);
-    fixture.detectChanges();
-    const content = fixture.nativeElement.textContent as string;
-
-    expect(content).toContain("Pr\u00E9visualisation de l'\u00E9quipe KRAAK");
-    expect(content).toContain("L'\u00E9quipe KRAAK");
-    expect(content).toContain('Savannah Nguyen');
+    expect(content).toContain('Une mission claire, une vision utile.');
+    expect(content).toContain('Nos valeurs');
+    expect(content).not.toContain("L'\u00e9quipe KRAAK");
   });
 });

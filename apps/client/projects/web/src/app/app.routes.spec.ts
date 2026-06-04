@@ -10,7 +10,6 @@ import {
   participantRoleGuard,
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
-import { environment } from '../environments/environment';
 import NotFoundPage from './features/support/not-found.page';
 
 describe('Web routes', () => {
@@ -20,8 +19,6 @@ describe('Web routes', () => {
     'services',
     'faq',
     'programmes',
-    'blog',
-    'blog/:slug',
     'ressources',
     'contact',
     'mentions-legales',
@@ -86,11 +83,8 @@ describe('Web routes', () => {
       expect(authResetRoute?.data?.['seo']?.robots).toBe('noindex, nofollow');
     });
 
-    it('When inspecting article and alias routes Then the blog article page is lazy-loaded and english slugs redirect to french canonical paths', () => {
+    it('When inspecting alias routes Then english slugs redirect to french canonical paths', () => {
       const builtRoutes = buildRoutes();
-      const blogArticleRoute = builtRoutes.find(
-        (route) => route.path === 'blog/:slug',
-      );
       const aboutAliasRoute = builtRoutes.find(
         (route) => route.path === 'about',
       );
@@ -100,13 +94,6 @@ describe('Web routes', () => {
       const resourcesAliasRoute = builtRoutes.find(
         (route) => route.path === 'resources',
       );
-
-      expect(blogArticleRoute).toBeDefined();
-      expect(blogArticleRoute!.title).toBe(
-        'Article de blog | KRAAK Consulting',
-      );
-      expect(blogArticleRoute!.data?.['seo']).toBeDefined();
-      expect(blogArticleRoute!.loadComponent).toBeDefined();
 
       expect(aboutAliasRoute).toBeDefined();
       expect(aboutAliasRoute?.redirectTo).toBe('a-propos');
@@ -327,7 +314,7 @@ describe('Web routes', () => {
     it('When comparing exported routes Then they match the environment default', () => {
       const exportedPaths = routes.map((route) => route.path);
       const rebuiltPaths = buildRoutes({
-        includeParticipantArea: environment.enableParticipantArea,
+        includeParticipantArea: false,
       }).map((route) => route.path);
 
       expect(exportedPaths).toEqual(rebuiltPaths);
