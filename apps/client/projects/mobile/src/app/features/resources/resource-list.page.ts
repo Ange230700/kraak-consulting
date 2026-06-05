@@ -19,7 +19,7 @@ const RESOURCE_THEME_OPTIONS: readonly {
   { value: 'training', label: 'Formation' },
   { value: 'project_management', label: 'Gestion de projet' },
   { value: 'immigration', label: 'Immigration' },
-  { value: 'career', label: 'Carri\u00E8re' },
+  { value: 'career', label: 'Carrière' },
 ];
 
 const RESOURCE_AUDIENCE_OPTIONS: readonly {
@@ -29,7 +29,7 @@ const RESOURCE_AUDIENCE_OPTIONS: readonly {
   { value: 'all', label: 'Tous' },
   {
     value: 'young_professionals_students',
-    label: 'Jeunes pros et \u00E9tudiants',
+    label: 'Jeunes pros et étudiants',
   },
   { value: 'organizations', label: 'Organisations' },
   { value: 'international_candidates', label: 'Candidats internationaux' },

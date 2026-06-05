@@ -16,10 +16,10 @@ describe('Card', () => {
     fixture.componentRef.setInput('title', 'Formation');
     fixture.componentRef.setInput(
       'description',
-      'Un accompagnement structur\u00E9.',
+      'Un accompagnement structuré.',
     );
     fixture.componentRef.setInput('link', '/services');
-    fixture.componentRef.setInput('linkLabel', 'D\u00E9couvrir');
+    fixture.componentRef.setInput('linkLabel', 'Découvrir');
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;

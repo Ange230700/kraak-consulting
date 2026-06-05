@@ -19,7 +19,7 @@
             for="sign-up-first-name"
             class="text-sm font-semibold text-neutral-900"
           >
-            Pr&eacute;nom
+            Prénom
           </label>
           <input
             id="sign-up-first-name"
@@ -76,7 +76,7 @@
           type="password"
           formControlName="password"
           autocomplete="new-password"
-          placeholder="Minimum 8 caract&egrave;res"
+          placeholder="Minimum 8 caractères"
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
       </div>
@@ -86,7 +86,7 @@
           for="sign-up-phone"
           class="text-sm font-semibold text-neutral-900"
         >
-          T&eacute;l&eacute;phone
+          Téléphone
         </label>
         <input
           id="sign-up-phone"
@@ -97,14 +97,14 @@
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
         <p class="text-sm leading-6 text-neutral-700">
-          Optionnel. Ajoutez-le si vous souhaitez &ecirc;tre recontact&eacute;
-          plus facilement.
+          Optionnel. Ajoutez-le si vous souhaitez être recontacté plus
+          facilement.
         </p>
       </div>
 
       @if (form.invalid && form.touched) {
         <p class="text-sm leading-6 text-rose-700">
-          V&eacute;rifiez vos informations avant de continuer.
+          Vérifiez vos informations avant de continuer.
         </p>
       }
 
@@ -130,9 +130,7 @@
         class="kraak-primary-button"
         [disabled]="submitting()"
       >
-        {{
-          submitting() ? 'Cr\u00e9ation en cours...' : 'Cr\u00e9er un compte'
-        }}
+        {{ submitting() ? 'Création en cours...' : 'Créer un compte' }}
       </ion-button>
     </form>
 

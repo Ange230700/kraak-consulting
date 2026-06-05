@@ -1,11 +1,11 @@
 [
   {
     "path": "",
-    "title": "KRAAK Consulting | D\u00e9veloppez vos comp\u00e9tences, lancez vos projets",
-    "description": "KRAAK Consulting accompagne les jeunes, les professionnels, les entreprises et les institutions avec des solutions concr\u00e8tes en employabilit\u00e9, gestion de projets et mobilit\u00e9 internationale.",
+    "title": "KRAAK Consulting | Développez vos compétences, lancez vos projets",
+    "description": "KRAAK Consulting accompagne les jeunes, les professionnels, les entreprises et les institutions avec des solutions concrètes en employabilité, gestion de projets et mobilité internationale.",
     "openGraph": {
-      "title": "KRAAK Consulting | D\u00e9veloppez vos comp\u00e9tences, lancez vos projets",
-      "description": "Employabilit\u00e9, projets et mobilit\u00e9 internationale : un accompagnement KRAAK clair pour transformer un potentiel en trajectoire concr\u00e8te.",
+      "title": "KRAAK Consulting | Développez vos compétences, lancez vos projets",
+      "description": "Employabilité, projets et mobilité internationale : un accompagnement KRAAK clair pour transformer un potentiel en trajectoire concrète.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -16,11 +16,11 @@
   },
   {
     "path": "a-propos",
-    "title": "\u00c0 propos | Capital humain, impact et trajectoires | KRAAK Consulting",
-    "description": "D\u00e9couvrez une structure engag\u00e9e pour le capital humain, l'employabilit\u00e9 des jeunes et des trajectoires durables en C\u00f4te d'Ivoire et \u00e0 l'international.",
+    "title": "À propos | Capital humain, impact et trajectoires | KRAAK Consulting",
+    "description": "Découvrez une structure engagée pour le capital humain, l'employabilité des jeunes et des trajectoires durables en Côte d'Ivoire et à l'international.",
     "openGraph": {
-      "title": "\u00c0 propos de KRAAK Consulting",
-      "description": "Une \u00e9quipe engag\u00e9e pour l'employabilit\u00e9, l'impact durable et le d\u00e9veloppement du capital humain.",
+      "title": "À propos de KRAAK Consulting",
+      "description": "Une équipe engagée pour l'employabilité, l'impact durable et le développement du capital humain.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -31,11 +31,11 @@
   },
   {
     "path": "services",
-    "title": "Services | Formation, projets, \u00e9tudes, immigration et entreprises | KRAAK",
-    "description": "D\u00e9couvrez les services KRAAK Consulting en formation, recherche et gestion de projets, \u00e9tudes et immigration, et solutions entreprises.",
+    "title": "Services | Formation, projets, études, immigration et entreprises | KRAAK",
+    "description": "Découvrez les services KRAAK Consulting en formation, recherche et gestion de projets, études et immigration, et solutions entreprises.",
     "openGraph": {
       "title": "Services KRAAK Consulting",
-      "description": "Des offres claires pour l'employabilit\u00e9, la structuration de projets, la mobilit\u00e9 internationale et les besoins entreprises.",
+      "description": "Des offres claires pour l'employabilité, la structuration de projets, la mobilité internationale et les besoins entreprises.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -47,10 +47,10 @@
   {
     "path": "programmes",
     "title": "Programmes | Orientation et formats d'accompagnement | KRAAK",
-    "description": "Le catalogue d\u00e9taill\u00e9 est partag\u00e9 apr\u00e8s orientation. D\u00e9couvrez les formats KRAAK pour employabilit\u00e9, langues, mobilit\u00e9 internationale et interventions collectives.",
+    "description": "Le catalogue détaillé est partagé après orientation. Découvrez les formats KRAAK pour employabilité, langues, mobilité internationale et interventions collectives.",
     "openGraph": {
       "title": "Programmes KRAAK Consulting",
-      "description": "KRAAK oriente chaque demande vers le bon format selon l'objectif, le profil et la disponibilit\u00e9 des cohortes ou des partenaires.",
+      "description": "KRAAK oriente chaque demande vers le bon format selon l'objectif, le profil et la disponibilité des cohortes ou des partenaires.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -62,10 +62,10 @@
   {
     "path": "ressources",
     "title": "Ressources d'orientation | Formation, projet et immigration | KRAAK",
-    "description": "Une page d'orientation vitrine pour clarifier votre prochaine \u00e9tape entre formation, projet, immigration, programme ou solution entreprise.",
+    "description": "Une page d'orientation vitrine pour clarifier votre prochaine étape entre formation, projet, immigration, programme ou solution entreprise.",
     "openGraph": {
       "title": "Ressources d'orientation KRAAK Consulting",
-      "description": "Des rep\u00e8res courts pour choisir le bon point d'entr\u00e9e KRAAK, sans promettre un hub \u00e9ditorial ou une biblioth\u00e8que publique de contenus.",
+      "description": "Des repères courts pour choisir le bon point d'entrée KRAAK, sans promettre un hub éditorial ou une bibliothèque publique de contenus.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -80,7 +80,7 @@
     "description": "Formation, gestion de projets, immigration ou besoin entreprise : contactez KRAAK Consulting via le formulaire ou WhatsApp.",
     "openGraph": {
       "title": "Parlons de votre projet",
-      "description": "Formation, projet, immigration ou besoin entreprise : envoyez votre demande \u00e0 KRAAK Consulting.",
+      "description": "Formation, projet, immigration ou besoin entreprise : envoyez votre demande à KRAAK Consulting.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -92,10 +92,10 @@
   {
     "path": "faq",
     "title": "FAQ | Aide et orientation | KRAAK Consulting",
-    "description": "Consultez la FAQ KRAAK pour clarifier vos questions sur les services, les programmes, l'accompagnement et les d\u00e9lais de r\u00e9ponse.",
+    "description": "Consultez la FAQ KRAAK pour clarifier vos questions sur les services, les programmes, l'accompagnement et les délais de réponse.",
     "openGraph": {
       "title": "FAQ | Aide et orientation | KRAAK Consulting",
-      "description": "Des r\u00e9ponses utiles pour choisir le bon point d'entr\u00e9e chez KRAAK et avancer avec plus de clart\u00e9.",
+      "description": "Des réponses utiles pour choisir le bon point d'entrée chez KRAAK et avancer avec plus de clarté.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -106,11 +106,11 @@
   },
   {
     "path": "mentions-legales",
-    "title": "Mentions l\u00e9gales | KRAAK Consulting",
-    "description": "Mentions l\u00e9gales de KRAAK Consulting : statut, coordonn\u00e9es publiques, h\u00e9bergement, propri\u00e9t\u00e9 intellectuelle et responsabilit\u00e9.",
+    "title": "Mentions légales | KRAAK Consulting",
+    "description": "Mentions légales de KRAAK Consulting : statut, coordonnées publiques, hébergement, propriété intellectuelle et responsabilité.",
     "openGraph": {
-      "title": "Mentions l\u00e9gales | KRAAK Consulting",
-      "description": "Statut, contacts et informations l\u00e9gales relatives au site KRAAK Consulting.",
+      "title": "Mentions légales | KRAAK Consulting",
+      "description": "Statut, contacts et informations légales relatives au site KRAAK Consulting.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -121,11 +121,11 @@
   },
   {
     "path": "politique-de-confidentialite",
-    "title": "Politique de confidentialit\u00e9 | KRAAK Consulting",
-    "description": "D\u00e9couvrez comment KRAAK Consulting collecte, utilise, conserve et prot\u00e8ge les donn\u00e9es transmises via ses canaux publics.",
+    "title": "Politique de confidentialité | KRAAK Consulting",
+    "description": "Découvrez comment KRAAK Consulting collecte, utilise, conserve et protège les données transmises via ses canaux publics.",
     "openGraph": {
-      "title": "Politique de confidentialit\u00e9 | KRAAK Consulting",
-      "description": "Donn\u00e9es de contact, conservation, droits, consentement et mesure d'audience chez KRAAK Consulting.",
+      "title": "Politique de confidentialité | KRAAK Consulting",
+      "description": "Données de contact, conservation, droits, consentement et mesure d'audience chez KRAAK Consulting.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },
@@ -136,12 +136,12 @@
   },
   {
     "path": "auth/reset",
-    "title": "Finaliser la r\u00e9initialisation | KRAAK Consulting",
-    "description": "D\u00e9finissez un nouveau mot de passe pour s\u00e9curiser votre acc\u00e8s \u00e0 l'espace KRAAK.",
+    "title": "Finaliser la réinitialisation | KRAAK Consulting",
+    "description": "Définissez un nouveau mot de passe pour sécuriser votre accès à l'espace KRAAK.",
     "robots": "noindex, nofollow",
     "openGraph": {
-      "title": "Finaliser la r\u00e9initialisation | KRAAK Consulting",
-      "description": "D\u00e9finissez un nouveau mot de passe pour s\u00e9curiser votre acc\u00e8s \u00e0 l'espace KRAAK.",
+      "title": "Finaliser la réinitialisation | KRAAK Consulting",
+      "description": "Définissez un nouveau mot de passe pour sécuriser votre accès à l'espace KRAAK.",
       "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
       "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
     },

@@ -72,11 +72,9 @@ describe('Mobile SupportPage', () => {
       'En cours',
     );
     expect(fixture.componentInstance.getStatusLabel('resolved')).toBe(
-      'R\u00E9solue',
+      'Résolue',
     );
-    expect(fixture.componentInstance.getStatusLabel('closed')).toBe(
-      'Cl\u00F4tur\u00E9e',
-    );
+    expect(fixture.componentInstance.getStatusLabel('closed')).toBe('Clôturée');
   });
 
   it('Given the support tracking API fails, when the page initializes, then a fallback error message is displayed', async () => {

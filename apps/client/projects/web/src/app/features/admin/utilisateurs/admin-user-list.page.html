@@ -164,7 +164,7 @@
                   <div class="flex items-center justify-end gap-2">
                     <button
                       pButton
-                      class="kr-button-ghost !px-3 !py-1.5 text-xs"
+                      class="kr-button-ghost px-3! py-1.5! text-xs"
                       type="button"
                       (click)="openEdit(user)"
                       [attr.aria-label]="
@@ -176,7 +176,7 @@
                     </button>
                     <button
                       pButton
-                      class="kr-button-ghost border-red-200 !px-3 !py-1.5 text-xs text-red-600 hover:bg-red-50"
+                      class="kr-button-ghost border-red-200 px-3! py-1.5! text-xs text-red-600 hover:bg-red-50"
                       type="button"
                       (click)="requestDelete(user)"
                       [attr.aria-label]="
@@ -368,7 +368,7 @@
         </button>
         <button
           pButton
-          class="kr-button-primary !border-red-600 !bg-red-600 hover:!bg-red-700"
+          class="kr-button-primary border-red-600! bg-red-600! hover:bg-red-700!"
           type="button"
           (click)="confirmDelete()"
           [disabled]="submitting()"

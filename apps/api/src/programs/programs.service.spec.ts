@@ -16,7 +16,11 @@ function createSingleRowQuery(result: { data: unknown; error: unknown }) {
   };
 }
 
-function createListQuery(result: { data: unknown; error: unknown }) {
+function createListQuery(result: {
+  data: unknown;
+  error: unknown;
+  count?: number | null;
+}) {
   return {
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),

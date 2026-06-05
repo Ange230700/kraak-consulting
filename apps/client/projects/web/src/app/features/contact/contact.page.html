@@ -87,12 +87,12 @@
               <h2
                 class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
               >
-                Donnez-nous les bons rep&egrave;res pour vous orienter.
+                Donnez-nous les bons repères pour vous orienter.
               </h2>
               <p class="text-brand-white mt-4 text-sm leading-6">
-                Formation, projets, leadership, mobilit&eacute; internationale :
-                d&eacute;crivez votre priorit&eacute; et nous revenons vers vous
-                avec un plan d'action clair.
+                Formation, projets, leadership, mobilité internationale :
+                décrivez votre priorité et nous revenons vers vous avec un plan
+                d'action clair.
               </p>
             </div>
 
@@ -152,14 +152,14 @@
                 </li>
                 <li class="flex items-center gap-3">
                   <i class="pi pi-clock text-brand-cyan" aria-hidden="true"></i>
-                  <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
+                  <span>Réponse sous 48h ouvrées</span>
                 </li>
               </ul>
             </address>
 
             <nav
               class="flex items-center gap-3"
-              aria-label="R&eacute;seaux sociaux KRAAK"
+              aria-label="Réseaux sociaux KRAAK"
             >
               @for (social of socialLinks; track social.label) {
                 <a
@@ -197,16 +197,16 @@
               Envoyez votre demande
             </h2>
             <p class="text-brand-navy text-base leading-relaxed">
-              D&eacute;crivez brièvement votre objectif : formation, projet,
-              immigration, partenariat, ou autre demande. Nous vous
-              r&eacute;pondrons dans les meilleurs d&eacute;lais.
+              Décrivez brièvement votre objectif : formation, projet,
+              immigration, partenariat, ou autre demande. Nous vous répondrons
+              dans les meilleurs délais.
             </p>
           </div>
 
           @if (success()) {
             <p-message
               severity="success"
-              text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
+              text="Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
               [closable]="false"
               styleClass="w-full mb-6"
             />
@@ -305,7 +305,7 @@
                       @if (name.errors?.['required']) {
                         Le nom est requis.
                       } @else if (name.errors?.['minlength']) {
-                        Le nom doit contenir au moins 2 caract&egrave;res.
+                        Le nom doit contenir au moins 2 caractères.
                       }
                     </p>
                   }
@@ -400,7 +400,7 @@
                     pInputText
                     id="country"
                     type="text"
-                    placeholder="Votre pays de r&eacute;sidence"
+                    placeholder="Votre pays de résidence"
                     formControlName="country"
                     class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
@@ -470,7 +470,7 @@
                   pTextarea
                   id="message"
                   rows="6"
-                  placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
+                  placeholder="Décrivez votre besoin, votre calendrier ou la prochaine décision à prendre..."
                   formControlName="message"
                   class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                   [ngClass]="{
@@ -492,7 +492,7 @@
                     @if (message.errors?.['required']) {
                       Le message est requis.
                     } @else if (message.errors?.['minlength']) {
-                      Le message doit contenir au moins 10 caract&egrave;res.
+                      Le message doit contenir au moins 10 caractères.
                     }
                   </p>
                 }
@@ -536,9 +536,7 @@
 
 <section class="kr-perf-section bg-neutral-50 py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Nos coordonn&eacute;es
-    </h2>
+    <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos coordonnées</h2>
     <div class="mt-10 grid gap-8 md:grid-cols-2">
       <div class="text-center">
         <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
@@ -581,8 +579,8 @@
         <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
         <h3 class="mt-2 text-lg font-bold">Zone d'intervention</h3>
         <p class="mt-1 text-neutral-700">
-          Afrique &amp; international &mdash; accompagnement &agrave; distance
-          et en pr&eacute;sentiel.
+          Afrique &amp; international &mdash; accompagnement à distance et en
+          présentiel.
         </p>
       </div>
     </div>
@@ -590,6 +588,6 @@
 </section>
 
 <kraak-cta-banner
-  heading="Parlons de votre prochaine &eacute;tape."
-  body="Envoyez votre demande via le formulaire ou lancez directement un &eacute;change sur WhatsApp."
+  heading="Parlons de votre prochaine étape."
+  body="Envoyez votre demande via le formulaire ou lancez directement un échange sur WhatsApp."
 />

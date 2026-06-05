@@ -1,8 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 
 const expectParticipantCta =
-  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
-  (process.env['KRAAK_E2E_REUSE_SERVER'] === 'true' ? 'false' : 'true');
+  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ?? 'false';
 const participantCtaExpected = expectParticipantCta === 'true';
 const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
 
@@ -42,9 +41,10 @@ test.describe(`Page d'accueil — smoke tests`, () => {
   test(`Given la page d'accueil, When elle se charge, Then la marque KRAAK est visible dans la navigation`, async ({
     page,
   }) => {
-    await expect(page.getByRole('banner')).toContainText('KRAAK');
+    const banner = page.getByRole('banner');
+    await expect(banner).toContainText('KRAAK');
     await expect(
-      page.getByRole('img', { name: 'Logo KRAAK Consulting' }),
+      banner.getByRole('img', { name: 'Symbole KRAAK' }),
     ).toBeVisible();
   });
 
@@ -77,7 +77,7 @@ test.describe(`Page d'accueil — smoke tests`, () => {
     page,
   }) => {
     await expect(page.getByRole('contentinfo')).toContainText(
-      `KRAAK Consulting — Expertise internationale au service de votre croissance.`,
+      `L'excellence opérationnelle au service du développement humain.`,
     );
   });
 

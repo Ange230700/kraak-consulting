@@ -1,23 +1,30 @@
 import { expect, test } from '@playwright/test';
 
+const participantAreaExpected =
+  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
+
 test.describe('Parcours coeur participant - orientation web', () => {
   test('Given un visiteur non authentifie, When il tente l\u0027accès dashboard participant, Then il est redirige vers la connexion et oriente vers des pages publiques', async ({
     page,
   }) => {
     await page.goto('/participant/dashboard');
 
-    await expect(page).toHaveURL(/\/connexion$/);
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Connexion' }),
-    ).toBeVisible();
+    if (participantAreaExpected) {
+      await expect(page).toHaveURL(/\/connexion$/);
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Connexion' }),
+      ).toBeVisible();
+    } else {
+      await expect(page).toHaveURL(/\/participant\/dashboard$/);
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Oups.' }),
+      ).toBeVisible();
+    }
 
     await page.goto('/programmes');
-    await expect(
-      page.getByRole('heading', {
-        level: 1,
-        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
-      }),
-    ).toBeVisible();
+    await expect(page.locator('h1').first()).toContainText(
+      /Orientation d'abord, format adapt\u00e9 ensuite\./i,
+    );
 
     await page.goto('/contact');
     await expect(

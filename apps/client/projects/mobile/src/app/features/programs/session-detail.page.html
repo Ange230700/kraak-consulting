@@ -107,9 +107,9 @@
         <p class="text-primary text-lg font-semibold">Progression</p>
         <p class="text-sm leading-6 text-neutral-700">
           @if (isSessionCompleted()) {
-            Session marqu&eacute;e comme termin&eacute;e.
+            Session marquée comme terminée.
           } @else {
-            Session non termin&eacute;e.
+            Session non terminée.
           }
         </p>
 
@@ -128,7 +128,7 @@
             (click)="markSessionCompletion(false)"
             (keydown.enter)="onMarkKeydown($event, false)"
           >
-            Marquer comme non termin&eacute;e
+            Marquer comme non terminée
           </ion-button>
         } @else {
           <ion-button
@@ -138,7 +138,7 @@
             (click)="markSessionCompletion(true)"
             (keydown.enter)="onMarkKeydown($event, true)"
           >
-            Marquer comme termin&eacute;e
+            Marquer comme terminée
           </ion-button>
         }
       </article>
@@ -167,7 +167,7 @@
       class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col gap-4 border p-5"
     >
       <p class="text-sm leading-6 text-neutral-700">
-        La session n'a pas pu &ecirc;tre trouv&eacute;e.
+        La session n'a pas pu être trouvée.
       </p>
       <ion-button
         [routerLink]="['/tabs/programmes', programId()]"

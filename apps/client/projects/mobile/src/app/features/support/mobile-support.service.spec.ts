@@ -39,9 +39,8 @@ describe('MobileSupportService', () => {
     const payload: ContactFormDto = {
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     };
 

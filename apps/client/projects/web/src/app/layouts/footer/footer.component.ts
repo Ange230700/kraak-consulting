@@ -135,16 +135,13 @@ export class Footer implements AfterViewInit, OnDestroy {
     { label: 'Mentions l\u00E9gales', path: '/mentions-legales' },
     { label: 'FAQ', path: '/faq' },
     {
-      label: 'Politique de confidentialit\u00E9',
+      label: 'Politique de confidentialité',
       path: '/politique-de-confidentialite',
     },
   ];
 
   ngAfterViewInit(): void {
-    if (
-      typeof globalThis.window === 'undefined' ||
-      this.footerRoot === undefined
-    ) {
+    if (globalThis.window === undefined || this.footerRoot === undefined) {
       return;
     }
 
@@ -156,7 +153,7 @@ export class Footer implements AfterViewInit, OnDestroy {
 
   private readonly handleScroll = (): void => {
     if (
-      typeof globalThis.window === 'undefined' ||
+      globalThis.window === undefined ||
       this.footerRoot === undefined ||
       this.hasActivatedAnimations
     ) {
@@ -187,7 +184,7 @@ export class Footer implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (typeof globalThis.window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       globalThis.window.removeEventListener('scroll', this.handleScroll);
     }
   }

@@ -26,15 +26,19 @@ describe('MentionsLegalesPage', () => {
     it('When displayed, Then it includes the editor section', () => {
       const headings: NodeListOf<HTMLElement> =
         fixture.nativeElement.querySelectorAll('h2');
-      const texts = Array.from(headings).map((h) => h.textContent ?? '');
-      expect(texts.some((t) => t.includes('diteur'))).toBe(true);
+      const texts = Array.from(headings).map((h) =>
+        (h.textContent ?? '').toLowerCase(),
+      );
+      expect(texts.some((t) => t.includes('éditeur'))).toBe(true);
     });
 
     it('When displayed, Then it includes the hosting section', () => {
       const headings: NodeListOf<HTMLElement> =
         fixture.nativeElement.querySelectorAll('h2');
-      const texts = Array.from(headings).map((h) => h.textContent ?? '');
-      expect(texts.some((t) => t.includes('bergement'))).toBe(true);
+      const texts = Array.from(headings).map((h) =>
+        (h.textContent ?? '').toLowerCase(),
+      );
+      expect(texts.some((t) => t.includes('hébergement'))).toBe(true);
     });
 
     it('When displayed, Then it states the current legal status and public contact channels', () => {

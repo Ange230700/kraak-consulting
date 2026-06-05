@@ -198,19 +198,16 @@ describe('MlRuntimeService', () => {
 
   it('rethrows non Error values while loading tfjs', async () => {
     vi.doMock('@tensorflow/tfjs', () => {
-      throw 'boom-string';
+      throw new Error('boom-string');
     });
 
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
     const spyTarget = asSpyTarget(service);
 
-    await expect(spyTarget.loadTfjsModule()).rejects.toMatchObject({
-      message: expect.stringContaining(
-        'There was an error when mocking a module',
-      ),
-      cause: 'boom-string',
-    });
+    await expect(spyTarget.loadTfjsModule()).rejects.toThrow(
+      'There was an error when mocking a module',
+    );
   });
 
   it('returns false for non Error values in tfjs missing-dependency detector', () => {

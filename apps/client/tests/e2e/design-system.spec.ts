@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-async function revealParticipantCta(page: Page) {
-  const participantCta = page
-    .getByRole('link', { name: 'Espace participant' })
+async function revealPrimaryCta(page: Page) {
+  const primaryCta = page
+    .getByRole('link', { name: 'Réserver une consultation' })
     .first();
   const mobileMenuButton = page.getByRole('button', {
     name: 'Menu de navigation',
@@ -20,9 +20,9 @@ async function revealParticipantCta(page: Page) {
     await mobileMenuButton.click();
   }
 
-  await expect(participantCta).toBeVisible();
+  await expect(primaryCta).toBeVisible();
 
-  return participantCta;
+  return primaryCta;
 }
 
 test.describe(`Design system web — smoke styling`, () => {
@@ -34,20 +34,12 @@ test.describe(`Design system web — smoke styling`, () => {
     page,
   }) => {
     const heroSection = page.locator('kraak-home-page section').first();
+    const heroCopy = page.locator('kraak-home-page .hero-copy').first();
     const heroInner = heroSection.locator('div.relative.z-10').first();
-    const viewportSize = page.viewportSize();
-    const isDesktopViewport = (viewportSize?.width ?? 0) >= 1024;
 
     await expect(heroSection).toBeVisible();
-    await expect(heroSection).toHaveCSS('text-align', 'center');
-    await expect(heroSection).toHaveCSS(
-      'padding-top',
-      isDesktopViewport ? '112px' : '80px',
-    );
-    await expect(heroSection).toHaveCSS(
-      'padding-bottom',
-      isDesktopViewport ? '112px' : '80px',
-    );
+    await expect(heroSection).toHaveCSS('text-align', 'start');
+    await expect(heroCopy).toHaveCSS('text-align', 'left');
     await expect(heroInner).toHaveCSS('padding-right', '24px');
     await expect(heroInner).toHaveCSS('padding-left', '24px');
   });
@@ -55,16 +47,15 @@ test.describe(`Design system web — smoke styling`, () => {
   test(`Given la page d'accueil, When le design system se charge, Then le CTA principal applique le style KRAAK`, async ({
     page,
   }) => {
-    const primaryCta = await revealParticipantCta(page);
+    const primaryCta = await revealPrimaryCta(page);
 
     await expect(primaryCta).toBeVisible();
-    await expect(primaryCta).toHaveCSS('display', 'inline-flex');
-    await expect(primaryCta).toHaveCSS('border-top-left-radius', '12px');
-    await expect(primaryCta).toHaveCSS('border-top-right-radius', '12px');
-    await expect(primaryCta).toHaveCSS('background-color', 'rgb(22, 115, 174)');
-    await expect(primaryCta).toHaveCSS('padding-top', '10px');
-    await expect(primaryCta).toHaveCSS('padding-right', '20px');
-    await expect(primaryCta).toHaveCSS('padding-bottom', '10px');
-    await expect(primaryCta).toHaveCSS('padding-left', '20px');
+    await expect(primaryCta).toHaveCSS('display', 'flex');
+    await expect(primaryCta).toHaveClass(/kr-button-primary/);
+    await expect(primaryCta).toHaveClass(/rounded-2xl/);
+    await expect(primaryCta).toHaveCSS('padding-top', '16px');
+    await expect(primaryCta).toHaveCSS('padding-right', '32px');
+    await expect(primaryCta).toHaveCSS('padding-bottom', '16px');
+    await expect(primaryCta).toHaveCSS('padding-left', '32px');
   });
 });

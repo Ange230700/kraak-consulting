@@ -263,11 +263,11 @@ export class ArticlesController {
 
   @Patch(':id')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Mettre à jour un article (compatibilite PATCH)' })
+  @ApiOperation({ summary: 'Mettre à jour un article (compatibilité PATCH)' })
   @ApiBody({ schema: updateArticleBodySchema })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Article mis a jour avec succes.',
+    description: 'Article mis à jour avec succès.',
     schema: articleSchema,
   })
   async patchArticle(
@@ -283,7 +283,7 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Publier un article' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Article publie avec succes.',
+    description: 'Article publié avec succès.',
     schema: articleSchema,
   })
   async publishArticle(
@@ -320,7 +320,7 @@ export class ArticlesController {
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Image de couverture envoyee.',
+    description: 'Image de couverture envoyée avec succès.',
     schema: {
       type: 'object',
       required: ['url', 'path'],
@@ -378,7 +378,7 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Lister les categories' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categories chargees avec succes.',
+    description: 'Catégories chargées avec succès.',
     schema: { type: 'array', items: categoryResponseSchema },
   })
   async listCategories(
@@ -398,11 +398,11 @@ export class ArticlesController {
 
   @Post('categories')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Creer une categorie' })
+  @ApiOperation({ summary: 'Créer une catégorie' })
   @ApiBody({ schema: categoryCreateBodySchema })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Categorie creee avec succes.',
+    description: 'Catégorie créée avec succès.',
     schema: categoryResponseSchema,
   })
   async createCategory(
@@ -435,11 +435,11 @@ export class ArticlesController {
 
   @Patch('categories/:id')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Mettre a jour une categorie' })
+  @ApiOperation({ summary: 'Mettre à jour une catégorie' })
   @ApiBody({ schema: categoryUpdateBodySchema })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Categorie mise a jour avec succes.',
+    description: 'Catégorie mise à jour avec succès.',
     schema: categoryResponseSchema,
   })
   async updateCategory(
@@ -475,7 +475,7 @@ export class ArticlesController {
   @Delete('categories/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Archiver une categorie' })
+  @ApiOperation({ summary: 'Archiver une catégorie' })
   async deleteCategory(
     @Param('id') id: string,
     @Headers('authorization') authorizationHeader?: string,
@@ -497,7 +497,7 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Lister les tags' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tags charges avec succes.',
+    description: 'Tags chargés avec succès.',
     schema: { type: 'array', items: tagResponseSchema },
   })
   async listTags(
@@ -517,11 +517,11 @@ export class ArticlesController {
 
   @Post('tags')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Creer un tag' })
+  @ApiOperation({ summary: 'Créer un tag' })
   @ApiBody({ schema: tagCreateBodySchema })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Tag cree avec succes.',
+    description: 'Tag créé avec succès.',
     schema: tagResponseSchema,
   })
   async createTag(
@@ -551,11 +551,11 @@ export class ArticlesController {
 
   @Patch('tags/:id')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Mettre a jour un tag' })
+  @ApiOperation({ summary: 'Mettre à jour un tag' })
   @ApiBody({ schema: tagUpdateBodySchema })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tag mis a jour avec succes.',
+    description: 'Tag mis à jour avec succès.',
     schema: tagResponseSchema,
   })
   async updateTag(

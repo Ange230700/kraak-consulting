@@ -69,7 +69,7 @@ export default class SupportRequestPage {
   readonly errorMessage = signal<string | null>(null);
 
   readonly categoryOptions: { value: SupportCategoryValue; label: string }[] = [
-    { value: 'technical', label: 'Probl\u00E8me technique' },
+    { value: 'technical', label: 'Problème technique' },
     { value: 'program', label: 'Question sur un programme' },
     { value: 'session', label: 'Question sur une session' },
     { value: 'billing', label: 'Facturation' },
@@ -140,7 +140,7 @@ function resolveSupportErrorMessage(error: unknown): string {
     }
 
     if (error.status === 400) {
-      return 'Les informations saisies sont invalides. Veuillez v\u00E9rifier le formulaire.';
+      return 'Les informations saisies sont invalides. Veuillez vérifier le formulaire.';
     }
   }
 
@@ -154,7 +154,7 @@ function resolveSupportErrorMessage(error: unknown): string {
     return error.message.trim();
   }
 
-  return 'Une erreur est survenue. Veuillez r\u00E9essayer ult\u00E9rieurement.';
+  return 'Une erreur est survenue. Veuillez réessayer ultérieurement.';
 }
 
 function readSupportErrorBody(

@@ -116,7 +116,7 @@ describe('AnalyticsService', () => {
     setupAnalyticsTestBed('G-ABC123');
 
     const existing = document.createElement('script');
-    existing.setAttribute('data-kraak-analytics', 'loader');
+    existing.dataset['kraakAnalytics'] = 'loader';
     document.head.appendChild(existing);
 
     const service = TestBed.inject(AnalyticsService);

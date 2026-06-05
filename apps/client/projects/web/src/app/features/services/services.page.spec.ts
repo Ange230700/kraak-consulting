@@ -48,7 +48,7 @@ describe('ServicesPage', () => {
 
     expect(faqAccordion).not.toBeNull();
     expect(element.querySelectorAll('kraak-faq-accordion')).toHaveLength(1);
-    expect(element.textContent).toContain('Questions fr\u00e9quentes');
+    expect(element.textContent).toContain('Questions fréquentes');
   });
 
   it('should render service-specific FAQ section', () => {
@@ -56,9 +56,9 @@ describe('ServicesPage', () => {
     fixture.detectChanges();
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Questions fr\u00E9quentes');
+    expect(content).toContain('Questions fréquentes');
     expect(content).toContain(
-      'Comment choisir le service le plus adapt\u00E9 \u00E0 mon objectif ?',
+      'Comment choisir le service le plus adapté à mon objectif ?',
     );
   });
 });

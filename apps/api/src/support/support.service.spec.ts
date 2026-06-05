@@ -1049,10 +1049,10 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un rôle employe, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
+  it('Given un rôle employee, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
     configService.get.mockReturnValue(undefined);
     authGetUserMock.mockResolvedValue({
-      data: { user: { id: 'employe-1' } },
+      data: { user: { id: 'employee-1' } },
       error: null,
     });
 
@@ -1061,7 +1061,7 @@ describe('SupportService', () => {
     fromMock.mockImplementation((table: string) => {
       if (table === 'app_user') {
         return createQueryChain({
-          data: { id: 'employe-1', role: 'employe' },
+          data: { id: 'employee-1', role: 'employee' },
           error: null,
         });
       }

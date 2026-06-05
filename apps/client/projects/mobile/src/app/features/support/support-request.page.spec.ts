@@ -133,9 +133,8 @@ describe('Mobile SupportRequestPage', () => {
     fixture.componentInstance.form.setValue({
       name: '  Alice Dupont  ',
       email: '  alice@kraak.org  ',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     });
 
@@ -144,9 +143,8 @@ describe('Mobile SupportRequestPage', () => {
     expect(supportService.submitContactForm).toHaveBeenCalledWith({
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     });
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/tabs/support');
@@ -185,7 +183,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(400, 'Bad Request', {
-        errors: ['Le message doit contenir au moins 10 caract\u00E8res.'],
+        errors: ['Le message doit contenir au moins 10 caractères.'],
       }),
     );
 
@@ -200,7 +198,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Le message doit contenir au moins 10 caract\u00E8res.',
+      'Le message doit contenir au moins 10 caractères.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -225,8 +223,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(422, 'Unprocessable Entity', {
-        message:
-          'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+        message: 'Ce sujet a déjà été soumis récemment.',
       }),
     );
 
@@ -241,7 +238,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+      'Ce sujet a déjà été soumis récemment.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -250,7 +247,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(400, 'Bad Request', {
-        errors: 'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+        errors: 'Formulaire invalide, veuillez vérifier vos saisies.',
       }),
     );
 
@@ -265,7 +262,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+      'Formulaire invalide, veuillez vérifier vos saisies.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -315,7 +312,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Une erreur est survenue. Veuillez r\u00E9essayer ult\u00E9rieurement.',
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });

@@ -2,8 +2,8 @@ import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import {
   requireAdminAccess,
   requireAdminSession,
-  requireEmployeAccess,
-  requireEmployeSession,
+  requireEmployeeAccess,
+  requireEmployeeSession,
   requireTrainerAccess,
 } from './admin-access.utils';
 
@@ -47,67 +47,70 @@ describe('requireAdminAccess', () => {
   });
 });
 
-describe('requireEmployeAccess', () => {
-  it('Given un rôle admin, When requireEmployeAccess est appelé, Then le token est renvoyé', async () => {
+describe('requireEmployeeAccess', () => {
+  it('Given un rôle admin, When requireEmployeeAccess est appelé, Then le token est renvoyé', async () => {
     const authService = makeAuthService('admin');
-    const token = await requireEmployeAccess(authService, 'Bearer admin-token');
+    const token = await requireEmployeeAccess(
+      authService,
+      'Bearer admin-token',
+    );
     expect(token).toBe('admin-token');
   });
 
-  it('Given un rôle employe, When requireEmployeAccess est appelé, Then le token est renvoyé', async () => {
-    const authService = makeAuthService('employe');
-    const token = await requireEmployeAccess(
+  it('Given un rôle employee, When requireEmployeeAccess est appelé, Then le token est renvoyé', async () => {
+    const authService = makeAuthService('employee');
+    const token = await requireEmployeeAccess(
       authService,
-      'Bearer employe-token',
+      'Bearer employee-token',
     );
-    expect(token).toBe('employe-token');
+    expect(token).toBe('employee-token');
   });
 
-  it('Given un rôle participant, When requireEmployeAccess est appelé, Then une ForbiddenException est levée', async () => {
+  it('Given un rôle participant, When requireEmployeeAccess est appelé, Then une ForbiddenException est levée', async () => {
     const authService = makeAuthService('participant');
     await expect(
-      requireEmployeAccess(authService, 'Bearer participant-token'),
+      requireEmployeeAccess(authService, 'Bearer participant-token'),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given un rôle trainer, When requireEmployeAccess est appelé, Then une ForbiddenException est levée', async () => {
+  it('Given un rôle trainer, When requireEmployeeAccess est appelé, Then une ForbiddenException est levée', async () => {
     const authService = makeAuthService('trainer');
     await expect(
-      requireEmployeAccess(authService, 'Bearer trainer-token'),
+      requireEmployeeAccess(authService, 'Bearer trainer-token'),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given un header absent, When requireEmployeAccess est appelé, Then une UnauthorizedException est levée', async () => {
-    const authService = makeAuthService('employe');
-    await expect(requireEmployeAccess(authService)).rejects.toBeInstanceOf(
+  it('Given un header absent, When requireEmployeeAccess est appelé, Then une UnauthorizedException est levée', async () => {
+    const authService = makeAuthService('employee');
+    await expect(requireEmployeeAccess(authService)).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
   });
 });
 
-describe('requireEmployeSession', () => {
-  it('Given un rôle admin, When requireEmployeSession est appelé, Then la session est renvoyée', async () => {
+describe('requireEmployeeSession', () => {
+  it('Given un rôle admin, When requireEmployeeSession est appelé, Then la session est renvoyée', async () => {
     const authService = makeAuthService('admin');
-    const result = await requireEmployeSession(
+    const result = await requireEmployeeSession(
       authService,
       'Bearer admin-token',
     );
     expect(result.accessToken).toBe('admin-token');
   });
 
-  it('Given un rôle employe, When requireEmployeSession est appelé, Then la session est renvoyée', async () => {
-    const authService = makeAuthService('employe');
-    const result = await requireEmployeSession(
+  it('Given un rôle employee, When requireEmployeeSession est appelé, Then la session est renvoyée', async () => {
+    const authService = makeAuthService('employee');
+    const result = await requireEmployeeSession(
       authService,
-      'Bearer employe-token',
+      'Bearer employee-token',
     );
-    expect(result.accessToken).toBe('employe-token');
+    expect(result.accessToken).toBe('employee-token');
   });
 
-  it('Given un rôle participant, When requireEmployeSession est appelé, Then une ForbiddenException est levée', async () => {
+  it('Given un rôle participant, When requireEmployeeSession est appelé, Then une ForbiddenException est levée', async () => {
     const authService = makeAuthService('participant');
     await expect(
-      requireEmployeSession(authService, 'Bearer participant-token'),
+      requireEmployeeSession(authService, 'Bearer participant-token'),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });
@@ -135,10 +138,10 @@ describe('requireTrainerAccess', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given un rôle employe, When requireTrainerAccess est appelé, Then une ForbiddenException est levée', async () => {
-    const authService = makeAuthService('employe');
+  it('Given un rôle employee, When requireTrainerAccess est appelé, Then une ForbiddenException est levée', async () => {
+    const authService = makeAuthService('employee');
     await expect(
-      requireTrainerAccess(authService, 'Bearer employe-token'),
+      requireTrainerAccess(authService, 'Bearer employee-token'),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 

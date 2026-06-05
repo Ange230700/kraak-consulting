@@ -24,7 +24,7 @@ export class ArticlesPublicController {
   @ApiOperation({ summary: 'Afficher le detail public d un article' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Article public charge avec succes.',
+    description: 'Article public charge avec succès.',
     schema: articleSchema,
   })
   @ApiResponse({

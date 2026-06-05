@@ -21,19 +21,19 @@ describe('ProgramsPage', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     expect(page.querySelector('h1')?.textContent).toContain(
-      "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
+      "Orientation d'abord, format adapt\u00e9 ensuite.",
     );
     expect(page.textContent).toContain(
-      "Ateliers d'employabilit\u00e9 et de posture professionnelle",
+      "Ateliers d'employabilité et de posture professionnelle",
     );
     expect(page.textContent).toContain(
-      'Pr\u00e9paration linguistique et tests de langue',
+      'Préparation linguistique et tests de langue',
     );
     expect(page.textContent).toContain(
-      'Orientation \u00e9tudes, travail et mobilit\u00e9 internationale',
+      'Orientation études, travail et mobilité internationale',
     );
     expect(page.textContent).toContain(
-      'Interventions collectives pour \u00e9coles, associations et entreprises',
+      'Interventions collectives pour écoles, associations et entreprises',
     );
   });
 

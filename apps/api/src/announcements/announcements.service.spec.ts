@@ -2240,6 +2240,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
+          return undefined;
         }),
       });
 
@@ -2274,6 +2275,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2308,6 +2310,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2348,6 +2351,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2397,6 +2401,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2447,6 +2452,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2493,6 +2499,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
+          return undefined;
         }),
       });
 
@@ -2515,6 +2522,7 @@ describe('AnnouncementsService', () => {
       mockSupabaseService.getClient.mockReturnValue({
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
+          return undefined;
         }),
       });
 
@@ -2562,6 +2570,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2614,6 +2623,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2668,6 +2678,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2723,6 +2734,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2777,6 +2789,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2832,6 +2845,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2872,6 +2886,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
+          return undefined;
         }),
       });
 
@@ -2919,6 +2934,7 @@ describe('AnnouncementsService', () => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 

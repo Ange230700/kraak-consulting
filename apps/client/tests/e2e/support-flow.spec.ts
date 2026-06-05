@@ -286,17 +286,26 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         {
           path: '/401',
           title: /Authentification requise/i,
-          ctas: ['Se connecter', "Demander de l'aide"],
+          ctas: [
+            /Se connecter|Accéder à la page de connexion/i,
+            /Demander de l'aide|Contacter KRAAK/i,
+          ],
         },
         {
           path: '/403',
           title: /Accès refusé/i,
-          ctas: ["Retour à l'accueil", 'Nous contacter'],
+          ctas: [
+            /Retour à l'accueil|Retour à la page d'accueil/i,
+            /Nous contacter|Contacter KRAAK/i,
+          ],
         },
         {
           path: '/500',
           title: /Incident technique/i,
-          ctas: ["Retour à l'accueil", /Signaler un problème/i],
+          ctas: [
+            /Retour à l'accueil|Retour à la page d'accueil/i,
+            /Signaler un problème à KRAAK|Signaler un problème/i,
+          ],
         },
       ];
 
@@ -318,9 +327,10 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
           'content',
           new RegExp(`${route.path.replaceAll('/', '/')}$`),
         );
+        const statusActions = page.locator('div.mt-10.flex').first();
         for (const cta of route.ctas) {
           await expect(
-            page.locator('a').filter({ hasText: cta }),
+            statusActions.getByRole('link', { name: cta }),
           ).toBeVisible();
         }
       }
