@@ -144,15 +144,10 @@ jobs:
 
       - name: Exécuter les tests E2E web (Playwright)
         env:
-          KRAAK_E2E_BASE_URL: http://127.0.0.1:4200
-          KRAAK_E2E_START_WEB_SERVER: "true"
-          KRAAK_E2E_WEB_SERVER_URL: http://127.0.0.1:4200
-          KRAAK_E2E_WEB_SERVER_COMMAND: >-
-            node ../../scripts/generate-client-runtime-config.mjs --env staging &&
-            node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" &&
-            npx ng serve web --configuration staging --port 4200 --prebundle=false --live-reload=false
+          KRAAK_E2E_BASE_URL: https://kraak-web-staging.onrender.com
+          KRAAK_E2E_START_WEB_SERVER: "false"
           CLIENT_API_BASE_URL: https://kraak-api-staging.onrender.com
-          CLIENT_SITE_URL: http://127.0.0.1:4200
+          CLIENT_SITE_URL: https://kraak-web-staging.onrender.com
           KRAAK_E2E_BROWSER_CHANNEL: chrome
         run: pnpm test:e2e:web -- --project=chromium
 
