@@ -144,12 +144,20 @@ jobs:
 
       - name: Exécuter les tests E2E web (Playwright)
         env:
-          KRAAK_E2E_BASE_URL: https://kraak-web-staging.onrender.com
+          KRAAK_E2E_BASE_URL: http://127.0.0.1:4200
           KRAAK_E2E_START_WEB_SERVER: "false"
           CLIENT_API_BASE_URL: https://kraak-api-staging.onrender.com
-          CLIENT_SITE_URL: https://kraak-web-staging.onrender.com
-          KRAAK_E2E_BROWSER_CHANNEL: chrome
-        run: pnpm --filter @kraak/client exec playwright test --project=chromium
+          CLIENT_SITE_URL: http://127.0.0.1:4200
+        run: |
+          pnpm --filter @kraak/client build:web
+
+          pnpm dlx serve -s apps/client/dist/web/browser -l 4200 >/tmp/kraak-e2e-serve.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true' EXIT
+
+          timeout 120 bash -c 'until curl -sf http://127.0.0.1:4200 >/dev/null; do sleep 2; done'
+
+          pnpm --filter @kraak/client exec playwright test --project=chromium
 
   # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)
