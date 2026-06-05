@@ -149,7 +149,7 @@ jobs:
           CLIENT_API_BASE_URL: https://kraak-api-staging.onrender.com
           CLIENT_SITE_URL: https://kraak-web-staging.onrender.com
           KRAAK_E2E_BROWSER_CHANNEL: chrome
-        run: pnpm test:e2e:web -- --project=chromium
+        run: pnpm --filter @kraak/client exec playwright test --project=chromium
 
   # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)
