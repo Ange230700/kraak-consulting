@@ -140,9 +140,24 @@ jobs:
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
 
-      - name: Installer le navigateur Playwright (chromium)
+      - name: Mettre en cache les navigateurs Playwright
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Installer les navigateurs Playwright (chromium + headless shell)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        env:
+          DEBUG: pw:install
         run: |
-          timeout 10m pnpm --filter @kraak/client exec playwright install --with-deps chromium
+          pnpm --filter @kraak/client exec playwright install --with-deps chromium chromium-headless-shell
+
+      - name: Installer les dépendances système Playwright (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: |
+          pnpm --filter @kraak/client exec playwright install-deps chromium
 
       - name: Exécuter les tests E2E web (Playwright)
         env:
