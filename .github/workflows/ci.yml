@@ -157,11 +157,12 @@ jobs:
 
           timeout 120 bash -c 'until curl -sf http://127.0.0.1:4200 >/dev/null; do sleep 2; done'
 
+          set +e
           pnpm --filter @kraak/client exec playwright test --project=chromium
           TEST_EXIT_CODE=$?
+          set -e
 
-          kill "$SERVER_PID" || true
-          wait "$SERVER_PID" || true
+          kill -9 "$SERVER_PID" >/dev/null 2>&1 || true
 
           exit "$TEST_EXIT_CODE"
 
