@@ -4,6 +4,7 @@ import { NgStyle } from '@angular/common';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 
 const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
@@ -12,7 +13,7 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
-  imports: [NgStyle, CtaBanner],
+  imports: [NgStyle, CtaBanner, RevealOnScrollDirective],
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
@@ -25,7 +26,6 @@ export default class AboutPage implements OnInit, OnDestroy {
     this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
     this.gsapService.initializeInteractiveCardAnimations('article');
     this.gsapService.initializeButtonTransitions();
-    this.gsapService.initializeSectionAnimations();
     this.gsapService.initializeIconAnimations();
   }
 

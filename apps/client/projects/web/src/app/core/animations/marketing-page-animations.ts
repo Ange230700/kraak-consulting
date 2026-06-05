@@ -7,7 +7,6 @@ export function initializeMarketingPageAnimations(
   gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
   gsapService.initializeInteractiveCardAnimations('article');
   gsapService.initializeButtonTransitions();
-  gsapService.initializeSectionAnimations();
   gsapService.initializeIconAnimations();
 }
 

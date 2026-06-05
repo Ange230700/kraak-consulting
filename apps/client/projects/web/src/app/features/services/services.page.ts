@@ -9,6 +9,7 @@ import {
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import {
   FaqAccordion,
   type FaqItem,
@@ -21,7 +22,13 @@ const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 @Component({
   selector: 'kraak-services-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, FaqAccordion, CtaBanner],
+  imports: [
+    NgStyle,
+    RouterLink,
+    FaqAccordion,
+    CtaBanner,
+    RevealOnScrollDirective,
+  ],
   templateUrl: './services.page.html',
 })
 export default class ServicesPage implements OnInit, OnDestroy {

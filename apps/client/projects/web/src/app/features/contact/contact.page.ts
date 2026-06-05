@@ -28,6 +28,7 @@ import {
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -145,6 +146,7 @@ const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
     Message,
     CtaBanner,
     PublicConversionTrackingDirective,
+    RevealOnScrollDirective,
   ],
   templateUrl: './contact.page.html',
   styles: [
