@@ -1,7 +1,14 @@
 import { resolveRuntimeClientConfig } from '../../../shared/runtime-client-config';
 
+const runtimeGlobals = globalThis as typeof globalThis & {
+  process?: {
+    env?: Record<string, string | undefined>;
+  };
+};
+
 const runtimeClientConfig = resolveRuntimeClientConfig();
-const runtimeGa4Id = process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
+const runtimeGa4Id =
+  runtimeGlobals.process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 
 export const environment = {
   production: true,
