@@ -19,6 +19,7 @@ const getEnvOrFallback = (key: string, fallback: string): string => {
   return value && value.length > 0 ? value : fallback;
 };
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+const resolvedBrowserChannel = process.env['KRAAK_E2E_BROWSER_CHANNEL']?.trim();
 const shouldStartWebServer =
   process.env['KRAAK_E2E_START_WEB_SERVER'] === 'true' || !process.env['CI'];
 const isCi = !!process.env['CI'];
@@ -66,7 +67,10 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(resolvedBrowserChannel ? { channel: resolvedBrowserChannel } : {}),
+      },
     },
     {
       name: 'firefox',
