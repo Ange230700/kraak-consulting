@@ -142,11 +142,10 @@ jobs:
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
 
-      - name: Installer Google Chrome stable via Playwright (apt)
-        env:
-          DEBUG: pw:install
+      - name: Vérifier la présence de Google Chrome système (pré-installé)
         run: |
-          pnpm --filter @kraak/client exec playwright install --with-deps chrome
+          which google-chrome
+          google-chrome --version
 
       - name: Exécuter les tests E2E web (Playwright)
         env:
