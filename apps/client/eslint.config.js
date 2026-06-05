@@ -72,6 +72,7 @@ module.exports = defineConfig(
       sonarjs,
     },
     rules: {
+      "playwright/no-skipped-test": ["warn", { "allowConditional": true }],
       "sonarjs/no-identical-conditions": "error",
       "sonarjs/no-identical-expressions": "error",
     },

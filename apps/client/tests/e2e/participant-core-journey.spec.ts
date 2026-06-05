@@ -4,22 +4,45 @@ const participantAreaExpected =
   process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
 
 test.describe('Parcours coeur participant - orientation web', () => {
-  test('Given un visiteur non authentifie, When il tente l\u0027accès dashboard participant, Then il est redirige vers la connexion et oriente vers des pages publiques', async ({
+  test('Given un visiteur non authentifie (espace activé), When il tente l\u0027accès dashboard participant, Then il est redirigé vers la connexion et peut naviguer vers les pages publiques', async ({
     page,
   }) => {
+    test.skip(
+      !participantAreaExpected,
+      'Espace participant non activé dans cet environnement',
+    );
     await page.goto('/participant/dashboard');
+    await expect(page).toHaveURL(/\/connexion$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Connexion' }),
+    ).toBeVisible();
 
-    if (participantAreaExpected) {
-      await expect(page).toHaveURL(/\/connexion$/);
-      await expect(
-        page.getByRole('heading', { level: 1, name: 'Connexion' }),
-      ).toBeVisible();
-    } else {
-      await expect(page).toHaveURL(/\/participant\/dashboard$/);
-      await expect(
-        page.getByRole('heading', { level: 1, name: 'Oups.' }),
-      ).toBeVisible();
-    }
+    await page.goto('/programmes');
+    await expect(page.locator('h1').first()).toContainText(
+      /Orientation d'abord, format adapt\u00e9 ensuite\./i,
+    );
+
+    await page.goto('/contact');
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Parlez-nous de votre objectif.',
+      }),
+    ).toBeVisible();
+  });
+
+  test('Given un visiteur non authentifie (espace désactivé), When il tente l\u0027accès dashboard participant, Then une page 404 est affichée et les pages publiques restent accessibles', async ({
+    page,
+  }) => {
+    test.skip(
+      participantAreaExpected,
+      'Espace participant activé dans cet environnement',
+    );
+    await page.goto('/participant/dashboard');
+    await expect(page).toHaveURL(/\/participant\/dashboard$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Oups.' }),
+    ).toBeVisible();
 
     await page.goto('/programmes');
     await expect(page.locator('h1').first()).toContainText(
