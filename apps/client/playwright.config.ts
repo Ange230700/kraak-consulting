@@ -86,7 +86,7 @@ export default defineConfig({
         command: resolvedWebServerCommand,
         url: resolvedWebServerUrl,
         reuseExistingServer,
-        timeout: 180_000,
+        timeout: isCi ? 300_000 : 180_000,
         env: {
           CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
           CLIENT_API_BASE_URL: resolvedClientApiBaseUrl,
