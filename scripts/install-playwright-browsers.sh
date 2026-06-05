@@ -2,4 +2,4 @@
 set -euo pipefail
 
 cd apps/client
-pnpm exec playwright install --with-deps chromium firefox webkit
+pnpm --ignore-scripts exec playwright install --with-deps chromium firefox webkit
