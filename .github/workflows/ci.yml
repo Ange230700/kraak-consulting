@@ -136,6 +136,9 @@ jobs:
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
+      - name: Construire les packages workspace
+        run: pnpm -r --filter "./packages/**" build
+
       - name: Installer les navigateurs Playwright
         run: echo "Utilisation du navigateur Chrome système du runner CI"
 
