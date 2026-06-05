@@ -1,4 +1,4 @@
-import { GsapAnimationsService } from './gsap-animations.service';
+import type { GsapAnimationsService } from './gsap-animations.service';
 
 export function initializeMarketingPageAnimations(
   gsapService: GsapAnimationsService,

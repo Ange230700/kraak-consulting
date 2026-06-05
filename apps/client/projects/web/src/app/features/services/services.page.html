@@ -93,6 +93,7 @@
           class="rounded-card bg-neutral-50 p-5"
           kraakRevealOnScroll
           [revealDelayMs]="60"
+          [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
             Problématique
@@ -209,6 +210,7 @@
           class="rounded-card bg-brand-white p-5 shadow-sm"
           kraakRevealOnScroll
           [revealDelayMs]="60"
+          [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
             Problématique
@@ -344,6 +346,7 @@
           class="rounded-card bg-neutral-50 p-5"
           kraakRevealOnScroll
           [revealDelayMs]="60"
+          [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
             Problématique
@@ -508,7 +511,10 @@
       Notre méthode d'intervention
     </h2>
     <div class="mt-10 grid gap-8 md:grid-cols-3">
-      <div class="text-center">
+      <div
+        data-motion="reversible"
+        class="services-method-step gsap-reversible-on-scroll text-center"
+      >
         <p class="text-brand-navy-soft text-3xl font-bold">1</p>
         <h3 class="mt-2 text-lg font-bold">Clarifier</h3>
         <p class="text-brand-navy mt-1">
@@ -516,7 +522,10 @@
           prendre.
         </p>
       </div>
-      <div class="text-center">
+      <div
+        data-motion="reversible"
+        class="services-method-step gsap-reversible-on-scroll text-center"
+      >
         <p class="text-brand-navy-soft text-3xl font-bold">2</p>
         <h3 class="mt-2 text-lg font-bold">Structurer</h3>
         <p class="text-brand-navy mt-1">
@@ -524,7 +533,10 @@
           priorités opérationnelles.
         </p>
       </div>
-      <div class="text-center">
+      <div
+        data-motion="reversible"
+        class="services-method-step gsap-reversible-on-scroll text-center"
+      >
         <p class="text-brand-navy-soft text-3xl font-bold">3</p>
         <h3 class="mt-2 text-lg font-bold">Avancer</h3>
         <p class="text-brand-navy mt-1">

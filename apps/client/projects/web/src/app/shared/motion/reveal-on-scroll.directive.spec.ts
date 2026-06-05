@@ -40,6 +40,20 @@ class HostComponent {
   revealOnce = true;
 }
 
+@Component({
+  standalone: true,
+  imports: [RevealOnScrollDirective],
+  template: `
+    <section
+      id="target-mobile"
+      kraakRevealOnScroll
+      [revealDelayMs]="100"
+      [revealDelayMobileMs]="30"
+    ></section>
+  `,
+})
+class HostMobileDelayComponent {}
+
 describe('RevealOnScrollDirective', () => {
   it('Given un element avec la directive, When il est initialise, Then la classe de base est appliquee avec le delai', async () => {
     const originalObserver = globalThis.IntersectionObserver;
@@ -110,6 +124,59 @@ describe('RevealOnScrollDirective', () => {
         (
           globalThis as { IntersectionObserver: typeof IntersectionObserver }
         ).IntersectionObserver = originalObserver;
+      }
+
+      observedElement = null;
+      observerCallback = null;
+    }
+  });
+
+  it('Given un viewport mobile, When revealDelayMobileMs est fourni, Then le delai mobile est applique', async () => {
+    const originalObserver = globalThis.IntersectionObserver;
+    const originalMatchMedia = globalThis.matchMedia;
+    (
+      globalThis as { IntersectionObserver: typeof IntersectionObserver }
+    ).IntersectionObserver =
+      MockIntersectionObserver as unknown as typeof IntersectionObserver;
+
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: query.includes('max-width: 767px'),
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+
+    try {
+      await TestBed.configureTestingModule({
+        imports: [HostMobileDelayComponent],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(HostMobileDelayComponent);
+      fixture.detectChanges();
+
+      const target = fixture.nativeElement.querySelector(
+        '#target-mobile',
+      ) as HTMLElement;
+
+      expect(target.style.transitionDelay).toBe('30ms');
+    } finally {
+      if (originalObserver) {
+        (
+          globalThis as { IntersectionObserver: typeof IntersectionObserver }
+        ).IntersectionObserver = originalObserver;
+      }
+
+      if (originalMatchMedia) {
+        vi.stubGlobal('matchMedia', originalMatchMedia);
+      } else {
+        vi.unstubAllGlobals();
       }
 
       observedElement = null;
