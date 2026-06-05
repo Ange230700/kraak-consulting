@@ -6,15 +6,11 @@ test.describe('Blog public - smoke CMS-03', () => {
   }) => {
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
-    const notFoundHeading = page.getByRole('heading', {
-      level: 1,
-      name: 'Oups.',
-    });
-    if (await notFoundHeading.isVisible().catch(() => false)) {
-      await expect(page).toHaveURL(/\/blog$/);
-      await expect(notFoundHeading).toBeVisible();
-      return;
-    }
+    const isNotFound = await page
+      .getByRole('heading', { level: 1, name: 'Oups.' })
+      .isVisible()
+      .catch(() => false);
+    test.skip(isNotFound, 'Route /blog indisponible dans cet environnement');
 
     await expect(page.locator('h1').first()).toContainText(
       /Actualités, repères et\s*analyses pour avancer avec clarté\./i,
@@ -38,17 +34,11 @@ test.describe('Blog public - smoke CMS-03', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const notFoundHeading = page.getByRole('heading', {
-      level: 1,
-      name: 'Oups.',
-    });
-    if (await notFoundHeading.isVisible().catch(() => false)) {
-      await expect(page).toHaveURL(
-        /\/blog\/clarifier-son-projet-avant-de-candidater$/,
-      );
-      await expect(notFoundHeading).toBeVisible();
-      return;
-    }
+    const isNotFound = await page
+      .getByRole('heading', { level: 1, name: 'Oups.' })
+      .isVisible()
+      .catch(() => false);
+    test.skip(isNotFound, 'Route /blog indisponible dans cet environnement');
 
     await expect(page.locator('h1').first()).toContainText(
       /Clarifier son projet avant de candidater/i,

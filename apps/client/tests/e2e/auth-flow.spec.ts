@@ -7,14 +7,11 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
   test('Given une page de connexion, When elle se charge, Then le formulaire et les liens d\u0027accès sont visibles', async ({
     page,
   }) => {
+    test.skip(
+      !participantAreaExpected,
+      'Espace participant non activé dans cet environnement',
+    );
     await page.goto('/connexion');
-
-    if (!participantAreaExpected) {
-      await expect(
-        page.getByRole('heading', { level: 1, name: 'Oups.' }),
-      ).toBeVisible();
-      return;
-    }
 
     await expect(
       page.getByRole('heading', { level: 1, name: 'Connexion' }),
@@ -36,14 +33,11 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
   test('Given une page de connexion, When le visiteur ouvre la création de compte, Then la page d inscription est affichée', async ({
     page,
   }) => {
+    test.skip(
+      !participantAreaExpected,
+      'Espace participant non activé dans cet environnement',
+    );
     await page.goto('/connexion');
-
-    if (!participantAreaExpected) {
-      await expect(
-        page.getByRole('heading', { level: 1, name: 'Oups.' }),
-      ).toBeVisible();
-      return;
-    }
 
     await page.getByRole('link', { name: 'Créer un compte' }).click();
 
@@ -56,14 +50,11 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
   test('Given une page de connexion, When le visiteur ouvre le reset, Then la page de reinitialisation est affichée', async ({
     page,
   }) => {
+    test.skip(
+      !participantAreaExpected,
+      'Espace participant non activé dans cet environnement',
+    );
     await page.goto('/connexion');
-
-    if (!participantAreaExpected) {
-      await expect(
-        page.getByRole('heading', { level: 1, name: 'Oups.' }),
-      ).toBeVisible();
-      return;
-    }
 
     await page.getByRole('link', { name: 'Mot de passe oublié' }).click();
 

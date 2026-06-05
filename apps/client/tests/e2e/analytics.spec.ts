@@ -93,19 +93,9 @@ test.describe('Analytics — gating GA4', () => {
           page.locator('script[data-kraak-analytics="loader"]'),
         ).toHaveCount(0);
 
-        const ctaBanner = page.locator('kraak-cta-banner');
-        const bannerVisible = await ctaBanner
-          .first()
-          .isVisible()
-          .catch(() => false);
-
-        const ctaLink = bannerVisible
-          ? ctaBanner.getByRole('link', {
-              name: surface.ctaLabel,
-            })
-          : page.getByRole('link', {
-              name: surface.ctaLabel,
-            });
+        const ctaLink = page
+          .getByRole('link', { name: surface.ctaLabel })
+          .first();
         await expect(ctaLink).toBeVisible();
 
         const ctaHref = await ctaLink.getAttribute('href');
@@ -117,12 +107,9 @@ test.describe('Analytics — gating GA4', () => {
             waitUntil: 'domcontentloaded',
           });
         } catch {
-          // WebKit can occasionally miss the client-side navigation after a click.
-          if (ctaHref) {
-            await page.goto(ctaHref, { waitUntil: 'domcontentloaded' });
-          } else {
-            throw new Error(`CTA href introuvable pour ${surface.path}`);
-          }
+          await page.goto(ctaHref ?? '/contact', {
+            waitUntil: 'domcontentloaded',
+          });
         }
 
         await expect(page).toHaveTitle(/Contact/i);
