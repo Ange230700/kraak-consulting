@@ -40,7 +40,23 @@ describe('Navbar', () => {
       'CONTACT',
     ]);
 
+    const companyName = host.querySelector('a[routerlink="/"] span');
+    expect(companyName).not.toBeNull();
+    expect(companyName?.classList.contains('hidden')).toBe(true);
+    expect(companyName?.classList.contains('lg:inline')).toBe(true);
     expect(host.textContent).toContain('KRAAK Consulting');
+  });
+
+  it('Given le symbole KRAAK de la navbar, When le template est rendu, Then il est affiché avec un fond transparent', () => {
+    const fixture = TestBed.createComponent(Navbar);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const symbol = host.querySelector('img[alt="Symbole KRAAK"]');
+
+    expect(symbol).not.toBeNull();
+    expect(symbol?.getAttribute('src')).toBe('/kraak_symbol.svg');
+    expect(symbol?.classList.contains('bg-transparent')).toBe(true);
   });
 
   it('Given le menu mobile est fermé, When on clique sur le bouton menu, Then il s ouvre puis se referme au clic sur un lien', () => {

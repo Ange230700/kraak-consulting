@@ -47,4 +47,16 @@ describe('AboutPage', () => {
     expect(content).toContain('Nos valeurs');
     expect(content).not.toContain("L'équipe KRAAK");
   });
+
+  it('Given the about page When it renders Then it shows the CEO quote section', () => {
+    const fixture = TestBed.createComponent(AboutPage);
+    fixture.detectChanges();
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).toContain(
+      "KRAAK Consulting n'est pas qu'un projet commercial, c'est une mission de vie.",
+    );
+    expect(content).toContain('Mr AKA');
+    expect(content).toContain('Directeur Général /Co-Fondateur');
+  });
 });

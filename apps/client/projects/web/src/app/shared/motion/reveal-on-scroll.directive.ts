@@ -13,6 +13,7 @@ import {
 })
 export class RevealOnScrollDirective implements OnInit, OnDestroy {
   @Input() revealDelayMs = 0;
+  @Input() revealDelayMobileMs?: number;
   @Input() revealOnce = true;
   @Input() revealThreshold = 0.2;
 
@@ -22,15 +23,15 @@ export class RevealOnScrollDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const element = this.elementRef.nativeElement;
+    const revealDelayMs = this.resolveRevealDelayMs();
 
     this.renderer.addClass(element, 'motion-reveal-base');
-    this.renderer.setStyle(
-      element,
-      'transition-delay',
-      `${this.revealDelayMs}ms`,
-    );
+    this.renderer.setStyle(element, 'transition-delay', `${revealDelayMs}ms`);
 
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    if (
+      globalThis.window === undefined ||
+      !('IntersectionObserver' in globalThis.window)
+    ) {
       this.renderer.addClass(element, 'motion-reveal-visible');
       return;
     }
@@ -58,6 +59,24 @@ export class RevealOnScrollDirective implements OnInit, OnDestroy {
     );
 
     this.observer.observe(element);
+  }
+
+  private resolveRevealDelayMs(): number {
+    if (this.revealDelayMobileMs === undefined) {
+      return this.revealDelayMs;
+    }
+
+    if (
+      globalThis.window === undefined ||
+      typeof globalThis.matchMedia !== 'function'
+    ) {
+      return this.revealDelayMs;
+    }
+
+    const isMobileViewport =
+      globalThis.matchMedia('(max-width: 767px)').matches;
+
+    return isMobileViewport ? this.revealDelayMobileMs : this.revealDelayMs;
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="966" height="815" viewBox="210 226 966 815" role="img" aria-labelledby="title desc">
+  <title id="title">KRAAK Consulting symbol</title>
+  <desc id="desc">Vector recreation of the standalone KRAAK geometric K symbol based on the provided references.</desc>
+  <defs>
+    <linearGradient id="navyDeep" x1="220" y1="235" x2="700" y2="700" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B4F91"/>
+      <stop offset="0.55" stop-color="#053B78"/>
+      <stop offset="1" stop-color="#032857"/>
+    </linearGradient>
+    <linearGradient id="blueDiagonal" x1="220" y1="820" x2="650" y2="540" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0870B8"/>
+      <stop offset="0.45" stop-color="#08A7D6"/>
+      <stop offset="1" stop-color="#17C6DF"/>
+    </linearGradient>
+    <linearGradient id="blueDiagonalDark" x1="250" y1="1000" x2="700" y2="590" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#073F87"/>
+      <stop offset="0.55" stop-color="#066AAE"/>
+      <stop offset="1" stop-color="#0D9ED2"/>
+    </linearGradient>
+    <linearGradient id="upperArm" x1="470" y1="540" x2="1040" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#07529D"/>
+      <stop offset="0.55" stop-color="#0576BF"/>
+      <stop offset="1" stop-color="#10B7D9"/>
+    </linearGradient>
+    <linearGradient id="upperArmShadow" x1="470" y1="545" x2="850" y2="365" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#083E86"/>
+      <stop offset="0.55" stop-color="#075DAA"/>
+      <stop offset="1" stop-color="#078BC9"/>
+    </linearGradient>
+    <linearGradient id="cyanFacet" x1="760" y1="235" x2="890" y2="395" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#18BFE2"/>
+      <stop offset="1" stop-color="#05A6D1"/>
+    </linearGradient>
+    <linearGradient id="tealRight" x1="650" y1="600" x2="1170" y2="1025" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#19D5CF"/>
+      <stop offset="0.55" stop-color="#13BFC5"/>
+      <stop offset="1" stop-color="#0997AE"/>
+    </linearGradient>
+    <linearGradient id="tealDark" x1="560" y1="650" x2="790" y2="1010" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#04427B"/>
+      <stop offset="0.55" stop-color="#057C99"/>
+      <stop offset="1" stop-color="#0795A2"/>
+    </linearGradient>
+    <linearGradient id="tealFacet" x1="700" y1="580" x2="760" y2="860" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#006D83"/>
+      <stop offset="1" stop-color="#0DB9B9"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="890" y1="240" x2="1060" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD733"/>
+      <stop offset="1" stop-color="#F2A500"/>
+    </linearGradient>
+  </defs>
+
+  <g id="kraak-symbol">
+    <!-- left upper stroke -->
+    <polygon points="422,234 691,234 218,694 218,430" fill="url(#navyDeep)"/>
+
+    <!-- lower-left stroke base -->
+    <polygon points="218,782 433,579 896,1026 665,1026 449,816 218,1033" fill="url(#blueDiagonalDark)"/>
+    <!-- lighter facet on lower-left stroke -->
+    <polygon points="218,782 433,579 564,706 218,845" fill="url(#blueDiagonal)" opacity="0.88"/>
+
+    <!-- lower-right stroke -->
+    <polygon points="461,543 708,579 1168,1026 958,1026" fill="url(#tealRight)"/>
+    <!-- deep inner teal/blue facet -->
+    <path d="M582,698 C558,776 558,893 665,1026 L895,1026 L708,579 Z" fill="url(#tealDark)" opacity="0.86"/>
+    <polygon points="708,579 755,815 615,688" fill="url(#tealFacet)" opacity="0.74"/>
+    <polygon points="582,698 708,579 615,688" fill="#005B75" opacity="0.62"/>
+
+    <!-- upper-right stroke base -->
+    <polygon points="785,234 1068,234 708,579 461,543" fill="url(#upperArm)"/>
+    <!-- darker central facet of the upper stroke -->
+    <polygon points="461,543 735,459 708,579 582,698" fill="url(#upperArmShadow)" opacity="0.96"/>
+    <polygon points="735,459 1068,234 708,579" fill="#0570B7" opacity="0.46"/>
+
+    <!-- top cyan folded facet -->
+    <polygon points="785,234 866,234 878,356 735,459" fill="url(#cyanFacet)" opacity="0.96"/>
+    <polygon points="866,234 900,234 878,356" fill="#0BB2D6" opacity="0.94"/>
+    <polygon points="827,274 878,356 735,459" fill="#0A83C6" opacity="0.38"/>
+
+    <!-- gold corner facet -->
+    <polygon points="886,234 1068,234 878,418" fill="url(#gold)"/>
+  </g>
+</svg>

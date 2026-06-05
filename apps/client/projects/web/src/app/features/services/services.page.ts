@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -6,10 +6,10 @@ import {
   initializeMarketingPageAnimations,
   teardownMarketingPageAnimations,
 } from '../../core/animations/marketing-page-animations';
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
+import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import {
   FaqAccordion,
   type FaqItem,
@@ -51,13 +51,50 @@ export default class ServicesPage implements OnInit, OnDestroy {
     },
   ];
 
-  private readonly gsapService = inject(GsapAnimationsService);
+  private readonly injector = inject(Injector);
+  private gsapService: GsapAnimationsService | null = null;
+  private isDestroyed = false;
 
   ngOnInit(): void {
-    initializeMarketingPageAnimations(this.gsapService);
+    void this.initializeAnimations();
   }
 
   ngOnDestroy(): void {
-    teardownMarketingPageAnimations(this.gsapService);
+    this.isDestroyed = true;
+    if (this.gsapService) {
+      teardownMarketingPageAnimations(this.gsapService);
+    }
+  }
+
+  private async initializeAnimations(): Promise<void> {
+    const gsapService = await this.resolveGsapService();
+    if (!gsapService) {
+      return;
+    }
+
+    initializeMarketingPageAnimations(gsapService);
+    gsapService.initializeReversibleScrollAnimations(
+      '.services-method-step[data-motion="reversible"]',
+    );
+  }
+
+  private async resolveGsapService(): Promise<GsapAnimationsService | null> {
+    if (globalThis.window === undefined) {
+      return null;
+    }
+
+    if (this.gsapService) {
+      return this.gsapService;
+    }
+
+    const { GsapAnimationsService } =
+      await import('../../core/animations/gsap-animations.service');
+
+    if (this.isDestroyed) {
+      return null;
+    }
+
+    this.gsapService = this.injector.get(GsapAnimationsService);
+    return this.gsapService;
   }
 }

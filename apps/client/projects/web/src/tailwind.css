@@ -131,6 +131,41 @@
 }
 
 @layer components {
+  .kr-navbar-interactive {
+    transition:
+      transform 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .kr-navbar-interactive:hover {
+    transform: translateY(-1px);
+  }
+
+  .kr-navbar-brand {
+    transition: opacity 180ms ease;
+  }
+
+  .kr-navbar-brand-symbol {
+    transition: transform 220ms ease;
+    transform-origin: center;
+  }
+
+  .kr-navbar-brand-name {
+    transition: color 180ms ease;
+  }
+
+  .kr-navbar-brand:hover .kr-navbar-brand-symbol {
+    transform: scale(1.02);
+  }
+
+  .kr-navbar-brand:hover .kr-navbar-brand-name {
+    color: var(--color-primary);
+  }
+
   .kr-skip-link {
     position: absolute;
     top: 1rem;
@@ -159,6 +194,9 @@
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.01em;
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
   }
 
   .kr-nav-link::after {
@@ -181,6 +219,11 @@
 
   .kr-nav-link:hover {
     color: var(--color-primary);
+    transform: translateY(-0.5px);
+  }
+
+  .kr-nav-link:hover::after {
+    transform: scaleX(1);
   }
 
   .kr-link,

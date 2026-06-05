@@ -7,21 +7,21 @@
   >
     <a
       routerLink="/"
-      class="flex items-center gap-3 no-underline"
+      class="kr-navbar-brand kr-navbar-interactive flex items-center gap-0 no-underline lg:gap-3"
       (click)="closeMobileMenu()"
     >
       <img
-        src="/kraak-symbol.png"
+        src="/kraak_symbol.svg"
         alt="Symbole KRAAK"
         width="44"
         height="44"
         fetchpriority="high"
         loading="eager"
         decoding="async"
-        class="h-11 w-11"
+        class="kr-navbar-brand-symbol h-11 w-11 bg-transparent"
       />
       <span
-        class="text-brand-navy text-lg leading-none font-bold tracking-tight"
+        class="kr-navbar-brand-name text-brand-navy hidden text-lg leading-none font-bold tracking-tight lg:inline"
       >
         KRAAK Consulting
       </span>
@@ -46,7 +46,7 @@
                 nav_path: link.path,
                 nav_surface: 'primary_nav',
               }"
-              class="kr-nav-link uppercase"
+              class="kr-nav-link kr-navbar-interactive uppercase"
               (click)="closeMobileMenu()"
             >
               {{ link.label }}
@@ -59,7 +59,7 @@
     <div class="lg:hidden">
       <button
         type="button"
-        class="border-brand-blue/25 bg-brand-white text-brand-navy hover:border-brand-blue/45 hover:bg-brand-cyan/8 shadow-brand-navy/20 inline-flex items-center justify-center rounded-(--kr-radius-btn) border px-3 py-3 shadow-xl transition-all hover:-translate-y-px"
+        class="kr-navbar-interactive border-brand-blue/25 bg-brand-white text-brand-navy hover:border-brand-blue/45 hover:bg-brand-cyan/8 shadow-brand-navy/20 inline-flex items-center justify-center rounded-(--kr-radius-btn) border px-3 py-3 shadow-xl"
         (click)="toggleMobileMenu()"
         [attr.aria-expanded]="mobileMenuOpen()"
         aria-label="Menu de navigation"

@@ -14,9 +14,6 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
   # ──────────────────────────────────────────────
   # Vérifications rapides : format + lint
@@ -24,6 +21,8 @@ jobs:
   lint:
     name: Format & Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -68,6 +67,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -97,6 +98,8 @@ jobs:
     name: Tests unitaires
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -130,6 +133,8 @@ jobs:
     name: Tests E2E
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - name: Statut E2E CI
         run: echo "Tests E2E check reported successfully."
@@ -141,6 +146,8 @@ jobs:
     name: Workspace Checks
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -164,6 +171,8 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -177,6 +186,8 @@ jobs:
     name: Android Debug APK
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 

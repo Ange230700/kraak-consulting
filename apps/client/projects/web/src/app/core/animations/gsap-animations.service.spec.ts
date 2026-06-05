@@ -3,24 +3,64 @@ import gsap from 'gsap';
 import { GsapAnimationsService } from './gsap-animations.service';
 import { afterEach, vi } from 'vitest';
 
-function mockReducedMotion(matches: boolean): void {
+interface MediaPreferences {
+  reducedMotion: boolean;
+  isMobile: boolean;
+}
+
+function mockMediaPreferences(preferences: MediaPreferences): void {
   vi.stubGlobal(
     'matchMedia',
-    vi.fn().mockImplementation(() => ({
-      matches,
-      media: '(prefers-reduced-motion: reduce)',
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
+    vi.fn().mockImplementation((query: string) => {
+      let matches = false;
+
+      if (query.includes('(prefers-reduced-motion: reduce)')) {
+        matches = preferences.reducedMotion;
+      } else if (query.includes('(max-width: 767px)')) {
+        matches = preferences.isMobile;
+      } else if (query.includes('(min-width: 768px)')) {
+        matches = !preferences.isMobile;
+      }
+
+      return {
+        matches,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      };
+    }),
   );
 }
 
 function allowAnimations(): void {
-  mockReducedMotion(false);
+  mockMediaPreferences({ reducedMotion: false, isMobile: false });
+}
+
+function allowAnimationsOnMobile(): void {
+  mockMediaPreferences({ reducedMotion: false, isMobile: true });
+}
+
+function setReducedMotionPreference(): void {
+  mockMediaPreferences({ reducedMotion: true, isMobile: false });
+}
+
+function mockGsapMatchMedia(): void {
+  vi.spyOn(gsap, 'matchMedia').mockImplementation(() => {
+    const revert = vi.fn();
+
+    return {
+      add: (query: string, callback: () => void) => {
+        if (globalThis.matchMedia?.(query).matches) {
+          callback();
+        }
+      },
+      revert,
+    } as unknown as gsap.MatchMedia;
+  });
 }
 
 function mockGsapEffects() {
@@ -41,10 +81,6 @@ function mockGsapEffects() {
   return { fromSpy, toSpy, killTweensSpy };
 }
 
-function setReducedMotionPreference(): void {
-  mockReducedMotion(true);
-}
-
 describe('GsapAnimationsService', () => {
   let service: GsapAnimationsService;
 
@@ -53,7 +89,8 @@ describe('GsapAnimationsService', () => {
       providers: [GsapAnimationsService],
     });
     service = TestBed.inject(GsapAnimationsService);
-    mockReducedMotion(false);
+    allowAnimations();
+    mockGsapMatchMedia();
   });
 
   afterEach(() => {
@@ -83,7 +120,7 @@ describe('GsapAnimationsService', () => {
     });
 
     it('Given reduced motion is enabled, When figure animations initialize, Then no transform is applied', () => {
-      mockReducedMotion(true);
+      setReducedMotionPreference();
 
       const div = document.createElement('div');
       const figure = document.createElement('figure');
@@ -140,6 +177,203 @@ describe('GsapAnimationsService', () => {
       expect(fromSpy).toHaveBeenCalledTimes(2);
 
       container.remove();
+    });
+  });
+
+  describe('initializeReversibleScrollAnimations', () => {
+    it('Given des éléments ciblés, When initializeReversibleScrollAnimations est invoqué, Then GSAP crée un tween par élément', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+
+      const container = document.createElement('div');
+      const first = document.createElement('article');
+      const second = document.createElement('article');
+      first.classList.add('gsap-reversible-on-scroll');
+      second.classList.add('gsap-reversible-on-scroll');
+      container.appendChild(first);
+      container.appendChild(second);
+      document.body.appendChild(container);
+
+      service.initializeReversibleScrollAnimations(
+        'article.gsap-reversible-on-scroll',
+      );
+
+      expect(fromSpy).toHaveBeenCalledTimes(2);
+
+      container.remove();
+    });
+
+    it('Given desktop viewport, When reversible animations initialize, Then ScrollTrigger uses reverse on back scroll', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const element = document.createElement('article');
+      element.classList.add('gsap-reversible-on-scroll');
+      document.body.appendChild(element);
+
+      service.initializeReversibleScrollAnimations(
+        'article.gsap-reversible-on-scroll',
+      );
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        element,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            toggleActions: 'play none none reverse',
+          }),
+        }),
+      );
+
+      element.remove();
+    });
+
+    it('Given mobile viewport, When reversible animations initialize, Then ScrollTrigger keeps play-only behavior', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const element = document.createElement('article');
+      element.classList.add('gsap-reversible-on-scroll');
+      document.body.appendChild(element);
+
+      service.initializeReversibleScrollAnimations(
+        'article.gsap-reversible-on-scroll',
+      );
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        element,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            toggleActions: 'play none none none',
+          }),
+        }),
+      );
+
+      element.remove();
+    });
+
+    it('Given desktop media conditions, When reversible animations initialize, Then toggleActions includes reverse', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const container = document.createElement('div');
+      const card = document.createElement('article');
+      card.classList.add('desktop-reversible-target');
+      container.appendChild(card);
+      document.body.appendChild(container);
+
+      service.initializeReversibleScrollAnimations(
+        'article.desktop-reversible-target',
+      );
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        card,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            toggleActions: 'play none none reverse',
+          }),
+        }),
+      );
+
+      container.remove();
+    });
+
+    it('Given mobile media conditions, When reversible animations initialize, Then toggleActions disables reverse', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const container = document.createElement('div');
+      const card = document.createElement('article');
+      card.classList.add('mobile-reversible-target');
+      container.appendChild(card);
+      document.body.appendChild(container);
+
+      service.initializeReversibleScrollAnimations(
+        'article.mobile-reversible-target',
+      );
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        card,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            toggleActions: 'play none none none',
+          }),
+        }),
+      );
+
+      container.remove();
+    });
+    it('Given reduced motion preference, When reversible animations initialize, Then GSAP tweens are skipped', () => {
+      setReducedMotionPreference();
+      const fromSpy = vi.spyOn(gsap, 'from');
+
+      const element = document.createElement('article');
+      element.classList.add('gsap-reversible-on-scroll');
+      document.body.appendChild(element);
+
+      service.initializeReversibleScrollAnimations(
+        'article.gsap-reversible-on-scroll',
+      );
+
+      expect(fromSpy).not.toHaveBeenCalled();
+
+      element.remove();
+    });
+
+    it('Given overlap with reveal directive, When reversible animations initialize, Then overlapping targets are skipped', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+
+      const overlapping = document.createElement('article');
+      overlapping.setAttribute('kraakRevealOnScroll', '');
+      overlapping.dataset['motion'] = 'reversible';
+
+      const safe = document.createElement('article');
+      safe.dataset['motion'] = 'reversible';
+
+      document.body.append(overlapping, safe);
+
+      service.initializeReversibleScrollAnimations(
+        '[data-motion="reversible"]',
+      );
+
+      expect(fromSpy).toHaveBeenCalledTimes(1);
+      expect(fromSpy).toHaveBeenCalledWith(
+        safe,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            toggleActions: 'play none none reverse',
+          }),
+        }),
+      );
+
+      overlapping.remove();
+      safe.remove();
+    });
+
+    it('Given motion debug enabled, When reversible animations initialize, Then debug markers are enabled', () => {
+      allowAnimations();
+      globalThis.window.localStorage.setItem('kraak:motion-debug', '1');
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {
+        return undefined;
+      });
+
+      const target = document.createElement('article');
+      target.dataset['motion'] = 'reversible';
+      document.body.appendChild(target);
+
+      service.initializeReversibleScrollAnimations(
+        '[data-motion="reversible"]',
+      );
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        target,
+        expect.objectContaining({
+          scrollTrigger: expect.objectContaining({
+            markers: true,
+          }),
+        }),
+      );
+      expect(debugSpy).toHaveBeenCalled();
+
+      target.remove();
+      globalThis.window.localStorage.removeItem('kraak:motion-debug');
     });
   });
 
@@ -403,6 +637,48 @@ describe('GsapAnimationsService', () => {
       first.remove();
       second.remove();
     });
+
+    it('Given desktop media, When list item animations initialize, Then desktop motion presets are applied', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const item = document.createElement('li');
+      item.classList.add('list-desktop-target');
+      document.body.appendChild(item);
+
+      service.initializeListItemAnimations('li.list-desktop-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        item,
+        expect.objectContaining({
+          x: -20,
+          duration: 0.6,
+          scrollTrigger: expect.objectContaining({ start: 'top 90%' }),
+        }),
+      );
+
+      item.remove();
+    });
+
+    it('Given mobile media, When list item animations initialize, Then mobile motion presets are applied', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const item = document.createElement('li');
+      item.classList.add('list-mobile-target');
+      document.body.appendChild(item);
+
+      service.initializeListItemAnimations('li.list-mobile-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        item,
+        expect.objectContaining({
+          x: -12,
+          duration: 0.5,
+          scrollTrigger: expect.objectContaining({ start: 'top 94%' }),
+        }),
+      );
+
+      item.remove();
+    });
   });
 
   describe('initializeTextRevealAnimations', () => {
@@ -435,6 +711,28 @@ describe('GsapAnimationsService', () => {
       service.initializeTextRevealAnimations('p.branch-text');
 
       expect(fromSpy).toHaveBeenCalled();
+
+      p.remove();
+    });
+
+    it('Given mobile media, When text reveal animations initialize, Then mobile text presets are applied', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const p = document.createElement('p');
+      p.classList.add('text-mobile-target');
+      p.textContent = 'Texte mobile';
+      document.body.appendChild(p);
+
+      service.initializeTextRevealAnimations('p.text-mobile-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        p,
+        expect.objectContaining({
+          y: 6,
+          duration: 0.55,
+          scrollTrigger: expect.objectContaining({ start: 'top 92%' }),
+        }),
+      );
 
       p.remove();
     });
@@ -496,6 +794,50 @@ describe('GsapAnimationsService', () => {
       icon.dispatchEvent(new MouseEvent('mouseleave'));
 
       expect(toSpy).toHaveBeenCalledTimes(2);
+
+      icon.remove();
+    });
+
+    it('Given desktop media, When icon hover starts, Then desktop icon preset is applied', () => {
+      allowAnimations();
+      const toSpy = vi.spyOn(gsap, 'to');
+      const icon = document.createElement('svg');
+      icon.classList.add('icon-desktop-target');
+      document.body.appendChild(icon);
+
+      service.initializeIconAnimations('svg.icon-desktop-target');
+      icon.dispatchEvent(new MouseEvent('mouseenter'));
+
+      expect(toSpy).toHaveBeenCalledWith(
+        icon,
+        expect.objectContaining({
+          scale: 1.2,
+          rotate: 5,
+          duration: 0.3,
+        }),
+      );
+
+      icon.remove();
+    });
+
+    it('Given mobile media, When icon hover starts, Then mobile icon preset is applied', () => {
+      allowAnimationsOnMobile();
+      const toSpy = vi.spyOn(gsap, 'to');
+      const icon = document.createElement('svg');
+      icon.classList.add('icon-mobile-target');
+      document.body.appendChild(icon);
+
+      service.initializeIconAnimations('svg.icon-mobile-target');
+      icon.dispatchEvent(new MouseEvent('mouseenter'));
+
+      expect(toSpy).toHaveBeenCalledWith(
+        icon,
+        expect.objectContaining({
+          scale: 1.1,
+          rotate: 2,
+          duration: 0.22,
+        }),
+      );
 
       icon.remove();
     });
@@ -614,6 +956,27 @@ describe('GsapAnimationsService', () => {
       // Cleanup
       section.remove();
     });
+
+    it('Given desktop media, When section animations initialize, Then desktop section presets are applied', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const section = document.createElement('section');
+      section.classList.add('section-desktop-target');
+      document.body.appendChild(section);
+
+      service.initializeSectionAnimations('section.section-desktop-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        section,
+        expect.objectContaining({
+          y: 40,
+          duration: 0.8,
+          scrollTrigger: expect.objectContaining({ start: 'top 75%' }),
+        }),
+      );
+
+      section.remove();
+    });
   });
 
   describe('initializeMouseFollowAnimations', () => {
@@ -677,6 +1040,50 @@ describe('GsapAnimationsService', () => {
 
       expect(fromSpy).toHaveBeenCalled();
       expect(toSpy).toHaveBeenCalled();
+
+      badge.remove();
+    });
+
+    it('Given desktop media, When badge animations initialize, Then desktop badge presets are used', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const badge = document.createElement('span');
+      badge.classList.add('badge', 'badge-desktop-target');
+      document.body.appendChild(badge);
+
+      service.initializeBadgeAnimations('.badge-desktop-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        badge,
+        expect.objectContaining({ scale: 0.8, duration: 0.5 }),
+      );
+      expect(toSpy).toHaveBeenCalledWith(
+        badge,
+        expect.objectContaining({ scale: 1.05, duration: 1.5 }),
+      );
+
+      badge.remove();
+    });
+
+    it('Given mobile media, When badge animations initialize, Then mobile badge presets are used', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const badge = document.createElement('span');
+      badge.classList.add('badge', 'badge-mobile-target');
+      document.body.appendChild(badge);
+
+      service.initializeBadgeAnimations('.badge-mobile-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        badge,
+        expect.objectContaining({ scale: 0.9, duration: 0.4 }),
+      );
+      expect(toSpy).toHaveBeenCalledWith(
+        badge,
+        expect.objectContaining({ scale: 1.02, duration: 1.8 }),
+      );
 
       badge.remove();
     });
@@ -764,6 +1171,74 @@ describe('GsapAnimationsService', () => {
 
       img.remove();
     });
+
+    it('Given desktop media, When image parallax initializes, Then desktop image presets are applied', () => {
+      allowAnimations();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const img = document.createElement('img');
+      img.classList.add('parallax-desktop-target');
+      document.body.appendChild(img);
+
+      service.initializeImageParallaxAnimations('img.parallax-desktop-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        img,
+        expect.objectContaining({
+          scale: 0.95,
+          duration: 0.8,
+          scrollTrigger: expect.objectContaining({ start: 'top 80%' }),
+        }),
+      );
+      expect(toSpy).toHaveBeenCalledWith(
+        img,
+        expect.objectContaining({
+          y: -30,
+          duration: 1,
+          scrollTrigger: expect.objectContaining({
+            start: 'top center',
+            end: 'bottom center',
+            scrub: 0.5,
+          }),
+        }),
+      );
+
+      img.remove();
+    });
+
+    it('Given mobile media, When image parallax initializes, Then mobile image presets are applied', () => {
+      allowAnimationsOnMobile();
+      const fromSpy = vi.spyOn(gsap, 'from');
+      const toSpy = vi.spyOn(gsap, 'to');
+      const img = document.createElement('img');
+      img.classList.add('parallax-mobile-target');
+      document.body.appendChild(img);
+
+      service.initializeImageParallaxAnimations('img.parallax-mobile-target');
+
+      expect(fromSpy).toHaveBeenCalledWith(
+        img,
+        expect.objectContaining({
+          scale: 0.98,
+          duration: 0.6,
+          scrollTrigger: expect.objectContaining({ start: 'top 90%' }),
+        }),
+      );
+      expect(toSpy).toHaveBeenCalledWith(
+        img,
+        expect.objectContaining({
+          y: -16,
+          duration: 0.8,
+          scrollTrigger: expect.objectContaining({
+            start: 'top 90%',
+            end: 'bottom 60%',
+            scrub: 0.35,
+          }),
+        }),
+      );
+
+      img.remove();
+    });
   });
 
   describe('reduced motion guards', () => {
@@ -771,6 +1246,8 @@ describe('GsapAnimationsService', () => {
       setReducedMotionPreference();
       const { fromSpy, toSpy, killTweensSpy } = mockGsapEffects();
 
+      service.initializeFigureAnimations();
+      service.initializeReversibleScrollAnimations();
       service.initializeInteractiveCardAnimations();
       service.initializePageEntranceAnimations();
       service.initializeButtonTransitions();
