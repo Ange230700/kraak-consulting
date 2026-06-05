@@ -3,50 +3,40 @@ import { expect, test } from '@playwright/test';
 test.describe('Page programmes - parcours vitrine', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/programmes', { waitUntil: 'domcontentloaded' });
-    await expect(
-      page.getByRole('heading', {
-        level: 1,
-        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
-      }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      "Orientation d'abord, format adapté ensuite.",
+    );
   });
 
   test('Given la page Programmes, When elle se charge, Then le titre principal et les formats clés sont visibles', async ({
     page,
   }) => {
-    await expect(
-      page.getByRole('heading', {
-        level: 1,
-        name: "Programmes KRAAK : orientation d'abord, format adapt\u00e9 ensuite.",
-      }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      "Orientation d'abord, format adapté ensuite.",
+    );
 
     await expect(
-      page.getByText(
-        "Ateliers d'employabilit\u00e9 et de posture professionnelle",
-      ),
+      page.getByText("Ateliers d'employabilité et de posture professionnelle"),
     ).toBeVisible();
     await expect(
-      page.getByText('Pr\u00e9paration linguistique et tests de langue'),
+      page.getByText('Préparation linguistique et tests de langue'),
     ).toBeVisible();
     await expect(
-      page.getByText(
-        'Orientation \u00e9tudes, travail et mobilit\u00e9 internationale',
-      ),
+      page.getByText('Orientation études, travail et mobilité internationale'),
     ).toBeVisible();
     await expect(
       page.getByText(
-        'Interventions collectives pour \u00e9coles, associations et entreprises',
+        'Interventions collectives pour écoles, associations et entreprises',
       ),
     ).toBeVisible();
   });
 
-  test("Given la section d'orientation, When elle est lue, Then les quatre étapes de parcours sont presentees", async ({
+  test("Given la section d'orientation, When elle est lue, Then les quatre étapes de parcours sont présentées", async ({
     page,
   }) => {
     await expect(
       page.getByRole('heading', {
-        name: 'Comment \u00eatre orient\u00e9 vers le bon programme ?',
+        name: 'Comment être orienté vers le bon programme ?',
       }),
     ).toBeVisible();
     await expect(
@@ -63,7 +53,7 @@ test.describe('Page programmes - parcours vitrine', () => {
     ).toBeVisible();
   });
 
-  test("Given le call-to-action de fin de page, When un visiteur veut être oriente, Then l'action mene vers la page contact", async ({
+  test("Given le call-to-action de fin de page, When un visiteur veut être orienté, Then l'action mène vers la page contact", async ({
     page,
   }) => {
     const cta = page.getByRole('link', { name: 'Demander une orientation' });

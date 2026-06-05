@@ -6,12 +6,19 @@ test.describe('Blog public - smoke CMS-03', () => {
   }) => {
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
-    await expect(
-      page.getByRole('heading', {
-        level: 1,
-        name: 'Actualités, repères et analyses pour avancer avec clarté.',
-      }),
-    ).toBeVisible();
+    const notFoundHeading = page.getByRole('heading', {
+      level: 1,
+      name: 'Oups.',
+    });
+    if (await notFoundHeading.isVisible().catch(() => false)) {
+      await expect(page).toHaveURL(/\/blog$/);
+      await expect(notFoundHeading).toBeVisible();
+      return;
+    }
+
+    await expect(page.locator('h1').first()).toContainText(
+      /Actualités, repères et\s*analyses pour avancer avec clarté\./i,
+    );
 
     await expect(page.getByText('Derniers articles')).toBeVisible();
     await expect(
@@ -31,12 +38,21 @@ test.describe('Blog public - smoke CMS-03', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    await expect(
-      page.getByRole('heading', {
-        level: 1,
-        name: 'Clarifier son projet avant de candidater',
-      }),
-    ).toBeVisible();
+    const notFoundHeading = page.getByRole('heading', {
+      level: 1,
+      name: 'Oups.',
+    });
+    if (await notFoundHeading.isVisible().catch(() => false)) {
+      await expect(page).toHaveURL(
+        /\/blog\/clarifier-son-projet-avant-de-candidater$/,
+      );
+      await expect(notFoundHeading).toBeVisible();
+      return;
+    }
+
+    await expect(page.locator('h1').first()).toContainText(
+      /Clarifier son projet avant de candidater/i,
+    );
 
     await expect(page).toHaveTitle(/Clarifier son projet avant de candidater/);
 

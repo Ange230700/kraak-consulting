@@ -48,12 +48,12 @@ describe('ArticlesPublicController', () => {
     controller = module.get<ArticlesPublicController>(ArticlesPublicController);
   });
 
-  it('Given des articles publics disponibles, When listPublishedArticles est appele, Then la liste publiee est renvoyee', async () => {
+  it('Given des articles publics disponibles, When listPublishedArticles est appelé, Then la liste publiée est renvoyée', async () => {
     await expect(controller.listPublishedArticles()).resolves.toEqual([]);
     expect(articlesService.listPublicArticles).toHaveBeenCalledTimes(1);
   });
 
-  it('Given le module public articles, When on lit les metadonnees NestJS, Then les routes GET sont exposees', () => {
+  it('Given le module public articles, When on lit les métadonnées NestJS, Then les routes GET sont exposées', () => {
     expect(Reflect.getMetadata(PATH_METADATA, ArticlesPublicController)).toBe(
       'articles',
     );
@@ -65,7 +65,7 @@ describe('ArticlesPublicController', () => {
     ).toBe(RequestMethod.GET);
   });
 
-  it('Given un slug valide, When getArticleBySlug est appele, Then le detail public est renvoye', async () => {
+  it('Given un slug valide, When getArticleBySlug est appelé, Then le detail public est renvoyé', async () => {
     await expect(
       controller.getArticleBySlug('article-1'),
     ).resolves.toMatchObject({
@@ -78,7 +78,7 @@ describe('ArticlesPublicController', () => {
     );
   });
 
-  it('Given un slug inconnu, When getArticleBySlug est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un slug inconnu, When getArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
     articlesService.getPublicArticleBySlug.mockRejectedValueOnce(
       new NotFoundException({
         success: false,
@@ -91,14 +91,18 @@ describe('ArticlesPublicController', () => {
     );
   });
 
-  it('Given Reflect decorate/metadata indisponibles, When le module public controller est charge, Then le controleur reste chargeable', async () => {
-    const originalDecorate = Reflect.decorate;
-    const originalMetadata = Reflect.metadata;
+  it('Given Reflect decorate/metadata indisponibles, When le module public controller est charge, Then le contrôleur reste chargeable', async () => {
+    const mutableReflect = Reflect as unknown as {
+      decorate: typeof Reflect.decorate | undefined;
+      metadata: typeof Reflect.metadata | undefined;
+    };
+    const originalDecorate = mutableReflect.decorate;
+    const originalMetadata = mutableReflect.metadata;
 
     try {
       jest.resetModules();
-      Reflect.decorate = undefined;
-      Reflect.metadata = undefined;
+      mutableReflect.decorate = undefined;
+      mutableReflect.metadata = undefined;
 
       await jest.isolateModulesAsync(async () => {
         const reloaded = (await import('./articles-public.controller')) as {
@@ -108,8 +112,8 @@ describe('ArticlesPublicController', () => {
         expect(reloaded.ArticlesPublicController).toBeDefined();
       });
     } finally {
-      Reflect.decorate = originalDecorate;
-      Reflect.metadata = originalMetadata;
+      mutableReflect.decorate = originalDecorate;
+      mutableReflect.metadata = originalMetadata;
     }
   });
 });

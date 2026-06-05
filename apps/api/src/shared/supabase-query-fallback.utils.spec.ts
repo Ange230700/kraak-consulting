@@ -6,18 +6,18 @@ import {
 } from './supabase-query-fallback.utils';
 
 describe('readSupabaseErrorCode', () => {
-  it('Given une erreur Supabase avec code, When readSupabaseErrorCode est appele, Then le code est retourne', () => {
+  it('Given une erreur Supabase avec code, When readSupabaseErrorCode est appelé, Then le code est retourne', () => {
     expect(readSupabaseErrorCode({ code: '42703' })).toBe('42703');
   });
 
-  it('Given une erreur sans code exploitable, When readSupabaseErrorCode est appele, Then null est retourne', () => {
+  it('Given une erreur sans code exploitable, When readSupabaseErrorCode est appelé, Then null est retourne', () => {
     expect(readSupabaseErrorCode({ code: 42703 })).toBeNull();
     expect(readSupabaseErrorCode(null)).toBeNull();
   });
 });
 
 describe('readSupabaseErrorMessage', () => {
-  it('Given une erreur Supabase avec message, When readSupabaseErrorMessage est appele, Then le message est retourne', () => {
+  it('Given une erreur Supabase avec message, When readSupabaseErrorMessage est appelé, Then le message est retourne', () => {
     expect(
       readSupabaseErrorMessage({
         message: 'column announcement.priority does not exist',
@@ -25,14 +25,14 @@ describe('readSupabaseErrorMessage', () => {
     ).toBe('column announcement.priority does not exist');
   });
 
-  it('Given une erreur sans message exploitable, When readSupabaseErrorMessage est appele, Then null est retourne', () => {
+  it('Given une erreur sans message exploitable, When readSupabaseErrorMessage est appelé, Then null est retourne', () => {
     expect(readSupabaseErrorMessage({ message: false })).toBeNull();
     expect(readSupabaseErrorMessage(undefined)).toBeNull();
   });
 });
 
 describe('isSupabaseColumnMissingError', () => {
-  it('Given une erreur 42703 sur une colonne attendue, When isSupabaseColumnMissingError est appele, Then true est retourne', () => {
+  it('Given une erreur 42703 sur une colonne attendue, When isSupabaseColumnMissingError est appelé, Then true est retourne', () => {
     expect(
       isSupabaseColumnMissingError(
         {
@@ -44,7 +44,7 @@ describe('isSupabaseColumnMissingError', () => {
     ).toBe(true);
   });
 
-  it('Given une erreur non liee a une colonne attendue, When isSupabaseColumnMissingError est appele, Then false est retourne', () => {
+  it('Given une erreur non liée a une colonne attendue, When isSupabaseColumnMissingError est appelé, Then false est retourne', () => {
     expect(
       isSupabaseColumnMissingError(
         {
@@ -58,7 +58,7 @@ describe('isSupabaseColumnMissingError', () => {
 });
 
 describe('readSupabaseQueryWithFallback', () => {
-  it('Given une erreur de colonne manquante, When readSupabaseQueryWithFallback est appele, Then la requete fallback est rejouee', async () => {
+  it('Given une erreur de colonne manquante, When readSupabaseQueryWithFallback est appelé, Then la requête fallback est rejouée', async () => {
     const loadQuery = jest
       .fn()
       .mockResolvedValueOnce({
@@ -93,7 +93,7 @@ describe('readSupabaseQueryWithFallback', () => {
     expect(loadQuery).toHaveBeenNthCalledWith(2, 'without-priority');
   });
 
-  it('Given une erreur non eligible, When readSupabaseQueryWithFallback est appele, Then le resultat primaire est retourne sans fallback', async () => {
+  it('Given une erreur non eligible, When readSupabaseQueryWithFallback est appelé, Then le résultat primaire est retourne sans fallback', async () => {
     const primaryResult = {
       data: null,
       error: {
@@ -119,7 +119,7 @@ describe('readSupabaseQueryWithFallback', () => {
     expect(loadQuery).toHaveBeenCalledTimes(1);
   });
 
-  it('Given un fallback en erreur, When readSupabaseQueryWithFallback est appele, Then le resultat fallback est retourne et l erreur est loggee', async () => {
+  it('Given un fallback en erreur, When readSupabaseQueryWithFallback est appelé, Then le résultat fallback est retourne et l\u0027erreur est logguée', async () => {
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);

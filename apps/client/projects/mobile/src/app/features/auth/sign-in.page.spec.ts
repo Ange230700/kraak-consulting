@@ -85,7 +85,7 @@ describe('Mobile SignInPage', () => {
       'Saisissez une adresse email valide.',
     );
     expect(element.textContent).toContain(
-      'Votre mot de passe doit contenir au moins 8 caract\u00E8res.',
+      'Votre mot de passe doit contenir au moins 8 caractères.',
     );
   });
 

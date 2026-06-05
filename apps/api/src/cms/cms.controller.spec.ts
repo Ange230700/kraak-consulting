@@ -321,11 +321,14 @@ describe('CmsController', () => {
   });
 
   it('Given Reflect.metadata indisponible, When cms controller module est chargé, Then les décorateurs restent chargeables', async () => {
-    const originalMetadata = Reflect.metadata;
+    const mutableReflect = Reflect as unknown as {
+      metadata: typeof Reflect.metadata | undefined;
+    };
+    const originalMetadata = mutableReflect.metadata;
 
     try {
       jest.resetModules();
-      Reflect.metadata = undefined;
+      mutableReflect.metadata = undefined;
 
       await jest.isolateModulesAsync(async () => {
         const reloaded = (await import('./cms.controller')) as {
@@ -335,7 +338,7 @@ describe('CmsController', () => {
         expect(reloaded.CmsController).toBeDefined();
       });
     } finally {
-      Reflect.metadata = originalMetadata;
+      mutableReflect.metadata = originalMetadata;
     }
   });
 

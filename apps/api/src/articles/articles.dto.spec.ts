@@ -220,7 +220,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload categorie valide, When validateCreateCategoryPayload est appele, Then les champs normalises sont renvoyes', () => {
+  it('Given un payload categorie valide, When validateCreateCategoryPayload est appelé, Then les champs normalises sont renvoyés', () => {
     const result = validateCreateCategoryPayload({
       slug: '  immigration  ',
       label: '  Immigration  ',
@@ -237,7 +237,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload tag invalide, When validateCreateTagPayload est appele, Then les erreurs explicites sont renvoyees', () => {
+  it('Given un payload tag invalide, When validateCreateTagPayload est appelé, Then les erreurs explicites sont renvoyées', () => {
     const result = validateCreateTagPayload({
       slug: '',
       label: '',
@@ -249,7 +249,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload categorie update vide, When validateUpdateCategoryPayload est appele, Then une erreur est renvoyee', () => {
+  it('Given un payload categorie update vide, When validateUpdateCategoryPayload est appelé, Then une erreur est renvoyée', () => {
     const result = validateUpdateCategoryPayload({});
 
     expect(result).toEqual({
@@ -258,7 +258,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un corps non objet pour categorie et tag, When validateCreateCategoryPayload et validateUpdateCategoryPayload sont appeles, Then une erreur corps invalide est renvoyee', () => {
+  it('Given un corps non objet pour categorie et tag, When validateCreateCategoryPayload et validateUpdateCategoryPayload sont appelés, Then une erreur corps invalide est renvoyée', () => {
     expect(validateCreateCategoryPayload(null)).toEqual({
       valid: false,
       errors: ['Corps de requête invalide.'],
@@ -270,7 +270,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un update categorie avec label vide, When validateUpdateCategoryPayload est appele, Then une erreur explicite sur label est renvoyee', () => {
+  it('Given un update categorie avec label vide, When validateUpdateCategoryPayload est appelé, Then une erreur explicite sur label est renvoyée', () => {
     const result = validateUpdateCategoryPayload({
       slug: 'immigration',
       label: '   ',
@@ -282,7 +282,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un update categorie avec description nullable, When validateUpdateCategoryPayload est appele, Then description est normalisee', () => {
+  it('Given un update categorie avec description nullable, When validateUpdateCategoryPayload est appelé, Then description est normalisée', () => {
     const result = validateUpdateCategoryPayload({
       description: '   ',
     });
@@ -295,7 +295,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload tag update valide, When validateUpdateTagPayload est appele, Then les champs sont normalises', () => {
+  it('Given un payload tag update valide, When validateUpdateTagPayload est appelé, Then les champs sont normalises', () => {
     const result = validateUpdateTagPayload({
       slug: '  integrations  ',
       label: '  Integrations  ',
@@ -310,7 +310,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload tag avec description, When validateCreateTagPayload est appele, Then une erreur explicite est renvoyee', () => {
+  it('Given un payload tag avec description, When validateCreateTagPayload est appelé, Then une erreur explicite est renvoyée', () => {
     const result = validateCreateTagPayload({
       slug: 'tag-1',
       label: 'Tag 1',
@@ -323,7 +323,7 @@ describe('Articles DTO validation', () => {
     });
   });
 
-  it('Given un payload tag update avec description, When validateUpdateTagPayload est appele, Then une erreur explicite est renvoyee', () => {
+  it('Given un payload tag update avec description, When validateUpdateTagPayload est appelé, Then une erreur explicite est renvoyée', () => {
     const result = validateUpdateTagPayload({
       description: 'Description interdite',
     });

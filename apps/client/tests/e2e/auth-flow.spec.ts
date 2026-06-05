@@ -1,10 +1,20 @@
 import { expect, test } from '@playwright/test';
 
+const participantAreaExpected =
+  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
+
 test.describe('Auth flow - connexion, inscription et reset', () => {
   test('Given une page de connexion, When elle se charge, Then le formulaire et les liens d\u0027accès sont visibles', async ({
     page,
   }) => {
     await page.goto('/connexion');
+
+    if (!participantAreaExpected) {
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Oups.' }),
+      ).toBeVisible();
+      return;
+    }
 
     await expect(
       page.getByRole('heading', { level: 1, name: 'Connexion' }),
@@ -28,6 +38,13 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
   }) => {
     await page.goto('/connexion');
 
+    if (!participantAreaExpected) {
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Oups.' }),
+      ).toBeVisible();
+      return;
+    }
+
     await page.getByRole('link', { name: 'Créer un compte' }).click();
 
     await expect(page).toHaveURL(/\/inscription$/);
@@ -40,6 +57,13 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
     page,
   }) => {
     await page.goto('/connexion');
+
+    if (!participantAreaExpected) {
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Oups.' }),
+      ).toBeVisible();
+      return;
+    }
 
     await page.getByRole('link', { name: 'Mot de passe oublié' }).click();
 

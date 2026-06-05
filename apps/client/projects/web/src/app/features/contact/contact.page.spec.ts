@@ -64,7 +64,7 @@ describe('ContactPage', () => {
   // Given la page de contact est chargée
   // When le composant est instancié
   // Then il doit être créé sans erreur
-  it('Given la page de contact When le composant est instancie Then il se cree sans erreur', () => {
+  it('Given la page de contact When le composant est instancie Then il se crée sans erreur', () => {
     const fixture = TestBed.createComponent(ContactPage);
     expect(fixture.componentInstance).toBeTruthy();
   });
@@ -79,9 +79,9 @@ describe('ContactPage', () => {
     expect(heading?.textContent).toContain('Parlez-nous de votre objectif.');
   });
 
-  // Given le formulaire de contact est affich\u00E9
+  // Given le formulaire de contact est affiché
   // When l'utilisateur n'a pas encore soumis
-  // Then le formulaire avec tous ses champs doit \u00EAtre pr\u00E9sent
+  // Then le formulaire avec tous ses champs doit être présent
   it('Given la page de contact When le formulaire est rendu Then tous les champs requis sont presents', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
@@ -95,7 +95,7 @@ describe('ContactPage', () => {
     expect(fixture.nativeElement.querySelector('#message')).toBeTruthy();
   });
 
-  it('Given la page de contact When le bloc de contact est rendu Then une action WhatsApp visible est presente', () => {
+  it('Given la page de contact When le bloc de contact est rendu Then une action WhatsApp visible est présente', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
 
@@ -108,7 +108,7 @@ describe('ContactPage', () => {
     expect(whatsappLink?.getAttribute('href')).toBe(WHATSAPP_URL);
   });
 
-  it('Given la page de contact When le lien WhatsApp direct est clique Then un evenement WhatsApp public est envoye', () => {
+  it('Given la page de contact When le lien WhatsApp direct est clique Then un événement WhatsApp public est envoyé', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
 
@@ -128,7 +128,7 @@ describe('ContactPage', () => {
     );
   });
 
-  it('Given la page de contact When le lien e-mail direct est clique Then un evenement e-mail public est envoye', () => {
+  it('Given la page de contact When le lien e-mail direct est clique Then un événement e-mail public est envoyé', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
 
@@ -148,7 +148,7 @@ describe('ContactPage', () => {
     );
   });
 
-  it('Given la page de contact When les coordonnees sont rendues Then le numero public utilise un lien tel explicite', () => {
+  it('Given la page de contact When les coordonnées sont rendues Then le numéro public utilise un lien tel explicite', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
 
@@ -189,13 +189,13 @@ describe('ContactPage', () => {
     const faqAccordion = element.querySelector('kraak-faq-accordion');
 
     expect(faqAccordion).toBeNull();
-    expect(element.textContent).not.toContain('Questions fr\u00E9quentes');
+    expect(element.textContent).not.toContain('Questions fréquentes');
   });
 
   // Given le formulaire est vide
   // When l'utilisateur soumet le formulaire
-  // Then le formulaire doit \u00EAtre invalide et les erreurs affich\u00E9es
-  it('Given un formulaire vide When la soumission est declenchee Then le formulaire devient invalide', () => {
+  // Then le formulaire doit être invalide et les erreurs affichées
+  it('Given un formulaire vide When la soumission est déclenchée Then le formulaire devient invalide', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -216,14 +216,14 @@ describe('ContactPage', () => {
   // Given l'état initial
   // When le composant est créé
   // Then le signal de succès doit être false
-  it('Given la page de contact When le composant est cree Then le signal success vaut false', () => {
+  it('Given la page de contact When le composant est créé Then le signal success vaut false', () => {
     const fixture = TestBed.createComponent(ContactPage);
     expect(fixture.componentInstance.success()).toBe(false);
   });
 
   // Given le formulaire de contact
-  // When on remplit tous les champs avec des donn\u00E9es valides
-  // Then le formulaire doit \u00EAtre valide
+  // When on remplit tous les champs avec des données valides
+  // Then le formulaire doit être valide
   it('Given le formulaire de contact When tous les champs valides sont renseignes Then le formulaire devient valide', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
@@ -241,7 +241,7 @@ describe('ContactPage', () => {
     expect(component.form.valid).toBe(true);
   });
 
-  it('Given les categories publiques When elles sont exposees Then chacune a une file de triage et un workflow', () => {
+  it('Given les catégories publiques When elles sont exposées Then chacune a une file de triage et un workflow', () => {
     const fixture = TestBed.createComponent(ContactPage);
     const component = fixture.componentInstance as unknown as {
       serviceOptions: {
@@ -324,9 +324,9 @@ describe('ContactPage', () => {
   });
 
   // Given l'\u00E9tat initial de chargement
-  // When le composant est cr\u00E9\u00E9
-  // Then loading doit \u00EAtre false
-  it('Given la page de contact When le composant est cree Then le signal loading vaut false', () => {
+  // When le composant est créé
+  // Then loading doit être false
+  it('Given la page de contact When le composant est créé Then le signal loading vaut false', () => {
     const fixture = TestBed.createComponent(ContactPage);
     expect(fixture.componentInstance.loading()).toBe(false);
   });
@@ -334,7 +334,7 @@ describe('ContactPage', () => {
   // Given un formulaire valide
   // When la soumission API réussit
   // Then le formulaire est réinitialisé et le message de succès est affiché
-  it('Given un formulaire valide When la soumission reussit Then un retour de succes est affiche', () => {
+  it('Given un formulaire valide When la soumission réussit Then un retour de succès est affiché', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -393,7 +393,7 @@ describe('ContactPage', () => {
   // Given un succès précédent
   // When l'utilisateur soumet à nouveau le formulaire
   // Then success doit repasser à false immédiatement avant la réponse HTTP
-  it('Given un succes precedent When une nouvelle soumission commence Then success repasse immediatement a false', () => {
+  it('Given un succès précédent When une nouvelle soumission commence Then success repasse immédiatement à false', () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -435,7 +435,7 @@ describe('ContactPage', () => {
   // Given un formulaire valide
   // When l'API répond avec des erreurs de validation
   // Then les erreurs API doivent être affichées dans la page
-  it("Given un formulaire valide When l'API renvoie des erreurs de validation Then elles sont affichees dans la page", () => {
+  it("Given un formulaire valide When l'API renvoie des erreurs de validation Then elles sont affichées dans la page", () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -481,7 +481,7 @@ describe('ContactPage', () => {
     );
   });
 
-  it("Given l'API indique une panne de livraison When la soumission echoue Then les canaux directs sont affiches", () => {
+  it("Given l'API indique une panne de livraison When la soumission échoue Then les canaux directs sont affichés", () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -525,7 +525,7 @@ describe('ContactPage', () => {
   // Given un formulaire valide
   // When l'API répond avec une erreur sans tableau errors structuré
   // Then le message d'erreur générique est affiché
-  it("Given un formulaire valide When l'API renvoie une erreur non structuree Then le message generique est affiche", () => {
+  it("Given un formulaire valide When l'API renvoie une erreur non structurée Then le message générique est affiché", () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;

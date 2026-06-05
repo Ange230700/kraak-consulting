@@ -20,7 +20,7 @@ describe('PolitiqueDeConfidentialitePage', () => {
   describe('Given the politique de confidentialité page is rendered', () => {
     it('When displayed, Then it shows the main heading', () => {
       const h1: HTMLElement = fixture.nativeElement.querySelector('h1');
-      expect(h1?.textContent).toContain('Politique de confidentialit');
+      expect(h1?.textContent).toContain('Politique de confidentialité');
     });
 
     it('When displayed, Then it includes the RGPD rights section', () => {

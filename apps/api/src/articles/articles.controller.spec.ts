@@ -128,7 +128,7 @@ describe('ArticlesController', () => {
     );
   });
 
-  it('Given un token admin valide, When publishArticle est appele, Then le service de publication est invoque', async () => {
+  it('Given un token admin valide, When publishArticle est appelé, Then le service de publication est invoque', async () => {
     await controller.publishArticle('article-1', 'Bearer access-token');
 
     expect(articlesService.publishArticle).toHaveBeenCalledWith(
@@ -137,7 +137,7 @@ describe('ArticlesController', () => {
     );
   });
 
-  it('Given un token admin valide, When uploadCoverImage est appele, Then le service upload est invoque', async () => {
+  it('Given un token admin valide, When uploadCoverImage est appelé, Then le service upload est invoque', async () => {
     await controller.uploadCoverImage(
       {
         buffer: Buffer.from('image'),
@@ -151,7 +151,7 @@ describe('ArticlesController', () => {
     expect(articlesService.uploadCoverImage).toHaveBeenCalled();
   });
 
-  it('Given une erreur ForbiddenException du service upload, When uploadCoverImage est appele, Then l erreur est propagee', async () => {
+  it('Given une erreur ForbiddenException du service upload, When uploadCoverImage est appelé, Then l erreur est propagée', async () => {
     articlesService.uploadCoverImage.mockRejectedValueOnce(
       new ForbiddenException({
         success: false,
@@ -172,7 +172,7 @@ describe('ArticlesController', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given une categorie invalide, When createCategory est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given une categorie invalide, When createCategory est appelé, Then une BadRequestException est renvoyée', async () => {
     await expect(
       controller.createCategory(
         {
@@ -183,7 +183,7 @@ describe('ArticlesController', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('Given un tag valide, When createTag est appele, Then le service createTag est invoque', async () => {
+  it('Given un tag valide, When createTag est appelé, Then le service createTag est invoque', async () => {
     await controller.createTag(
       {
         slug: 'tag-1',
@@ -198,7 +198,7 @@ describe('ArticlesController', () => {
     });
   });
 
-  it('Given un payload tag avec description, When createTag est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given un payload tag avec description, When createTag est appelé, Then une BadRequestException est renvoyée', async () => {
     await expect(
       controller.createTag(
         {

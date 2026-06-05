@@ -22,7 +22,7 @@ describe('FaqPage', () => {
     fixture.detectChanges();
 
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Les r\u00e9ponses utiles');
+    expect(heading?.textContent).toContain('Les réponses utiles');
   });
 
   it('Given the support FAQ page When it renders Then it should expose the KRAAK FAQ questions', () => {
@@ -31,11 +31,11 @@ describe('FaqPage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Les r\u00e9ponses utiles');
+    expect(content).toContain('Les réponses utiles');
     expect(content).toContain(
       'Comment choisir le bon accompagnement chez KRAAK ?',
     );
-    expect(content).toContain('Vous ne trouvez pas votre r\u00e9ponse ?');
+    expect(content).toContain('Vous ne trouvez pas votre réponse ?');
 
     const contactLinks = fixture.nativeElement.querySelectorAll(
       'a[routerLink="/contact"]',

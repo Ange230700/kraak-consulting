@@ -37,7 +37,7 @@ describe('TeamGrid', () => {
     fixture.componentRef.setInput('members', [
       {
         id: 99,
-        name: 'Aminata Traore',
+        name: 'Aminata Traoré',
         role: 'Responsable programme',
         image: '/assets/team/aminata.avif',
       },
@@ -46,12 +46,12 @@ describe('TeamGrid', () => {
 
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.textContent).toContain('Aminata Traore');
+    expect(element.textContent).toContain('Aminata Traoré');
     expect(element.textContent).not.toContain('Savannah Nguyen');
     expect(fixture.componentInstance.visibleMembers()).toEqual([
       {
         id: 99,
-        name: 'Aminata Traore',
+        name: 'Aminata Traoré',
         role: 'Responsable programme',
         image: '/assets/team/aminata.avif',
       },

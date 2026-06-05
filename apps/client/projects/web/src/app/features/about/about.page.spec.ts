@@ -20,7 +20,7 @@ describe('AboutPage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain(
-      'Une structure engag\u00e9e pour le capital humain et les trajectoires durables.',
+      'Une structure engagée pour le capital humain et les trajectoires durables.',
     );
   });
 
@@ -30,13 +30,11 @@ describe('AboutPage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain(
-      'R\u00e9v\u00e9ler, former et accompagner les jeunes dans leur transformation',
+      'Révéler, former et accompagner les jeunes dans leur transformation',
     );
-    expect(content).toContain('D\u00e9veloppement des comp\u00e9tences');
+    expect(content).toContain('Développement des compétences');
     expect(content).toContain('Structuration des projets');
-    expect(content).toContain(
-      'Acc\u00e8s aux opportunit\u00e9s internationales',
-    );
+    expect(content).toContain('Accès aux opportunités internationales');
     expect(content).toContain('Ouverture et connexion globale');
   });
 
@@ -47,6 +45,6 @@ describe('AboutPage', () => {
 
     expect(content).toContain('Une mission claire, une vision utile.');
     expect(content).toContain('Nos valeurs');
-    expect(content).not.toContain("L'\u00e9quipe KRAAK");
+    expect(content).not.toContain("L'équipe KRAAK");
   });
 });

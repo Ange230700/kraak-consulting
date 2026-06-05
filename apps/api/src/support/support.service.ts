@@ -21,7 +21,7 @@ import {
   resolveContactTriagePlan,
 } from './contact-triage.config';
 
-type UserRole = 'participant' | 'admin' | 'trainer' | 'employe';
+type UserRole = 'participant' | 'admin' | 'trainer' | 'employee';
 
 type SessionUserContext = {
   userId: string;
@@ -112,7 +112,7 @@ export class SupportService {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    const isPrivilegedRole = ['admin', 'employe', 'trainer'].includes(
+    const isPrivilegedRole = ['admin', 'employee', 'trainer'].includes(
       sessionUser.role,
     );
     if (!isPrivilegedRole) {
@@ -210,7 +210,7 @@ export class SupportService {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const adminClient = this.supabaseService.getClient();
 
-    const isPrivilegedRole = ['admin', 'employe', 'trainer'].includes(
+    const isPrivilegedRole = ['admin', 'employee', 'trainer'].includes(
       sessionUser.role,
     );
 

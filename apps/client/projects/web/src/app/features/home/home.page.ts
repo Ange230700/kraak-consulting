@@ -104,33 +104,32 @@ export default class HomePage implements OnInit, OnDestroy {
   ];
 
   protected readonly keySolutions: readonly string[] = [
-    'D\u00e9veloppement personnel et professionnel',
-    'Anglais et fran\u00e7ais professionnel',
+    'Développement personnel et professionnel',
+    'Anglais et français professionnel',
     'Leadership et prise de parole',
-    'Pr\u00e9paration aux entretiens',
+    'Préparation aux entretiens',
     'Structuration de projets',
     "Accompagnement d'entreprises et startups",
-    'Conseils en mobilit\u00e9 internationale',
+    'Conseils en mobilité internationale',
     'Recrutement et placement en emploi',
   ];
 
   protected readonly faqItems: FaqItem[] = [
     {
       question:
-        'Je ne sais pas par o\u00f9 commencer, quelle est la premi\u00e8re \u00e9tape ?',
+        'Je ne sais pas par où commencer, quelle est la première étape ?',
       answer:
-        "Commencez par partager votre objectif, votre contexte et votre d\u00e9lai via le formulaire de contact. Nous vous orientons ensuite vers le bon point d'entree.",
+        "Commencez par partager votre objectif, votre contexte et votre délai via le formulaire de contact. Nous vous orientons ensuite vers le bon point d'entrée.",
     },
     {
       question: 'Proposez-vous un accompagnement pour les entreprises ?',
       answer:
-        "Oui. KRAAK accompagne aussi les organisations sur la gestion de projets, la formation du personnel, le recrutement et la performance d'\u00e9quipe.",
+        "Oui. KRAAK accompagne aussi les organisations sur la gestion de projets, la formation du personnel, le recrutement et la performance d'équipe.",
     },
     {
-      question:
-        'Les consultations sont-elles pr\u00e9sentiel ou \u00e0 distance ?',
+      question: 'Les consultations sont-elles présentiel ou à distance ?',
       answer:
-        'Les \u00e9changes peuvent se faire \u00e0 distance ou en pr\u00e9sentiel selon le besoin, le service et les contraintes du projet.',
+        'Les échanges peuvent se faire à distance ou en présentiel selon le besoin, le service et les contraintes du projet.',
     },
   ];
 

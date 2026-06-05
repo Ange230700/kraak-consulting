@@ -15,7 +15,7 @@
       <p
         class="border-secondary/20 bg-brand-white text-secondary mx-auto mb-8 inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase"
       >
-        Pr&eacute;visualisation du format t&eacute;moignages
+        Prévisualisation du format témoignages
       </p>
     }
 
@@ -25,7 +25,7 @@
       <button
         class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
         type="button"
-        aria-label="Voir le t&eacute;moignage pr&eacute;c&eacute;dent"
+        aria-label="Voir le témoignage précédent"
         (click)="prevCard()"
       >
         <svg
@@ -46,7 +46,7 @@
 
       <section
         class="relative h-96 w-full max-w-4xl md:h-112"
-        aria-label="Carrousel de t&eacute;moignages"
+        aria-label="Carrousel de témoignages"
       >
         @for (card of visibleCards(); track card.id; let index = $index) {
           <article
@@ -86,7 +86,7 @@
       <button
         class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
         type="button"
-        aria-label="Voir le t&eacute;moignage suivant"
+        aria-label="Voir le témoignage suivant"
         (click)="nextCard()"
       >
         <svg

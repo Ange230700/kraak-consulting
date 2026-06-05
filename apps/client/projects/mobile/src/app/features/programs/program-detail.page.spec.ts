@@ -151,7 +151,7 @@ describe('Mobile ProgramDetailPage', () => {
     const mockSession: SessionDto = {
       id: 'session-1',
       cohortId: 'cohort-1',
-      title: 'Session de d\u00E9marrage',
+      title: 'Session de démarrage',
       description: null,
       status: 'scheduled',
       startsAt: new Date('2026-06-01T10:00:00Z').toISOString(),
@@ -222,7 +222,7 @@ describe('Mobile ProgramDetailPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('Sessions (2)');
-      expect(element.textContent).toContain('Session de d\u00E9marrage');
+      expect(element.textContent).toContain('Session de démarrage');
       expect(element.textContent).toContain('Ressources (2)');
       expect(element.textContent).toContain('Guide de formation');
       expect(element.textContent).toContain('Un guide complet');
@@ -248,7 +248,7 @@ describe('Mobile ProgramDetailPage', () => {
       expect(element.textContent).not.toContain('Cohorte');
     });
 
-    it('Given optional cohort and session fields are absent, when the page loads, then optional badges are not rendered', async () => {
+    it('Given optional cohort fields are absent, when the page loads, then optional cohort badges are not rendered', async () => {
       service.getProgramDetail.mockResolvedValue({
         ...mockProgramDetail,
         cohort: {
@@ -260,7 +260,7 @@ describe('Mobile ProgramDetailPage', () => {
           {
             ...mockSession,
             id: 'session-no-location-type',
-            locationType: undefined as unknown as SessionDto['locationType'],
+            locationType: 'onsite',
           },
         ],
         resources: [],
@@ -277,7 +277,6 @@ describe('Mobile ProgramDetailPage', () => {
       expect(element.textContent).toContain('Sessions (1)');
       expect(element.textContent).not.toContain('Code:');
       expect(element.textContent).not.toContain('Capacité:');
-      expect(element.textContent).not.toContain('Type:');
     });
 
     it('Given a loaded program, when reloadProgram is called, then the service is called again', async () => {

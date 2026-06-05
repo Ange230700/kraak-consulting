@@ -46,9 +46,7 @@ describe('HomePage', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain(
-      'D\u00e9veloppez vos comp\u00e9tences.',
-    );
+    expect(heading?.textContent).toContain('Développez vos compétences.');
   });
 
   it('Given the home page When it renders Then it shows the primary consulting calls to action', () => {
@@ -56,8 +54,8 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('R\u00e9server une consultation');
-    expect(element.textContent).toContain('D\u00e9couvrir nos programmes');
+    expect(element.textContent).toContain('Réserver une consultation');
+    expect(element.textContent).toContain('Découvrir nos programmes');
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
@@ -79,13 +77,13 @@ describe('HomePage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('D\u00e9veloppement personnel et professionnel');
-    expect(content).toContain('Anglais et fran\u00e7ais professionnel');
+    expect(content).toContain('Développement personnel et professionnel');
+    expect(content).toContain('Anglais et français professionnel');
     expect(content).toContain('Leadership et prise de parole');
-    expect(content).toContain('Pr\u00e9paration aux entretiens');
+    expect(content).toContain('Préparation aux entretiens');
     expect(content).toContain('Structuration de projets');
     expect(content).toContain("Accompagnement d'entreprises et startups");
-    expect(content).toContain('Conseils en mobilit\u00e9 internationale');
+    expect(content).toContain('Conseils en mobilité internationale');
     expect(content).toContain('Recrutement et placement en emploi');
   });
 
@@ -98,7 +96,7 @@ describe('HomePage', () => {
 
     expect(faqAccordion).not.toBeNull();
     expect(element.querySelectorAll('kraak-faq-accordion')).toHaveLength(1);
-    expect(element.textContent).toContain('Questions fr\u00e9quentes');
+    expect(element.textContent).toContain('Questions fréquentes');
   });
 
   it("Given the home page When it renders Then it exposes proof blocks grounded in KRAAK's real positioning", () => {
@@ -109,8 +107,8 @@ describe('HomePage', () => {
 
     expect(content).toContain('Insertion socioprofessionnelle');
     expect(content).toContain('Approche bidirectionnelle');
-    expect(content).toContain('Exp\u00e9rience internationale');
-    expect(content).toContain('Accompagnement structur\u00e9');
+    expect(content).toContain('Expérience internationale');
+    expect(content).toContain('Accompagnement structuré');
   });
 
   it('Given the home page When it renders Then it highlights why to choose KRAAK with concrete differentiators', () => {
@@ -120,8 +118,8 @@ describe('HomePage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain('Pourquoi choisir KRAAK ?');
-    expect(content).toContain("Expertise reconnue \u00e0 l'international");
-    expect(content).toContain('R\u00e9sultats concrets et mesurables');
+    expect(content).toContain("Expertise reconnue à l'international");
+    expect(content).toContain('Résultats concrets et mesurables');
     expect(content).not.toContain('Réseau de partenaires stratégiques');
   });
 

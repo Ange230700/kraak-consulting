@@ -14,7 +14,7 @@ describe('Mobile SignUpPage', () => {
     authService.signUp.mockReset();
     authService.signUp.mockResolvedValue({
       message:
-        'Votre compte a \u00E9t\u00E9 cr\u00E9\u00E9. V\u00E9rifiez votre email pour confirmer votre acc\u00E8s.',
+        'Votre compte a été créé. Vérifiez votre email pour confirmer votre accès.',
       requiresEmailConfirmation: true,
       session: null,
       profile: null,
@@ -41,7 +41,7 @@ describe('Mobile SignUpPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
-    expect(element.textContent).toContain('Cr\u00E9er un compte');
+    expect(element.textContent).toContain('Créer un compte');
     expect(element.textContent).toContain('Se connecter');
   });
 
@@ -51,7 +51,7 @@ describe('Mobile SignUpPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).not.toContain(
-      'V\u00E9rifiez vos informations avant de continuer.',
+      'Vérifiez vos informations avant de continuer.',
     );
   });
 
@@ -61,7 +61,7 @@ describe('Mobile SignUpPage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('Cr\u00E9ation en cours...');
+    expect(element.textContent).toContain('Création en cours...');
   });
 
   it('Given valid participant data, when the form is submitted, then the auth service is called and a success message is exposed', async () => {
@@ -86,7 +86,7 @@ describe('Mobile SignUpPage', () => {
       redirectTo: 'kraak://auth/callback',
     });
     expect(fixture.componentInstance.successMessage()).toContain(
-      'V\u00E9rifiez votre email',
+      'Vérifiez votre email',
     );
   });
 
@@ -100,14 +100,12 @@ describe('Mobile SignUpPage', () => {
     expect(authService.signUp).not.toHaveBeenCalled();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain(
-      'V\u00E9rifiez vos informations avant de continuer.',
+      'Vérifiez vos informations avant de continuer.',
     );
   });
 
   it('Given signUp throws an error, when submit is called, then the error message is rendered', async () => {
-    authService.signUp.mockRejectedValue(
-      new Error('Compte d\u00E9j\u00E0 existant'),
-    );
+    authService.signUp.mockRejectedValue(new Error('Compte déjà existant'));
     const fixture = TestBed.createComponent(SignUpPage);
     fixture.componentInstance.form.setValue({
       firstName: 'Alice',
@@ -121,7 +119,7 @@ describe('Mobile SignUpPage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('Compte d\u00E9j\u00E0 existant');
+    expect(element.textContent).toContain('Compte déjà existant');
   });
 
   it('Given signUp returns a session and profile, when submit succeeds, then router navigates to accueil', async () => {
@@ -181,6 +179,6 @@ describe('Mobile SignUpPage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('V\u00E9rifiez votre email');
+    expect(element.textContent).toContain('Vérifiez votre email');
   });
 });

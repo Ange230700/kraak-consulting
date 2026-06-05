@@ -25,10 +25,10 @@ describe('ResourcesPage', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.textContent).toContain(
-      "Ressources d'orientation pour clarifier votre prochaine \u00e9tape",
+      "Ressources d'orientation pour clarifier votre prochaine étape",
     );
     expect(element.textContent).toContain(
-      "Cette page n'est pas un hub d'actualit\u00e9s ou une biblioth\u00e8que de contenus",
+      "Cette page n'est pas un hub d'actualités ou une bibliothèque de contenus",
     );
   });
 

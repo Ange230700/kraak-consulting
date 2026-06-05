@@ -645,7 +645,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given des articles publies, When listPublicArticles est appele, Then seuls les articles publies sont retournes', async () => {
+  it('Given des articles publies, When listPublicArticles est appelé, Then seuls les articles publies sont retournes', async () => {
     const articleQuery = createListQuery({
       data: [
         {
@@ -695,7 +695,7 @@ describe('ArticlesService', () => {
     expect(articleQuery.eq).toHaveBeenCalledWith('status', 'published');
   });
 
-  it('Given une erreur de lecture publique, When listPublicArticles est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de lecture publique, When listPublicArticles est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const articleQuery = createListQuery({
       data: null,
       error: { message: 'db error' },
@@ -714,7 +714,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given un article public existant, When getPublicArticleBySlug est appele, Then le detail public est renvoye', async () => {
+  it('Given un article public existant, When getPublicArticleBySlug est appelé, Then le detail public est renvoyé', async () => {
     const articleQuery = createSingleRowQuery({
       data: {
         id: 'article-public-1',
@@ -779,7 +779,7 @@ describe('ArticlesService', () => {
     });
   });
 
-  it('Given une erreur Supabase non not found, When getPublicArticleBySlug est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur Supabase non not found, When getPublicArticleBySlug est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const articleQuery = createSingleRowQuery({
       data: null,
       error: { code: '08006', message: 'connection error' },
@@ -798,7 +798,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un article public absent avec code not found, When getPublicArticleBySlug est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un article public absent avec code not found, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
     const articleQuery = createSingleRowQuery({
       data: null,
       error: { code: 'PGRST116', message: 'no rows' },
@@ -817,7 +817,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un article public absent sans erreur technique, When getPublicArticleBySlug est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un article public absent sans erreur technique, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
     const articleQuery = createSingleRowQuery({
       data: null,
       error: null,
@@ -836,7 +836,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un article admin existant, When publishArticle est appele, Then son statut passe a published', async () => {
+  it('Given un article admin existant, When publishArticle est appelé, Then son statut passe a published', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -892,7 +892,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ status: 'published' });
   });
 
-  it('Given une erreur Supabase non not found lors de publishArticle, When publishArticle est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur Supabase non not found lors de publishArticle, When publishArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -918,7 +918,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un article introuvable lors de publishArticle, When publishArticle est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un article introuvable lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -944,7 +944,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un article sans erreur technique mais sans donnee lors de publishArticle, When publishArticle est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un article sans erreur technique mais sans donnee lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -970,7 +970,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un update sans erreur technique mais sans donnee, When updateArticle est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un update sans erreur technique mais sans donnee, When updateArticle est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -999,7 +999,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une categorie inexistante lors de updateCategory, When updateCategory est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une catégorie inexistante lors de updateCategory, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1027,7 +1027,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une categorie sans donnee retournee, When updateCategory est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une catégorie sans donnee retournée, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1055,7 +1055,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur technique lors de updateCategory, When updateCategory est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur technique lors de updateCategory, When updateCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1083,7 +1083,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une categorie valide, When updateCategory est appele, Then la categorie mise a jour est renvoyee', async () => {
+  it('Given une catégorie valide, When updateCategory est appelé, Then la catégorie mise à jour est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1121,7 +1121,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ id: 'category-1', slug: 'categorie' });
   });
 
-  it('Given une erreur de lecture lors de deleteCategory, When deleteCategory est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de lecture lors de deleteCategory, When deleteCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1147,7 +1147,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une categorie existante mais un echec d archivage, When deleteCategory est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une catégorie existante mais un échec d archivage, When deleteCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1182,7 +1182,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une categorie existante, When deleteCategory est appele, Then la categorie est archivee', async () => {
+  it('Given une catégorie existante, When deleteCategory est appelé, Then la catégorie est archivée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1217,7 +1217,7 @@ describe('ArticlesService', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('Given une categorie absente, When deleteCategory est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une catégorie absente, When deleteCategory est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1243,7 +1243,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un tag inexistant lors de updateTag, When updateTag est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un tag inexistant lors de updateTag, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1271,7 +1271,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un tag sans donnee retournee, When updateTag est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un tag sans donnee retournée, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1299,7 +1299,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur technique lors de updateTag, When updateTag est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur technique lors de updateTag, When updateTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1327,7 +1327,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un tag valide, When updateTag est appele, Then le tag mis a jour est renvoye', async () => {
+  it('Given un tag valide, When updateTag est appelé, Then le tag mis a jour est renvoyé', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1363,7 +1363,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ id: 'tag-1', slug: 'tag-slug' });
   });
 
-  it('Given un tag absent, When deleteTag est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un tag absent, When deleteTag est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1389,7 +1389,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur de lecture lors de deleteTag, When deleteTag est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de lecture lors de deleteTag, When deleteTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1415,7 +1415,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un tag existant mais un echec d archivage, When deleteTag est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given un tag existant mais un échec d\u0027archivage, When deleteTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1448,7 +1448,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un tag existant, When deleteTag est appele, Then le tag est archive', async () => {
+  it('Given un tag existant, When deleteTag est appelé, Then le tag est archivé', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1481,7 +1481,7 @@ describe('ArticlesService', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('Given une liste de categories valide, When listCategories est appele, Then les categories sont mappees', async () => {
+  it('Given une liste de categories valide, When listCategories est appelé, Then les categories sont mappées', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1517,7 +1517,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given une erreur de lecture des categories, When listCategories est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de lecture des categories, When listCategories est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1543,7 +1543,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given une creation categorie valide, When createCategory est appele, Then la categorie est creee', async () => {
+  it('Given une creation categorie valide, When createCategory est appelé, Then la categorie est créée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1581,7 +1581,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ id: 'category-1', slug: 'category' });
   });
 
-  it('Given une creation categorie invalide, When createCategory est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une creation categorie invalide, When createCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1611,7 +1611,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une liste de tags valide, When listTags est appele, Then les tags sont mappes', async () => {
+  it('Given une liste de tags valide, When listTags est appelé, Then les tags sont mappes', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1646,7 +1646,7 @@ describe('ArticlesService', () => {
     ]);
   });
 
-  it('Given une erreur de lecture des tags, When listTags est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de lecture des tags, When listTags est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1672,7 +1672,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given une creation tag valide, When createTag est appele, Then le tag est cree', async () => {
+  it('Given une creation tag valide, When createTag est appelé, Then le tag est créé', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1708,7 +1708,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ id: 'tag-1', slug: 'tag' });
   });
 
-  it('Given une creation tag invalide, When createTag est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une creation tag invalide, When createTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1737,7 +1737,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given un fichier non image, When uploadCoverImage est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given un fichier non image, When uploadCoverImage est appelé, Then une BadRequestException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1761,7 +1761,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('Given une image trop lourde, When uploadCoverImage est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given une image trop lourde, When uploadCoverImage est appelé, Then une BadRequestException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1785,7 +1785,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('Given une image valide mais un echec de stockage, When uploadCoverImage est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une image valide mais un échec de stockage, When uploadCoverImage est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1816,7 +1816,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une creation valide sans categories ni tags, When createArticle est appele, Then l article est cree avec des relations vides', async () => {
+  it('Given une creation valide sans categories ni tags, When createArticle est appelé, Then l\u0027article est créé avec des relations vides', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1826,8 +1826,8 @@ describe('ArticlesService', () => {
       data: {
         id: 'article-created',
         slug: 'article-created',
-        title: 'Article cree',
-        excerpt: 'Resume',
+        title: 'Article créé',
+        excerpt: 'Résumé',
         content: '<p>Contenu</p>',
         status: 'draft',
         cover_image_url: null,
@@ -1880,7 +1880,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -1899,7 +1899,7 @@ describe('ArticlesService', () => {
     });
   });
 
-  it('Given un fichier image valide, When uploadCoverImage est appele, Then une URL publique est retournee', async () => {
+  it('Given un fichier image valide, When uploadCoverImage est appelé, Then une URL publique est retournée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1923,7 +1923,7 @@ describe('ArticlesService', () => {
     ).resolves.toMatchObject({ path: expect.stringContaining('articles/') });
   });
 
-  it('Given un payload update complet, When updateArticle est appele, Then tous les champs modifiables sont mappes vers Supabase', async () => {
+  it('Given un payload update complet, When updateArticle est appelé, Then tous les champs modifiables sont mappes vers Supabase', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -1997,7 +1997,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given une erreur de suppression des categories relationnelles, When createArticle est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de suppression des categories relationnelles, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2006,7 +2006,7 @@ describe('ArticlesService', () => {
       data: {
         id: 'article-created',
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2044,7 +2044,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2059,7 +2059,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une erreur insertion categories relationnelles, When createArticle est appele avec categories, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur insertion categories relationnelles, When createArticle est appelé avec categories, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2068,7 +2068,7 @@ describe('ArticlesService', () => {
       data: {
         id: 'article-created',
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2122,7 +2122,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2137,7 +2137,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given des relations article en erreur de lecture, When listPublicArticles est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given des relations article en erreur de lecture, When listPublicArticles est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const articleQuery = createListQuery({
       data: [
         {
@@ -2183,7 +2183,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given des relations vers taxonomies inactives, When listPublicArticles est appele, Then les ids inactifs sont ignores', async () => {
+  it('Given des relations vers taxonomies inactives, When listPublicArticles est appelé, Then les ids inactifs sont ignorés', async () => {
     const articleQuery = createListQuery({
       data: [
         {
@@ -2246,7 +2246,7 @@ describe('ArticlesService', () => {
     ]);
   });
 
-  it('Given une liste publique vide, When listPublicArticles est appele, Then une liste vide est renvoyee', async () => {
+  it('Given une liste publique vide, When listPublicArticles est appelé, Then une liste vide est renvoyée', async () => {
     const articleQuery = createListQuery({ data: [], error: null });
 
     adminClient.from.mockImplementation((tableName: string) => {
@@ -2260,7 +2260,7 @@ describe('ArticlesService', () => {
     await expect(service.listPublicArticles()).resolves.toEqual([]);
   });
 
-  it('Given une erreur insertion tags relationnels, When createArticle est appele avec tags, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur insertion tags relationnels, When createArticle est appelé avec tags, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2269,8 +2269,8 @@ describe('ArticlesService', () => {
       data: {
         id: 'article-created',
         slug: 'article-created',
-        title: 'Article cree',
-        excerpt: 'Resume',
+        title: 'Article créé',
+        excerpt: 'Résumé',
         content: '<p>Contenu</p>',
         status: 'draft',
         cover_image_url: null,
@@ -2325,7 +2325,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2340,7 +2340,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une erreur de validation taxonomy, When createArticle est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de validation taxonomy, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2364,7 +2364,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2379,7 +2379,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une liste publique avec data null sans erreur, When listPublicArticles est appele, Then une liste vide est renvoyee', async () => {
+  it('Given une liste publique avec data null sans erreur, When listPublicArticles est appelé, Then une liste vide est renvoyée', async () => {
     const articleQuery = createListQuery({ data: null, error: null });
 
     adminClient.from.mockImplementation((tableName: string) => {
@@ -2393,7 +2393,7 @@ describe('ArticlesService', () => {
     await expect(service.listPublicArticles()).resolves.toEqual([]);
   });
 
-  it('Given une liste admin avec data null sans erreur, When listArticles est appele, Then une liste vide est renvoyee', async () => {
+  it('Given une liste admin avec data null sans erreur, When listArticles est appelé, Then une liste vide est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2414,7 +2414,7 @@ describe('ArticlesService', () => {
     await expect(service.listArticles('access-token')).resolves.toEqual([]);
   });
 
-  it('Given un article admin absent sans erreur technique, When getArticleById est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given un article admin absent sans erreur technique, When getArticleById est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2440,7 +2440,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur not found PGRST116, When getPublicArticleBySlug est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une erreur not found PGRST116, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
     const articleQuery = createSingleRowQuery({
       data: null,
       error: { code: 'PGRST116', message: 'No rows found' },
@@ -2459,7 +2459,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur not found PGRST116 lors de publishArticle, When publishArticle est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une erreur not found PGRST116 lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2485,7 +2485,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given un payload update avec tagIds uniquement, When updateArticle est appele, Then categoryIds reprend les relations courantes', async () => {
+  it('Given un payload update avec tagIds uniquement, When updateArticle est appelé, Then categoryIds reprend les relations courantes', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2575,7 +2575,7 @@ describe('ArticlesService', () => {
     ]);
   });
 
-  it('Given un payload update avec categoryIds uniquement et tags courants absents, When updateArticle est appele, Then nextTagIds bascule vers un tableau vide', async () => {
+  it('Given un payload update avec categoryIds uniquement et tags courants absents, When updateArticle est appelé, Then nextTagIds bascule vers un tableau vide', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2662,7 +2662,7 @@ describe('ArticlesService', () => {
     ]);
   });
 
-  it('Given une erreur de suppression des tags relationnels, When createArticle est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur de suppression des tags relationnels, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2671,7 +2671,7 @@ describe('ArticlesService', () => {
       data: {
         id: 'article-created',
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2720,7 +2720,7 @@ describe('ArticlesService', () => {
     await expect(
       service.createArticle('access-token', {
         slug: 'article-created',
-        title: 'Article cree',
+        title: 'Article créé',
         excerpt: 'Resume',
         content: '<p>Contenu</p>',
         status: 'draft',
@@ -2735,7 +2735,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given des relations nulles sans erreur, When listPublicArticles est appele, Then la lecture retourne des relations vides', async () => {
+  it('Given des relations nulles sans erreur, When listPublicArticles est appelé, Then la lecture retourne des relations vides', async () => {
     const articleQuery = createListQuery({
       data: [
         {
@@ -2780,7 +2780,7 @@ describe('ArticlesService', () => {
     ]);
   });
 
-  it('Given une erreur not found PGRST116 sur updateCategory, When updateCategory est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une erreur not found PGRST116 sur updateCategory, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2804,7 +2804,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur not found PGRST116 sur updateTag, When updateTag est appele, Then une NotFoundException est renvoyee', async () => {
+  it('Given une erreur not found PGRST116 sur updateTag, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2828,7 +2828,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('Given une erreur avec code non string sur getPublicArticleBySlug, When getPublicArticleBySlug est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur avec code non string sur getPublicArticleBySlug, When getPublicArticleBySlug est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const articleQuery = createSingleRowQuery({
       data: null,
       error: { code: 404, message: 'non string code' },
@@ -2845,7 +2845,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une erreur avec code non string sur publishArticle, When publishArticle est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur avec code non string sur publishArticle, When publishArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2867,7 +2867,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une erreur avec code non string sur updateCategory, When updateCategory est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur avec code non string sur updateCategory, When updateCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2892,7 +2892,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une erreur avec code non string sur updateTag, When updateTag est appele, Then une InternalServerErrorException est renvoyee', async () => {
+  it('Given une erreur avec code non string sur updateTag, When updateTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2917,7 +2917,7 @@ describe('ArticlesService', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('Given une lecture categories avec data null sans erreur, When listCategories est appele, Then une liste vide est renvoyee', async () => {
+  it('Given une lecture categories avec data null sans erreur, When listCategories est appelé, Then une liste vide est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2934,7 +2934,7 @@ describe('ArticlesService', () => {
     await expect(service.listCategories('access-token')).resolves.toEqual([]);
   });
 
-  it('Given une lecture tags avec data null sans erreur, When listTags est appele, Then une liste vide est renvoyee', async () => {
+  it('Given une lecture tags avec data null sans erreur, When listTags est appelé, Then une liste vide est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -2951,7 +2951,7 @@ describe('ArticlesService', () => {
     await expect(service.listTags('access-token')).resolves.toEqual([]);
   });
 
-  it('Given un update avec tagIds vide et relations courantes absentes, When updateArticle est appele, Then categoryIds et tagIds basculent vers des tableaux vides', async () => {
+  it('Given un update avec tagIds vide et relations courantes absentes, When updateArticle est appelé, Then categoryIds et tagIds basculent vers des tableaux vides', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,
@@ -3041,7 +3041,7 @@ describe('ArticlesService', () => {
     );
   });
 
-  it('Given des validations taxonomy avec data null sans erreur, When createArticle est appele, Then une BadRequestException est renvoyee', async () => {
+  it('Given des validations taxonomy avec data null sans erreur, When createArticle est appelé, Then une BadRequestException est renvoyée', async () => {
     const appUserQuery = createSingleRowQuery({
       data: { id: 'user-1', role: 'admin' },
       error: null,

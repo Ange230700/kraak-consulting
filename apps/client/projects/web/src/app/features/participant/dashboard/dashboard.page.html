@@ -17,10 +17,9 @@
             voici votre vue d'ensemble.
           </h1>
           <p class="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            Ce dashboard MVP synth&eacute;tise les contenus prioritaires issus
-            de votre parcours: programmes suivis, prochaines sessions et
-            derni&egrave;res annonces, aliment&eacute;s par le service dashboard
-            de KRAAK.
+            Ce dashboard MVP synthétise les contenus prioritaires issus de votre
+            parcours: programmes suivis, prochaines sessions et dernières
+            annonces, alimentés par le service dashboard de KRAAK.
           </p>
         </div>
       </div>
@@ -35,11 +34,11 @@
           Point d'attention
         </p>
         <h2 id="dashboard-attention-title" class="mt-3 text-2xl font-semibold">
-          Rester align&eacute; sur la prochaine &eacute;tape
+          Rester aligné sur la prochaine étape
         </h2>
         <p class="mt-3 text-sm leading-6 text-slate-200">
-          L'accueil sert de rep&egrave;re rapide: programmes actifs, prochaines
-          sessions et annonces r&eacute;centes sont consolid&eacute;s ici.
+          L'accueil sert de repère rapide: programmes actifs, prochaines
+          sessions et annonces récentes sont consolidés ici.
         </p>
       </aside>
     </section>
@@ -61,7 +60,7 @@
             id="dashboard-synthesis-title"
             class="mt-2 text-2xl font-semibold text-slate-950"
           >
-            Synth&egrave;se utile
+            Synthèse utile
           </h2>
         </div>
         @if (!loading() && !errorMessage()) {
@@ -73,8 +72,7 @@
 
       @if (loading()) {
         <p class="mt-4 text-sm leading-6 text-slate-600">
-          La synth&egrave;se se met &agrave; jour avec vos derni&egrave;res
-          informations.
+          La synthèse se met à jour avec vos dernières informations.
         </p>
       } @else if (errorMessage()) {
         <p-message
@@ -112,7 +110,7 @@
             <p
               class="text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase"
             >
-              Prochaine &eacute;tape
+              Prochaine étape
             </p>
             <h3
               id="dashboard-next-step-title"
@@ -145,7 +143,7 @@
             id="dashboard-overview-title"
             class="mt-2 text-2xl font-semibold text-slate-950"
           >
-            Votre vue d'ensemble personnalis&eacute;e
+            Votre vue d'ensemble personnalisée
           </h2>
         </div>
         @if (loading()) {
@@ -171,7 +169,7 @@
             class="btn btn-primary"
             (click)="reloadDashboard()"
           >
-            R&eacute;essayer
+            Réessayer
           </button>
         </div>
       } @else if (loading()) {
@@ -241,11 +239,11 @@
               id="dashboard-sessions-title"
               class="mt-2 text-lg font-semibold text-slate-950"
             >
-              Les rappels &agrave; ne pas manquer
+              Les rappels à ne pas manquer
             </h3>
             @if (upcomingSessions().length === 0) {
               <p class="mt-3 text-sm leading-6 text-slate-600">
-                Aucune session planifi&eacute;e pour le moment.
+                Aucune session planifiée pour le moment.
               </p>
             } @else {
               <ul class="mt-4 space-y-3">
@@ -275,7 +273,7 @@
             <p
               class="text-brand-blue text-xs font-semibold tracking-[0.24em] uppercase"
             >
-              Annonces r&eacute;centes
+              Annonces récentes
             </p>
             <h3
               id="dashboard-announcements-title"
@@ -285,7 +283,7 @@
             </h3>
             @if (recentAnnouncements().length === 0) {
               <p class="mt-3 text-sm leading-6 text-slate-600">
-                Aucune annonce r&eacute;cente pour l'instant.
+                Aucune annonce récente pour l'instant.
               </p>
             } @else {
               <ul class="mt-4 space-y-3">
@@ -316,7 +314,7 @@
       <p
         class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
       >
-        Acc&egrave;s rapides
+        Accès rapides
       </p>
       <h2 id="dashboard-quicklinks-title" class="mt-2 text-2xl font-semibold">
         Des sorties utiles depuis votre espace

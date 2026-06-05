@@ -45,8 +45,8 @@ export async function requireAdminAccess(
   return accessToken;
 }
 
-// Allows admin OR employe — for support inbox, enrollment management
-export async function requireEmployeSession(
+// Allows admin OR employee — for support inbox, enrollment management
+export async function requireEmployeeSession(
   authService: Pick<AuthService, 'getSession'>,
   authorizationHeader?: string,
 ): Promise<{ accessToken: string; session: AdminSession }> {
@@ -60,10 +60,10 @@ export async function requireEmployeSession(
   }
 
   const session = await authService.getSession(accessToken.data);
-  // `employe` can be persisted by auth metadata before contracts expose it in the role union.
+  // `employee` can be persisted by auth metadata before contracts expose it in the role union.
   const role = session.profile.appUser.role as string;
 
-  if (role !== 'admin' && role !== 'employe') {
+  if (role !== 'admin' && role !== 'employee') {
     throw new ForbiddenException({
       success: false,
       message: 'Accès réservé aux employés et administrateurs.',
@@ -76,11 +76,11 @@ export async function requireEmployeSession(
   };
 }
 
-export async function requireEmployeAccess(
+export async function requireEmployeeAccess(
   authService: Pick<AuthService, 'getSession'>,
   authorizationHeader?: string,
 ): Promise<string> {
-  const { accessToken } = await requireEmployeSession(
+  const { accessToken } = await requireEmployeeSession(
     authService,
     authorizationHeader,
   );

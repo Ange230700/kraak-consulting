@@ -64,7 +64,7 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       enrollmentId: 'enr-1',
       programId: 'program-1',
       slug: 'integration',
-      title: "Parcours d'int\u00E9gration",
+      title: "Parcours d'intégration",
       summary: 'Suivi individuel et collectif',
       enrollmentStatus: 'active',
       cohortId: 'cohort-1',
@@ -87,14 +87,14 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       cohortName: 'Cohorte printemps',
       programId: 'program-1',
       programSlug: 'integration',
-      programTitle: "Parcours d'int\u00E9gration",
+      programTitle: "Parcours d'intégration",
     },
   ],
   recentAnnouncements: [
     {
       id: 'announcement-1',
       title: 'Rappel documents',
-      body: 'Pensez \u00E0 v\u00E9rifier vos pi\u00E8ces justificatives.',
+      body: 'Pensez à vérifier vos pièces justificatives.',
       audienceType: 'all_participants',
       programId: null,
       cohortId: null,
@@ -152,8 +152,8 @@ describe('Web Participant Dashboard Page', () => {
       );
 
       expect(text).toContain('Mon dashboard');
-      expect(text).toContain('Synth\u00E8se utile');
-      expect(text).toContain("Parcours d'int\u00E9gration");
+      expect(text).toContain('Synthèse utile');
+      expect(text).toContain("Parcours d'intégration");
       expect(text).toContain('Atelier CV');
       expect(text).toContain('Rappel documents');
       expect(text).toContain('Cohorte printemps');
@@ -172,10 +172,8 @@ describe('Web Participant Dashboard Page', () => {
       expect(text).toContain('Synth\u00E8se utile');
       expect(text).toContain('Programmes actifs');
       expect(text).toContain('Sessions \u00E0 venir');
-      expect(text).toContain('Annonces r\u00E9centes');
-      expect(text).toContain(
-        '3 \u00E9l\u00E9ments cl\u00E9s disponibles aujourd\u2019hui.',
-      );
+      expect(text).toContain('Annonces récentes');
+      expect(text).toContain('3 éléments clés disponibles aujourd’hui.');
       expect(text).toContain('Prochaine session');
       expect(text).toContain('Atelier CV - ');
     });
@@ -188,7 +186,7 @@ describe('Web Participant Dashboard Page', () => {
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
       expect(text).toContain('Prochaine session');
-      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
+      expect(text).toContain('Aucune session planifiée pour le moment.');
     });
 
     it('Given an empty dashboard aggregate, When the page loads, Then it renders the global empty state', async () => {
@@ -302,7 +300,7 @@ describe('Web Participant Dashboard Page', () => {
       await flush(fixture);
 
       expect(fixture.componentInstance.totalSummaryLabel()).toBe(
-        '1 \u00E9l\u00E9ment cl\u00E9 disponible aujourd\u2019hui.',
+        '1 élément clé disponible aujourd’hui.',
       );
     });
 
@@ -323,7 +321,7 @@ describe('Web Participant Dashboard Page', () => {
               email: 'participant@example.com',
               role: 'participant',
               firstName: 'Awa',
-              lastName: 'Konate',
+              lastName: 'Konaté',
               phone: null,
               preferredContactChannel: null,
               isActive: true,
@@ -392,7 +390,7 @@ describe('Web Participant Dashboard Page', () => {
 
       const programs = fixture.componentInstance.programs();
       expect(programs).toHaveLength(1);
-      expect(programs[0].title).toBe("Parcours d'int\u00E9gration");
+      expect(programs[0].title).toBe("Parcours d'intégration");
     });
 
     it('Given a program without summary or cohortName, When the page loads, Then those optional fields are not rendered', async () => {
@@ -417,7 +415,7 @@ describe('Web Participant Dashboard Page', () => {
       await flush(fixture);
 
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
+      expect(text).toContain('Aucune session planifiée pour le moment.');
     });
   });
 

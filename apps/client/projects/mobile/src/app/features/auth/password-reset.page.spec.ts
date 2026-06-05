@@ -15,7 +15,7 @@ describe('Mobile PasswordResetPage', () => {
     authService.requestPasswordReset.mockResolvedValue({
       success: true,
       message:
-        'Si cette adresse existe, un email de r\u00E9initialisation vient d\u2019\u00EAtre envoy\u00E9.',
+        'Si cette adresse existe, un email de réinitialisation vient d\u2019être envoyé.',
     });
 
     await TestBed.configureTestingModule({
@@ -39,8 +39,8 @@ describe('Mobile PasswordResetPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
-    expect(element.textContent).toContain('R\u00E9initialiser');
-    expect(element.textContent).toContain('Retour \u00E0 la connexion');
+    expect(element.textContent).toContain('Réinitialiser');
+    expect(element.textContent).toContain('Retour à la connexion');
   });
 
   it('Given a reset submission in progress, when the page renders, then the loading button label is shown', () => {
@@ -65,7 +65,7 @@ describe('Mobile PasswordResetPage', () => {
       redirectTo: 'kraak://auth/reset',
     });
     expect(fixture.componentInstance.successMessage()).toContain(
-      'email de r\u00E9initialisation',
+      'email de réinitialisation',
     );
   });
 
@@ -104,6 +104,6 @@ describe('Mobile PasswordResetPage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('email de r\u00E9initialisation');
+    expect(element.textContent).toContain('email de réinitialisation');
   });
 });
