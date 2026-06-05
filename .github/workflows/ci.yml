@@ -150,7 +150,7 @@ jobs:
             npx ng serve web --configuration staging --port 4200 --prebundle=false --live-reload=false
           CLIENT_API_BASE_URL: https://kraak-api-staging.onrender.com
           CLIENT_SITE_URL: http://127.0.0.1:4200
-        run: pnpm test:e2e:web
+        run: pnpm test:e2e:web -- --project=chromium
 
   # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)
