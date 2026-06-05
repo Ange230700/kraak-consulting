@@ -148,6 +148,7 @@ jobs:
           KRAAK_E2E_START_WEB_SERVER: "false"
           CLIENT_API_BASE_URL: https://kraak-api-staging.onrender.com
           CLIENT_SITE_URL: http://127.0.0.1:4200
+          KRAAK_E2E_BROWSER_CHANNEL: chrome
         run: |
           pnpm --filter @kraak/client build:web
 
