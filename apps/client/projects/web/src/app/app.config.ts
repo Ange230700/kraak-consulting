@@ -5,7 +5,11 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter, TitleStrategy } from '@angular/router';
+import {
+  provideRouter,
+  TitleStrategy,
+  withViewTransitions,
+} from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
@@ -30,7 +34,7 @@ export const appConfig: ApplicationConfig = {
       provide: ErrorHandler,
       useClass: KraakErrorHandler,
     },
-    provideRouter(routes),
+    provideRouter(routes, withViewTransitions()),
     provideClientHydration(),
     provideHttpClient(withFetch()),
     providePrimeNG({

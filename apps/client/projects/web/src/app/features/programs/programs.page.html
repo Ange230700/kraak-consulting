@@ -1,6 +1,7 @@
 <section
   class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
+  kraakRevealOnScroll
 >
   <div
     aria-hidden="true"
@@ -34,7 +35,7 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="40">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div class="mx-auto max-w-3xl text-center">
       <p
@@ -53,7 +54,10 @@
     </div>
 
     <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card shadow-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+      >
         <i
           class="pi pi-briefcase text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -72,7 +76,11 @@
         </p>
       </article>
 
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card shadow-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="60"
+      >
         <i
           class="pi pi-language text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -91,7 +99,11 @@
         </p>
       </article>
 
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card shadow-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="120"
+      >
         <i
           class="pi pi-globe text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -110,7 +122,11 @@
         </p>
       </article>
 
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card shadow-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="180"
+      >
         <i
           class="pi pi-users text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -132,7 +148,7 @@
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16">
+<section class="bg-neutral-50 py-16" kraakRevealOnScroll [revealDelayMs]="60">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div class="mx-auto max-w-3xl text-center">
       <p
@@ -181,7 +197,7 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
       Comment être orienté vers le bon programme ?
@@ -223,7 +239,7 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="100">
   <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
     <h2 class="text-3xl font-bold lg:text-4xl">
       Vous n'avez pas à choisir seul dans un catalogue inachevé.

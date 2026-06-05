@@ -10,6 +10,7 @@ import {
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import {
   FaqAccordion,
   type FaqItem,
@@ -28,6 +29,7 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
     ButtonDirective,
     FaqAccordion,
     PublicConversionTrackingDirective,
+    RevealOnScrollDirective,
   ],
   templateUrl: './home.page.html',
   styles: [

@@ -47,6 +47,23 @@
   --radius-card: var(--kr-radius-card);
 
   --shadow-card: var(--kr-shadow-card);
+
+  --motion-duration-xs: 120ms;
+  --motion-duration-sm: 180ms;
+  --motion-duration-md: 260ms;
+  --motion-duration-lg: 360ms;
+
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --motion-shift-xs: 4px;
+  --motion-shift-sm: 8px;
+  --motion-shift-md: 16px;
+  --motion-shift-lg: 24px;
+
+  --motion-opacity-from: 0;
+  --motion-opacity-to: 1;
 }
 
 /*
@@ -100,6 +117,16 @@
   img {
     max-width: 100%;
     height: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: kr-route-fade-out var(--motion-duration-sm)
+      var(--motion-ease-exit) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: kr-route-fade-in var(--motion-duration-md)
+      var(--motion-ease-enter) both;
   }
 }
 
@@ -287,6 +314,47 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .motion-reveal-base {
+    opacity: var(--motion-opacity-from);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(var(--motion-shift-md));
+      transition-property: transform, opacity;
+      transition-duration: var(--motion-duration-md);
+      transition-timing-function: var(--motion-ease-enter);
+    }
+  }
+
+  .motion-reveal-visible {
+    opacity: var(--motion-opacity-to);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(0);
+    }
+  }
+
+  .motion-hover-lift {
+    @media (prefers-reduced-motion: no-preference) {
+      transition-property:
+        transform, box-shadow, border-color, background-color;
+      transition-duration: var(--motion-duration-xs);
+      transition-timing-function: var(--motion-ease-standard);
+    }
+  }
+
+  .motion-hover-lift:hover,
+  .motion-hover-lift:focus-visible {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(calc(-1 * var(--motion-shift-xs)));
+    }
+  }
+
+  .motion-press:active {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(0.98);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -298,5 +366,29 @@
     transition-delay: 0ms !important;
     animation-duration: 0ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@keyframes kr-route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-shift-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kr-route-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(var(--motion-shift-sm));
   }
 }

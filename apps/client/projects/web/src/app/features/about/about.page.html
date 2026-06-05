@@ -1,6 +1,7 @@
 <section
   class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
+  kraakRevealOnScroll
 >
   <div
     aria-hidden="true"
@@ -33,10 +34,10 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="40">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div class="grid gap-8 md:grid-cols-3">
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article class="rounded-card bg-neutral-50 p-6" kraakRevealOnScroll>
         <i
           class="pi pi-graduation-cap text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -47,7 +48,11 @@
           compétitivité professionnelle.
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="60"
+      >
         <i
           class="pi pi-sitemap text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -58,7 +63,11 @@
           suivies et capables de produire des résultats.
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="120"
+      >
         <i
           class="pi pi-globe text-brand-navy-soft text-3xl"
           aria-hidden="true"
@@ -75,7 +84,11 @@
   </div>
 </section>
 
-<section class="relative overflow-hidden bg-neutral-50 py-16">
+<section
+  class="relative overflow-hidden bg-neutral-50 py-16"
+  kraakRevealOnScroll
+  [revealDelayMs]="60"
+>
   <div
     class="from-secondary/10 absolute inset-x-0 top-0 h-24 bg-linear-to-b to-transparent"
   ></div>
@@ -98,6 +111,8 @@
     <div class="mt-12 grid gap-6 lg:grid-cols-2">
       <article
         class="relative overflow-hidden rounded-4xl border border-white bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
+        kraakRevealOnScroll
+        [revealDelayMs]="80"
       >
         <div
           class="bg-primary/10 absolute -top-8 -right-8 h-32 w-32 rounded-full blur-2xl"
@@ -162,6 +177,8 @@
 
       <article
         class="border-secondary/10 bg-brand-navy relative overflow-hidden rounded-4xl border p-8 text-white shadow-[0_20px_60px_rgba(15,23,42,0.12)]"
+        kraakRevealOnScroll
+        [revealDelayMs]="140"
       >
         <div
           class="bg-secondary/20 absolute top-6 -left-10 h-36 w-36 rounded-full blur-3xl"
@@ -217,18 +234,22 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos valeurs</h2>
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <article class="rounded-card bg-neutral-50 p-5">
+      <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
         <p class="text-primary text-center text-lg font-bold">Humanisme</p>
         <p class="text-brand-navy mt-3 text-sm">
           Nous défendons le respect de chaque individu, la dignité humaine et
           l'inclusion, sans discrimination.
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
+      <article
+        class="rounded-card bg-neutral-50 p-5"
+        kraakRevealOnScroll
+        [revealDelayMs]="50"
+      >
         <p class="text-primary text-center text-lg font-bold">
           Responsabilité personnelle
         </p>
@@ -237,7 +258,11 @@
           choix et son avenir.
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
+      <article
+        class="rounded-card bg-neutral-50 p-5"
+        kraakRevealOnScroll
+        [revealDelayMs]="100"
+      >
         <p class="text-primary text-center text-lg font-bold">
           Leadership par le service
         </p>
