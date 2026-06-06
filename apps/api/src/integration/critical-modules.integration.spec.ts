@@ -18,9 +18,14 @@ import { ProgramsController } from '../programs/programs.controller';
 import { ProgramsService } from '../programs/programs.service';
 import { ResourcesController } from '../resources/resources.controller';
 import { ResourcesService } from '../resources/resources.service';
+import { ServicesController } from '../services/services.controller';
+import { ServicesService } from '../services/services.service';
 import { SupportController } from '../support/support.controller';
 import { SupportRequestsController } from '../support/support-requests.controller';
 import { SupportService } from '../support/support.service';
+import { DashboardController } from '../dashboard/dashboard.controller';
+import { DashboardService } from '../dashboard/dashboard.service';
+import { ArticlesPublicController } from '../articles/articles-public.controller';
 
 async function buildHttpApp(options: {
   controllers: Array<Type<unknown>>;
@@ -196,9 +201,13 @@ describe('Critical API Modules Integration', () => {
     let app: INestApplication;
 
     const resourcesServiceMock: jest.Mocked<
-      Pick<ResourcesService, 'listResources' | 'trackResourceConsultation'>
+      Pick<
+        ResourcesService,
+        'listResources' | 'getResourceById' | 'trackResourceConsultation'
+      >
     > = {
       listResources: jest.fn(),
+      getResourceById: jest.fn(),
       trackResourceConsultation: jest.fn(),
     };
 
@@ -221,6 +230,22 @@ describe('Critical API Modules Integration', () => {
       resourcesServiceMock.listResources.mockResolvedValue({
         data: [],
         total: 0,
+      });
+      resourcesServiceMock.getResourceById.mockResolvedValue({
+        id: 'resource-1',
+        programId: 'program-1',
+        cohortId: null,
+        title: 'Fiche pratique',
+        description: 'Document utile',
+        resourceType: 'document',
+        resourceTheme: 'training',
+        resourceAudience: 'all',
+        url: null,
+        filePath: '/files/resource-1.pdf',
+        status: 'published',
+        publishedAt: '2026-01-06T10:00:00.000Z',
+        createdAt: '2026-01-06T10:00:00.000Z',
+        updatedAt: '2026-01-06T10:00:00.000Z',
       });
       resourcesServiceMock.trackResourceConsultation.mockResolvedValue(
         undefined,
@@ -258,6 +283,33 @@ describe('Critical API Modules Integration', () => {
       expect(
         resourcesServiceMock.trackResourceConsultation,
       ).toHaveBeenCalledWith('resource-1');
+    });
+
+    it('Given a published resource exists, When loading it by id, Then it returns 200 and forwards the identifier', async () => {
+      const response = await (request(app.getHttpServer())
+        .get('/resources/resource-1')
+        .expect(200) as unknown as Promise<{ body: { id: string } }>);
+
+      expect(response.body.id).toBe('resource-1');
+      expect(resourcesServiceMock.getResourceById).toHaveBeenCalledWith(
+        'resource-1',
+      );
+    });
+
+    it('Given a published resource is missing, When loading it by id, Then it returns 404', async () => {
+      resourcesServiceMock.getResourceById.mockRejectedValueOnce(
+        new NotFoundException(
+          'Resource with ID resource-404 not found or is not published.',
+        ),
+      );
+
+      await (request(app.getHttpServer())
+        .get('/resources/resource-404')
+        .expect(404) as unknown as Promise<void>);
+
+      expect(resourcesServiceMock.getResourceById).toHaveBeenCalledWith(
+        'resource-404',
+      );
     });
   });
 
@@ -319,6 +371,213 @@ describe('Critical API Modules Integration', () => {
         'participant-token',
         '1',
         '10',
+      );
+    });
+  });
+
+  describe('SVC-02 Public services endpoints', () => {
+    let app: INestApplication;
+
+    const servicesServiceMock: jest.Mocked<
+      Pick<ServicesService, 'listServices' | 'getServiceById'>
+    > = {
+      listServices: jest.fn(),
+      getServiceById: jest.fn(),
+    };
+
+    const authServiceMock: jest.Mocked<Pick<AuthService, 'getSession'>> = {
+      getSession: jest.fn(),
+    };
+
+    const serviceFixture = {
+      id: 'service-1',
+      title: 'Formation',
+      description: 'Accompagner les apprenants',
+      icon: 'graduation-cap',
+      sortOrder: 1,
+      createdAt: '2026-01-03T10:00:00.000Z',
+      updatedAt: '2026-01-03T10:00:00.000Z',
+    };
+
+    const serviceWithDetailsFixture = {
+      ...serviceFixture,
+      details: [
+        {
+          id: 'detail-1',
+          serviceId: 'service-1',
+          title: 'Ateliers',
+          description: 'Ateliers pratiques et ciblés',
+          sortOrder: 1,
+          createdAt: '2026-01-03T10:00:00.000Z',
+          updatedAt: '2026-01-03T10:00:00.000Z',
+        },
+      ],
+    };
+
+    beforeAll(async () => {
+      app = await buildHttpApp({
+        controllers: [ServicesController],
+        providers: [
+          { provide: ServicesService, useValue: servicesServiceMock },
+          { provide: AuthService, useValue: authServiceMock },
+        ],
+      });
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      servicesServiceMock.listServices.mockResolvedValue([serviceFixture]);
+      servicesServiceMock.getServiceById.mockResolvedValue(
+        serviceWithDetailsFixture,
+      );
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('Given public services exist, When listing services, Then it returns 200 and forwards the list', async () => {
+      const response = await (request(app.getHttpServer())
+        .get('/services')
+        .expect(200) as unknown as Promise<{ body: unknown[] }>);
+
+      expect(response.body).toHaveLength(1);
+      expect(servicesServiceMock.listServices).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given a public service exists, When loading the service detail, Then it returns 200 with the details', async () => {
+      const response = await (request(app.getHttpServer())
+        .get('/services/service-1')
+        .expect(200) as unknown as Promise<{ body: { details: unknown[] } }>);
+
+      expect(response.body.details).toHaveLength(1);
+      expect(servicesServiceMock.getServiceById).toHaveBeenCalledWith(
+        'service-1',
+      );
+    });
+  });
+
+  describe('ART-01 Public articles endpoints', () => {
+    let app: INestApplication;
+
+    const articlesServiceMock: jest.Mocked<
+      Pick<ArticlesService, 'listPublicArticles' | 'getPublicArticleBySlug'>
+    > = {
+      listPublicArticles: jest.fn(),
+      getPublicArticleBySlug: jest.fn(),
+    };
+
+    const articleFixture = {
+      id: 'article-public-1',
+      slug: 'integration-in-public',
+      title: 'Intégration en pratique',
+      excerpt: 'Apprendre à intégrer les parcours',
+      content: '<p>Contenu public</p>',
+      status: 'published' as const,
+      coverImageUrl: null,
+      seoTitle: 'Intégration en pratique',
+      seoDescription: 'Article public de démonstration',
+      publishedAt: '2026-01-04T10:00:00.000Z',
+      authorId: 'author-1',
+      categories: [],
+      tags: [],
+      createdAt: '2026-01-04T10:00:00.000Z',
+      updatedAt: '2026-01-04T10:00:00.000Z',
+    };
+
+    beforeAll(async () => {
+      app = await buildHttpApp({
+        controllers: [ArticlesPublicController],
+        providers: [
+          { provide: ArticlesService, useValue: articlesServiceMock },
+        ],
+      });
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      articlesServiceMock.listPublicArticles.mockResolvedValue([
+        articleFixture,
+      ]);
+      articlesServiceMock.getPublicArticleBySlug.mockResolvedValue(
+        articleFixture,
+      );
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('Given public articles exist, When listing articles, Then it returns 200 and forwards the list', async () => {
+      const response = await (request(app.getHttpServer())
+        .get('/articles')
+        .expect(200) as unknown as Promise<{ body: unknown[] }>);
+
+      expect(response.body).toHaveLength(1);
+      expect(articlesServiceMock.listPublicArticles).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given a public article exists, When loading it by slug, Then it returns 200 and forwards the slug', async () => {
+      const response = await (request(app.getHttpServer())
+        .get('/articles/integration-in-public')
+        .expect(200) as unknown as Promise<{ body: { slug: string } }>);
+
+      expect(response.body.slug).toBe('integration-in-public');
+      expect(articlesServiceMock.getPublicArticleBySlug).toHaveBeenCalledWith(
+        'integration-in-public',
+      );
+    });
+  });
+
+  describe('DSH-03 Dashboard participant endpoint', () => {
+    let app: INestApplication;
+
+    const dashboardServiceMock: jest.Mocked<
+      Pick<DashboardService, 'getAggregate'>
+    > = {
+      getAggregate: jest.fn(),
+    };
+
+    beforeAll(async () => {
+      app = await buildHttpApp({
+        controllers: [DashboardController],
+        providers: [
+          { provide: DashboardService, useValue: dashboardServiceMock },
+        ],
+      });
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      dashboardServiceMock.getAggregate.mockResolvedValue({
+        generatedAt: '2026-01-05T10:00:00.000Z',
+        programs: [],
+        upcomingSessions: [],
+        recentAnnouncements: [],
+      });
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('Given a missing authorization header, When loading the dashboard, Then it returns 401', async () => {
+      await (request(app.getHttpServer())
+        .get('/dashboard')
+        .expect(401) as unknown as Promise<void>);
+
+      expect(dashboardServiceMock.getAggregate).not.toHaveBeenCalled();
+    });
+
+    it('Given a valid access token, When loading the dashboard, Then it returns 200 and forwards the token', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/dashboard')
+        .set('authorization', 'Bearer participant-token')
+        .expect(200);
+
+      expect(response.body.generatedAt).toBe('2026-01-05T10:00:00.000Z');
+      expect(dashboardServiceMock.getAggregate).toHaveBeenCalledWith(
+        'participant-token',
       );
     });
   });

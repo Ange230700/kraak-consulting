@@ -235,20 +235,20 @@ Ces réglages sont déjà appliqués dans le `.git/config` du dépôt. Si vous c
 
 Des vérifications automatiques s'exécutent à chaque étape :
 
-| Moment       | Vérification                                                                | Effet si échec |
-| ------------ | --------------------------------------------------------------------------- | -------------- |
-| `commit-msg` | Format Conventional Commits (commitlint)                                    | Commit rejeté  |
-| `pre-commit` | `pnpm format` + `pnpm lint:fix` + restage automatique des fichiers modifiés | Commit rejeté  |
-| `pre-push`   | Nom de branche valide + `pnpm typecheck` + `pnpm test:api` + tests client   | Push rejeté    |
+| Moment       | Vérification                                                         | Effet si échec |
+| ------------ | -------------------------------------------------------------------- | -------------- |
+| `commit-msg` | Format Conventional Commits (commitlint)                             | Commit rejeté  |
+| `pre-commit` | `lint-staged` (formatage/lint uniquement sur les fichiers indexés)   | Commit rejeté  |
+| `pre-push`   | Nom de branche valide + contrôles ciblés selon les fichiers modifiés | Push rejeté    |
 
 ### Si un hook échoue
 
-- **Formatage** : le hook applique déjà `pnpm format` et restage les fichiers corrigés ; si l'échec persiste, corriger le blocage signalé puis recommiter
+- **Formatage / lint pre-commit** : corriger les erreurs remontées par `lint-staged` puis recommiter
 - **Lint** : corriger les erreurs signalées par ESLint
-- **Typecheck** : corriger les erreurs TypeScript signalées par `pnpm typecheck`
+- **Typecheck** : corriger les erreurs TypeScript signalées par le contrôle ciblé (API, web, mobile, ou global)
 - **Nom de branche** : renommer avec `git branch -m <nouveau-nom>`
 - **Message de commit** : relancer `pnpm commit` et choisir un scope autorisé
-- **Tests** : corriger les tests cassés avant de pousser
+- **Tests** : corriger les tests cassés avant de pousser (les tests E2E exhaustifs restent pilotés par la CI)
 
 ---
 
@@ -281,7 +281,17 @@ pnpm format
 pnpm format:check
 ```
 
-> Le hook `pre-commit` applique automatiquement `pnpm format` et `pnpm lint:fix`, puis restage les fichiers corrigés avant le commit.
+Le hook `pre-commit` s'appuie maintenant sur `lint-staged` pour n'exécuter formatage et lint que sur les fichiers indexés. Le hook `pre-push` exécute `pnpm affected:lint`, `pnpm affected:test` et `pnpm test:integration` sur les zones modifiées, puis garde `pnpm test:workspace` uniquement quand les scripts du dépôt changent, ce qui évite les E2E locales et les checks globaux inutiles.
+
+Les hooks définissent `GIT_EXECUTABLE` avec un chemin absolu vers `git` (ou utilisent une valeur déjà fournie par l'environnement) pour verrouiller le binaire appelé. En CI, `GIT_EXECUTABLE` est fixé globalement à `/usr/bin/git`.
+
+Pour accélérer les vérifications locales sur une branche de travail, utiliser d'abord les scripts ciblés suivants quand la portée est limitée :
+
+- `pnpm affected:lint`
+- `pnpm affected:test`
+- `pnpm affected:build`
+
+En CI, conserver le cache pnpm déjà configuré via `actions/setup-node` et, si un nouveau workflow est ajouté, garder `cache: pnpm` avec `cache-dependency-path: pnpm-lock.yaml` pour stabiliser les temps d'installation.
 
 ---
 

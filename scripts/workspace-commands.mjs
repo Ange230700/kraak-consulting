@@ -6,7 +6,7 @@ export function createWorkflows() {
   return {
     test: {
       description:
-        'Run shared libraries, API, client unit tests, then Playwright end-to-end tests.',
+        'Run shared libraries, API and client unit tests, API integration tests, then Playwright end-to-end tests.',
       phases: [
         {
           name: 'shared-libraries',
@@ -24,11 +24,21 @@ export function createWorkflows() {
           commands: [
             {
               name: 'api',
-              args: ['test:api'],
+              args: ['test:api:unit'],
             },
             {
               name: 'client',
               args: ['test:unit'],
+            },
+          ],
+        },
+        {
+          name: 'integration',
+          parallel: false,
+          commands: [
+            {
+              name: 'api-integration',
+              args: ['test:integration'],
             },
           ],
         },
