@@ -237,6 +237,7 @@ jobs:
       - name: Construire les workspaces affectés
         run: pnpm affected:build
 
+      # Prébuild des dépendances workspace requises par le mobile même si non "affected"
       - name: Construire les dépendances workspace du mobile
         run: pnpm --filter @kraak/contracts --filter @kraak/domain build
 
