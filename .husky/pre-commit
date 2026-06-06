@@ -1,5 +1,20 @@
 command -v pnpm >/dev/null 2>&1 || exit 0
-pnpm format
-pnpm lint:fix
-# Restage les fichiers corrigés par les auto-fixers avant de créer le commit.
-git update-index --again
+
+if [ -z "${GIT_EXECUTABLE:-}" ]; then
+	if [ -x "/usr/bin/git" ]; then
+		export GIT_EXECUTABLE="/usr/bin/git"
+	elif [ -x "/usr/local/bin/git" ]; then
+		export GIT_EXECUTABLE="/usr/local/bin/git"
+	elif [ -x "/opt/homebrew/bin/git" ]; then
+		export GIT_EXECUTABLE="/opt/homebrew/bin/git"
+	elif [ -x "/c/Program Files/Git/cmd/git.exe" ]; then
+		export GIT_EXECUTABLE="/c/Program Files/Git/cmd/git.exe"
+	elif [ -x "/c/Program Files/Git/bin/git.exe" ]; then
+		export GIT_EXECUTABLE="/c/Program Files/Git/bin/git.exe"
+	else
+		echo "[husky] GIT_EXECUTABLE introuvable. Définissez la variable avec un chemin absolu vers git." >&2
+		exit 1
+	fi
+fi
+
+pnpm precommit:staged

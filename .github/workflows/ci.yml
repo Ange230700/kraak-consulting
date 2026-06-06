@@ -1,6 +1,6 @@
 # Pipeline CI — kraak-group monorepo
 # Déclenché sur push vers main et sur les pull requests ciblant main.
-# Couvre : format, lint, build, tests unitaires.
+# Couvre : format, lint, build, tests unitaires et integration.
 
 name: CI
 
@@ -13,6 +13,9 @@ on:
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  GIT_EXECUTABLE: /usr/bin/git
 
 jobs:
   # ──────────────────────────────────────────────
@@ -33,6 +36,7 @@ jobs:
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
@@ -45,7 +49,7 @@ jobs:
         run: pnpm format:check
 
       - name: Lint (ESLint)
-        run: pnpm -r lint
+        run: pnpm affected:lint
 
       - name: Lint Supabase lié
         if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
@@ -79,17 +83,12 @@ jobs:
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
-
-      - name: Build web (production SSR)
-        run: pnpm build:web
-
-      - name: Build mobile (production)
-        run: pnpm build:mobile
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
 
   # ──────────────────────────────────────────────
   # Tests unitaires (Vitest via Angular builder)
@@ -110,14 +109,41 @@ jobs:
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
 
       - name: Exécuter les tests unitaires
-        run: pnpm test:unit
+        run: pnpm affected:test
+
+  # ──────────────────────────────────────────────
+  # Tests integration API
+  # ──────────────────────────────────────────────
+  integration:
+    name: Tests integration
+    runs-on: ubuntu-latest
+    needs: lint
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Exécuter les tests integration
+        run: pnpm test:integration
 
   # ──────────────────────────────────────────────
   # Check E2E requis par la protection de branche
@@ -158,6 +184,7 @@ jobs:
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
@@ -198,16 +225,17 @@ jobs:
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
 
       - name: Build mobile & sync Android
         run: pnpm build:debug:android

@@ -184,6 +184,8 @@ publique de contenu. Voir
 | `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local           |
 | `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging         |
 | `pnpm test:api`             | Tests unitaires API                                       |
+| `pnpm test:api:unit`        | Tests unitaires API hors intégration                      |
+| `pnpm test:integration`     | Tests d'intégration API                                   |
 | `pnpm splinter:local`       | Lancer Splinter (Supabase Advisors) sur la DB locale      |
 | `pnpm splinter:linked`      | Lancer Splinter (Supabase Advisors) sur le projet lié     |
 | `pnpm splinter:sec`         | Lancer les checks sécurité Splinter sur le projet lié     |
