@@ -38,9 +38,11 @@ const gitExecutable = resolveGitExecutable();
 function runCommand(command, args, label) {
   console.info(`[pre-push] ${label}`);
 
+  const useShell = process.platform === 'win32';
+
   const result = spawnSync(command, args, {
     stdio: 'inherit',
-    shell: false,
+    shell: useShell,
   });
 
   if (result.status !== 0) {
@@ -49,7 +51,7 @@ function runCommand(command, args, label) {
 }
 
 function runPnpm(args, label) {
-  const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  const pnpmCommand = 'pnpm';
   runCommand(pnpmCommand, args, label);
 }
 

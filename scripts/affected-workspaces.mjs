@@ -257,13 +257,14 @@ function getCommandPlan(mode, affectedWorkspaceNames) {
 function runCommand(commandParts, label) {
   console.info(`[affected] ${label}`);
 
+  const useShell = process.platform === 'win32';
   const commandExecutable =
     process.platform === 'win32' && commandParts[0] === 'pnpm'
-      ? 'pnpm.cmd'
+      ? 'pnpm'
       : commandParts[0];
   const result = spawnSync(commandExecutable, commandParts.slice(1), {
     stdio: 'inherit',
-    shell: false,
+    shell: useShell,
   });
 
   if (result.status !== 0) {
