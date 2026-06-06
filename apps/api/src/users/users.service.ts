@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  TooManyRequestsException,
 } from '@nestjs/common';
 import type {
   AppUserDto,
@@ -195,6 +196,23 @@ export class UsersService {
         "Erreur lors de l'invitation de l'utilisateur",
         authError,
       );
+
+      const inviteErrorCode =
+        authError?.code ??
+        (authError as { error_code?: string } | null)?.error_code ??
+        null;
+      const inviteErrorMessage = (authError?.message ?? '').toLowerCase();
+      const isInviteRateLimited =
+        authError?.status === 429 ||
+        inviteErrorCode === 'over_email_send_rate_limit' ||
+        inviteErrorMessage.includes('rate limit');
+
+      if (isInviteRateLimited) {
+        throw new TooManyRequestsException(
+          "Trop d'invitations ont été envoyées récemment. Réessayez dans quelques minutes.",
+        );
+      }
+
       throw new InternalServerErrorException(
         "Impossible d'envoyer l'invitation",
       );

@@ -1,6 +1,7 @@
 import {
   NotFoundException,
   InternalServerErrorException,
+  TooManyRequestsException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
@@ -305,6 +306,29 @@ describe('UsersService', () => {
             preferredContactChannel: null,
           }),
         ).rejects.toThrow(InternalServerErrorException);
+      });
+
+      it('Given an invite rate limit error, When invite is called, Then throws TooManyRequestsException', async () => {
+        mockInviteUser.mockResolvedValueOnce({
+          data: null,
+          error: {
+            status: 429,
+            code: 'over_email_send_rate_limit',
+            message: 'email rate limit exceeded',
+          },
+        });
+
+        await expect(
+          service.invite({
+            email: 'alice@example.com',
+            firstName: 'Alice',
+            lastName: 'Martin',
+            role: 'participant',
+            isActive: true,
+            phone: null,
+            preferredContactChannel: null,
+          }),
+        ).rejects.toThrow(TooManyRequestsException);
       });
 
       it('Given invite response without user, When invite is called, Then throws InternalServerErrorException', async () => {
