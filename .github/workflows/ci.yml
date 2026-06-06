@@ -237,6 +237,9 @@ jobs:
       - name: Construire les workspaces affectés
         run: pnpm affected:build
 
+      - name: Construire les dépendances workspace du mobile
+        run: pnpm --filter @kraak/contracts --filter @kraak/domain build
+
       - name: Build mobile & sync Android
         run: pnpm build:debug:android
 
