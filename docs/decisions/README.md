@@ -1,3 +1,5 @@
+<!-- docs\decisions\README.md -->
+
 # Architecture Decision Records (ADR)
 
 Ce répertoire centralise les décisions d'architecture formelles du projet

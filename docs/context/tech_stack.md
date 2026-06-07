@@ -1,3 +1,5 @@
+<!-- docs\context\tech_stack.md -->
+
 # Stack Technologique Du MVP KRAAK
 
 ## 1. Décision globale

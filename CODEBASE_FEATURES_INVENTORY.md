@@ -1,3 +1,5 @@
+<!-- CODEBASE_FEATURES_INVENTORY.md -->
+
 # KRAAK Codebase Feature Inventory (May 9, 2026)
 
 ## Executive Summary

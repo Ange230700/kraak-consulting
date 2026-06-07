@@ -1,9 +1,11 @@
+// packages\domain\tsconfig.build.json
+
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "verbatimModuleSyntax": false
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true
   },
   "exclude": ["**/*.spec.ts", "dist", "node_modules"]
 }

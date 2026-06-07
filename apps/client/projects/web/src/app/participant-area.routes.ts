@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\participant-area.routes.ts
+
 import { type CanMatchFn, Routes } from '@angular/router';
 
 import {

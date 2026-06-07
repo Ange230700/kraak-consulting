@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\staging-preview-smoke.spec.ts
+
 import { expect, test, Page } from '@playwright/test';
 
 const participantAreaExpected =

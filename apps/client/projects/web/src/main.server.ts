@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\main.server.ts
+
 import {
   BootstrapContext,
   bootstrapApplication,

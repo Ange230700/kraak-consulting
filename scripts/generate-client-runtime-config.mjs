@@ -134,22 +134,14 @@ function buildRuntimeConfig(runtimeValues) {
     'contactPhoneDisplay',
     runtimeValues.contactPhoneDisplay,
   );
-  addRuntimeVariable(
-    runtimeConfig,
-    'contactEmail',
-    runtimeValues.contactEmail,
-  );
+  addRuntimeVariable(runtimeConfig, 'contactEmail', runtimeValues.contactEmail);
   addRuntimeVariable(
     runtimeConfig,
     'whatsappContactHref',
     runtimeValues.whatsappContactHref,
   );
   addRuntimeVariable(runtimeConfig, 'facebookUrl', runtimeValues.facebookUrl);
-  addRuntimeVariable(
-    runtimeConfig,
-    'instagramUrl',
-    runtimeValues.instagramUrl,
-  );
+  addRuntimeVariable(runtimeConfig, 'instagramUrl', runtimeValues.instagramUrl);
   addRuntimeVariable(runtimeConfig, 'tiktokUrl', runtimeValues.tiktokUrl);
   addRuntimeVariable(runtimeConfig, 'siteUrl', runtimeValues.siteUrl);
   addRuntimeVariable(runtimeConfig, 'supabaseUrl', runtimeValues.supabaseUrl);
@@ -236,7 +228,7 @@ export function loadClientRuntimeConfig(
   );
   const enableParticipantArea =
     participantAreaRawValue === undefined
-      ? true
+      ? environmentName !== 'production'
       : participantAreaRawValue === 'true';
 
   return buildRuntimeConfig({
