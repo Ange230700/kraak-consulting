@@ -1,3 +1,5 @@
+<!-- AGENTS.md -->
+
 # AGENTS.md
 
 ## Objectif

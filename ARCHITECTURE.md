@@ -1,3 +1,5 @@
+<!-- ARCHITECTURE.md -->
+
 # ARCHITECTURE.md
 
 ## Objectif

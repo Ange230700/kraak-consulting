@@ -1,7 +1,10 @@
+// apps\api\src\users\users.service.spec.ts
+
 import {
-  NotFoundException,
+  HttpException,
+  HttpStatus,
   InternalServerErrorException,
-  TooManyRequestsException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
@@ -308,7 +311,7 @@ describe('UsersService', () => {
         ).rejects.toThrow(InternalServerErrorException);
       });
 
-      it('Given an invite rate limit error, When invite is called, Then throws TooManyRequestsException', async () => {
+      it('Given an invite rate limit error, When invite is called, Then throws HttpException with status 429', async () => {
         mockInviteUser.mockResolvedValueOnce({
           data: null,
           error: {
@@ -318,8 +321,10 @@ describe('UsersService', () => {
           },
         });
 
-        await expect(
-          service.invite({
+        let caughtError: unknown;
+
+        try {
+          await service.invite({
             email: 'alice@example.com',
             firstName: 'Alice',
             lastName: 'Martin',
@@ -327,8 +332,18 @@ describe('UsersService', () => {
             isActive: true,
             phone: null,
             preferredContactChannel: null,
-          }),
-        ).rejects.toThrow(TooManyRequestsException);
+          });
+        } catch (error) {
+          caughtError = error;
+        }
+
+        expect(caughtError).toBeInstanceOf(HttpException);
+        expect((caughtError as HttpException).getStatus()).toBe(
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+        expect((caughtError as HttpException).message).toBe(
+          "Trop d'invitations ont été envoyées récemment. Réessayez dans quelques minutes.",
+        );
       });
 
       it('Given invite response without user, When invite is called, Then throws InternalServerErrorException', async () => {
