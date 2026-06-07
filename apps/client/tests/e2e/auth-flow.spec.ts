@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\auth-flow.spec.ts
+
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =

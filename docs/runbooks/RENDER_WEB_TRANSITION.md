@@ -1,3 +1,5 @@
+<!-- docs\runbooks\RENDER_WEB_TRANSITION.md -->
+
 # RENDER_WEB_TRANSITION — Migration du front web vers Render
 
 > Objectif : basculer l’hébergement du site web Angular prerender de Vercel vers Render, sans interruption de service et avec rollback rapide.

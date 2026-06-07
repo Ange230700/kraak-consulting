@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\participant-core-journey.spec.ts
+
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =

@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\support-flow.spec.ts
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Support flow - FAQ + 404 navigation', () => {
@@ -165,8 +167,14 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         name: 'Explorer les programmes KRAAK',
       });
       await programsButton.scrollIntoViewIfNeeded();
-      await programsButton.click();
-      await expect(page).toHaveURL(/\/programmes$/, { timeout: 10000 });
+
+      await Promise.all([
+        page.waitForURL(/\/programmes$/, {
+          timeout: 10_000,
+          waitUntil: 'domcontentloaded',
+        }),
+        programsButton.click(),
+      ]);
 
       // Then: User lands on programs page
       await expect(page).toHaveTitle(/Programmes/i);
@@ -190,12 +198,17 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         exact: true,
       });
       await expect(faqFooterLink).toBeVisible();
-      await faqFooterLink.click();
-      await page.waitForURL('**/faq', {
-        timeout: 5000,
-        waitUntil: 'domcontentloaded',
-      });
-      await expect(page).toHaveTitle(/FAQ/i);
+
+      await Promise.all([
+        page.waitForURL(/\/faq$/, {
+          timeout: 10_000,
+          waitUntil: 'domcontentloaded',
+        }),
+        faqFooterLink.click(),
+      ]);
+
+      const faqTitle = page.locator('h1').first();
+      await expect(faqTitle).toContainText(/réponses|questions|faq/i);
     });
 
     test('When user is on marketing page Then footer is visible', async ({

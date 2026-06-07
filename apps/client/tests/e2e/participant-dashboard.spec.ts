@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\participant-dashboard.spec.ts
+
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =

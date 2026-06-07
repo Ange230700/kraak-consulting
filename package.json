@@ -99,7 +99,7 @@
     "apps/api/src/**/*.ts": [
       "pnpm --filter @kraak/api exec eslint --fix --cache --cache-location .cache/eslint/.eslintcache --max-warnings=0"
     ],
-    "apps/client/**/*.{ts,html}": [
+    "apps/client/{projects,tests}/**/*.{ts,html}": [
       "pnpm --filter @kraak/client exec eslint --fix --cache --cache-location .cache/eslint/.eslintcache --max-warnings=0"
     ],
     "**/*.{ts,js,mjs,cjs,html,scss,css,json,md,yml,yaml}": [

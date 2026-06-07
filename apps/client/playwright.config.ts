@@ -1,3 +1,5 @@
+// apps\client\playwright.config.ts
+
 import { defineConfig, devices } from '@playwright/test';
 
 /**

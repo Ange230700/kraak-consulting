@@ -1,3 +1,5 @@
+<!-- docs\decisions\ARC-13-non-vitrine-gating-complete.md -->
+
 # ARC-13 - Gating des routes non vitrines côté web
 
 **Date :** 2026-05-14  

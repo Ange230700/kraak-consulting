@@ -1,3 +1,5 @@
+// apps\client\tests\e2e\smoke.spec.ts
+
 import { expect, test, Page } from '@playwright/test';
 
 const expectParticipantCta =

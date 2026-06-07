@@ -1,3 +1,5 @@
+<!-- docs\decisions\ARC-10-feature-flag-participant-area.md -->
+
 # ARC-10 — Feature flag espace participant
 
 | Champ          | Valeur                      |

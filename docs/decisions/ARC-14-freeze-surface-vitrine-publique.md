@@ -1,3 +1,5 @@
+<!-- docs\decisions\ARC-14-freeze-surface-vitrine-publique.md -->
+
 # ARC-14 - Gel de la surface vitrine publique
 
 | Champ          | Valeur                      |

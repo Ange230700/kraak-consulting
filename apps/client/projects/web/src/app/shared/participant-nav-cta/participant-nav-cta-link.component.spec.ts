@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta-link.component.spec.ts
+
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
