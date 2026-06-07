@@ -1,3 +1,5 @@
+<!-- CONTRIBUTING.md -->
+
 # Guide de contribution
 
 Ce document explique comment contribuer au dépôt KRAAK Group.

@@ -1,3 +1,5 @@
+<!-- README.md -->
+
 # KRAAK Group
 
 Monorepo du MVP KRAAK — site web, application mobile et API backend.

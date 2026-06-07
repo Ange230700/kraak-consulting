@@ -1,9 +1,12 @@
+// apps\api\src\users\users.service.ts
+
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
-  TooManyRequestsException,
 } from '@nestjs/common';
 import type {
   AppUserDto,
@@ -208,8 +211,9 @@ export class UsersService {
         inviteErrorMessage.includes('rate limit');
 
       if (isInviteRateLimited) {
-        throw new TooManyRequestsException(
+        throw new HttpException(
           "Trop d'invitations ont été envoyées récemment. Réessayez dans quelques minutes.",
+          HttpStatus.TOO_MANY_REQUESTS,
         );
       }
 
