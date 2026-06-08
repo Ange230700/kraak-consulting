@@ -3,7 +3,9 @@
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =
-  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
+  (process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] ??
+    process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
+    'true') === 'true';
 
 test.describe('Auth flow - connexion, inscription et reset', () => {
   test('Given une page de connexion, When elle se charge, Then le formulaire et les liens d\u0027accès sont visibles', async ({

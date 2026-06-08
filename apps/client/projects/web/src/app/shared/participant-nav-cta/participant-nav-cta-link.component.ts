@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta-link.component.ts
+
 import { Component, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 

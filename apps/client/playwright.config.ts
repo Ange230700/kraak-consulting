@@ -34,6 +34,22 @@ const resolvedClientApiBaseUrl = process.env['CI']
 const resolvedClientSiteUrl = process.env['CI']
   ? requireEnv('CLIENT_SITE_URL')
   : getEnvOrFallback('CLIENT_SITE_URL', 'http://localhost:4200');
+
+const resolvedParticipantAreaExpected = getEnvOrFallback(
+  'KRAAK_E2E_EXPECT_PARTICIPANT_AREA',
+  getEnvOrFallback('CLIENT_FEATURE_PARTICIPANT_AREA', 'true'),
+);
+
+const resolvedParticipantCtaExpected = getEnvOrFallback(
+  'KRAAK_E2E_EXPECT_PARTICIPANT_CTA',
+  resolvedParticipantAreaExpected,
+);
+
+process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] =
+  resolvedParticipantAreaExpected;
+process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] =
+  resolvedParticipantCtaExpected;
+
 let resolvedWebServerUrl = '';
 let resolvedWebServerCommand = '';
 
@@ -46,7 +62,7 @@ if (shouldStartWebServer) {
     ? requireEnv('KRAAK_E2E_WEB_SERVER_COMMAND')
     : getEnvOrFallback(
         'KRAAK_E2E_WEB_SERVER_COMMAND',
-        "node ../../scripts/generate-client-runtime-config.mjs --env local && node -e \"require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })\" && npx ng serve web --port 4200 --prebundle=false --live-reload=false",
+        "node ../../scripts/generate-client-runtime-config.mjs --env local && node -e \"require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })\" && npx ng serve web --configuration local --port 4200 --prebundle=false --live-reload=false",
       );
 }
 
@@ -90,9 +106,11 @@ export default defineConfig({
         reuseExistingServer,
         timeout: isCi ? 300_000 : 180_000,
         env: {
-          CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
+          CLIENT_FEATURE_PARTICIPANT_AREA: resolvedParticipantAreaExpected,
           CLIENT_API_BASE_URL: resolvedClientApiBaseUrl,
           CLIENT_SITE_URL: resolvedClientSiteUrl,
+          KRAAK_E2E_EXPECT_PARTICIPANT_AREA: resolvedParticipantAreaExpected,
+          KRAAK_E2E_EXPECT_PARTICIPANT_CTA: resolvedParticipantCtaExpected,
         },
       }
     : undefined,

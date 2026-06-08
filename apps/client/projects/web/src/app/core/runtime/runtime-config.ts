@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\core\runtime\runtime-config.ts
+
 import { environment } from '../../../environments/environment';
 
 interface KraakRuntimeConfig {

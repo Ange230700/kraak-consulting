@@ -3,7 +3,9 @@
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =
-  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
+  (process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] ??
+    process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
+    'true') === 'true';
 
 // E2E — protection de la vue dashboard web participant (DSH-04)
 // Given/When/Then : un visiteur non authentifié ne doit pas voir le dashboard.

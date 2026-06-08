@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\layouts\navbar\navbar.component.spec.ts
+
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
@@ -9,6 +11,11 @@ interface NavbarInternals {
 }
 
 describe('Navbar', () => {
+  const originalConfig = globalThis.__KRAAK_RUNTIME_CONFIG__;
+
+  afterEach(() => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = originalConfig;
+  });
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Navbar],
@@ -82,5 +89,32 @@ describe('Navbar', () => {
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('Given the participant area is enabled, When the navbar renders, Then the participant CTA is visible', () => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: true };
+
+    const fixture = TestBed.createComponent(Navbar);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const participantCta = host.querySelector(
+      'a[aria-label="Espace participant"]',
+    );
+
+    expect(participantCta).not.toBeNull();
+    expect(participantCta?.textContent).toContain('Espace participant');
+    expect(participantCta?.getAttribute('href')).toBe('/participant');
+  });
+
+  it('Given the participant area is disabled, When the navbar renders, Then the participant CTA is hidden', () => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = { enableParticipantArea: false };
+
+    const fixture = TestBed.createComponent(Navbar);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('a[aria-label="Espace participant"]')).toBeNull();
   });
 });
