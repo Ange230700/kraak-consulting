@@ -1,5 +1,8 @@
+// apps\client\projects\web\src\app\app.routes.ts
+
 import { Route, Routes } from '@angular/router';
 
+import { environment } from '../environments/environment';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 import { adminAreaRoutes } from './admin-area.routes';
 import { participantAreaRoutes } from './participant-area.routes';
@@ -154,8 +157,8 @@ interface BuildRoutesOptions {
 }
 
 export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
-  // Keep participant routes opt-in only for explicit previews/tests.
-  const includeParticipantArea = options.includeParticipantArea ?? false;
+  const includeParticipantArea =
+    options.includeParticipantArea ?? environment.enableParticipantArea;
 
   return [
     ...marketingRoutes,

@@ -1,3 +1,5 @@
+<!-- apps\client\projects\web\src\app\layouts\navbar\navbar.component.html -->
+
 <header
   class="bg-brand-white/92 border-brand-blue/10 shadow-brand-navy/10 sticky top-0 z-50 border-b shadow-lg backdrop-blur-sm"
 >
@@ -54,6 +56,10 @@
           </li>
         }
       </ul>
+      <kraak-participant-nav-cta
+        class="mt-4 flex lg:mt-0"
+        (activated)="closeMobileMenu()"
+      />
     </div>
 
     <div class="lg:hidden">

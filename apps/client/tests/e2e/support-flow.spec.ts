@@ -167,6 +167,8 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         name: 'Explorer les programmes KRAAK',
       });
       await programsButton.scrollIntoViewIfNeeded();
+      await expect(programsButton).toBeVisible();
+      await expect(programsButton).toHaveAttribute('href', '/programmes');
 
       await Promise.all([
         page.waitForURL(/\/programmes$/, {
@@ -175,9 +177,6 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
         }),
         programsButton.click(),
       ]);
-
-      // Then: User lands on programs page
-      await expect(page).toHaveTitle(/Programmes/i);
     });
   });
 

@@ -3,7 +3,9 @@
 import { expect, test, Page } from '@playwright/test';
 
 const expectParticipantCta =
-  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ?? 'false';
+  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
+  process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
+  'true';
 const participantCtaExpected = expectParticipantCta === 'true';
 const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
 

@@ -3,7 +3,9 @@
 import { expect, test } from '@playwright/test';
 
 const participantAreaExpected =
-  process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] === 'true';
+  (process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] ??
+    process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
+    'true') === 'true';
 
 test.describe('Parcours coeur participant - orientation web', () => {
   test('Given un visiteur non authentifie (espace activé), When il tente l\u0027accès dashboard participant, Then il est redirigé vers la connexion et peut naviguer vers les pages publiques', async ({

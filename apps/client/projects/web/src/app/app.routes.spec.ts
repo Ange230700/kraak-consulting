@@ -1,3 +1,7 @@
+// apps\client\projects\web\src\app\app.routes.spec.ts
+
+import { Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 import {
   buildMarketingRoute,
   buildRoutes,
@@ -12,6 +16,17 @@ import {
 } from './core/auth/auth.guard';
 import NotFoundPage from './features/support/not-found.page';
 
+const PARTICIPANT_ROUTE_PATHS = [
+  'connexion',
+  'inscription',
+  'mot-de-passe-oublie',
+  'participant',
+];
+
+function routePathsOf(routeList: Routes): (string | undefined)[] {
+  return routeList.map((route) => route.path);
+}
+
 describe('Web routes', () => {
   const marketingPaths = [
     '',
@@ -24,18 +39,6 @@ describe('Web routes', () => {
     'mentions-legales',
     'politique-de-confidentialite',
     'auth/reset',
-  ];
-  const aliasRedirectPaths = ['about', 'programs', 'resources'];
-  const adminPaths = ['admin'];
-  const frozenPublicPaths = [
-    ...marketingPaths,
-    ...aliasRedirectPaths,
-    ...adminPaths,
-    '401',
-    '403',
-    '500',
-    '404',
-    '**',
   ];
   const participantPaths = [
     'connexion',
@@ -55,10 +58,43 @@ describe('Web routes', () => {
     });
 
     it('When building public routes without participant area Then the frozen public surface exactly matches ARC-14 and support status pages', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: false });
-      const paths = builtRoutes.map((route) => route.path ?? '');
+      const publicRoutes = buildRoutes({ includeParticipantArea: false });
+      const routePaths = routePathsOf(publicRoutes);
 
-      expect(paths).toEqual(frozenPublicPaths);
+      expect(routePaths).toEqual([
+        '',
+        'a-propos',
+        'services',
+        'faq',
+        'programmes',
+        'ressources',
+        'contact',
+        'mentions-legales',
+        'politique-de-confidentialite',
+        'auth/reset',
+        'about',
+        'programs',
+        'resources',
+        'admin',
+        '401',
+        '403',
+        '500',
+        '404',
+        '**',
+      ]);
+
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).not.toContain(participantPath);
+      }
+    });
+
+    it('When building routes with participant area enabled Then auth and participant routes are defined', () => {
+      const previewRoutes = buildRoutes({ includeParticipantArea: true });
+      const routePaths = routePathsOf(previewRoutes);
+
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).toContain(participantPath);
+      }
     });
 
     it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
@@ -126,23 +162,23 @@ describe('Web routes', () => {
   });
 
   describe('Given the participant area is disabled for the build', () => {
-    it('When building routes Then auth and participant routes are excluded', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: false });
-      const paths = builtRoutes.map((route) => route.path);
+    it('When building routes with participant area disabled Then auth and participant routes are excluded', () => {
+      const publicRoutes = buildRoutes({ includeParticipantArea: false });
+      const routePaths = routePathsOf(publicRoutes);
 
-      for (const path of participantPaths) {
-        expect(paths).not.toContain(path);
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).not.toContain(participantPath);
       }
     });
   });
 
   describe('Given the participant area is enabled for the build', () => {
-    it('When building routes Then auth and participant routes are defined', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const paths = builtRoutes.map((route) => route.path);
+    it('When building routes with participant area enabled Then auth and participant routes are defined', () => {
+      const previewRoutes = buildRoutes({ includeParticipantArea: true });
+      const routePaths = routePathsOf(previewRoutes);
 
-      for (const path of participantPaths) {
-        expect(paths).toContain(path);
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).toContain(participantPath);
       }
     });
 
@@ -314,10 +350,22 @@ describe('Web routes', () => {
     it('When comparing exported routes Then they match the environment default', () => {
       const exportedPaths = routes.map((route) => route.path);
       const rebuiltPaths = buildRoutes({
-        includeParticipantArea: false,
+        includeParticipantArea: environment.enableParticipantArea,
       }).map((route) => route.path);
 
       expect(exportedPaths).toEqual(rebuiltPaths);
+    });
+
+    it('When building routes with the environment default Then participant routes follow environment.enableParticipantArea', () => {
+      const routePaths = routePathsOf(buildRoutes());
+
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        if (environment.enableParticipantArea) {
+          expect(routePaths).toContain(participantPath);
+        } else {
+          expect(routePaths).not.toContain(participantPath);
+        }
+      }
     });
   });
 
