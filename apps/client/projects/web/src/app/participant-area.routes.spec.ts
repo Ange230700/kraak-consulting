@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\participant-area.routes.spec.ts
+
 import type { Route } from '@angular/router';
 import { describe, expect, it } from 'vitest';
 

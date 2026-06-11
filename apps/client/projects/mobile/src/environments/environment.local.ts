@@ -1,3 +1,5 @@
+// apps\client\projects\mobile\src\environments\environment.local.ts
+
 const runtimeGlobals = globalThis as typeof globalThis & {
   process?: {
     env?: Record<string, string | undefined>;
@@ -33,6 +35,9 @@ export const environment = {
   pushNotificationsEnabled: true,
   pushNotificationsProvider: 'fcm',
   supabaseUrl: readEnv('SUPABASE_URL') || 'http://127.0.0.1:54321',
-  supabasePublishableKey: '',
+  supabasePublishableKey: readEnv(
+    'CLIENT_SUPABASE_PUBLISHABLE_KEY',
+    'SUPABASE_PUBLISHABLE_KEY',
+  ),
   ga4Id: '',
 };

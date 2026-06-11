@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\auth\auth-reset.page.ts
+
 import { Component, OnInit, inject, signal } from '@angular/core';
 import {
   FormControl,

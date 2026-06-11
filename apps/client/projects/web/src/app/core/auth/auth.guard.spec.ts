@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\core\auth\auth.guard.spec.ts
+
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot,

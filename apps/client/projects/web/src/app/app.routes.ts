@@ -2,10 +2,10 @@
 
 import { Route, Routes } from '@angular/router';
 
-import { environment } from '../environments/environment';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 import { adminAreaRoutes } from './admin-area.routes';
 import { participantAreaRoutes } from './participant-area.routes';
+import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
 
 export { participantAreaCanMatch } from './participant-area.routes';
 
@@ -158,7 +158,7 @@ interface BuildRoutesOptions {
 
 export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
   const includeParticipantArea =
-    options.includeParticipantArea ?? environment.enableParticipantArea;
+    options.includeParticipantArea ?? isParticipantAreaEnabled();
 
   return [
     ...marketingRoutes,

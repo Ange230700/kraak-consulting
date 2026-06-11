@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\auth\sign-in.page.ts
+
 import { Component, inject, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';

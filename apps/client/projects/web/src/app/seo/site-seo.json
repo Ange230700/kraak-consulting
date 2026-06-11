@@ -135,6 +135,54 @@
     }
   },
   {
+    "path": "connexion",
+    "title": "Connexion | Espace KRAAK",
+    "description": "Connectez-vous à votre espace KRAAK pour accéder à votre tableau de bord participant.",
+    "robots": "noindex, nofollow",
+    "openGraph": {
+      "title": "Connexion | Espace KRAAK",
+      "description": "Accédez à votre espace participant KRAAK.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
+    },
+    "sitemap": {
+      "changeFrequency": "never",
+      "priority": 0.1
+    }
+  },
+  {
+    "path": "inscription",
+    "title": "Créer un compte | Espace KRAAK",
+    "description": "Créez votre compte KRAAK pour accéder à votre espace participant.",
+    "robots": "noindex, nofollow",
+    "openGraph": {
+      "title": "Créer un compte | Espace KRAAK",
+      "description": "Démarrez votre accès à l'espace participant KRAAK.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
+    },
+    "sitemap": {
+      "changeFrequency": "never",
+      "priority": 0.1
+    }
+  },
+  {
+    "path": "mot-de-passe-oublie",
+    "title": "Mot de passe oublié | Espace KRAAK",
+    "description": "Demandez un lien de réinitialisation pour récupérer l'accès à votre compte KRAAK.",
+    "robots": "noindex, nofollow",
+    "openGraph": {
+      "title": "Mot de passe oublié | Espace KRAAK",
+      "description": "Recevez un lien de réinitialisation pour votre compte KRAAK.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
+    },
+    "sitemap": {
+      "changeFrequency": "never",
+      "priority": 0.1
+    }
+  },
+  {
     "path": "auth/reset",
     "title": "Finaliser la réinitialisation | KRAAK Consulting",
     "description": "Définissez un nouveau mot de passe pour sécuriser votre accès à l'espace KRAAK.",
