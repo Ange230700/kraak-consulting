@@ -1,3 +1,5 @@
+// packages\api-client\src\console-debug.spec.ts
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { logDebugError } from './console-debug';
 

@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\auth\sign-up.page.ts
+
 import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,

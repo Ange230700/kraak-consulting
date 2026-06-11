@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\auth\sign-up.page.spec.ts
+
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';

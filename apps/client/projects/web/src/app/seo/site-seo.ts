@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\seo\site-seo.ts
+
 import siteSeoDefinitions from './site-seo.json';
 import blogSitemapDefinitions from './blog-sitemap-pages.json';
 import { resolveSiteUrl } from '../core/runtime/runtime-config';

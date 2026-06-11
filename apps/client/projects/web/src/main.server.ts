@@ -16,10 +16,30 @@ if (
   typeof process !== 'undefined' &&
   process.env
 ) {
+  const readOptionalEnv = (keys: readonly string[]): string | undefined => {
+    for (const key of keys) {
+      const value = process.env[key]?.trim();
+
+      if (value) {
+        return value;
+      }
+    }
+
+    return undefined;
+  };
+
   const flag = process.env['CLIENT_FEATURE_PARTICIPANT_AREA'];
+
   globalThis.__KRAAK_RUNTIME_CONFIG__ = Object.freeze({
     enableParticipantArea:
       typeof flag === 'string' ? flag.trim() === 'true' : undefined,
+    apiBaseUrl: readOptionalEnv(['CLIENT_API_BASE_URL']),
+    siteUrl: readOptionalEnv(['CLIENT_SITE_URL']),
+    supabaseUrl: readOptionalEnv(['CLIENT_SUPABASE_URL', 'SUPABASE_URL']),
+    supabasePublishableKey: readOptionalEnv([
+      'CLIENT_SUPABASE_PUBLISHABLE_KEY',
+      'SUPABASE_PUBLISHABLE_KEY',
+    ]),
   });
 }
 

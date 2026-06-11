@@ -72,6 +72,18 @@ function parseEnvFile(filePath) {
   return variables;
 }
 
+function loadEnvFiles(filePaths) {
+  const variables = {};
+
+  for (const filePath of filePaths) {
+    if (existsSync(filePath)) {
+      Object.assign(variables, parseEnvFile(filePath));
+    }
+  }
+
+  return variables;
+}
+
 function parseEnvironmentName(argv) {
   const envFlagIndex = argv.indexOf('--env');
   const environmentName =
@@ -86,15 +98,15 @@ function parseEnvironmentName(argv) {
   return environmentName;
 }
 
-function resolveEnvFileName(environmentName) {
+function resolveEnvFileNames(environmentName) {
   if (environmentName === 'local') {
-    return '.env';
+    return ['.env', '.env.local'];
   }
 
   const envFileEnvironment =
     environmentName === 'production' ? 'prod' : environmentName;
 
-  return `.env.${envFileEnvironment}`;
+  return ['.env', `.env.${envFileEnvironment}`];
 }
 
 function readRuntimeVariable(key, fileVariables, processEnv) {
@@ -105,6 +117,18 @@ function readRuntimeVariable(key, fileVariables, processEnv) {
   }
 
   return processEnv[key]?.trim();
+}
+
+function readFirstRuntimeVariable(keys, fileVariables, processEnv) {
+  for (const key of keys) {
+    const value = readRuntimeVariable(key, fileVariables, processEnv);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 function addRuntimeVariable(runtimeConfig, key, value) {
@@ -158,9 +182,11 @@ export function loadClientRuntimeConfig(
   environmentName,
   { clientRootPath = clientRoot, processEnv = process.env } = {},
 ) {
-  const envFileName = resolveEnvFileName(environmentName);
-  const envPath = path.join(clientRootPath, envFileName);
-  const fileVariables = existsSync(envPath) ? parseEnvFile(envPath) : {};
+  const envFileNames = resolveEnvFileNames(environmentName);
+  const envPaths = envFileNames.map((envFileName) =>
+    path.join(clientRootPath, envFileName),
+  );
+  const fileVariables = loadEnvFiles(envPaths);
   const apiBaseUrl = readRuntimeVariable(
     'CLIENT_API_BASE_URL',
     fileVariables,
@@ -211,16 +237,23 @@ export function loadClientRuntimeConfig(
     fileVariables,
     processEnv,
   );
-  const supabaseUrl = readRuntimeVariable(
-    'SUPABASE_URL',
+
+  const supabaseUrl = readFirstRuntimeVariable(
+    ['CLIENT_SUPABASE_URL', 'SUPABASE_URL'],
     fileVariables,
     processEnv,
   );
-  const supabasePublishableKey = readRuntimeVariable(
-    'SUPABASE_PUBLISHABLE_KEY',
+
+  const supabasePublishableKey = readFirstRuntimeVariable(
+    [
+      'CLIENT_SUPABASE_PUBLISHABLE_KEY',
+      'SUPABASE_PUBLISHABLE_KEY',
+      'SUPABASE_ANON_KEY',
+    ],
     fileVariables,
     processEnv,
   );
+
   const participantAreaRawValue = readRuntimeVariable(
     'CLIENT_FEATURE_PARTICIPANT_AREA',
     fileVariables,

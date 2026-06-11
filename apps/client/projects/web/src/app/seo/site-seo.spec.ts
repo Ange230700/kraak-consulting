@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\seo\site-seo.spec.ts
+
 import {
   buildAbsoluteUrl,
   buildRobotsTxt,
@@ -24,6 +26,9 @@ describe('site-seo', () => {
       'faq',
       'mentions-legales',
       'politique-de-confidentialite',
+      'connexion',
+      'inscription',
+      'mot-de-passe-oublie',
       'auth/reset',
     ]);
   });
@@ -47,6 +52,11 @@ describe('site-seo', () => {
     );
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/ressources</loc>`);
     expect(sitemap).toContain(`<loc>${DEFAULT_SITE_URL}/contact</loc>`);
+    expect(sitemap).not.toContain(`<loc>${DEFAULT_SITE_URL}/connexion</loc>`);
+    expect(sitemap).not.toContain(`<loc>${DEFAULT_SITE_URL}/inscription</loc>`);
+    expect(sitemap).not.toContain(
+      `<loc>${DEFAULT_SITE_URL}/mot-de-passe-oublie</loc>`,
+    );
     expect(sitemap).not.toContain(`<loc>${DEFAULT_SITE_URL}/auth/reset</loc>`);
   });
 
