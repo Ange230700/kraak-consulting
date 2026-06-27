@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\shared\client-defaults.ts
+
 interface ClientDefaults {
   siteUrl: string;
   siteName: string;

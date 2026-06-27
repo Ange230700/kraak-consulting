@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta.prod.component.spec.ts
+
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 

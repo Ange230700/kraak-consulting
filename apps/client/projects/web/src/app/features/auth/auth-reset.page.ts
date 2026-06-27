@@ -10,7 +10,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
-import { ButtonDirective } from 'primeng/button';
+import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import {
   WebAuthService,
@@ -25,7 +25,7 @@ interface AuthResetFormModel {
 @Component({
   selector: 'kraak-web-auth-reset-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
+  imports: [ReactiveFormsModule, RouterLink, Button, Message],
   templateUrl: './auth-reset.page.html',
 })
 export default class AuthResetPage implements OnInit {

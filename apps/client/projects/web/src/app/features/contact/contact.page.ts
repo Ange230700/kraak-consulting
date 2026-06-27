@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\contact\contact.page.ts
+
 import { NgClass, NgStyle } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
@@ -10,7 +12,7 @@ import {
 } from '@angular/forms';
 import type { ContactFormDto } from '@kraak/contracts';
 import { logDebugError } from '@kraak/api-client';
-import { ButtonDirective } from 'primeng/button';
+import { ButtonDirective, Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
@@ -141,6 +143,7 @@ const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
     NgClass,
     NgStyle,
     ButtonDirective,
+    Button,
     InputText,
     Textarea,
     Message,

@@ -1,4 +1,4 @@
-// apps\client\projects\web\src\server.ts
+// apps/client/projects/web/src/server.ts
 
 import {
   AngularNodeAppEngine,
@@ -8,40 +8,51 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { existsSync } from 'node:fs';
-import { extname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { registerSeoRoutes } from './seo-routes';
 import { buildPrerenderedHtmlPath } from './ssr-path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const resolvedBrowserDistFolder = resolve(browserDistFolder);
-const participantAreaEnabled =
-  process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] === 'true';
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
 registerSeoRoutes(app);
 
 /**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
+ * Serve runtime config without long-term caching.
  */
+app.get('/assets/runtime-config.js', (_req, res, next) => {
+  res.setHeader(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  );
+
+  res.sendFile(
+    join(browserDistFolder, 'assets', 'runtime-config.js'),
+    (error) => {
+      if (error) {
+        next(error);
+      }
+    },
+  );
+});
 
 /**
- * Serve static files from /browser
+ * Serve static files from /browser.
  */
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
     redirect: false,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    },
   }),
 );
 
@@ -54,26 +65,6 @@ app.use((req, res, next) => {
   }
 
   res.sendFile(prerenderedHtmlPath, (error) => {
-    if (error) {
-      next(error);
-    }
-  });
-});
-
-app.use((req, res, next) => {
-  if (participantAreaEnabled) {
-    next();
-    return;
-  }
-
-  const notFoundHtmlPath = resolveStaticNotFoundHtmlPath(req);
-
-  if (!notFoundHtmlPath) {
-    next();
-    return;
-  }
-
-  res.status(404).sendFile(notFoundHtmlPath, (error) => {
     if (error) {
       next(error);
     }
@@ -108,7 +99,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 }
 
 /**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
+ * Request handler used by the Angular CLI for dev-server/build or serverless adapters.
  */
 export const reqHandler = createNodeRequestHandler(app);
 export { app };
@@ -119,38 +110,10 @@ function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
   }
 
   const routePath = parseRequestPath(req);
+
   return routePath
     ? buildPrerenderedHtmlPath(routePath, resolvedBrowserDistFolder, existsSync)
     : undefined;
-}
-
-function resolveStaticNotFoundHtmlPath(
-  req: express.Request,
-): string | undefined {
-  if (!['GET', 'HEAD'].includes(req.method) || !req.accepts('html')) {
-    return undefined;
-  }
-
-  const routePath = parseRequestPath(req);
-  if (!routePath || extname(routePath)) {
-    return undefined;
-  }
-
-  const rootNotFoundHtmlPath = resolve(resolvedBrowserDistFolder, '404.html');
-  if (existsSync(rootNotFoundHtmlPath)) {
-    return rootNotFoundHtmlPath;
-  }
-
-  const routeNotFoundHtmlPath = resolve(
-    resolvedBrowserDistFolder,
-    '404',
-    'index.html',
-  );
-  if (existsSync(routeNotFoundHtmlPath)) {
-    return routeNotFoundHtmlPath;
-  }
-
-  return undefined;
 }
 
 function parseRequestPath(req: express.Request): string | undefined {
@@ -163,6 +126,7 @@ function parseRequestPath(req: express.Request): string | undefined {
       url: req.originalUrl,
       error,
     });
+
     return undefined;
   }
 }

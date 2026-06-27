@@ -10,7 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
-import { ButtonDirective } from 'primeng/button';
+import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { environment } from '../../../environments/environment';
 import {
@@ -33,7 +33,7 @@ interface SignUpFormModel {
 @Component({
   selector: 'kraak-web-sign-up-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
+  imports: [ReactiveFormsModule, RouterLink, Button, Message],
   templateUrl: './sign-up.page.html',
 })
 export default class SignUpPage {

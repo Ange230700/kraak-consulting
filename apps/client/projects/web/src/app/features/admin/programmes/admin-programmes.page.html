@@ -46,12 +46,18 @@
       <p-message
         severity="success"
         [text]="successMessage()!"
-        class="mb-6 block"
-      />
+        [closable]="false"
+        styleClass="w-full mb-6 block"
+      ></p-message>
     }
 
     @if (errorMessage()) {
-      <p-message severity="error" [text]="errorMessage()!" class="mb-6 block" />
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        [closable]="false"
+        styleClass="w-full mb-6 block"
+      ></p-message>
     }
 
     @if (showForm()) {

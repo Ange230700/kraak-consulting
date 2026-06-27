@@ -155,21 +155,20 @@
                 [text]="errorMessage()!"
                 [closable]="false"
                 styleClass="w-full"
-              />
+              ></p-message>
             }
 
-            <button
-              pButton
+            <p-button
               type="submit"
               size="large"
               [label]="submitting() ? 'Connexion en cours...' : 'Se connecter'"
               [loading]="submitting()"
               [disabled]="submitting()"
-              [attr.aria-label]="
+              [ariaLabel]="
                 submitting() ? 'Connexion en cours...' : 'Se connecter'
               "
               class="kr-button-primary mt-1 w-full"
-            ></button>
+            ></p-button>
           </form>
 
           <div

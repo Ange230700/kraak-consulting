@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\app.config.ts
+
 import {
   ApplicationConfig,
   ErrorHandler,

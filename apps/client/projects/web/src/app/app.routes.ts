@@ -5,7 +5,6 @@ import { Route, Routes } from '@angular/router';
 import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 import { adminAreaRoutes } from './admin-area.routes';
 import { participantAreaRoutes } from './participant-area.routes';
-import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
 
 export { participantAreaCanMatch } from './participant-area.routes';
 
@@ -157,8 +156,7 @@ interface BuildRoutesOptions {
 }
 
 export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
-  const includeParticipantArea =
-    options.includeParticipantArea ?? isParticipantAreaEnabled();
+  const includeParticipantArea = options.includeParticipantArea ?? true;
 
   return [
     ...marketingRoutes,
@@ -197,4 +195,6 @@ export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
   ];
 }
 
-export const routes: Routes = buildRoutes();
+export const routes: Routes = buildRoutes({
+  includeParticipantArea: true,
+});

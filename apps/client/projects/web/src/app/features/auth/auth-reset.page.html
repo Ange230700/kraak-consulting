@@ -25,7 +25,7 @@
             text="Vérification du lien de réinitialisation..."
             [closable]="false"
             styleClass="w-full"
-          />
+          ></p-message>
         </div>
       }
 
@@ -91,7 +91,7 @@
               [text]="successMessage()!"
               [closable]="false"
               styleClass="w-full"
-            />
+            ></p-message>
           }
 
           @if (errorMessage()) {
@@ -100,11 +100,10 @@
               [text]="errorMessage()!"
               [closable]="false"
               styleClass="w-full"
-            />
+            ></p-message>
           }
 
-          <button
-            pButton
+          <p-button
             type="submit"
             size="large"
             [label]="
@@ -114,13 +113,13 @@
             "
             [loading]="submitting()"
             [disabled]="submitting() || !recoveryToken()"
-            [attr.aria-label]="
+            [ariaLabel]="
               submitting()
                 ? 'Mise à jour en cours...'
                 : 'Mettre à jour le mot de passe'
             "
             class="kr-button-primary mt-1 w-full"
-          ></button>
+          ></p-button>
         </form>
       }
 

@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\app.config.server.ts
+
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { appConfig } from './app.config';

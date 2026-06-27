@@ -104,7 +104,7 @@ describe('Navbar', () => {
 
     expect(participantCta).not.toBeNull();
     expect(participantCta?.textContent).toContain('Espace participant');
-    expect(participantCta?.getAttribute('href')).toBe('/participant');
+    expect(participantCta?.getAttribute('href')).toBe('/participant/dashboard');
   });
 
   it('Given the participant area is disabled, When the navbar renders, Then the participant CTA is hidden', () => {

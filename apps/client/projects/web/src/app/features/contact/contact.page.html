@@ -1,3 +1,5 @@
+<!-- apps\client\projects\web\src\app\features\contact\contact.page.html -->
+
 <section
   class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
   [ngStyle]="heroBackgroundStyle"
@@ -215,7 +217,7 @@
               text="Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
               [closable]="false"
               styleClass="w-full mb-6"
-            />
+            ></p-message>
           } @else {
             @if (apiErrors().length > 0) {
               <div class="mb-6">
@@ -225,7 +227,7 @@
                     [text]="err"
                     [closable]="false"
                     styleClass="w-full mb-2"
-                  />
+                  ></p-message>
                 }
                 @if (shouldShowContactFallback()) {
                   <div
@@ -505,16 +507,15 @@
               </div>
 
               <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center">
-                <button
-                  pButton
+                <p-button
                   type="submit"
                   label="Envoyer ma demande"
                   size="large"
-                  aria-label="Envoyer ma demande"
+                  [ariaLabel]="'Envoyer ma demande'"
                   [loading]="loading()"
                   [disabled]="loading()"
                   class="kr-button-primary w-full sm:w-auto"
-                ></button>
+                ></p-button>
                 <a
                   pButton
                   [href]="whatsappLink"
@@ -530,7 +531,8 @@
                   aria-label="Discuter sur WhatsApp"
                   icon="pi pi-whatsapp"
                   class="kr-button-secondary w-full sm:w-auto"
-                ></a>
+                  >Discuter sur WhatsApp</a
+                >
               </div>
             </form>
           }

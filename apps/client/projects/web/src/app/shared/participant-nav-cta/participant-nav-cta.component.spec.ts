@@ -1,14 +1,33 @@
 // apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta.component.spec.ts
 
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { ParticipantNavCta } from './participant-nav-cta.component';
 
+@Component({
+  standalone: true,
+  template: '',
+})
+class BlankRouteComponent {}
+
 async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [ParticipantNavCta],
-    providers: [provideRouter([{ path: 'participant', children: [] }])],
+    providers: [
+      provideRouter([
+        {
+          path: 'participant',
+          children: [
+            {
+              path: 'dashboard',
+              component: BlankRouteComponent,
+            },
+          ],
+        },
+      ]),
+    ],
   }).compileComponents();
 }
 
@@ -37,7 +56,7 @@ describe('ParticipantNavCta', () => {
       expect(participantCta?.textContent).toContain('Espace participant');
     });
 
-    it('When the CTA link is clicked Then the wrapper emits the activation event', () => {
+    it('When the CTA link is clicked Then the wrapper emits the activation event', async () => {
       const fixture = TestBed.createComponent(ParticipantNavCta);
       const emitSpy = vi.fn();
 
@@ -49,6 +68,8 @@ describe('ParticipantNavCta', () => {
           'a[aria-label="Espace participant"]',
         ) as HTMLAnchorElement
       ).click();
+
+      await fixture.whenStable();
 
       expect(emitSpy).toHaveBeenCalled();
     });
