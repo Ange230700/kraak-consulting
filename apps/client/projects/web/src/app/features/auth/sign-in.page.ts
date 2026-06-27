@@ -9,14 +9,14 @@ import {
   submitSignInForm,
 } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
-import { ButtonDirective } from 'primeng/button';
+import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 
 @Component({
   selector: 'kraak-web-sign-in-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
+  imports: [ReactiveFormsModule, RouterLink, Button, Message],
   templateUrl: './sign-in.page.html',
 })
 export default class SignInPage {
@@ -39,8 +39,18 @@ export default class SignInPage {
   async submit(): Promise<void> {
     await submitSignInForm({
       ...this.submitSignInSharedOptions,
-      navigateAfterSuccess: () =>
-        this.router.navigateByUrl('/participant/dashboard'),
+      navigateAfterSuccess: async () => {
+        const result = await this.router.navigateByUrl(
+          '/participant/dashboard',
+        );
+
+        console.log('[SignInPage] dashboard navigation result', {
+          result,
+          currentUrl: this.router.url,
+        });
+
+        return result;
+      },
       onSuccess: () => {
         this.messageService.add({
           key: 'app-feedback',

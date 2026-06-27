@@ -120,7 +120,7 @@ test('le runtime client peut lire les variables staging depuis process.env quand
   }
 });
 
-test('le runtime client renvoie uniquement le flag participant en production quand aucune variable publique n est fournie', () => {
+test("le runtime client active le flag participant par défaut en production quand aucune variable publique n'est fournie", () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -131,7 +131,7 @@ test('le runtime client renvoie uniquement le flag participant en production qua
       processEnv: {},
     });
 
-    assert.deepEqual(runtimeConfig, { enableParticipantArea: false });
+    assert.deepEqual(runtimeConfig, { enableParticipantArea: true });
   } finally {
     rmSync(tempRoot, { recursive: true, force: true });
   }
@@ -269,7 +269,7 @@ test('le runtime client expose enableParticipantArea quand CLIENT_FEATURE_PARTIC
   }
 });
 
-test('le runtime client expose enableParticipantArea=false par défaut en production quand la variable est absente', () => {
+test('le runtime client expose enableParticipantArea=true par défaut en production quand la variable est absente', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -291,7 +291,7 @@ test('le runtime client expose enableParticipantArea=false par défaut en produc
       processEnv: {},
     });
 
-    assert.equal(runtimeConfig.enableParticipantArea, false);
+    assert.equal(runtimeConfig.enableParticipantArea, true);
   } finally {
     rmSync(tempRoot, { recursive: true, force: true });
   }

@@ -1,5 +1,6 @@
 // apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta-link.component.spec.ts
 
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -7,10 +8,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../../../environments/environment';
 import { ParticipantNavCtaLink } from './participant-nav-cta-link.component';
 
+@Component({
+  standalone: true,
+  template: '',
+})
+class BlankRouteComponent {}
+
 async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [ParticipantNavCtaLink],
-    providers: [provideRouter([{ path: 'participant', children: [] }])],
+    providers: [
+      provideRouter([
+        {
+          path: 'participant',
+          children: [
+            {
+              path: 'dashboard',
+              component: BlankRouteComponent,
+            },
+          ],
+        },
+      ]),
+    ],
   }).compileComponents();
 }
 
@@ -27,7 +46,7 @@ describe('ParticipantNavCtaLink', () => {
       await compile();
     });
 
-    it('When the CTA renders Then it exposes the participant link', () => {
+    it('When the CTA renders Then it exposes the participant dashboard link', () => {
       const fixture = TestBed.createComponent(ParticipantNavCtaLink);
       fixture.detectChanges();
 
@@ -37,9 +56,12 @@ describe('ParticipantNavCtaLink', () => {
 
       expect(participantCta).toBeTruthy();
       expect(participantCta?.textContent).toContain('Espace participant');
+      expect(participantCta?.getAttribute('href')).toBe(
+        '/participant/dashboard',
+      );
     });
 
-    it('When the CTA is clicked Then it emits the activation event', () => {
+    it('When the CTA is clicked Then it emits the activation event', async () => {
       const fixture = TestBed.createComponent(ParticipantNavCtaLink);
       const emitSpy = vi.fn();
 
@@ -51,6 +73,8 @@ describe('ParticipantNavCtaLink', () => {
           'a[aria-label="Espace participant"]',
         ) as HTMLAnchorElement
       ).click();
+
+      await fixture.whenStable();
 
       expect(emitSpy).toHaveBeenCalled();
     });
@@ -91,6 +115,9 @@ describe('ParticipantNavCtaLink', () => {
 
       if (environment.enableParticipantArea) {
         expect(participantCta).toBeTruthy();
+        expect(participantCta?.getAttribute('href')).toBe(
+          '/participant/dashboard',
+        );
       } else {
         expect(participantCta).toBeNull();
       }

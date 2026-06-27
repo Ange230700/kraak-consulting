@@ -80,39 +80,37 @@ export const participantAreaRoutes: Routes = [
     path: 'connexion',
     title: 'Connexion | KRAAK',
     data: { seo: signInSeo },
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/sign-in.page'),
   },
   {
     path: 'inscription',
     title: 'Inscription | KRAAK',
     data: { seo: signUpSeo },
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/sign-up.page'),
   },
   {
     path: 'mot-de-passe-oublie',
     title: 'Mot de passe oublié | KRAAK',
     data: { seo: passwordResetSeo },
-    canMatch: [participantAreaCanMatch],
     loadComponent: () => import('./features/auth/password-reset.page'),
   },
   {
     path: 'participant',
     data: { seo: participantDashboardSeo },
-    canMatch: [participantAreaCanMatch],
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./features/participant/dashboard/dashboard.page'),
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard',
       },
       {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/participant/dashboard/dashboard.page').then(
+            (m) => m.default,
+          ),
       },
     ],
   },

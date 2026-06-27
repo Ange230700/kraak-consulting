@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\ssr-path.spec.ts
+
 import { describe, expect, it, vi } from 'vitest';
 
 import { buildPrerenderedHtmlPath } from './ssr-path';

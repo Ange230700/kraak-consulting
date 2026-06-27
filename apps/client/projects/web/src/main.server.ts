@@ -32,7 +32,7 @@ if (
 
   globalThis.__KRAAK_RUNTIME_CONFIG__ = Object.freeze({
     enableParticipantArea:
-      typeof flag === 'string' ? flag.trim() === 'true' : undefined,
+      typeof flag === 'string' ? flag.trim() === 'true' : true,
     apiBaseUrl: readOptionalEnv(['CLIENT_API_BASE_URL']),
     siteUrl: readOptionalEnv(['CLIENT_SITE_URL']),
     supabaseUrl: readOptionalEnv(['CLIENT_SUPABASE_URL', 'SUPABASE_URL']),

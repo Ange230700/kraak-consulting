@@ -261,7 +261,7 @@ export function loadClientRuntimeConfig(
   );
   const enableParticipantArea =
     participantAreaRawValue === undefined
-      ? environmentName !== 'production'
+      ? true
       : participantAreaRawValue === 'true';
 
   return buildRuntimeConfig({

@@ -47,11 +47,15 @@
         severity="success"
         [text]="successMessage()!"
         class="mb-6 block"
-      />
+      ></p-message>
     }
 
     @if (errorMessage()) {
-      <p-message severity="error" [text]="errorMessage()!" class="mb-6 block" />
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        class="mb-6 block"
+      ></p-message>
     }
 
     @if (showForm()) {

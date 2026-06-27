@@ -200,7 +200,7 @@
                 [text]="successMessage()!"
                 [closable]="false"
                 styleClass="w-full"
-              />
+              ></p-message>
             }
 
             @if (errorMessage()) {
@@ -209,11 +209,10 @@
                 [text]="errorMessage()!"
                 [closable]="false"
                 styleClass="w-full"
-              />
+              ></p-message>
             }
 
-            <button
-              pButton
+            <p-button
               type="submit"
               size="large"
               [label]="
@@ -221,11 +220,11 @@
               "
               [loading]="submitting()"
               [disabled]="submitting()"
-              [attr.aria-label]="
+              [ariaLabel]="
                 submitting() ? 'Création en cours...' : 'Créer mon compte'
               "
               class="kr-button-primary mt-1 w-full"
-            ></button>
+            ></p-button>
           </form>
 
           <div

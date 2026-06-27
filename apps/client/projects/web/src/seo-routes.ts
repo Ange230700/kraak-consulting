@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\seo-routes.ts
+
 import type express from 'express';
 
 import { buildRobotsTxt, buildSitemapXml } from './app/seo/site-seo';

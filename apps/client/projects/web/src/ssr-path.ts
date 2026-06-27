@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\ssr-path.ts
+
 export function buildPrerenderedHtmlPath(
   routePath: string,
   browserDistFolder: string,
