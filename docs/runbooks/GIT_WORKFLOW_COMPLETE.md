@@ -1,512 +1,477 @@
----
-layout: guide
-title: Git Workflow — Complete
-description: Full developer guide for feature branches, changesets, staging, and production releases.
----
+<!-- docs\runbooks\GIT_WORKFLOW_COMPLETE.md -->
 
-# GIT WORKFLOW — Complet
+# GIT_WORKFLOW_COMPLETE — Workflow Git complet
 
-> Guide complet pour développeurs. Couvre branches, commits, changesets,
-> promotion staging→main, et déploiements production.
+> Référence active : `staging` est la branche d'intégration ; `main` est la
+> branche de release.
+>
+> Les branches courtes partent de `staging` et ouvrent leurs PR vers `staging`.
+> `main` ne reçoit que des PR de release `staging → main`.
 
-Voir aussi:
+Voir aussi :
 
-- [`AGENTS.md`](../../AGENTS.md) — Règles du workflow Git (stratégie rebase-only, conventions)
-- [`CHANGESETS.md`](CHANGESETS.md) — Gestion des versions et tags
-- [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md) — Promotion staging→main
-- [`RELEASE_PROD.md`](RELEASE_PROD.md) — Déploiement production
-- Décisions architecture : [`ARC-07`](../decisions/ARC-07-prod-release-tag-based.md), [`ARC-08`](../decisions/ARC-08-staging-environment.md)
-
----
-
-## Grandes lignes du flux
-
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│ 1. FEATURE BRANCH (développeur)                                 │
-│    • git checkout -b feat/user-auth                             │
-│    • commits + push                                             │
-│    • PR vers main                                               │
-├─────────────────────────────────────────────────────────────────┤
-│ 2. CODE REVIEW + CI                                             │
-│    • GitHub Actions : lint, build, tests, type-check           │
-│    • Revue manuelle                                             │
-│    • Approve + merge                                            │
-├─────────────────────────────────────────────────────────────────┤
-│ 3. CHANGESET (développeur ou CI)                                │
-│    • À faire AVANT merge, ou ajouté en branche                  │
-│    • pnpm changeset → .changeset/*.md                           │
-│    • Décrit package + version bump + description                │
-├─────────────────────────────────────────────────────────────────┤
-│ 4. STAGING DEPLOYMENT (automatique via staging branch)          │
-│    • Code mergé vers main                                       │
-│    • CI crée PR de version (changesets.yml)                     │
-│    • PR version mergée → staging (promote-to-main.yml)          │
-│    • Push staging → déploiement Render + Vercel (auto-déploie)  │
-├─────────────────────────────────────────────────────────────────┤
-│ 5. PRODUCTION TAG & RELEASE (automatique via tag)               │
-│    • Version PR mergée vers staging → promotion vers main       │
-│    • publish-release.yml crée tags SemVer (v1.2.3)              │
-│    • Tag v1.2.3 déclenche release-prod.yml                      │
-│    • Build, tests, approbation review → déploiement prod        │
-└─────────────────────────────────────────────────────────────────┘
-```
+- [`GIT_WORKFLOW_CHEATSHEET.md`](GIT_WORKFLOW_CHEATSHEET.md)
+- [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md)
+- [`RELEASE_PROD.md`](RELEASE_PROD.md)
+- [`CHANGESETS.md`](CHANGESETS.md)
+- [`ARC-09-inversion-main-staging`](../decisions/ARC-09-inversion-main-staging.md)
 
 ---
 
-## 1 · SETUP LOCAL (une seule fois)
+## 1 · Vue d'ensemble
 
-### Cloner et configurer
+```mermaid
+flowchart LR
+    start["staging à jour"]
+    branch["branche courte<br/>feat/* fix/* docs/*"]
+    work["implémentation<br/>petit incrément"]
+    checks["tests locaux"]
+    pr["PR vers staging"]
+    ci["checks GitHub"]
+    merge["merge vers staging"]
+    deploy["déploiement staging"]
+    validation["validation staging"]
+    releasePr["PR release<br/>staging → main"]
+    tag["tag SemVer sur main"]
+    prod["workflow production"]
 
-```bash
-git clone https://github.com/Ange230700/kraak-consulting.git
-cd kraak-consulting
-
-# Configuration git obligatoire (rebase-only + fast-forward)
-git config pull.rebase true
-git config merge.ff only
-
-# Global (recommandé)
-git config --global pull.rebase true
-git config --global merge.ff only
+    start --> branch --> work --> checks --> pr --> ci --> merge --> deploy --> validation --> releasePr --> tag --> prod
 ```
 
-### Vérifier la config
+Règles principales :
+
+- `staging` est la branche par défaut et d'intégration ;
+- `main` est la branche de release ;
+- aucun commit direct sur `staging` ou `main` ;
+- aucune PR de travail vers `main` ;
+- aucun tag SemVer sur `staging`.
+
+## 2 · Préparer son environnement
+
+Vérifier le dépôt :
 
 ```bash
-git config --get pull.rebase   # → true
-git config --get merge.ff      # → only
+git remote -v
+git branch -a
+git status --short
 ```
 
-### Installer les outils
+Le remote attendu est :
 
-```bash
-# Installer les dépendances
-pnpm install
-
-# Vérifier que changesets est disponible
-pnpm changeset --version
+```txt
+origin  https://github.com/Ange230700/kraak-consulting.git
 ```
 
----
+La branche de travail de départ doit être `staging`.
 
-## 2 · WORKFLOW DÉVELOPPEUR (par feature)
+## 3 · Démarrer une tâche
 
-### 2.1 Créer une branche feature
+Mettre `staging` à jour:
 
 ```bash
-# Récupérer main à jour
-git checkout main
-git pull --rebase
-
-# Créer branche courte
-git checkout -b feat/user-profile
-# Noms: feat/*, fix/*, chore/*, docs/*, test/*, refactor/*, ci/*, etc.
+git switch staging
+git pull --rebase origin staging
 ```
 
-### 2.2 Implémenter + commit
+Créer une branche courte :
 
 ```bash
-# Éditer fichiers
-# ...
-
-# Commiter (avec lint + format)
-pnpm lint:fix
-pnpm format
-git add .
-git commit -m "feat: add user profile page"
-
-# Messages: respecter conventional commits
-# Types: feat, fix, chore, docs, test, refactor, ci, style, perf, revert, build
+git switch -c feat/description-courte
 ```
 
-### 2.3 Créer un changeset (AVANT de merger)
+Types de branches autorisés :
+
+| Type         | Usage                           |
+| ------------ | ------------------------------- |
+| `feat/*`     | fonctionnalité                  |
+| `fix/*`      | correction                      |
+| `docs/*`     | documentation                   |
+| `chore/*`    | maintenance                     |
+| `test/*`     | tests                           |
+| `refactor/*` | refactor sans changement métier |
+| `ci/*`       | CI/CD                           |
+| `build/*`    | build / packaging               |
+| `style/*`    | formatage ou style sans logique |
+| `perf/*`     | performance                     |
+| `revert/*`   | revert                          |
+
+## 4 · Développer
+
+Travailler par petits incréments.
+
+Avant commit :
 
 ```bash
-pnpm changeset
-
-# Sélectionner les packages affectés :
-#   - @kraak/api
-#   - @kraak/client
-#   - @kraak/contracts
-#   - @kraak/domain
-#   - @kraak/api-client
-#   - @kraak/tokens
-
-# Sélectionner le type de version :
-#   - patch (0.0.X) pour bugfix
-#   - minor (0.X.0) pour feature
-#   - major (X.0.0) pour breaking change
-
-# Décrire le changement
-# Exemple: "Add user profile page with avatar upload"
-
-# Ceci crée .changeset/<hash>.md
+git status --short
+pnpm format:check
+pnpm test:workspace
 ```
 
-### 2.4 Commit du changeset
+Selon la portée :
 
 ```bash
-git add .changeset/
-git commit -m "chore: add changeset for user profile"
+pnpm typecheck
+pnpm test:libs
+pnpm test:api
+pnpm test:unit
+pnpm test:e2e:web
+pnpm build
 ```
 
-### 2.5 Pousser et ouvrir PR
+## 5 · Commits
 
-```bash
-# Pousser la branche
-git push -u origin feat/user-profile
+Utiliser Conventional Commits avec scope.
 
-# Ouvrir PR via GitHub UI
-# - Title: "feat: add user profile page"
-# - Description: décrire le changement, référencer issues si applicable
-# - Target : main
+Format :
+
+```txt
+<type>(<scope>): <description>
 ```
 
-### 2.6 Attendre la revue et CI
-
-- **CI** s'exécute automatiquement (lint, build, tests, type-check)
-- **Revue humaine** : approve + request changes ou approve
-- **Merge** : une fois approuvé et CI verte
-
----
-
-## 3 · MERGE → STAGING (automatique)
-
-Après que votre PR soit mergée vers `main` :
-
-### 3.1 changesets.yml s'exécute
-
-1. Détecte les fichiers `.changeset/*.md`
-2. Exécute `changeset version` :
-   - Bump versions dans `package.json` / `packages/*/package.json`
-   - Génère `CHANGELOG.md`
-   - Crée commit `chore: bump versions and update changelogs`
-3. Crée une **PR de version** vers `main`
-
-### 3.2 Review version PR
-
-- Vérifier que les bumps sont corrects (patch/minor/major)
-- Exemple : `v1.0.0` → `v1.1.0` (minor) ou `v1.0.1` (patch)
-- Merge quand satisfait
-
-### 3.3 promote-to-main.yml s'exécute
-
-1. Détecte que version PR a été mergée vers `staging`
-2. Rebase `staging` sur `main` et fast-forward
-3. Promotion automatique : `staging` contient le commit de version
-4. Push `staging` → déclenche déploiement Render + Vercel
-
-### Déploiement staging
-
-- **API** : Render service `kraak-api-staging` redéploie (2-3 min)
-- **Web** : Vercel project staging redéploie (1-2 min)
-- Supabase migrations appliquées si nécessaire
-
-### Tester sur staging
+Exemples :
 
 ```bash
-# Récupérer les changements
+git commit -m "docs(workflow): align staging branch instructions"
+git commit -m "fix(api): map invite rate limit to 429"
+git commit -m "feat(web): enable participant navigation flow"
+```
+
+Scopes usuels :
+
+| Scope        | Usage              |
+| ------------ | ------------------ |
+| `root`       | racine repo        |
+| `repo`       | conventions dépôt  |
+| `docs`       | documentation      |
+| `scripts`    | scripts            |
+| `web`        | application web    |
+| `mobile`     | application mobile |
+| `api`        | API NestJS         |
+| `client`     | workspace Angular  |
+| `contracts`  | contrats partagés  |
+| `domain`     | logique métier     |
+| `api-client` | client API partagé |
+| `tokens`     | design tokens      |
+| `infra`      | infra              |
+| `ci`         | CI/CD              |
+
+## 6 · Rebaser avant push
+
+Avant de pousser :
+
+```bash
 git fetch origin
-
-# Voir les versions bumpées
-git log --oneline staging --not main  # commits en avance sur main
-cat CHANGELOG.md  # vérifier le changelog
-
-# Tester les services staging
-curl https://kraak-api-staging.onrender.com/health
-# → {"status": "ok"}
+git rebase origin/staging
 ```
 
----
-
-## 4 · TAG + PRODUCTION (automatique)
-
-Une fois `staging` promu :
-
-### 4.1 publish-release.yml s'exécute
-
-1. Détecte le commit de version sur `main`
-2. Exécute `changeset publish`
-3. **Crée les tags SemVer** : `v1.1.0`, `v1.0.1`, etc.
-4. Pousse les tags
-
-### 4.2 release-prod.yml s'exécute
-
-1. Déclenché par les tags `v*`
-2. Build, tests rejoués sur le commit du tag
-3. Supabase migrations prod (si nécessaire)
-4. **Attente d'approbation** depuis GitHub Environment `production`
-5. Déploie sur Render prod + Vercel prod
-6. Smoke tests sur prod
-
-### Suivi release prod
+En cas de conflit :
 
 ```bash
-# Voir les tags créés
-git fetch --tags
-git log --oneline --decorate | head -20
-
-# Voir release-prod en cours
-# GitHub Actions → release-prod → observer les logs
+git status
+# résoudre les fichiers
+git add <fichiers>
+git rebase --continue
 ```
 
----
-
-## 5 · TROUBLESHOOTING
-
-### "PR de version n'apparaît pas"
-
-- changesets.yml a échoué → vérifier les logs GitHub Actions
-- Généralement : `pnpm install` failed ou permission issue
-- **Solution** : créer le changeset manuellement dans la branche et amendez le commit
-
-### "CI échoue sur main"
-
-- Lint, format, tests, type-check ont échoué
-- **Solution** :
-
-  ```bash
-  git checkout feat/my-feature
-  pnpm lint:fix
-  pnpm format
-  pnpm test
-  pnpm typecheck
-  git add .
-  git commit -m "fix: linting and formatting issues"
-  git push
-  ```
-
-### "Tags ne sont pas créés sur main"
-
-- publish-release.yml a échoué
-- Vérifier : commit doit être `"chore: bump versions..."`
-- Vérifier : GitHub Actions permissions (contents: write)
-- **Solution** : relancer manuellement
-
-  ```bash
-  GitHub Actions → publish-release → Run workflow
-  ```
-
-### "Impossible de merger PR (protection branch)"
-
-- `main` requiert : CI verte + approvals + linear history
-- **Solution** :
-
-  ```bash
-  # Rebase sur main (rebase-only strategy)
-  git fetch origin main
-  git rebase origin/main
-  git push --force-with-lease origin feat/my-feature
-  # Re-request review et attendre que CI passe
-  ```
-
-### "Merge conflict sur staging"
-
-- `staging` doit toujours rester en fast-forward de `main`
-- Si conflict : **c'est un incident**
-- **Solution** :
-
-  ```bash
-  # Rollback
-  git reset --hard origin/main
-  git push --force-with-lease origin staging
-  # Enquêter sur la cause du conflict
-  ```
-
----
-
-## 6 · BONNES PRATIQUES
-
-✅ **Faites**
-
-- Branches courtes (une tâche = une branche)
-- Commits atomiques avec des messages clairs
-- Changeset **avant** de merger (pour aller plus vite)
-- Rebase local avant de pousser (évite merge commits)
-- Tests locaux avant PR : `pnpm test`, `pnpm lint`, `pnpm typecheck`
-
-❌ **Ne faites pas**
-
-- Pusher directement sur `main` (protection branch l'empêchera)
-- Utiliser `git push --force` sauf avec `--force-with-lease` et raison valide
-- Combiner plusieurs features en une seule PR (une PR = une tâche)
-- Merger sans CI verte
-- Oublier le changeset (ira ralentir le release)
-
----
-
-## 7 · EXEMPLE COMPLET : Feature to Production
+Si le rebase doit être annulé :
 
 ```bash
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 1 : Feature branch
-# ═════════════════════════════════════════════════════════════════
-git checkout main
-git pull --rebase
-git checkout -b feat/email-verification
+git rebase --abort
+```
 
-# ... implémenter la feature ...
+## 7 · Pousser la branche
 
-pnpm lint:fix
-pnpm format
-git add .
-git commit -m "feat: add email verification flow"
+```bash
+git push -u origin HEAD
+```
 
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 2 : Changeset
-# ═════════════════════════════════════════════════════════════════
+Si la branche a déjà été poussée et a été rebasée :
+
+```bash
+git push --force-with-lease
+```
+
+Ne jamais utiliser git push --force sans --force-with-lease.
+
+## 8 · Ouvrir une PR vers staging
+
+```bash
+gh pr create \
+  --base staging \
+  --head "$(git branch --show-current)"
+```
+
+La PR doit contenir :
+
+- résumé du changement ;
+- issue liée si applicable ;
+- commandes de validation exécutées ;
+- captures ou preuves si l'UI change ;
+- note sur les migrations si applicable ;
+- note sur les variables d'environnement si applicable.
+
+## 9 · Checks requis
+
+Les checks exacts peuvent évoluer dans GitHub, mais la PR doit au minimum respecter :
+
+- format ;
+- lint ;
+- tests unitaires ;
+- build ;
+- E2E si le périmètre l'exige ;
+- checks spécifiques aux packages ou à l'infra.
+
+Pour vérifier localement :
+
+```bash
+pnpm format:check
+pnpm typecheck
+pnpm test:workspace
+pnpm build
+```
+
+## 10 · Merge vers staging
+
+Après validation :
+
+1. vérifier que la PR cible `staging` ;
+2. vérifier que la branche est à jour ;
+3. merger sans merge commit ;
+4. supprimer la branche distante ;
+5. mettre à jour l'issue et le Project GitHub.
+
+Après merge :
+
+```bash
+git switch staging
+git pull --rebase origin staging
+git branch -d <branche-courte>
+git push origin --delete <branche-courte>
+```
+
+## 11 · Déploiement staging
+
+Un push sur `staging` déclenche les services staging configurés.
+
+Surfaces principales :
+
+| Surface | Cible                                     |
+| ------- | ----------------------------------------- |
+| Web     | Render static site `kraak-web-staging`    |
+| API     | Render Docker service `kraak-api-staging` |
+| Base    | Supabase staging                          |
+
+Vérifier :
+
+```bash
+curl -I https://kraak-web-staging.onrender.com
+curl -i https://kraak-api-staging.onrender.com/health
+```
+
+Voir aussi [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md).
+
+## 12 · Corrections après validation staging
+
+Si une anomalie est détectée sur staging :
+
+```bash
+git switch staging
+git pull --rebase origin staging
+git switch -c fix/description-courte
+```
+
+Corriger, tester, puis ouvrir une PR vers `staging`.
+
+Ne pas corriger directement sur `staging`.
+
+## 13 · Release vers main
+
+Quand `staging` est validée :
+
+```bash
+gh pr create \
+  --base main \
+  --head staging \
+  --title "release: promote staging to main"
+```
+
+La PR de release doit inclure :
+
+- résumé des changements ;
+- validation staging ;
+- migrations appliquées ;
+- risques connus ;
+- lien vers les issues ou milestone ;
+- décision go/no-go si applicable.
+
+`main` ne doit pas recevoir de PR de fonctionnalité.
+
+## 14 · Tag SemVer
+
+Après merge de la PR de release :
+
+```bash
+git switch main
+git pull --rebase origin main
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+Le tag SemVer déclenche le workflow de production.
+
+Voir [`RELEASE_PROD.md`](RELEASE_PROD.md).
+
+## 15 · Hotfix
+
+Un hotfix production suit le même principe de traçabilité.
+
+Chemin recommandé :
+
+1. créer une branche courte depuis `staging` ;
+2. corriger ;
+3. PR vers staging ;
+4. valider staging ;
+5. PR release `staging → main` ;
+6. tag patch SemVer sur `main`.
+
+Si une urgence impose un chemin plus court, documenter explicitement :
+
+- raison ;
+- impact ;
+- validation minimale ;
+- rollback ;
+- issue associée.
+
+## 16 · Migrations Supabase
+
+Si un changement contient des migrations :
+
+1. vérifier les migrations localement ;
+2. appliquer en staging avant validation fonctionnelle ;
+3. documenter l'application dans la PR ;
+4. appliquer en production uniquement dans le flux de release.
+
+Commandes usuelles :
+
+```bash
+pnpm supabase link --project-ref "$SUPABASE_STAGING_PROJECT_REF"
+pnpm supabase db push
+```
+
+Ne jamais modifier le schéma de production hors procédure de release.
+
+## 17 · Changesets
+
+Si le changement doit être versionné :
+
+```bash
 pnpm changeset
-# Sélectionner @kraak/api (minor)
-# Description: "Add email verification to auth module"
-
-git add .changeset/
-git commit -m "chore: add changeset for email verification"
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 3 : PR vers main
-# ═════════════════════════════════════════════════════════════════
-git push -u origin feat/email-verification
-# → Ouvrir PR via GitHub UI
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 4 : CI + Revue (GitHub Actions) + Merge
-# ═════════════════════════════════════════════════════════════════
-# Attendre que CI passe ✅
-# Obtenir approbations
-# Merge (fast-forward)
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 5 : Automatique — changesets.yml
-# ═════════════════════════════════════════════════════════════════
-# PR de version créée automatiquement : "chore: bump versions and update changelogs"
-# Reviewer approuve
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 6 : Automatique — promote-to-main.yml
-# ═════════════════════════════════════════════════════════════════
-# staging rebase et promeut sur main automatiquement
-# Render staging + Vercel staging redéploient
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 7 : Automatique — publish-release.yml
-# ═════════════════════════════════════════════════════════════════
-# Tag SemVer créé (ex: v1.1.0)
-# release-prod.yml déclenché par le tag
-
-# ═════════════════════════════════════════════════════════════════
-# ÉTAPE 8 : Production (humain approuve)
-# ═════════════════════════════════════════════════════════════════
-# GitHub Environment production : approbation requise
-# Déploiement prod Render + Vercel
-# Smoke tests prod
-# ✅ Release complète
 ```
 
----
+La PR de travail reste une PR vers `staging`.
 
-## 8 · Diagramme complet
+Voir [`CHANGESETS.md`](./CHANGESETS.md).
 
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│ DÉVELOPPEUR                                                      │
-│ ┌────────────────────────────────────────────────────────────┐  │
-│ │ git checkout -b feat/feature-name                          │  │
-│ │ ... edit code ...                                          │  │
-│ │ pnpm lint:fix && pnpm format                               │  │
-│ │ git commit -m "feat: description"                          │  │
-│ │ pnpm changeset  (← VERSION BUMP)                           │  │
-│ │ git commit -m "chore: add changeset"                       │  │
-│ │ git push -u origin feat/feature-name                       │  │
-│ │ ... PR review ...                                          │  │
-│ │ MERGE                                                      │  │
-│ └────────────────────────────────────────────────────────────┘  │
-│                           ↓                                      │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-                  CI vérifie commit
-                    (tests, lint...)
-                            │
-┌──────────────────────────────────────────────────────────────────┐
-│ GITHUB ACTIONS — changesets.yml                                  │
-│ ┌────────────────────────────────────────────────────────────┐  │
-│ │ • changeset version                                        │  │
-│ │ • bump package.json + CHANGELOG.md                         │  │
-│ │ • create PR "chore: bump versions..."                      │  │
-│ └────────────────────────────────────────────────────────────┘  │
-│                           ↓                                      │
-│ VERSION PR REVIEW (humain)                                       │
-│                           ↓                                      │
-│ MERGE vers staging                                               │
-│ └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-┌──────────────────────────────────────────────────────────────────┐
-│ GITHUB ACTIONS — promote-to-main.yml                             │
-│ ┌────────────────────────────────────────────────────────────┐  │
-│ │ • git rebase main                                          │  │
-│ │ • git push staging                                         │  │
-│ │ • staging → main fast-forward                              │  │
-│ └────────────────────────────────────────────────────────────┘  │
-│                           ↓                                      │
-│ STAGING DEPLOYMENT (automatique)                                 │
-│ • Render kraak-api-staging redéploie (autoDeploy: true)          │
-│ • Vercel staging redéploie                                       │
-│ └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-┌──────────────────────────────────────────────────────────────────┐
-│ GITHUB ACTIONS — publish-release.yml                             │
-│ ┌────────────────────────────────────────────────────────────┐  │
-│ │ • changeset publish                                        │  │
-│ │ • git tag v1.2.3                                           │  │
-│ │ • git push --follow-tags                                   │  │
-│ └────────────────────────────────────────────────────────────┘  │
-│                           ↓                                      │
-│ TAG v1.2.3 déclenche release-prod.yml                            │
-│ └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-┌──────────────────────────────────────────────────────────────────┐
-│ GITHUB ACTIONS — release-prod.yml                                │
-│ ┌────────────────────────────────────────────────────────────┐  │
-│ │ • validate tag SemVer                                      │  │
-│ │ • build + tests sur commit du tag                          │  │
-│ │ • Supabase migrations prod (si nécessaire)                 │  │
-│ │ • ⏸️  ATTENTE APPROBATION PRODUCTION (GitHub Environment)   │  │
-│ │ • Deploy Render prod + Vercel prod                         │  │
-│ │ • Smoke tests prod                                         │  │
-│ │ ✅ Production live                                          │  │
-│ └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
+## 18 · Nettoyage de branche
+
+Après merge :
+
+```bash
+git switch staging
+git pull --rebase origin staging
+git branch --merged
+git branch -d <branche>
+git push origin --delete <branche>
 ```
 
----
+Ne pas supprimer :
 
-## 9 · Liens rapides
+- `staging` ;
+- `main` ;
+- branches liées à une PR ouverte.
 
-- **Setup** → Local configuration
-- **Feature** → Branches courtes + commits atomiques
-- **Changesets** → [`CHANGESETS.md`](CHANGESETS.md)
-- **Staging** → [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md)
-- **Prod** → [`RELEASE_PROD.md`](RELEASE_PROD.md)
-- **Règles Git** → [`AGENTS.md`](../../AGENTS.md) (Règles de workflow Git)
+## 19 · Récupération locale
 
----
+### Annuler des changements non commités
 
-## 10 · Résumé rapide
+```bash
+git restore <fichier>
+```
 
-| Étape      | Qui                 | Commande                 | Résultat             |
-| ---------- | ------------------- | ------------------------ | -------------------- |
-| Feature    | Dev                 | `git checkout -b feat/*` | Branche courte       |
-| Changeset  | Dev                 | `pnpm changeset`         | `.changeset/*.md`    |
-| Push       | Dev                 | `git push`               | PR review            |
-| Merge      | Dev+CI              | Approve + merge          | Commit sur main      |
-| Version PR | changesets.yml      | auto                     | PR version vers main |
-| Staging    | promote-to-main.yml | auto                     | Déploiement staging  |
-| Tag        | publish-release.yml | auto                     | `v*.*.*` créé        |
-| Prod       | release-prod.yml    | auto + humain            | Déploiement prod     |
+### Annuler tous les changements non commités
 
----
+```bash
+git restore .
+```
 
-**Ce flux est automatisé. Les développeurs créent features + changesets, le reste est orchestré par GitHub Actions.**
+### Désindexer sans perdre les changements
+
+```bash
+git restore --staged .
+```
+
+### Réaligner une branche courte sur staging
+
+Attention : cette commande supprime les commits locaux non poussés.
+
+```bash
+git fetch origin
+git reset --hard origin/staging
+```
+
+## 20 · Anti-patterns
+
+Ne pas :
+
+- créer une branche courte depuis `main` ;
+- ouvrir une PR de fonctionnalité vers `main` ;
+- merger une branche courte directement dans `main` ;
+- créer un commit direct sur `staging` ;
+- créer un commit direct sur `main` ;
+- synchroniser `staging` depuis `main` ;
+- poser un tag SemVer sur `staging` ;
+- utiliser `--no-verify` ;
+- utiliser `git push --force` au lieu de `--force-with-lease` ;
+- ignorer une migration Supabase liée à un changement applicatif.
+
+## 21 · Résumé opérationnel
+
+| Étape      | Branche / cible               | Commande clé                               | Résultat               |
+| ---------- | ----------------------------- | ------------------------------------------ | ---------------------- |
+| Départ     | `staging`                     | `git pull --rebase origin staging`         | base à jour            |
+| Travail    | `feat/*` / `fix/*` / `docs/*` | `git switch -c ...`                        | branche courte         |
+| Validation | branche courte                | `pnpm format:check && pnpm test:workspace` | feedback local         |
+| PR         | `staging`                     | `gh pr create --base staging`              | intégration            |
+| Staging    | `staging`                     | auto-deploy                                | validation pré-release |
+| Release PR | `main`                        | `gh pr create --base main --head staging`  | préparation prod       |
+| Tag        | `main`                        | `git tag vX.Y.Z`                           | déclenchement prod     |
+
+## 22 · Diagramme détaillé
+
+```mermaid
+sequenceDiagram
+    participant Dev as Développeur
+    participant Staging as staging
+    participant CI as GitHub Checks
+    participant Render as Render staging
+    participant Main as main
+    participant Prod as Production workflow
+
+    Dev->>Staging: PR branche courte → staging
+    CI->>CI: format, lint, tests, build
+    Staging->>Render: auto-deploy staging
+    Dev->>Render: smoke tests + logs
+    Dev->>Main: PR release staging → main
+    Main->>Prod: tag SemVer
+    Prod->>Prod: approval + deploy
+```
+
+## 23 · Validation documentaire
+
+Avant commit, vérifier manuellement que les documents actifs ne contiennent plus :
+
+- une synchronisation inverse vers `staging` ;
+- un rebase de branche courte sur `main` ;
+- une PR de travail vers `main` ;
+- une promotion automatique depuis la branche de release ;
+- une instruction de tag SemVer hors de `main`.

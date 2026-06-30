@@ -1,297 +1,202 @@
-# CHANGESETS — Gestion des versions et releases
+<!-- docs\runbooks\CHANGESETS.md -->
 
-> Guide pratique pour gérer les versions du monorepo KRAAK avec
-> [changesets](https://github.com/changesets/changesets).
+# CHANGESETS — Versionnage et release
 
-## Vue d'ensemble
+## 1 · Objectif
 
-Changesets automatise le versioning sémantique et la création de tags pour le
-monorepo. Le flux complet est :
+Changesets sert à documenter les changements versionnés avant une release.
 
-1. **Développeur** : Ajoute un changeset à `.changeset/*.md` dans la feature branch
-2. **Feature branch mergée** : Code merged vers `main` avec changeset
-3. **CI (changesets.yml)** : Sur push vers `main`, crée une **PR de version**
-4. **Mainteneur** : Revue et merge la PR de version vers `main`
-5. **CI (promote-to-main.yml)** : Promotion automatique `main → staging` (fast-forward)
-6. **Staging deployment** : Push vers staging déclenche Render + Vercel
-7. **CI (publish-release.yml)** : Crée tags SemVer (`v*.*.\*)
-8. **CI (release-prod.yml)** : Tag SemVer déclenche déploiement production
+Dans ce dépôt, le workflow actif est aligné sur ARC-09 :
 
-Voir aussi :
+- les branches courtes partent de `staging` ;
+- les PR de travail ciblent `staging` ;
+- `main` ne reçoit que des PR de release depuis `staging` ;
+- les tags SemVer sont posés sur `main` ;
+- aucun flux `main` vers `staging` n'est utilisé.
 
-- [`GIT_WORKFLOW_COMPLETE.md`](GIT_WORKFLOW_COMPLETE.md) — Workflow Git complet
-- [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-tag-based.md)
-- [`RELEASE_PROD.md`](RELEASE_PROD.md)
-- [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md)
+## 2 · Flux global
 
----
+```mermaid
+flowchart LR
+    branch["Branche courte<br/>depuis staging"]
+    changeset["Changeset<br/>si nécessaire"]
+    prStaging["PR vers staging"]
+    staging["staging<br/>validation"]
+    releasePr["PR release<br/>staging → main"]
+    main["main"]
+    tag["Tag SemVer"]
+    publish["Release / publication"]
 
-## 1. Ajouter un changeset (développeur)
+    branch --> changeset --> prStaging --> staging --> releasePr --> main --> tag --> publish
+```
 
-### Créer un changeset
+## 3 · Quand créer un changeset
 
-**Avant de merger vers `main`**, créez un changeset qui documente votre
-changement :
+Créer un changeset quand le changement doit apparaître dans une release ou modifie une surface consommée :
+
+- package partagé ;
+- API publique ;
+- contrat partagé ;
+- comportement produit important ;
+- changement de compatibilité ;
+- changement visible pour les utilisateurs ou intégrateurs.
+
+Ne pas créer de changeset pour :
+
+- correction typographique mineure ;
+- documentation historique ;
+- commentaire interne sans effet ;
+- refactor sans impact utilisateur ;
+- modification de test sans changement fonctionnel.
+
+## 4 · Créer un changeset
+
+Depuis une branche courte créée depuis `staging`:
 
 ```bash
+git switch staging
+git pull --rebase origin staging
+git switch -c feat/description-courte
 pnpm changeset
 ```
 
-Ceci ouvre une CLI interactive qui demande :
+Répondre aux questions de Changesets, puis committer le fichier généré dans `.changeset/`.
 
-1. **Quels packages changer ?** (sélectionner avec `SPC` / `ENT`)
-   - `@kraak/api`
-   - `@kraak/client`
-   - `@kraak/contracts`
-   - `@kraak/domain`
-   - `@kraak/api-client`
-   - `@kraak/tokens`
-
-2. **Quel type de version ?**
-   - `patch` = bugfix (0.0.X)
-   - `minor` = nouvelle feature (0.X.0)
-   - `major` = breaking change (X.0.0)
-
-3. **Brève description** (ex: "Add user authentication flow")
-
-Le changeset crée un fichier `.changeset/<hash>.md` contenant les détails.
-
-### Exemple
+Exemple :
 
 ```bash
-$ pnpm changeset
-? Which packages would you like to include?
- ◉ @kraak/api
- ◉ @kraak/client
- ◯ @kraak/contracts
-
-? What kind of change is this? (Use arrow keys)
-❯ patch
-  minor
-  major
-
-? Describe what you changed
-> Add email verification flow to auth module
-
-✔ Changelog entry added
+git add .changeset/*.md
+git commit -m "docs(changeset): document feature release impact"
 ```
 
-### Committer le changeset
+## 5 · PR de travail
+
+La PR de travail cible `staging`.
 
 ```bash
-git add .changeset/
-git commit -m "chore: add changeset for email verification feature"
+git push -u origin HEAD
+gh pr create --base staging --head "$(git branch --show-current)"
 ```
 
-**Attention** : Oubliez le changeset ? Pas de problème — vous pouvez l'ajouter
-dans une branche ultérieure avant merge vers `main`. Changesets attendra
-tous les changesets avant de bumper.
-
----
-
-## 2. Fusion vers `main` (workflow changesets.yml)
-
-Quand vous mergez vers `main` :
-
-1. **changesets.yml** détecte le push et exécute :
-   - `changeset version` : calcule les nouvelles versions SemVer
-   - Crée/met à jour un **CHANGELOG.md** à la racine
-   - Bumpe les versions dans `package.json` / `packages/*/package.json`
-   - Génère une **PR de version** (ex: "chore: bump versions and update
-     changelogs")
-
-2. **PR de version** :
-   - Affiche un diff des changements : quels packages, quelles versions
-   - Titre standardisé : `chore: bump versions and update changelogs`
-   - Cible : `main` (reste sur `main`)
-
-3. **Mainteneur** :
-   - Revise la PR pour s'assurer que les bumps sont corrects
-   - Merge vers `main` (👉 cela déclenche la promotion vers `staging`)
-
----
-
-## 3. Promotion `main` → `staging` et publication (promote-to-main.yml + publish-release.yml)
-
-Une fois la PR de version mergée vers `main`, deux workflows s'exécutent en séquence :
-
-### Étape 1 — promote-to-main.yml
-
-1. Détecte que version PR a été mergée vers `main`
-2. Rebase et fast-forward `staging` sur `main`
-3. Push `staging` → déclenche déploiement Render + Vercel
-
-### Étape 2 — publish-release.yml
-
-1. Détecte le commit de version sur `main`
-2. Exécute `changeset publish`
-3. **Crée les tags SemVer** (ex: `v1.2.3`)
-4. Pousse les tags vers GitHub
-
-### Étape 3 — release-prod.yml
-
-1. Est déclenché automatiquement par les tags `v*`
-2. Lance la build, tests, déploiements prod
-3. Voir [`RELEASE_PROD.md`](RELEASE_PROD.md)
-
----
-
-## 4. Workflows GitHub
-
-### changesets.yml
-
-```yaml
-Trigger: push vers main (ou workflow_dispatch)
-Branches: main
-Actions: • Installe les dépendances
-  • changesets/action@v1 crée/met à jour la PR de version
-  • Bumpe automatiquement les versions
-  • Génère CHANGELOG.md
-```
-
-### promote-to-main.yml
-
-```yaml
-Trigger: PR fermée vers main avec titre "chore: bump versions..."
-Branches: main → staging
-Actions:
-  • Rebase staging sur main
-  • Fast-forward staging
-  • Pousse staging → déclenche déploiements (Render + Vercel)
-```
-
-### publish-release.yml
-
-```yaml
-Trigger: push vers main avec commit "chore: bump versions..."
-Branches: main
-Actions:
-  • Exécute changeset publish (crée les tags SemVer)
-  • Pousse les tags
-  • release-prod.yml est déclenché par les tags
-```
-
----
-
-## 5. Configuration changesets
-
-Fichier : `.changeset/config.json`
-
-```json
-{
-  "baseBranch": "main",
-  "changelog": "@changesets/cli/changelog",
-  "commit": false,
-  "access": "restricted",
-  "updateInternalDependencies": "patch",
-  "ignore": []
-}
-```
-
-- **baseBranch** : `main` (changesets compare main → branche courante)
-- **commit** : `false` (GitHub Actions gère le commit)
-- **access** : `restricted` (packages privés)
-- **updateInternalDependencies** : `patch` (dépendances internes → patch bump)
-
----
-
-## 6. Troubleshooting
-
-### "Changeset file not found"
-
-- Vous n'avez pas exécuté `pnpm changeset` avant de merger
-- **Solution** : Créez le changeset dans une branche et amendez le commit, ou
-  créez une PR séparée
-
-### "Version PR ne s'ouvre pas"
-
-- changesets.yml a échoué. Vérifier la sortie du workflow :
-  - GitHub Actions → changesets.yml → Vérifier les logs
-  - Généralement, c'est une erreur `pnpm install` ou de permissions
-
-### "Tags ne sont pas créés après merge sur main"
-
-- publish-release.yml a échoué. Vérifier :
-  - Le commit sur `main` doit contenir `"chore: bump versions..."`
-  - Logs du workflow publish-release.yml → `Publish` job
-  - Permission `contents: write` vérifiée ? (oui, dans config)
-
-### "Comment faire un bump manuel ?"
-
-Pour tester ou forcer un bump en dehors du flux normal :
+Avant de demander review ou merge :
 
 ```bash
-# Locally
-pnpm changeset version
-pnpm changeset publish
-
-# Ou via workflow_dispatch
-# GitHub Actions → changesets.yml → "Run workflow" → workflow_dispatch
+pnpm format:check
+pnpm test:workspace
 ```
 
----
-
-## 7. Bonnes pratiques
-
-✅ **Faites**
-
-- Créer un changeset **avant de merger vers main**
-- Une ligne concise dans le changeset : "Add auth email flow"
-- Reclasser les changesets si un autre PR ajoute des changesets avant vôtre
-- Attendre que promote-to-main.yml promeuve staging automatiquement après version PR merge
-
-❌ **Ne faites pas**
-
-- Pusher directement sur `main` ou `staging` (protection branch l'empêchera)
-- Oublier le changeset (ralentit la release)
-- Modifier `.changeset/config.json` ou les tags manuellement
-- Combiner plusieurs features majeures en un seul changeset (= un changeset par
-  feature cohérente)
-- Faire un fast-forward manuel de staging vers main (c'est automatisé par promote-to-main.yml)
-
----
-
-## 8. Exemple complet de workflow
+Selon le changement :
 
 ```bash
-# 1. Branche feature
-git checkout -b feat/user-profile
+pnpm test:libs
+pnpm test:api
+pnpm test:unit
+pnpm build
+```
 
-# 2. Implémenter le feature
-# ... edit files ...
+## 6 · Validation sur staging
 
-# 3. Commit
-git add .
-git commit -m "feat: add user profile page"
+Après merge dans `staging`:
 
-# 4. Créer le changeset (avant de pousser)
+1. vérifier les checks GitHub ;
+2. vérifier le déploiement staging ;
+3. vérifier les logs ;
+4. tester les parcours concernés ;
+5. confirmer que le changeset correspond bien au changement livré.
+
+Si une anomalie est détectée, créer une branche courte depuis `staging` et ouvrir une nouvelle PR vers `staging`.
+
+## 7 · Release
+
+Quand `staging` est validée :
+
+```bash
+gh pr create \
+  --base main \
+  --head staging \
+  --title "release: promote staging to main"
+```
+
+Après merge de la PR de release :
+
+```bash
+git switch main
+git pull --rebase origin main
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+Le tag SemVer déclenche le workflow de production prévu par le runbook [`RELEASE_PROD`](./RELEASE_PROD.md)
+
+## 8 · Version PR
+
+Si un workflow Changesets crée une PR de version, cette PR doit respecter le modèle actif :
+
+- base: `staging` si elle prépare l'intégration;
+- base: `main` uniquement si elle fait partie d'une release contrôlée;
+- aucun mécanisme automatique ne doit synchroniser `main` vers `staging`.
+
+Le mainteneur doit vérifier :
+
+- les versions modifiées ;
+- le changelog généré ;
+- les packages impactés ;
+- la cohérence avec le périmètre livré.
+
+## 9 · Troubleshooting
+
+### Aucun changeset n'a été ajouté
+
+Si le changement est versionnable :
+
+```bash
 pnpm changeset
-# Sélectionner @kraak/client (minor)
-# Description: "Add user profile page with avatar upload"
-
-# 5. Commit du changeset
-git add .changeset/
-git commit -m "chore: add changeset for user profile feature"
-
-# 6. Pousser et ouvrir PR vers main
-git push -u origin feat/user-profile
-# ... Ouvrir PR via GitHub UI ...
-
-# 7. PR est mergée vers main
-# → changesets.yml s'exécute, crée PR de version
-
-# 8. Reviewer approuve la PR de version et merge vers main
-# → promote-to-main.yml promeut main → staging (fast-forward)
-# → Push staging déclenche déploiement Render + Vercel
-# → publish-release.yml crée les tags (v1.1.0, etc.)
-# → release-prod.yml déploie en prod (avec approbation)
+git add .changeset/*.md
+git commit -m "docs(changeset): add release note"
+git push
 ```
 
----
+Si le changement ne nécessite pas de changeset, documenter la raison dans la PR.
 
-## 9. Pour aller plus loin
+### La PR de version est incorrecte
 
-- [Changesets documentation](https://github.com/changesets/changesets)
-- [Semantic Versioning](https://semver.org)
-- [`GIT_WORKFLOW_COMPLETE.md`](GIT_WORKFLOW_COMPLETE.md) — Workflow Git complet
-- `docs/decisions/ARC-07-prod-release-tag-based.md`
+Corriger sur une branche courte depuis `staging`, puis ouvrir une PR vers `staging`.
+
+```bash
+git switch staging
+git pull --rebase origin staging
+git switch -c fix/version-notes
+```
+
+### Le tag SemVer n'a pas déclenché la release
+
+Vérifier :
+
+- que le tag a été créé sur `main`;
+- que le tag respecte le format `vX.Y.Z`;
+- que le workflow de release est actif ;
+- que les permissions GitHub Actions permettent l'exécution attendue.
+
+### Un changeset a été mergé sans release
+
+C'est acceptable tant que la release n'est pas prête. Le changeset reste dans l'historique de `staging` et sera pris en compte lors de la prochaine release.
+
+## 10 · Anti-patterns
+
+Ne pas :
+
+- créer un changeset directement sur `main` pour une fonctionnalité non validée ;
+- ouvrir une PR de fonctionnalité vers `main` ;
+- poser un tag SemVer sur `staging` ;
+- synchroniser `main` vers `staging` ;
+- supprimer un changeset sans justification ;
+- mélanger plusieurs changements indépendants dans un seul changeset vague.
+
+## 11 · Checklist PR
+
+- [ ] Branche courte créée depuis `staging`
+- [ ] Changeset créé si nécessaire
+- [ ] PR ciblant `staging`
+- [ ] Format et tests exécutés
+- [ ] Changelog cohérent si généré
+- [ ] Pas de tag créé avant merge de release sur `main`
