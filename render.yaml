@@ -1,22 +1,23 @@
 # render.yaml
 
-# Configuration Render — déploiement de l'API NestJS via Docker
+# Configuration Render — services web statiques Angular prerender et API NestJS.
 # Documentation : https://docs.render.com/blueprint-spec
 #
-# Quatre services distincts :
-#   - kraak-web-staging : front web statique Angular prerender. Auto-deploy
-#                         sur push de `staging`.
-#   - kraak-web-prod    : front web statique Angular prerender. Déploiement
-#                         manuel uniquement (autoDeploy: false).
-#   - kraak-api-staging : auto-deploy sur push de la branche longue `staging`.
-#                         La promotion `main -> staging` se fait par
-#                         fast-forward manuel. Voir
-#                         docs/decisions/ARC-08-staging-environment.md et
-#                         docs/runbooks/STAGING_PROMOTION.md.
-#   - kraak-api-prod    : autoDeploy: false ; déclenché uniquement par le
-#                         workflow .github/workflows/release-prod.yml sur tag
-#                         SemVer. Voir docs/decisions/ARC-07-prod-release-tag-based.md
-#                         et docs/runbooks/RELEASE_PROD.md.
+# Services déclarés :
+#   - kraak-web-staging : front web statique Angular prerender.
+#                         Auto-deploy sur push de `staging`.
+#   - kraak-web-prod    : front web statique Angular prerender.
+#                         Auto-deploy désactivé ; usage production contrôlé.
+#   - kraak-api-staging : API NestJS Docker.
+#                         Auto-deploy sur push de `staging`.
+#   - kraak-api-prod    : API NestJS Docker.
+#                         Auto-deploy désactivé ; déclenchement production
+#                         contrôlé par workflow de release/tag.
+#
+# Modèle Git actif :
+#   - `staging` reçoit les PR de travail et sert à la validation.
+#   - `main` reçoit uniquement les PR de release depuis `staging`.
+#   - aucune synchronisation inverse vers `staging` n'est active.
 
 services:
   - type: web
@@ -89,9 +90,6 @@ services:
     dockerContext: .
     plan: starter
     healthCheckPath: /health
-    # Production : aucun déploiement automatique. Le workflow GitHub
-    # release-prod.yml déclenche manuellement les déploiements via l'API Render
-    # à chaque tag SemVer approuvé dans l'environnement GitHub `production`.
     autoDeploy: false
     envVars:
       - key: NODE_ENV

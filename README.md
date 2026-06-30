@@ -1,6 +1,6 @@
 <!-- README.md -->
 
-# KRAAK Group
+# KRAAK Consulting
 
 Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
@@ -21,8 +21,8 @@ Monorepo du MVP KRAAK — site web, application mobile et API backend.
 ### Cloner et installer
 
 ```bash
-git clone https://github.com/Ange230700/kraak-group.git
-cd kraak-group
+git clone https://github.com/Ange230700/kraak-consulting.git
+cd kraak-consulting
 pnpm install
 ```
 
@@ -239,3 +239,22 @@ changement.
 | [`docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md`](docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md) | Sources officielles des documentations de la stack |
 | [`docs/runbooks/GITHUB_PROJECT_BOARD.md`](docs/runbooks/GITHUB_PROJECT_BOARD.md)                     | Pilotage du board GitHub Project                   |
 | [`docs/specs/erd_mvp.md`](docs/specs/erd_mvp.md)                                                     | ERD complet commenté du modèle de données MVP      |
+
+## État courant du dépôt
+
+- Dépôt GitHub : `Ange230700/kraak-consulting`
+- Branche par défaut : `staging`
+- Branche d'intégration : `staging`
+- Branche de release : `main`
+- Les branches courtes (`feat/*`, `fix/*`, `docs/*`, etc.) partent de `staging` et reviennent vers `staging` par PR.
+- La production part de `main` uniquement après PR de release `staging → main` et tag SemVer.
+
+> Note de nommage : le dépôt GitHub s'appelle `kraak-consulting`, tandis que le package racine conserve le nom npm/workspace `kraak-group`.
+
+| Surface           | Cible active                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Web staging       | Render static site `kraak-web-staging`                                                                                           |
+| API staging       | Render Docker service `kraak-api-staging`                                                                                        |
+| Web production    | Release contrôlée ; vérifier [`docs/runbooks/RELEASE_PROD.md`](docs/runbooks/RELEASE_PROD.md) pour la cible active Vercel/Render |
+| API production    | Render Docker service `kraak-api-prod`                                                                                           |
+| Base/Auth/Storage | Supabase par environnement                                                                                                       |

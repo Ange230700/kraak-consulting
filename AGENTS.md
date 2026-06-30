@@ -257,8 +257,8 @@ utilitaires) et **PrimeNG** (classes de composants) pour tout le style visuel.
 
 Workflow Git par défaut dans ce dépôt :
 
-- Traiter `main` comme la seule branche permanente.
-- Garder `main` dans un état livrable.
+- Traiter `staging` comme la seule branche permanente.
+- Garder `staging` dans un état livrable.
 - Utiliser uniquement des branches courtes (`feat/*`, `fix/*`, `chore/*`,
   `docs/*`, `test/*`, `refactor/*`, `ci/*`, `style/*`, `perf/*`, `revert/*`,
   `build/*`).
@@ -267,13 +267,20 @@ Workflow Git par défaut dans ce dépôt :
 - Travailler sur une seule tâche à la fois.
 - Garder une portée de branche correspondant à une tâche et fusionner vite.
 - **Stratégie de fusion : rebase uniquement.** Ne jamais créer de merge commits.
-  Toujours rebaser la branche courte sur `main` avant de fusionner en
+  Toujours rebaser la branche courte sur `staging` avant de fusionner en
   fast-forward. La configuration locale du dépôt impose `pull.rebase = true`
   et `merge.ff = only`.
 
+Avant toute modification de code ou de documentation active :
+
+1. vérifier que la branche courante part de `staging` ;
+2. refuser toute synchronisation inverse vers `staging` ;
+3. ouvrir les PR de travail vers `staging` ;
+4. ne mentionner `main` que pour une PR de release ou un tag SemVer.
+
 Flux d’exécution d’une tâche :
 
-1. Récupérer le dernier `main`.
+1. Récupérer le dernier `staging`.
 2. Identifier l’item GitHub Project correspondant à la tâche et vérifier d’abord
    que la tâche existe bien dans la liste liée au Project.
 3. Si la tâche est absente du Project, créer un nouvel item de Project seulement
@@ -286,9 +293,9 @@ Flux d’exécution d’une tâche :
    gardant l’issue ouverte.
 7. Implémenter le plus petit incrément valide.
 8. Exécuter la validation pertinente.
-9. Rebaser la branche sur `main` (`git rebase main`) puis fusionner en
-   fast-forward (`git merge --ff-only <branche>`) dans `main`.
-10. Pousser `main`.
+9. Rebaser la branche sur `staging` (`git rebase staging`) puis fusionner en
+   fast-forward (`git merge --ff-only <branche>`) dans `staging`.
+10. Pousser `staging`.
 11. Une fois la fusion / le push réussis, fermer l’issue liée, déplacer l’item du
     Project en `Done`, définir `Statut` sur `Termine` et `Status` sur `Done`,
     tout en gardant les champs d’état alignés.
@@ -318,7 +325,7 @@ Comportement obligatoire pour les assistants :
   forcer ni contourner les contrôles. Appliquer systématiquement la séquence
   suivante :
   1. `git stash -u` pour mettre les changements de côté, y compris les fichiers non suivis.
-  2. Créer une branche courte appropriée **depuis `staging`** (`git checkout staging && git checkout -b <type>/<sujet>`).
+  2. Créer une branche courte appropriée **depuis `staging`** (`git switch staging && git switch -c <type>/<sujet>`).
   3. `git stash pop` pour restaurer les changements sur cette branche.
   4. Suivre le protocole normal : commit, push, PR vers `staging`, merge, nettoyage de branche.
 

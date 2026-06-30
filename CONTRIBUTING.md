@@ -8,7 +8,7 @@ Ce document explique comment contribuer au dépôt KRAAK Group.
 
 ## Branches
 
-`main` est la seule branche permanente. Toute modification passe par une branche courte.
+`main` et `staging` sont les seules branches permanentes. Toute modification passe par une branche courte.
 
 ### Nommage
 
@@ -203,7 +203,7 @@ de Project clairement pris en charge.
 
 ### Stratégie de fusion : rebase uniquement
 
-Ne jamais créer de merge commits. Toujours rebaser la branche courte sur `main`
+Ne jamais créer de merge commits. Toujours rebaser la branche courte sur `staging`
 avant de fusionner en fast-forward.
 
 La configuration locale du dépôt impose :
@@ -219,16 +219,18 @@ Ces réglages sont déjà appliqués dans le `.git/config` du dépôt. Si vous c
 ### Séquence type
 
 ```text
-1. s'assigner la tâche correspondante sur le GitHub Project du dépôt
-2. git checkout main && git pull origin main
-3. git checkout -b feat/ma-feature
-4. # implémenter + tester
-5. git add .
-6. pnpm commit
-7. git push -u origin feat/ma-feature
-8. # ouvrir une Pull Request sur GitHub (rebase and merge uniquement)
-9. # review + merge (fast-forward) dans main
-10. # supprimer la branche locale et distante
+1. Partir de `staging` à jour.
+2. Créer une branche courte : `<type>/<sujet>`.
+3. Implémenter le plus petit incrément viable.
+4. Commiter en Conventional Commits.
+5. Pousser la branche.
+6. Ouvrir une PR vers `staging`.
+7. Attendre les checks requis.
+8. Merger sans merge commit, avec historique linéaire.
+9. Supprimer la branche locale et distante.
+10. Mettre à jour l'issue et le Project GitHub.
+
+`main` n'est pas une branche de développement. Elle avance uniquement par PR de release depuis `staging`.
 ```
 
 ---
@@ -256,15 +258,15 @@ Des vérifications automatiques s'exécutent à chaque étape :
 
 ## Pull Requests
 
-- Ouvrir la PR vers `main`
+- Ouvrir la PR vers `staging`
 - Remplir le template de PR (description, tests, captures d'écran si UI)
 - Attendre la review avant de fusionner
 - Fusionner exclusivement en **rebase and merge** (pas de merge commit, pas de squash)
 - Après fusion, supprimer la branche locale et distante :
 
 ```bash
-git checkout main
-git pull origin main
+git switch staging
+git pull --rebase origin staging
 git branch -d feat/ma-feature
 git push origin --delete feat/ma-feature
 ```
@@ -301,3 +303,15 @@ En CI, conserver le cache pnpm déjà configuré via `actions/setup-node` et, si
 
 - **Code** (variables, fonctions, types, noms de fichiers) : **anglais**
 - **Documentation, commentaires, textes UI, messages** : **français**
+
+## Release
+
+Une release suit un flux séparé :
+
+1. Valider `staging`.
+2. Ouvrir une PR `staging → main`.
+3. Merger la PR de release après validation.
+4. Créer un tag SemVer sur `main`.
+5. Laisser le workflow de production gérer l'approbation et le déploiement.
+
+Aucun tag de production ne doit être posé sur `staging`.

@@ -1,4 +1,4 @@
-# GIT WORKFLOW — Cheat Sheet
+# GIT_WORKFLOW_CHEATSHEET — Workflow Git courant
 
 > Commandes et étapes rapides pour développer dans KRAAK.
 
@@ -20,150 +20,64 @@ cd kraak-consulting
 pnpm install
 ```
 
-## 📝 Feature workflow (par tâche)
+## Règle centrale
 
-```bash
-# 1. Récupérer main à jour
-git checkout main
-git pull --rebase
+`staging` est la branche d'intégration. `main` est la branche de release.
 
-# 2. Créer branche courte
-git checkout -b feat/my-feature
-# Noms: feat/*, fix/*, chore/*, docs/*, test/*, etc.
+```mermaid
+flowchart LR
+    feature["feat/* fix/* docs/*"]
+    stagingPr["PR → staging"]
+    staging["staging"]
+    releasePr["PR release<br/>staging → main"]
+    main["main"]
+    tag["tag v*.*.*"]
+    prod["production"]
 
-# 3. Éditer + committer
-pnpm lint:fix && pnpm format
-git add .
-git commit -m "feat: add new feature"
-
-# 4. Créer changeset (AVANT de pousser)
-pnpm changeset
-# Sélectionner packages + version type + description
-
-git add .changeset/
-git commit -m "chore: add changeset"
-
-# 5. Pousser + PR
-git push -u origin feat/my-feature
-# → Ouvrir PR sur GitHub vers main
-
-# 6. Attendre CI + revue
-# → Merge (fast-forward)
+    feature --> stagingPr --> staging --> releasePr --> main --> tag --> prod
 ```
 
-## 📦 Changesets
+## Démarrer une tâche
 
 ```bash
-# Créer changeset interactif
-pnpm changeset
-
-# Voir les changesets en attente
-ls -la .changeset/
-
-# Version bump (test local)
-pnpm changesets:version
-
-# Publish (test local)
-pnpm changesets:publish
+git switch staging
+git pull --rebase origin staging
+git switch -c feat/nom-court
 ```
 
-## 📊 Branches & status
+## Rebaser avant push
 
 ```bash
-# État local
-git status
-
-# Voir l'historique
-git log --oneline -10
-git log --oneline --decorate --graph
-
-# Voir les branches
-git branch -a
-
-# Voir les tags
-git tag -l | tail -20
-
-# Récupérer dernière version main
-git fetch origin main
-git rebase origin/main
+git fetch origin
+git rebase origin/staging
 ```
 
-## 🔄 Promotion (automatique)
+## Ouvrir la PR
 
 ```bash
-# Après que version PR soit mergée vers main:
-
-# 1. promote-to-main.yml s'exécute
-#    → main → staging (fast-forward)
-#    → Render + Vercel redéploient automatiquement
-
-# 2. publish-release.yml crée tags
-#    → git tag v1.2.3
-#    → release-prod.yml déploie en prod
-
-# Vérifier
-git fetch --tags
-git log --oneline --decorate | head -20
+git push -u origin HEAD
+gh pr create --base staging --head "$(git branch --show-current)"
 ```
 
-## 🆘 Troubleshooting
-
-### "Merge conflict"
+## Après merge
 
 ```bash
-# Rebaser sur main
-git fetch origin main
-git rebase origin/main
-git push --force-with-lease origin feat/my-feature
+git switch staging
+git pull --rebase origin staging
+git branch -d feat/nom-court
+git push origin --delete feat/nom-court
 ```
 
-### "Besoin d'amender le dernier commit"
+## Release production
 
 ```bash
-git add .
-git commit --amend --no-edit
-git push --force-with-lease origin feat/my-feature
+git switch staging
+git pull --rebase origin staging
+
+gh pr create \
+  --base main \
+  --head staging \
+  --title "release: promote staging to main"
 ```
 
-### "Oublié un fichier dans le commit"
-
-```bash
-git add <file>
-git commit --amend --no-edit
-git push --force-with-lease origin feat/my-feature
-```
-
-### "Annuler le dernier commit local (pas encore pushé)"
-
-```bash
-git reset HEAD~1
-```
-
-### "Annuler un push (danger! utiliser avec soin)"
-
-```bash
-# Si le commit n'a pas encore été mergé
-git reset --hard origin/main
-git push --force-with-lease origin feat/my-feature
-```
-
-## 📚 Links
-
-- [Git Workflow Complet](GIT_WORKFLOW_COMPLETE.md) — Guide détaillé
-- [Changesets Guide](CHANGESETS.md) — Gestion des versions
-- [Staging Promotion](STAGING_PROMOTION.md) — Deploy staging
-- [Release Production](RELEASE_PROD.md) — Deploy production
-
-## 🎯 Résumé ultra-rapide
-
-```bash
-git checkout -b feat/x          # 1. Feature branch
-# ... edit ...
-pnpm lint:fix && pnpm format    # 2. Lint + format
-git commit -m "feat: ..."       # 3. Commit
-pnpm changeset                  # 4. Changeset
-git commit -m "chore: ..."      # 5. Commit changeset
-git push -u origin feat/x       # 6. Push + PR
-# ... approve + merge ...
-# → Automatique: version PR → tags → deploy
-```
+Après merge sur `main`, créer le tag SemVer depuis `main`.
