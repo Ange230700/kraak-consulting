@@ -2,7 +2,7 @@ name: Observability
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -22,11 +22,11 @@ jobs:
             # On le check directement pour garantir une validation séparée de la prod.
             web_url: https://kraak-web-staging.onrender.com
             api_url: https://kraak-api-staging.onrender.com
-            alert_issue_title: "[ALERT][DEP-05][staging] Observability check failure"
+            alert_issue_title: '[ALERT][DEP-05][staging] Observability check failure'
           - environment: production
-            web_url: https://kraak-consulting.vercel.app
+            web_url: https://kraak-web-prod.onrender.com
             api_url: https://kraak-api-prod.onrender.com
-            alert_issue_title: "[ALERT][DEP-05][production] Observability check failure"
+            alert_issue_title: '[ALERT][DEP-05][production] Observability check failure'
     env:
       KRAAK_OBSERVABILITY_ENVIRONMENT: ${{ matrix.environment }}
       KRAAK_OBSERVABILITY_WEB_URL: ${{ matrix.web_url }}
@@ -73,7 +73,7 @@ jobs:
               '',
               '## Action attendue',
               '',
-              '1. Vérifier le statut Vercel et Render.',
+              '1. Vérifier le statut des services Render.',
               '2. Rejouer `pnpm check:observability` avec les mêmes URLs.',
               '3. Suivre le runbook DEP-05 / DEP-06 si le service reste indisponible.',
             ].join('\n');

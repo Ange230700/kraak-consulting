@@ -2,14 +2,14 @@
 
 - Statut : Acceptée
 - Date : 2026-05-02
-- Portée : `.github/workflows/`, `render.yaml`, configuration Vercel,
+- Portée : `.github/workflows/`, `render.yaml`, configuration Render,
   configuration Supabase, runbooks de release et d'environnement
 
 ## Contexte
 
 Le MVP KRAAK approche d'un déploiement pilote en production. Jusqu'ici, seul un
 environnement **staging** a été câblé (`apps/api/.env.staging`,
-`supabase/.env.staging`, projet Render `kraak-api-staging`, projet Vercel en
+`supabase/.env.staging`, projet Render `kraak-api-staging`, projet Render en
 preview). Aucune cible production n'existe et aucun garde-fou ne distingue
 clairement « modifier le code » de « livrer en prod ».
 
@@ -40,7 +40,7 @@ isolation totale des secrets et des projets de plateforme.
 3. **Approbation humaine obligatoire.** Le déploiement prod passe par un
    GitHub Environment `production` avec required reviewers.
 4. **Aucun secret prod en local ni dans le repo.** Les variables prod vivent
-   uniquement dans GitHub Secrets, Render Env, Vercel Env.
+   uniquement dans GitHub Secrets, Render Env.
 5. **Rollback par re-deploy d'un tag antérieur.** Pas de `git push --force`,
    pas de `git tag -f`. Forward-fix (`v1.0.1`) ou rollback (`v0.9.x`).
 
@@ -51,9 +51,9 @@ isolation totale des secrets et des projets de plateforme.
 | GitHub Workflow    | Nouveau fichier `.github/workflows/release-prod.yml` sur `tags: ['v*']`              |
 | GitHub Environment | `production` avec required reviewers + restriction « tags only »                     |
 | Render (API)       | Service prod `kraak-api-prod` avec `autoDeploy: false` ; staging garde l'auto-deploy |
-| Vercel (web)       | Production branch désactivée ; déploiement prod uniquement via API/CLI sur tag       |
+| Render (web)       | Production branch désactivée ; déploiement prod uniquement via API/CLI sur tag       |
 | Supabase           | Projet **séparé** pour la prod (`kraak-prod`), distinct de `kraak-staging`           |
-| Variables d'env    | `apps/api/.env.prod` reste **gitignoré** ; injection via Render/Vercel/GH Secrets    |
+| Variables d'env    | `apps/api/.env.prod` reste **gitignoré** ; injection via Render/GH Secrets           |
 | Branch protection  | `main` protégée (review + status checks) ; tags `v*` créés depuis `main` uniquement  |
 | Runbook            | `docs/runbooks/RELEASE_PROD.md` documente la procédure tag → review → deploy → smoke |
 
@@ -63,13 +63,13 @@ isolation totale des secrets et des projets de plateforme.
 flowchart LR
     dev["Branche courte\nfeat/* / fix/*"]
     staging_br(["staging\nintégration"])
-    staging_deploy["Staging\nRender + Vercel\n+ Supabase staging"]
+    staging_deploy["Staging\nRender\n+ Supabase staging"]
     main_br(["main\nrelease"])
     tag["git tag v*.*.*\nSemVer"]
     wf["Workflow\nrelease-prod.yml"]
     gh_env{{"GitHub Environment\nproduction\napprobation requise"}}
     render_prod[("Render\nkraak-api-prod")]
-    vercel_prod[("Vercel\nsite web prod")]
+    render_prod[("Render\nsite web prod")]
     supa_prod[("Supabase\nkraak-prod")]
 
     dev -- "PR → merge" --> staging_br
@@ -79,7 +79,7 @@ flowchart LR
     tag -- "déclenche" --> wf
     wf -- "review humaine" --> gh_env
     gh_env -- "approuvé" --> render_prod
-    gh_env -- "approuvé" --> vercel_prod
+    gh_env -- "approuvé" --> render_prod
     gh_env -- "approuvé" --> supa_prod
 ```
 
@@ -126,14 +126,14 @@ Cette décision est révisable si :
    (introduction possible d'une branche `release/*` ou d'un canal canary).
 2. KRAAK adopte un déploiement multi-région nécessitant plusieurs cibles prod
    coordonnées.
-3. Une plateforme tierce remplace Render ou Vercel et impose un autre modèle
+3. Une plateforme tierce remplace Render ou Render et impose un autre modèle
    de promotion.
 
 ## Liens
 
 - Runbook : `docs/runbooks/RELEASE_PROD.md`
 - Workflow : `.github/workflows/release-prod.yml`
-- Configuration hébergeurs : `render.yaml`, configuration Vercel (UI)
+- Configuration hébergeurs : `render.yaml`, configuration Render (UI)
 - Variables d'environnement : `docs/runbooks/ENVIRONMENT_VARIABLES.md`
 - Procédure d'urgence : `docs/runbooks/DEP-06_INCIDENT_ROLLBACK_PILOT_CHECKLIST_2026-04-30.md`
 - Gate go/no-go : `docs/runbooks/DEP-07_GO_NO_GO_PILOT_RELEASE_2026-04-30.md`

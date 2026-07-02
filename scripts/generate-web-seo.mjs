@@ -30,7 +30,7 @@ const blogSitemapSourcePath = join(
   'blog-sitemap-pages.json',
 );
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
-const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
+const defaultSiteUrl = 'https://kraak-web-prod.onrender.com';
 
 const trimTrailingSlashes = (value) => {
   let end = value.length;
@@ -100,7 +100,10 @@ const main = async () => {
   const rawBlogSitemapConfig = await readFile(blogSitemapSourcePath, 'utf8');
   const seoPages = JSON.parse(rawSeoConfig);
   const blogSitemapPages = JSON.parse(rawBlogSitemapConfig);
-  const sitemapPages = [...seoPages.filter(isIndexablePage), ...blogSitemapPages];
+  const sitemapPages = [
+    ...seoPages.filter(isIndexablePage),
+    ...blogSitemapPages,
+  ];
   const siteUrl = normalizeSiteUrl(
     process.env['PUBLIC_SITE_URL'] || defaultSiteUrl,
   );

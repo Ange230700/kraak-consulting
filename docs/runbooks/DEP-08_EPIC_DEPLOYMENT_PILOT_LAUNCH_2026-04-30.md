@@ -28,7 +28,7 @@ Vérification réalisée via GitHub CLI sur les issues `[TASK][DEP-*]`.
 1. `pnpm lint`
 2. `pnpm typecheck`
 3. `pnpm test:workspace`
-4. `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability`
+4. `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability`
 5. `curl -sS -o /tmp/api_health.json -w "%{http_code}\\n" https://kraak-api-staging.onrender.com/health`
 
 ## Résultats
@@ -42,7 +42,7 @@ Vérification réalisée via GitHub CLI sur les issues `[TASK][DEP-*]`.
 ### Revérifications runtime pilote
 
 - API pilot (`https://kraak-api-staging.onrender.com/health`): HTTP 200, payload observé `{"status":"ok"}`
-- Web pilot (`https://kraak-consulting.vercel.app/`): HTTP 401 pendant le check d'observabilité
+- Web pilot (`https://kraak-web-prod.onrender.com/`): HTTP 401 pendant le check d'observabilité
 
 ## Décision de lancement maîtrisé
 
@@ -56,7 +56,7 @@ Justification:
 
 ## Actions de déblocage obligatoires
 
-1. Vérifier la configuration de protection du projet Vercel (Deployment Protection / Password / Trusted Access).
+1. Vérifier la configuration de protection du projet Render (Deployment Protection / Password / Trusted Access).
 2. Restaurer un accès HTTP 200 public pour les routes critiques pilote (`/`, `/services`, `/programmes`, `/contact`).
 3. Rejouer `pnpm check:observability` avec URLs pilote en variables d'environnement.
 4. Archiver la preuve de recheck dans `docs/runbooks/evidence/`.

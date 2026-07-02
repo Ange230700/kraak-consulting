@@ -2,47 +2,47 @@
 <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kraak-consulting.vercel.app/</loc>
+    <loc>https://kraak-web-prod.onrender.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/a-propos</loc>
+    <loc>https://kraak-web-prod.onrender.com/a-propos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/services</loc>
+    <loc>https://kraak-web-prod.onrender.com/services</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/programmes</loc>
+    <loc>https://kraak-web-prod.onrender.com/programmes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/ressources</loc>
+    <loc>https://kraak-web-prod.onrender.com/ressources</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/contact</loc>
+    <loc>https://kraak-web-prod.onrender.com/contact</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/faq</loc>
+    <loc>https://kraak-web-prod.onrender.com/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/mentions-legales</loc>
+    <loc>https://kraak-web-prod.onrender.com/mentions-legales</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://kraak-consulting.vercel.app/politique-de-confidentialite</loc>
+    <loc>https://kraak-web-prod.onrender.com/politique-de-confidentialite</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

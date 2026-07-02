@@ -112,7 +112,7 @@ L'ADR ARC-10 décrit le système de feature flag :
 
 **Aucun changement de code requis — le système existe déjà.**
 
-### 3.2 Configuration Vercel Par Environnement
+### 3.2 Configuration Render Par Environnement
 
 | Environnement         | Branch      | `CLIENT_FEATURE_PARTICIPANT_AREA` | Exécution                          |
 | --------------------- | ----------- | --------------------------------- | ---------------------------------- |
@@ -148,13 +148,13 @@ L'ADR ARC-10 décrit le système de feature flag :
 
 ## 4 · Checklist Avant Tag Release
 
-### 4.1 Configuration Vercel (À Valider / Configurer)
+### 4.1 Configuration Render (À Valider / Configurer)
 
-- [ ] **Projet Vercel `kraak-consulting`** : vérifier la variable `CLIENT_FEATURE_PARTICIPANT_AREA`
+- [ ] **Projet Render `kraak-consulting`** : vérifier la variable `CLIENT_FEATURE_PARTICIPANT_AREA`
   - [ ] **Production** (`main`) → **`false`** (ou absent = défaut)
   - [ ] **Preview** (`staging`) → **`true`** (override branche)
-- [ ] Tester le déploiement Vercel de `main` avec `CLIENT_FEATURE_PARTICIPANT_AREA=false`
-- [ ] Tester le déploiement Vercel de `staging` avec `CLIENT_FEATURE_PARTICIPANT_AREA=true`
+- [ ] Tester le déploiement Render de `main` avec `CLIENT_FEATURE_PARTICIPANT_AREA=false`
+- [ ] Tester le déploiement Render de `staging` avec `CLIENT_FEATURE_PARTICIPANT_AREA=true`
 
 ### 4.2 Build & Bundle
 
@@ -202,7 +202,7 @@ L'ADR ARC-10 décrit le système de feature flag :
 
 - [ ] Documenter le release dans `CHANGELOG.md`
 - [ ] Mettre à jour `README.md` avec version courante
-- [ ] Vérifier URL Vercel prod accessible
+- [ ] Vérifier URL Render prod accessible
 - [ ] Vérifier API prod accessible et répond
 - [ ] Envoyer notification aux stakeholders
 
@@ -215,7 +215,7 @@ L'ADR ARC-10 décrit le système de feature flag :
 | **Participant area web** | Implémenté, gâté  | ✅ Rien — déjà masqué par feature flag        |
 | **Mobile**               | Implémenté        | ✅ Rien — déploiement séparé (APK)            |
 | **API endpoints**        | Implémentés, auth | ✅ Rien — protégés par auth + RLS             |
-| **Vercel config**        | À valider         | ⚠️ **Confirmer flag `false` en prod**         |
+| **Render config**        | À valider         | ⚠️ **Confirmer flag `false` en prod**         |
 | **Tests**                | 1 060 au vert     | ✅ Passer la suite avant tag                  |
 | **Git**                  | Prêt              | ✅ Workflow standard + tag v1.0.0             |
 | **Documentation**        | À mettre à jour   | ⚠️ Mettre à jour CHANGELOG + README après tag |
@@ -228,7 +228,7 @@ L'ADR ARC-10 décrit le système de feature flag :
 | ------------------------------------------- | ----------- | ------ | --------------------------------------- |
 | Bug surface vitrine non détecté pré-release | Basse       | Haute  | Rejouer full E2E smoke test avant push  |
 | Code participant consomme ressources prod   | Très basse  | Basse  | Tree-shake + vérifier bundle size       |
-| Flag Vercel mal configuré, participant OK   | Moyenne     | Haute  | Tester preview branch avant prod push   |
+| Flag Render mal configuré, participant OK   | Moyenne     | Haute  | Tester preview branch avant prod push   |
 | RLS Supabase not configured                 | Très basse  | Haute  | Vérifier policies.sql + tests API       |
 | Mobile APK built with prod API              | Basse       | Haute  | Configurer env de build APK sur staging |
 
@@ -238,7 +238,7 @@ L'ADR ARC-10 décrit le système de feature flag :
 
 Avant de procéder, confirmez :
 
-1. **Vercel** : La variable `CLIENT_FEATURE_PARTICIPANT_AREA` est-elle déjà configurée sur le projet `kraak-consulting`?
+1. **Render** : La variable `CLIENT_FEATURE_PARTICIPANT_AREA` est-elle déjà configurée sur le projet `kraak-consulting`?
    - `production` → `false`?
    - `preview` + branche `staging` → `true`?
 
@@ -246,7 +246,7 @@ Avant de procéder, confirmez :
 
 3. **Analytics** : GA4 tracking doit-il être actif en prod dès la v1.0.0 ou attendre validation métier?
 
-4. **Deployment** : Souhaitez-vous un **blue-green deployment** ou un **rolling release** standard Vercel?
+4. **Deployment** : Souhaitez-vous un **blue-green deployment** ou un **rolling release** standard Render?
 
 5. **Rollback plan** : En cas de problème prod, bascule possible vers une version antérieure ou faut-il rebuild?
 
@@ -255,7 +255,7 @@ Avant de procéder, confirmez :
 ## Prochaines Étapes
 
 ✅ **Validation client** : Confirmez la liste ci-dessous
-✅ **Confirmation Vercel config** : Vérifiez les variables d'environnement
+✅ **Confirmation Render config** : Vérifiez les variables d'environnement
 ✅ **Exécution checklist** : Lancez les tests et verifications
 ✅ **Tag & push** : Déclenchez le release
 ✅ **Documentation post-release** : Mettez à jour la doc de maintenance

@@ -14,7 +14,7 @@ avec les artefacts Git et la documentation associée.
 
 | Dépendance | Description                               | Statut        |
 | ---------- | ----------------------------------------- | ------------- |
-| DEP-02     | Pipeline déploiement web (Vercel)         | ✅ Satisfaite |
+| DEP-02     | Pipeline déploiement web (Render)         | ✅ Satisfaite |
 | DEP-03     | Pipeline déploiement API (Render)         | ✅ Satisfaite |
 | DEP-04     | Distribution mobile test (APK/TestFlight) | ✅ Satisfaite |
 | DEP-06     | Runbook incident + rollback + checklist   | ✅ Satisfaite |
@@ -39,14 +39,14 @@ Cette tâche ne couvre pas :
 
 ## 1. Consolidation Des Dépendances
 
-### 1.1 DEP-02 — Pipeline déploiement web (Vercel)
+### 1.1 DEP-02 — Pipeline déploiement web (Render)
 
 **Statut** : ✅ Go
 
 Preuves :
 
-- site vitrine KRAAK déployé et accessible : `https://kraak-consulting.vercel.app`
-- pipeline CI/CD Vercel actif (déploiements automatiques sur `main`)
+- site vitrine KRAAK déployé et accessible : `https://kraak-web-prod.onrender.com`
+- pipeline CI/CD Render actif (déploiements automatiques sur `main`)
 - toutes les routes critiques répondent avec HTTP 200 :
   - `/` (Accueil)
   - `/services`
@@ -99,7 +99,7 @@ Preuves :
 
 - runbook livré : `docs/runbooks/DEP-06_INCIDENT_ROLLBACK_PILOT_CHECKLIST_2026-04-30.md`
 - procédures d'incident documentées (détection, diagnostic, mitigation)
-- procédures de rollback documentées pour Vercel (web) et Render (API)
+- procédures de rollback documentées pour Render (web) et Render (API)
 - checklist complète de lancement pilot incluse
 - evidence : `docs/runbooks/evidence/DEP-06_incident-rollback-pilot-evidence_2026-04-30.md`
 
@@ -138,7 +138,7 @@ Preuves :
 
 **Périmètre du pilote** :
 
-- Surface web : `https://kraak-consulting.vercel.app` (routes `/`, `/services`, `/programmes`, `/contact`)
+- Surface web : `https://kraak-web-prod.onrender.com` (routes `/`, `/services`, `/programmes`, `/contact`)
 - Surface API : `https://kraak-api-staging.onrender.com` (endpoints de contact, health)
 - Surface mobile : APK debug disponible pour distribution interne (TestFlight iOS en préparation)
 
@@ -169,7 +169,7 @@ Commande utilisée :
 git tag -a pilot-2026-04-30 -m "Release pilote KRAAK — 2026-04-30
 
 Go/No-Go : GO
-Périmètre : web (Vercel) + API (Render) + mobile debug (APK)
+Périmètre : web (Render) + API (Render) + mobile debug (APK)
 Commit : HEAD
 "
 git push origin pilot-2026-04-30
@@ -177,7 +177,7 @@ git push origin pilot-2026-04-30
 
 ### 4.2 Périmètre de la release pilote
 
-#### Web — `https://kraak-consulting.vercel.app`
+#### Web — `https://kraak-web-prod.onrender.com`
 
 Pages déployées :
 

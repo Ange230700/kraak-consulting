@@ -155,8 +155,8 @@ GET    /auth/profile             - Current authenticated user + participant data
 
 | Environment | Value   | Source                                    | Intent                                        |
 | ----------- | ------- | ----------------------------------------- | --------------------------------------------- |
-| Production  | `false` | Vercel project env var (kraak-consulting) | Hide participant area until post-MVP approval |
-| Staging     | `true`  | Vercel preview override on staging branch | Enable for testing                            |
+| Production  | `false` | Render project env var (kraak-consulting) | Hide participant area until post-MVP approval |
+| Staging     | `true`  | Render preview override on staging branch | Enable for testing                            |
 | Development | `true`  | `.env` or `.env.staging`                  | Enable for local dev                          |
 
 #### Behavior
@@ -192,7 +192,7 @@ This flag is **TEMPORARY** (see `docs/decisions/ARC-10-feature-flag-participant-
 3. Remove `participantAreaCanMatch` guard
 4. Remove `@if (participantAreaEnabled)` from navbar
 5. Clean up `.env*` files
-6. Delete Vercel environment variable
+6. Delete Render environment variable
 
 ---
 
@@ -372,7 +372,7 @@ Key ADRs defining scope boundaries:
 
 3. **Environment Cleanup**
    - Delete `CLIENT_FEATURE_PARTICIPANT_AREA` from `.env*` files
-   - Remove Vercel project environment variable
+   - Remove Render project environment variable
 
 4. **Documentation**
    - Remove ARC-10 flag decision document (flag no longer needed)

@@ -16,8 +16,8 @@ ajouter d'infrastructure externe supplémentaire :
 ## Dépendances
 
 - DEP-02: satisfaite
-  - le site public est déjà déployée via Vercel
-  - URL publique documentée: `https://kraak-consulting.vercel.app`
+  - le site public est déjà déployée via Render
+  - URL publique documentée: `https://kraak-web-prod.onrender.com`
 - DEP-03: satisfaite
   - l'API est déjà déployée via Render
   - endpoint de santé déclaré dans `render.yaml` via `healthCheckPath: /health`
@@ -74,11 +74,11 @@ Comportement:
 Valeurs versionnées actuellement dans le workflow:
 
 - staging
-  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app` (aucune URL web staging stable ; les previews Vercel changent a chaque commit et le branch alias a SSO)
+  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com` (aucune URL web staging stable ; les previews Render changent a chaque commit et le branch alias a SSO)
   - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com`
   - issue: `[ALERT][DEP-05][staging] Observability check failure`
 - production
-  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app`
+  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com`
   - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com`
   - issue: `[ALERT][DEP-05][production] Observability check failure`
 
@@ -87,7 +87,7 @@ Valeurs versionnées actuellement dans le workflow:
 Commande locale ou CI:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com \
 pnpm check:observability
 ```
@@ -95,7 +95,7 @@ pnpm check:observability
 Commande pour la cible staging:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 ```
@@ -124,7 +124,7 @@ Sortie attendue:
 ## Risques résiduels
 
 - L'alerte dépend encore des notifications GitHub et non d'un canal paging dédié.
-- Le web est valide sur la home publique, pas sur un endpoint de santé dédié côté Vercel.
+- Le web est valide sur la home publique, pas sur un endpoint de santé dédié côté Render.
 - La valeur `APP_VERSION` doit être renseignée côté Render pour être pleinement utile.
 
 ## Prochaine étape

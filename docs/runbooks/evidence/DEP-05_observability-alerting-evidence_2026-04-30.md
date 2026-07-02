@@ -46,7 +46,7 @@ Résultat attendu:
 
 ## Couverture DEP-02 / DEP-03 vérifiée
 
-- DEP-02: déploiement web alimente le endpoint surveillé `https://kraak-consulting.vercel.app`
+- DEP-02: déploiement web alimente le endpoint surveillé `https://kraak-web-prod.onrender.com`
 - DEP-03: déploiement API expose `/health` et `render.yaml` référence `healthCheckPath: /health`
 
 ## Preuve structurelle ajoutée

@@ -9,21 +9,24 @@ import {
 
 test('Given une URL publique valide, When on la normalise, Then le slash terminal est retire', () => {
   assert.equal(
-    normalizePublicUrl('https://kraak-consulting.vercel.app/', 'KRAAK_OBSERVABILITY_WEB_URL'),
-    'https://kraak-consulting.vercel.app',
+    normalizePublicUrl(
+      'https://kraak-web-prod.onrender.com/',
+      'KRAAK_OBSERVABILITY_WEB_URL',
+    ),
+    'https://kraak-web-prod.onrender.com',
   );
 });
 
 test('Given les URLs web et API, When on construit les checks, Then la home web et /health sont surveilles', () => {
   assert.deepEqual(
     createObservabilityTargets({
-      webUrl: 'https://kraak-consulting.vercel.app/',
+      webUrl: 'https://kraak-web-prod.onrender.com/',
       apiUrl: 'https://kraak-api-staging.onrender.com/',
     }),
     [
       {
         name: 'web-home',
-        url: 'https://kraak-consulting.vercel.app/',
+        url: 'https://kraak-web-prod.onrender.com/',
         expectedStatus: 200,
         expectedContentType: 'text/html',
       },
@@ -76,7 +79,7 @@ test('Given un endpoint web qui repond en JSON, When le check s execute, Then un
       checkTarget(
         {
           name: 'web-home',
-          url: 'https://kraak-consulting.vercel.app/',
+          url: 'https://kraak-web-prod.onrender.com/',
           expectedStatus: 200,
           expectedContentType: 'text/html',
         },

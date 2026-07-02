@@ -492,12 +492,12 @@
       "config_by_environment": {
         "production": {
           "value": false,
-          "source": "defaults to false; can be overridden via Vercel env vars on kraak-consulting project",
+          "source": "defaults to false; can be overridden via Render env vars on kraak-consulting project",
           "intent": "Participant area is hidden in prod until approved post-MVP"
         },
         "staging": {
           "value": true,
-          "source": "Vercel preview override for staging branch",
+          "source": "Render preview override for staging branch",
           "intent": "Enable for testing on staging branch preview"
         },
         "development": {
@@ -507,7 +507,7 @@
         }
       },
       "temporary_status": "This flag is TEMPORARY and will be removed post-MVP once participant area passes security review. See ARC-10 decision document.",
-      "removal_plan": "Post-MVP: Remove flag from runtime-config, collapse buildRoutes to constant, remove @if in navbar, clean env files, remove Vercel variable"
+      "removal_plan": "Post-MVP: Remove flag from runtime-config, collapse buildRoutes to constant, remove @if in navbar, clean env files, remove Render variable"
     }
   ],
   "runtime_configuration": {

@@ -18,7 +18,7 @@ Voir aussi : [`ARC-07-prod-release-tag-based`](../decisions/ARC-07-prod-release-
   [`STAGING_PROMOTION`](STAGING_PROMOTION.md)).
 - **Approbation humaine obligatoire** via le GitHub Environment `production`.
 - **Aucun secret prod** dans le repo, ni en local. Tout passe par GitHub
-  Secrets, Render Env, Vercel Env.
+  Secrets, Render Env.
 - **Rollback = re-deploy d'un tag antérieur.** Jamais de `git push --force` ni
   `git tag -f`.
 
@@ -36,9 +36,7 @@ Dans `Settings → Environments → New environment` :
   - `RENDER_API_KEY`
   - `RENDER_PROD_SERVICE_ID`
   - `PROD_API_HEALTH_URL` (URL absolue vers `/health` du service prod)
-  - `VERCEL_TOKEN`
-  - `VERCEL_PROD_PROJECT_ID`
-  - `VERCEL_ORG_ID`
+  - `RENDER_PROD_WEB_SERVICE_ID`
   - `PROD_WEB_URL` (URL absolue de la home web prod)
   - `SUPABASE_ACCESS_TOKEN` (token CLI Supabase pour `link` + `db push`)
   - `SUPABASE_PROD_PROJECT_REF` (ref du projet Supabase prod, distinct de staging)
@@ -69,13 +67,12 @@ des étapes migration ou smoke test.
 - Les déploiements prod sont déclenchés via API Render depuis le workflow
   `release-prod.yml`.
 
-### 4. Vercel — projet web prod
+### 4. Render — projet web prod
 
 - Production Branch : `(none)` (ou tout autre paramètre désactivant les
   déploiements automatiques sur `main`).
-- Les déploiements prod sont déclenchés via `vercel deploy --prod` depuis le
-  workflow.
-- Variables d'environnement prod renseignées via l'UI Vercel sur la cible
+- Les déploiements prod sont déclenchés via API Render depuis le workflow.
+- Variables d'environnement prod renseignées via l'UI Render sur la cible
   `Production`.
 
 ### 5. Supabase — projet prod séparé
@@ -129,7 +126,7 @@ Le push du tag déclenche `.github/workflows/release-prod.yml` :
    `production`.
 3. Migrations Supabase prod appliquées (si présentes).
 4. Déploiement Render prod via API.
-5. Déploiement Vercel prod via CLI.
+5. Déploiement Render prod via CLI.
 6. Smoke test prod (`/health`, page d'accueil web).
 
 ### Étape 4 — Validation post-deploy
@@ -137,7 +134,7 @@ Le push du tag déclenche `.github/workflows/release-prod.yml` :
 - Vérifier `/health` de l'API prod (status `ok`, `version` correspondant au
   tag).
 - Vérifier la home web prod (HTTP 200, marque KRAAK visible).
-- Vérifier les logs Render et Vercel pour absence d'erreurs au démarrage.
+- Vérifier les logs Render pour absence d'erreurs au démarrage.
 - Marquer la GitHub Release associée au tag (`gh release create v1.2.0
 --generate-notes`).
 
@@ -170,7 +167,7 @@ Synthèse :
 - Tous les secrets prod vivent dans :
   - GitHub Environment `production` (pour le workflow CI/CD)
   - Render Env (pour le runtime API)
-  - Vercel Env (pour le runtime web)
+  - Render Env (pour le runtime web)
 - Toute rotation de secret se fait dans **les trois endroits** simultanément.
 
 ## Anti-patterns interdits
@@ -212,7 +209,7 @@ gh run list --workflow release-prod.yml
 - preparation / build / tests
 - gate d'approbation environment `production`
 - migrations Supabase (ou skip explicite)
-- déploiement Render/Vercel (ou simulation explicite)
+- déploiement Render (ou simulation explicite)
 - smoke final
 
 ### Critères go/no-go de process

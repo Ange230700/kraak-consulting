@@ -14,7 +14,7 @@ est :
 - **Back-end :** NestJS
 - **Backend services :** Supabase + Resend
 - **Déploiement :**
-  - front-end préproduction sur **Vercel**
+  - front-end préproduction sur **Render**
   - back-end préproduction sur **Render**
 - **CI/CD :** GitHub Actions + Docker multi-stage builds
 
@@ -101,7 +101,7 @@ Le meilleur compromis est de construire le front avec Angular, mais de **pré-re
 
 - meilleur SEO ;
 - pages plus rapides ;
-- déploiement plus simple sur Vercel ;
+- déploiement plus simple sur Render ;
 - pas besoin d’un serveur SSR permanent pour les pages publiques du MVP.
 
 ### PrimeNG 21 + Tailwind
@@ -158,9 +158,9 @@ C’est cohérent avec ton choix initial.
 
 ### Front-end — préproduction
 
-#### Choix : Vercel
+#### Choix : Render
 
-#### Rôle de Vercel
+#### Rôle de Render
 
 - héberger le front Angular pré-rendu ;
 - gérer les previews par branche / pull request ;
@@ -237,7 +237,7 @@ flowchart TD
 
 ### À chaque push sur la branche de préproduction
 
-- **Vercel** build le workspace client et publie `apps/client/dist/web/browser`
+- **Render** build le workspace client et publie `apps/client/dist/web/browser`
 - **Render** déploie `apps/api` à partir du `render.yaml`
 
 ### Docker
@@ -253,7 +253,7 @@ flowchart TD
 #### Remarque
 
 - Docker est indispensable côté API ;
-- il n’est pas nécessaire pour le front Vercel au MVP.
+- il n’est pas nécessaire pour le front Render au MVP.
 
 ---
 
@@ -270,7 +270,7 @@ flowchart TD
 
 ### Front
 
-- `vercel.json`
+- `render.yaml`
 - `apps/client/angular.json`
 - `apps/client/projects/web/src/tailwind.css`
 - `apps/client/projects/web/src/app/app.routes.server.ts` si rendu hybride/prerender avancé
@@ -341,7 +341,7 @@ La stack MVP recommandée pour KRAAK est donc :
 - **Emails : Resend**
 - **Formulaires : API personnalisée**
 - **Analytics : GA4 + Search Console**
-- **Front hosting : Vercel**
+- **Front hosting : Render**
 - **API hosting : Render**
 - **CI/CD : GitHub Actions + Docker**
 
@@ -349,4 +349,4 @@ La stack MVP recommandée pour KRAAK est donc :
 
 ## 10. Résumé en une phrase
 
-La meilleure option pour ce MVP est un **site marketing Angular pré-rendu, déployé sur Vercel, soutenu par une API NestJS sur Render, avec Supabase pour les services backend, pnpm pour le monorepo, et Docker pour fiabiliser la CI/CD**.
+La meilleure option pour ce MVP est un **site marketing Angular pré-rendu, déployé sur Render, soutenu par une API NestJS sur Render, avec Supabase pour les services backend, pnpm pour le monorepo, et Docker pour fiabiliser la CI/CD**.

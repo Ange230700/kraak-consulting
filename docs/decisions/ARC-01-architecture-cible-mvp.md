@@ -40,7 +40,7 @@ Adopter une architecture **monorepo** organisée comme suit :
 | BaaS / Base       | Supabase (PostgreSQL managé, Auth, Storage, RLS)       |
 | Notifications     | Firebase Cloud Messaging (FCM) via Capacitor           |
 | Analytics         | PostHog ou Google Analytics (léger, MVP seulement)     |
-| Déploiement web   | Vercel (prerendering statique, SSR si nécessaire)      |
+| Déploiement web   | Render (prerendering statique, SSR si nécessaire)      |
 | Déploiement API   | Render (Docker)                                        |
 | Packages partagés | `packages/tokens`, `contracts`, `domain`, `api-client` |
 
@@ -91,7 +91,7 @@ docs/
 | SEO natif                  | ✅ Prerender Angular                 | ✅ SSR natif       | ❌ Web limité    |
 | Mobile natif               | ✅ Ionic + Capacitor                 | ⚠️ PWA seulement   | ✅ Natif         |
 | Partage de code web/mobile | ✅ Services Angular partagés         | ❌ Pas de partage  | ✅ Dart unifié   |
-| Complexité infrastructure  | ✅ Simple (Vercel + Render)          | ✅ Simple          | ⚠️ Moyenne       |
+| Complexité infrastructure  | ✅ Simple (Render)                   | ✅ Simple          | ⚠️ Moyenne       |
 | Écosystème composants UI   | ✅ PrimeNG mature                    | ✅ Large choix     | ⚠️ Plus jeune    |
 
 ---
@@ -126,7 +126,7 @@ Auth (Supabase Auth)
 
 ### 4.3 Déploiement
 
-- **Web** : Vercel, `outputDirectory: apps/client/dist/web/browser`
+- **Web** : Render, `outputDirectory: apps/client/dist/web/browser`
 - **API** : Render, conteneur Docker depuis `apps/api/Dockerfile`
 - **Base** : Supabase Cloud, migrations versionnées dans `supabase/migrations/`
 
