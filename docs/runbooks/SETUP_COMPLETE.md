@@ -26,7 +26,7 @@
 
 - **Trigger:** Version PR merged to `main`
 - **Action:** Fast-forwards `staging` to latest `main`
-- **Output:** Staging deployment (Render + Vercel auto-deploy)
+- **Output:** Staging deployment (Render auto-deploy)
 
 #### **publish-release.yml** (NEW)
 
@@ -92,7 +92,7 @@
 │ ↓                                                               │
 │ STAGING DEPLOYMENT (auto)                                       │
 │ • Render (kraak-api-staging) redeploys                          │
-│ • Vercel (staging project) redeploys                            │
+│ • Render (staging project) redeploys                            │
 └─────────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -107,7 +107,7 @@
 │ • Triggered by SemVer tag                                       │
 │ • Build + tests on tag commit                                   │
 │ • Awaits production approval (GitHub Environment)               │
-│ • Deploy to Render prod + Vercel prod                           │
+│ • Deploy to Render prod + Render prod                           │
 │ • Smoke tests                                                   │
 │ ✅ Production Live                                              │
 └─────────────────────────────────────────────────────────────────┘
@@ -237,7 +237,7 @@ git push -u origin feat/my-feature
 
 - Check: Did promote-to-main.yml run after version PR merge?
 - View: GitHub Actions > promote-to-main.yml > logs
-- Check: Render and Vercel dashboards for errors
+- Check: Render and Render dashboards for errors
 
 ---
 

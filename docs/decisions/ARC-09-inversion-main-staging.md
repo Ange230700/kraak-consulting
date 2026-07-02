@@ -24,8 +24,8 @@ chaque tag SemVer le seul déclencheur de release.
    atterrir alors que la prod attendait juste un tag, ce qui rendait `main`
    à la fois branche d'intégration ET point d'ancrage des tags — sans
    séparation claire des deux rôles.
-2. **Le check requis `Vercel – kraak-consulting` (Production) n'est plus
-   émis** depuis que les déploiements Vercel git-triggered ont été désactivés
+2. **Le check requis `Render – kraak-consulting` (Production) n'est plus
+   émis** depuis que les déploiements Render git-triggered ont été désactivés
    (ARC-07). Cela bloque mécaniquement tout merge sur `main` (`Missing
 successful active Production – kraak-consulting deployment`), même quand
    tous les autres checks sont verts.
@@ -58,7 +58,7 @@ KRAAK **inverse les rôles** des deux branches longues posés par ARC-08 :
 ### 2.2 Flux complet
 
 ```text
-feat/* ──► PR ──► staging ──► déploiement staging (Render + Vercel + Supabase)
+feat/* ──► PR ──► staging ──► déploiement staging (Render + Supabase)
                      │
                      ▼
             validation manuelle + E2E
@@ -104,7 +104,7 @@ non par l'UI GitHub) pour rester reproductible.
 | `required_pull_request_reviews`    |                 0 review                  | Solo dev ; 1 review obligatoire dès qu'un second mainteneur rejoint.   |
 | `enforce_admins`                   |                  `false`                  | Permet un override admin documenté en cas d'incident.                  |
 | `required_status_checks.strict`    |                  `true`                   | La PR doit être à jour avec `staging`.                                 |
-| `required_status_checks.contexts`  | CI complète + `Vercel – kraak-consulting` | La staging Preview est obligatoire (cf. ARC-11, projet Vercel unique). |
+| `required_status_checks.contexts`  | CI complète + `Render – kraak-consulting` | La staging Preview est obligatoire (cf. ARC-11, projet Render unique). |
 
 #### `main` (release)
 
@@ -118,13 +118,13 @@ non par l'UI GitHub) pour rester reproductible.
 | `required_pull_request_reviews`    |                     0 review                     | Cohérent avec `staging` ; à monter à 1 dès second mainteneur.         |
 | `enforce_admins`                   |                     `false`                      | Permet un hot-fix tag de release contrôlé.                            |
 | `required_status_checks.strict`    |                      `true`                      | La PR de release doit être à jour avec `main`.                        |
-| `required_status_checks.contexts`  | CI complète **sans** `Vercel – kraak-consulting` | La prod n'est plus git-triggered (ARC-07) ; ce check n'est plus émis. |
+| `required_status_checks.contexts`  | CI complète **sans** `Render – kraak-consulting` | La prod n'est plus git-triggered (ARC-07) ; ce check n'est plus émis. |
 
 ### 2.4 Check supprimé sur `main`
 
-Le contexte `Vercel – kraak-consulting` est **retiré** des
+Le contexte `Render – kraak-consulting` est **retiré** des
 `required_status_checks` de `main`. Justification : depuis ARC-07, la prod
-Vercel n'est plus déployée par push git mais par job manuel sur tag. Le
+Render n'est plus déployée par push git mais par job manuel sur tag. Le
 check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
 
 ---
@@ -137,7 +137,7 @@ check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
   (`main`).
 - `main` redevient une branche **stable et rare** : un commit = une release.
 - Le script de protection rend le modèle reproductible et auditable.
-- Les PR ne sont plus bloquées par un check Vercel Production fantôme.
+- Les PR ne sont plus bloquées par un check Render Production fantôme.
 
 ### Négatives / à surveiller
 

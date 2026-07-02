@@ -28,7 +28,7 @@ Types autorisés :
 | `refactor/` | Refactorisation sans changement de comportement |
 | `style/`    | Formatage, espaces, points-virgules             |
 | `perf/`     | Amélioration de performance                     |
-| `ci/`       | CI/CD (GitHub Actions, Vercel, Render)          |
+| `ci/`       | CI/CD (GitHub Actions, Render)                  |
 | `build/`    | Build system, scripts                           |
 | `revert/`   | Annulation d'un changement                      |
 

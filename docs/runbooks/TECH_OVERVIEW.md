@@ -156,7 +156,7 @@ pnpm run <script>     # Exécuter un script du package.json
 
 | Application | Plateforme | Comment                                             |
 | ----------- | ---------- | --------------------------------------------------- |
-| Site web    | **Vercel** | Plateforme cible configurée via `vercel.json`       |
+| Site web    | **Render** | Plateforme cible configurée via `render.yaml`       |
 | API         | **Render** | Déploiement via Docker (voir `apps/api/Dockerfile`) |
 
 ---

@@ -24,10 +24,11 @@ KRAAK.
 | `ARC-06` | Gating natif notifications push mobile sur Firebase                            | Acceptée                                      | 2026-04-10 |
 | `ARC-07` | Stratégie de release production basée sur les tags                             | Acceptée                                      | 2026-05-02 |
 | `ARC-08` | Environnement staging et branche longue `staging`                              | Acceptée (partiellement remplacée par ARC-09) | 2026-05-03 |
-| `ARC-09` | Inversion `main` ↔ `staging` (staging = intégration)                           | Acceptée (partiellement remplacée par ARC-11) | 2026-05-03 |
+| `ARC-09` | Inversion `main` ↔ `staging` (staging = intégration)                           | Acceptée (partiellement remplacée par ARC-16) | 2026-05-03 |
 | `ARC-10` | Feature flag espace participant                                                | Acceptée                                      | 2026-05-01 |
-| `ARC-11` | Consolidation des projets Vercel en un seul projet                             | Acceptée                                      | 2026-05-03 |
+| `ARC-11` | Consolidation de l'hebergement web sur un service unique                       | Remplacée (par ARC-16)                        | 2026-05-03 |
 | `ARC-11` | Stratégie de release production avec désactivation des surfaces non finalisées | À valider avant implémentation                | 2026-05-09 |
+| `ARC-16` | Render uniquement pour l'hebergement web                                       | Acceptee                                      | 2026-07-02 |
 | `ARC-12` | Retrait des sections de prévisualisation du bundle production                  | Appliquée                                     | 2026-05-14 |
 | `ARC-13` | Gating des routes non vitrines côté web                                        | Appliquée                                     | 2026-05-14 |
 | `ARC-14` | Gel de la surface vitrine publique                                             | Acceptée                                      | 2026-05-15 |

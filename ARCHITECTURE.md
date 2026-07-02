@@ -28,7 +28,7 @@ conflit avec la pile par défaut mentionnée dans `AGENTS.md`.
 - les quatre packages partagés (`packages/tokens`, `packages/contracts`,
   `packages/domain` et `packages/api-client`) sont implémentés avec couverture
   de tests unitaires (voir `docs/runbooks/PACKAGE_GUIDELINES.md`)
-- `vercel.json` et `render.yaml` sont déjà présents pour cadrer le déploiement
+- `render.yaml` est déjà présent pour cadrer le déploiement
 
 ---
 
@@ -50,7 +50,7 @@ La décision validée pour ce projet est :
 - analytics web : **PostHog** et/ou **Google Analytics** selon besoin réel
 - analytics mobile : outil dédié uniquement si le besoin de pilotage mobile le
   justifie
-- déploiement web : **Vercel** ou équivalent
+- déploiement web : **Render** ou équivalent
 - distribution mobile : **APK**, **TestFlight** et/ou canaux de test interne
 - stratégie de contenu : contenu web statique ou géré simplement ; contenu
   mobile servi par l'API/backend
@@ -158,7 +158,7 @@ tard, il devra être justifié dans une décision complémentaire.
 
 ### Déploiement
 
-- website : **Vercel** ou équivalent compatible front Angular
+- website : **Render** ou équivalent compatible front Angular
 - mobile : distribution via **APK**, **TestFlight**, canaux de test interne, ou
   processus équivalent selon la phase
 

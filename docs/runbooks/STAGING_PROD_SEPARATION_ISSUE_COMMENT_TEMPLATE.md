@@ -40,7 +40,7 @@ Runbook applique: docs/runbooks/STAGING_PROD_SEPARATION_30MIN.md
   - prod (Render + Supabase): compte GitHub `kraakconsulting`
   - Capture(s): <ajouter image ou lien>
 
-### 3) Vercel
+### 3) Render
 
 - [ ] Droit de déploiement Production vérifié
   - Projet prod rattaché à `kraakconsulting`

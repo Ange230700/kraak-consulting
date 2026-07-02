@@ -9,7 +9,7 @@ Epic: DEP
 Fournir des procédures opérationnelles pour :
 
 1. **Incident response** : diagnostic et mitigation rapide d'une dégradation de service
-2. **Rollback** : revert sûr vers une version précédente (API via Render, web via Vercel)
+2. **Rollback** : revert sûr vers une version précédente (API via Render, web via Render)
 3. **Pilot launch checklist** : vérification complète avant le déploiement pilot
 
 ## Dépendances
@@ -30,7 +30,7 @@ Fournir des procédures opérationnelles pour :
 Cette tâche couvre :
 
 - procédures de diagnostic et d'incident sur les services web et API pilot
-- procédures de rollback sûres pour Vercel (web) et Render (API)
+- procédures de rollback sûres pour Render (web) et Render (API)
 - checklist exhaustive de validation avant ouverture pilot
 - playbooks de réponse d'urgence
 
@@ -52,7 +52,7 @@ Cette tâche ne couvre pas :
 Les incidents sont détectés via :
 
 1. **Workflow `Observability`** (toutes les 15 minutes)
-   - vérification `GET https://kraak-consulting.vercel.app` (web home)
+   - vérification `GET https://kraak-web-prod.onrender.com` (web home)
    - vérification `GET https://kraak-api-staging.onrender.com/health` (API health)
    - en cas d'échec, issue GitHub `[ALERT][DEP-05] Observability check failure`
    - chaque échec crée un commentaire horodate
@@ -73,14 +73,14 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
    ```bash
    # Web
-   curl -v https://kraak-consulting.vercel.app
+   curl -v https://kraak-web-prod.onrender.com
 
    # API
    curl -v https://kraak-api-staging.onrender.com/health
    ```
 
 2. **Vérifier les logs déploiement** :
-   - Vercel : <https://vercel.com/dashboard/kraak-group> (Events + Deployments)
+   - Render : <https://render.com/dashboard/kraak-group> (Events + Deployments)
    - Render : <https://dashboard.render.com> (Web Service: kraak-api)
 
 3. **Notifier l'équipe** si incident confirmé (non-résolution = escalade)
@@ -91,7 +91,7 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
 | Symptôme                               | Domaine probable | Action urgente                             |
 | -------------------------------------- | ---------------- | ------------------------------------------ |
-| Web inaccessible (500, timeout)        | Vercel           | Vérifier Vercel dashboard & derniers logs  |
+| Web inaccessible (500, timeout)        | Render           | Vérifier Render dashboard & derniers logs  |
 | API `/health` échoue                   | Render           | Vérifier Render dashboard & logs conteneur |
 | API slow, latence élevée               | Render / DB      | Vérifier `GET /health` pour uptime/perf    |
 | Certains endpoints 5xx, autres 200 ok  | API route        | Chercher la route en erreur dans logs API  |
@@ -100,18 +100,18 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
 #### Phase 2 : Collecte de données
 
-##### Web (Vercel)
+##### Web (Render)
 
 ```bash
 # 1. Derniers deployments
-curl -s https://api.vercel.com/v6/deployments?teamId=TEAM_ID \
-  -H "Authorization: Bearer $VERCEL_TOKEN" | jq '.deployments[0:5]'
+curl -s https://api.render.com/v6/deployments?teamId=TEAM_ID \
+  -H "Authorization: Bearer $RENDER_API_KEY" | jq '.deployments[0:5]'
 
 # 2. Logs derniers déploiements
-# Via dashboard: https://vercel.com/dashboard/kraak-group > Deployments > Recent
+# Via dashboard: https://render.com/dashboard/kraak-group > Deployments > Recent
 
 # 3. Vérifier health via headers HTTP
-curl -i https://kraak-consulting.vercel.app
+curl -i https://kraak-web-prod.onrender.com
 ```
 
 ##### API (Render)
@@ -146,14 +146,14 @@ curl -v https://kraak-api-staging.onrender.com/health
 
 ```text
 Action 1 : Vérifier le dernier déploiement web
-- URL: https://vercel.com/dashboard/kraak-group
+- URL: https://render.com/dashboard/kraak-group
 - Chercher la dernière fonction/build échouée
 - Chercher les variables d'environnement manquantes
 
 Action 2 : Redéployer depuis main manuellement
 - Pousser un petit commit de "bump" (ex: changement inoffensif)
-- Ou utiliser Vercel UI > Deployments > Redeploy
-- Attendre ~60s et vérifier avec: curl -v https://kraak-consulting.vercel.app
+- Ou utiliser Render UI > Deployments > Redeploy
+- Attendre ~60s et vérifier avec: curl -v https://kraak-web-prod.onrender.com
 
 Action 3 : Si le problème persiste
 - Procéder à un ROLLBACK (voir section 2)
@@ -207,7 +207,7 @@ Action 4 : Redémarrer le service API
 
 ```text
 Action 1 : Identifier la route défaillante depuis les logs Web
-- URL: https://vercel.com/dashboard > Logs (Function Logs)
+- URL: https://render.com/dashboard > Logs (Function Logs)
 - Chercher les GET /programs (ou la route en erreur)
 - Lire le message d'erreur
 
@@ -240,16 +240,16 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 
 ## 2. Rollback Procedures
 
-### 2.1 Rollback Web (Vercel)
+### 2.1 Rollback Web (Render)
 
 **Prérequis** :
 
-- Accès dashboard Vercel (<https://vercel.com>)
+- Accès dashboard Render (<https://render.com>)
 - Accès repo GitHub avec droits push
 
-#### Méthode A : Redeploy depuis l'UI Vercel (rapide)
+#### Méthode A : Redeploy depuis l'UI Render (rapide)
 
-1. Aller sur <https://vercel.com/dashboard/kraak-group>
+1. Aller sur <https://render.com/dashboard/kraak-group>
 2. Cliquer sur le projet `kraak-group`
 3. Aller dans l'onglet **Deployments**
 4. Trouver le déploiement stable précédent (chercher la date/heure)
@@ -257,7 +257,7 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 6. Sélectionner **Promote to Production**
 7. Confirmer
 8. Attendre ~60 secondes
-9. Vérifier : `curl -v https://kraak-consulting.vercel.app`
+9. Vérifier : `curl -v https://kraak-web-prod.onrender.com`
 
 **Durée** : ~2 minutes  
 **Risque** : bas (même artefact, juste serveur mis à jour)
@@ -270,9 +270,9 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 4. Commiter le revert : `git commit -m "fix: rollback to <commit_sha> due to <incident>"`
 5. Pousser : `git push origin fix/rollback-<yyyymmdd-hhmm>`
 6. Créer une PR, reviewer, merger vers `main`
-7. Vercel redéploie automatiquement
+7. Render redéploie automatiquement
 8. Attendre ~60 secondes
-9. Vérifier : `curl -v https://kraak-consulting.vercel.app`
+9. Vérifier : `curl -v https://kraak-web-prod.onrender.com`
 
 **Durée** : ~5 minutes (incluant build)  
 **Risque** : très bas (tracé Git clair)
@@ -288,7 +288,7 @@ git checkout -b fix/rollback-from-<tag> <tag>
 # 2. Commiter en revert
 git commit --allow-empty -m "fix: rollback to tag <tag> due to <incident>"
 
-# 3. Pousser et laisser Vercel redéployer
+# 3. Pousser et laisser Render redéployer
 git push origin fix/rollback-from-<tag>
 
 # 4. Merger dans main une fois vérifiée
@@ -362,7 +362,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 2. Puis rollback web (plus visible)
    - Rollback web suivant méthode 2.1.B
-   - Attendre vérification: curl https://kraak-consulting.vercel.app
+   - Attendre vérification: curl https://kraak-web-prod.onrender.com
 
 3. Post-rollback
    - Documenter l'incident
@@ -392,11 +392,11 @@ Si web ET API doivent être rollbackés ensemble :
 
 #### Infrastructure & Déploiement
 
-- [ ] Web déployée et accessible : `curl -I https://kraak-consulting.vercel.app` → HTTP 200
+- [ ] Web déployée et accessible : `curl -I https://kraak-web-prod.onrender.com` → HTTP 200
 - [ ] API déployée et accessible : `curl https://kraak-api-staging.onrender.com/health` → `{ "status": "ok", ... }`
 - [ ] Supabase production-pilot configuré et connecté
 - [ ] Variables d'environnement validées sur tous les services
-  - Vercel: <https://vercel.com/dashboard/kraak-group> > Settings > Environment Variables
+  - Render: <https://render.com/dashboard/kraak-group> > Settings > Environment Variables
   - Render: <https://dashboard.render.com> > kraak-api > Environment
   - Supabase: <https://supabase.com/dashboard> > Settings
 - [ ] Domaines personnalisés (si applicable) configurés et validés
@@ -426,7 +426,7 @@ Si web ET API doivent être rollbackés ensemble :
 
 #### Parcours Utilisateur Critiques
 
-Tester manuellement chaque flux principal via <https://kraak-consulting.vercel.app> :
+Tester manuellement chaque flux principal via <https://kraak-web-prod.onrender.com> :
 
 - [ ] **Page d'accueil** `/`
   - [ ] Charge en < 2s
@@ -465,10 +465,10 @@ Tester manuellement chaque flux principal via <https://kraak-consulting.vercel.a
 
 - [ ] HTTPS obligatoire
   - Vérifier que tous les endpoints sont HTTPS
-  - Test: `curl -I https://kraak-consulting.vercel.app` → `strict-transport-security` header
+  - Test: `curl -I https://kraak-web-prod.onrender.com` → `strict-transport-security` header
 
 - [ ] Content-Security-Policy configurée (si applicable)
-  - Vérifier headers: `curl -i https://kraak-consulting.vercel.app | grep -i "content-security"`
+  - Vérifier headers: `curl -i https://kraak-web-prod.onrender.com | grep -i "content-security"`
 
 #### Données & Base de Données
 
@@ -505,13 +505,13 @@ Tester manuellement chaque flux principal via <https://kraak-consulting.vercel.a
 
 ```bash
 # 1. Web sanity check
-curl -I https://kraak-consulting.vercel.app
+curl -I https://kraak-web-prod.onrender.com
 
 # 2. API sanity check
 curl https://kraak-api-staging.onrender.com/health | jq .
 
 # 3. Observability check
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 
@@ -537,7 +537,7 @@ pnpm check:observability
 
 2. **Monitoring intensif** (1h après lancement)
    - Consulter GitHub issues toutes les 10 minutes
-   - Vérifier les logs Render et Vercel
+   - Vérifier les logs Render
    - Être prêt à rollback
 
 3. **Stabilité** (4-24h post-lancement)
@@ -583,7 +583,7 @@ Incident NON-RÉSOLU après:
 
 1. Vérifier l'issue GitHub [ALERT][DEP-05]
 2. Diagnostiquer: curl web + curl API /health
-3. Chercher les logs: Vercel dashboard + Render dashboard
+3. Chercher les logs: Render dashboard + Render dashboard
 4. Identifier le domaine: Web? API? Supabase?
 5. Mitiger: Redémarrer / Redeploy / ROLLBACK
 6. Post-incident: Documenter + Corriger + Déployer
@@ -622,7 +622,7 @@ Appeler = 🚨
 
 ## Ressources Externes
 
-- Vercel docs: <https://vercel.com/docs/deployments/overview>
+- Render docs: <https://render.com/docs/deployments/overview>
 - Render docs: <https://render.com/docs>
 - Supabase dashboard: <https://supabase.com/dashboard>
 - GitHub issues: <https://github.com/Ange230700/kraak-group/issues>

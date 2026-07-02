@@ -118,7 +118,7 @@ kraak-group/
 | Frontend mobile        | Ionic Angular 8 + Capacitor 7            |
 | Backend                | NestJS 11                                |
 | Base de données / Auth | Supabase (PostgreSQL, Auth, Storage)     |
-| Déploiement web        | Vercel                                   |
+| Déploiement web        | Render                                   |
 | Déploiement API        | Render (Docker)                          |
 
 Pour les détails, voir [`ARCHITECTURE.md`](ARCHITECTURE.md).
@@ -251,10 +251,10 @@ changement.
 
 > Note de nommage : le dépôt GitHub s'appelle `kraak-consulting`, tandis que le package racine conserve le nom npm/workspace `kraak-group`.
 
-| Surface           | Cible active                                                                                                                     |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Web staging       | Render static site `kraak-web-staging`                                                                                           |
-| API staging       | Render Docker service `kraak-api-staging`                                                                                        |
-| Web production    | Release contrôlée ; vérifier [`docs/runbooks/RELEASE_PROD.md`](docs/runbooks/RELEASE_PROD.md) pour la cible active Vercel/Render |
-| API production    | Render Docker service `kraak-api-prod`                                                                                           |
-| Base/Auth/Storage | Supabase par environnement                                                                                                       |
+| Surface           | Cible active                                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Web staging       | Render static site `kraak-web-staging`                                                                                    |
+| API staging       | Render Docker service `kraak-api-staging`                                                                                 |
+| Web production    | Release contrôlée ; vérifier [`docs/runbooks/RELEASE_PROD.md`](docs/runbooks/RELEASE_PROD.md) pour la cible active Render |
+| API production    | Render Docker service `kraak-api-prod`                                                                                    |
+| Base/Auth/Storage | Supabase par environnement                                                                                                |

@@ -17,8 +17,8 @@ Issue: #124
 
 **Statut** : ✅ Satisfaite
 
-- Site pilote accessible : `https://kraak-consulting.vercel.app`
-- Déploiements automatiques Vercel actifs sur `main`
+- Site pilote accessible : `https://kraak-web-prod.onrender.com`
+- Déploiements automatiques Render actifs sur `main`
 - Routes critiques HTTP 200 validées par QAT-06
 
 ### DEP-03 — Pipeline déploiement API
@@ -73,7 +73,7 @@ Issue: #124
 ### Vérification observabilité
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app \
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
 pnpm check:observability
 ```
@@ -136,7 +136,7 @@ Commandes exécutées :
 git tag -a pilot-2026-04-30 -m "Release pilote KRAAK — 2026-04-30
 
 Go/No-Go : GO
-Périmètre : web (Vercel) + API (Render) + mobile debug (APK)
+Périmètre : web (Render) + API (Render) + mobile debug (APK)
 "
 git push origin pilot-2026-04-30
 ```

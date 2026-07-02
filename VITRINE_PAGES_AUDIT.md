@@ -547,7 +547,7 @@ duplicatedPartners = [...this.partners, ...this.partners]; // ← Duplication po
 - [ ] Valider visuellement chaque page dans le navigateur
 - [ ] Exécuter `pnpm --dir apps/client e2e` tests (Playwright vitrine pages)
 - [ ] Merger `feat/mvp-vitrine-cleanup` vers `main` via rebase
-- [ ] Tagger `v1.0.0` et déployer vers Vercel
+- [ ] Tagger `v1.0.0` et déployer vers Render
 
 ---
 

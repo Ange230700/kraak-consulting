@@ -12,20 +12,12 @@ const dryRun = process.argv.includes('--dry-run');
 const targetsByWorkspace = new Map([
   [
     '.',
-    [
-      '.cache',
-      '.vercel',
-      'blob-report',
-      'coverage',
-      'playwright-report',
-      'test-results',
-    ],
+    ['.cache', 'blob-report', 'coverage', 'playwright-report', 'test-results'],
   ],
   [
     'apps/client',
     [
       '.angular',
-      '.vercel',
       'blob-report',
       'coverage',
       'dist',

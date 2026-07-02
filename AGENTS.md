@@ -135,7 +135,7 @@ Pile actuellement retenue dans ce dépôt :
   fil des fonctionnalités MVP
 - Analytics : `Google Analytics` et outils légers seulement si le besoin réel du
   MVP le justifie
-- Déploiement : `Vercel` pour le front, `Render` pour l’API
+- Déploiement : `Render` pour le front, `Render` pour l’API
 - SEO technique : prerender / SSR Angular, metadata, Open Graph, sitemap,
   robots
 

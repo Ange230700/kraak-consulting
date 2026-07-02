@@ -21,7 +21,8 @@ describe('buildCorsOptions', () => {
 
   describe('Given an exact allow-list via CORS_ALLOWED_ORIGINS', () => {
     const env = {
-      CORS_ALLOWED_ORIGINS: 'https://example.com, https://app.example.com',
+      CORS_ALLOWED_ORIGINS:
+        'https://kraak-web-staging.onrender.com, https://kraak-web-prod.onrender.com',
     };
 
     it('When the request has no Origin header Then it is allowed', async () => {
@@ -32,11 +33,22 @@ describe('buildCorsOptions', () => {
       expect(result.allow).toBe(true);
     });
 
-    it('When the Origin matches an entry Then it is allowed', async () => {
+    it('When the Origin is the Render staging web app Then it is allowed', async () => {
       const options = buildCorsOptions(env);
       const result = await callOrigin(
         options.origin as OriginFn,
-        'https://app.example.com',
+        'https://kraak-web-staging.onrender.com',
+      );
+
+      expect(result.err).toBeNull();
+      expect(result.allow).toBe(true);
+    });
+
+    it('When the Origin is the Render production web app Then it is allowed', async () => {
+      const options = buildCorsOptions(env);
+      const result = await callOrigin(
+        options.origin as OriginFn,
+        'https://kraak-web-prod.onrender.com',
       );
 
       expect(result.err).toBeNull();
@@ -47,7 +59,7 @@ describe('buildCorsOptions', () => {
       const options = buildCorsOptions(env);
       const result = await callOrigin(
         options.origin as OriginFn,
-        'https://evil.test',
+        'https://unknown-origin.example',
       );
 
       expect(result.err).toBeInstanceOf(Error);
@@ -57,25 +69,25 @@ describe('buildCorsOptions', () => {
 
   describe('Given a regex allow-list via CORS_ALLOWED_ORIGIN_PATTERNS', () => {
     const env = {
-      CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://kraak-consulting(-[a-z0-9]+)?-ange230700s-projects\.vercel\.app$`,
+      CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://preview-[a-z0-9-]+\.example\.com$`,
     };
 
-    it('When a Vercel preview Origin matches Then it is allowed', async () => {
+    it('When an Origin matches the configured pattern Then it is allowed', async () => {
       const options = buildCorsOptions(env);
       const result = await callOrigin(
         options.origin as OriginFn,
-        'https://kraak-consulting-7rc34lkhb-ange230700s-projects.vercel.app',
+        'https://preview-abc123.example.com',
       );
 
       expect(result.err).toBeNull();
       expect(result.allow).toBe(true);
     });
 
-    it('When the Vercel-shaped Origin belongs to another project Then it is rejected', async () => {
+    it('When an Origin does not match the configured pattern Then it is rejected', async () => {
       const options = buildCorsOptions(env);
       const result = await callOrigin(
         options.origin as OriginFn,
-        'https://other-project-abc-someone-else-projects.vercel.app',
+        'https://other-preview.example.com',
       );
 
       expect(result.err).toBeInstanceOf(Error);
@@ -86,17 +98,17 @@ describe('buildCorsOptions', () => {
   describe('Given both exact and pattern allow-lists', () => {
     it('When the Origin matches either source Then it is allowed', async () => {
       const options = buildCorsOptions({
-        CORS_ALLOWED_ORIGINS: 'https://kraak.app',
-        CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://[a-z0-9-]+\.vercel\.app$`,
+        CORS_ALLOWED_ORIGINS: 'https://kraak-web-prod.onrender.com',
+        CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://preview-[a-z0-9-]+\.example\.com$`,
       });
 
       const exact = await callOrigin(
         options.origin as OriginFn,
-        'https://kraak.app',
+        'https://kraak-web-prod.onrender.com',
       );
       const pattern = await callOrigin(
         options.origin as OriginFn,
-        'https://preview-123.vercel.app',
+        'https://preview-123.example.com',
       );
 
       expect(exact.allow).toBe(true);
@@ -106,8 +118,8 @@ describe('buildCorsOptions', () => {
 
   describe('Given a restrictive allow-list', () => {
     const env = {
-      CORS_ALLOWED_ORIGINS: 'https://kraak.app',
-      CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://preview-[a-z0-9-]+\.vercel\.app$`,
+      CORS_ALLOWED_ORIGINS: 'https://kraak-web-prod.onrender.com',
+      CORS_ALLOWED_ORIGIN_PATTERNS: String.raw`^https://preview-[a-z0-9-]+\.example\.com$`,
     };
 
     it('When Origin is secure localhost Then it is allowed for mobile webview runtime', async () => {

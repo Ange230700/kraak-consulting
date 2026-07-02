@@ -15,7 +15,7 @@ Cette procedure est volontairement peu disruptive: elle ne change ni l'architect
 
 - Être connecte a GitHub avec un compte administrateur du depot.
 - Être connecte a Render avec un compte ayant les droits de gestion des services.
-- Être connecte a Vercel avec les droits de gestion du projet.
+- Être connecte a Render avec les droits de gestion du projet.
 - Avoir les deux collaborateurs deja invites et actifs sur le repo.
 
 ---
@@ -24,7 +24,7 @@ Cette procedure est volontairement peu disruptive: elle ne change ni l'architect
 
 - Bloc A GitHub (12 min)
 - Bloc B Render (8 min)
-- Bloc C Vercel (6 min)
+- Bloc C Render (6 min)
 - Bloc D Validation finale (4 min)
 
 ---
@@ -104,11 +104,11 @@ Résultat attendu:
 
 ---
 
-## Bloc C — Vercel (6 min)
+## Bloc C — Render (6 min)
 
 ### C1. Verrouiller Production sur kraakconsulting (4 min)
 
-1. Ouvrir le projet Vercel correspondant au web KRAAK.
+1. Ouvrir le projet Render correspondant au web KRAAK.
 2. Cliquer `Settings` puis `Members` (ou `Team Members`).
 3. Vérifier que le projet de production est rattaché à l'équipe/compte `kraakconsulting`.
 4. Conserver les droits admin de `Ange230700` si déjà attribués.
@@ -152,7 +152,7 @@ Résultat attendu:
 - Capture de la page GitHub Environment `production` (Required reviewers).
 - Capture du ruleset tags `v*`.
 - Capture Render des droits prod/staging.
-- Capture Vercel des droits production.
+- Capture Render des droits production.
 - Lien du run `Release Prod` en attente d'approbation.
 
 Modèle prêt à coller dans une issue:
@@ -174,7 +174,7 @@ Périmètre: exploitation des environnements `staging` et `production`.
 | Validation fonctionnelle staging                  | A/R        | C/I             |
 | Approbation gate GitHub `production`              | C/I        | A/R             |
 | Création et promotion tag SemVer prod (`v*`)      | C/I        | A/R             |
-| Déploiement production (Render/Vercel)            | C/I        | A/R             |
+| Déploiement production (Render)                   | C/I        | A/R             |
 | Rollback staging                                  | A/R        | C/I             |
 | Rollback production                               | C/I        | A/R             |
 
@@ -200,6 +200,6 @@ Si un verrouillage bloque trop:
 
 1. Revenir dans GitHub `Settings` > `Environments` > `production` et restaurer les reviewers précédents.
 2. Désactiver temporairement le ruleset tags `v*`.
-3. Restaurer les droits précédents dans Render/Vercel.
+3. Restaurer les droits précédents dans Render.
 
 Temps de retour arrière estimé: 5 à 10 minutes.

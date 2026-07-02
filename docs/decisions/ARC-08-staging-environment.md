@@ -5,7 +5,7 @@
 > [ARC-09](./ARC-09-inversion-main-staging.md)**. Dans le modèle actuel,
 > `staging` est la branche d'intégration (toutes les PR la ciblent) et
 > `main` n'avance que par PR de release depuis `staging`. Le reste de cette
-> ADR (motivations, choix Render/Vercel/Supabase, runbook) reste applicable.
+> ADR (motivations, choix Render/Supabase, runbook) reste applicable.
 
 | Champ           | Valeur                                                                               |
 | --------------- | ------------------------------------------------------------------------------------ |
@@ -21,15 +21,15 @@
 
 Avant de livrer en production, KRAAK doit valider chaque incrément du MVP dans
 un environnement **prod-like exposé sur Internet**, branché à des services
-réels (Supabase, Resend, Vercel, Render), mais **isolé des données de
+réels (Supabase, Resend, Render, Render), mais **isolé des données de
 production**.
 
 L'environnement staging existait déjà partiellement :
 
 - `apps/api/.env.staging`, `apps/client/.env.staging`, `supabase/.env.staging` ;
 - service Render `kraak-api-staging` (`autoDeploy: true`, branche `main`) ;
-- projet Vercel staging avec preview branch `main` (URL stable
-  `https://client-six-indol-58.vercel.app`).
+- projet Render staging avec preview branch `main` (URL stable
+  `https://kraak-web-staging.onrender.com`).
 
 Avec ARC-07, la prod a été figée sur un déclenchement par **tag SemVer**. Le
 flux tel quel devient :
@@ -67,7 +67,7 @@ déploiement de l'environnement staging**, avec les contraintes suivantes :
    propre.
 3. `staging` n'avance **que par fast-forward depuis `main`**. Aucun merge
    commit, aucun rebase non trivial, aucun cherry-pick n'y est autorisé.
-4. Pousser sur `staging` déclenche le déploiement staging (Render Vercel
+4. Pousser sur `staging` déclenche le déploiement staging (Render Render
    Supabase migrations).
 5. Le **tag SemVer** créé depuis `main` (ou depuis le commit pointé par
    `staging`) reste le seul déclencheur prod (ARC-07 inchangé).
@@ -106,7 +106,7 @@ feat/* ──► PR ──► main (rebase only, ARC-02)
 | Bloc                | Décision                                                                                  |
 | ------------------- | ----------------------------------------------------------------------------------------- |
 | Render (API)        | `kraak-api-staging` suit la branche `staging` (`autoDeploy: true`, `branch: staging`)     |
-| Vercel (web)        | Projet Vercel staging configure « Production Branch = `staging` » dans son dashboard      |
+| Render (web)        | Projet Render staging configure « Production Branch = `staging` » dans son dashboard      |
 | Supabase            | Projet Supabase **`kraak-staging`** distinct de `kraak-prod` (déjà acté ARC-07)           |
 | Migrations Supabase | `supabase db push` staging déclenché manuellement avant le fast-forward staging si schéma |
 | Branch protection   | `staging` protégée GitHub : pas de push direct, pas de force-push hors rollback contrôlé  |
@@ -174,15 +174,15 @@ Dans `Settings → Branches → Add branch protection rule` :
 Le service `kraak-api-prod` reste sur `autoDeploy: false` (déclenché par le
 workflow `release-prod.yml` sur tag).
 
-### 4.4 Configuration Vercel (UI)
+### 4.4 Configuration Render (UI)
 
-Sur le projet Vercel staging :
+Sur le projet Render staging :
 
 - `Settings → Git → Production Branch` : `staging`
 - `Settings → Git → Ignored Build Step` : conserver le comportement existant
-  défini par `vercel.json`.
+  défini par `render.yaml`.
 
-Sur le projet Vercel prod :
+Sur le projet Render prod :
 
 - `Production Branch` : `(none)` (inchangé, ARC-07).
 
@@ -219,7 +219,7 @@ git reset --hard <sha-commit-main-stable>
 git push --force-with-lease origin staging
 ```
 
-Render et Vercel staging redéploient automatiquement le commit pointé.
+Render staging redéploient automatiquement le commit pointé.
 
 ---
 
@@ -255,7 +255,7 @@ Cette décision est révisable si :
    justifie une automatisation par GitHub Action déclenchée sur `main`.
 2. KRAAK introduit un environnement supplémentaire (par ex. `qa`, `demo`)
    nécessitant une matrice de branches plus riche.
-3. Un outil tiers (Vercel, Render) impose un autre modèle de promotion qui
+3. Un outil tiers (Render) impose un autre modèle de promotion qui
    rendrait la branche `staging` redondante.
 
 ---

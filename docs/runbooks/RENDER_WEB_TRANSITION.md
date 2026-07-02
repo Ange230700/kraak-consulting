@@ -2,7 +2,7 @@
 
 # RENDER_WEB_TRANSITION — Migration du front web vers Render
 
-> Objectif : basculer l’hébergement du site web Angular prerender de Vercel vers Render, sans interruption de service et avec rollback rapide.
+> Objectif : basculer l’hébergement du site web Angular prerender de Render vers Render, sans interruption de service et avec rollback rapide.
 
 ## 1 · Cadrage technique
 
@@ -27,18 +27,18 @@ Configurer ces variables sur les services static site Render :
   - staging : URL publique Render staging (ou domaine staging custom)
   - prod : URL domaine public final
 
-Important : `CLIENT_SITE_URL` est nécessaire pour éviter les canonicals/URLs SEO pointant encore vers Vercel.
+Important : `CLIENT_SITE_URL` est nécessaire pour éviter les canonicals/URLs SEO pointant encore vers Render.
 
 ## 3 · Stratégie de transition recommandée
 
 1. Provisionner `kraak-web-staging` sur Render avec autoDeploy actif.
 2. Verifier le site staging Render avec smoke tests (routes publiques + contact + SEO).
-3. Garder Vercel staging actif en parallèle pendant la phase de validation.
+3. Garder Render staging actif en parallèle pendant la phase de validation.
 4. Mettre a jour DNS staging vers Render uniquement apres validation complete.
 5. Provisionner `kraak-web-prod` sur Render (autoDeploy: false).
 6. Executer un dry-run de build/déploiement prod sur Render.
 7. Basculer le domaine prod vers Render en fenêtre de changement.
-8. Garder Vercel en mode rollback court terme (24-72h), puis décommissionner.
+8. Garder Render en mode rollback court terme (24-72h), puis décommissionner.
 
 ## 4 · Checklist de validation staging (obligatoire)
 
@@ -54,7 +54,7 @@ Important : `CLIENT_SITE_URL` est nécessaire pour éviter les canonicals/URLs S
 
 Si incident apres bascule DNS :
 
-1. Repointer le domaine vers Vercel.
+1. Repointer le domaine vers Render.
 2. Conserver Render actif pour diagnostic.
 3. Corriger la configuration (souvent `CLIENT_SITE_URL`, headers, CORS API) puis retester.
 4. Rebasculer DNS uniquement apres validation smoke complete.
@@ -63,4 +63,4 @@ Si incident apres bascule DNS :
 
 - Les outils Render API peuvent exiger une workspace active avant creation de service.
 - Si la creation via API retourne `no workspace set`, sélectionner d'abord la workspace Render cible puis relancer la creation des services.
-- Ne pas désactiver Vercel avant validation complete des parcours critiques sur Render.
+- Ne pas désactiver Render avant validation complete des parcours critiques sur Render.

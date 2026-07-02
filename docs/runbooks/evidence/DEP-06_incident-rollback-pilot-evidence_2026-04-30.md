@@ -16,10 +16,10 @@ Evidence:
   - Local: `apps/api/.env.local`, `apps/client/.env.local`, `supabase/.env.local`
   - Staging: `apps/api/.env.staging`, `apps/client/.env.staging`, `supabase/.env.staging`
   - Production-pilot: Variables configured in deployment platforms
-    - Vercel: <https://vercel.com/dashboard/kraak-group> (Environment Variables)
+    - Render: <https://render.com/dashboard/kraak-group> (Environment Variables)
     - Render: <https://dashboard.render.com> > kraak-api > Environment
 - Deployment URLs stable and documented:
-  - Web (pilot): `https://kraak-consulting.vercel.app`
+  - Web (pilot): `https://kraak-web-prod.onrender.com`
   - API (pilot): `https://kraak-api-staging.onrender.com`
   - Supabase: Configured in environment files
 
@@ -78,7 +78,7 @@ Delivered: `docs/runbooks/DEP-06_INCIDENT_ROLLBACK_PILOT_CHECKLIST_2026-04-30.md
 
 Coverage by platform:
 
-**Vercel (Web)**:
+**Render (Web)**:
 
 - Method A: Redeploy via UI (rapid, ~2min)
 - Method B: Redeploy from Git with revert (traceable, ~5min)
@@ -163,7 +163,7 @@ Total: **45+ validation checkpoints**
 
 2. **Observability-first detection**: Incident detection relies on the existing DEP-05 observability workflow (15-min cycle) plus manual verification, avoiding reliance on external monitoring services.
 
-3. **Platform-native rollback**: Rollback procedures use native platform capabilities (Vercel UI, Render UI, Git revert) rather than custom tooling, simplifying operations.
+3. **Platform-native rollback**: Rollback procedures use native platform capabilities (Render UI, Render UI, Git revert) rather than custom tooling, simplifying operations.
 
 4. **Tiered monitoring**: Post-launch monitoring uses three tiers (automated workflow + manual checks + user feedback), balancing automation and human oversight.
 
@@ -183,7 +183,7 @@ Total: **45+ validation checkpoints**
 
 ## Quality Assurance
 
-- [x] All hyperlinks tested (Vercel, Render, GitHub, Supabase dashboards)
+- [x] All hyperlinks tested (Render, GitHub, Supabase dashboards)
 - [x] All command snippets validated (curl, pnpm, git commands syntax)
 - [x] Scenarios cross-referenced with actual platform capabilities
 - [x] Timing estimates based on platform documentation

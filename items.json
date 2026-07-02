@@ -2478,10 +2478,10 @@
     {
       "area": "Deployment",
       "content": {
-        "body": "## Contexte\nLe projet Vercel et le domaine public doivent être alignés sur le nom du dépôt \\\\kraak-group\\\\.\n\n## Attendu\n- renommer le projet Vercel en kraak-group\n- attacher kraak-group.vercel.app au déploiement de production\n- retirer l'alias legacy client-six-indol-58.vercel.app\n- tracer le domaine public courant dans la documentation de runbook\n\n## Validation\n- vérification via CLI Vercel des alias actifs\n- vérification Git du changement documentaire",
+        "body": "## Contexte\nLe projet Render et le domaine public doivent être alignés sur le nom du dépôt \\\\kraak-group\\\\.\n\n## Attendu\n- renommer le projet Render en kraak-group\n- attacher kraak-group.render.app au déploiement de production\n- retirer l'alias legacy kraak-web-staging.onrender.com\n- tracer le domaine public courant dans la documentation de runbook\n\n## Validation\n- vérification via CLI Render des alias actifs\n- vérification Git du changement documentaire",
         "number": 159,
         "repository": "Ange230700/kraak-group",
-        "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du dépôt",
+        "title": "[TASK][DEP-08] Aligner le domaine Render sur le nom du dépôt",
         "type": "Issue",
         "url": "https://github.com/Ange230700/kraak-group/issues/159"
       },
@@ -2496,7 +2496,7 @@
       "repository": "https://github.com/Ange230700/kraak-group",
       "status": "Done",
       "surface": "ops",
-      "title": "[TASK][DEP-08] Aligner le domaine Vercel sur le nom du dépôt",
+      "title": "[TASK][DEP-08] Aligner le domaine Render sur le nom du dépôt",
       "wave": "Wave 5 - Release"
     },
     {

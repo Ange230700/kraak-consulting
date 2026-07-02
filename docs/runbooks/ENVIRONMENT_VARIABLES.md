@@ -40,7 +40,7 @@ Variables lues par `process.env` dans le code NestJS :
 - `CONTACT_FROM_EMAIL` : expéditeur des emails transactionnels. Exemple : `onboarding@resend.dev`
 - `CONTACT_TO_EMAIL` : email destinataire interne des formulaires. Exemple : `contact@kraak.org`. Les demandes publiques y arrivent déjà enrichies avec la file de triage, le workflow de réponse et le fallback opérationnel.
 - `CORS_ALLOWED_ORIGINS` : origines autorisées exactes séparées par des virgules. Exemple : `http://localhost:4200,http://localhost:4300`
-- `CORS_ALLOWED_ORIGIN_PATTERNS` : optionnel. Expressions régulières séparées par des virgules pour autoriser des familles d'origines, typiquement les déploiements de prévisualisation Vercel (URL changeant à chaque commit). Exemple : `^https://kraak-consulting(-[a-z0-9]+)?-ange230700s-projects\.vercel\.app$`
+- `CORS_ALLOWED_ORIGIN_PATTERNS` : optionnel. Expressions régulières séparées par des virgules pour autoriser des familles d'origines, typiquement les déploiements de prévisualisation Render (URL changeant à chaque commit). Exemple : `^https://kraak-consulting(-[a-z0-9]+)?-ange230700s-projects\.render\.app$`
 - `APP_VERSION` : identifiant de release exposé par `/health`. Exemple : `pilot-2026-04-30`
 
 Ordre de chargement côté API :
@@ -52,7 +52,7 @@ Ordre de chargement côté API :
 
 Les fichiers `.env.staging` et `.env.prod` ne doivent **jamais** être
 versionnés : en staging et en production, les variables sont injectées par
-l'hébergeur (Render, Vercel, GitHub Secrets).
+l'hébergeur (Render, GitHub Secrets).
 
 Scripts utiles côté `apps/api/package.json` :
 
@@ -160,19 +160,18 @@ Aliases legacy acceptés par l'API :
 
 ## Domaines publics documentés
 
-- Domaine public principal : `https://kraak-consulting.vercel.app`
-- Domaine staging : pas d'URL stable (previews Vercel changent par commit ; branch alias protégé par SSO)
+- Domaine public principal : `https://kraak-web-prod.onrender.com`
+- Domaine staging : pas d'URL stable (previews Render changent par commit ; branch alias protégé par SSO)
 - API staging actuelle : `https://kraak-api-staging.onrender.com`
 - API production actuelle : `https://kraak-api-prod.onrender.com`
 
 ## CI/CD — `.env.example` (racine)
 
-| Variable            | Description                     |
-| ------------------- | ------------------------------- |
-| `VERCEL_TOKEN`      | Token d'authentification Vercel |
-| `VERCEL_ORG_ID`     | ID organisation Vercel          |
-| `VERCEL_PROJECT_ID` | ID projet Vercel                |
-| `RENDER_API_KEY`    | Clé API Render                  |
+| Variable                     | Description                            |
+| ---------------------------- | -------------------------------------- |
+| `RENDER_API_KEY`             | Clé API Render (authentification API)  |
+| `RENDER_PROD_SERVICE_ID`     | ID du service Render API de production |
+| `RENDER_PROD_WEB_SERVICE_ID` | ID du service Render web de production |
 
 URLs de supervision versionnées dans le dépôt :
 

@@ -48,7 +48,7 @@ Résultat:
 Commande:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-consulting.vercel.app KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability
+KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com pnpm check:observability
 ```
 
 Résultat:
