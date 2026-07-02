@@ -126,7 +126,7 @@ Le push du tag déclenche `.github/workflows/release-prod.yml` :
    `production`.
 3. Migrations Supabase prod appliquées (si présentes).
 4. Déploiement Render prod via API.
-5. Déploiement Render prod via CLI.
+5. Déploiement du web prod Render via API.
 6. Smoke test prod (`/health`, page d'accueil web).
 
 ### Étape 4 — Validation post-deploy

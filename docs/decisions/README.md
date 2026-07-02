@@ -27,8 +27,8 @@ KRAAK.
 | `ARC-09` | Inversion `main` ↔ `staging` (staging = intégration)                           | Acceptée (partiellement remplacée par ARC-16) | 2026-05-03 |
 | `ARC-10` | Feature flag espace participant                                                | Acceptée                                      | 2026-05-01 |
 | `ARC-11` | Consolidation de l'hebergement web sur un service unique                       | Remplacée (par ARC-16)                        | 2026-05-03 |
-| `ARC-11` | Stratégie de release production avec désactivation des surfaces non finalisées | À valider avant implémentation                | 2026-05-09 |
-| `ARC-16` | Render uniquement pour l'hebergement web                                       | Acceptee                                      | 2026-07-02 |
+| `ARC-17` | Stratégie de release production avec désactivation des surfaces non finalisées | À valider avant implémentation                | 2026-05-09 |
+| `ARC-16` | Render uniquement pour l'hebergement web                                       | Acceptée                                      | 2026-07-02 |
 | `ARC-12` | Retrait des sections de prévisualisation du bundle production                  | Appliquée                                     | 2026-05-14 |
 | `ARC-13` | Gating des routes non vitrines côté web                                        | Appliquée                                     | 2026-05-14 |
 | `ARC-14` | Gel de la surface vitrine publique                                             | Acceptée                                      | 2026-05-15 |

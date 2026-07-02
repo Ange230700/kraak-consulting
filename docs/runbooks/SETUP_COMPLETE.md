@@ -55,7 +55,7 @@
 
 ## Complete Workflow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │ STEP 1: Feature Branch (Developer)                              │
 │ • git checkout -b feat/my-feature                               │
@@ -107,7 +107,7 @@
 │ • Triggered by SemVer tag                                       │
 │ • Build + tests on tag commit                                   │
 │ • Awaits production approval (GitHub Environment)               │
-│ • Deploy to Render prod + Render prod                           │
+│ • Deploy to Render prod (API + web)                             │
 │ • Smoke tests                                                   │
 │ ✅ Production Live                                              │
 └─────────────────────────────────────────────────────────────────┘
@@ -237,8 +237,10 @@ git push -u origin feat/my-feature
 
 - Check: Did promote-to-main.yml run after version PR merge?
 - View: GitHub Actions > promote-to-main.yml > logs
-- Check: Render and Render dashboards for errors
+- Check: Render dashboard(s) for errors
 
 ---
 
-**Everything is automated. Just create features and changesets, the rest flows automatically! 🚀**
+## Everything is automated
+
+Just create features and changesets, the rest flows automatically.

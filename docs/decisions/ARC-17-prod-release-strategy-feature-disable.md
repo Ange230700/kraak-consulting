@@ -1,6 +1,6 @@
-<!-- docs\decisions\ARC-11-prod-release-strategy-feature-disable.md -->
+<!-- docs\decisions\ARC-17-prod-release-strategy-feature-disable.md -->
 
-# ARC-11 — Production Release Strategy: Feature Disabling for MVP Deployment
+# ARC-17 — Production Release Strategy: Feature Disabling for MVP Deployment
 
 | Champ          | Valeur                              |
 | -------------- | ----------------------------------- |

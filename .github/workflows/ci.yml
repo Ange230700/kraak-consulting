@@ -62,7 +62,23 @@ jobs:
             exit 0
           fi
           supabase link --project-ref "$SUPABASE_STAGING_PROJECT_REF"
-          pnpm splinter:linked
+          set +e
+          splinter_output="$(pnpm splinter:linked 2>&1)"
+          splinter_code=$?
+          set -e
+
+          echo "$splinter_output"
+
+          if [[ $splinter_code -eq 0 ]]; then
+            exit 0
+          fi
+
+          if echo "$splinter_output" | grep -q "unexpected performance advisors status 400"; then
+            echo "::warning::Supabase advisors a retourné une erreur 400 côté service (incident externe connu). Étape marquée non bloquante."
+            exit 0
+          fi
+
+          exit $splinter_code
 
   # ──────────────────────────────────────────────
   # Build de production (web + mobile)
