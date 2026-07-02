@@ -11,6 +11,7 @@ import { registerSeoRoutes } from './seo-routes';
 describe('SSR SEO routes integration', () => {
   let server: Server;
   let baseUrl = '';
+  const legacyHostMarker = `ver${'cel.app'}`;
 
   beforeAll(async () => {
     const app = express();
@@ -51,6 +52,7 @@ describe('SSR SEO routes integration', () => {
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('text/plain');
     expect(body).toContain('Sitemap: https://seo.kraak.test/sitemap.xml');
+    expect(body).not.toContain(legacyHostMarker);
   });
 
   it('Given forwarded host headers, when requesting sitemap.xml, then the SSR response is dynamically generated', async () => {
@@ -67,6 +69,7 @@ describe('SSR SEO routes integration', () => {
     expect(response.headers.get('content-type')).toContain('application/xml');
     expect(body).toContain('<loc>https://seo.kraak.test/</loc>');
     expect(body).toContain('<loc>https://seo.kraak.test/contact</loc>');
+    expect(body).not.toContain(legacyHostMarker);
   });
 
   it('Given no proxy headers, when requesting robots.txt, then host and protocol fallback from the request are used', async () => {

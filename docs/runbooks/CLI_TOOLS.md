@@ -135,19 +135,7 @@ export RENDER_API_KEY="..."
 
 ## 4 · Liaison des projets locaux
 
-### 4.1 Render
-
-Lier le workspace `apps/client` au projet Render existant :
-
-```bash
-cd apps/client
-render link
-# Sélectionner : team kraak  →  projet du site web
-```
-
-Le lien est stocké dans `.render/project.json` (déjà ignoré par `.gitignore`).
-
-### 4.2 Supabase
+### 4.1 Supabase
 
 Lier le projet local au projet distant `kraak-staging` :
 
@@ -164,7 +152,7 @@ supabase link --project-ref <ref-prod>
 Le `project-ref` est visible dans l'URL du dashboard
 (`https://supabase.com/dashboard/project/<ref>`).
 
-### 4.3 Render
+### 4.2 Render
 
 Render ne supporte pas la liaison locale. Les commandes prennent un
 `--service-id` (visible dans l'URL d'un service Render).
@@ -242,7 +230,7 @@ Utilisation recommandée:
 ## 6 · Vérification post-installation
 
 ```bash
-render --version    # attendu : 53.x
+render --version    # attendu : 2.16.x ou plus
 supabase --version  # attendu : 2.90.x ou plus
 cmd //c "render --version"  # Windows / Git Bash, attendu : v2.16.x
 ```

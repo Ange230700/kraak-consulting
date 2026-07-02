@@ -40,7 +40,7 @@ Variables lues par `process.env` dans le code NestJS :
 - `CONTACT_FROM_EMAIL` : expéditeur des emails transactionnels. Exemple : `onboarding@resend.dev`
 - `CONTACT_TO_EMAIL` : email destinataire interne des formulaires. Exemple : `contact@kraak.org`. Les demandes publiques y arrivent déjà enrichies avec la file de triage, le workflow de réponse et le fallback opérationnel.
 - `CORS_ALLOWED_ORIGINS` : origines autorisées exactes séparées par des virgules. Exemple : `http://localhost:4200,http://localhost:4300`
-- `CORS_ALLOWED_ORIGIN_PATTERNS` : optionnel. Expressions régulières séparées par des virgules pour autoriser des familles d'origines, typiquement les déploiements de prévisualisation Render (URL changeant à chaque commit). Exemple : `^https://kraak-consulting(-[a-z0-9]+)?-ange230700s-projects\.render\.app$`
+- `CORS_ALLOWED_ORIGIN_PATTERNS` : optionnel. Expressions régulières séparées par des virgules pour autoriser des familles d'origines, typiquement des sous-domaines contrôlés sur `onrender.com`. Exemple : `^https://kraak-web-staging(-[a-z0-9]+)?\.onrender\.com$`
 - `APP_VERSION` : identifiant de release exposé par `/health`. Exemple : `pilot-2026-04-30`
 
 Ordre de chargement côté API :

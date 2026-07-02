@@ -104,8 +104,8 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
 
 ```bash
 # 1. Derniers deployments
-curl -s https://api.render.com/v6/deployments?teamId=TEAM_ID \
-  -H "Authorization: Bearer $RENDER_API_KEY" | jq '.deployments[0:5]'
+curl -s "https://api.render.com/v1/services/$RENDER_WEB_SERVICE_ID/deploys?limit=5" \
+  -H "Authorization: Bearer $RENDER_API_KEY" | jq '.'
 
 # 2. Logs derniers déploiements
 # Via dashboard: https://render.com/dashboard/kraak-group > Deployments > Recent
