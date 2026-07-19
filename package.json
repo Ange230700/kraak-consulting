@@ -8,18 +8,6 @@
     "pnpm": ">=10.0.0"
   },
   "packageManager": "pnpm@10.23.0",
-  "pnpm": {
-    "overrides": {
-      "typescript": "~5.9.2"
-    },
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lmdb",
-      "playwright",
-      "rollup",
-      "sharp"
-    ]
-  },
   "scripts": {
     "clean": "pnpm -r clean && node ./scripts/clean.mjs",
     "dev": "node ./scripts/dev-all.mjs",
