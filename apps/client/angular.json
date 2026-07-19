@@ -39,9 +39,6 @@
             "scripts": [],
             "server": "projects/web/src/main.server.ts",
             "outputMode": "server",
-            "security": {
-              "allowedHosts": []
-            },
             "ssr": {
               "entry": "projects/web/src/server.ts"
             }
@@ -121,6 +118,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": []
+          },
           "configurations": {
             "production": {
               "buildTarget": "web:build:production"
