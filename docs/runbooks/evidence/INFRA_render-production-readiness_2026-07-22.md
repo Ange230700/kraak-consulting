@@ -29,7 +29,14 @@ Résultats observés:
 
 - `Observability` échoue sur les jobs staging et production avant publication
   de logs exploitables (`steps=[]`, aucun runner attaché dans les métadonnées du
-  run).
+  run). Le run manuel
+  [29928756058](https://github.com/Ange230700/kraak-consulting/actions/runs/29928756058)
+  indique explicitement: `The job was not started because your account is locked
+due to a billing issue.`
+- Le push `staging` du commit
+  [7843018b](https://github.com/Ange230700/kraak-consulting/commit/7843018b)
+  déclenche le même symptôme sur `CI` et `SonarCloud`: échec en 3-4 secondes,
+  `steps=[]`.
 - `Nightly Regression` échoue sur `Newman strict (staging API)` avec le même
   symptôme côté logs GitHub (`steps=[]`).
 - Reproduction locale Nightly:
