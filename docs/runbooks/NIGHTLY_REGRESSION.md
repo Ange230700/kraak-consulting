@@ -28,3 +28,30 @@ pnpm test:api:journey:strict:staging
 - La CI principale garde uniquement les vérifications rapides et les tests non bloquants.
 - Le nightly regression sert à détecter les écarts nominaux sur Auth et les régressions API plus tardives.
 - Les échecs du workflow nocturne doivent être investigués avant la prochaine fenêtre de livraison.
+
+## Défaut connu — 2026-07-22
+
+Issue: [#618](https://github.com/Ange230700/kraak-consulting/issues/618)
+
+Le workflow échoue avant d'exécuter les assertions HTTP parce que le script
+`pnpm test:api:journey:strict:staging` cible
+`test-results/postman/api-user-journey.collection.json`, alors que
+`test-results/` est gitignoré et qu'aucune collection Newman source n'est
+présente dans le dépôt.
+
+Reproduction locale :
+
+```bash
+pnpm.cmd test:api:journey:strict:staging
+```
+
+Erreur observée :
+
+```text
+collection could not be loaded
+unable to read data from file "test-results/postman/api-user-journey.collection.json"
+ENOENT: no such file or directory
+```
+
+Le correctif attendu consiste à versionner la collection source dans un chemin
+non ignoré ou à générer explicitement l'artefact avant l'exécution du workflow.

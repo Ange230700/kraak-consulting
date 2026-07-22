@@ -162,20 +162,24 @@ jobs:
     needs: [validate-tag, supabase-migrate]
     environment: production
     steps:
-      - name: Mettre à jour APP_VERSION sur le service prod
+      - name: Mettre à jour APP_VERSION et APP_ENV sur le service prod
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_PROD_SERVICE_ID }}
           TAG: ${{ needs.validate-tag.outputs.ref }}
         run: |
           set -euo pipefail
+          if [[ -z "${RENDER_API_KEY:-}" || -z "${RENDER_SERVICE_ID:-}" ]]; then
+            echo "::error::Secrets Render API prod manquants: RENDER_API_KEY ou RENDER_PROD_SERVICE_ID."
+            exit 1
+          fi
           curl -fSs -X PUT \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "[{\"key\":\"APP_VERSION\",\"value\":\"$TAG\"}]" \
+            -d "[{\"key\":\"APP_VERSION\",\"value\":\"$TAG\"},{\"key\":\"APP_ENV\",\"value\":\"production\"}]" \
             "https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars" \
             > /dev/null
-          echo "APP_VERSION mis à jour sur le service Render prod."
+          echo "APP_VERSION et APP_ENV mis à jour sur le service Render prod."
 
       - name: Déclencher le déploiement Render (commit épinglé)
         id: render-deploy
@@ -185,6 +189,10 @@ jobs:
           SHA: ${{ needs.validate-tag.outputs.sha }}
         run: |
           set -euo pipefail
+          if [[ -z "${RENDER_API_KEY:-}" || -z "${RENDER_SERVICE_ID:-}" ]]; then
+            echo "::error::Secrets Render API prod manquants: RENDER_API_KEY ou RENDER_PROD_SERVICE_ID."
+            exit 1
+          fi
           response="$(curl -fSs -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
@@ -229,7 +237,7 @@ jobs:
           echo "::error::Timeout en attendant le déploiement Render"
           exit 1
 
-      - name: Smoke test /health (API prod) avec vérification de version
+      - name: Smoke test /health (API prod) avec vérification de version et environnement
         env:
           PROD_API_HEALTH_URL: ${{ secrets.PROD_API_HEALTH_URL }}
           EXPECTED_VERSION: ${{ needs.validate-tag.outputs.ref }}
@@ -238,15 +246,16 @@ jobs:
           for i in $(seq 1 20); do
             body="$(curl -fSs "$PROD_API_HEALTH_URL" || true)"
             status="$(echo "$body" | jq -r '.status // empty')"
+            environment="$(echo "$body" | jq -r '.environment // empty')"
             version="$(echo "$body" | jq -r '.version // empty')"
-            echo "[$i] status=$status version=$version (attendu=$EXPECTED_VERSION)"
-            if [[ "$status" == "ok" && "$version" == "$EXPECTED_VERSION" ]]; then
-              echo "API prod OK et version correcte"
+            echo "[$i] status=$status environment=$environment version=$version (attendu=$EXPECTED_VERSION)"
+            if [[ "$status" == "ok" && "$environment" == "production" && "$version" == "$EXPECTED_VERSION" ]]; then
+              echo "API prod OK, environnement et version corrects"
               exit 0
             fi
             sleep 15
           done
-          echo "::error::Smoke test API prod en échec (status ou version incorrects)"
+          echo "::error::Smoke test API prod en échec (status, environnement ou version incorrects)"
           exit 1
 
   # ──────────────────────────────────────────────
@@ -266,6 +275,10 @@ jobs:
           SHA: ${{ needs.validate-tag.outputs.sha }}
         run: |
           set -euo pipefail
+          if [[ -z "${RENDER_API_KEY:-}" || -z "${RENDER_SERVICE_ID:-}" ]]; then
+            echo "::error::Secrets Render web prod manquants: RENDER_API_KEY ou RENDER_PROD_WEB_SERVICE_ID."
+            exit 1
+          fi
           response="$(curl -fSs -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \

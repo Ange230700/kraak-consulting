@@ -22,6 +22,7 @@ test('Given les URLs web et API, When on construit les checks, Then la home web 
     createObservabilityTargets({
       webUrl: 'https://kraak-web-prod.onrender.com/',
       apiUrl: 'https://kraak-api-staging.onrender.com/',
+      environment: 'production',
     }),
     [
       {
@@ -35,6 +36,7 @@ test('Given les URLs web et API, When on construit les checks, Then la home web 
         url: 'https://kraak-api-staging.onrender.com/health',
         expectedStatus: 200,
         expectedContentType: 'application/json',
+        expectedEnvironment: 'production',
       },
     ],
   );
@@ -47,6 +49,7 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
       url: 'https://kraak-api-staging.onrender.com/health',
       expectedStatus: 200,
       expectedContentType: 'application/json',
+      expectedEnvironment: 'production',
     },
     {
       fetchImpl: async () =>
@@ -71,6 +74,38 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
 
   assert.equal(result.ok, true);
   assert.equal(result.payload.service, 'kraak-api');
+});
+
+test('Given un endpoint API staging identifié en production, When le check passe, Then une erreur explicite est levee', async () => {
+  await assert.rejects(
+    () =>
+      checkTarget(
+        {
+          name: 'api-health',
+          url: 'https://kraak-api-staging.onrender.com/health',
+          expectedStatus: 200,
+          expectedContentType: 'application/json',
+          expectedEnvironment: 'staging',
+        },
+        {
+          fetchImpl: async () =>
+            new Response(
+              JSON.stringify({
+                status: 'ok',
+                service: 'kraak-api',
+                environment: 'production',
+              }),
+              {
+                status: 200,
+                headers: {
+                  'content-type': 'application/json; charset=utf-8',
+                },
+              },
+            ),
+        },
+      ),
+    /environnement/,
+  );
 });
 
 test('Given un endpoint web qui repond en JSON, When le check s execute, Then une erreur explicite est levee', async () => {

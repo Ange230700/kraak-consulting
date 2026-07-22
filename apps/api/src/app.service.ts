@@ -1,5 +1,16 @@
 import { Injectable, Optional } from '@nestjs/common';
 
+function readNonEmptyEnv(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  return value ? value : undefined;
+}
+
+function resolveDeploymentEnvironment(): string {
+  return (
+    readNonEmptyEnv('APP_ENV') ?? readNonEmptyEnv('NODE_ENV') ?? 'development'
+  );
+}
+
 export interface HealthStatus {
   status: 'ok';
   service: string;
@@ -17,7 +28,7 @@ export class AppService {
     private readonly getUptimeSeconds: () => number = () =>
       Math.floor(process.uptime()),
     @Optional()
-    private readonly environment = process.env['NODE_ENV'] ?? 'development',
+    private readonly environment = resolveDeploymentEnvironment(),
     @Optional()
     private readonly version = process.env['APP_VERSION'] ??
       process.env['npm_package_version'] ??

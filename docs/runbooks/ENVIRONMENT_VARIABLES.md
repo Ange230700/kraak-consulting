@@ -30,6 +30,10 @@ dans le monorepo. Ne jamais commiter de secrets dans le dépôt.
 Variables lues par `process.env` dans le code NestJS :
 
 - `NODE_ENV` : environnement d'exécution. Exemple local : `local`
+- `APP_ENV` : environnement de déploiement exposé par `/health`. Valeurs
+  attendues : `local`, `staging`, `production`. Sur Render, ne pas s'appuyer sur
+  `NODE_ENV` pour distinguer staging et production, car les deux services
+  utilisent des builds optimisés avec `NODE_ENV=production`.
 - `PORT` : port d'écoute de l'API. Exemple local : `3000`
 - `SUPABASE_URL` : URL du projet Supabase. Exemple local : `http://127.0.0.1:54321`
 - `SUPABASE_PUBLISHABLE_KEY` : clé publique Supabase pour les flux auth API
@@ -49,6 +53,10 @@ Ordre de chargement côté API :
 2. Sinon : `.env.${NODE_ENV}` est chargé en priorité, avec `.env` comme
    fallback pour les variables non spécifiées. Cas particulier :
    `NODE_ENV=production` est résolu vers `.env.prod`, comme `NODE_ENV=prod`.
+
+`APP_ENV` ne pilote pas le chargement des fichiers `.env` ; il sert uniquement à
+identifier l'environnement réel dans le payload `/health` et dans les checks
+d'observabilité.
 
 Les fichiers `.env.staging` et `.env.prod` ne doivent **jamais** être
 versionnés : en staging et en production, les variables sont injectées par
@@ -184,9 +192,10 @@ en développement local.
 ## Déploiement — Render (`render.yaml`)
 
 Le fichier `render.yaml` déclare les variables d'environnement de production
-pour l'API : `NODE_ENV`, `PORT`, `APP_VERSION`, `SUPABASE_URL`,
-`SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`,
-`CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`, `CORS_ALLOWED_ORIGIN_PATTERNS`.
+pour l'API : `NODE_ENV`, `APP_ENV`, `PORT`, `APP_VERSION`, `SUPABASE_URL`,
+`SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`,
+`CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CORS_ALLOWED_ORIGINS`,
+`CORS_ALLOWED_ORIGIN_PATTERNS`.
 La procédure de vérification et de finalisation manuelle dans le dashboard
 Render est documentée dans
 [`RENDER_ENV_FINALIZATION.md`](RENDER_ENV_FINALIZATION.md).

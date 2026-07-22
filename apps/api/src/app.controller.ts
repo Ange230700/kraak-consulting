@@ -29,7 +29,11 @@ export class AppController {
       properties: {
         status: { type: 'string', example: 'ok' },
         service: { type: 'string', example: 'kraak-api' },
-        environment: { type: 'string', example: 'production' },
+        environment: {
+          type: 'string',
+          enum: ['local', 'staging', 'production'],
+          example: 'production',
+        },
         timestamp: { type: 'string', format: 'date-time' },
         version: { type: 'string', example: '0.0.0' },
         uptimeSeconds: { type: 'number', example: 42 },

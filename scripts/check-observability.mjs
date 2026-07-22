@@ -1,4 +1,5 @@
 import process from 'node:process';
+import { pathToFileURL } from 'node:url';
 
 const DEFAULT_TIMEOUT_MS = 30_000; // Render free tier cold start can take up to 30s
 
@@ -14,15 +15,23 @@ function trimTrailingSlash(value) {
 
 export function normalizePublicUrl(value, name) {
   if (!value || value.trim().length === 0) {
-    throw new Error(`La variable ${name} est requise pour exécuter les checks d'observabilité.`);
+    throw new Error(
+      `La variable ${name} est requise pour exécuter les checks d'observabilité.`,
+    );
   }
 
   return trimTrailingSlash(value.trim());
 }
 
-export function createObservabilityTargets({ webUrl, apiUrl }) {
-  const normalizedWebUrl = normalizePublicUrl(webUrl, 'KRAAK_OBSERVABILITY_WEB_URL');
-  const normalizedApiUrl = normalizePublicUrl(apiUrl, 'KRAAK_OBSERVABILITY_API_URL');
+export function createObservabilityTargets({ webUrl, apiUrl, environment }) {
+  const normalizedWebUrl = normalizePublicUrl(
+    webUrl,
+    'KRAAK_OBSERVABILITY_WEB_URL',
+  );
+  const normalizedApiUrl = normalizePublicUrl(
+    apiUrl,
+    'KRAAK_OBSERVABILITY_API_URL',
+  );
 
   return [
     {
@@ -36,6 +45,7 @@ export function createObservabilityTargets({ webUrl, apiUrl }) {
       url: `${normalizedApiUrl}/health`,
       expectedStatus: 200,
       expectedContentType: 'application/json',
+      expectedEnvironment: environment,
     },
   ];
 }
@@ -83,6 +93,15 @@ export async function checkTarget(target, options = {}) {
       );
     }
 
+    if (
+      target.expectedEnvironment &&
+      payload.environment !== target.expectedEnvironment
+    ) {
+      throw new Error(
+        `api-health a retourné l'environnement "${payload.environment ?? 'inconnu'}" au lieu de "${target.expectedEnvironment}".`,
+      );
+    }
+
     result.payload = payload;
   }
 
@@ -106,7 +125,10 @@ function formatSummary(results) {
       const details = [`${result.name}: ${result.status}`, result.url];
 
       if (result.name === 'api-health' && result.payload) {
-        details.push(`env=${result.payload.environment}`, `version=${result.payload.version}`);
+        details.push(
+          `env=${result.payload.environment}`,
+          `version=${result.payload.version}`,
+        );
       }
 
       return `- ${details.join(' | ')}`;
@@ -117,13 +139,17 @@ function formatSummary(results) {
 async function main() {
   const webUrl = process.env['KRAAK_OBSERVABILITY_WEB_URL'];
   const apiUrl = process.env['KRAAK_OBSERVABILITY_API_URL'];
-  const results = await runObservabilityChecks({ webUrl, apiUrl });
+  const environment = process.env['KRAAK_OBSERVABILITY_ENVIRONMENT'];
+  const results = await runObservabilityChecks({ webUrl, apiUrl, environment });
 
   console.log("Checks d'observabilité passés avec succès:");
   console.log(formatSummary(results));
 }
 
-if (import.meta.main) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   try {
     await main();
   } catch (error) {

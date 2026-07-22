@@ -34,14 +34,14 @@ describe('AppController', () => {
     controller = module.get<AppController>(AppController);
   });
 
-  it('should be defined', () => {
+  it('Given le module API est instancié, When AppController est résolu, Then le contrôleur est disponible', () => {
     expect(controller).toBeDefined();
   });
 
   // Given le serveur API est démarré
   // When un client envoie GET /health
   // Then la réponse contient les métadonnées minimales d observabilité
-  it('GET /health — should return an observable health payload', () => {
+  it('Given le serveur API est démarré, When un client appelle GET /health, Then le payload de supervision est retourné', () => {
     expect(controller.getHealth()).toEqual(healthPayload);
   });
 

@@ -26,6 +26,8 @@ services:
     plan: free
     branch: staging
     autoDeploy: true
+    staticPublishPath: public
+    renderSubdomainPolicy: enabled
     buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web:staging && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
     envVars:
       - key: CLIENT_API_BASE_URL
@@ -41,6 +43,8 @@ services:
     plan: free
     branch: main
     autoDeploy: false
+    staticPublishPath: public
+    renderSubdomainPolicy: enabled
     buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
     envVars:
       - key: CLIENT_API_BASE_URL
@@ -62,6 +66,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: APP_ENV
+        value: staging
       - key: PORT
         value: '3000'
       - key: APP_VERSION
@@ -91,8 +97,11 @@ services:
     plan: starter
     healthCheckPath: /health
     autoDeploy: false
+    branch: main
     envVars:
       - key: NODE_ENV
+        value: production
+      - key: APP_ENV
         value: production
       - key: PORT
         value: '3000'

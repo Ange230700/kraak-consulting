@@ -61,16 +61,20 @@ des étapes migration ou smoke test.
 
 - Créer un service Render distinct `kraak-api-prod` (déclaré dans
   `render.yaml`).
+- Branch : `main`.
 - `autoDeploy: false` ⇒ Render ne déploie pas sur push `main`.
 - Variables d'environnement prod renseignées via l'UI Render
-  (jamais commitées).
+  (jamais commitées), dont `NODE_ENV=production` et `APP_ENV=production`.
 - Les déploiements prod sont déclenchés via API Render depuis le workflow
   `release-prod.yml`.
 
 ### 4. Render — projet web prod
 
-- Production Branch : `(none)` (ou tout autre paramètre désactivant les
-  déploiements automatiques sur `main`).
+- Production Branch : `main`.
+- Auto-deploy désactivé.
+- Publish directory : `public` (`staticPublishPath: public` dans `render.yaml`).
+- Le sous-domaine Render `kraak-web-prod.onrender.com` doit rester activé tant
+  que la validation de production exige un HTTP 200 sur cette URL.
 - Les déploiements prod sont déclenchés via API Render depuis le workflow.
 - Variables d'environnement prod renseignées via l'UI Render sur la cible
   `Production`.
@@ -131,8 +135,8 @@ Le push du tag déclenche `.github/workflows/release-prod.yml` :
 
 ### Étape 4 — Validation post-deploy
 
-- Vérifier `/health` de l'API prod (status `ok`, `version` correspondant au
-  tag).
+- Vérifier `/health` de l'API prod (status `ok`, `environment=production`,
+  `version` correspondant au tag).
 - Vérifier la home web prod (HTTP 200, marque KRAAK visible).
 - Vérifier les logs Render pour absence d'erreurs au démarrage.
 - Marquer la GitHub Release associée au tag (`gh release create v1.2.0

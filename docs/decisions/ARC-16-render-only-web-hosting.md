@@ -27,8 +27,10 @@ assertion de test ou runbook relies a un autre hebergeur web.
 ## 3 · Regles operationnelles
 
 - `render.yaml` est la source de verite pour les services web:
-  - `kraak-web-staging` sur `staging`, `autoDeploy: true`
-  - `kraak-web-prod` sur `main`, `autoDeploy: false`
+  - `kraak-web-staging` sur `staging`, `autoDeploy: true`,
+    `staticPublishPath: public`
+  - `kraak-web-prod` sur `main`, `autoDeploy: false`,
+    `staticPublishPath: public`, sous-domaine Render activé
 - Le workflow de release production deploie:
   - `kraak-api-prod`
   - `kraak-web-prod`

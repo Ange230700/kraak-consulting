@@ -237,7 +237,8 @@ flowchart TD
 
 ### À chaque push sur la branche de préproduction
 
-- **Render** build le workspace client et publie `apps/client/dist/web/browser`
+- **Render** build le workspace client, copie `apps/client/dist/web/browser`
+  vers `public`, puis publie ce dossier statique
 - **Render** déploie `apps/api` à partir du `render.yaml`
 
 ### Docker

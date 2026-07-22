@@ -25,14 +25,14 @@ describe('AppService', () => {
     service = module.get<AppService>(AppService);
   });
 
-  it('should be defined', () => {
+  it('Given le module API est instancié, When AppService est résolu, Then le service est disponible', () => {
     expect(service).toBeDefined();
   });
 
   // Given le service AppService est instancié
   // When on appelle getHealth()
   // Then on reçoit un payload exploitable pour la supervision
-  it('getHealth — should return an observable health payload', () => {
+  it('Given le service est configuré, When getHealth est appelé, Then le payload de supervision est retourné', () => {
     expect(service.getHealth()).toEqual({
       status: 'ok',
       service: 'kraak-api',
@@ -97,18 +97,42 @@ describe('AppService — version env var fallback', () => {
   });
 });
 
-describe('AppService — NODE_ENV fallback', () => {
-  const originalNodeEnv = process.env['NODE_ENV'];
+describe('AppService — deployment environment fallback', () => {
+  const original = {
+    APP_ENV: process.env['APP_ENV'],
+    NODE_ENV: process.env['NODE_ENV'],
+  };
 
   afterEach(() => {
-    if (originalNodeEnv === undefined) {
+    if (original.APP_ENV === undefined) {
+      delete process.env['APP_ENV'];
+    } else {
+      process.env['APP_ENV'] = original.APP_ENV;
+    }
+
+    if (original.NODE_ENV === undefined) {
       delete process.env['NODE_ENV'];
     } else {
-      process.env['NODE_ENV'] = originalNodeEnv;
+      process.env['NODE_ENV'] = original.NODE_ENV;
     }
   });
 
-  it('Given NODE_ENV absent, When getHealth est appelé, Then environment vaut "development"', () => {
+  it('Given APP_ENV vaut staging et NODE_ENV vaut production, When getHealth est appelé, Then environment vaut staging', () => {
+    process.env['APP_ENV'] = 'staging';
+    process.env['NODE_ENV'] = 'production';
+    const service = new AppService();
+    expect(service.getHealth().environment).toBe('staging');
+  });
+
+  it('Given APP_ENV est absent et NODE_ENV vaut production, When getHealth est appelé, Then environment garde le fallback legacy', () => {
+    delete process.env['APP_ENV'];
+    process.env['NODE_ENV'] = 'production';
+    const service = new AppService();
+    expect(service.getHealth().environment).toBe('production');
+  });
+
+  it('Given APP_ENV et NODE_ENV sont absents, When getHealth est appelé, Then environment vaut development', () => {
+    delete process.env['APP_ENV'];
     delete process.env['NODE_ENV'];
     const service = new AppService();
     expect(service.getHealth().environment).toBe('development');
