@@ -186,36 +186,26 @@ Sur le projet Render prod :
 
 - `Production Branch` : `(none)` (inchangé, ARC-07).
 
-### 4.5 Promotion `main → staging`
+### 4.5 Promotion staging-first
 
-Procédure standard (détaillée dans le runbook) :
+Cette ADR est remplacée, pour le sens de promotion, par
+[`ARC-09`](./ARC-09-inversion-main-staging.md). Le flux actif part de branches
+courtes vers `staging`, puis utilise une PR de release de `staging` vers `main`
+quand la préproduction est validée.
 
-```bash
-git checkout staging
-git pull --ff-only
-git merge --ff-only origin/main
-git push origin staging
-```
-
-Aucun rebase, aucun merge non fast-forward. Si le fast-forward échoue, c'est
-qu'un commit a été créé directement sur `staging` (interdit) → rollback à
-l'état de `main` :
-
-```bash
-git fetch origin
-git reset --hard origin/main
-git push --force-with-lease origin staging
-```
+Aucun workflow ne doit synchroniser `staging` depuis `main`. Si un correctif est
+nécessaire après une release, il doit repartir d'une branche courte créée depuis
+`staging`, puis suivre le workflow Git standard.
 
 ### 4.6 Rollback staging
 
-Pour repointer staging sur un commit antérieur de `main` (ex. après détection
-d'un bug en pré-prod) :
+Pour repointer staging sur un commit antérieur validé (ex. après détection d'un
+bug en pré-prod) :
 
 ```bash
 git checkout staging
 git fetch origin
-git reset --hard <sha-commit-main-stable>
+git reset --hard <sha-commit-staging-stable>
 git push --force-with-lease origin staging
 ```
 
@@ -236,10 +226,11 @@ Positives :
 
 Négatives / à surveiller :
 
-- Une étape manuelle supplémentaire (le fast-forward `main → staging`) entre
-  un merge et son apparition en staging.
-- Risque de désynchronisation : staging peut être en retard sur `main` ; il
-  faut accepter cette latence et la documenter.
+- Une étape de release contrôlée reste nécessaire entre la validation staging et
+  la production.
+- Risque de désynchronisation : `main` peut être en retard sur `staging` tant
+  qu'une release n'est pas prête ; il faut accepter cette latence et la
+  documenter.
 - Risque de tentation de commit direct sur `staging` : la protection GitHub +
   cette ADR doivent l'interdire explicitement.
 - L'exception à ARC-02 doit rester strictement bornée : si une seconde

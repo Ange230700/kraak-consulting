@@ -10,7 +10,7 @@
 
 ### 1. ✅ Changesets Integration
 
-- **`.changeset/config.json`** — Configured for monorepo with `baseBranch: main`
+- **`.changeset/config.json`** — Configured for monorepo with `baseBranch: staging`
 - **`pnpm changesets:version`** — Script to bump versions
 - **`pnpm changesets:publish`** — Script to create tags
 
@@ -18,15 +18,9 @@
 
 #### **changesets.yml**
 
-- **Trigger:** Push to `main`
+- **Trigger:** Push to `staging`
 - **Action:** Creates/updates version PR with bumped versions and CHANGELOG
 - **Output:** PR "chore: bump versions and update changelogs"
-
-#### **promote-to-main.yml** (NEW)
-
-- **Trigger:** Version PR merged to `main`
-- **Action:** Fast-forwards `staging` to latest `main`
-- **Output:** Staging deployment (Render auto-deploy)
 
 #### **publish-release.yml** (NEW)
 
@@ -62,7 +56,7 @@
 │ • Make changes + commit                                         │
 │ • pnpm changeset (add version info)                             │
 │ • git push -u origin feat/my-feature                            │
-│ • Open PR to main                                               │
+│ • Open PR to staging                                            │
 └─────────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -73,7 +67,7 @@
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │ STEP 3: Version Bump (changesets.yml - AUTOMATIC)               │
-│ • Detects push to main                                          │
+│ • Detects push to staging                                       │
 │ • Bumps versions in package.json                                │
 │ • Generates CHANGELOG.md                                        │
 │ • Creates PR "chore: bump versions..."                          │
@@ -82,24 +76,21 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │ STEP 4: Review Version PR (Maintainer)                          │
 │ • Review version bumps (patch/minor/major)                      │
-│ • Merge to main                                                 │
+│ • Merge to staging                                              │
 └─────────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│ STEP 5: Staging Promotion (promote-to-main.yml - AUTOMATIC)     │
-│ • Fast-forward staging to main                                  │
-│ • Push staging                                                  │
-│ ↓                                                               │
-│ STAGING DEPLOYMENT (auto)                                       │
+│ STEP 5: Staging Deployment + Validation                         │
 │ • Render (kraak-api-staging) redeploys                          │
 │ • Render (staging project) redeploys                            │
+│ • Maintainer validates staging                                  │
 └─────────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│ STEP 6: Tag Creation (publish-release.yml - AUTOMATIC)          │
-│ • Runs changeset publish                                        │
-│ • Creates Git tags (v1.2.3, etc.)                               │
-│ • Pushes tags                                                   │
+│ STEP 6: Release PR + Tag Creation                               │
+│ • Open release PR from staging to main                          │
+│ • Merge release PR when staging is validated                    │
+│ • Push SemVer tag on main                                       │
 └─────────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -149,7 +140,7 @@ git commit -m "chore: add changeset"
 
 # 4. Push and PR
 git push -u origin feat/my-feature
-# → Open PR to main on GitHub
+# → Open PR to staging on GitHub
 
 # Rest is automatic! ✨
 ```
@@ -160,7 +151,7 @@ git push -u origin feat/my-feature
 
 ✅ **Required**
 
-- Always create changesets before merging to main
+- Always create changesets before merging release-worthy work to staging
 - Use rebase-only strategy (no merge commits)
 - Fast-forward only merges
 - Keep branches short (one task per branch)
@@ -192,12 +183,11 @@ git push -u origin feat/my-feature
 
 ## Workflows Deployed
 
-| Workflow         | File                                    | Trigger          | Purpose              |
-| ---------------- | --------------------------------------- | ---------------- | -------------------- |
-| **Changesets**   | `.github/workflows/changesets.yml`      | Push to main     | Create version PR    |
-| **Promote**      | `.github/workflows/promote-to-main.yml` | Version PR merge | Fast-forward staging |
-| **Publish**      | `.github/workflows/publish-release.yml` | Version commit   | Create SemVer tags   |
-| **Release Prod** | `.github/workflows/release-prod.yml`    | SemVer tag       | Deploy production    |
+| Workflow         | File                                    | Trigger         | Purpose            |
+| ---------------- | --------------------------------------- | --------------- | ------------------ |
+| **Changesets**   | `.github/workflows/changesets.yml`      | Push to staging | Create version PR  |
+| **Publish**      | `.github/workflows/publish-release.yml` | Version commit  | Create SemVer tags |
+| **Release Prod** | `.github/workflows/release-prod.yml`    | SemVer tag      | Deploy production  |
 
 ---
 
@@ -235,12 +225,13 @@ git push -u origin feat/my-feature
 
 ### "Staging isn't deploying"
 
-- Check: Did promote-to-main.yml run after version PR merge?
-- View: GitHub Actions > promote-to-main.yml > logs
+- Check: Did the relevant branch merge to `staging`?
+- View: GitHub Actions > changesets.yml > logs if the issue is version-related
 - Check: Render dashboard(s) for errors
 
 ---
 
 ## Everything is automated
 
-Just create features and changesets, the rest flows automatically.
+Create branches from `staging`, merge PRs back to `staging`, validate staging,
+then release to `main` only when production is ready.
