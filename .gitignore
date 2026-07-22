@@ -38,6 +38,7 @@ desktop.ini
 # Tests / Couverture
 coverage/
 .nyc_output/
+.reports/
 
 # Playwright
 test-results/
