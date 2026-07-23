@@ -1,3 +1,10 @@
+---
+status: reference
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: false
+---
+
 # ARC-08 — Environnement de staging stable et branche longue `staging`
 
 > ⚠️ **Mise à jour 2026-05-03** : les sections « 2.1 Exception à ARC-02 »
@@ -7,13 +14,13 @@
 > `main` n'avance que par PR de release depuis `staging`. Le reste de cette
 > ADR (motivations, choix Render/Supabase, runbook) reste applicable.
 
-| Champ           | Valeur                                                                               |
-| --------------- | ------------------------------------------------------------------------------------ |
-| **Statut**      | Acceptée (partiellement remplacée par ARC-09)                                        |
-| **Date**        | 2026-05-03                                                                           |
-| **Auteurs**     | Équipe KRAAK                                                                         |
-| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag)                                 |
-| **Liée à**      | `docs/runbooks/STAGING_PROMOTION.md`, `docs/runbooks/RELEASE_PROD.md`, `render.yaml` |
+| Champ           | Valeur                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| **Statut**      | Acceptée (partiellement remplacée par ARC-09)                                             |
+| **Date**        | 2026-05-03                                                                                |
+| **Auteurs**     | Équipe KRAAK                                                                              |
+| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag)                                      |
+| **Liée à**      | `docs/operations/STAGING_VALIDATION.md`, `docs/operations/RELEASE_PROD.md`, `render.yaml` |
 
 ---
 
@@ -111,7 +118,7 @@ feat/* ──► PR ──► main (rebase only, ARC-02)
 | Migrations Supabase | `supabase db push` staging déclenché manuellement avant le fast-forward staging si schéma |
 | Branch protection   | `staging` protégée GitHub : pas de push direct, pas de force-push hors rollback contrôlé  |
 | Workflow Git        | Aucun PR ne cible `staging` ; promotion par script `pnpm staging:promote` (cf. runbook)   |
-| Runbook             | `docs/runbooks/STAGING_PROMOTION.md` documente la procédure et les rollbacks staging      |
+| Runbook             | `docs/operations/STAGING_VALIDATION.md` documente la procédure et les rollbacks staging   |
 | ARC-07              | Inchangé : prod toujours par tag SemVer, jamais par push `staging` ni `main`              |
 
 ### 2.4 Ce que cette décision **ne change pas**
@@ -255,7 +262,7 @@ Cette décision est révisable si :
 
 - [ARC-02 — Conventions dépôt et workflow Git](./ARC-02-conventions-repo.md)
 - [ARC-07 — Stratégie de release production basée sur les tags](./ARC-07-prod-release-tag-based.md)
-- [Runbook — Promotion staging](../runbooks/STAGING_PROMOTION.md)
-- [Runbook — Release prod](../runbooks/RELEASE_PROD.md)
-- [Runbook — Variables d'environnement](../runbooks/ENVIRONMENT_VARIABLES.md)
+- [Runbook — Promotion staging](../operations/STAGING_VALIDATION.md)
+- [Runbook — Release prod](../operations/RELEASE_PROD.md)
+- [Runbook — Variables d'environnement](../operations/ENVIRONMENTS.md)
 - [`render.yaml`](../../render.yaml)

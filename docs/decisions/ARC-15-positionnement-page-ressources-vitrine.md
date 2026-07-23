@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-15 - Positionnement de la page `/ressources` dans la vitrine
 
 | Champ          | Valeur                              |

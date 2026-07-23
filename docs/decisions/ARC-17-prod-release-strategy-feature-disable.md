@@ -1,3 +1,10 @@
+---
+status: reference
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: false
+---
+
 <!-- docs\decisions\ARC-17-prod-release-strategy-feature-disable.md -->
 
 # ARC-17 — Production Release Strategy: Feature Disabling for MVP Deployment

@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- AGENTS.md -->
 
 # AGENTS.md
@@ -14,7 +21,7 @@ KRAAK, et livrable.
 Utiliser ce fichier avec :
 
 - `ARCHITECTURE.md` pour les limites techniques
-- `docs/specs/BACKLOG.md` pour le backlog et l’ordre de priorité
+- `docs/planning/GITHUB_PROJECT.md` pour le backlog et l’ordre de priorité
 - `README.md` pour les conventions de structure du dépôt
 
 ## Stade Actuel Du Projet
@@ -76,7 +83,7 @@ Les règles suivantes sont obligatoires pour tout le code, la documentation et l
 - Les répertoires fonctionnels web/mobile/API existent déjà en grande partie,
   mais beaucoup de flux métier restent encore à implémenter ou à brancher.
 - Le contexte de marque, les orientations de contenu, et les artefacts de travail
-  ou de proposition restent centralisés dans `docs/context/`.
+  ou de proposition utiles restent classés dans `docs/reference/`.
 - Le code de production final du site et des parcours participants n’est pas
   encore considéré comme mature ni complètement stabilisé.
 
@@ -227,12 +234,17 @@ utilitaires) et **PrimeNG** (classes de composants) pour tout le style visuel.
 - Garder les documents de pilotage des assistants à la racine du dépôt :
   - `AGENTS.md`
   - `ARCHITECTURE.md`
-  - `docs/specs/BACKLOG.md`
+  - `docs/planning/GITHUB_PROJECT.md`
   - `README.md`
-- Traiter `docs/context/` comme un espace de référence source.
-- Mettre les nouvelles spécifications techniques dans `docs/specs/`.
+- Traiter `docs/reference/` comme un espace de support non autoritaire.
+- Mettre les nouvelles synthèses d'architecture dans `docs/architecture/`.
+- Mettre les nouvelles spécifications produit dans `docs/product/`.
+- Mettre les nouvelles règles d'ingénierie dans `docs/engineering/`.
 - Mettre les décisions d’architecture / produit dans `docs/decisions/`.
-- Mettre les playbooks opérationnels dans `docs/runbooks/`.
+- Mettre les playbooks opérationnels dans `docs/operations/`.
+- Mettre les documents de pilotage dans `docs/planning/`.
+- Mettre les preuves et snapshots générés dans `docs/generated/`.
+- Mettre les états passés dans `docs/archive/`.
 - Placer le frontend Angular dans `apps/client/`, avec :
   - `apps/client/projects/web/` pour le site vitrine
   - `apps/client/projects/mobile/` pour l’application mobile
@@ -348,7 +360,7 @@ Métadonnées du dépôt pour les assistants :
 
 - Propriétaire GitHub : `Ange230700`
 - GitHub Project lié (principal) : vérifier le board actif documenté dans
-  `docs/runbooks/GITHUB_PROJECT_BOARD.md` avant toute automatisation
+  `docs/planning/GITHUB_PROJECT.md` avant toute automatisation
 
 Quand l’accès aux GitHub Projects est disponible :
 
@@ -510,7 +522,7 @@ toute tâche touchant l'API.
 
 ## Modèle De Travail Pour Les Agents
 
-1. Prendre exactement une tâche dans `docs/specs/BACKLOG.md` ou dans l’item
+1. Prendre exactement une tâche dans `docs/planning/GITHUB_PROJECT.md` ou dans l’item
    GitHub Project explicitement lié au travail.
 2. Confirmer que la tâche reste compatible avec le MVP (sauf si l’utilisateur
    demande explicitement du V1.1+).
@@ -600,10 +612,10 @@ La documentation doit rester concise, pratique, et orientée implémentation.
 
 ### Règle De Rendu Mermaid (Obligatoire)
 
-Pour tout deck Marp dans `docs/context/*.marp.md` qui contient des blocs Mermaid :
+Pour tout deck Marp dans `docs/reference/*.marp.md` qui contient des blocs Mermaid :
 
 1. Rendre les diagrammes Mermaid en assets image (`.svg` préféré, `.png`
-   autorisé) dans `docs/context/mermaid-artefacts/`.
+   autorisé) dans `docs/reference/diagrams/`.
 2. Remplacer les blocs de code Mermaid par des références d’images Markdown avant
    de générer les exports finaux.
 3. Générer les `.pdf` et `.pptx` uniquement à partir du fichier Marp basé sur les

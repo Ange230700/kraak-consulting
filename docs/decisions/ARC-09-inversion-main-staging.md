@@ -1,13 +1,20 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-09 — Inversion `main` ↔ `staging` : staging devient la branche d'intégration
 
-| Champ           | Valeur                                                                               |
-| --------------- | ------------------------------------------------------------------------------------ |
-| **Statut**      | Acceptée                                                                             |
-| **Date**        | 2026-05-03                                                                           |
-| **Auteurs**     | Équipe KRAAK                                                                         |
-| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag), ARC-08 (environnement staging) |
-| **Liée à**      | `docs/runbooks/STAGING_PROMOTION.md`, `docs/runbooks/RELEASE_PROD.md`, `AGENTS.md`   |
-| **Remplace**    | Sections « branchage » de ARC-02 et § 2.1/2.2 de ARC-08                              |
+| Champ           | Valeur                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------- |
+| **Statut**      | Acceptée                                                                                |
+| **Date**        | 2026-05-03                                                                              |
+| **Auteurs**     | Équipe KRAAK                                                                            |
+| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag), ARC-08 (environnement staging)    |
+| **Liée à**      | `docs/operations/STAGING_VALIDATION.md`, `docs/operations/RELEASE_PROD.md`, `AGENTS.md` |
+| **Remplace**    | Sections « branchage » de ARC-02 et § 2.1/2.2 de ARC-08                                 |
 
 ---
 
@@ -183,5 +190,5 @@ Cette décision est révisable si :
 - [ARC-08 — Environnement staging et branche longue `staging`](./ARC-08-staging-environment.md)
   (§ 2.1 et 2.2 remplacés par cette ADR)
 - [`scripts/github/update-branch-protection.mjs`](../../scripts/github/update-branch-protection.mjs)
-- [Runbook — Promotion staging](../runbooks/STAGING_PROMOTION.md)
-- [Runbook — Release prod](../runbooks/RELEASE_PROD.md)
+- [Runbook — Promotion staging](../operations/STAGING_VALIDATION.md)
+- [Runbook — Release prod](../operations/RELEASE_PROD.md)

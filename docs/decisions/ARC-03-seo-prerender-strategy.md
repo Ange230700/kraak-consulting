@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-03 — Stratégie de rendu web (SEO / prerender)
 
 | Champ      | Valeur                                                      |
@@ -210,4 +217,4 @@ framework n'est pas envisagé.
 - [Angular Prerendering Guide](https://angular.dev/guide/prerendering)
 - [Render Static Site Deployment](https://render.com/docs/frameworks)
 - `ARCHITECTURE.md` — section _SEO Et Web Marketing_
-- `docs/specs/BACKLOG.md` — `ARC-03`, `WEB-03`
+- `docs/planning/GITHUB_PROJECT.md` — `ARC-03`, `WEB-03`

@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-05 — Critères anti-scope-creep et cadrage ADR
 
 | Champ          | Valeur         |
@@ -194,7 +201,7 @@ Pour chaque PR, vérifier :
 ## 7 · Références
 
 - [AGENTS.md](../../AGENTS.md) — garde-fous du périmètre produit
-- [docs/specs/BACKLOG.md](../specs/BACKLOG.md) — backlog MVP
+- [docs/planning/GITHUB_PROJECT.md](../planning/GITHUB_PROJECT.md) — backlog MVP
 - [ARC-01 — Architecture cible MVP](./ARC-01-architecture-cible-mvp.md)
 - [ARC-02 — Conventions dépôt et workflow Git](./ARC-02-conventions-repo.md)
 - [ARC-03 — Stratégie SEO et prerendering](./ARC-03-seo-prerender-strategy.md)

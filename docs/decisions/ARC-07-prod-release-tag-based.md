@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-07 — Stratégie de release production basée sur les tags
 
 - Statut : Acceptée
@@ -46,16 +53,16 @@ isolation totale des secrets et des projets de plateforme.
 
 ### Périmètre couvert par cette décision
 
-| Bloc               | Décision                                                                             |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| GitHub Workflow    | Nouveau fichier `.github/workflows/release-prod.yml` sur `tags: ['v*']`              |
-| GitHub Environment | `production` avec required reviewers + restriction « tags only »                     |
-| Render (API)       | Service prod `kraak-api-prod` avec `autoDeploy: false` ; staging garde l'auto-deploy |
-| Render (web)       | Production branch désactivée ; déploiement prod uniquement via API/CLI sur tag       |
-| Supabase           | Projet **séparé** pour la prod (`kraak-prod`), distinct de `kraak-staging`           |
-| Variables d'env    | `apps/api/.env.prod` reste **gitignoré** ; injection via Render/GH Secrets           |
-| Branch protection  | `main` protégée (review + status checks) ; tags `v*` créés depuis `main` uniquement  |
-| Runbook            | `docs/runbooks/RELEASE_PROD.md` documente la procédure tag → review → deploy → smoke |
+| Bloc               | Décision                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| GitHub Workflow    | Nouveau fichier `.github/workflows/release-prod.yml` sur `tags: ['v*']`                |
+| GitHub Environment | `production` avec required reviewers + restriction « tags only »                       |
+| Render (API)       | Service prod `kraak-api-prod` avec `autoDeploy: false` ; staging garde l'auto-deploy   |
+| Render (web)       | Production branch désactivée ; déploiement prod uniquement via API/CLI sur tag         |
+| Supabase           | Projet **séparé** pour la prod (`kraak-prod`), distinct de `kraak-staging`             |
+| Variables d'env    | `apps/api/.env.prod` reste **gitignoré** ; injection via Render/GH Secrets             |
+| Branch protection  | `main` protégée (review + status checks) ; tags `v*` créés depuis `main` uniquement    |
+| Runbook            | `docs/operations/RELEASE_PROD.md` documente la procédure tag → review → deploy → smoke |
 
 ### Pipeline de release production
 
@@ -131,9 +138,9 @@ Cette décision est révisable si :
 
 ## Liens
 
-- Runbook : `docs/runbooks/RELEASE_PROD.md`
+- Runbook : `docs/operations/RELEASE_PROD.md`
 - Workflow : `.github/workflows/release-prod.yml`
 - Configuration hébergeurs : `render.yaml`, configuration Render (UI)
-- Variables d'environnement : `docs/runbooks/ENVIRONMENT_VARIABLES.md`
-- Procédure d'urgence : `docs/runbooks/DEP-06_INCIDENT_ROLLBACK_PILOT_CHECKLIST_2026-04-30.md`
-- Gate go/no-go : `docs/runbooks/DEP-07_GO_NO_GO_PILOT_RELEASE_2026-04-30.md`
+- Variables d'environnement : `docs/operations/ENVIRONMENTS.md`
+- Procédure d'urgence : `docs/operations/INCIDENT_ROLLBACK.md`
+- Gate go/no-go : `docs/archive/pilot-2026-04/DEP-07_GO_NO_GO_PILOT_RELEASE_2026-04-30.md`

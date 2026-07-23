@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- docs\decisions\ARC-10-feature-flag-participant-area.md -->
 
 # ARC-10 — Feature flag espace participant
@@ -73,7 +80,7 @@ déploiement Preview de `staging` :
 - [`apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts) :
   factory `buildRoutes(participantAreaEnabled)` qui compose `marketingRoutes`
   (toujours actives) avec `participantAreaRoutes` (gardées par le flag).
-- [`apps/client/projects/web/src/app/layouts/navbar/navbar.ts`](../../apps/client/projects/web/src/app/layouts/navbar/navbar.ts) :
+- [`apps/client/projects/web/src/app/layouts/navbar/navbar.component.ts`](../../apps/client/projects/web/src/app/layouts/navbar/navbar.component.ts) :
   champ `participantAreaEnabled` consommé par le template.
 - Tests unitaires (Vitest) : `runtime-config.spec.ts`, `app.routes.spec.ts`,
   `navbar.spec.ts` couvrent les deux états du flag.

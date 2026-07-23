@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- docs\decisions\ARC-14-freeze-surface-vitrine-publique.md -->
 
 # ARC-14 - Gel de la surface vitrine publique

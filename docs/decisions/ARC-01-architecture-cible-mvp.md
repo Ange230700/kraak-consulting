@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-01 — Architecture cible MVP
 
 | Champ          | Valeur                 |
@@ -162,5 +169,5 @@ Auth (Supabase Auth)
 - [ARCHITECTURE.md](../../ARCHITECTURE.md) — document source validé
 - [ARC-03 — Stratégie SEO et prerendering](./ARC-03-seo-prerender-strategy.md)
 - [ARC-04 — Modèles de données MVP](./ARC-04-modeles-donnees-mvp.md)
-- [docs/context/tech_stack.md](../context/tech_stack.md)
-- [docs/context/mvp_brief.md](../context/mvp_brief.md)
+- [docs/architecture/OVERVIEW.md](../architecture/OVERVIEW.md)
+- [docs/product/MVP_SCOPE.md](../product/MVP_SCOPE.md)

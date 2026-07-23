@@ -1,3 +1,10 @@
+---
+status: reference
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: false
+---
+
 <!-- docs\decisions\ARC-11-consolidation-hebergement-web-projet-unique.md -->
 
 # ARC-11 — Consolidation de l'hebergement web sur un service unique

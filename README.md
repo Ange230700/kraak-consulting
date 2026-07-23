@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- README.md -->
 
 # KRAAK Consulting
@@ -37,15 +44,13 @@ cp apps/client/.env.example apps/client/.env
 ```
 
 Remplir les valeurs manquantes — voir
-[`docs/runbooks/ENVIRONMENT_VARIABLES.md`](docs/runbooks/ENVIRONMENT_VARIABLES.md).
+[`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md).
 
 Le provider email/password local et les templates email du MVP sont versionnés
 dans [`supabase/config.toml`](supabase/config.toml) et documentés dans
-[`docs/runbooks/SUPABASE_AUTH_SETUP.md`](docs/runbooks/SUPABASE_AUTH_SETUP.md).
-La procédure de rotation manuelle des clés secrètes Supabase est documentée dans
-[`docs/runbooks/SUPABASE_SECRET_ROTATION.md`](docs/runbooks/SUPABASE_SECRET_ROTATION.md).
-La finalisation manuelle des variables d'environnement Render est documentée
-dans [`docs/runbooks/RENDER_ENV_FINALIZATION.md`](docs/runbooks/RENDER_ENV_FINALIZATION.md).
+[`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md).
+Les variables locales, staging et production sont suivies dans
+[`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md).
 
 ### Lancer en mode développement
 
@@ -70,7 +75,7 @@ pnpm dev:mobile
 Le fichier [`compose.local.yml`](compose.local.yml) sert uniquement au workflow de développement local.
 Il ne doit pas être utilisé comme couche d'orchestration en production.
 Pour un profil DB local prêt à l'emploi avec Supabase CLI, voir
-[`docs/runbooks/DEV_MODE.md`](docs/runbooks/DEV_MODE.md) (section
+[`docs/engineering/LOCAL_DEVELOPMENT.md`](docs/engineering/LOCAL_DEVELOPMENT.md) (section
 "Profil DB local prêt à l'emploi (Supabase + Docker Compose)").
 
 ```bash
@@ -99,9 +104,15 @@ kraak-group/
 │           ├── web/   # Site web (PrimeNG + Tailwind)
 │           └── mobile/# App mobile (Ionic + Capacitor)
 ├── docs/
-│   ├── context/       # Briefs produit, guides de style, brouillons
-│   ├── runbooks/      # Guides opérationnels (env, GitHub Project…)
-│   └── specs/         # Spécifications produit et backlog
+│   ├── architecture/  # Architecture courante
+│   ├── decisions/     # ADRs
+│   ├── product/       # Périmètre et parcours produit
+│   ├── engineering/   # Développement, tests, contribution
+│   ├── operations/    # Environnements, release, incident
+│   ├── planning/      # Pilotage GitHub Project
+│   ├── reference/     # Supports utiles non autoritaires
+│   ├── generated/     # Artefacts générés
+│   └── archive/       # Historique uniquement
 ├── scripts/           # Scripts utilitaires
 ├── AGENTS.md          # Règles pour les assistants IA
 ├── ARCHITECTURE.md    # Décisions d'architecture validées
@@ -209,10 +220,10 @@ Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) pour le workflow complet (branches, co
 
 **Résumé rapide :**
 
-1. Créer une branche depuis `main` : `git checkout -b feat/ma-feature`
+1. Créer une branche depuis `staging` : `git switch -c feat/ma-feature`
 2. Implémenter + tester
 3. Commiter avec un message [Conventional Commits](https://www.conventionalcommits.org/) via `pnpm commit` ou en respectant le format `feat(web): ajouter le formulaire de contact`
-4. Pousser et ouvrir une PR
+4. Pousser et ouvrir une PR vers `staging`
 
 Règle documentaire : toute évolution du codebase qui rend la documentation
 inexacte doit inclure la mise à jour des fichiers `.md` concernés dans le même
@@ -224,21 +235,22 @@ changement.
 
 ### Validation API
 
-- [`docs/runbooks/CLI_TOOLS.md`](docs/runbooks/CLI_TOOLS.md) — commandes de validation API et de régression
-- [`docs/runbooks/NIGHTLY_REGRESSION.md`](docs/runbooks/NIGHTLY_REGRESSION.md) — workflow nocturne de régression stricte
+- [`docs/README.md`](docs/README.md) — carte documentaire et règle de précédence
+- [`docs/operations/CLI_TOOLS.md`](docs/operations/CLI_TOOLS.md) — commandes de validation API et de régression
+- [`docs/operations/NIGHTLY_REGRESSION.md`](docs/operations/NIGHTLY_REGRESSION.md) — workflow nocturne de régression stricte
 
-| Document                                                                                             | Contenu                                            |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                                 | Workflow Git, conventions de commits, hooks, PR    |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)                                                                 | Décisions d'architecture validées                  |
-| [`AGENTS.md`](AGENTS.md)                                                                             | Règles de fonctionnement pour les assistants IA    |
-| [`docs/runbooks/ENVIRONMENT_VARIABLES.md`](docs/runbooks/ENVIRONMENT_VARIABLES.md)                   | Variables d'environnement                          |
-| [`docs/runbooks/SUPABASE_AUTH_SETUP.md`](docs/runbooks/SUPABASE_AUTH_SETUP.md)                       | Configuration Auth Supabase du MVP                 |
-| [`docs/runbooks/DEV_MODE.md`](docs/runbooks/DEV_MODE.md)                                             | Guide détaillé du mode développement               |
-| [`docs/runbooks/TECH_OVERVIEW.md`](docs/runbooks/TECH_OVERVIEW.md)                                   | Vue d'ensemble de la stack pour débutants          |
-| [`docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md`](docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md) | Sources officielles des documentations de la stack |
-| [`docs/runbooks/GITHUB_PROJECT_BOARD.md`](docs/runbooks/GITHUB_PROJECT_BOARD.md)                     | Pilotage du board GitHub Project                   |
-| [`docs/specs/erd_mvp.md`](docs/specs/erd_mvp.md)                                                     | ERD complet commenté du modèle de données MVP      |
+| Document                                                                                 | Contenu                                            |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [`docs/engineering/CONTRIBUTION_WORKFLOW.md`](docs/engineering/CONTRIBUTION_WORKFLOW.md) | Workflow Git, conventions de commits, hooks, PR    |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)                                                     | Décisions d'architecture validées                  |
+| [`AGENTS.md`](AGENTS.md)                                                                 | Règles de fonctionnement pour les assistants IA    |
+| [`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md)                     | Variables d'environnement                          |
+| [`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md)                   | Configuration Auth Supabase du MVP                 |
+| [`docs/engineering/LOCAL_DEVELOPMENT.md`](docs/engineering/LOCAL_DEVELOPMENT.md)         | Guide détaillé du mode développement               |
+| [`docs/architecture/OVERVIEW.md`](docs/architecture/OVERVIEW.md)                         | Vue d'ensemble de la stack pour débutants          |
+| [`docs/reference/OFFICIAL_SOURCES.md`](docs/reference/OFFICIAL_SOURCES.md)               | Sources officielles des documentations de la stack |
+| [`docs/planning/GITHUB_PROJECT.md`](docs/planning/GITHUB_PROJECT.md)                     | Pilotage du board GitHub Project                   |
+| [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md)                     | Modèle de données MVP courant                      |
 
 ## État courant du dépôt
 
@@ -251,10 +263,10 @@ changement.
 
 > Note de nommage : le dépôt GitHub s'appelle `kraak-consulting`, tandis que le package racine conserve le nom npm/workspace `kraak-group`.
 
-| Surface           | Cible active                                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Web staging       | Render static site `kraak-web-staging`                                                                                    |
-| API staging       | Render Docker service `kraak-api-staging`                                                                                 |
-| Web production    | Release contrôlée ; vérifier [`docs/runbooks/RELEASE_PROD.md`](docs/runbooks/RELEASE_PROD.md) pour la cible active Render |
-| API production    | Render Docker service `kraak-api-prod`                                                                                    |
-| Base/Auth/Storage | Supabase par environnement                                                                                                |
+| Surface           | Cible active                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Web staging       | Render static site `kraak-web-staging`                                                                                        |
+| API staging       | Render Docker service `kraak-api-staging`                                                                                     |
+| Web production    | Release contrôlée ; vérifier [`docs/operations/RELEASE_PROD.md`](docs/operations/RELEASE_PROD.md) pour la cible active Render |
+| API production    | Render Docker service `kraak-api-prod`                                                                                        |
+| Base/Auth/Storage | Supabase par environnement                                                                                                    |

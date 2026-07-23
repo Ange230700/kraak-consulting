@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-12 - Retrait des sections de prévisualisation du bundle de production
 
 **Date :** 2026-05-14  

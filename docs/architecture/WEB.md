@@ -1,0 +1,35 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
+# Architecture web
+
+Le site web KRAAK est l'application Angular publique située dans
+`apps/client/projects/web`.
+
+## Contrat courant
+
+- Framework : Angular.
+- UI : PrimeNG, PrimeIcons et Tailwind CSS.
+- Rendu : prerender Angular pour les routes vitrines publiques.
+- Style : classes Tailwind et composants PrimeNG, sans `style` inline ni fichier
+  CSS/SCSS par composant.
+- Icônes : PrimeIcons pour les icônes UI.
+- Surface publique gelée : `/`, `/a-propos`, `/services`, `/faq`,
+  `/programmes`, `/ressources`, `/contact`, pages légales et pages d'erreur.
+
+## Sources liées
+
+- [`ARC-03`](../decisions/ARC-03-seo-prerender-strategy.md) pour la stratégie de
+  prerender.
+- [`ARC-14`](../decisions/ARC-14-freeze-surface-vitrine-publique.md) pour le gel
+  de la surface vitrine.
+- [`ARC-15`](../decisions/ARC-15-positionnement-page-ressources-vitrine.md) pour
+  le positionnement de `/ressources`.
+- [`../engineering/UI_COMPONENT_MAPPING.md`](../engineering/UI_COMPONENT_MAPPING.md)
+  pour le mapping PrimeNG/Ionic.
+- [`../engineering/UI_FEEDBACK.md`](../engineering/UI_FEEDBACK.md) pour les
+  messages et toasts web.

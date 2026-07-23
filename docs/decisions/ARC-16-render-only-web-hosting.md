@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- docs\decisions\ARC-16-render-only-web-hosting.md -->
 
 # ARC-16 — Render uniquement pour l'hebergement web

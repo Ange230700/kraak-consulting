@@ -1,3 +1,10 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 <!-- docs\decisions\ARC-13-non-vitrine-gating-complete.md -->
 
 # ARC-13 - Gating des routes non vitrines côté web
