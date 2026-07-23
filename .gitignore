@@ -93,6 +93,8 @@ apps/client/android/
 # Local security scan outputs
 hardcoded-audit*.txt
 *secrets*.txt
+docs/generated/evidence/security/*.raw.json
+docs/generated/evidence/security/*.exitcode
 
 # Local repository audit outputs
 .extract-keys.cjs

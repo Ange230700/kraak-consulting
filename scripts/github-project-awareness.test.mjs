@@ -429,6 +429,11 @@ test('Given a canonical CSV with stable issue keys, When Phase 9 comparison runs
       comparison.fallbackMatches.map((entry) => entry.title),
       ['[TASK][WEB-45] Résumé client'],
     );
+    assert.equal(analysis.summary.canonicalDriftFindings, 2);
+    assert.equal(
+      readFileSync(path.join(root, 'canonical-drift-count.txt'), 'utf8').trim(),
+      '2',
+    );
 
     const exportLines = readFileSync(planningExportFile, 'utf8')
       .trimEnd()

@@ -16,8 +16,9 @@ d'origine change dans le même passage.
 | Chemin      | Statut      | Source                                               |
 | ----------- | ----------- | ---------------------------------------------------- |
 | `primeng/`  | `generated` | Documentation PrimeNG importée pour référence locale |
-| `evidence/` | `generated` | Sorties brutes de checks, audits et validations      |
+| `planning/` | `generated` | Snapshots reproductibles du GitHub Project #6        |
+| `evidence/` | `generated` | Sorties de checks, audits et validations             |
 
-Le snapshot courant du GitHub Project est généré mais reste rangé dans
-[`../planning/github_project_planning_current.csv`](../planning/github_project_planning_current.csv)
-car il accompagne directement le runbook de planning.
+Les sorties brutes volumineuses des audits de dépendances sont publiées comme
+artefacts GitHub Actions. Le dépôt conserve uniquement les résumés lisibles qui
+servent de preuve documentaire.

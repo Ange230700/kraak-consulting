@@ -24,7 +24,7 @@ Ce document reste la source de verite **metier** du MVP. Pour le pilotage
 quotidien a deux, la source de verite **opérationnelle** devient :
 
 - `docs/planning/GITHUB_PROJECT.md` pour les vues, champs et règles board
-- `docs/planning/github_project_planning_current.csv` pour le snapshot courant du
+- `docs/generated/planning/github_project_planning_current.csv` pour le snapshot courant du
   Project #6
 - `docs/archive/historical-planning/github_project_bootstrap_mvp_2026-04.csv` pour l'import
   historique initial `Lane / Surface / Coupling / Wave`

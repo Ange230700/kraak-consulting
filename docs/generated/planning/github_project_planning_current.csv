@@ -157,3 +157,6 @@
 "618","https://github.com/Ange230700/kraak-consulting/issues/618","[DEFECT][QAT-05] Restaurer l'artefact Newman du workflow Nightly Regression","critical","Shared handoff","qa","handoff","Wave 4 - Qualite","5"
 "619","https://github.com/Ange230700/kraak-consulting/issues/619","[OPS] Restaurer l'exécution GitHub Actions bloquée par billing","critical","Shared handoff","ops","handoff","Wave 5 - Release","3"
 "620","https://github.com/Ange230700/kraak-consulting/issues/620","[TASK][OPS-01] Normaliser le GitHub Project #6","high","Shared handoff","ops","handoff","Wave 5 - Release","3"
+"621","https://github.com/Ange230700/kraak-consulting/issues/621","[TASK][DOCS-AUDIT] Fiabiliser l'audit documentation avant gate","high","Shared handoff","docs","independent","Wave 4 - Qualite","3"
+"624","https://github.com/Ange230700/kraak-consulting/issues/624","[DOCS] Archive historical material","low","Shared handoff","docs","independent","Wave 5 - Release",""
+"625","https://github.com/Ange230700/kraak-consulting/issues/625","[TASK][DOCS-HYGIENE] Phase 7 - Archiver ou supprimer les artefacts obsoletes","high","Shared handoff","docs","independent","Wave 5 - Release",""

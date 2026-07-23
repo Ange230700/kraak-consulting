@@ -33,7 +33,8 @@ Sources et artefacts :
 
 - source opérationnelle : GitHub Project #6 live
 - périmètre produit : `docs/product/MVP_SCOPE.md`
-- snapshot courant reproductible : `docs/planning/github_project_planning_current.csv`
+- snapshot courant reproductible :
+  `docs/generated/planning/github_project_planning_current.csv`
 - bootstrap historique MVP avril 2026 :
   `docs/archive/historical-planning/github_project_bootstrap_mvp_2026-04.csv`
 - famille de titres acceptee :
@@ -223,7 +224,17 @@ bash scripts/github-project-awareness.sh \
   --owner Ange230700 \
   --repo Ange230700/kraak-consulting \
   --current-wave "Wave 5 - Release" \
-  --export-current docs/planning/github_project_planning_current.csv
+  --export-current docs/generated/planning/github_project_planning_current.csv
+```
+
+Pour vérifier le snapshot courant sans le modifier :
+
+```bash
+bash scripts/github-project-awareness.sh \
+  --owner Ange230700 \
+  --repo Ange230700/kraak-consulting \
+  --current-wave "Wave 5 - Release" \
+  --check-current
 ```
 
 Règles de comparaison CSV :
@@ -458,7 +469,7 @@ Le fichier historique de bootstrap/import initial est :
 
 Le snapshot courant de planification est :
 
-- `docs/planning/github_project_planning_current.csv`
+- `docs/generated/planning/github_project_planning_current.csv`
 
 Le snapshot courant contient uniquement les champs stables :
 

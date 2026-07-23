@@ -36,7 +36,7 @@ GENERIC=0
 FAIL_ON_DRIFT=0
 OPEN_PROJECT=0
 USE_CANONICAL=1
-CANONICAL_FILE="docs/specs/github_project_planning_current.csv"
+CANONICAL_FILE="docs/generated/planning/github_project_planning_current.csv"
 PLANNING_EXPORT_FILE=""
 USE_COLOR=1
 
@@ -58,6 +58,7 @@ Options:
   --deep                 Fetch issue dependencies, parents, sub-issues and PR details
   --canonical FILE       Compare with a canonical planning CSV
   --export-current FILE  Write a current planning CSV snapshot from live project data
+  --check-current        Check the live project against the generated planning CSV
   --no-canonical         Disable canonical CSV comparison
   --generic              Disable KRAAK-specific fields, views and option checks
   --fail-on-drift        Exit 3 when planning drift is detected
@@ -69,7 +70,8 @@ Examples:
   bash scripts/github-project-awareness.sh
   bash scripts/github-project-awareness.sh --deep
   bash scripts/github-project-awareness.sh --project 6 --owner @me --deep
-  bash scripts/github-project-awareness.sh --export-current docs/specs/github_project_planning_current.csv
+  bash scripts/github-project-awareness.sh --export-current docs/generated/planning/github_project_planning_current.csv
+  bash scripts/github-project-awareness.sh --check-current
 EOF
 }
 
@@ -115,6 +117,11 @@ while (($# > 0)); do
     --export-current)
       PLANNING_EXPORT_FILE="${2:-}"
       shift 2
+      ;;
+    --check-current)
+      USE_CANONICAL=1
+      FAIL_ON_DRIFT=1
+      shift
       ;;
     --no-canonical)
       USE_CANONICAL=0
@@ -1258,6 +1265,8 @@ if (canonicalEnabled && canonicalFile && fs.existsSync(canonicalFile)) {
     canonicalComparison.error = error instanceof Error ? error.message : String(error);
     console.warn(`Comparaison CSV canonique impossible: ${canonicalComparison.error}`);
   }
+} else if (canonicalEnabled && canonicalFile) {
+  canonicalComparison.error = `Canonical planning file not found: ${canonicalFile}`;
 }
 
 writeJson(path.join(outDir, 'canonical-comparison.json'), canonicalComparison);
@@ -1312,6 +1321,13 @@ const findingGroups = {
   canonicalFieldMismatches: canonicalComparison.fieldMismatches,
 };
 const findingCount = Object.values(findingGroups).reduce((sum, group) => sum + group.length, 0);
+const canonicalDriftCount = canonicalComparison.error ? 1 : (
+  canonicalComparison.missingInProject.length +
+  canonicalComparison.extraInProject.length +
+  canonicalComparison.fieldMismatches.length +
+  canonicalComparison.duplicateCanonicalKeys.length +
+  canonicalComparison.duplicateCanonicalTitles.length
+);
 const blockingCount = missingExpectedFields.length + missingExpectedViews.length +
   stateStatusMismatches.length + duplicateUrls.length +
   canonicalComparison.missingInProject.length + canonicalComparison.fieldMismatches.length;
@@ -1351,6 +1367,7 @@ const analysis = {
   canonicalComparison,
   summary: {
     totalFindings: findingCount,
+    canonicalDriftFindings: canonicalDriftCount,
     blockingFindings: blockingCount,
     warningFindings: Math.max(0, findingCount - blockingCount),
   },
@@ -1630,6 +1647,7 @@ report.push('');
 
 fs.writeFileSync(path.join(outDir, 'report.md'), `${report.join('\n')}\n`, 'utf8');
 fs.writeFileSync(path.join(outDir, 'drift-count.txt'), `${findingCount}\n`, 'utf8');
+fs.writeFileSync(path.join(outDir, 'canonical-drift-count.txt'), `${canonicalDriftCount}\n`, 'utf8');
 fs.writeFileSync(path.join(outDir, 'blocking-count.txt'), `${blockingCount}\n`, 'utf8');
 NODE
 
@@ -1721,6 +1739,7 @@ CURRENT_WAVE="$CURRENT_WAVE" \
 node "$RAW_DIR/analyze-project.mjs" analyze
 
 DRIFT_COUNT="$(cat "$OUTPUT_DIR/drift-count.txt")"
+CANONICAL_DRIFT_COUNT="$(cat "$OUTPUT_DIR/canonical-drift-count.txt")"
 BLOCKING_COUNT="$(cat "$OUTPUT_DIR/blocking-count.txt")"
 
 step "8. Summary"
@@ -1729,6 +1748,7 @@ printf '%sOwner:%s %s\n' "$C_BOLD" "$C_RESET" "$OWNER_LOGIN"
 printf '%sRepository:%s %s\n' "$C_BOLD" "$C_RESET" "$REPOSITORY"
 printf '%sItems:%s %s\n' "$C_BOLD" "$C_RESET" "$NORMALIZED_COUNT"
 printf '%sFindings:%s %s total, %s blocking\n' "$C_BOLD" "$C_RESET" "$DRIFT_COUNT" "$BLOCKING_COUNT"
+printf '%sCanonical CSV drift:%s %s\n' "$C_BOLD" "$C_RESET" "$CANONICAL_DRIFT_COUNT"
 printf '%sReport:%s %s\n' "$C_BOLD" "$C_RESET" "$REPORT_FILE"
 if [[ -n "$PLANNING_EXPORT_FILE" ]]; then
   printf '%sCurrent CSV:%s %s\n' "$C_BOLD" "$C_RESET" "$PLANNING_EXPORT_FILE"
@@ -1743,7 +1763,7 @@ if ((OPEN_PROJECT)); then
   gh project view "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --web >/dev/null 2>&1 || true
 fi
 
-if ((FAIL_ON_DRIFT)) && ((DRIFT_COUNT > 0)); then
+if ((FAIL_ON_DRIFT)) && ((CANONICAL_DRIFT_COUNT > 0)); then
   exit 3
 fi
 
