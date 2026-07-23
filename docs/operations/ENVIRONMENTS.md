@@ -157,7 +157,8 @@ sont déclarées directement dans `apps/api/.env` et `apps/client/.env`.
 La configuration Auth email/password versionnée du MVP ne vit pas dans ces
 fichiers `.env` mais dans `supabase/config.toml`, avec ses templates email
 locaux dans `supabase/templates/auth/`. Voir aussi
-[`SUPABASE_AUTH.md`](SUPABASE_AUTH.md).
+[`SUPABASE_AUTH.md`](SUPABASE_AUTH.md) et la politique de secrets de
+[`RELEASE_PROD.md`](RELEASE_PROD.md#politique-de-secrets).
 
 Variables attendues :
 

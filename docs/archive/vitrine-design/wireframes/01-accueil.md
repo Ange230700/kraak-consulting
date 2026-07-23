@@ -197,7 +197,7 @@ Fond navy. Sticky au scroll.
 
 ### 9. FOOTER (composant partagé)
 
-Voir [README.md](README.md#footer--présent-sur-toutes-les-pages).
+Voir [`README.md`](README.md) pour les composants de layout partagés.
 
 ---
 
