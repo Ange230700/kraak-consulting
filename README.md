@@ -12,11 +12,11 @@ Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
 | Outil       | Version minimale | Installation                                                  |
 | ----------- | ---------------- | ------------------------------------------------------------- |
-| **Node.js** | 24.14+           | [nodejs.org](https://nodejs.org/)                             |
-| **pnpm**    | 10.0+            | `corepack enable && corepack prepare pnpm@10.23.0 --activate` |
+| **Node.js** | 22+              | [nodejs.org](https://nodejs.org/)                             |
+| **pnpm**    | 10.23.0          | `corepack enable && corepack prepare pnpm@10.23.0 --activate` |
 | **Git**     | 2.x              | [git-scm.com](https://git-scm.com/)                           |
 
-> **Astuce** : `corepack` est inclus avec Node 24. Pas besoin d'installer `pnpm` séparément.
+> **Astuce** : `corepack` est inclus avec Node 22+. Pas besoin d'installer `pnpm` séparément.
 
 ### Cloner et installer
 

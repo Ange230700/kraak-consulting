@@ -27,14 +27,14 @@ Statuts utilisés :
 
 ## Runtime, langage et monorepo
 
-| Technologie    | Statut    | Usage dans KRAAK                                           | Documentation officielle                                                                                         |
-| -------------- | --------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Node.js        | Actif     | Runtime du monorepo, de l'API, du SSR et des scripts       | [https://nodejs.org/download/release/v24.14.1/docs/api/](https://nodejs.org/download/release/v24.14.1/docs/api/) |
-| pnpm           | Actif     | Gestionnaire de packages et workspaces du monorepo         | [https://pnpm.io/](https://pnpm.io/)                                                                             |
-| TypeScript     | Actif     | Langage principal du web, mobile, API et packages partagés | [https://www.typescriptlang.org/docs/](https://www.typescriptlang.org/docs/)                                     |
-| Git            | Actif     | Versioning local du dépôt                                  | [https://git-scm.com/doc](https://git-scm.com/doc)                                                               |
-| GitHub         | Configuré | Hébergement du dépôt et workflow de contribution           | [https://docs.github.com/](https://docs.github.com/)                                                             |
-| GitHub Actions | Configuré | Pipeline CI défini dans `.github/workflows/ci.yml`         | [https://docs.github.com/actions](https://docs.github.com/actions)                                               |
+| Technologie    | Statut    | Usage dans KRAAK                                           | Documentation officielle                                                               |
+| -------------- | --------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Node.js        | Actif     | Runtime du monorepo, de l'API, du SSR et des scripts       | [https://nodejs.org/docs/latest-v22.x/api/](https://nodejs.org/docs/latest-v22.x/api/) |
+| pnpm           | Actif     | Gestionnaire de packages et workspaces du monorepo         | [https://pnpm.io/](https://pnpm.io/)                                                   |
+| TypeScript     | Actif     | Langage principal du web, mobile, API et packages partagés | [https://www.typescriptlang.org/docs/](https://www.typescriptlang.org/docs/)           |
+| Git            | Actif     | Versioning local du dépôt                                  | [https://git-scm.com/doc](https://git-scm.com/doc)                                     |
+| GitHub         | Configuré | Hébergement du dépôt et workflow de contribution           | [https://docs.github.com/](https://docs.github.com/)                                   |
+| GitHub Actions | Configuré | Pipeline CI défini dans `.github/workflows/ci.yml`         | [https://docs.github.com/actions](https://docs.github.com/actions)                     |
 
 ## Frontend web
 

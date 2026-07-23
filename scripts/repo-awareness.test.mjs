@@ -55,7 +55,7 @@ function runCommand(command, args, options = {}) {
       ...options.env,
     },
     maxBuffer: 1024 * 1024 * 100,
-    timeout: options.timeout ?? 60_000,
+    timeout: options.timeout ?? 90_000,
   });
 }
 

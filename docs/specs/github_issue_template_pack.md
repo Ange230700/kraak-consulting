@@ -6,6 +6,7 @@ Usage rapide :
 2. Copier-coller un bloc complet ci-dessous.
 3. Ajuster l'owner, les dates et les critères si nécessaire.
 4. Ajouter labels et milestone indiques dans le bloc.
+5. Renseigner `Status` et `Priority` dans le GitHub Project, pas en labels.
 
 ---
 
@@ -18,8 +19,6 @@ Labels:
 
 - type: epic
 - area: architecture
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -70,8 +69,6 @@ Labels:
 
 - type: epic
 - area: workspace
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -124,8 +121,6 @@ Labels:
 
 - type: epic
 - area: shared-libs
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -175,8 +170,6 @@ Labels:
 
 - type: epic
 - area: website
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -227,8 +220,6 @@ Labels:
 
 - type: epic
 - area: mobile-shell
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -279,8 +270,6 @@ Labels:
 
 - type: epic
 - area: auth
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -332,8 +321,6 @@ Labels:
 
 - type: epic
 - area: dashboard
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -384,8 +371,6 @@ Labels:
 
 - type: epic
 - area: programs
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -437,8 +422,6 @@ Labels:
 
 - type: epic
 - area: resources
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -490,8 +473,6 @@ Labels:
 
 - type: epic
 - area: announcements
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -542,8 +523,6 @@ Labels:
 
 - type: epic
 - area: support
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -595,8 +574,6 @@ Labels:
 
 - type: epic
 - area: qa
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -653,8 +630,6 @@ Labels:
 
 - type: epic
 - area: deployment
-- priority: P0
-- status: backlog
 
 Milestone:
 

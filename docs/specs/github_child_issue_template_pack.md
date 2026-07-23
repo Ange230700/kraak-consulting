@@ -4,7 +4,7 @@
 > l'unite, mais il ne doit plus servir a recréer en masse une seconde famille
 > d'issues pour le board MVP. Pour la remise a plat du project, utiliser
 > `docs/runbooks/GITHUB_PROJECT_BOARD.md` et
-> `docs/specs/github_project_import_parallel_duo.csv`.
+> `docs/specs/github_project_bootstrap_mvp_2026-04.csv`.
 
 Usage rapide :
 
@@ -12,11 +12,12 @@ Usage rapide :
 2. Copier-coller le bloc correspondant a l'ID.
 3. Ajouter labels et milestone proposes.
 4. Lier l'issue a son epic parent.
+5. Renseigner `Status` et `Priority` dans le GitHub Project, pas en labels.
 
 Convention :
 
 - `type: task` pour tous les child issues (coherence bulk-create)
-- `status: backlog` au démarrage
+- `Status = Todo` et `Priority` sont des champs GitHub Project, pas des labels
 - dépendances sous forme d'IDs backlog
 
 ---
@@ -33,8 +34,6 @@ Labels:
 - type: task
 - area: architecture
 - epic: ARC
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -71,8 +70,6 @@ Labels:
 - type: task
 - area: architecture
 - epic: ARC
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -109,8 +106,6 @@ Labels:
 - type: task
 - area: architecture
 - epic: ARC
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -147,8 +142,6 @@ Labels:
 - type: task
 - area: architecture
 - epic: ARC
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -185,8 +178,6 @@ Labels:
 - type: task
 - area: architecture
 - epic: ARC
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -228,8 +219,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -266,8 +255,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -304,8 +291,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -343,8 +328,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -382,8 +365,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -421,8 +402,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -461,8 +440,6 @@ Labels:
 - type: task
 - area: workspace
 - epic: SET
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -503,8 +480,6 @@ Labels:
 - type: task
 - area: shared-libs
 - epic: LIB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -542,8 +517,6 @@ Labels:
 - type: task
 - area: shared-libs
 - epic: LIB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -581,8 +554,6 @@ Labels:
 - type: task
 - area: shared-libs
 - epic: LIB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -620,8 +591,6 @@ Labels:
 - type: task
 - area: shared-libs
 - epic: LIB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -663,8 +632,6 @@ Labels:
 - type: task
 - area: website
 - epic: WEB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -702,8 +669,6 @@ Labels:
 - type: task
 - area: website
 - epic: WEB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -741,8 +706,6 @@ Labels:
 - type: task
 - area: website
 - epic: WEB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -779,8 +742,6 @@ Labels:
 - type: task
 - area: website
 - epic: WEB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -817,8 +778,6 @@ Labels:
 - type: task
 - area: website
 - epic: WEB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -860,8 +819,6 @@ Labels:
 - type: task
 - area: mobile-shell
 - epic: MOB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -898,8 +855,6 @@ Labels:
 - type: task
 - area: mobile-shell
 - epic: MOB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -936,8 +891,6 @@ Labels:
 - type: task
 - area: mobile-shell
 - epic: MOB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -975,8 +928,6 @@ Labels:
 - type: task
 - area: mobile-shell
 - epic: MOB
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1013,8 +964,6 @@ Labels:
 - type: task
 - area: mobile-shell
 - epic: MOB
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1056,8 +1005,6 @@ Labels:
 - type: task
 - area: auth
 - epic: AUT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1095,8 +1042,6 @@ Labels:
 - type: task
 - area: auth
 - epic: AUT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1134,8 +1079,6 @@ Labels:
 - type: task
 - area: auth
 - epic: AUT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1173,8 +1116,6 @@ Labels:
 - type: task
 - area: auth
 - epic: AUT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1212,8 +1153,6 @@ Labels:
 - type: task
 - area: auth
 - epic: AUT
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1255,8 +1194,6 @@ Labels:
 - type: task
 - area: dashboard
 - epic: DSH
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1293,8 +1230,6 @@ Labels:
 - type: task
 - area: dashboard
 - epic: DSH
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1333,8 +1268,6 @@ Labels:
 - type: task
 - area: dashboard
 - epic: DSH
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1373,8 +1306,6 @@ Labels:
 - type: task
 - area: dashboard
 - epic: DSH
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1417,8 +1348,6 @@ Labels:
 - type: task
 - area: programs
 - epic: PRG
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1455,8 +1384,6 @@ Labels:
 - type: task
 - area: programs
 - epic: PRG
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1496,8 +1423,6 @@ Labels:
 - type: task
 - area: programs
 - epic: PRG
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1535,8 +1460,6 @@ Labels:
 - type: task
 - area: programs
 - epic: PRG
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1574,8 +1497,6 @@ Labels:
 - type: task
 - area: programs
 - epic: PRG
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1618,8 +1539,6 @@ Labels:
 - type: task
 - area: resources
 - epic: RES
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1656,8 +1575,6 @@ Labels:
 - type: task
 - area: resources
 - epic: RES
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1697,8 +1614,6 @@ Labels:
 - type: task
 - area: resources
 - epic: RES
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1736,8 +1651,6 @@ Labels:
 - type: task
 - area: resources
 - epic: RES
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1779,8 +1692,6 @@ Labels:
 - type: task
 - area: announcements
 - epic: ANN
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1817,8 +1728,6 @@ Labels:
 - type: task
 - area: announcements
 - epic: ANN
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1858,8 +1767,6 @@ Labels:
 - type: task
 - area: announcements
 - epic: ANN
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1898,8 +1805,6 @@ Labels:
 - type: task
 - area: announcements
 - epic: ANN
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -1941,8 +1846,6 @@ Labels:
 - type: task
 - area: support
 - epic: SUP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -1980,8 +1883,6 @@ Labels:
 - type: task
 - area: support
 - epic: SUP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2020,8 +1921,6 @@ Labels:
 - type: task
 - area: support
 - epic: SUP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2059,8 +1958,6 @@ Labels:
 - type: task
 - area: support
 - epic: SUP
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -2097,8 +1994,6 @@ Labels:
 - type: task
 - area: support
 - epic: SUP
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -2140,8 +2035,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2179,8 +2072,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2219,8 +2110,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2262,8 +2151,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2305,8 +2192,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2345,8 +2230,6 @@ Labels:
 - type: task
 - area: qa
 - epic: QAT
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -2388,8 +2271,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2426,8 +2307,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2465,8 +2344,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2504,8 +2381,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2543,8 +2418,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P1
-- status: backlog
 
 Milestone:
 
@@ -2582,8 +2455,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 
@@ -2622,8 +2493,6 @@ Labels:
 - type: task
 - area: deployment
 - epic: DEP
-- priority: P0
-- status: backlog
 
 Milestone:
 

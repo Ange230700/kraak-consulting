@@ -44,8 +44,8 @@ est :
 
 ### Runtime / outillage
 
-- **Node.js : 24.14+**
-- **pnpm : 10.23.0+**
+- **Node.js : >=22**
+- **pnpm : 10.23.0**
 - **TypeScript : 5.9.3**
 - **Git : dernière version stable**
 - **GitHub : dépôt principal**
@@ -333,7 +333,7 @@ La stack MVP recommandée pour KRAAK est donc :
 
 - **Monorepo : pnpm workspaces**
 - **Langage : TypeScript 5.9.3**
-- **Runtime : Node.js 24.14+**
+- **Runtime : Node.js >=22**
 - **Front-end : Angular 21.2.x + prerender**
 - **UI : PrimeNG 21.1.x + Tailwind CSS 4.2.x**
 - **État : Signals + services + RxJS**

@@ -4,7 +4,7 @@
 
 name: 'Tâche design'
 about: Créer ou ajuster une décision de design
-labels: ['design', 'type: chore', 'status: ready']
+labels: ['type: chore']
 
 ---
 

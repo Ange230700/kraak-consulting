@@ -2,30 +2,77 @@
 
 ## Board Actif
 
-- GitHub Project principal : `#6 - KRAAK MVP - Product Backlog`
+- GitHub Project principal : `#6 - KRAAK - Product Backlog`
 - Propriétaire : `@me` / `Ange230700`
-- Depot : `Ange230700/kraak-group`
-- Mise a jour : 11 avril 2026
+- Dépôt : `Ange230700/kraak-consulting`
+- Mise a jour : 23 juillet 2026
 
 ---
 
 ## État Actuel
 
-Le rework du board a ete execute le 10-11 avril 2026.
+Le rework initial du board a ete execute le 10-11 avril 2026. Depuis la
+normalisation Phase 9, le Project #6 live est la source opérationnelle de
+vérité.
 
-- le project contient `80` items (tous issus du backlog MVP canonique)
-- les `38` anciennes issues web-only (`#1` a `#38`) ont ete retirees
-- tous les champs duo (`Lane`, `Surface`, `Coupling`, `Wave`) sont renseignes
-  sur chaque item (553 field-edit commands, zero erreurs)
-- la vue Board par défaut est configurée en Kanban avec swimlanes, tri, et
-  slicing
-- `6` vues personnalisées sont créées et sauvegardées
+- le Project contient `158` items au moment de l'export du 23 juillet 2026
+- les champs stables de planification contrôlés par CSV sont `Priority`, `Lane`,
+  `Surface`, `Coupling`, `Wave` et `Effort`
+- les champs dynamiques (`Status`, `Assignee`, `Launch blocker`, milestone
+  courant) restent lus depuis GitHub Project et ne doivent pas être remplacés par
+  un CSV statique
 
-Source canonique :
+Sources et artefacts :
 
+- source opérationnelle : GitHub Project #6 live
 - backlog métier : `docs/specs/BACKLOG.md`
-- projection board duo : `docs/specs/github_project_import_parallel_duo.csv`
-- famille d'issues canonique : `[EPIC][ID]` et `[TASK][ID]`
+- snapshot courant reproductible : `docs/specs/github_project_planning_current.csv`
+- bootstrap historique MVP avril 2026 :
+  `docs/specs/github_project_bootstrap_mvp_2026-04.csv`
+- famille de titres acceptee :
+  `[EPIC][ID]`, `[TASK][ID]`, `[BUG][ID]`, `[DEFECT][ID]`,
+  `[ALERT][ID]`, `[ALERT][ID][scope]`, `[OPS]` et `[DOCS]`
+
+Le CSV sert uniquement de snapshot/import reproductible. Il n'écrase jamais les
+statuts live du board.
+
+---
+
+## Mises À Jour Du Statut Du Projet
+
+Le Project #6 doit contenir des status updates publiés directement dans GitHub
+Projects. Ces updates remplacent l'ancien modèle de comparaison CSV comme signal
+de reporting humain : le CSV reste un snapshot technique, pas un journal de
+pilotage.
+
+Update initial à publier pour juillet 2026 :
+
+```md
+## KRAAK planning status — July 2026
+
+### Current focus
+
+- Restore GitHub Actions execution
+- Restore Nightly Regression
+- Restore production observability
+
+### Release blockers
+
+- #619 GitHub Actions billing/execution
+- #618 Newman artifact
+- #608 Production observability
+
+### Planning maintenance
+
+- Normalizing Project #6 fields, views and automation
+- Replacing the obsolete CSV comparison model
+```
+
+Cadence obligatoire de publication :
+
+- chaque semaine pendant une phase de livraison active
+- avant toute décision de release
+- après la clôture d'une vague majeure
 
 ---
 
@@ -66,6 +113,9 @@ Une dépendance non acceptable doit ressembler à :
 - `Effort`
 - `Launch blocker`
 
+`Area` est conservé temporairement comme champ historique, mais il est
+optionnel et ne fait plus partie des champs requis par l'audit.
+
 ### Champs board duo
 
 Ces champs ont ete créés sur le project `#6` le `10 avril 2026`.
@@ -90,11 +140,14 @@ Ces champs ont ete créés sur le project `#6` le `10 avril 2026`.
 - `Wave` (`SINGLE_SELECT`)
   - `Wave 0 - Cadrage`
   - `Wave 1 - Socle`
-  - `Wave 2 - Accès`
+  - `Wave 2 - Acces`
   - `Wave 3A - Site public`
   - `Wave 3B - Parcours participant`
-  - `Wave 4 - Qualité`
+  - `Wave 4 - Qualite`
   - `Wave 5 - Release`
+  - `Wave 6 - Monetisation`
+  - `Wave 7 - Apprentissage`
+  - `Wave 8 - Release V1.1`
 
 Usage attendu :
 
@@ -102,6 +155,140 @@ Usage attendu :
 - `Surface` = ou se fait le changement principal
 - `Coupling` = niveau de coordination requis
 - `Wave` = ordre macro d'exécution
+
+## Politique De Labels Phase 10
+
+Les labels restent des signaux de type ou de domaine. Les champs GitHub Project
+restent la source de vérité pour `Status` et `Priority`.
+
+Labels à conserver ou créer selon le besoin :
+
+- `type: task`
+- `type: epic`
+- `type: bug`
+- `type: chore`
+- `epic: ARC`
+- `epic: AUT`
+- `epic: PAY`
+- `area: auth`
+- `area: deployment`
+- `security`
+- `documentation`
+
+Labels à retirer :
+
+- `status: *`
+- `priority: *`
+
+Normalisation attendue : garder un espace après les deux-points pour les labels
+namespacés (`epic: SET`, pas `epic:SET`).
+
+---
+
+## Contrat De Champs Et CSV Phase 9
+
+Ce contrat est la règle opérationnelle avant tout remplissage en masse. L'audit
+doit contrôler les champs selon la catégorie de l'item, pas forcer tous les
+items à posséder les mêmes valeurs.
+
+| Catégorie d'item          | Champs requis                                                                                                    |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Tâche `In Progress`       | `Status`, `Priority`, `Lane`, `Surface`, `Coupling`, `Wave`, `Effort`, `Launch blocker`, `Assignee`, `Milestone` |
+| Tâche `Todo` vague active | `Status`, `Priority`, `Lane`, `Surface`, `Coupling`, `Wave`, `Effort`, `Launch blocker`                          |
+| Tâche vague future        | `Status`, `Priority`, `Lane`, `Surface`, `Wave`                                                                  |
+| Epic                      | `Status`, `Priority`, `Lane`, `Wave`                                                                             |
+| Item `Done`               | `Status` uniquement ; conserver les champs historiques existants sans backfill obligatoire                       |
+| Pull request              | Ne pas conserver comme carte normale de planification                                                            |
+
+Pour l'audit local, passer la vague active explicitement quand elle est connue :
+
+```bash
+bash scripts/github-project-awareness.sh --current-wave "Wave 5 - Release"
+```
+
+Sans `--current-wave`, l'audit l'infère à partir des tâches `In Progress`, puis
+de la première vague non terminée.
+
+Pour régénérer le snapshot CSV courant :
+
+```bash
+bash scripts/github-project-awareness.sh \
+  --owner Ange230700 \
+  --repo Ange230700/kraak-consulting \
+  --current-wave "Wave 5 - Release" \
+  --export-current docs/specs/github_project_planning_current.csv
+```
+
+Règles de comparaison CSV :
+
+- utiliser `Issue URL` en priorité, puis `Issue Number`
+- utiliser le titre normalisé Unicode/accents seulement en fallback historique
+- comparer uniquement `Priority`, `Lane`, `Surface`, `Coupling`, `Wave` et
+  `Effort`
+- exclure `Status`, `Assignee`, `Launch blocker` et milestone courant de la
+  comparaison statique
+- ne pas activer `--fail-on-drift` en CI tant que ce contrat Phase 9 et le
+  snapshot courant ne sont pas revus et mergés
+
+### Statut
+
+Options conservées :
+
+- `Todo`
+- `In Progress`
+- `Done`
+
+### Priorité
+
+La priorité doit redevenir un signal de décision strict :
+
+| Priorité   | Sens opérationnel                                                                 |
+| ---------- | --------------------------------------------------------------------------------- |
+| `critical` | bloque la release courante, la production, la sécurité ou un workflow obligatoire |
+| `high`     | requis dans la vague active                                                       |
+| `medium`   | engagé mais non bloquant pour la release                                          |
+| `low`      | optionnel, exploratoire ou reportable                                             |
+
+Les anciens niveaux CSV se mappent seulement pour comparaison :
+
+- `P0` -> `critical`
+- `P1` -> `high`
+- `P2` -> `medium`
+- `P3` -> `low`
+
+Cette conversion ne concerne que la compatibilité avec les anciens exports CSV.
+Le board live utilise directement `critical`, `high`, `medium` et `low`.
+
+### Effort
+
+Le champ GitHub `Effort` reste numérique pour permettre les sommes par vue.
+La comparaison CSV applique ce mapping :
+
+| Taille | Points |
+| ------ | -----: |
+| `XS`   |      1 |
+| `S`    |      2 |
+| `M`    |      3 |
+| `L`    |      5 |
+| `XL`   |      8 |
+
+Règles :
+
+- requis pour les tâches `Todo` de la vague active et les tâches `In Progress`
+- non requis directement sur les epics ; utiliser les totaux des sous-issues
+- non requis sur les items `Done` historiques sauf besoin de reporting rétro
+
+### Launch Blocker, Assignee Et Milestone
+
+- `Launch blocker` est requis uniquement sur les tâches actives ou de release
+  courante, avec une valeur explicite `Yes` ou `No`.
+- Les tâches de vagues futures peuvent garder `Launch blocker` vide jusqu'au
+  raffinement.
+- `Assignee` est requis uniquement en `In Progress`.
+- `Milestone` est requis pour le travail actif ; les tâches V1.1 futures doivent
+  rester alignées avec `M8`, `M9` ou `M10` avant sélection.
+- Ces champs sont dynamiques et ne font pas partie de la comparaison CSV
+  canonique.
 
 ---
 
@@ -255,11 +442,27 @@ Les étapes suivantes ont été réalisées le 10-11 avril 2026 :
 
 ---
 
-## Artefact A Utiliser
+## Artefacts CSV
 
-Le fichier a utiliser pour la reimportation ou la remise a plat du board est :
+Le fichier historique de bootstrap/import initial est :
 
-- `docs/specs/github_project_import_parallel_duo.csv`
+- `docs/specs/github_project_bootstrap_mvp_2026-04.csv`
+
+Le snapshot courant de planification est :
+
+- `docs/specs/github_project_planning_current.csv`
+
+Le snapshot courant contient uniquement les champs stables :
+
+- `Issue Number`
+- `Issue URL`
+- `Title`
+- `Priority`
+- `Lane`
+- `Surface`
+- `Coupling`
+- `Wave`
+- `Effort`
 
 Il ajoute une lecture opérationnelle en plus du backlog :
 

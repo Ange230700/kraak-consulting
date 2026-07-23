@@ -4,7 +4,7 @@
 
 name: 'Signalement de bug'
 about: Signaler un problème qui impacte le MVP
-labels: ['type: bug', 'status: ready']
+labels: ['type: bug']
 
 ---
 

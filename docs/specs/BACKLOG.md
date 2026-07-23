@@ -1,7 +1,7 @@
 # Backlog Produit MVP KRAAK - Epics, Issues Et Milestones
 
 - Projet : KRAAK (MVP web + base mobile)
-- Dépôt : <https://github.com/Ange230700/kraak-group>
+- Dépôt : <https://github.com/Ange230700/kraak-consulting>
 - Project board : voir le board actif documenté dans `docs/runbooks/GITHUB_PROJECT_BOARD.md`
 - Mise à jour : 10 avril 2026
 
@@ -20,8 +20,10 @@ Ce document reste la source de verite **metier** du MVP. Pour le pilotage
 quotidien a deux, la source de verite **opérationnelle** devient :
 
 - `docs/runbooks/GITHUB_PROJECT_BOARD.md` pour les vues, champs et règles board
-- `docs/specs/github_project_import_parallel_duo.csv` pour la projection
-  `Lane / Surface / Coupling / Wave`
+- `docs/specs/github_project_planning_current.csv` pour le snapshot courant du
+  Project #6
+- `docs/specs/github_project_bootstrap_mvp_2026-04.csv` pour l'import
+  historique initial `Lane / Surface / Coupling / Wave`
 
 Échelle de priorité appliquée à toutes les issues :
 

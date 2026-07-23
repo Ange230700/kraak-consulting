@@ -4,7 +4,7 @@
 
 name: 'Tâche contenu'
 about: Ajouter ou ajuster du contenu produit
-labels: ['content', 'type: chore', 'status: ready']
+labels: ['documentation', 'type: chore']
 
 ---
 

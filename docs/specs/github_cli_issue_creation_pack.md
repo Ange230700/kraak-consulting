@@ -11,7 +11,7 @@ Objectif désormais :
 Reference principale :
 
 - `docs/runbooks/GITHUB_PROJECT_BOARD.md`
-- `docs/specs/github_project_import_parallel_duo.csv`
+- `docs/specs/github_project_bootstrap_mvp_2026-04.csv`
 
 Convention de lecture a conserver :
 
@@ -40,7 +40,7 @@ Priorité :
 
 1. `gh auth status`
 2. accès au project `#6`
-3. accès écriture au dépôt `Ange230700/kraak-group`
+3. accès écriture au dépôt `Ange230700/kraak-consulting`
 
 ---
 
@@ -55,7 +55,7 @@ gh project item-list 6 --owner "@me" --limit 200 --format json
 ### Ajouter une issue manquante au project
 
 ```bash
-gh project item-add 6 --owner "@me" --url https://github.com/Ange230700/kraak-group/issues/75
+gh project item-add 6 --owner "@me" --url https://github.com/Ange230700/kraak-consulting/issues/75
 ```
 
 ### Retirer un item legacy du project
@@ -111,11 +111,14 @@ gh project field-create 6 \
 
 - `Wave 0 - Cadrage`
 - `Wave 1 - Socle`
-- `Wave 2 - Accès`
+- `Wave 2 - Acces`
 - `Wave 3A - Site public`
 - `Wave 3B - Parcours participant`
-- `Wave 4 - Qualité`
+- `Wave 4 - Qualite`
 - `Wave 5 - Release`
+- `Wave 6 - Monetisation`
+- `Wave 7 - Apprentissage`
+- `Wave 8 - Release V1.1`
 
 ---
 
@@ -127,7 +130,7 @@ Pseudo-sequence a suivre :
 2. retirer du project les anciennes issues `#1` a `#38`
 3. ajouter toutes les issues canoniques manquantes
 4. renseigner les champs a partir de
-   `docs/specs/github_project_import_parallel_duo.csv`
+   `docs/specs/github_project_bootstrap_mvp_2026-04.csv`
 5. verifier les vues `Lane A`, `Lane B`, `Shared handoff`
 
 ---

@@ -8,7 +8,7 @@ Ce runbook décrit comment générer les projets natifs Android et iOS, lancer u
 
 | Outil          | Version recommandée / utilisée | Remarque                                                  |
 | -------------- | ------------------------------ | --------------------------------------------------------- |
-| Node.js        | 24.14.1                        | version utilisée via `.nvmrc`                             |
+| Node.js        | 22.13.0                        | version utilisée via `.nvmrc`                             |
 | pnpm           | 10.23.0                        | version utilisée via `packageManager` dans `package.json` |
 | JDK            | 21+                            | Temurin recommande, nécessaire pour Gradle / Android      |
 | Android Studio | Hedgehog (2023.1.1)+           | Installe le SDK Android et les émulateurs                 |
