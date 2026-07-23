@@ -18,12 +18,15 @@ processus courant.
 - Si une information historique reste utile, l'extraire vers un document actif
   ou de référence, puis laisser l'archive intacte.
 - Ne pas ajouter de métadonnées lourdes aux preuves brutes et snapshots.
+- Chaque sous-dossier d'archive doit garder un `README.md` indiquant la raison
+  d'archivage, la date d'archivage, les documents actifs de remplacement et la
+  règle de suppression ultérieure.
 
 ## Sous-dossiers
 
-| Dossier                  | Statut       | Contenu                                                    |
-| ------------------------ | ------------ | ---------------------------------------------------------- |
-| `pilot-2026-04/`         | `historical` | Runbooks et preuves du pilote avril 2026                   |
-| `vitrine-design/`        | `historical` | Audits, migration et maquettes vitrine                     |
-| `historical-planning/`   | `historical` | Backlogs, packs d'issues et anciennes vues de travail      |
-| `deployment-transition/` | `historical` | Checklists de transition staging/prod et preuves associées |
+| Dossier                  | Statut       | Contenu                                               |
+| ------------------------ | ------------ | ----------------------------------------------------- |
+| `pilot-2026-04/`         | `historical` | Runbooks et preuves du pilote avril 2026              |
+| `vitrine-design/`        | `historical` | Wireframes, audits, migration et maquettes vitrine    |
+| `historical-planning/`   | `historical` | Backlogs, packs d'issues et anciennes vues de travail |
+| `deployment-transition/` | `historical` | Setup et transition staging/prod vers Render          |

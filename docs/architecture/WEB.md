@@ -21,6 +21,15 @@ Le site web KRAAK est l'application Angular publique située dans
 - Surface publique gelée : `/`, `/a-propos`, `/services`, `/faq`,
   `/programmes`, `/ressources`, `/contact`, pages légales et pages d'erreur.
 
+## Implémentation active
+
+- Routes publiques : [`../../apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts).
+- Prerender public : [`../../apps/client/projects/web/src/app/app.routes.server.ts`](../../apps/client/projects/web/src/app/app.routes.server.ts).
+- Tests de surface : [`../../apps/client/projects/web/src/app/app.routes.spec.ts`](../../apps/client/projects/web/src/app/app.routes.spec.ts)
+  et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
+- Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
+  à consulter uniquement comme archive.
+
 ## Sources liées
 
 - [`ARC-03`](../decisions/ARC-03-seo-prerender-strategy.md) pour la stratégie de
