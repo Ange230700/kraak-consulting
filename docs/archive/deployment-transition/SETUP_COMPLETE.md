@@ -174,14 +174,14 @@ git push -u origin feat/my-feature
 
 ## Documentation Links
 
-| Document                                                                    | Purpose                               |
-| --------------------------------------------------------------------------- | ------------------------------------- |
-| [GIT_WORKFLOW_COMPLETE.md](../historical-planning/GIT_WORKFLOW_COMPLETE.md) | Full guide with detailed explanations |
-| [CHANGESETS.md](../../engineering/CHANGESETS.md)                            | Changesets configuration and usage    |
+| Document                                                                        | Purpose                               |
+| ------------------------------------------------------------------------------- | ------------------------------------- |
+| [GIT_WORKFLOW_COMPLETE.md](../historical-planning/GIT_WORKFLOW_COMPLETE.md)     | Full guide with detailed explanations |
+| [CHANGESETS.md](../../engineering/CHANGESETS.md)                                | Changesets configuration and usage    |
 | [GIT_WORKFLOW_CHEATSHEET.md](../historical-planning/GIT_WORKFLOW_CHEATSHEET.md) | Quick command reference               |
-| [STAGING_VALIDATION.md](../../operations/STAGING_VALIDATION.md)              | Staging deployment details            |
-| [RELEASE_PROD.md](../../operations/RELEASE_PROD.md)                          | Production release procedure          |
-| [AGENTS.md](../../AGENTS.md)                                                 | Git workflow rules (reference)        |
+| [STAGING_VALIDATION.md](../../operations/STAGING_VALIDATION.md)                 | Staging deployment details            |
+| [RELEASE_PROD.md](../../operations/RELEASE_PROD.md)                             | Production release procedure          |
+| [AGENTS.md](../../../AGENTS.md)                                                 | Git workflow rules (reference)        |
 
 ---
 
@@ -198,9 +198,9 @@ git push -u origin feat/my-feature
 ## Next Steps
 
 1. **Review** the workflow documents:
-   - Start with [GIT_WORKFLOW_CHEATSHEET.md](GIT_WORKFLOW_CHEATSHEET.md)
-   - Read [GIT_WORKFLOW_COMPLETE.md](GIT_WORKFLOW_COMPLETE.md) for details
-   - Reference [CHANGESETS.md](CHANGESETS.md) for versioning
+   - Start with [GIT_WORKFLOW_CHEATSHEET.md](../historical-planning/GIT_WORKFLOW_CHEATSHEET.md)
+   - Read [GIT_WORKFLOW_COMPLETE.md](../historical-planning/GIT_WORKFLOW_COMPLETE.md) for details
+   - Reference [CHANGESETS.md](../../engineering/CHANGESETS.md) for versioning
 
 2. **Configure** your local environment:
 

@@ -7,30 +7,30 @@ source_of_truth: false
 
 <!-- docs\decisions\ARC-11-consolidation-hebergement-web-projet-unique.md -->
 
-# ARC-11 — Consolidation de l'hebergement web sur un service unique
+# ARC-11 — Consolidation de l'hébergement web sur un service unique
 
-- **Statut** : Remplacee
+- **Statut** : Remplacée
 - **Date** : 2026-05-03
 - **Remplace** : aspects d'ARC-08 et ARC-09 sur la duplication des cibles web
-- **Remplacee par** : ARC-16 (hebergement web Render uniquement)
+- **Remplacée par** : ARC-16 (hébergement web Render uniquement)
 
 ---
 
 ## 1 · Contexte
 
-Cette decision a formalise une etape intermediaire de consolidation de
-l'hebergement web, pour reduire la duplication des configurations et simplifier
+Cette décision a formalisé une étape intermédiaire de consolidation de
+l'hébergement web, pour réduire la duplication des configurations et simplifier
 la gestion des environnements de validation et de production.
 
-## 2 · Decision historique
+## 2 · Décision historique
 
-- Une cible d'hebergement web unique par depot.
-- Variables d'environnement alignees par environnement (`staging` et
+- Une cible d'hébergement web unique par dépôt.
+- Variables d'environnement alignées par environnement (`staging` et
   `production`).
-- Deploiement de production pilote par workflow de release, pas par push direct
+- Déploiement de production piloté par workflow de release, pas par push direct
   sur branche de production.
 
 ## 3 · Statut actuel
 
-Cette decision n'est plus la reference active. Les regles d'hebergement web
-actuelles sont decrites dans ARC-16.
+Cette décision n'est plus la référence active. Les règles d'hébergement web
+actuelles sont décrites dans ARC-16.

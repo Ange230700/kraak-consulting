@@ -7,45 +7,45 @@ source_of_truth: true
 
 <!-- docs\decisions\ARC-16-render-only-web-hosting.md -->
 
-# ARC-16 — Render uniquement pour l'hebergement web
+# ARC-16 — Render uniquement pour l'hébergement web
 
-- **Statut** : Acceptee
+- **Statut** : Acceptée
 - **Date** : 2026-07-02
-- **Portee** : hebergement web staging + production, workflows CI/CD, docs, tests
-- **Remplace** : la partie hebergement web d'ARC-09 et ARC-11
+- **Portée** : hébergement web staging + production, workflows CI/CD, docs, tests
+- **Remplace** : la partie hébergement web d'ARC-09 et ARC-11
 
 ---
 
-## 1 · Decision
+## 1 · Décision
 
-Render devient l'unique cible active d'hebergement web pour les environnements
+Render devient l'unique cible active d'hébergement web pour les environnements
 `staging` et `production`.
 
-Le depot ne contient plus de configuration, workflow, variable, URL,
-assertion de test ou runbook relies a un autre hebergeur web.
+Le dépôt ne contient plus de configuration, workflow, variable, URL,
+assertion de test ou runbook reliés à un autre hébergeur web.
 
 ## 2 · Contraintes
 
-- Le deploiement externe legacy deja en ligne est traite comme un fallback
-  fige hors depot.
-- Cette decision ne prescrit aucune action de suppression cote dashboard.
-- Aucun outillage CLI de l'ancien hebergeur n'est necessaire dans le depot.
+- Le déploiement externe legacy déjà en ligne est traité comme un fallback
+  figé hors dépôt.
+- Cette décision ne prescrit aucune action de suppression côté dashboard.
+- Aucun outillage CLI de l'ancien hébergeur n'est nécessaire dans le dépôt.
 
-## 3 · Regles operationnelles
+## 3 · Règles opérationnelles
 
-- `render.yaml` est la source de verite pour les services web:
+- `render.yaml` est la source de vérité pour les services web:
   - `kraak-web-staging` sur `staging`, `autoDeploy: true`,
     `staticPublishPath: public`
   - `kraak-web-prod` sur `main`, `autoDeploy: false`,
     `staticPublishPath: public`, sous-domaine Render activé
-- Le workflow de release production deploie:
+- Le workflow de release production déploie:
   - `kraak-api-prod`
   - `kraak-web-prod`
-- Les checks d'observabilite web pointent sur les URLs Render.
+- Les checks d'observabilité web pointent sur les URLs Render.
 
-## 4 · Consequences
+## 4 · Conséquences
 
 - Simplification de l'exploitation: une seule plateforme web active.
-- Reduction du risque de divergence de configuration entre fournisseurs.
-- Historique conserve via les ADR precedents, mais non normatif pour
-  l'hebergement web actif.
+- Réduction du risque de divergence de configuration entre fournisseurs.
+- Historique conservé via les ADR précédents, mais non normatif pour
+  l'hébergement web actif.

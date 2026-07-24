@@ -10,8 +10,8 @@ Ce document explique le diagramme entité-relation complet du MVP KRAAK.
 
 Il complète :
 
-- [`docs/decisions/ARC-04-modeles-donnees-mvp.md`](../decisions/ARC-04-modeles-donnees-mvp.md) pour la décision d'architecture
-- [`docs/architecture/DATA_MODEL.md`](./product_model.md) pour la vision produit
+- [`docs/decisions/ARC-04-modeles-donnees-mvp.md`](../../decisions/ARC-04-modeles-donnees-mvp.md) pour la décision d'architecture
+- [`docs/architecture/DATA_MODEL.md`](../../architecture/DATA_MODEL.md) pour la vision produit
 
 Le périmètre reste strictement celui du MVP. Les éléments de V1.1+ comme les
 paiements, le LMS complet, les certificats, le CRM avancé ou les automatisations
@@ -144,7 +144,7 @@ direct entre toutes les tables, mais du chaînage :
 ## Diagramme Mermaid
 
 Le bloc ci-dessous reprend le diagramme de référence actuellement conservé dans
-[`docs/reference/diagrams/erd-full.mmd`](../context/mermaid-artefacts/erd-full.mmd).
+[`docs/reference/diagrams/erd-full.mmd`](../../reference/diagrams/erd-full.mmd).
 
 ```mermaid
 erDiagram

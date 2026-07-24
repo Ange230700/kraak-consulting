@@ -1,570 +1,843 @@
 #!/usr/bin/env bash
-#
-# KRAAK docs audit
-#
-# Read-only audit of the repository docs/ tree.
-#
-# Requirements: git, node >= 18
-# Optional: rg, tree, curl
-#
-# Usage:
-#   bash scripts/audit-docs.sh
-#   bash scripts/audit-docs.sh --full
-#   bash scripts/audit-docs.sh --network
-#   bash scripts/audit-docs.sh --fail-on-findings
-#   bash scripts/audit-docs.sh --output .reports/docs-audit
-#   bash scripts/audit-docs.sh --docs docs
-#
-# Exit codes:
-#   0 completed
-#   2 invalid input or missing prerequisite
-#   3 findings detected in strict mode
-#   4 audit execution failure
 
 set -uo pipefail
 
 DOCS_DIR="docs"
-OUTPUT_DIR=""
+OUTPUT_DIR=".reports/docs-audit"
 FULL=0
 NETWORK=0
 FAIL_ON_FINDINGS=0
 STALE_DAYS=180
 
 usage() {
-  sed -n '2,28p' "$0" | sed 's/^# \{0,1\}//'
+  cat <<'USAGE'
+KRAAK documentation audit
+
+Usage:
+  bash scripts/audit-docs.sh [--full] [--network] [--fail-on-findings] [--output DIR]
+
+Options:
+  --docs DIR            Documentation root to audit. Defaults to docs.
+  --output DIR          Report output directory. Defaults to .reports/docs-audit.
+  --full                Include staleness and broader inventory reporting.
+  --network             Check collected external HTTP(S) links.
+  --fail-on-findings    Fail only on initial blocking documentation categories.
+  --stale-days DAYS     Staleness threshold used with --full. Defaults to 180.
+USAGE
 }
 
 while (($# > 0)); do
   case "$1" in
     --docs)
       [[ $# -ge 2 ]] || { echo "ERROR: --docs requires a directory." >&2; exit 2; }
-      DOCS_DIR="$2"; shift 2 ;;
+      DOCS_DIR="$2"
+      shift 2
+      ;;
     --output)
       [[ $# -ge 2 ]] || { echo "ERROR: --output requires a directory." >&2; exit 2; }
-      OUTPUT_DIR="$2"; shift 2 ;;
-    --full) FULL=1; shift ;;
-    --network) NETWORK=1; shift ;;
-    --fail-on-findings) FAIL_ON_FINDINGS=1; shift ;;
+      OUTPUT_DIR="$2"
+      shift 2
+      ;;
+    --full)
+      FULL=1
+      shift
+      ;;
+    --network)
+      NETWORK=1
+      shift
+      ;;
+    --fail-on-findings)
+      FAIL_ON_FINDINGS=1
+      shift
+      ;;
     --stale-days)
       [[ $# -ge 2 && "$2" =~ ^[0-9]+$ ]] || {
         echo "ERROR: --stale-days requires a non-negative integer." >&2
         exit 2
       }
-      STALE_DAYS="$2"; shift 2 ;;
-    -h|--help) usage; exit 0 ;;
-    *) echo "ERROR: unknown option: $1" >&2; usage >&2; exit 2 ;;
+      STALE_DAYS="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "ERROR: unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
   esac
 done
 
-have() { command -v "$1" >/dev/null 2>&1; }
-section() { printf '\n## %s\n' "$1"; printf '%s\n' '--------------------------------------------------------------------------------'; }
-run() {
-  printf '\n$'; printf ' %q' "$@"; printf '\n'
-  "$@" 2>&1 || { status=$?; echo "WARN: command exited with status $status; audit continues."; return 0; }
-}
-run_shell() {
-  printf '\n$ %s\n' "$1"
-  bash -lc "$1" 2>&1 || { status=$?; echo "WARN: command exited with status $status; audit continues."; return 0; }
+command -v node >/dev/null 2>&1 || {
+  echo "ERROR: node is required for documentation audit." >&2
+  exit 2
 }
 
-for cmd in git node; do
-  have "$cmd" || { echo "ERROR: required command is missing: $cmd" >&2; exit 2; }
-done
-
-REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[[ -n "$REPO_ROOT" ]] || { echo "ERROR: run inside a Git repository." >&2; exit 2; }
-cd "$REPO_ROOT" || exit 4
-[[ -d "$DOCS_DIR" ]] || { echo "ERROR: directory not found: $DOCS_DIR" >&2; exit 2; }
-
-TIMESTAMP="$(date -u '+%Y%m%dT%H%M%SZ' 2>/dev/null || date '+%Y%m%dT%H%M%S')"
-[[ -n "$OUTPUT_DIR" ]] || OUTPUT_DIR=".reports/docs-audit-$TIMESTAMP"
 mkdir -p "$OUTPUT_DIR/raw"
 
-REPORT_MD="$OUTPUT_DIR/report.md"
-REPORT_JSON="$OUTPUT_DIR/analysis.json"
-FILES_JSON="$OUTPUT_DIR/files.json"
-FINDINGS_TSV="$OUTPUT_DIR/findings.tsv"
-EXTERNAL_URLS="$OUTPUT_DIR/raw/external-urls.txt"
-EXTERNAL_RESULTS="$OUTPUT_DIR/raw/external-link-results.tsv"
-CONSOLE_LOG="$OUTPUT_DIR/raw/console.txt"
+node --input-type=module - "$PWD" "$DOCS_DIR" "$OUTPUT_DIR" "$FULL" "$NETWORK" "$STALE_DAYS" <<'NODE'
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
-: > "$FINDINGS_TSV"
-: > "$EXTERNAL_URLS"
-: > "$EXTERNAL_RESULTS"
-exec > >(tee "$CONSOLE_LOG") 2>&1
-
-printf '# KRAAK DOCUMENTATION AUDIT\n'
-printf 'Generated:          %s\n' "$TIMESTAMP"
-printf 'Repository:         %s\n' "$REPO_ROOT"
-printf 'Documentation root: %s\n' "$DOCS_DIR"
-printf 'Output:             %s\n' "$OUTPUT_DIR"
-printf 'Mode:               full=%s network=%s strict=%s\n' "$FULL" "$NETWORK" "$FAIL_ON_FINDINGS"
-
-section "1. Git scope"
-run git status --short --branch
-run git log -1 --format='%h %cI %s'
-run_shell "git ls-files \"$DOCS_DIR\" | wc -l"
-run git ls-files --others --exclude-standard "$DOCS_DIR"
-
-section "2. Documentation tree"
-if have tree; then
-  if ((FULL)); then run tree -a "$DOCS_DIR"; else run tree -a -L 4 "$DOCS_DIR"; fi
-else
-  if ((FULL)); then
-    run_shell "find \"$DOCS_DIR\" -print | sort"
-  else
-    run_shell "find \"$DOCS_DIR\" -maxdepth 4 -print | sort"
-  fi
-fi
-
-section "3. Inventory"
-run_shell "find \"$DOCS_DIR\" -type f | sort"
-run_shell "find \"$DOCS_DIR\" -type f | awk -F. 'NF==1 {ext=\"[none]\"} NF>1 {ext=\$NF} {count[ext]++} END {for (e in count) print count[e], e}' | sort -nr"
-run_shell "find \"$DOCS_DIR\" -type f -print0 | xargs -0 wc -l | sort -n | tail -30"
-
-section "4. Fast risk scan"
-if have rg; then
-  run rg -n --glob '*.md' --glob '*.mmd' --glob '*.html' \
-    '<<<<<<<|=======|>>>>>>>' "$DOCS_DIR"
-  run rg -n -i --glob '*.md' --glob '*.mmd' --glob '*.html' \
-    'vercel|vercel\.app|VERCEL_|kraak-consulting-staging|kraak-consulting-git-staging' "$DOCS_DIR"
-  echo "NOTE: unfinished-marker checks run in the structural analyzer to ignore Markdown code spans and fences."
-else
-  echo "NOTE: rg is unavailable; core Node analysis still runs."
-fi
-
-section "5. Structural, link, ADR, and runbook analysis"
-node - "$REPO_ROOT" "$DOCS_DIR" "$REPORT_MD" "$REPORT_JSON" "$FILES_JSON" "$FINDINGS_TSV" "$EXTERNAL_URLS" "$STALE_DAYS" "$FULL" <<'NODE'
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const {execFileSync} = require('child_process');
-
-const [repoArg, docsArg, mdArg, jsonArg, filesArg, tsvArg, urlsArg, staleArg, fullArg] = process.argv.slice(2);
-const repo = path.resolve(repoArg);
-const docs = path.resolve(repo, docsArg);
-const reportMd = path.resolve(repo, mdArg);
-const reportJson = path.resolve(repo, jsonArg);
-const filesJson = path.resolve(repo, filesArg);
-const findingsTsv = path.resolve(repo, tsvArg);
-const urlsFile = path.resolve(repo, urlsArg);
-const staleDays = Number(staleArg);
+const [rootArg, docsArg, outputArg, fullArg, networkArg, staleDaysArg] =
+  process.argv.slice(2);
+const root = path.resolve(rootArg);
+const docsRoot = path.resolve(root, docsArg);
+const outputRoot = path.resolve(root, outputArg);
 const full = fullArg === '1';
+const network = networkArg === '1';
+const staleDays = Number(staleDaysArg);
 
-const mdExt = new Set(['.md', '.markdown', '.mdown']);
-const textExt = new Set(['.md', '.markdown', '.mdown', '.mmd', '.txt', '.html', '.css', '.json', '.yaml', '.yml', '.toml', '.csv', '.xml', '.xsl']);
+const markdownExtensions = new Set(['.md', '.markdown', '.mdown', '.mmd']);
+const linkMarkdownExtensions = new Set(['.md', '.markdown', '.mdown']);
+const blockingCategories = new Set([
+  'broken-cross-file-anchor',
+  'broken-local-anchor',
+  'broken-relative-link',
+  'duplicate-adr-number',
+  'invalid-mermaid',
+  'merge-conflict-marker',
+  'missing-required-metadata',
+  'retired-provider-reference',
+  'undefined-reference-link',
+  'unclosed-code-fence',
+]);
+const activeMetadataPrefixes = [
+  'docs/architecture/',
+  'docs/decisions/',
+  'docs/engineering/',
+  'docs/operations/',
+  'docs/planning/',
+  'docs/product/',
+];
+const generatedMetadataExclusions = [
+  'docs/generated/primeng/',
+];
+const mermaidStarts = [
+  'flowchart',
+  'graph',
+  'sequenceDiagram',
+  'classDiagram',
+  'stateDiagram',
+  'stateDiagram-v2',
+  'erDiagram',
+  'journey',
+  'gantt',
+  'pie',
+  'mindmap',
+  'timeline',
+  'gitGraph',
+  'quadrantChart',
+  'requirementDiagram',
+  'C4Context',
+  'sankey-beta',
+  'xychart-beta',
+  'block-beta',
+  'packet-beta',
+];
+
 const findings = [];
-const records = [];
-const externalUrls = new Set();
+const files = [];
 const headingsByFile = new Map();
+const externalUrls = new Set();
 const hashes = new Map();
-const basenames = new Map();
 
-function walk(dir) {
-  const out = [];
-  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
-    const p = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...walk(p));
-    else if (entry.isFile()) out.push(p);
-  }
-  return out;
+function toRelative(filePath) {
+  return path.relative(root, filePath).split(path.sep).join('/');
 }
-function rel(p) { return path.relative(repo, p).split(path.sep).join('/'); }
-function add(severity, category, file, line, message, details='') {
-  findings.push({severity, category, file: file ? rel(file) : '', line: line || 0, message, details});
+
+function addFinding(category, file, line, message, severity = 'warning', details = '') {
+  findings.push({
+    blocking: blockingCategories.has(category),
+    category,
+    details,
+    file: file ? toRelative(file) : '',
+    line: line ?? 0,
+    message,
+    severity: blockingCategories.has(category) ? 'error' : severity,
+  });
 }
-function slug(text) {
-  return text.trim().toLowerCase().replace(/<[^>]+>/g, '').replace(/[`*_~]/g, '')
-    .replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-}
-function decode(value) { try { return decodeURIComponent(value); } catch { return value; } }
-function stripInlineCode(line) {
-  let out = '';
-  let inCode = false;
-  for (let i = 0; i < line.length; i++) {
-    if (line[i] === '`') {
-      let j = i;
-      while (j < line.length && line[j] === '`') j++;
-      inCode = !inCode;
-      i = j - 1;
+
+function walk(directory) {
+  const entries = fs.existsSync(directory)
+    ? fs.readdirSync(directory, { withFileTypes: true })
+    : [];
+  const output = [];
+
+  for (const entry of entries) {
+    const absoluteEntry = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      output.push(...walk(absoluteEntry));
       continue;
     }
-    out += inCode ? ' ' : line[i];
+
+    if (entry.isFile()) {
+      output.push(absoluteEntry);
+    }
   }
-  return out;
-}
-function markerLineForScan(line) {
-  return stripInlineCode(line);
-}
-function hasUnfinishedMarker(line) {
-  const actionable = /\b(TODO|FIXME|TBD|XXX|HACK)\b|^\s*(<<<<<<<|=======|>>>>>>>)/;
-  const contextDependentStatus = /^\s*(?:document\s+)?(?:status|statut)\s*:\s*(?:draft|legacy|stale|obsolete|wip)\b/i;
-  const contextDependentSentence = /\bthis document is\s+(?:stale|obsolete|wip)\b/i;
-  const frenchIncomplete = /\ba completer\b/i;
 
-  return actionable.test(line) || contextDependentStatus.test(line) || contextDependentSentence.test(line) || frenchIncomplete.test(line);
+  return output;
 }
-function isTemplateReferenceLink(label, key) {
-  const normalizedLabel = label.trim().toUpperCase();
-  const normalizedKey = key.trim().toUpperCase();
-  const typedPlaceholders = new Set(['TASK', 'EPIC', 'BUG', 'DEFECT', 'ALERT', 'DOCS', 'OPS']);
 
-  return normalizedKey === 'ID' && typedPlaceholders.has(normalizedLabel)
-    || normalizedLabel === 'ID' && normalizedKey === 'ID'
-    || /^DEP-\*$/.test(normalizedLabel)
-    || /^DEP-\*$/.test(normalizedKey);
-}
-function gitCommittedAt(relativeFile) {
-  try {
-    const output = execFileSync('git', ['log', '-1', '--format=%cI', '--', relativeFile], {
-      cwd: repo,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-
-    if (!output) return null;
-    const date = new Date(output);
-    return Number.isNaN(date.getTime()) ? null : date;
-  } catch {
-    return null;
+function parseFrontmatter(content) {
+  if (!content.startsWith('---\n')) {
+    return { body: content, metadata: {} };
   }
+
+  const end = content.indexOf('\n---', 4);
+
+  if (end === -1) {
+    return { body: content, metadata: {} };
+  }
+
+  const metadata = {};
+
+  for (const line of content.slice(4, end).split(/\r?\n/)) {
+    const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+
+    if (match) {
+      metadata[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, '');
+    }
+  }
+
+  return {
+    body: content.slice(content.indexOf('\n', end + 1) + 1),
+    metadata,
+  };
 }
-function duplicateContentIsIgnorable(files) {
-  return files.every(file => file.bytes < 16 || file.file.toLowerCase().endsWith('.exitcode'));
+
+function slug(text) {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/<[^>]+>/g, '')
+    .replace(/[`*_~]/g, '')
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+function stripInlineCode(line) {
+  let output = '';
+  let inCode = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    if (line[index] === '`') {
+      inCode = !inCode;
+      continue;
+    }
+
+    output += inCode ? ' ' : line[index];
+  }
+
+  return output;
+}
+
+function isGeneratedMetadataExcluded(relativeFile) {
+  return generatedMetadataExclusions.some((prefix) =>
+    relativeFile.startsWith(prefix),
+  );
+}
+
+function requiresActiveMetadata(relativeFile, metadata) {
+  if (isGeneratedMetadataExcluded(relativeFile)) {
+    return false;
+  }
+
+  return (
+    /^docs\/[^/]+\.md$/i.test(relativeFile) ||
+    relativeFile === 'docs/README.md' ||
+    relativeFile === 'docs/archive/README.md' ||
+    activeMetadataPrefixes.some((prefix) => relativeFile.startsWith(prefix)) ||
+    metadata.status === 'active'
+  );
+}
+
+function validateRequiredMetadata(file, relativeFile, metadata) {
+  if (!requiresActiveMetadata(relativeFile, metadata)) {
+    return;
+  }
+
+  const missing = ['status', 'owner', 'last_reviewed', 'source_of_truth'].filter(
+    (key) => !metadata[key],
+  );
+
+  if (missing.length > 0) {
+    addFinding(
+      'missing-required-metadata',
+      file,
+      1,
+      'Required metadata is missing on an active documentation file.',
+      'error',
+      missing.join(', '),
+    );
+  }
 }
 
 function parseMarkdown(file, content) {
   const lines = content.split(/\r?\n/);
   const headings = [];
   const links = [];
-  const refs = new Map();
   let fence = null;
-  let mermaid = 0;
+  let mermaidStart = null;
+  let mermaidLines = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const lineNo = i + 1;
-    const line = lines[i];
-    const fenceMatch = line.match(/^\s*(```+|~~~+)\s*([^\s`]*)?.*$/);
+  function closeMermaid(endLine) {
+    if (!mermaidStart) {
+      return;
+    }
+
+    validateMermaid(file, mermaidStart, mermaidLines.join('\n'));
+    mermaidStart = null;
+    mermaidLines = [];
+  }
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const lineNumber = index + 1;
+    const line = lines[index];
+    const fenceMatch = line.match(/^\s*(```+|~~~+)\s*([A-Za-z0-9_-]+)?/);
+
     if (fenceMatch) {
       const marker = fenceMatch[1];
-      const language = (fenceMatch[2] || '').trim();
+      const language = (fenceMatch[2] ?? '').toLowerCase();
+
       if (!fence) {
-        fence = {char: marker[0], length: marker.length, line: lineNo};
-        if (!language) add('warning', 'code-fence-language', file, lineNo, 'Fenced code block has no language identifier.');
-        if (language.toLowerCase() === 'mermaid') mermaid++;
+        fence = { char: marker[0], length: marker.length, line: lineNumber };
+
+        if (language === 'mermaid') {
+          mermaidStart = lineNumber;
+          mermaidLines = [];
+        }
       } else if (marker[0] === fence.char && marker.length >= fence.length) {
+        closeMermaid(lineNumber);
         fence = null;
       }
+
       continue;
     }
-    if (fence) continue;
 
-    const hm = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
-    if (hm) headings.push({level: hm[1].length, text: hm[2].trim(), line: lineNo, slug: slug(hm[2])});
-
-    const searchableLine = stripInlineCode(line);
-    const rd = searchableLine.match(/^\s*\[([^\]]+)\]:\s*(\S+)/);
-    if (rd) refs.set(rd[1].trim().toLowerCase(), {target: rd[2], line: lineNo});
-
-    let m;
-    const inline = /!?\[([^\]]*)\]\(([^)]+)\)/g;
-    while ((m = inline.exec(searchableLine)) !== null) {
-      const raw = m[2].trim().replace(/^<|>$/g, '');
-      links.push({label: m[1], target: raw.split(/\s+["'(]/)[0], line: lineNo, image: m[0].startsWith('!')});
-    }
-    const refLink = /!?\[([^\]]+)\]\[([^\]]*)\]/g;
-    while ((m = refLink.exec(searchableLine)) !== null) {
-      const key = (m[2] || m[1]).trim().toLowerCase();
-      if (isTemplateReferenceLink(m[1], key)) continue;
-      links.push({label: m[1], target: refs.get(key)?.target || '', line: lineNo, image: m[0].startsWith('!'), unresolved: !refs.has(key), key});
-    }
-    const bare = /https?:\/\/[^\s<>"')\]]+/g;
-    while ((m = bare.exec(searchableLine)) !== null) externalUrls.add(m[0].replace(/[.,;:]$/, ''));
-  }
-
-  if (fence) add('error', 'unclosed-code-fence', file, fence.line, 'Unclosed fenced code block.');
-  const h1 = headings.filter(h => h.level === 1);
-  if (h1.length === 0) add('warning', 'missing-h1', file, 1, 'Markdown file has no H1 heading.');
-  if (h1.length > 1) add('warning', 'multiple-h1', file, h1[1].line, `Markdown file has ${h1.length} H1 headings.`);
-
-  let previous = 0;
-  for (const h of headings) {
-    if (previous && h.level > previous + 1) add('warning', 'heading-level-skip', file, h.line, `Heading jumps from H${previous} to H${h.level}.`, h.text);
-    previous = h.level;
-  }
-  const counts = new Map();
-  for (const h of headings) counts.set(h.slug, (counts.get(h.slug) || 0) + 1);
-  for (const [key, count] of counts) if (key && count > 1) add('warning', 'duplicate-heading', file, headings.find(h => h.slug === key)?.line || 1, `Heading anchor "${key}" appears ${count} times.`);
-
-  headingsByFile.set(file, headings);
-  return {lines, headings, links, mermaid};
-}
-
-for (const file of walk(docs).sort()) {
-  const stat = fs.statSync(file);
-  const relativeFile = rel(file);
-  const ext = path.extname(file).toLowerCase();
-  const base = path.basename(file).toLowerCase();
-  if (!basenames.has(base)) basenames.set(base, []);
-  basenames.get(base).push(relativeFile);
-
-  const committedAt = gitCommittedAt(relativeFile);
-  const ageBasisMs = committedAt ? committedAt.getTime() : stat.mtimeMs;
-  const record = {file: relativeFile, extension: ext || '[none]', bytes: stat.size, lines: null, ageDays: Math.floor((Date.now() - ageBasisMs) / 86400000), ageSource: committedAt ? 'git-history' : 'filesystem-mtime', lastCommittedAt: committedAt ? committedAt.toISOString() : null, markdown: mdExt.has(ext), headings: 0, links: 0, mermaidBlocks: 0};
-  let content = null;
-
-  if (textExt.has(ext)) {
-    try { content = fs.readFileSync(file, 'utf8'); }
-    catch (e) { add('error', 'read-failure', file, 0, 'Unable to read text file.', e.message); }
-  }
-
-  if (content !== null) {
-    const lines = content.split(/\r?\n/);
-    record.lines = lines.length;
-    const hash = crypto.createHash('sha256').update(content).digest('hex');
-    if (!hashes.has(hash)) hashes.set(hash, []);
-    hashes.get(hash).push({file: relativeFile, bytes: stat.size});
-
-    if (/\r\n/.test(content)) add('info', 'crlf-line-endings', file, 1, 'File uses CRLF line endings.');
-    const trail = lines.findIndex(line => /[ \t]+$/.test(line));
-    if (trail >= 0) add('warning', 'trailing-whitespace', file, trail + 1, 'File contains trailing whitespace.');
-    const conflict = lines.findIndex(line => /^(<<<<<<<|=======|>>>>>>>)/.test(line));
-    if (conflict >= 0) add('error', 'merge-conflict-marker', file, conflict + 1, 'Merge-conflict marker detected.');
-
-    let scanFence = null;
-    for (let i = 0; i < lines.length; i++) {
-      if (mdExt.has(ext)) {
-        const fenceMatch = lines[i].match(/^\s*(```+|~~~+)/);
-        if (fenceMatch) {
-          const marker = fenceMatch[1];
-          if (!scanFence) scanFence = {char: marker[0], length: marker.length};
-          else if (marker[0] === scanFence.char && marker.length >= scanFence.length) scanFence = null;
-          continue;
-        }
-        if (scanFence) continue;
+    if (fence) {
+      if (mermaidStart) {
+        mermaidLines.push(line);
       }
 
-      const markerLine = mdExt.has(ext) ? markerLineForScan(lines[i]) : lines[i];
-      if (hasUnfinishedMarker(markerLine))
-        add('warning', 'unfinished-marker', file, i + 1, 'Potential unfinished or stale documentation marker.', markerLine.trim().slice(0, 180));
-    }
-    const provider = lines.findIndex(line => /vercel|vercel\.app|VERCEL_|kraak-consulting-staging|kraak-consulting-git-staging/i.test(line));
-    if (provider >= 0) add('warning', 'retired-provider-reference', file, provider + 1, 'Potential retired hosting-provider reference.', lines[provider].trim().slice(0, 180));
-
-    if (mdExt.has(ext)) {
-      const parsed = parseMarkdown(file, content);
-      record.headings = parsed.headings.length;
-      record.links = parsed.links.length;
-      record.mermaidBlocks = parsed.mermaid;
-      record.parsedLinks = parsed.links;
-    }
-  } else {
-    const hash = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-    if (!hashes.has(hash)) hashes.set(hash, []);
-    hashes.get(hash).push({file: relativeFile, bytes: stat.size});
-  }
-
-  if (stat.size === 0) add('warning', 'empty-file', file, 1, 'File is empty.');
-  if (stat.size > 500000) add('info', 'large-doc-file', file, 0, 'Documentation file exceeds 500 KB.', `${stat.size} bytes`);
-  if (record.ageDays > staleDays) add('info', committedAt ? 'old-file-git-history' : 'old-file-mtime', file, 0, committedAt ? `Last Git commit for file is older than ${staleDays} days.` : `File mtime is older than ${staleDays} days.`, `${record.ageDays} days`);
-  if (/\s/.test(path.relative(docs, file))) add('warning', 'space-in-path', file, 0, 'Documentation path contains spaces.');
-  records.push(record);
-}
-
-for (const [base, files] of basenames) {
-  if (files.length > 1 && base !== 'readme.md' && base !== '.gitkeep') add('info', 'duplicate-basename', null, 0, `Basename "${base}" appears ${files.length} times.`, files.join(', '));
-}
-for (const files of hashes.values()) if (files.length > 1 && !duplicateContentIsIgnorable(files)) add('warning', 'duplicate-content', null, 0, `Identical content appears in ${files.length} files.`, files.map(file => file.file).join(', '));
-
-for (const record of records.filter(r => r.markdown)) {
-  const source = path.resolve(repo, record.file);
-  const sourceDir = path.dirname(source);
-  for (const link of record.parsedLinks || []) {
-    if (link.unresolved) { add('error', 'undefined-reference-link', source, link.line, `Undefined reference link: [${link.key}]`); continue; }
-    const target = link.target.trim();
-    if (!target) { add('warning', 'empty-link-target', source, link.line, 'Link has an empty target.'); continue; }
-    if (/^(https?:|mailto:|tel:|sms:|data:)/i.test(target)) {
-      if (/^https?:/i.test(target)) externalUrls.add(target);
-      if (/^http:\/\//i.test(target)) add('warning', 'insecure-http-link', source, link.line, 'External link uses HTTP.', target);
       continue;
     }
+
+    const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+
+    if (heading) {
+      headings.push({ line: lineNumber, slug: slug(heading[2]), text: heading[2] });
+    }
+
+    const searchableLine = stripInlineCode(line);
+    let match;
+    const inlineLink = /!?\[([^\]]*)\]\(([^)]+)\)/g;
+
+    while ((match = inlineLink.exec(searchableLine)) !== null) {
+      const target = match[2].trim().replace(/^<|>$/g, '').split(/\s+["']/)[0];
+      links.push({ line: lineNumber, target });
+    }
+
+    const bareUrl = /https?:\/\/[^\s<>"')\]]+/g;
+
+    while ((match = bareUrl.exec(searchableLine)) !== null) {
+      externalUrls.add(match[0].replace(/[.,;:]$/, ''));
+    }
+  }
+
+  if (fence) {
+    addFinding(
+      'unclosed-code-fence',
+      file,
+      fence.line,
+      'Unclosed fenced code block.',
+      'error',
+    );
+  }
+
+  headingsByFile.set(file, headings);
+
+  return { headings, links };
+}
+
+function decodeTarget(target) {
+  try {
+    return decodeURIComponent(target);
+  } catch {
+    return target;
+  }
+}
+
+function validateLinks(file, parsed) {
+  const sourceDirectory = path.dirname(file);
+
+  for (const link of parsed.links) {
+    const target = link.target;
+
+    if (!target || /^(https?:|mailto:|tel:|sms:|data:)/i.test(target)) {
+      if (/^https?:/i.test(target)) {
+        externalUrls.add(target);
+      }
+
+      continue;
+    }
+
     if (target.startsWith('#')) {
-      const anchor = decode(target.slice(1)).toLowerCase();
-      const anchors = new Set((headingsByFile.get(source) || []).map(h => h.slug));
-      if (anchor && !anchors.has(anchor)) add('error', 'broken-local-anchor', source, link.line, `Anchor not found: #${anchor}`);
+      const anchor = slug(decodeTarget(target.slice(1)));
+      const anchors = new Set((headingsByFile.get(file) ?? []).map((item) => item.slug));
+
+      if (anchor && !anchors.has(anchor)) {
+        addFinding(
+          'broken-local-anchor',
+          file,
+          link.line,
+          `Anchor not found: ${target}`,
+          'error',
+        );
+      }
+
       continue;
     }
-    const parts = target.split('#', 2);
-    const cleanPath = decode(parts[0].split('?')[0]);
-    const resolved = path.resolve(sourceDir, cleanPath);
+
+    const [targetPath, rawAnchor] = target.split('#', 2);
+    const resolved = path.resolve(sourceDirectory, decodeTarget(targetPath.split('?')[0]));
+
     if (!fs.existsSync(resolved)) {
-      add('error', link.image ? 'missing-image' : 'broken-relative-link', source, link.line, `Referenced path does not exist: ${target}`, rel(resolved));
+      addFinding(
+        'broken-relative-link',
+        file,
+        link.line,
+        `Referenced path does not exist: ${target}`,
+        'error',
+        toRelative(resolved),
+      );
       continue;
     }
-    if (parts[1] && fs.statSync(resolved).isFile() && mdExt.has(path.extname(resolved).toLowerCase())) {
-      if (!headingsByFile.has(resolved)) parseMarkdown(resolved, fs.readFileSync(resolved, 'utf8'));
-      const anchors = new Set((headingsByFile.get(resolved) || []).map(h => h.slug));
-      const anchor = decode(parts[1]).toLowerCase();
-      if (anchor && !anchors.has(anchor)) add('error', 'broken-cross-file-anchor', source, link.line, `Cross-file anchor not found: ${target}`);
+
+    if (
+      rawAnchor &&
+      fs.statSync(resolved).isFile() &&
+      linkMarkdownExtensions.has(path.extname(resolved).toLowerCase())
+    ) {
+      if (!headingsByFile.has(resolved)) {
+        const content = fs.readFileSync(resolved, 'utf8');
+        parseMarkdown(resolved, content);
+      }
+
+      const anchors = new Set((headingsByFile.get(resolved) ?? []).map((item) => item.slug));
+      const anchor = slug(decodeTarget(rawAnchor));
+
+      if (anchor && !anchors.has(anchor)) {
+        addFinding(
+          'broken-cross-file-anchor',
+          file,
+          link.line,
+          `Cross-file anchor not found: ${target}`,
+          'error',
+        );
+      }
     }
   }
 }
 
-const decisions = path.join(docs, 'decisions');
-if (fs.existsSync(decisions)) {
-  const adrFiles = fs.readdirSync(decisions).filter(name => /^ARC-\d{2}-.+\.md$/i.test(name)).sort();
-  const numbers = new Map();
-  for (const name of adrFiles) {
-    const number = Number(name.match(/^ARC-(\d{2})-/i)[1]);
-    if (!numbers.has(number)) numbers.set(number, []);
-    numbers.get(number).push(name);
+function validateRetiredProvider(file, relativeFile, content, metadata) {
+  const activeLike =
+    requiresActiveMetadata(relativeFile, metadata) && metadata.status !== 'historical';
+
+  if (!activeLike) {
+    return;
   }
-  for (const [number, names] of numbers) if (names.length > 1) add('error', 'duplicate-adr-number', decisions, 0, `ADR ARC-${String(number).padStart(2,'0')} is duplicated.`, names.join(', '));
-  const sequence = [...numbers.keys()].sort((a,b) => a-b);
-  if (sequence.length) for (let n = sequence[0]; n <= sequence[sequence.length-1]; n++) if (!numbers.has(n)) add('warning', 'missing-adr-number', decisions, 0, `ADR sequence is missing ARC-${String(n).padStart(2,'0')}.`);
-  const index = path.join(decisions, 'README.md');
-  if (!fs.existsSync(index)) add('warning', 'missing-adr-index', decisions, 0, 'decisions/ has no README.md index.');
-  else {
-    const indexText = fs.readFileSync(index, 'utf8');
-    for (const name of adrFiles) if (!indexText.includes(name)) add('warning', 'adr-missing-from-index', index, 1, `ADR is not referenced by decisions/README.md: ${name}`);
+
+  const lines = content.split(/\r?\n/);
+  const providerPattern =
+    /vercel|vercel\.app|VERCEL_|kraak-consulting-staging|kraak-consulting-git-staging/i;
+  const index = lines.findIndex((line) => providerPattern.test(stripInlineCode(line)));
+
+  if (index !== -1) {
+    addFinding(
+      'retired-provider-reference',
+      file,
+      index + 1,
+      'Potential retired hosting-provider reference in active documentation.',
+      'error',
+      lines[index].trim(),
+    );
   }
 }
 
-const order = {error: 0, warning: 1, info: 2};
-findings.sort((a,b) => (order[a.severity]-order[b.severity]) || a.file.localeCompare(b.file) || a.line-b.line);
-const counts = {
-  files: records.length,
-  markdownFiles: records.filter(r => r.markdown).length,
-  totalLines: records.reduce((s,r) => s + (r.lines || 0), 0),
-  totalBytes: records.reduce((s,r) => s + r.bytes, 0),
-  headings: records.reduce((s,r) => s + r.headings, 0),
-  links: records.reduce((s,r) => s + r.links, 0),
-  mermaidBlocks: records.reduce((s,r) => s + r.mermaidBlocks, 0),
-  externalUrls: externalUrls.size,
-  findings: findings.length,
-  errors: findings.filter(f => f.severity === 'error').length,
-  warnings: findings.filter(f => f.severity === 'warning').length,
-  info: findings.filter(f => f.severity === 'info').length,
-};
+function validateMermaid(file, line, content) {
+  const withoutFrontmatter = parseFrontmatter(content).body;
+  const firstStatement = withoutFrontmatter
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter((item) => item && !item.startsWith('%%'))[0];
+
+  if (!firstStatement) {
+    addFinding('invalid-mermaid', file, line, 'Mermaid block is empty.', 'error');
+    return;
+  }
+
+  const startsWithKnownDiagram = mermaidStarts.some(
+    (keyword) =>
+      firstStatement === keyword || firstStatement.startsWith(`${keyword} `),
+  );
+
+  if (!startsWithKnownDiagram) {
+    addFinding(
+      'invalid-mermaid',
+      file,
+      line,
+      'Mermaid block does not start with a supported diagram declaration.',
+      'error',
+      firstStatement,
+    );
+  }
+}
+
+function validateMergeMarkers(file, content) {
+  const lines = content.split(/\r?\n/);
+  const index = lines.findIndex((line) => /^(<<<<<<<|=======|>>>>>>>)/.test(line));
+
+  if (index !== -1) {
+    addFinding(
+      'merge-conflict-marker',
+      file,
+      index + 1,
+      'Merge conflict marker detected.',
+      'error',
+    );
+  }
+}
+
+function validateDuplicateAdrNumbers() {
+  const decisionsRoot = path.join(docsRoot, 'decisions');
+
+  if (!fs.existsSync(decisionsRoot)) {
+    return;
+  }
+
+  const groups = new Map();
+
+  for (const file of walk(decisionsRoot)) {
+    const name = path.basename(file);
+    const match = name.match(/^(ARC-\d{2})-.+\.md$/i);
+
+    if (!match) {
+      continue;
+    }
+
+    const key = match[1].toUpperCase();
+    groups.set(key, [...(groups.get(key) ?? []), toRelative(file)]);
+  }
+
+  for (const [id, matches] of groups) {
+    if (matches.length > 1) {
+      addFinding(
+        'duplicate-adr-number',
+        decisionsRoot,
+        0,
+        `${id} is duplicated.`,
+        'error',
+        matches.join(', '),
+      );
+    }
+  }
+}
+
+function hashTrackedContent(relativeFile, content) {
+  if (relativeFile.startsWith('docs/generated/primeng/')) {
+    return;
+  }
+
+  const hash = crypto.createHash('sha256').update(content).digest('hex');
+  hashes.set(hash, [...(hashes.get(hash) ?? []), relativeFile]);
+}
+
+function validateDuplicateContent() {
+  for (const matches of hashes.values()) {
+    if (matches.length < 2) {
+      continue;
+    }
+
+    addFinding(
+      'duplicate-content',
+      null,
+      0,
+      `Identical documentation content appears in ${matches.length} files.`,
+      'warning',
+      matches.join(', '),
+    );
+  }
+}
+
+function gitCommittedAt(relativeFile) {
+  try {
+    const output = execFileSync('git', ['log', '-1', '--format=%cI', '--', relativeFile], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+
+    return output ? new Date(output) : null;
+  } catch {
+    return null;
+  }
+}
+
+function validateStaleness(file, relativeFile) {
+  if (!full || relativeFile.startsWith('docs/archive/')) {
+    return;
+  }
+
+  const committedAt = gitCommittedAt(relativeFile);
+  const basis = committedAt && !Number.isNaN(committedAt.getTime())
+    ? committedAt.getTime()
+    : fs.statSync(file).mtimeMs;
+  const ageDays = Math.floor((Date.now() - basis) / 86400000);
+
+  if (ageDays > staleDays) {
+    addFinding(
+      'stale-document',
+      file,
+      0,
+      `Document has not changed for more than ${staleDays} days.`,
+      'info',
+      `${ageDays} days`,
+    );
+  }
+}
+
+async function checkExternalLinks() {
+  const rows = ['url\tstatus\tresult'];
+
+  if (!network) {
+    fs.writeFileSync(path.join(outputRoot, 'raw', 'external-link-results.tsv'), `${rows.join('\n')}\n`);
+    return;
+  }
+
+  for (const url of [...externalUrls].sort()) {
+    let status = 0;
+    let result = 'failed';
+
+    try {
+      let response = await fetch(url, {
+        method: 'HEAD',
+        redirect: 'follow',
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (response.status === 405) {
+        response = await fetch(url, {
+          method: 'GET',
+          redirect: 'follow',
+          signal: AbortSignal.timeout(15000),
+        });
+      }
+
+      status = response.status;
+      result =
+        response.status >= 200 && response.status < 400
+          ? 'ok'
+          : response.status === 401 || response.status === 403
+            ? 'restricted'
+            : 'failed';
+    } catch (error) {
+      result = 'failed';
+    }
+
+    rows.push(`${url}\t${status}\t${result}`);
+
+    if (result === 'failed') {
+      addFinding(
+        'external-link-failure',
+        null,
+        0,
+        'External link check failed.',
+        'warning',
+        `${status} ${url}`,
+      );
+    }
+  }
+
+  fs.writeFileSync(path.join(outputRoot, 'raw', 'external-link-results.tsv'), `${rows.join('\n')}\n`);
+}
+
+if (!fs.existsSync(docsRoot)) {
+  console.error(`Documentation directory not found: ${docsArg}`);
+  process.exit(2);
+}
+
+fs.mkdirSync(path.join(outputRoot, 'raw'), { recursive: true });
+
+const parsedMarkdown = new Map();
+
+for (const file of walk(docsRoot).sort()) {
+  const relativeFile = toRelative(file);
+  const extension = path.extname(file).toLowerCase();
+
+  if (!markdownExtensions.has(extension)) {
+    continue;
+  }
+
+  if (relativeFile.startsWith('docs/generated/primeng/')) {
+    continue;
+  }
+
+  const content = fs.readFileSync(file, 'utf8');
+  const { metadata } = parseFrontmatter(content);
+
+  files.push({
+    bytes: fs.statSync(file).size,
+    file: relativeFile,
+    metadata,
+  });
+
+  validateRequiredMetadata(file, relativeFile, metadata);
+  validateMergeMarkers(file, content);
+  validateRetiredProvider(file, relativeFile, content, metadata);
+  hashTrackedContent(relativeFile, content);
+  validateStaleness(file, relativeFile);
+
+  if (extension === '.mmd') {
+    validateMermaid(file, 1, content);
+  }
+
+  if (linkMarkdownExtensions.has(extension)) {
+    parsedMarkdown.set(file, parseMarkdown(file, content));
+  }
+}
+
+for (const [file, parsed] of parsedMarkdown) {
+  validateLinks(file, parsed);
+}
+
+validateDuplicateAdrNumbers();
+validateDuplicateContent();
+await checkExternalLinks();
+
+findings.sort(
+  (left, right) =>
+    Number(right.blocking) - Number(left.blocking) ||
+    left.category.localeCompare(right.category, 'en') ||
+    left.file.localeCompare(right.file, 'en') ||
+    left.line - right.line,
+);
+
 const categories = {};
-for (const f of findings) categories[f.category] = (categories[f.category] || 0) + 1;
-const analysis = {generatedAt: new Date().toISOString(), documentationRoot: rel(docs), staleThresholdDays: staleDays, counts, categories, findings};
 
-fs.writeFileSync(filesJson, JSON.stringify(records.map(({parsedLinks, ...r}) => r), null, 2) + '\n');
-fs.writeFileSync(reportJson, JSON.stringify(analysis, null, 2) + '\n');
-fs.writeFileSync(urlsFile, [...externalUrls].sort().join('\n') + (externalUrls.size ? '\n' : ''));
-const esc = v => String(v ?? '').replace(/\t/g,' ').replace(/\r?\n/g,' ');
-fs.writeFileSync(findingsTsv, ['severity\tcategory\tfile\tline\tmessage\tdetails', ...findings.map(f => [f.severity,f.category,f.file,f.line,f.message,f.details].map(esc).join('\t'))].join('\n') + '\n');
+for (const finding of findings) {
+  categories[finding.category] = (categories[finding.category] ?? 0) + 1;
+}
 
-const categoryRows = Object.entries(categories).sort((a,b) => b[1]-a[1]).map(([k,v]) => `| \`${k}\` | ${v} |`).join('\n') || '| _None_ | 0 |';
-const largestRows = [...records].sort((a,b) => b.bytes-a.bytes).slice(0,20).map(r => `| \`${r.file}\` | ${r.bytes} | ${r.lines ?? 'binary'} |`).join('\n');
-const max = full ? findings.length : 250;
-const findingRows = findings.slice(0,max).map(f => {
-  const loc = f.file ? `\`${f.file}${f.line ? ':'+f.line : ''}\`` : '-';
-  const details = f.details ? `<br><sub>${f.details.replace(/\|/g,'\\|')}</sub>` : '';
-  return `| ${f.severity} | \`${f.category}\` | ${loc} | ${f.message.replace(/\|/g,'\\|')}${details} |`;
-}).join('\n') || '| - | - | - | No findings. |';
+const counts = {
+  blocking: findings.filter((finding) => finding.blocking).length,
+  files: files.length,
+  findings: findings.length,
+  informational: findings.filter((finding) => finding.severity === 'info').length,
+  warnings: findings.filter((finding) => finding.severity === 'warning').length,
+};
+const analysis = {
+  categories,
+  counts,
+  documentationRoot: path.relative(root, docsRoot).split(path.sep).join('/'),
+  externalUrls: [...externalUrls].sort(),
+  findings,
+  generatedAt: new Date().toISOString(),
+};
 
-const md = `# KRAAK documentation audit\n\n- Generated: ${analysis.generatedAt}\n- Documentation root: \`${analysis.documentationRoot}\`\n- Stale threshold: ${staleDays} days\n\n## Executive summary\n\n| Metric | Value |\n| --- | ---: |\n| Files | ${counts.files} |\n| Markdown files | ${counts.markdownFiles} |\n| Text lines | ${counts.totalLines} |\n| Bytes | ${counts.totalBytes} |\n| Headings | ${counts.headings} |\n| Markdown links/images | ${counts.links} |\n| Mermaid blocks | ${counts.mermaidBlocks} |\n| External URLs | ${counts.externalUrls} |\n| Findings | ${counts.findings} |\n| Errors | ${counts.errors} |\n| Warnings | ${counts.warnings} |\n| Informational | ${counts.info} |\n\n## Findings by category\n\n| Category | Count |\n| --- | ---: |\n${categoryRows}\n\n## Largest files\n\n| File | Bytes | Lines |\n| --- | ---: | ---: |\n${largestRows}\n\n## Detailed findings\n\n| Severity | Category | Location | Finding |\n| --- | --- | --- | --- |\n${findingRows}\n${!full && findings.length > 250 ? '\n> The Markdown report shows the first 250 findings. Use analysis.json or findings.tsv for the complete set.\n' : ''}\n## Artifacts\n\n- \`analysis.json\`\n- \`files.json\`\n- \`findings.tsv\`\n- \`raw/external-urls.txt\`\n- \`raw/external-link-results.tsv\`\n- \`raw/console.txt\`\n`;
-fs.writeFileSync(reportMd, md);
+fs.writeFileSync(
+  path.join(outputRoot, 'analysis.json'),
+  `${JSON.stringify(analysis, null, 2)}\n`,
+);
+fs.writeFileSync(
+  path.join(outputRoot, 'files.json'),
+  `${JSON.stringify(files, null, 2)}\n`,
+);
+fs.writeFileSync(
+  path.join(outputRoot, 'findings.tsv'),
+  [
+    'blocking\tseverity\tcategory\tfile\tline\tmessage\tdetails',
+    ...findings.map((finding) =>
+      [
+        finding.blocking,
+        finding.severity,
+        finding.category,
+        finding.file,
+        finding.line,
+        finding.message,
+        finding.details,
+      ]
+        .map((value) => String(value).replace(/\t/g, ' ').replace(/\r?\n/g, ' '))
+        .join('\t'),
+    ),
+  ].join('\n') + '\n',
+);
+fs.writeFileSync(
+  path.join(outputRoot, 'raw', 'external-urls.txt'),
+  `${[...externalUrls].sort().join('\n')}${externalUrls.size ? '\n' : ''}`,
+);
 
-console.log(`Files analyzed:      ${counts.files}`);
-console.log(`Markdown files:      ${counts.markdownFiles}`);
-console.log(`Errors:              ${counts.errors}`);
-console.log(`Warnings:            ${counts.warnings}`);
-console.log(`Informational:       ${counts.info}`);
-console.log(`External URLs:       ${counts.externalUrls}`);
-console.log(`Markdown report:     ${path.relative(repo, reportMd)}`);
-console.log(`JSON report:         ${path.relative(repo, reportJson)}`);
+const categoryRows = Object.entries(categories)
+  .sort((left, right) => right[1] - left[1])
+  .map(([category, count]) => `| \`${category}\` | ${count} |`)
+  .join('\n') || '| - | 0 |';
+const findingRows = findings
+  .slice(0, 200)
+  .map((finding) => {
+    const location = finding.file
+      ? `\`${finding.file}${finding.line ? `:${finding.line}` : ''}\``
+      : '-';
+    return `| ${finding.blocking ? 'yes' : 'no'} | ${finding.severity} | \`${finding.category}\` | ${location} | ${finding.message.replace(/\|/g, '\\|')} |`;
+  })
+  .join('\n') || '| - | - | - | - | No findings. |';
+
+fs.writeFileSync(
+  path.join(outputRoot, 'report.md'),
+  `# KRAAK documentation audit
+
+- Generated: ${analysis.generatedAt}
+- Documentation root: \`${analysis.documentationRoot}\`
+- Blocking findings: ${counts.blocking}
+- Warnings: ${counts.warnings}
+- Informational: ${counts.informational}
+
+## Categories
+
+| Category | Count |
+| --- | ---: |
+${categoryRows}
+
+## Findings
+
+| Blocking | Severity | Category | Location | Message |
+| --- | --- | --- | --- | --- |
+${findingRows}
+`,
+);
+
+console.log(`Documentation files: ${counts.files}`);
+console.log(`Findings: ${counts.findings}`);
+console.log(`Blocking findings: ${counts.blocking}`);
+console.log(`Report: ${path.relative(root, path.join(outputRoot, 'report.md')).split(path.sep).join('/')}`);
 NODE
 
 NODE_STATUS=$?
-((NODE_STATUS == 0)) || { echo "ERROR: Node analysis failed with status $NODE_STATUS." >&2; exit 4; }
-
-section "6. External links"
-if ((NETWORK)); then
-  if ! have curl; then
-    echo "WARN: --network requested, but curl is unavailable."
-  elif [[ ! -s "$EXTERNAL_URLS" ]]; then
-    echo "No external URLs found."
-  else
-    printf 'url\tstatus\tresult\n' > "$EXTERNAL_RESULTS"
-    curl_status() {
-      local method="$1"
-      local url="$2"
-      local status
-
-      if [[ "$method" == "HEAD" ]]; then
-        status="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 --connect-timeout 8 --user-agent 'KRAAK-Docs-Audit/1.0' --head "$url" 2>/dev/null || true)"
-      else
-        status="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 --connect-timeout 8 --user-agent 'KRAAK-Docs-Audit/1.0' "$url" 2>/dev/null || true)"
-      fi
-
-      [[ "$status" =~ ^[0-9]{3}$ ]] || status="000"
-      printf '%s' "$status"
-    }
-    check_url_once() {
-      local url="$1"
-      local status
-
-      status="$(curl_status HEAD "$url")"
-      if [[ "$status" == "405" ]]; then
-        status="$(curl_status GET "$url")"
-      fi
-
-      printf '%s' "$status"
-    }
-    retryable_status() {
-      case "$1" in
-        429|5??) return 0 ;;
-        *) return 1 ;;
-      esac
-    }
-    classify_status() {
-      case "$1" in
-        2??|3??) printf 'ok' ;;
-        401|403) printf 'restricted' ;;
-        *) printf 'failed' ;;
-      esac
-    }
-    while IFS= read -r url; do
-      [[ -n "$url" ]] || continue
-      status="$(check_url_once "$url")"
-      if retryable_status "$status"; then
-        status="$(check_url_once "$url")"
-      fi
-      result="$(classify_status "$status")"
-      printf '%s\t%s\t%s\n' "$url" "$status" "$result" >> "$EXTERNAL_RESULTS"
-      printf '%-4s %s\n' "$status" "$url"
-    done < "$EXTERNAL_URLS"
-  fi
-else
-  echo "NOTE: re-run with --network to check collected external URLs."
+if ((NODE_STATUS != 0)); then
+  exit "$NODE_STATUS"
 fi
 
-section "7. Documentation history"
-run git log --oneline --decorate -20 -- "$DOCS_DIR"
-if ((FULL)); then
-  run_shell "git log --name-only --format='' -- \"$DOCS_DIR\" | sed '/^$/d' | sort | uniq -c | sort -nr | head -50"
-fi
+BLOCKING_COUNT="$(node -e "const fs=require('fs');const p=process.argv[1];const a=JSON.parse(fs.readFileSync(p,'utf8'));process.stdout.write(String(a.counts.blocking||0));" "$OUTPUT_DIR/analysis.json")"
 
-ERROR_COUNT="$(node -e 'const fs=require("fs"); const a=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); process.stdout.write(String(a.counts.errors||0));' "$REPORT_JSON")"
-WARNING_COUNT="$(node -e 'const fs=require("fs"); const a=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); process.stdout.write(String(a.counts.warnings||0));' "$REPORT_JSON")"
-NETWORK_FAILURES=0
-if [[ -s "$EXTERNAL_RESULTS" ]]; then
-  NETWORK_FAILURES="$(awk -F '\t' 'NR>1 && $3=="failed" {n++} END {print n+0}' "$EXTERNAL_RESULTS")"
-fi
-
-section "8. Final summary"
-printf 'Errors:                 %s\n' "$ERROR_COUNT"
-printf 'Warnings:               %s\n' "$WARNING_COUNT"
-printf 'External link failures: %s\n' "$NETWORK_FAILURES"
-printf 'Markdown report:        %s\n' "$REPORT_MD"
-printf 'JSON report:            %s\n' "$REPORT_JSON"
-printf 'Findings TSV:           %s\n' "$FINDINGS_TSV"
-
-if ((FAIL_ON_FINDINGS)) && ((ERROR_COUNT > 0 || WARNING_COUNT > 0 || NETWORK_FAILURES > 0)); then
-  echo "FAIL: documentation findings detected."
+if ((FAIL_ON_FINDINGS)) && ((BLOCKING_COUNT > 0)); then
+  echo "FAIL: blocking documentation findings detected." >&2
   exit 3
 fi
 

@@ -1,0 +1,116 @@
+name: Docs Quality
+
+on:
+  pull_request:
+    branches: [staging, main]
+    paths:
+      - '*.md'
+      - 'docs/**'
+      - 'scripts/audit-docs.sh'
+      - 'scripts/audit-docs.test.mjs'
+      - 'scripts/generate-docs-index.mjs'
+      - 'scripts/generate-docs-index.test.mjs'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/docs-quality.yml'
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GIT_EXECUTABLE: /usr/bin/git
+
+jobs:
+  pull-request-docs:
+    name: Pull Request Docs
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Detect changed Markdown files
+        run: |
+          mkdir -p .reports/docs-quality
+          git diff --name-only --diff-filter=ACMRT \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" \
+            -- '*.md' '*.markdown' '*.mdown' \
+            > .reports/docs-quality/changed-docs.txt
+          cat .reports/docs-quality/changed-docs.txt
+
+      - name: Prettier on changed docs
+        run: |
+          node <<'NODE'
+          const { readFileSync } = require('node:fs');
+          const { spawnSync } = require('node:child_process');
+
+          const files = readFileSync('.reports/docs-quality/changed-docs.txt', 'utf8')
+            .split(/\r?\n/)
+            .filter(Boolean);
+
+          if (files.length === 0) {
+            console.log('No changed Markdown files.');
+            process.exit(0);
+          }
+
+          const result = spawnSync('pnpm', ['exec', 'prettier', '--check', ...files], {
+            stdio: 'inherit',
+          });
+
+          process.exit(result.status ?? 1);
+          NODE
+
+      - name: Internal links, metadata, retired providers and Mermaid
+        run: pnpm docs:audit:strict
+
+      - name: ADR index check
+        run: pnpm docs:index:check
+
+  weekly-docs-audit:
+    name: Weekly Docs Audit
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Full docs audit with external links
+        run: bash scripts/audit-docs.sh --full --network --output .reports/docs-audit
+
+      - name: Upload docs audit report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: docs-audit
+          path: .reports/docs-audit/
+          retention-days: 30

@@ -206,9 +206,9 @@ Voir [`README.md`](README.md) pour les composants de layout partagés.
 
 ## Points d'attention implémentation
 
-| Point         | Détail                                                                                        |
-| ------------- | --------------------------------------------------------------------------------------------- |
-| Accessibilité | H1 = titre hero, H2 par section, alt sur photos équipe                                        |
-| SEO           | `<title>` "À propos — KRAAK", description unique à la page                                    |
-| Responsive    | Colonnes histoire / mission → 1 col mobile                                                    |
-| Contenu       | Photos et bio fondateur = placeholder ; connecter à [`CONTENT_DRAFT.md`](../CONTENT_DRAFT.md) |
+| Point         | Détail                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------- |
+| Accessibilité | H1 = titre hero, H2 par section, alt sur photos équipe                                                        |
+| SEO           | `<title>` "À propos — KRAAK", description unique à la page                                                    |
+| Responsive    | Colonnes histoire / mission → 1 col mobile                                                                    |
+| Contenu       | Photos et bio fondateur = placeholder ; connecter à [`CONTENT_DRAFT.md`](../../../reference/CONTENT_DRAFT.md) |
