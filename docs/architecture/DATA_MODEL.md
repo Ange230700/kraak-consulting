@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -13,8 +13,9 @@ Ce document définit le modèle produit minimum de l'application KRAAK pour
 servir de base commune au produit, au backend/API, au mobile, aux contrats de
 données et au futur schéma de stockage.
 
-Il consolide l'ancien modèle produit et l'ancien ERD MVP. Les diagrammes source
-sont conservés comme référence dans [`../reference/diagrams/`](../reference/diagrams/).
+Il consolide l'ancien modèle produit et l'ancien ERD MVP. Le diagramme ER
+autoritaire est intégré dans ce document pour éviter plusieurs artefacts Mermaid
+divergents.
 
 Il couvre :
 
@@ -175,37 +176,164 @@ Entités retenues :
 
 ## 4. Relations Entre Entités
 
-### Vue synthétique
+### Diagramme ER autoritaire
 
-- un `User` peut porter un rôle `participant`, `admin` ou `trainer`
-- un `User` de rôle `participant` est lié à un `Participant`
-- un `Program` contient plusieurs `Cohort`
-- une `Cohort` appartient à un `Program`
-- une `Cohort` contient plusieurs `Session`
-- une `Cohort` peut exposer plusieurs `Resource`
-- une `Cohort` peut recevoir plusieurs `Announcement`
-- un `Participant` peut avoir plusieurs `Enrollment`
-- un `Enrollment` relie un `Participant` à un `Program` et, si besoin, à une
-  `Cohort`
-- une `Session` peut être rattachée à un `trainer` via un `User`
-- une `Notification` cible un `User` ou un groupe logique d'utilisateurs
-- un `SupportRequest` est créé par un `User`, généralement un `participant`
+```mermaid
+erDiagram
+    APP_USER {
+        uuid id PK "FK auth.users"
+        text email UK
+        user_role role
+        text first_name
+        text last_name
+        text phone
+        text preferred_contact_channel
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
 
-### Cardinalités minimales
+    PARTICIPANT {
+        uuid id PK
+        uuid user_id FK, UK "UNIQUE vers APP_USER.id"
+        lifecycle_status lifecycle_status
+        text reference_code
+        text country
+        text city
+        text notes
+        timestamptz created_at
+        timestamptz updated_at
+    }
 
-- `User` 1 -> 0..1 `Participant`
-- `Participant` 1 -> 1 `User`
-- `Program` 1 -> 0..n `Cohort`
-- `Cohort` n -> 1 `Program`
-- `Cohort` 1 -> 0..n `Session`
-- `Cohort` 1 -> 0..n `Resource`
-- `Cohort` 1 -> 0..n `Announcement`
-- `Participant` 1 -> 0..n `Enrollment`
-- `Enrollment` n -> 1 `Participant`
-- `Enrollment` n -> 1 `Program`
-- `Enrollment` n -> 0..1 `Cohort`
-- `User` 1 -> 0..n `Notification`
-- `User` 1 -> 0..n `SupportRequest`
+    PROGRAM {
+        uuid id PK
+        text slug UK
+        text title
+        text summary
+        text description
+        publication_status status
+        program_visibility visibility
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    COHORT {
+        uuid id PK
+        uuid program_id FK
+        text name
+        text code
+        cohort_status status
+        date start_date
+        date end_date
+        integer capacity
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    SESSION {
+        uuid id PK
+        uuid cohort_id FK
+        text title
+        text description
+        session_status status
+        timestamptz starts_at
+        timestamptz ends_at
+        location_type location_type
+        text location_label
+        text meeting_link
+        uuid trainer_user_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    RESOURCE {
+        uuid id PK
+        uuid program_id FK
+        uuid cohort_id FK
+        text title
+        text description
+        resource_type resource_type
+        text url
+        text file_path
+        publication_status status
+        timestamptz published_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ANNOUNCEMENT {
+        uuid id PK
+        text title
+        text body
+        audience_type audience_type
+        uuid program_id FK
+        uuid cohort_id FK
+        publication_status status
+        timestamptz published_at
+        uuid created_by_user_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ENROLLMENT {
+        uuid id PK
+        uuid participant_id FK
+        uuid program_id FK
+        uuid cohort_id FK
+        enrollment_status status
+        timestamptz enrolled_at
+        timestamptz completed_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    NOTIFICATION {
+        uuid id PK
+        uuid user_id FK
+        text title
+        text body
+        notification_type notification_type
+        notification_channel channel
+        boolean is_read
+        timestamptz read_at
+        text source_type
+        uuid source_id
+        timestamptz created_at
+    }
+
+    SUPPORT_REQUEST {
+        uuid id PK
+        uuid user_id FK
+        uuid participant_id FK
+        text subject
+        text message
+        support_request_status status
+        support_category category
+        uuid assigned_to_user_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    APP_USER ||--o| PARTICIPANT : "possède"
+    APP_USER ||--o{ NOTIFICATION : "reçoit"
+    APP_USER ||--o{ SUPPORT_REQUEST : "crée"
+    APP_USER ||--o{ SUPPORT_REQUEST : "traite"
+    APP_USER ||--o{ ANNOUNCEMENT : "rédige"
+    APP_USER ||--o{ SESSION : "anime"
+
+    PARTICIPANT ||--o{ ENROLLMENT : "s'inscrit"
+    PARTICIPANT ||--o{ SUPPORT_REQUEST : "ouvre"
+
+    PROGRAM ||--o{ COHORT : "contient"
+    PROGRAM ||--o{ ENROLLMENT : "reçoit"
+    PROGRAM ||--o{ RESOURCE : "fournit"
+    PROGRAM ||--o{ ANNOUNCEMENT : "cible"
+
+    COHORT ||--o{ SESSION : "planifie"
+    COHORT ||--o{ ENROLLMENT : "accueille"
+    COHORT ||--o{ RESOURCE : "fournit"
+    COHORT ||--o{ ANNOUNCEMENT : "cible"
+```
 
 ### Règles métier minimales
 

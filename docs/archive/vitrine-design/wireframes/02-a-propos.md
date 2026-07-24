@@ -19,7 +19,7 @@ de travailler avec l'organisation.
 
 ### 1. HEADER (composant partagé)
 
-Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
+Voir [`README.md`](README.md) pour les composants de layout partagés.
 
 ---
 
@@ -200,7 +200,7 @@ Voir [README.md](README.md#header--présent-sur-toutes-les-pages).
 
 ### 9. FOOTER (composant partagé)
 
-Voir [README.md](README.md#footer--présent-sur-toutes-les-pages).
+Voir [`README.md`](README.md) pour les composants de layout partagés.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -46,6 +46,32 @@ Cette tâche ne couvre pas :
 - automatisation de rollback (procédures manuelles retenues pour la sécurité)
 - orchestration multi-région ou failover automatique
 - SLA ou contrats de niveau de service
+
+---
+
+## Flux synthétique
+
+```mermaid
+flowchart TD
+    detect["Détection<br/>Observability, support, issue"]
+    confirm["Confirmer l'incident<br/>curl web + API health"]
+    falseAlert["Fausse alerte<br/>commenter puis fermer"]
+    isolate["Isoler le domaine<br/>web, API, Supabase"]
+    collect["Collecter les preuves<br/>logs Render, santé, statut DB"]
+    mitigate["Mitiger<br/>restart, redeploy, correction rapide"]
+    restored{"Service rétabli ?"}
+    rollback["Rollback sûr<br/>Render ou tag stable"]
+    verify["Vérifier<br/>home web + /health API"]
+    post["Post-incident<br/>postmortem, fix, Project"]
+
+    detect --> confirm
+    confirm -->|non confirmé| falseAlert
+    confirm -->|confirmé| isolate
+    isolate --> collect --> mitigate --> restored
+    restored -->|oui| verify
+    restored -->|non| rollback --> verify
+    verify --> post
+```
 
 ---
 
