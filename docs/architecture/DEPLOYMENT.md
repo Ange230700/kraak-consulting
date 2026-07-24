@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -10,6 +10,25 @@ source_of_truth: true
 KRAAK utilise Render pour le web et l'API, avec Supabase par environnement.
 
 ## Topologie courante
+
+```mermaid
+flowchart LR
+    local["Local"]
+    staging["Staging"]
+    production["Production"]
+
+    local --> localWeb["Angular web/mobile"]
+    local --> localApi["NestJS API"]
+    localApi --> localDb["Supabase local"]
+
+    staging --> stagingWeb["Render web staging"]
+    staging --> stagingApi["Render API staging"]
+    stagingApi --> stagingDb["Supabase staging"]
+
+    production --> prodWeb["Render web production"]
+    production --> prodApi["Render API production"]
+    prodApi --> prodDb["Supabase production"]
+```
 
 | Surface           | Staging             | Production          |
 | ----------------- | ------------------- | ------------------- |

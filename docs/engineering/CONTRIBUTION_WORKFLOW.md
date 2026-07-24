@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -227,20 +227,28 @@ Ces réglages sont déjà appliqués dans le `.git/config` du dépôt. Si vous c
 
 ### Séquence type
 
-```text
-1. Partir de `staging` à jour.
-2. Créer une branche courte : `<type>/<sujet>`.
-3. Implémenter le plus petit incrément viable.
-4. Commiter en Conventional Commits.
-5. Pousser la branche.
-6. Ouvrir une PR vers `staging`.
-7. Attendre les checks requis.
-8. Merger sans merge commit, avec historique linéaire.
-9. Supprimer la branche locale et distante.
-10. Mettre à jour l'issue et le Project GitHub.
+```mermaid
+flowchart LR
+    staging["staging à jour"]
+    branch["Branche courte<br/>type/sujet"]
+    work["Petit incrément<br/>tests ciblés"]
+    commit["Commit<br/>Conventional Commits"]
+    pr["PR vers staging"]
+    checks["Checks requis"]
+    ff["Rebase + fusion<br/>fast-forward"]
+    done["staging poussé<br/>issue + Project terminé"]
+    cleanup["Branche supprimée"]
 
-`main` n'est pas une branche de développement. Elle avance uniquement par PR de release depuis `staging`.
+    releasePr["PR release<br/>staging -> main"]
+    tag["Tag SemVer<br/>sur main"]
+    prod["Workflow release-prod<br/>approbation production"]
+
+    staging --> branch --> work --> commit --> pr --> checks --> ff --> done --> cleanup
+    done --> releasePr --> tag --> prod
 ```
+
+`main` n'est pas une branche de développement. Elle avance uniquement par PR de
+release depuis `staging`, puis par tag SemVer validé.
 
 ---
 

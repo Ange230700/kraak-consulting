@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -59,11 +59,39 @@ Le MVP sera considéré comme réussi si les conditions suivantes sont remplies 
 
 Pour rester simple et efficace, le MVP peut inclure les pages suivantes :
 
-- **Accueil**
-- **À propos**
-- **Services**
-- **Programmes / Formations**
-- **Contact**
+```mermaid
+flowchart LR
+    young["Jeunes professionnels<br/>et étudiants"]
+    companies["Entreprises<br/>et start-ups"]
+    international["Public international"]
+
+    site["Site vitrine MVP"]
+    home["Accueil"]
+    about["À propos"]
+    services["Services"]
+    programs["Programmes / formations"]
+    contact["Contact"]
+
+    info["Comprendre KRAAK"]
+    reassure["Être rassuré"]
+    convert["Demander un échange"]
+
+    young --> site
+    companies --> site
+    international --> site
+
+    site --> home
+    site --> about
+    site --> services
+    site --> programs
+    site --> contact
+
+    home --> info
+    about --> reassure
+    services --> convert
+    programs --> convert
+    contact --> convert
+```
 
 ## 6. Résultat attendu
 

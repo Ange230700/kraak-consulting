@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -14,18 +14,47 @@ Ce document explique les technologies utilisées dans le projet KRAAK, à destin
 ## Vue d'ensemble
 
 ```mermaid
-flowchart TD
-    web["Site web<br />(Angular)"]
-    mobile["App mobile<br />(Ionic)"]
-    api["API NestJS<br />(backend)"]
-    supabase["Supabase<br />(BDD/Auth)"]
+flowchart LR
+    visitor["Visiteurs publics"]
+    participant["Participants"]
+    admin["Équipe KRAAK"]
 
-    web --> api
-    mobile --> api
+    web["Site web Angular<br/>apps/client/projects/web"]
+    mobile["App mobile Ionic + Capacitor<br/>apps/client/projects/mobile"]
+    api["API NestJS<br/>apps/api"]
+
+    contracts["Contrats DTO<br/>packages/contracts"]
+    domain["Règles métier<br/>packages/domain"]
+    apiClient["Client API typé<br/>packages/api-client"]
+    tokens["Design tokens<br/>packages/tokens"]
+
+    supabase["Supabase<br/>PostgreSQL + Auth + Storage"]
+    resend["Resend<br/>Emails transactionnels"]
+    renderWeb["Render<br/>web"]
+    renderApi["Render<br/>API"]
+
+    visitor --> web
+    participant --> web
+    participant --> mobile
+    admin --> web
+
+    web --> apiClient
+    mobile --> apiClient
+    apiClient --> api
+    api --> contracts
+    api --> domain
+    web --> tokens
+    mobile --> tokens
+
     api --> supabase
+    api --> resend
+    renderWeb --> web
+    renderApi --> api
 ```
 
-Le site web et l'app mobile communiquent avec l'API backend (NestJS), qui elle-même communique avec Supabase pour la base de données, l'authentification et le stockage.
+Le web et le mobile restent des surfaces clientes. L'API porte l'orchestration
+serveur, les packages partagés stabilisent les contrats et règles transverses,
+et les services externes restent isolés derrière l'API.
 
 ---
 

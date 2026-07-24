@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-24
 source_of_truth: true
 ---
 
@@ -15,24 +15,37 @@ conservé comme archive.
 
 ```mermaid
 flowchart TD
-    root["README.md<br/>Repository onboarding"]
-    docsIndex["docs/README.md<br/>Documentation map"]
-    architecture["Architecture<br/>Current system"]
-    decisions["ADRs<br/>Why decisions were made"]
-    product["Product<br/>What is being built"]
-    engineering["Engineering<br/>How to develop"]
-    operations["Operations<br/>How to operate"]
-    planning["Planning<br/>How work is managed"]
-    archive["Archive<br/>Historical only"]
+    root["README.md<br/>Accueil du dépôt"]
+    docsIndex["docs/README.md<br/>Carte documentaire"]
+    agents["AGENTS.md<br/>Règles assistants"]
+    archRoot["ARCHITECTURE.md<br/>Architecture de référence"]
+    architecture["docs/architecture<br/>Système courant"]
+    decisions["docs/decisions<br/>Décisions validées"]
+    product["docs/product<br/>Périmètre produit"]
+    engineering["docs/engineering<br/>Contribution, tests, dev"]
+    operations["docs/operations<br/>Runbooks d'exploitation"]
+    planning["docs/planning<br/>Pilotage GitHub Project"]
+    reference["docs/reference<br/>Matériel d'appui"]
+    generated["docs/generated<br/>Preuves générées"]
+    archive["docs/archive<br/>Historique"]
 
     root --> docsIndex
+    root --> agents
+    root --> archRoot
     docsIndex --> architecture
     docsIndex --> decisions
     docsIndex --> product
     docsIndex --> engineering
     docsIndex --> operations
     docsIndex --> planning
+    docsIndex --> reference
+    docsIndex --> generated
     docsIndex --> archive
+
+    decisions --> architecture
+    architecture --> product
+    engineering --> operations
+    planning --> generated
 ```
 
 ## Règle de précédence
