@@ -5,13 +5,17 @@
 ## Documentation and process
 
 /docs/ @Ange230700
+/docs/architecture/ @Ange230700
+/docs/decisions/ @Ange230700
+/docs/operations/ @Ange230700
+/docs/planning/ @Ange230700
 /.github/ @Ange230700
 
 ## Separation staging/prod
 
 ### Ange230700 pilote le staging; kraakconsulting valide les zones prod sensibles
 
-/docs/runbooks/STAGING_PROMOTION.md @Ange230700
-/docs/runbooks/RELEASE_PROD.md @kraakconsulting
+/docs/operations/STAGING_VALIDATION.md @Ange230700
+/docs/operations/RELEASE_PROD.md @kraakconsulting
 /.github/workflows/release-prod.yml @kraakconsulting
 /render.yaml @Ange230700 @kraakconsulting

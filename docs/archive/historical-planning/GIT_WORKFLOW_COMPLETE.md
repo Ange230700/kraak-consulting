@@ -15,10 +15,10 @@
 Voir aussi :
 
 - [`GIT_WORKFLOW_CHEATSHEET.md`](GIT_WORKFLOW_CHEATSHEET.md)
-- [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md)
-- [`RELEASE_PROD.md`](RELEASE_PROD.md)
-- [`CHANGESETS.md`](CHANGESETS.md)
-- [`ARC-09-inversion-main-staging`](../decisions/ARC-09-inversion-main-staging.md)
+- [`STAGING_VALIDATION.md`](../../operations/STAGING_VALIDATION.md)
+- [`RELEASE_PROD.md`](../../operations/RELEASE_PROD.md)
+- [`CHANGESETS.md`](../../engineering/CHANGESETS.md)
+- [`ARC-09-inversion-main-staging`](../../decisions/ARC-09-inversion-main-staging.md)
 
 ---
 
@@ -272,7 +272,7 @@ curl -I https://kraak-web-staging.onrender.com
 curl -i https://kraak-api-staging.onrender.com/health
 ```
 
-Voir aussi [`STAGING_PROMOTION.md`](STAGING_PROMOTION.md).
+Voir aussi [`STAGING_VALIDATION.md`](../../operations/STAGING_VALIDATION.md).
 
 ## 12 · Corrections après validation staging
 
@@ -323,7 +323,7 @@ git push origin vX.Y.Z
 
 Le tag SemVer déclenche le workflow de production.
 
-Voir [`RELEASE_PROD.md`](RELEASE_PROD.md).
+Voir [`RELEASE_PROD.md`](../../operations/RELEASE_PROD.md).
 
 ## 15 · Hotfix
 
@@ -374,7 +374,7 @@ pnpm changeset
 
 La PR de travail reste une PR vers `staging`.
 
-Voir [`CHANGESETS.md`](./CHANGESETS.md).
+Voir [`CHANGESETS.md`](../../engineering/CHANGESETS.md).
 
 ## 18 · Nettoyage de branche
 

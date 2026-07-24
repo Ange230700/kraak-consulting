@@ -306,6 +306,29 @@ Pour accélérer les vérifications locales sur une branche de travail, utiliser
 
 En CI, conserver le cache pnpm déjà configuré via `actions/setup-node` et, si un nouveau workflow est ajouté, garder `cache: pnpm` avec `cache-dependency-path: pnpm-lock.yaml` pour stabiliser les temps d'installation.
 
+### Qualité documentaire
+
+Les index documentaires générés se contrôlent avec :
+
+```bash
+pnpm docs:index:check
+pnpm docs:index:write
+```
+
+Le workflow `.github/workflows/docs-quality.yml` exécute sur pull request :
+
+- Prettier uniquement sur les fichiers Markdown modifiés ;
+- l'audit local `pnpm docs:audit:strict` pour les liens internes, ancres,
+  métadonnées actives, références de fournisseur retiré, doublons ADR,
+  marqueurs de merge et blocs Mermaid invalides ;
+- `pnpm docs:index:check` pour empêcher un index ADR ou documentaire obsolète.
+
+Le hook `pre-commit` reste volontairement léger : il s'appuie sur `lint-staged`
+pour les fichiers indexés et ne lance ni vérification réseau, ni audit complet
+de tout l'arbre documentaire. L'audit hebdomadaire planifié exécute
+`bash scripts/audit-docs.sh --full --network --output .reports/docs-audit` et
+publie `.reports/docs-audit/` comme artefact GitHub Actions.
+
 ---
 
 ## Politique de langue

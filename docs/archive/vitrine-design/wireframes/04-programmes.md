@@ -231,10 +231,10 @@ Voir [README.md](README.md#footer--présent-sur-toutes-les-pages).
 
 ## Points d'attention implémentation
 
-| Point           | Détail                                                                                       |
-| --------------- | -------------------------------------------------------------------------------------------- |
-| Accessibilité   | Alt sur illustrations, coches accessibles (pas seulement couleur)                            |
-| SEO             | `<title>` "Programmes — KRAAK", `<meta description>` unique                                  |
-| Contenu         | Données programme = placeholder ; alimenter depuis [`CONTENT_DRAFT.md`](../CONTENT_DRAFT.md) |
-| Responsive      | Grille 2 col → 1 col mobile, étapes processus empilées verticalement                         |
-| CTA inscription | Pointe vers `/contact` avec query param `?sujet=inscription` (MVP)                           |
+| Point           | Détail                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------ |
+| Accessibilité   | Alt sur illustrations, coches accessibles (pas seulement couleur)                                            |
+| SEO             | `<title>` "Programmes — KRAAK", `<meta description>` unique                                                  |
+| Contenu         | Données programme = placeholder ; alimenter depuis [`CONTENT_DRAFT.md`](../../../reference/CONTENT_DRAFT.md) |
+| Responsive      | Grille 2 col → 1 col mobile, étapes processus empilées verticalement                                         |
+| CTA inscription | Pointe vers `/contact` avec query param `?sujet=inscription` (MVP)                                           |
