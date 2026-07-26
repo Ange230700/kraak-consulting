@@ -16,16 +16,16 @@ describe('ImpactStats', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('Given the component is created When Angular instantiates it Then the instance should exist', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should expose three preview stats', () => {
+  it('Given the preview impact catalog When the component is initialized Then it should expose three stats', () => {
     const stats = (component as unknown as { stats: unknown[] }).stats;
     expect(stats.length).toBe(3);
   });
 
-  it('should render stat cards', () => {
+  it('Given the impact stats section When the component renders Then it should display one card per stat', () => {
     const cards = fixture.nativeElement.querySelectorAll('article');
     expect(cards.length).toBe(3);
   });

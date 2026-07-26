@@ -24,23 +24,23 @@ describe('ScrollToTop', () => {
   });
 
   describe('Rendering', () => {
-    it('should create the component', () => {
+    it('Given the component is created When Angular instantiates it Then the instance should exist', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should render a button', () => {
+    it('Given the component renders When the DOM is inspected Then it should display a button', () => {
       const button = debugElement.nativeElement.querySelector('button');
       expect(button).toBeTruthy();
     });
 
-    it('should have aria-label for accessibility', () => {
+    it('Given the scroll button renders When accessibility attributes are inspected Then it should expose an aria label', () => {
       const button = debugElement.nativeElement.querySelector('button');
       expect(button?.getAttribute('aria-label')).toBeTruthy();
     });
   });
 
   describe('Visibility', () => {
-    it('should initially hide the button when page is at the top', () => {
+    it('Given the page is at the top When the component renders Then it should initially hide the button', () => {
       const button = debugElement.nativeElement.querySelector('button');
       expect(button?.classList.contains('opacity-0')).toBe(true);
       expect(button?.classList.contains('pointer-events-none')).toBe(true);
@@ -48,7 +48,7 @@ describe('ScrollToTop', () => {
   });
 
   describe('Scroll to top functionality', () => {
-    it('should scroll to top when button is clicked', () => {
+    it('Given the scroll button is activated When scrollToTop runs Then it should scroll smoothly to the top', () => {
       const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
 
       component.scrollToTop();
@@ -74,7 +74,7 @@ describe('ScrollToTop', () => {
       expect(scrollToSpy).not.toHaveBeenCalled();
     });
 
-    it('should update visibility on globalThis scroll', () => {
+    it('Given the page emits a scroll event When the listener runs Then it should update visibility', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
       // Simulate scroll event
@@ -85,7 +85,7 @@ describe('ScrollToTop', () => {
       updateVisibilitySpy.mockRestore();
     });
 
-    it('should set isVisible to true when scrollY > threshold', () => {
+    it('Given the scroll position is past the threshold When visibility updates Then the button should be visible', () => {
       // Mock globalThis.scrollY
       Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
@@ -98,7 +98,7 @@ describe('ScrollToTop', () => {
       expect(component.isVisible).toBe(true);
     });
 
-    it('should set isVisible to false when scrollY < threshold', () => {
+    it('Given the scroll position is before the threshold When visibility updates Then the button should be hidden', () => {
       Object.defineProperty(globalThis, 'scrollY', {
         writable: true,
         configurable: true,
@@ -112,7 +112,7 @@ describe('ScrollToTop', () => {
   });
 
   describe('Lifecycle', () => {
-    it('should attach scroll listener on init', () => {
+    it('Given the component initializes in a browser When ngOnInit runs Then it should attach a scroll listener', () => {
       const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
 
       component.ngOnInit();
@@ -137,7 +137,7 @@ describe('ScrollToTop', () => {
       expect(addEventListenerSpy).not.toHaveBeenCalled();
     });
 
-    it('should remove scroll listener on destroy', () => {
+    it('Given a scroll listener is registered When ngOnDestroy runs Then it should remove the listener', () => {
       const removeEventListenerSpy = vi.spyOn(
         globalThis,
         'removeEventListener',
@@ -149,6 +149,20 @@ describe('ScrollToTop', () => {
         'scroll',
         expect.any(Function),
       );
+
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('Given no scroll listener is registered When ngOnDestroy runs Then it should not remove a listener', () => {
+      const removeEventListenerSpy = vi.spyOn(
+        globalThis,
+        'removeEventListener',
+      );
+      component['scrollListener'] = null;
+
+      component.ngOnDestroy();
+
+      expect(removeEventListenerSpy).not.toHaveBeenCalled();
 
       removeEventListenerSpy.mockRestore();
     });
