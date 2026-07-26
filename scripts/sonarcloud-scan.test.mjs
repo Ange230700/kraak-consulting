@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -16,11 +22,11 @@ import {
   resolveSonarEnvironment,
 } from './sonarcloud-scan.mjs';
 
-test('Given Windows, When the scan command is built, Then pnpm.cmd runs sonar-scanner explicitly', () => {
+test('Given Windows, When the scan command is built, Then pnpm.cmd runs the @sonar/scan package directly', () => {
   const command = createSonarScanCommand('win32');
 
   assert.equal(command.command, 'pnpm.cmd');
-  assert.deepEqual(command.args, ['--package=@sonar/scan', 'dlx', 'sonar-scanner']);
+  assert.deepEqual(command.args, ['dlx', '@sonar/scan']);
 });
 
 test('Given a local env file, When Sonar variables are read, Then token and host url are loaded', () => {
@@ -29,7 +35,11 @@ test('Given a local env file, When Sonar variables are read, Then token and host
 
   writeFileSync(
     tempEnvPath,
-    ['# comment', 'SONAR_TOKEN="abc123"', 'SONAR_HOST_URL=https://sonarcloud.io'].join('\n'),
+    [
+      '# comment',
+      'SONAR_TOKEN="abc123"',
+      'SONAR_HOST_URL=https://sonarcloud.io',
+    ].join('\n'),
   );
 
   const environment = readLocalSonarEnvironment(tempEnvPath);
@@ -68,11 +78,16 @@ test('Given no strict diagnostic env flag, When options are resolved, Then stric
   const options = resolveStrictDiagnosticOptions({});
 
   assert.equal(options.enabled, false);
-  assert.match(options.logPath, /\.scannerwork[\\/]sonar-strict-diagnostic\.log$/);
+  assert.match(
+    options.logPath,
+    /\.scannerwork[\\/]sonar-strict-diagnostic\.log$/,
+  );
 });
 
 test('Given a trusted SystemRoot, When resolving taskkill path, Then an explicit System32 executable path is returned', () => {
-  const tempDirectory = mkdtempSync(path.join(os.tmpdir(), 'kraak-systemroot-'));
+  const tempDirectory = mkdtempSync(
+    path.join(os.tmpdir(), 'kraak-systemroot-'),
+  );
   const fakeSystemRoot = path.join(tempDirectory, 'Windows');
   const fakeSystem32 = path.join(fakeSystemRoot, 'System32');
   const fakeTaskkill = path.join(fakeSystem32, 'taskkill.exe');
@@ -85,7 +100,10 @@ test('Given a trusted SystemRoot, When resolving taskkill path, Then an explicit
       SystemRoot: fakeSystemRoot,
     });
 
-    assert.equal(taskkillPath, path.join(fakeSystemRoot, 'System32', 'taskkill.exe'));
+    assert.equal(
+      taskkillPath,
+      path.join(fakeSystemRoot, 'System32', 'taskkill.exe'),
+    );
   } finally {
     rmSync(tempDirectory, { force: true, recursive: true });
   }
@@ -112,11 +130,19 @@ test('Given a Windows-style LCOV report, When content is normalized, Then SF pat
 });
 
 test('Given an already prefixed SF path, When content is normalized, Then source path is not duplicated', () => {
-  const rawContent = ['TN:', 'SF:apps/client/projects/web/src/ssr-path.ts', 'DA:1,1', 'end_of_record'].join('\n');
+  const rawContent = [
+    'TN:',
+    'SF:apps/client/projects/web/src/ssr-path.ts',
+    'DA:1,1',
+    'end_of_record',
+  ].join('\n');
 
   const normalizedContent = normalizeLcovContent(rawContent, 'apps/client');
 
-  assert.match(normalizedContent, /SF:apps\/client\/projects\/web\/src\/ssr-path\.ts/);
+  assert.match(
+    normalizedContent,
+    /SF:apps\/client\/projects\/web\/src\/ssr-path\.ts/,
+  );
   assert.doesNotMatch(
     normalizedContent,
     /SF:apps\/client\/apps\/client\/projects\/web\/src\/ssr-path\.ts/,
@@ -124,7 +150,11 @@ test('Given an already prefixed SF path, When content is normalized, Then source
 });
 
 test('Given stale scanner-report artifacts, When report directory is reset, Then scanner-report is recreated cleanly', () => {
-  const scannerReportPath = path.join(process.cwd(), '.scannerwork', 'scanner-report');
+  const scannerReportPath = path.join(
+    process.cwd(),
+    '.scannerwork',
+    'scanner-report',
+  );
   const staleFilePath = path.join(scannerReportPath, 'stale.pb');
 
   mkdirSync(scannerReportPath, { recursive: true });
@@ -136,8 +166,14 @@ test('Given stale scanner-report artifacts, When report directory is reset, Then
 });
 
 test('Given an active lock, When another scan starts, Then the second lock acquisition is rejected', () => {
-  const tempDirectory = mkdtempSync(path.join(os.tmpdir(), 'kraak-sonar-lock-'));
-  const lockPath = path.join(tempDirectory, '.scannerwork', 'sonarcloud-scan.lock');
+  const tempDirectory = mkdtempSync(
+    path.join(os.tmpdir(), 'kraak-sonar-lock-'),
+  );
+  const lockPath = path.join(
+    tempDirectory,
+    '.scannerwork',
+    'sonarcloud-scan.lock',
+  );
 
   try {
     const firstLock = acquireScanLock(lockPath, process.pid);
@@ -153,8 +189,14 @@ test('Given an active lock, When another scan starts, Then the second lock acqui
 });
 
 test('Given a stale lock file, When a new scan starts, Then lock is reclaimed', () => {
-  const tempDirectory = mkdtempSync(path.join(os.tmpdir(), 'kraak-sonar-stale-lock-'));
-  const lockPath = path.join(tempDirectory, '.scannerwork', 'sonarcloud-scan.lock');
+  const tempDirectory = mkdtempSync(
+    path.join(os.tmpdir(), 'kraak-sonar-stale-lock-'),
+  );
+  const lockPath = path.join(
+    tempDirectory,
+    '.scannerwork',
+    'sonarcloud-scan.lock',
+  );
 
   try {
     mkdirSync(path.dirname(lockPath), { recursive: true });

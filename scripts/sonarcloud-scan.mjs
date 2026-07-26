@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
@@ -10,9 +16,16 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '..');
 const localEnvPath = path.join(repositoryRoot, '.env.local');
 const scannerWorkDirectory = path.join(repositoryRoot, '.scannerwork');
-const scannerReportDirectory = path.join(scannerWorkDirectory, 'scanner-report');
+const scannerReportDirectory = path.join(
+  scannerWorkDirectory,
+  'scanner-report',
+);
 const scannerLockPath = path.join(scannerWorkDirectory, 'sonarcloud-scan.lock');
-const strictDiagnosticDefaultLogPath = path.join(scannerWorkDirectory, 'sonar-strict-diagnostic.log');
+const strictDiagnosticDefaultLogPath = path.join(
+  scannerWorkDirectory,
+  'sonar-strict-diagnostic.log',
+);
+const sonarScanPackageName = '@sonar/scan';
 const lcovReportPathToSourcePrefix = {
   'apps/api/coverage/lcov.info': 'apps/api',
   'apps/client/coverage/web/lcov.info': 'apps/client',
@@ -85,7 +98,10 @@ export function readLocalSonarEnvironment(filePath = localEnvPath) {
   return parseEnvironmentFile(readFileSync(filePath, 'utf8'));
 }
 
-export function resolveSonarEnvironment(baseEnvironment = process.env, filePath = localEnvPath) {
+export function resolveSonarEnvironment(
+  baseEnvironment = process.env,
+  filePath = localEnvPath,
+) {
   const localEnvironment = readLocalSonarEnvironment(filePath);
   const localToken = localEnvironment.SONAR_TOKEN?.trim() ?? '';
   const shellToken = baseEnvironment.SONAR_TOKEN?.trim() ?? '';
@@ -102,7 +118,7 @@ export function resolveSonarEnvironment(baseEnvironment = process.env, filePath 
 export function createSonarScanCommand(platform = process.platform) {
   return {
     command: getPnpmCommand(platform),
-    args: ['--package=@sonar/scan', 'dlx', 'sonar-scanner'],
+    args: ['dlx', sonarScanPackageName],
   };
 }
 
@@ -154,7 +170,9 @@ function normalizeSourcePathForReport(sourcePath, sourcePrefix) {
   const normalizedSourcePath = trimLeadingDotSlash(toPosixPath(sourcePath));
 
   if (path.isAbsolute(normalizedSourcePath)) {
-    const relativeSourcePath = toPosixPath(path.relative(repositoryRoot, normalizedSourcePath));
+    const relativeSourcePath = toPosixPath(
+      path.relative(repositoryRoot, normalizedSourcePath),
+    );
 
     if (!relativeSourcePath.startsWith('..')) {
       return relativeSourcePath;
@@ -165,7 +183,9 @@ function normalizeSourcePathForReport(sourcePath, sourcePrefix) {
     return normalizedSourcePath;
   }
 
-  return collapseConsecutiveSlashes(`${normalizedPrefix}/${normalizedSourcePath}`);
+  return collapseConsecutiveSlashes(
+    `${normalizedPrefix}/${normalizedSourcePath}`,
+  );
 }
 
 export function normalizeLcovContent(content, sourcePrefix) {
@@ -175,7 +195,10 @@ export function normalizeLcovContent(content, sourcePrefix) {
     }
 
     const sourcePath = line.slice(3);
-    const normalizedSourcePath = normalizeSourcePathForReport(sourcePath, sourcePrefix);
+    const normalizedSourcePath = normalizeSourcePathForReport(
+      sourcePath,
+      sourcePrefix,
+    );
     return `SF:${normalizedSourcePath}`;
   });
 
@@ -275,9 +298,12 @@ function isTruthyFlag(value) {
 }
 
 export function resolveStrictDiagnosticOptions(baseEnvironment = process.env) {
-  const strictDiagnosticEnabled = isTruthyFlag(baseEnvironment.SONAR_STRICT_DIAGNOSTIC);
+  const strictDiagnosticEnabled = isTruthyFlag(
+    baseEnvironment.SONAR_STRICT_DIAGNOSTIC,
+  );
   const strictDiagnosticLogPath =
-    baseEnvironment.SONAR_STRICT_DIAGNOSTIC_LOG?.trim() || strictDiagnosticDefaultLogPath;
+    baseEnvironment.SONAR_STRICT_DIAGNOSTIC_LOG?.trim() ||
+    strictDiagnosticDefaultLogPath;
 
   return {
     enabled: strictDiagnosticEnabled,
@@ -326,7 +352,10 @@ function readLockPid(lockPath) {
   return Number.isInteger(lockPid) ? lockPid : null;
 }
 
-export function acquireScanLock(lockPath = scannerLockPath, currentPid = process.pid) {
+export function acquireScanLock(
+  lockPath = scannerLockPath,
+  currentPid = process.pid,
+) {
   mkdirSync(path.dirname(lockPath), { recursive: true });
 
   const existingPid = readLockPid(lockPath);
@@ -343,7 +372,12 @@ export function acquireScanLock(lockPath = scannerLockPath, currentPid = process
     writeFileSync(lockPath, `${currentPid}\n`, { flag: 'wx' });
     return { acquired: true, lockPid: null };
   } catch (error) {
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'EEXIST') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'EEXIST'
+    ) {
       return { acquired: false, lockPid: readLockPid(lockPath) };
     }
 
@@ -433,9 +467,13 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
   if (process.platform === 'win32') {
     try {
       const taskkillExecutablePath = resolveTaskkillExecutablePath();
-      const taskkillResult = spawnSync(taskkillExecutablePath, ['/PID', `${childPid}`, '/T', '/F'], {
-        stdio: 'ignore',
-      });
+      const taskkillResult = spawnSync(
+        taskkillExecutablePath,
+        ['/PID', `${childPid}`, '/T', '/F'],
+        {
+          stdio: 'ignore',
+        },
+      );
       diagnosticLogger.log(
         'ABORT_TASKKILL',
         `pid=${childPid} status=${taskkillResult.status ?? 'null'}`,
@@ -444,7 +482,10 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
       const message = error instanceof Error ? error.message : String(error);
       diagnosticLogger.log('ABORT_TASKKILL_ERROR', message);
       const wasKilled = childProcess.kill('SIGKILL');
-      diagnosticLogger.log('ABORT_FALLBACK_SIGKILL', `pid=${childPid} killed=${wasKilled}`);
+      diagnosticLogger.log(
+        'ABORT_FALLBACK_SIGKILL',
+        `pid=${childPid} killed=${wasKilled}`,
+      );
     }
     return;
   }
@@ -454,16 +495,25 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
 }
 
 export function resolveTaskkillExecutablePath(baseEnvironment = process.env) {
-  const systemRoot = baseEnvironment.SystemRoot?.trim() || baseEnvironment.WINDIR?.trim();
+  const systemRoot =
+    baseEnvironment.SystemRoot?.trim() || baseEnvironment.WINDIR?.trim();
 
   if (!systemRoot) {
-    throw new Error('Impossible de determiner le chemin système Windows (SystemRoot/WINDIR manquant).');
+    throw new Error(
+      'Impossible de determiner le chemin système Windows (SystemRoot/WINDIR manquant).',
+    );
   }
 
-  const taskkillExecutablePath = path.join(systemRoot, 'System32', 'taskkill.exe');
+  const taskkillExecutablePath = path.join(
+    systemRoot,
+    'System32',
+    'taskkill.exe',
+  );
 
   if (!existsSync(taskkillExecutablePath)) {
-    throw new Error(`Executable taskkill introuvable: ${taskkillExecutablePath}`);
+    throw new Error(
+      `Executable taskkill introuvable: ${taskkillExecutablePath}`,
+    );
   }
 
   return taskkillExecutablePath;
@@ -497,7 +547,10 @@ function createScannerReportMonitor(
     if (scannerReportExists) {
       if (!hasSeenScannerReportDirectory) {
         hasSeenScannerReportDirectory = true;
-        diagnosticLogger.log('SCANNER_REPORT_PRESENT', `path=${scannerReportDirectory}`);
+        diagnosticLogger.log(
+          'SCANNER_REPORT_PRESENT',
+          `path=${scannerReportDirectory}`,
+        );
       }
 
       missingSinceTimestamp = null;
@@ -520,7 +573,10 @@ function createScannerReportMonitor(
     }
 
     hasAbortedForMissingReport = true;
-    diagnosticLogger.log('SCANNER_REPORT_MISSING', `path=${scannerReportDirectory}`);
+    diagnosticLogger.log(
+      'SCANNER_REPORT_MISSING',
+      `path=${scannerReportDirectory}`,
+    );
     abortScannerProcess(childProcess, diagnosticLogger);
   }, monitorIntervalMs);
 
@@ -542,7 +598,10 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
       'STRICT_MODE',
       `enabled=${strictDiagnosticOptions.enabled} logPath=${strictDiagnosticOptions.logPath}`,
     );
-    diagnosticLogger.log('SCAN_STARTED', `pid=${childProcess.pid ?? 'unknown'}`);
+    diagnosticLogger.log(
+      'SCAN_STARTED',
+      `pid=${childProcess.pid ?? 'unknown'}`,
+    );
 
     const monitor = createScannerReportMonitor(
       strictDiagnosticOptions,
@@ -560,7 +619,10 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
       monitor.stop();
 
       if (monitor.shouldAbort()) {
-        diagnosticLogger.log('SCAN_ABORTED', 'scanner-report a disparu pendant le run');
+        diagnosticLogger.log(
+          'SCAN_ABORTED',
+          'scanner-report a disparu pendant le run',
+        );
       }
 
       if (signal) {
@@ -573,7 +635,9 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
     };
 
     childProcess.once('error', (error) => {
-      console.error(`ERROR: Impossible de lancer SonarScanner: ${error.message}`);
+      console.error(
+        `ERROR: Impossible de lancer SonarScanner: ${error.message}`,
+      );
       diagnosticLogger.log('SCAN_ERROR', error.message);
       finalize(1);
     });
@@ -588,7 +652,9 @@ export async function main() {
   const environment = resolveSonarEnvironment();
 
   if (!environment.SONAR_TOKEN) {
-    console.error('ERROR: SONAR_TOKEN manquant. Renseignez .env.local puis relancez.');
+    console.error(
+      'ERROR: SONAR_TOKEN manquant. Renseignez .env.local puis relancez.',
+    );
     return 1;
   }
 
@@ -598,7 +664,9 @@ export async function main() {
 
   if (!lock.acquired) {
     const pidLabel = lock.lockPid ?? 'inconnu';
-    console.error(`ERROR: Un scan Sonar est deja en cours (PID ${pidLabel}). Attendez sa fin puis relancez.`);
+    console.error(
+      `ERROR: Un scan Sonar est deja en cours (PID ${pidLabel}). Attendez sa fin puis relancez.`,
+    );
     return 1;
   }
 
