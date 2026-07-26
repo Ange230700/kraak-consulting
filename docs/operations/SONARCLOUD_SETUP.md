@@ -12,17 +12,24 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 
 ## Métadonnées du projet
 
+- **Dépôt GitHub** : `Ange230700/kraak-consulting`
+- **Package/workspace racine** : `kraak-group`
 - **Organisation SonarCloud** : `ange230700`
 - **Project key** : `Ange230700_kraak-group`
+- **Project name** : `kraak-group`
 - **Région** : EU
 - **Host URL** : `https://sonarcloud.io`
+
+Le nom du dépôt GitHub et les identifiants SonarCloud ne sont pas identiques :
+le dépôt actif est `kraak-consulting`, tandis que le package racine et le
+projet SonarCloud conservent `kraak-group` selon la configuration versionnée.
 
 ## Fichiers de configuration
 
 | Fichier                            | Rôle                                                 |
 | ---------------------------------- | ---------------------------------------------------- |
 | `sonar-project.properties`         | Périmètre, exclusions, chemins de couverture         |
-| `.sonarlint/connectedMode.json`    | Liaison SonarLint -> SonarCloud (mode connecté)      |
+| `.vscode/settings.json`            | Liaison SonarLint -> SonarCloud (mode connecté)      |
 | `.github/workflows/sonarcloud.yml` | Job CI exécutant `sonarqube-scan-action`             |
 | `.vscode/extensions.json`          | Recommandation de l'extension SonarLint              |
 | `.gitignore`                       | Ignore `.scannerwork/` et la config locale SonarLint |
@@ -30,7 +37,7 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 ## Mise en service côté SonarCloud
 
 1. Se connecter à <https://sonarcloud.io> avec le compte GitHub `Ange230700`.
-2. Importer le dépôt `Ange230700/kraak-group` dans l'organisation
+2. Importer le dépôt `Ange230700/kraak-consulting` dans l'organisation
    `ange230700`.
 3. Choisir le mode d'analyse **CI-based** (et non l'analyse automatique).
 4. Générer un **token utilisateur** (Account > Security) puis l'ajouter au
@@ -44,8 +51,8 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 ## Mise en service côté SonarLint (VS Code)
 
 1. Installer l'extension recommandée `SonarSource.sonarlint-vscode`.
-2. Au premier lancement, SonarLint détecte `.sonarlint/connectedMode.json`
-   et propose la liaison ; accepter.
+2. Au premier lancement, SonarLint détecte la configuration connectée dans
+   `.vscode/settings.json` et propose la liaison ; accepter.
 3. Fournir un token utilisateur SonarCloud quand demandé (stocké localement).
 4. Vérifier dans la barre d'état VS Code la mention "SonarLint connected".
 

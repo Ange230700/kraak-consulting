@@ -522,8 +522,7 @@ if have rg; then
 fi
 
 section "12. Documentation, ADRs, and workflows"
-run_shell "find docs/decisions -maxdepth 2 -type f -print 2>/dev/null | sort"
-run_shell "find docs/runbooks -maxdepth 2 -type f -print 2>/dev/null | sort"
+run_shell "find docs/decisions docs/engineering docs/operations docs/planning -maxdepth 2 -type f -print 2>/dev/null | sort"
 run_shell "find .github/workflows -maxdepth 1 -type f -print 2>/dev/null | sort"
 
 if have rg; then
@@ -533,7 +532,7 @@ if have rg; then
 
   run rg -n \
     "staging|main|release|Render|Supabase|prerender|participant|CORS|authentication|observability" \
-    README.md AGENTS.md CONTRIBUTING.md ARCHITECTURE.md docs/decisions docs/runbooks render.yaml
+    README.md AGENTS.md CONTRIBUTING.md ARCHITECTURE.md docs/decisions docs/engineering docs/operations docs/planning render.yaml
 fi
 
 section "13. Risk markers and cleanup residue"

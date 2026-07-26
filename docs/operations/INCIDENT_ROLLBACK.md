@@ -112,8 +112,8 @@ Si l'issue d'alerte Observability n'est pas fermée au-delà de **15 minutes** :
    ```
 
 2. **Vérifier les logs déploiement** :
-   - Render : <https://render.com/dashboard/kraak-group> (Events + Deployments)
-   - Render : <https://dashboard.render.com> (Web Service: kraak-api)
+   - Render : <https://dashboard.render.com> (services `kraak-web-prod` et
+     `kraak-api-staging`, Events + Deployments)
 
 3. **Notifier l'équipe** si incident confirmé (non-résolution = escalade)
 
@@ -140,7 +140,7 @@ curl -s "https://api.render.com/v1/services/$RENDER_WEB_SERVICE_ID/deploys?limit
   -H "Authorization: Bearer $RENDER_API_KEY" | jq '.'
 
 # 2. Logs derniers déploiements
-# Via dashboard: https://render.com/dashboard/kraak-group > Deployments > Recent
+# Via dashboard: https://dashboard.render.com > service `kraak-web-prod` > Deployments > Recent
 
 # 3. Vérifier health via headers HTTP
 curl -i https://kraak-web-prod.onrender.com
@@ -153,10 +153,10 @@ curl -i https://kraak-web-prod.onrender.com
 curl -v https://kraak-api-staging.onrender.com/health
 
 # 2. Accéder aux logs
-# Via dashboard: https://dashboard.render.com > Web Services > kraak-api > Logs
+# Via dashboard: https://dashboard.render.com > Web Services > kraak-api-staging > Logs
 
 # 3. Vérifier uptime du service
-# Via dashboard: https://dashboard.render.com > Web Services > kraak-api > Analytics
+# Via dashboard: https://dashboard.render.com > Web Services > kraak-api-staging > Analytics
 ```
 
 ##### Supabase
@@ -178,7 +178,7 @@ curl -v https://kraak-api-staging.onrender.com/health
 
 ```text
 Action 1 : Vérifier le dernier déploiement web
-- URL: https://render.com/dashboard/kraak-group
+- URL: https://dashboard.render.com > service `kraak-web-prod`
 - Chercher la dernière fonction/build échouée
 - Chercher les variables d'environnement manquantes
 
@@ -195,17 +195,17 @@ Action 3 : Si le problème persiste
 
 ```text
 Action 1 : Vérifier les logs Render
-- URL: https://dashboard.render.com > kraak-api > Logs
+- URL: https://dashboard.render.com > kraak-api-staging > Logs
 - Chercher les erreurs d'initialisation (DB, variables d'env)
 - Chercher les crashs de process
 
 Action 2 : Vérifier les variables d'environnement
-- URL: https://dashboard.render.com > kraak-api > Environment
+- URL: https://dashboard.render.com > kraak-api-staging > Environment
 - Confirmer que toutes les clés requises sont présentes
 - Vérifier la syntaxe des URLs (http://, https://, etc.)
 
 Action 3 : Redémarrer le service depuis Render UI
-- URL: https://dashboard.render.com > kraak-api > Settings > Restart
+- URL: https://dashboard.render.com > kraak-api-staging > Settings > Restart
 - Attendre ~30s pour démarrage du conteneur
 - Vérifier: curl https://kraak-api-staging.onrender.com/health
 
@@ -217,7 +217,7 @@ Action 4 : Si le problème persiste
 
 ```text
 Action 1 : Vérifier les ressources Render
-- URL: https://dashboard.render.com > kraak-api > Analytics
+- URL: https://dashboard.render.com > kraak-api-staging > Analytics
 - Chercher un pic de CPU ou mémoire
 - Chercher une saturation de connexions Supabase
 
@@ -231,7 +231,7 @@ Action 3 : Si Supabase est saturé
 - Ou limiter le trafic côté API en temporaire avec un redirect vers une page maintenance
 
 Action 4 : Redémarrer le service API
-- URL: https://dashboard.render.com > kraak-api > Settings > Restart
+- URL: https://dashboard.render.com > kraak-api-staging > Settings > Restart
 - Attendre 30s et vérifier la latence
 ```
 
@@ -244,7 +244,7 @@ Action 1 : Identifier la route défaillante depuis les logs Web
 - Lire le message d'erreur
 
 Action 2 : Vérifier les logs API correspondants
-- URL: https://dashboard.render.com > kraak-api > Logs
+- URL: https://dashboard.render.com > kraak-api-staging > Logs
 - Chercher le traceback de l'erreur
 - Identifier si c'est une erreur applicative ou une erreur BD
 
@@ -281,8 +281,8 @@ Action 4 : Si c'est une erreur BD (ex: table manquante)
 
 #### Méthode A : Redeploy depuis l'UI Render (rapide)
 
-1. Aller sur <https://render.com/dashboard/kraak-group>
-2. Cliquer sur le projet `kraak-group`
+1. Aller sur <https://dashboard.render.com>
+2. Ouvrir le service Render `kraak-web-prod`
 3. Aller dans l'onglet **Deployments**
 4. Trouver le déploiement stable précédent (chercher la date/heure)
 5. Cliquer sur le bouton `...` (menu)
@@ -335,7 +335,7 @@ git push origin fix/rollback-from-<tag>
 
 #### Méthode A : Redeploy un commit précédent depuis Render UI
 
-1. Aller sur <https://dashboard.render.com> > Web Services > kraak-api
+1. Aller sur <https://dashboard.render.com> > Web Services > kraak-api-staging
 2. Cliquer sur l'onglet **Deployments**
 3. Trouver le déploiement stable précédent (chercher la date/heure)
 4. Cliquer sur le déploiement
@@ -370,7 +370,7 @@ git push origin fix/rollback-from-<tag>
 # Sans changement de code :
 
 # 1. Via Render UI
-# https://dashboard.render.com > kraak-api > Settings > Restart
+# https://dashboard.render.com > kraak-api-staging > Settings > Restart
 
 # 2. Attendre ~30s
 
@@ -428,8 +428,8 @@ Si web ET API doivent être rollbackés ensemble :
 - [ ] API déployée et accessible : `curl https://kraak-api-staging.onrender.com/health` → `{ "status": "ok", ... }`
 - [ ] Supabase production-pilot configuré et connecté
 - [ ] Variables d'environnement validées sur tous les services
-  - Render: <https://render.com/dashboard/kraak-group> > Settings > Environment Variables
-  - Render: <https://dashboard.render.com> > kraak-api > Environment
+  - Render: <https://dashboard.render.com> > `kraak-web-prod` > Environment
+  - Render: <https://dashboard.render.com> > `kraak-api-staging` > Environment
   - Supabase: <https://supabase.com/dashboard> > Settings
 - [ ] Domaines personnalisés (si applicable) configurés et validés
 - [ ] HTTPS/certificats valides sur tous les endpoints publics
@@ -438,9 +438,9 @@ Si web ET API doivent être rollbackés ensemble :
 
 - [ ] Workflow `Observability` activé et testé
   - `pnpm check:observability` exécuté avec succès localement
-  - Vérifier les 15 dernières exécutions: <https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml>
+  - Vérifier les 15 dernières exécutions: <https://github.com/Ange230700/kraak-consulting/actions/workflows/observability.yml>
 - [ ] Dashboard de santé accessible aux responsables
-  - Bookmark: <https://github.com/Ange230700/kraak-group/issues?q=label%3A%5BALERT%5D>
+  - Bookmark: <https://github.com/Ange230700/kraak-consulting/issues?q=label%3A%5BALERT%5D>
 - [ ] Procédure d'alerte documentée et connue de l'équipe
 
 #### Tests Pré-Pilot
@@ -657,5 +657,5 @@ Appeler = 🚨
 - Render docs: <https://render.com/docs/deployments/overview>
 - Render docs: <https://render.com/docs>
 - Supabase dashboard: <https://supabase.com/dashboard>
-- GitHub issues: <https://github.com/Ange230700/kraak-group/issues>
-- Observability workflow: <https://github.com/Ange230700/kraak-group/actions/workflows/observability.yml>
+- GitHub issues: <https://github.com/Ange230700/kraak-consulting/issues>
+- Observability workflow: <https://github.com/Ange230700/kraak-consulting/actions/workflows/observability.yml>

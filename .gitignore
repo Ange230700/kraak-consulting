@@ -97,6 +97,7 @@ docs/generated/evidence/security/*.raw.json
 docs/generated/evidence/security/*.exitcode
 
 # Local repository audit outputs
+apps/client/lint-web.json
 .extract-keys.cjs
 .rank-coverage.cjs
 .keys-batch*.json

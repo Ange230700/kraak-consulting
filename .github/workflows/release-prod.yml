@@ -1,7 +1,7 @@
 # Workflow de release production — kraak-group monorepo
 # Déclenché uniquement sur la création d'un tag SemVer (v*.*.*).
 # Voir docs/decisions/ARC-07-prod-release-tag-based.md
-# Voir docs/runbooks/RELEASE_PROD.md
+# Voir docs/operations/RELEASE_PROD.md
 
 name: Release Prod
 
