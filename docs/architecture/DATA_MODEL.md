@@ -50,7 +50,8 @@ source_of_truth: true
     - [Notification](#notification)
     - [SupportRequest](#supportrequest)
   - [8. Décisions Simples De Modélisation À Garder](#8-decisions-simples-de-modelisation-a-garder)
-  - [9. Prochaine Utilisation De Cette Spec](#9-prochaine-utilisation-de-cette-spec)
+  - [9. Internationalisation cible des contenus](#9-internationalisation-cible-des-contenus)
+  - [10. Prochaine Utilisation De Cette Spec](#10-prochaine-utilisation-de-cette-spec)
 
 ## Objectif
 
@@ -695,7 +696,26 @@ Rôle :
 
 ---
 
-## 9. Prochaine Utilisation De Cette Spec
+## 9. Internationalisation cible des contenus
+
+Les contenus rédigés par KRAAK deviendront localisables dans une phase dédiée.
+La stratégie cible définie par
+[`ARC-19`](../decisions/ARC-19-i18n-localization-strategy.md) privilégie des
+tables enfants de traduction par entité plutôt que des colonnes du type
+`title_fr` / `title_en`.
+
+Les champs concernés incluront notamment les titres, résumés, descriptions,
+corps éditoriaux, slugs publics, métadonnées SEO, labels de catégories et
+contenus d'annonces. Les valeurs techniques d'enum resteront language-neutral ;
+leurs libellés visibles seront traduits par les catalogues clients ou les
+templates serveur.
+
+Cette PR ne modifie aucun schéma, aucune migration, aucune policy RLS et aucun
+contrat API.
+
+---
+
+## 10. Prochaine Utilisation De Cette Spec
 
 Cette spec doit servir ensuite à :
 

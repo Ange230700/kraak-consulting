@@ -12,6 +12,7 @@ source_of_truth: true
 - [Architecture web](#architecture-web)
   - [Contrat courant](#contrat-courant)
   - [Implémentation active](#implementation-active)
+  - [Internationalisation cible](#internationalisation-cible)
   - [Sources liées](#sources-liees)
 
 Le site web KRAAK est l'application Angular publique située dans
@@ -27,6 +28,8 @@ Le site web KRAAK est l'application Angular publique située dans
 - Icônes : PrimeIcons pour les icônes UI.
 - Surface publique gelée : `/`, `/a-propos`, `/services`, `/faq`,
   `/programmes`, `/ressources`, `/contact`, pages légales et pages d'erreur.
+- Internationalisation : `fr-CI` restera la locale source et de repli, `en-GB`
+  sera la première locale anglaise cible selon ARC-19.
 
 ## Implémentation active
 
@@ -36,6 +39,21 @@ Le site web KRAAK est l'application Angular publique située dans
   et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
 - Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
   à consulter uniquement comme archive.
+
+## Internationalisation cible
+
+Les routes publiques web utiliseront plus tard des chemins canoniques préfixés
+par locale : `/fr/...` pour le français et `/en/...` pour l'anglais. La racine
+`/` devra rediriger durablement vers `/fr/`, et les chemins publics français
+existants devront rediriger vers leurs équivalents `/fr/...`.
+
+Le prerender, les métadonnées SEO, les canonicals, les liens `hreflang`, les
+entrées sitemap et l'attribut `<html lang>` devront être générés par locale. Les
+routes d'authentification technique, notamment les callbacks et liens de
+réinitialisation, devront rester compatibles avec Supabase Auth avant toute
+localisation de chemin.
+
+Cette PR ne modifie aucune route, aucun catalogue et aucun comportement web.
 
 ## Sources liées
 
@@ -49,3 +67,5 @@ Le site web KRAAK est l'application Angular publique située dans
   pour le mapping PrimeNG/Ionic.
 - [`../engineering/UI_FEEDBACK.md`](../engineering/UI_FEEDBACK.md) pour les
   messages et toasts web.
+- [`ARC-19`](../decisions/ARC-19-i18n-localization-strategy.md) pour la stratégie
+  d'internationalisation français / anglais.

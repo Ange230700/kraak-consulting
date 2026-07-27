@@ -14,6 +14,7 @@ source_of_truth: true
 - [Architecture KRAAK](#architecture-kraak)
   - [Décision globale](#decision-globale)
   - [Stack active](#stack-active)
+  - [Internationalisation](#internationalisation)
   - [Garde-fous](#garde-fous)
   - [Sources de décision](#sources-de-decision)
 
@@ -44,6 +45,22 @@ KRAAK est un monorepo `pnpm` composé de :
 | Données/Auth/Storage | Supabase                                              | [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md) |
 | Déploiement          | Render web + API, Supabase par environnement          | [`docs/architecture/DEPLOYMENT.md`](docs/architecture/DEPLOYMENT.md) |
 
+## Internationalisation
+
+L'internationalisation est une préoccupation transverse acceptée pour le web, le
+mobile, l'API, les e-mails, les notifications, le SEO et les contenus CMS. La
+stratégie cible est définie par
+[`ARC-19`](docs/decisions/ARC-19-i18n-localization-strategy.md).
+
+Les locales applicatives retenues sont :
+
+- source et repli : `fr-CI` ;
+- anglais initial : `en-GB`.
+
+Cette décision ne signifie pas que les traductions, les catalogues ou les routes
+localisées sont déjà implémentés. Les PRs d'implémentation devront avancer par
+incréments courts, documentés et validés.
+
 ## Garde-fous
 
 - Ne pas introduire d'ORM par défaut. Toute décision d'ORM doit être documentée
@@ -71,3 +88,5 @@ KRAAK est un monorepo `pnpm` composé de :
   surface vitrine publique.
 - [`ARC-16`](docs/decisions/ARC-16-render-only-web-hosting.md) : hébergement web
   Render.
+- [`ARC-19`](docs/decisions/ARC-19-i18n-localization-strategy.md) :
+  internationalisation français / anglais.

@@ -12,6 +12,7 @@ source_of_truth: true
 - [Architecture de déploiement](#architecture-de-deploiement)
   - [Topologie courante](#topologie-courante)
   - [Branches et déclencheurs](#branches-et-declencheurs)
+  - [Internationalisation cible du web statique](#internationalisation-cible-du-web-statique)
   - [Sources liées](#sources-liees)
 
 KRAAK utilise Render pour le web et l'API, avec Supabase par environnement.
@@ -50,6 +51,17 @@ flowchart LR
 - La production est déclenchée par tag SemVer sur `main`.
 - Les secrets et variables d'environnement restent hors dépôt.
 
+## Internationalisation cible du web statique
+
+Le modèle cible d'internationalisation gardera un service Render static par
+environnement. Le build web pourra plus tard publier un seul dossier `public`
+contenant des sous-arbres localisés, par exemple `public/fr/` et `public/en/`,
+ainsi que les assets partagés, `sitemap.xml`, `robots.txt` et `404.html`.
+
+La configuration Render restera la source de vérité opérationnelle au moment où
+ce modèle sera implémenté. Cette PR ne modifie ni `render.yaml`, ni les commandes
+de build, ni les variables d'environnement.
+
 ## Sources liées
 
 - [`../operations/DEPLOYMENT.md`](../operations/DEPLOYMENT.md) pour la procédure
@@ -60,3 +72,5 @@ flowchart LR
   release production.
 - [`../operations/ENVIRONMENTS.md`](../operations/ENVIRONMENTS.md) pour les
   variables d'environnement.
+- [`../decisions/ARC-19-i18n-localization-strategy.md`](../decisions/ARC-19-i18n-localization-strategy.md)
+  pour le modèle cible d'internationalisation.
