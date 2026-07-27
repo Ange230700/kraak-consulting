@@ -38,6 +38,7 @@
     "splinter:perf": "pnpm splinter:performance:linked",
     "build:api": "pnpm --filter @kraak/api build",
     "check:observability": "node ./scripts/check-observability.mjs",
+    "i18n:check": "node ./scripts/check-i18n-catalogs.mjs",
     "docs:audit": "bash scripts/audit-docs.sh --output .reports/docs-audit",
     "docs:audit:full": "bash scripts/audit-docs.sh --full --output .reports/docs-audit",
     "docs:audit:strict": "bash scripts/audit-docs.sh --full --fail-on-findings --output .reports/docs-audit",

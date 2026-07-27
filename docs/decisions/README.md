@@ -47,3 +47,5 @@ KRAAK. L'index ci-dessous est dérivé des fichiers `ARC-XX-*.md`.
 | `ARC-16` | [Render uniquement pour l'hébergement web](ARC-16-render-only-web-hosting.md)                                                  | Acceptée                                      | 2026-07-02 |
 | `ARC-17` | [Production Release Strategy: Feature Disabling for MVP Deployment](ARC-17-prod-release-strategy-feature-disable.md)           | À valider avant implémentation                | 2026-05-09 |
 | `ARC-18` | [Consolidation partielle du blog public](ARC-18-consolidation-partielle-blog-public.md)                                        | Acceptée                                      | 2026-07-26 |
+| `ARC-19` | [Stratégie d'internationalisation français / anglais](ARC-19-i18n-localization-strategy.md)                                    | Acceptée                                      | 2026-07-27 |
+| `ARC-20` | [Bibliothèque runtime i18n client](ARC-20-runtime-i18n-library.md)                                                             | Acceptée                                      | 2026-07-27 |

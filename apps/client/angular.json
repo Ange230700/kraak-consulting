@@ -152,6 +152,8 @@
             "lintFilePatterns": [
               "projects/web/src/**/*.ts",
               "projects/web/src/**/*.html",
+              "projects/shared/**/*.ts",
+              "projects/shared/**/*.html",
               "tests/e2e/**/*.ts"
             ]
           }
@@ -297,7 +299,9 @@
           "options": {
             "lintFilePatterns": [
               "projects/mobile/src/**/*.ts",
-              "projects/mobile/src/**/*.html"
+              "projects/mobile/src/**/*.html",
+              "projects/shared/**/*.ts",
+              "projects/shared/**/*.html"
             ]
           }
         },

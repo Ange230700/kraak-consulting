@@ -83,6 +83,8 @@ document obsolète dans le même changement.
 | `decisions/ARC-15-positionnement-page-ressources-vitrine.md`           | active | true             | ARC-15 - Positionnement de la page `/ressources` dans la vitrine                 |
 | `decisions/ARC-16-render-only-web-hosting.md`                          | active | true             | ARC-16 — Render uniquement pour l'hébergement web                                |
 | `decisions/ARC-18-consolidation-partielle-blog-public.md`              | active | true             | ARC-18 - Consolidation partielle du blog public                                  |
+| `decisions/ARC-19-i18n-localization-strategy.md`                       | active | true             | ARC-19 - Stratégie d'internationalisation français / anglais                     |
+| `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                        |
 | `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                              |
 | `engineering/CONTRIBUTION_WORKFLOW.md`                                 | active | true             | Guide de contribution                                                            |
 | `engineering/LOCAL_DEVELOPMENT.md`                                     | active | true             | Guide du mode développement                                                      |

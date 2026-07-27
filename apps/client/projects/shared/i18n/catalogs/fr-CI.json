@@ -1,0 +1,20 @@
+{
+  "shared": {
+    "prototype": {
+      "greeting": "Bonjour {{ name }}",
+      "status": "Adaptateur i18n prêt",
+      "items": "{{ count }} élément(s) préparé(s)",
+      "icuPluralPath": "{count, plural, =0 {Aucun élément préparé} one {Un élément préparé} other {# éléments préparés}}",
+      "icuSelectPath": "{audience, select, learner {Parcours apprenant} leader {Parcours leadership} other {Parcours KRAAK}}"
+    }
+  },
+  "primeng": {
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "close": "Fermer",
+    "emptyMessage": "Aucun résultat",
+    "aria": {
+      "close": "Fermer"
+    }
+  }
+}

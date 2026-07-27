@@ -28,6 +28,10 @@ import { MlRuntimeService } from './core/ml/ml-runtime.service';
 import { TFJS_CONFIG } from './core/ml/tfjs-config';
 import { environment } from '../environments/environment';
 import { SeoTitleStrategy } from './seo/seo-title.strategy';
+import {
+  provideKraakI18n,
+  provideKraakPrimeNgI18nBridge,
+} from '../../../shared/i18n';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -51,6 +55,8 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    provideKraakI18n(),
+    provideKraakPrimeNgI18nBridge(),
     MessageService,
     {
       provide: TitleStrategy,
