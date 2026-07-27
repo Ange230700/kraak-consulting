@@ -45,8 +45,8 @@ function readText(filePath) {
 
 function escapeCell(value) {
   return String(value ?? '-')
-    .replace(/\r?\n/g, ' ')
-    .replace(/\|/g, '\\|')
+    .replaceAll(/\r?\n/g, ' ')
+    .replaceAll('|', String.raw`\|`)
     .trim();
 }
 
@@ -73,30 +73,69 @@ function parseFrontmatter(content) {
   const body = content.slice(4, end);
 
   for (const line of body.split(/\r?\n/)) {
-    const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+    const separatorIndex = line.indexOf(':');
 
-    if (!match) {
+    if (separatorIndex <= 0) {
       continue;
     }
 
-    metadata[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, '');
+    const key = line.slice(0, separatorIndex);
+
+    if (!/^[\w-]+$/u.test(key)) {
+      continue;
+    }
+
+    metadata[key] = line
+      .slice(separatorIndex + 1)
+      .trim()
+      .replace(/^['"]|['"]$/g, '');
   }
 
   return metadata;
 }
 
 function extractHeading(content) {
-  const heading = content.match(/^#\s+(.+)$/m);
+  for (const line of content.split(/\r?\n/)) {
+    const normalizedLine = line.trimEnd();
 
-  return heading ? heading[1].trim() : 'Sans titre';
+    if (normalizedLine.startsWith('# ')) {
+      return normalizedLine.slice(2).trim();
+    }
+  }
+
+  return 'Sans titre';
+}
+
+function stripHtmlTags(value) {
+  let result = '';
+  let pendingTag = '';
+  let insideTag = false;
+
+  for (const character of value) {
+    if (character === '<') {
+      insideTag = true;
+      pendingTag = character;
+      continue;
+    }
+
+    if (!insideTag) {
+      result += character;
+      continue;
+    }
+
+    pendingTag += character;
+
+    if (character === '>') {
+      insideTag = false;
+      pendingTag = '';
+    }
+  }
+
+  return insideTag ? result + pendingTag : result;
 }
 
 function stripMarkdown(value) {
-  return value
-    .replace(/\*\*/g, '')
-    .replace(/`/g, '')
-    .replace(/<[^>]+>/g, '')
-    .trim();
+  return stripHtmlTags(value).replaceAll('**', '').replaceAll('`', '').trim();
 }
 
 function readMarkdownRecord(root, relativeFile) {
@@ -262,15 +301,15 @@ ${renderActiveCatalog(root)}
 
 function parseAdrField(content, fieldName) {
   const tableRegex = new RegExp(
-    `\\|\\s*(?:\\*\\*)?${fieldName}(?:\\*\\*)?\\s*\\|\\s*([^|]+)\\|`,
+    String.raw`\|\s*(?:\*\*)?${fieldName}(?:\*\*)?\s*\|\s*([^|]+)\|`,
     'i',
   );
   const listRegex = new RegExp(
-    `^-\\s*(?:\\*\\*)?${fieldName}(?:\\*\\*)?\\s*:\\s*(.+)$`,
+    String.raw`^-\s*(?:\*\*)?${fieldName}(?:\*\*)?\s*:\s*(.+)$`,
     'im',
   );
   const boldInlineRegex = new RegExp(
-    `^\\*\\*${fieldName}\\s*:\\*\\*\\s*(.+)$`,
+    String.raw`^\*\*${fieldName}\s*:\*\*\s*(.+)$`,
     'im',
   );
   const tableMatch = content.match(tableRegex);
@@ -285,7 +324,7 @@ function parseAdrField(content, fieldName) {
 function adrTitle(record, id) {
   return stripMarkdown(
     record.title
-      .replace(new RegExp(`^${id}\\s*(?:[-–—:]\\s*)?`, 'i'), '')
+      .replace(new RegExp(String.raw`^${id}\s*(?:[-–—:]\s*)?`, 'i'), '')
       .trim(),
   );
 }
@@ -295,10 +334,13 @@ function adrRecords(root) {
     .filter((file) => /^docs\/decisions\/ARC-\d{2}-.+\.md$/i.test(file))
     .map((file) => {
       const record = readMarkdownRecord(root, file);
-      const id = path
-        .basename(file)
-        .match(/^(ARC-\d{2})-/i)[1]
-        .toUpperCase();
+      const idMatch = /^(ARC-\d{2})-/i.exec(path.basename(file));
+
+      if (!idMatch) {
+        throw new Error(`ADR sans identifiant ARC valide: ${file}`);
+      }
+
+      const id = idMatch[1].toUpperCase();
 
       return {
         date: parseAdrField(record.content, 'Date'),
@@ -349,16 +391,56 @@ ${renderTable(['ID', 'Titre', 'Statut', 'Date'], indexRows)}
 }
 
 function archiveSummary(content) {
-  const match = content.match(
-    /## Pourquoi ces documents sont archiv[ée]s\s+([\s\S]*?)(?:\n## |\n---|$)/i,
-  );
+  const heading = findArchiveSummaryHeading(content);
 
-  if (!match) {
+  if (!heading) {
     return '-';
   }
 
+  const summaryStart = heading.index + heading.text.length;
+  const remainingContent = content.slice(summaryStart);
+  const sectionEnd = findFirstExistingIndex(remainingContent, [
+    '\n## ',
+    '\n---',
+  ]);
+  const summaryContent = remainingContent.slice(
+    0,
+    sectionEnd ?? remainingContent.length,
+  );
+
+  return renderArchiveSummaryText(summaryContent);
+}
+
+function findArchiveSummaryHeading(content) {
+  const archiveSummaryHeadings = [
+    '## Pourquoi ces documents sont archives',
+    '## Pourquoi ces documents sont archivés',
+    '## Pourquoi ces documents sont archivées',
+  ];
+
+  for (const text of archiveSummaryHeadings) {
+    const index = content.indexOf(text);
+
+    if (index !== -1) {
+      return { index, text };
+    }
+  }
+
+  return undefined;
+}
+
+function findFirstExistingIndex(content, markers) {
+  const indexes = markers
+    .map((marker) => content.indexOf(marker))
+    .filter((index) => index !== -1);
+
+  return indexes.length > 0 ? Math.min(...indexes) : undefined;
+}
+
+function renderArchiveSummaryText(summaryContent) {
   return (
-    stripMarkdown(match[1].replace(/\s+/g, ' ')).replace(/\.$/, '.') || '-'
+    stripMarkdown(summaryContent.replaceAll(/\s+/g, ' ')).replace(/\.$/, '.') ||
+    '-'
   );
 }
 

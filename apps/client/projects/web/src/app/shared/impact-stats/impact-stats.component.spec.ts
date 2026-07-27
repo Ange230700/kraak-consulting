@@ -22,11 +22,11 @@ describe('ImpactStats', () => {
 
   it('Given the preview impact catalog When the component is initialized Then it should expose three stats', () => {
     const stats = (component as unknown as { stats: unknown[] }).stats;
-    expect(stats.length).toBe(3);
+    expect(stats).toHaveLength(3);
   });
 
   it('Given the impact stats section When the component renders Then it should display one card per stat', () => {
     const cards = fixture.nativeElement.querySelectorAll('article');
-    expect(cards.length).toBe(3);
+    expect(cards).toHaveLength(3);
   });
 });

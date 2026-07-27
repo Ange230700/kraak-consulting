@@ -47,7 +47,7 @@ describe('FaqAccordion', () => {
     const answers = (fixture.nativeElement as HTMLElement).querySelectorAll(
       'p-accordion-content p',
     );
-    expect(answers.length).toBe(SAMPLE_ITEMS.length);
+    expect(answers).toHaveLength(SAMPLE_ITEMS.length);
   });
 
   it('Given une liste d items, When une question est ouverte, Then la réponse devient visible', async () => {

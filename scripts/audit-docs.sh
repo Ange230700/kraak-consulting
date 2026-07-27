@@ -24,6 +24,7 @@ Options:
   --fail-on-findings    Fail only on initial blocking documentation categories.
   --stale-days DAYS     Staleness threshold used with --full. Defaults to 180.
 USAGE
+  return 0
 }
 
 while (($# > 0)); do

@@ -32,7 +32,7 @@ describe('utilisateurs.routes', () => {
 
     expect(listRoute?.loadComponent).toBeTypeOf('function');
     expect(createRoute?.loadComponent).toBeTypeOf('function');
-    expect(stepRoutes?.length).toBe(5);
+    expect(stepRoutes).toHaveLength(5);
 
     const loaders = [
       listRoute?.loadComponent,

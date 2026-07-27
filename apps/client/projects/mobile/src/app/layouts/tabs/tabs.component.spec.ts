@@ -54,7 +54,7 @@ describe('TabsLayout', () => {
     const fixture = TestBed.createComponent(TabsLayout);
     fixture.detectChanges();
     const buttons = fixture.nativeElement.querySelectorAll('ion-tab-button');
-    expect(buttons.length).toBe(MOBILE_PRIMARY_TABS.length);
+    expect(buttons).toHaveLength(MOBILE_PRIMARY_TABS.length);
   });
 
   it('should display correct tab labels', () => {
@@ -84,7 +84,7 @@ describe('TabsLayout', () => {
     fixture.detectChanges();
 
     const buttons = fixture.nativeElement.querySelectorAll('ion-tab-button');
-    expect(buttons.length).toBe(0);
+    expect(buttons).toHaveLength(0);
   });
 
   it('Given each tab, when the component data is inspected, then icon names match the shell config', () => {
@@ -102,6 +102,6 @@ describe('TabsLayout', () => {
     };
 
     expect(instance.tabs).toEqual(MOBILE_PRIMARY_TABS);
-    expect(instance.tabs.length).toBe(4);
+    expect(instance.tabs).toHaveLength(4);
   });
 });

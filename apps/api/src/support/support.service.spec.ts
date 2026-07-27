@@ -103,6 +103,45 @@ describe('SupportService', () => {
     service = module.get<SupportService>(SupportService);
   });
 
+  async function expectSupportRequestsAreUnfilteredForRole(
+    role: 'admin' | 'employee' | 'trainer',
+  ): Promise<void> {
+    const userId = `${role}-1`;
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: userId } },
+      error: null,
+    });
+
+    let eqCalled = false;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: userId, role },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          { data: [], error: null },
+          {
+            onEq: () => {
+              eqCalled = true;
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+    expect(eqCalled).toBe(false);
+    expect(results).toEqual([]);
+  }
+
   it('devrait être défini', () => {
     expect(service).toBeDefined();
   });
@@ -382,41 +421,13 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given un admin authentifié, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
-    configService.get.mockReturnValue(undefined);
-    authGetUserMock.mockResolvedValue({
-      data: { user: { id: 'admin-1' } },
-      error: null,
-    });
-
-    let eqCalled = false;
-
-    fromMock.mockImplementation((table: string) => {
-      if (table === 'app_user') {
-        return createQueryChain({
-          data: { id: 'admin-1', role: 'admin' },
-          error: null,
-        });
-      }
-
-      if (table === 'support_request') {
-        return createQueryChain(
-          { data: [], error: null },
-          {
-            onEq: () => {
-              eqCalled = true;
-            },
-          },
-        );
-      }
-
-      throw new Error(`Unexpected table: ${table}`);
-    });
-
-    const results = await service.listSupportRequests('access-token');
-    expect(eqCalled).toBe(false);
-    expect(results).toEqual([]);
-  });
+  it.each([['admin' as const], ['employee' as const], ['trainer' as const]])(
+    'Given un rôle %s authentifié, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id',
+    async (role) => {
+      expect.hasAssertions();
+      await expectSupportRequestsAreUnfilteredForRole(role);
+    },
+  );
 
   it('Given la requête support_request renvoie data null sans erreur, When listSupportRequests est appelé, Then la liste renvoyée est vide', async () => {
     configService.get.mockReturnValue(undefined);
@@ -1047,78 +1058,6 @@ describe('SupportService', () => {
         'access-token',
       ),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
-  });
-
-  it('Given un rôle employee, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
-    configService.get.mockReturnValue(undefined);
-    authGetUserMock.mockResolvedValue({
-      data: { user: { id: 'employee-1' } },
-      error: null,
-    });
-
-    let eqCalled = false;
-
-    fromMock.mockImplementation((table: string) => {
-      if (table === 'app_user') {
-        return createQueryChain({
-          data: { id: 'employee-1', role: 'employee' },
-          error: null,
-        });
-      }
-
-      if (table === 'support_request') {
-        return createQueryChain(
-          { data: [], error: null },
-          {
-            onEq: () => {
-              eqCalled = true;
-            },
-          },
-        );
-      }
-
-      throw new Error(`Unexpected table: ${table}`);
-    });
-
-    const results = await service.listSupportRequests('access-token');
-    expect(eqCalled).toBe(false);
-    expect(results).toEqual([]);
-  });
-
-  it('Given un rôle trainer, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
-    configService.get.mockReturnValue(undefined);
-    authGetUserMock.mockResolvedValue({
-      data: { user: { id: 'trainer-1' } },
-      error: null,
-    });
-
-    let eqCalled = false;
-
-    fromMock.mockImplementation((table: string) => {
-      if (table === 'app_user') {
-        return createQueryChain({
-          data: { id: 'trainer-1', role: 'trainer' },
-          error: null,
-        });
-      }
-
-      if (table === 'support_request') {
-        return createQueryChain(
-          { data: [], error: null },
-          {
-            onEq: () => {
-              eqCalled = true;
-            },
-          },
-        );
-      }
-
-      throw new Error(`Unexpected table: ${table}`);
-    });
-
-    const results = await service.listSupportRequests('access-token');
-    expect(eqCalled).toBe(false);
-    expect(results).toEqual([]);
   });
 
   it('Given un admin et une demande existante, When markSupportRequestAsRead est appelé, Then la demande est marquée lue et renvoyée', async () => {

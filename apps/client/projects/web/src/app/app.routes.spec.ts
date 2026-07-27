@@ -188,7 +188,7 @@ describe('Web routes', () => {
         participantPaths.includes(route.path ?? ''),
       );
 
-      expect(gatedRoutes.length).toBe(participantPaths.length);
+      expect(gatedRoutes).toHaveLength(participantPaths.length);
 
       for (const route of gatedRoutes) {
         expect(route.canMatch).toContain(participantAreaCanMatch);
@@ -201,7 +201,7 @@ describe('Web routes', () => {
         participantPaths.includes(route.path ?? ''),
       );
 
-      expect(participantSeoRoutes.length).toBe(participantPaths.length);
+      expect(participantSeoRoutes).toHaveLength(participantPaths.length);
 
       for (const route of participantSeoRoutes) {
         expect(route.data?.['seo']).toBeDefined();

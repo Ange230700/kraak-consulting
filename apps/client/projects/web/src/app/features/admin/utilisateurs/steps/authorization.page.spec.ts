@@ -95,6 +95,6 @@ describe('AuthorizationPage', () => {
       '#preferredContactChannel option',
     );
 
-    expect(options.length).toBe(4);
+    expect(options).toHaveLength(4);
   });
 });

@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@nestjs/common';
 
 function readNonEmptyEnv(name: string): string | undefined {
   const value = process.env[name]?.trim();
-  return value ? value : undefined;
+  return value || undefined;
 }
 
 function resolveDeploymentEnvironment(): string {

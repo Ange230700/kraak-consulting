@@ -166,7 +166,7 @@ describe('Mobile HomePage', () => {
     const actions = element.querySelectorAll('ion-button');
 
     expect(brandImage?.getAttribute('src')).toContain('kraak-logo.png');
-    expect(actions.length).toBe(2);
+    expect(actions).toHaveLength(2);
     expect(element.textContent).toContain('Voir les ressources utiles');
   });
 

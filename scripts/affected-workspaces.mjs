@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import process from 'node:process';
+
+import { getChangedFiles, resolveBaseRef } from './workspace-git-utils.mjs';
 
 const rootSensitivePaths = [
   'package.json',
@@ -11,6 +12,13 @@ const rootSensitivePaths = [
   'tsconfig.base.json',
   'scripts/',
   '.github/',
+];
+
+const clientWorkspaceLintCommand = [
+  'pnpm',
+  '--filter',
+  '@kraak/client',
+  'lint',
 ];
 
 const workspaceDefinitions = [
@@ -27,7 +35,7 @@ const workspaceDefinitions = [
     name: 'client-web',
     prefixes: ['apps/client/projects/web/'],
     commands: {
-      lint: ['pnpm', '--filter', '@kraak/client', 'lint'],
+      lint: clientWorkspaceLintCommand,
       test: ['pnpm', '--filter', '@kraak/client', 'test:web'],
       build: ['pnpm', 'build:web'],
     },
@@ -36,7 +44,7 @@ const workspaceDefinitions = [
     name: 'client-mobile',
     prefixes: ['apps/client/projects/mobile/'],
     commands: {
-      lint: ['pnpm', '--filter', '@kraak/client', 'lint'],
+      lint: clientWorkspaceLintCommand,
       test: ['pnpm', '--filter', '@kraak/client', 'test:mobile'],
       build: ['pnpm', 'build:mobile'],
     },
@@ -80,116 +88,6 @@ const workspaceDefinitions = [
 const workspaceNameByDefinition = new Map(
   workspaceDefinitions.map((definition) => [definition.name, definition]),
 );
-
-function resolveGitExecutable() {
-  const candidates = [];
-
-  if (process.env.GIT_EXECUTABLE) {
-    candidates.push(process.env.GIT_EXECUTABLE);
-  }
-
-  if (process.platform === 'win32') {
-    candidates.push(
-      String.raw`C:\Program Files\Git\cmd\git.exe`,
-      String.raw`C:\Program Files\Git\bin\git.exe`,
-    );
-  } else {
-    candidates.push(
-      '/usr/bin/git',
-      '/usr/local/bin/git',
-      '/opt/homebrew/bin/git',
-    );
-  }
-
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) {
-      return candidate;
-    }
-  }
-
-  throw new Error(
-    '[affected] Exécutable git introuvable. Définissez GIT_EXECUTABLE avec un chemin absolu fiable.',
-  );
-}
-
-const gitExecutable = resolveGitExecutable();
-
-function runGit(args) {
-  return spawnSync(gitExecutable, args, {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-}
-
-function getGitOutput(args) {
-  const result = runGit(args);
-
-  if (result.status !== 0) {
-    return '';
-  }
-
-  return result.stdout.trim();
-}
-
-function refExists(ref) {
-  const result = runGit([
-    'rev-parse',
-    '--verify',
-    '--quiet',
-    `${ref}^{commit}`,
-  ]);
-  return result.status === 0;
-}
-
-function resolveBaseRef() {
-  const upstream = getGitOutput([
-    'rev-parse',
-    '--abbrev-ref',
-    '--symbolic-full-name',
-    '@{upstream}',
-  ]);
-
-  if (upstream && refExists(upstream)) {
-    return upstream;
-  }
-
-  const candidates = [
-    'origin/staging',
-    'origin/main',
-    'staging',
-    'main',
-    'HEAD~1',
-  ];
-
-  for (const candidate of candidates) {
-    if (refExists(candidate)) {
-      return candidate;
-    }
-  }
-
-  return 'HEAD~1';
-}
-
-function getChangedFiles(baseRef) {
-  const result = runGit([
-    'diff',
-    '--name-only',
-    '--diff-filter=ACMRTUXB',
-    `${baseRef}...HEAD`,
-  ]);
-
-  if (result.status !== 0) {
-    console.warn(
-      '[affected] Impossible de détecter finement les changements, fallback sur une validation minimale.',
-    );
-    return [];
-  }
-
-  return result.stdout
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-}
 
 function isRootSensitiveFile(filePath) {
   return rootSensitivePaths.some((pattern) => {
@@ -289,7 +187,12 @@ function main() {
     process.exit(1);
   }
 
-  const changedFiles = getChangedFiles(resolveBaseRef());
+  const gitOptions = { errorPrefix: '[affected]' };
+  const changedFiles = getChangedFiles(resolveBaseRef(gitOptions), {
+    ...gitOptions,
+    warningMessage:
+      '[affected] Impossible de détecter finement les changements, fallback sur une validation minimale.',
+  });
   const affectedWorkspaceNames = collectAffectedWorkspaceNames(changedFiles);
 
   if (affectedWorkspaceNames.length === 0) {

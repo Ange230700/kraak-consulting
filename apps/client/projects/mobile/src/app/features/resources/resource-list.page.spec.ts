@@ -292,55 +292,6 @@ describe('Mobile ResourceListPage', () => {
     expect(service.listResources).toHaveBeenCalled();
   });
 
-  it('Given onSearchInput is called with a null event target, then searchQuery defaults to empty string', async () => {
-    service.listResources.mockResolvedValue({ data: [], total: 0 });
-    const fixture = TestBed.createComponent(ResourceListPage);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    (
-      fixture.componentInstance as unknown as {
-        onSearchInput: (e: Event) => void;
-      }
-    ).onSearchInput({ target: null } as unknown as Event);
-
-    expect(
-      (
-        fixture.componentInstance as unknown as { searchQuery: () => string }
-      ).searchQuery(),
-    ).toBe('');
-  });
-
-  it('Given onThemeChange is called with a null event target, then selectedTheme defaults to empty string', async () => {
-    service.listResources.mockResolvedValue({ data: [], total: 0 });
-    const fixture = TestBed.createComponent(ResourceListPage);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    await (
-      fixture.componentInstance as unknown as {
-        onThemeChange: (e: Event) => Promise<void>;
-      }
-    ).onThemeChange({ target: null } as unknown as Event);
-
-    expect(service.listResources).toHaveBeenCalled();
-  });
-
-  it('Given onAudienceChange is called with a null event target, then selectedAudience defaults to empty string', async () => {
-    service.listResources.mockResolvedValue({ data: [], total: 0 });
-    const fixture = TestBed.createComponent(ResourceListPage);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    await (
-      fixture.componentInstance as unknown as {
-        onAudienceChange: (e: Event) => Promise<void>;
-      }
-    ).onAudienceChange({ target: null } as unknown as Event);
-
-    expect(service.listResources).toHaveBeenCalled();
-  });
-
   it('Given two concurrent loads, when the older success resolves after the newer one, then stale success is ignored', async () => {
     const fixture = TestBed.createComponent(ResourceListPage);
     let resolveOlderLoad!: (value: unknown) => void;

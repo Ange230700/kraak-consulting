@@ -29,66 +29,6 @@ interface FooterOfficeItem {
   standalone: true,
   imports: [RouterLink, PublicConversionTrackingDirective],
   templateUrl: './footer.component.html',
-  styles: [
-    `
-      .kr-footer-fade-right,
-      .kr-footer-fade-left {
-        opacity: 0;
-        will-change: transform, opacity;
-      }
-
-      .kr-footer-fade-right {
-        transform: translate3d(-28px, 0, 0);
-      }
-
-      .kr-footer-fade-left {
-        transform: translate3d(28px, 0, 0);
-      }
-
-      .kr-footer-fade-right-visible {
-        animation: kr-footer-fade-right 800ms ease-out both;
-      }
-
-      .kr-footer-fade-left-visible {
-        animation: kr-footer-fade-left 800ms ease-out both;
-      }
-
-      @keyframes kr-footer-fade-right {
-        from {
-          opacity: 0;
-          transform: translate3d(-28px, 0, 0);
-        }
-
-        to {
-          opacity: 1;
-          transform: translate3d(0, 0, 0);
-        }
-      }
-
-      @keyframes kr-footer-fade-left {
-        from {
-          opacity: 0;
-          transform: translate3d(28px, 0, 0);
-        }
-
-        to {
-          opacity: 1;
-          transform: translate3d(0, 0, 0);
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .kr-footer-fade-right,
-        .kr-footer-fade-left,
-        .kr-footer-fade-right-visible,
-        .kr-footer-fade-left-visible {
-          animation: none;
-          opacity: 1;
-          transform: none;
-        }
-      }
-    `,
-  ],
 })
 export class Footer implements AfterViewInit, OnDestroy {
   @ViewChild('footerRoot')

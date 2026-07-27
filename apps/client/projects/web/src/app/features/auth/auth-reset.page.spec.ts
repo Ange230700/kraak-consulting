@@ -252,14 +252,14 @@ describe('Web AuthResetPage', () => {
       .mockImplementation(
         () => undefined as unknown as Window & typeof globalThis,
       );
-    const callsBefore = replaceStateSpy.mock.calls.length;
+    const callsBefore = [...replaceStateSpy.mock.calls];
 
     try {
       const fixture = TestBed.createComponent(AuthResetPage);
       fixture.componentInstance.ngOnInit();
       await flushPromises();
 
-      expect(replaceStateSpy.mock.calls.length).toBe(callsBefore);
+      expect(replaceStateSpy.mock.calls).toEqual(callsBefore);
     } finally {
       windowGetterSpy.mockRestore();
     }

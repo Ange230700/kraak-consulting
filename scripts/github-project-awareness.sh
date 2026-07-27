@@ -73,6 +73,7 @@ Examples:
   bash scripts/github-project-awareness.sh --export-current docs/generated/planning/github_project_planning_current.csv
   bash scripts/github-project-awareness.sh --check-current
 EOF
+  return 0
 }
 
 while (($# > 0)); do
@@ -193,29 +194,41 @@ else
 fi
 
 have() {
-  command -v "$1" >/dev/null 2>&1
+  local command_name="$1"
+  command -v "$command_name" >/dev/null 2>&1
+  return $?
 }
 
 fatal() {
-  printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$1" >&2
+  local message="$1"
+  printf '%sERROR:%s %s\n' "$C_RED" "$C_RESET" "$message" >&2
   exit 1
+  return 1
 }
 
 warn() {
-  printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$1" >&2
+  local message="$1"
+  printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$message" >&2
+  return 0
 }
 
 info() {
-  printf '%sINFO:%s %s\n' "$C_CYAN" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sINFO:%s %s\n' "$C_CYAN" "$C_RESET" "$message"
+  return 0
 }
 
 ok() {
-  printf '%sOK:%s %s\n' "$C_GREEN" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sOK:%s %s\n' "$C_GREEN" "$C_RESET" "$message"
+  return 0
 }
 
 step() {
-  printf '\n%s%s%s\n' "$C_BOLD$C_BLUE" "$1" "$C_RESET"
+  local message="$1"
+  printf '\n%s%s%s\n' "$C_BOLD$C_BLUE" "$message" "$C_RESET"
   printf '%s\n' '--------------------------------------------------------------------------------'
+  return 0
 }
 
 for cmd in git gh jq node; do

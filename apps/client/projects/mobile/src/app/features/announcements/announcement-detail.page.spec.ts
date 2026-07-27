@@ -212,38 +212,23 @@ describe('Mobile AnnouncementDetailPage', () => {
     expect(getByIdMock).toHaveBeenCalledTimes(2);
   });
 
-  it('Given a component instance, when getPriorityLabel is called with high, then it returns Élevée', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
+  it.each([
+    ['high' as const, 'Elev\u00E9e'],
+    ['normal' as const, 'Normale'],
+    ['low' as const, 'Faible'],
+  ])(
+    'Given a component instance, when getPriorityLabel is called with %s, then it returns %s',
+    (priority, expectedLabel) => {
+      const fixture = TestBed.createComponent(AnnouncementDetailPage);
+      configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
+      fixture.detectChanges();
 
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('high')).toBe('Elev\u00E9e');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with normal, then it returns Normale', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('normal')).toBe('Normale');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with low, then it returns Faible', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('low')).toBe('Faible');
-  });
+      const component = fixture.componentInstance as unknown as {
+        getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+      };
+      expect(component.getPriorityLabel(priority)).toBe(expectedLabel);
+    },
+  );
 
   it('Given an announcement with empty title, when page renders, then pageTitle falls back to default', async () => {
     const fixture = TestBed.createComponent(AnnouncementDetailPage);

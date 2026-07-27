@@ -214,47 +214,26 @@ describe('Mobile AnnouncementListPage', () => {
     expect(component.total()).toBe(0);
   });
 
-  it('Given a component instance, when getPriorityLabel is called with critical, then it returns Critique', () => {
-    const fixture = TestBed.createComponent(AnnouncementListPage);
-    configureAnnouncementsClient(
-      fixture,
-      Promise.resolve({ data: [], total: 0 }),
-    );
-    fixture.detectChanges();
+  it.each([
+    ['critical' as const, 'Critique'],
+    ['normal' as const, 'Normale'],
+    ['low' as const, 'Faible'],
+  ])(
+    'Given a component instance, when getPriorityLabel is called with %s, then it returns %s',
+    (priority, expectedLabel) => {
+      const fixture = TestBed.createComponent(AnnouncementListPage);
+      configureAnnouncementsClient(
+        fixture,
+        Promise.resolve({ data: [], total: 0 }),
+      );
+      fixture.detectChanges();
 
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('critical')).toBe('Critique');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with normal, then it returns Normale', () => {
-    const fixture = TestBed.createComponent(AnnouncementListPage);
-    configureAnnouncementsClient(
-      fixture,
-      Promise.resolve({ data: [], total: 0 }),
-    );
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('normal')).toBe('Normale');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with low, then it returns Faible', () => {
-    const fixture = TestBed.createComponent(AnnouncementListPage);
-    configureAnnouncementsClient(
-      fixture,
-      Promise.resolve({ data: [], total: 0 }),
-    );
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('low')).toBe('Faible');
-  });
+      const component = fixture.componentInstance as unknown as {
+        getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+      };
+      expect(component.getPriorityLabel(priority)).toBe(expectedLabel);
+    },
+  );
 
   it('Given API returns object without total, when page loads, then total falls back to data.length', async () => {
     const fixture = TestBed.createComponent(AnnouncementListPage);

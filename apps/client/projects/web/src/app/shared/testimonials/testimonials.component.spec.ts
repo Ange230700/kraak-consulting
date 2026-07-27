@@ -378,7 +378,7 @@ describe('Testimonials', () => {
     vi.advanceTimersByTime(250);
 
     expect(component.currentIndex()).toBe(2);
-    expect(component.animationDirection()).toBe(null);
+    expect(component.animationDirection()).toBeNull();
     expect(component.isAnimating()).toBe(false);
 
     vi.useRealTimers();

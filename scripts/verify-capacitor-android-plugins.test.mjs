@@ -20,21 +20,19 @@ function readCapacitorConfigSource() {
   return readFileSync(capacitorConfigPath, 'utf8');
 }
 
-test(
-  "tant que google-services.json est absent, capacitor.config.ts restreint les plugins natifs Android via includePlugins pour éviter le crash FCM au démarrage",
-  () => {
-    if (existsSync(googleServicesJsonPath)) {
-      // Une fois Firebase provisionné, le plugin push-notifications peut être
-      // réactivé : on n'impose plus le whitelist vide.
-      return;
-    }
+test('tant que google-services.json est absent, capacitor.config.ts restreint les plugins natifs Android via includePlugins pour éviter le crash FCM au démarrage', (t) => {
+  if (existsSync(googleServicesJsonPath)) {
+    // Une fois Firebase provisionné, le plugin push-notifications peut être
+    // réactivé : on n'impose plus le whitelist vide.
+    t.skip('Firebase Android déjà provisionné dans cet environnement.');
+    return;
+  }
 
-    const capacitorConfigSource = readCapacitorConfigSource();
+  const capacitorConfigSource = readCapacitorConfigSource();
 
-    assert.match(
-      capacitorConfigSource,
-      /android\s*:\s*\{[^}]*includePlugins\s*:\s*\[\s*\]/u,
-      "capacitor.config.ts doit définir android.includePlugins: [] tant que Firebase (google-services.json) n'est pas configuré, sinon @capacitor/push-notifications fait planter l'APK au démarrage.",
-    );
-  },
-);
+  assert.match(
+    capacitorConfigSource,
+    /android\s*:\s*\{[^}]*includePlugins\s*:\s*\[\s*\]/u,
+    "capacitor.config.ts doit définir android.includePlugins: [] tant que Firebase (google-services.json) n'est pas configuré, sinon @capacitor/push-notifications fait planter l'APK au démarrage.",
+  );
+});

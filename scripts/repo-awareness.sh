@@ -44,6 +44,7 @@ usage() {
     }
     { exit }
   ' "$0"
+  return 0
 }
 
 while (($# > 0)); do
@@ -90,37 +91,53 @@ else
 fi
 
 have() {
-  command -v "$1" >/dev/null 2>&1
+  local command_name="$1"
+  command -v "$command_name" >/dev/null 2>&1
+  return $?
 }
 
 title() {
-  printf '\n%s%s%s\n' "$C_BOLD$C_BLUE" "$1" "$C_RESET"
+  local message="$1"
+  printf '\n%s%s%s\n' "$C_BOLD$C_BLUE" "$message" "$C_RESET"
   printf '%s\n' '================================================================================'
+  return 0
 }
 
 section() {
-  printf '\n%s%s%s\n' "$C_BOLD$C_CYAN" "$1" "$C_RESET"
+  local message="$1"
+  printf '\n%s%s%s\n' "$C_BOLD$C_CYAN" "$message" "$C_RESET"
   printf '%s\n' '--------------------------------------------------------------------------------'
+  return 0
 }
 
 subsection() {
-  printf '\n%s%s%s\n' "$C_BOLD" "$1" "$C_RESET"
+  local message="$1"
+  printf '\n%s%s%s\n' "$C_BOLD" "$message" "$C_RESET"
+  return 0
 }
 
 note() {
-  printf '%sNOTE:%s %s\n' "$C_YELLOW" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sNOTE:%s %s\n' "$C_YELLOW" "$C_RESET" "$message"
+  return 0
 }
 
 warn() {
-  printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sWARN:%s %s\n' "$C_YELLOW" "$C_RESET" "$message"
+  return 0
 }
 
 info() {
-  printf '%sINFO:%s %s\n' "$C_CYAN" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sINFO:%s %s\n' "$C_CYAN" "$C_RESET" "$message"
+  return 0
 }
 
 fail() {
-  printf '%sFAIL:%s %s\n' "$C_RED" "$C_RESET" "$1"
+  local message="$1"
+  printf '%sFAIL:%s %s\n' "$C_RED" "$C_RESET" "$message"
+  return 0
 }
 
 run() {
@@ -156,8 +173,10 @@ run_info() {
 }
 
 tracked_ref_exists() {
-  git show-ref --verify --quiet "refs/remotes/origin/$1" ||
-    git show-ref --verify --quiet "refs/heads/$1"
+  local branch="$1"
+  git show-ref --verify --quiet "refs/remotes/origin/$branch" ||
+    git show-ref --verify --quiet "refs/heads/$branch"
+  return $?
 }
 
 resolve_ref() {
@@ -194,6 +213,7 @@ redacted_env_names() {
       ' |
       sort -u
   )
+  return 0
 }
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
@@ -221,6 +241,7 @@ if [[ -n "$OUTPUT_FILE" ]]; then
     exec 1>&3 2>&4
     cat "$OUTPUT_FILE"
     exit "$status"
+    return "$status"
   }
   trap print_saved_report EXIT
   exec > "$OUTPUT_FILE" 2>&1

@@ -128,7 +128,7 @@ describe('SeoService', () => {
     ).toBe(LOCAL_CONTACT_URL);
 
     service.applyPageSeo(homePage!, LOCAL_HOME_URL);
-    expect(document.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+    expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe(LOCAL_HOME_URL);
@@ -137,7 +137,7 @@ describe('SeoService', () => {
   // Given the canonical link already exists in the document head
   // When applyPageSeo is called again for a different page
   // Then the existing canonical link href is updated without creating a new element
-  it('Given a canonical link already exists, when applyPageSeo is called again, then the href is updated in place', () => {
+  it('Given a canonical link already exists and the base URL has a trailing slash, when applyPageSeo is called again, then the href is updated in place', () => {
     const service = TestBed.inject(SeoService);
     const contactPage = findSeoPageByPath('contact');
     const homePage = findSeoPageByPath('');
@@ -151,7 +151,7 @@ describe('SeoService', () => {
     ).toBe('http://localhost:4200/contact');
 
     service.applyPageSeo(homePage!, 'http://localhost:4200/');
-    expect(document.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+    expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe('http://localhost:4200/');

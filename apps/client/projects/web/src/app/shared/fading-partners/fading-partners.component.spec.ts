@@ -28,7 +28,7 @@ describe('FadingPartners', () => {
     renderComponent();
 
     const partnerElements = fixture.nativeElement.querySelectorAll('.px-10');
-    expect(partnerElements.length).toBe(component.duplicatedPartners.length);
+    expect(partnerElements).toHaveLength(component.duplicatedPartners.length);
   });
 
   it('Given duplicated partners When the component renders Then it should display the partner names', () => {
@@ -46,15 +46,15 @@ describe('FadingPartners', () => {
     const fadeGradients = fixture.nativeElement.querySelectorAll(
       '[class*="fade-gradient"]',
     );
-    expect(fadeGradients.length).toBe(2);
+    expect(fadeGradients).toHaveLength(2);
   });
 
   it('Given the raw partner catalog When the component is initialized Then it should expose the expected partner count', () => {
-    expect(component.partners.length).toBe(5);
+    expect(component.partners).toHaveLength(5);
   });
 
   it('Given the infinite scroll behaviour When the component is initialized Then it should duplicate the partner list once', () => {
-    expect(component.duplicatedPartners.length).toBe(10);
+    expect(component.duplicatedPartners).toHaveLength(10);
   });
 
   describe('Rendering', () => {
@@ -81,7 +81,7 @@ describe('FadingPartners', () => {
       const renderedLogos = fixture.nativeElement.querySelectorAll(
         '[aria-hidden="true"] svg',
       );
-      expect(renderedLogos.length).toBe(component.duplicatedPartners.length);
+      expect(renderedLogos).toHaveLength(component.duplicatedPartners.length);
     });
 
     it('Given structured SVG logos When the component renders Then it should keep every expected SVG path', () => {
@@ -95,7 +95,7 @@ describe('FadingPartners', () => {
         0,
       );
 
-      expect(renderedPaths.length).toBe(expectedPathCount);
+      expect(renderedPaths).toHaveLength(expectedPathCount);
     });
 
     it('Given the logo containers When the component renders Then it should keep one container per duplicated partner', () => {
@@ -104,7 +104,7 @@ describe('FadingPartners', () => {
       const logoContainers = fixture.nativeElement.querySelectorAll(
         '[aria-hidden="true"]',
       );
-      expect(logoContainers.length).toBe(component.duplicatedPartners.length);
+      expect(logoContainers).toHaveLength(component.duplicatedPartners.length);
     });
   });
 });
