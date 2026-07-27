@@ -4,6 +4,35 @@
 
 # DEP-07 - Go/No-Go Pilote et Publication Release Pilote
 
+## Table des matières
+
+- [DEP-07 - Go/No-Go Pilote et Publication Release Pilote](#dep-07-gono-go-pilote-et-publication-release-pilote)
+  - [Objectif](#objectif)
+  - [Dépendances](#dependances)
+  - [Portée DEP-07](#portee-dep-07)
+  - [1. Consolidation Des Dépendances](#1-consolidation-des-dependances)
+    - [1.1 DEP-02 — Pipeline déploiement web (Render)](#11-dep-02-pipeline-deploiement-web-render)
+    - [1.2 DEP-03 — Pipeline déploiement API (Render)](#12-dep-03-pipeline-deploiement-api-render)
+    - [1.3 DEP-04 — Distribution mobile test (APK/TestFlight)](#13-dep-04-distribution-mobile-test-apktestflight)
+    - [1.4 DEP-06 — Runbook incident + rollback + checklist](#14-dep-06-runbook-incident-rollback-checklist)
+  - [2. Grille Go/No-Go Pilote](#2-grille-gono-go-pilote)
+    - [Critères impératifs (P0 — tous requis pour GO)](#criteres-imperatifs-p0-tous-requis-pour-go)
+    - [Critères de performance (P1 — non bloquants mais surveiller)](#criteres-de-performance-p1-non-bloquants-mais-surveiller)
+  - [3. Décision Go/No-Go](#3-decision-gono-go)
+  - [4. Publication Release Pilote](#4-publication-release-pilote)
+    - [4.1 Tag Git de release](#41-tag-git-de-release)
+    - [4.2 Périmètre de la release pilote](#42-perimetre-de-la-release-pilote)
+      - [Web — https://kraak-web-prod.onrender.com](#web-httpskraak-web-prodonrendercom)
+      - [API — https://kraak-api-staging.onrender.com](#api-httpskraak-api-stagingonrendercom)
+      - [Mobile — Distribution interne](#mobile-distribution-interne)
+    - [4.3 Notes de release](#43-notes-de-release)
+  - [5. Checklist Finale De Release](#5-checklist-finale-de-release)
+    - [Avant la publication (pré-release)](#avant-la-publication-pre-release)
+    - [Immédiatement après le GO](#immediatement-apres-le-go)
+    - [Suivi post-release](#suivi-post-release)
+  - [Addendum PR-06 - Gate de bascule vers routes protegees](#addendum-pr-06-gate-de-bascule-vers-routes-protegees)
+  - [6. Références](#6-references)
+
 Date: 2026-04-30  
 Issue: #124  
 Epic: DEP

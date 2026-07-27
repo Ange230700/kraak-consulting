@@ -7,6 +7,12 @@ source_of_truth: true
 
 # Architecture mobile
 
+## Table des matières
+
+- [Architecture mobile](#architecture-mobile)
+  - [Contrat courant](#contrat-courant)
+  - [Sources liées](#sources-liees)
+
 L'application mobile KRAAK est l'application Ionic Angular située dans
 `apps/client/projects/mobile`.
 

@@ -7,6 +7,29 @@ source_of_truth: true
 
 # Guide de build mobile (Capacitor Android / iOS)
 
+## Table des matières
+
+- [Guide de build mobile (Capacitor Android / iOS)](#guide-de-build-mobile-capacitor-android-ios)
+  - [Prérequis](#prerequis)
+  - [Configuration locale persistante](#configuration-locale-persistante)
+    - [Android SDK (local.properties)](#android-sdk-localproperties)
+    - [JAVAHOME et variables d'environnement](#javahome-et-variables-denvironnement)
+      - [Option 1 : Configuration shell permanente (recommande)](#option-1-configuration-shell-permanente-recommande)
+      - [Option 2 : Via helper script (siege)](#option-2-via-helper-script-siege)
+  - [Generation des projets natifs](#generation-des-projets-natifs)
+  - [Build debug local](#build-debug-local)
+    - [Android](#android)
+    - [iOS (macOS uniquement)](#ios-macos-uniquement)
+  - [Travailler avec un environnement precis](#travailler-avec-un-environnement-precis)
+  - [Ouvrir dans l'IDE natif](#ouvrir-dans-lide-natif)
+    - [Android Studio](#android-studio)
+    - [Xcode (macOS uniquement)](#xcode-macos-uniquement)
+  - [Synchronisation du build web vers natif](#synchronisation-du-build-web-vers-natif)
+  - [Notifications push stub (MOB-05)](#notifications-push-stub-mob-05)
+  - [Test avec live-reload (appareil physique ou émulateur)](#test-avec-live-reload-appareil-physique-ou-emulateur)
+  - [CI - Debug APK automatique](#ci-debug-apk-automatique)
+  - [Distribution interne de test (DEP-04)](#distribution-interne-de-test-dep-04)
+
 Ce runbook décrit comment générer les projets natifs Android et iOS, lancer un build debug local, ouvrir le projet dans l'IDE natif, et tester avec le live-reload.
 
 ---

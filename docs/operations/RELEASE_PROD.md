@@ -7,6 +7,29 @@ source_of_truth: true
 
 # RELEASE_PROD — Procédure de release production
 
+## Table des matières
+
+- [RELEASEPROD — Procédure de release production](#releaseprod-procedure-de-release-production)
+  - [Principes](#principes)
+  - [Pré-requis (à provisionner une seule fois)](#pre-requis-a-provisionner-une-seule-fois)
+    - [1. GitHub Environment production](#1-github-environment-production)
+    - [2. Branch protection sur main](#2-branch-protection-sur-main)
+    - [3. Render — service prod](#3-render-service-prod)
+    - [4. Render — projet web prod](#4-render-projet-web-prod)
+    - [5. Supabase — projet prod séparé](#5-supabase-projet-prod-separe)
+  - [Procédure de release (par version)](#procedure-de-release-par-version)
+    - [Étape 1 — Pré-vol staging](#etape-1-pre-vol-staging)
+    - [Étape 2 — Tag SemVer](#etape-2-tag-semver)
+    - [Étape 3 — Workflow release-prod](#etape-3-workflow-release-prod)
+    - [Étape 4 — Validation post-deploy](#etape-4-validation-post-deploy)
+    - [Étape 5 — Clôture](#etape-5-cloture)
+  - [Rollback](#rollback)
+  - [Politique de secrets](#politique-de-secrets)
+  - [Anti-patterns interdits](#anti-patterns-interdits)
+  - [Addendum dry-run pre-prod (PR-06)](#addendum-dry-run-pre-prod-pr-06)
+    - [Procedure minimale de dry-run](#procedure-minimale-de-dry-run)
+    - [Critères go/no-go de process](#criteres-gono-go-de-process)
+
 > Document de référence pour livrer une version en production. Toute release
 > prod **doit** suivre cette procédure, sans exception.
 

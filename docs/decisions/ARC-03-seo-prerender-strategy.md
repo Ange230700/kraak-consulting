@@ -7,6 +7,26 @@ source_of_truth: true
 
 # ARC-03 — Stratégie de rendu web (SEO / prerender)
 
+## Table des matières
+
+- [ARC-03 — Stratégie de rendu web (SEO / prerender)](#arc-03-strategie-de-rendu-web-seo-prerender)
+  - [Contexte](#contexte)
+  - [Décision](#decision)
+  - [Justification](#justification)
+  - [Implémentation en place](#implementation-en-place)
+    - [Configuration des routes serveur](#configuration-des-routes-serveur)
+    - [Configuration serveur Angular](#configuration-serveur-angular)
+    - [Hydratation client](#hydratation-client)
+    - [Serveur Express SSR](#serveur-express-ssr)
+    - [Build et déploiement](#build-et-deploiement)
+  - [Alternatives considérées](#alternatives-considerees)
+    - [1. SPA pure (pas de rendu serveur)](#1-spa-pure-pas-de-rendu-serveur)
+    - [2. SSR dynamique (RenderMode.Server) sur toutes les routes](#2-ssr-dynamique-rendermodeserver-sur-toutes-les-routes)
+    - [3. Solution de prerender externe (Prerender.io, Rendertron)](#3-solution-de-prerender-externe-prerenderio-rendertron)
+    - [4. Framework SSR alternatif (Next.js, Nuxt, Astro)](#4-framework-ssr-alternatif-nextjs-nuxt-astro)
+  - [Limites et évolutions prévues](#limites-et-evolutions-prevues)
+  - [Références](#references)
+
 | Champ      | Valeur                                                      |
 | ---------- | ----------------------------------------------------------- |
 | Statut     | **Acceptée**                                                |

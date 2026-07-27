@@ -4,6 +4,21 @@
 
 # Point 2 — Structure du MVP du site web KRAAK
 
+## Table des matières
+
+- [Point 2 — Structure du MVP du site web KRAAK](#point-2-structure-du-mvp-du-site-web-kraak)
+  - [1. Objectif de la structure 🧭](#1-objectif-de-la-structure-)
+  - [2. Structure globale recommandée 🌐](#2-structure-globale-recommandee-)
+  - [3. Rôle de chaque page 📄](#3-role-de-chaque-page-)
+    - [1) Accueil](#1-accueil)
+    - [2) À propos](#2-a-propos)
+    - [3) Services](#3-services)
+    - [4) Programmes / Formations](#4-programmes-formations)
+    - [5) Contact](#5-contact)
+  - [4. Navigation principale 🔗](#4-navigation-principale-)
+  - [5. Éléments de conversion à prévoir ✅](#5-elements-de-conversion-a-prevoir-)
+  - [6. Résultat attendu](#6-resultat-attendu)
+
 ## 1. Objectif de la structure 🧭
 
 La structure du MVP doit permettre aux visiteurs de **comprendre rapidement qui

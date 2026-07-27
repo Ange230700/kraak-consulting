@@ -248,3 +248,47 @@ export const fixture = true;
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('Given duplicate Markdown headings, When strict audit runs, Then suffixed local anchors are accepted', () => {
+  const root = createFixtureRepository();
+  const outputDirectory = '.reports/docs-audit';
+
+  try {
+    writeMarkdown(
+      root,
+      'docs/README.md',
+      `
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
+# Fixture
+
+[Second section](#section-1)
+
+## Section
+
+First.
+
+## Section
+
+Second.
+`,
+    );
+
+    const result = runScript(root, [
+      '--output',
+      outputDirectory,
+      '--fail-on-findings',
+    ]);
+    const analysis = readAnalysis(root, outputDirectory);
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(analysis.counts.blocking, 0);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

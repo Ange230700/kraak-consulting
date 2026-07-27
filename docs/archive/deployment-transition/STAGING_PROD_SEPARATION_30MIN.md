@@ -4,6 +4,28 @@
 
 # STAGING_PROD_SEPARATION_30MIN — Check-list executable en 30 minutes
 
+## Table des matières
+
+- [STAGINGPRODSEPARATION30MIN — Check-list executable en 30 minutes](#stagingprodseparation30min-check-list-executable-en-30-minutes)
+  - [Prérequis](#prerequis)
+  - [Plan rapide (30 min)](#plan-rapide-30-min)
+  - [Bloc A — GitHub (12 min)](#bloc-a-github-12-min)
+    - [A1. Verrouiller l'approbation prod via Environment (5 min)](#a1-verrouiller-lapprobation-prod-via-environment-5-min)
+    - [A2. Restreindre la creation des tags de release (4 min)](#a2-restreindre-la-creation-des-tags-de-release-4-min)
+    - [A3. Activer les validations CODEOWNERS en PR (3 min)](#a3-activer-les-validations-codeowners-en-pr-3-min)
+  - [Bloc B — Render (8 min)](#bloc-b-render-8-min)
+    - [B1. Garder Ange sur staging uniquement (4 min)](#b1-garder-ange-sur-staging-uniquement-4-min)
+    - [B2. Figer l'ownership compte staging/prod (4 min)](#b2-figer-lownership-compte-stagingprod-4-min)
+  - [Bloc C — Render (6 min)](#bloc-c-render-6-min)
+    - [C1. Verrouiller Production sur kraakconsulting (4 min)](#c1-verrouiller-production-sur-kraakconsulting-4-min)
+    - [C2. Vérifier la branche de prod (2 min)](#c2-verifier-la-branche-de-prod-2-min)
+  - [Bloc D — Validation finale (4 min)](#bloc-d-validation-finale-4-min)
+    - [D1. Test d'autorisation release prod](#d1-test-dautorisation-release-prod)
+    - [D2. Test staging non regressif](#d2-test-staging-non-regressif)
+  - [Evidence a conserver](#evidence-a-conserver)
+  - [Addendum — RACI d'exploitation (règle figée)](#addendum-raci-dexploitation-regle-figee)
+  - [Rollback rapide (si besoin)](#rollback-rapide-si-besoin)
+
 Objectif: séparer proprement les responsabilités opérationnelles.
 
 - Ange230700: conserve tous les droits sur tous les environnements.

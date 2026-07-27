@@ -4,6 +4,50 @@
 
 # Audit complet des pages vitrine KRAAK — Status MVP v1.0.0
 
+## Table des matières
+
+- [Audit complet des pages vitrine KRAAK — Status MVP v1.0.0](#audit-complet-des-pages-vitrine-kraak-status-mvp-v100)
+  - [Résumé exécutif](#resume-executif)
+    - [Sections prêtes pour v1.0.0 ✅](#sections-pretes-pour-v100-)
+    - [Sections À cacher ou remplacer pour v1.0.0 ⚠️](#sections-a-cacher-ou-remplacer-pour-v100-)
+    - [Conditions de release ✅✅](#conditions-de-release-)
+  - [Audit détaillé par page](#audit-detaille-par-page)
+    - [1. HOME PAGE (home.page.ts / .html)](#1-home-page-homepagets-html)
+      - [✅ Complète & statique (prête pour v1.0.0)](#-complete-statique-prete-pour-v100)
+      - [⚠️ HOME — À remplacer ou cacher pour v1.0.0](#-home-a-remplacer-ou-cacher-pour-v100)
+      - [Éléments d'animation](#elements-danimation)
+    - [2. ABOUT PAGE (about.page.ts / .html)](#2-about-page-aboutpagets-html)
+      - [✅ ABOUT — Complète & statique](#-about-complete-statique)
+      - [⚠️ Placeholders à remplacer pour v1.0.0](#-placeholders-a-remplacer-pour-v100)
+      - [Details du placeholder Team Grid](#details-du-placeholder-team-grid)
+    - [3. SERVICES PAGE (services.page.ts / .html)](#3-services-page-servicespagets-html)
+      - [✅ SERVICES — Complète & statique](#-services-complete-statique)
+      - [⚠️ SERVICES — À remplacer ou cacher pour v1.0.0](#-services-a-remplacer-ou-cacher-pour-v100)
+    - [4. PROGRAMS PAGE (programs.page.ts / .html)](#4-programs-page-programspagets-html)
+      - [✅ PROGRAMS — Complète & statique](#-programs-complete-statique)
+      - [✅ PROGRAMS — Pas de sections incomplètes détectées](#-programs-pas-de-sections-incompletes-detectees)
+    - [5. RESOURCES PAGE (resources.page.ts / .html)](#5-resources-page-resourcespagets-html)
+      - [✅ RESOURCES — Complète & statique](#-resources-complete-statique)
+      - [✅ RESOURCES — Pas de sections incomplètes détectées](#-resources-pas-de-sections-incompletes-detectees)
+    - [6. CONTACT PAGE (contact.page.ts / .html)](#6-contact-page-contactpagets-html)
+      - [✅ Complète & dynamique](#-complete-dynamique)
+      - [✅ CONTACT — Pas de sections incomplètes détectées](#-contact-pas-de-sections-incompletes-detectees)
+  - [Audit des composants partagés (Shared)](#audit-des-composants-partages-shared)
+    - [📋 Tableau synthétique](#-tableau-synthetique)
+    - [Détails des problèmes](#details-des-problemes)
+      - [🔴 Testimonials Component (shared/testimonials/)](#-testimonials-component-sharedtestimonials)
+      - [🔴 ImpactStats Component (shared/impact-stats/)](#-impactstats-component-sharedimpact-stats)
+      - [🔴 TeamGrid Component (shared/team-grid/)](#-teamgrid-component-sharedteam-grid)
+      - [🔴 FadingPartners Component (shared/fading-partners/)](#-fadingpartners-component-sharedfading-partners)
+  - [Tableau de synthèse — Actions recommandées pour v1.0.0](#tableau-de-synthese-actions-recommandees-pour-v100)
+  - [Détails des composants à retirer ou cacher](#details-des-composants-a-retirer-ou-cacher)
+    - [Option A : SUPPRIMER les sections (recommandé pour MVP propre)](#option-a-supprimer-les-sections-recommande-pour-mvp-propre)
+    - [Option B : CACHER via [placeholder]="false" (si on veut préserver l'espace)](#option-b-cacher-via-placeholderfalse-si-on-veut-preserver-lespace)
+  - [Checklist v1.0.0 — Avant merge de la branche MVP](#checklist-v100-avant-merge-de-la-branche-mvp)
+  - [Sections à garder intégralement pour v1.0.0 ✅](#sections-a-garder-integralement-pour-v100-)
+  - [Prochaines étapes (V1.1+)](#prochaines-etapes-v11)
+  - [Conclusion](#conclusion)
+
 > Statut documentaire (PR-06): ce fichier est conserve comme **historique
 > d'audit**. Il ne fait plus foi pour le statut courant du périmètre vitrine.
 > La référence active est désormais:
@@ -68,7 +112,7 @@
 | Section                      | Problème                                                                                                                                                           | Status               | Raison                                          | Ligne                                                                                                                                                                                                                             |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Fading Partners carousel** | 5 logos placeholder SVG, aucun vrai client                                                                                                                         | ❌ Placeholder       | Mock data complet                               | `home.page.html:352`                                                                                                                                                                                                              |
-| **Impact Stats section**     | Chiffres fictifs "1M+", "72K+", "2.5M+" + bannière "Chiffres d'impact en prévisualisation"                                                                         | ❌ Placeholder       | Hardcoded stats intemporels                     | [impact-stats.ts:11-16](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.ts#L11-L16)                                                                                                                    |
+| **Impact Stats section**     | Chiffres fictifs "1M+", "72K+", "2.5M+" + bannière "Chiffres d'impact en prévisualisation"                                                                         | ❌ Placeholder       | Hardcoded stats intemporels                     | [impact-stats.ts:11-16](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.component.ts#L11-L16)                                                                                                          |
 | **Testimonials carousel**    | Fallback 3 témoignages Lorem ipsum + message "Un espace sera ouvert aux retours clients et aux preuves sociales dès que les prochains témoignages seront validés." | ❌ Placeholder/Draft | Mock testimonials + message explicite "à venir" | [home.page.html:393-398](../../../apps/client/projects/web/src/app/features/home/home.page.html#L393) et [testimonials.ts:23-50](../../../apps/client/projects/web/src/app/shared/testimonials/testimonials.component.ts#L23-L50) |
 
 #### Éléments d'animation
@@ -144,9 +188,9 @@ HTML template:
 
 #### ⚠️ SERVICES — À remplacer ou cacher pour v1.0.0
 
-| Section                      | Problème                                                                         | Status         | Evidence                                                                                                             |
-| ---------------------------- | -------------------------------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **Fading Partners carousel** | 5 logos placeholder SVG (Mistranet, Trimzales, Streamlinz, Limerantz, BriteMank) | ❌ Placeholder | [fading-partners.ts:21-109](../../../apps/client/projects/web/src/app/shared/fading-partners/fading-partners.ts#L21) |
+| Section                      | Problème                                                                         | Status         | Evidence                                                                                                                       |
+| ---------------------------- | -------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Fading Partners carousel** | 5 logos placeholder SVG (Mistranet, Trimzales, Streamlinz, Limerantz, BriteMank) | ❌ Placeholder | [fading-partners.ts:21-109](../../../apps/client/projects/web/src/app/shared/fading-partners/fading-partners.component.ts#L21) |
 
 ---
 
@@ -210,9 +254,9 @@ HTML template:
 | Composant          | Fichier                   | Status             | Problème                                                                                                          | Evidence                                                                                                                                                                                                                                        | Récup. pour v1.0.0 |
 | ------------------ | ------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | **Testimonials**   | `shared/testimonials/`    | ❌ **PLACEHOLDER** | 3 fallback testimonials Lorem ipsum + mode "prévisualisation" + bannière "preview"                                | [testimonials.ts:23-50](../../../apps/client/projects/web/src/app/shared/testimonials/testimonials.component.ts#L23) + [testimonials.html:14-16](../../../apps/client/projects/web/src/app/shared/testimonials/testimonials.component.html#L14) | **HIDE ou REMOVE** |
-| **ImpactStats**    | `shared/impact-stats/`    | ❌ **PLACEHOLDER** | Chiffres fictifs "1M+", "72K+", "2.5M+" + bannière "Chiffres d'impact en prévisualisation"                        | [impact-stats.ts:11-16](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.ts#L11) + [impact-stats.html:11-14](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.html#L11)                     | **HIDE ou REMOVE** |
+| **ImpactStats**    | `shared/impact-stats/`    | ❌ **PLACEHOLDER** | Chiffres fictifs "1M+", "72K+", "2.5M+" + bannière "Chiffres d'impact en prévisualisation"                        | [impact-stats.ts:11-16](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.component.ts#L11) + [impact-stats.html:11-14](../../../apps/client/projects/web/src/app/shared/impact-stats/impact-stats.component.html#L11) | **HIDE ou REMOVE** |
 | **TeamGrid**       | `shared/team-grid/`       | ❌ **PLACEHOLDER** | 12 profils staff fictifs + disclamer "Prévisualisation de l'équipe KRAAK" + "En attendant la liste officielle..." | [team-grid.ts:28-90](../../../apps/client/projects/web/src/app/shared/team-grid/team-grid.component.ts#L28) + [team-grid.html:5-10](../../../apps/client/projects/web/src/app/shared/team-grid/team-grid.component.html#L5)                     | **HIDE ou REMOVE** |
-| **FadingPartners** | `shared/fading-partners/` | ❌ **PLACEHOLDER** | 5 logos SVG fictifs (Mistranet, Trimzales, Limerantz, BriteMank)                                                  | [fading-partners.ts:21-109](../../../apps/client/projects/web/src/app/shared/fading-partners/fading-partners.ts#L21)                                                                                                                            | **HIDE ou REMOVE** |
+| **FadingPartners** | `shared/fading-partners/` | ❌ **PLACEHOLDER** | 5 logos SVG fictifs (Mistranet, Trimzales, Limerantz, BriteMank)                                                  | [fading-partners.ts:21-109](../../../apps/client/projects/web/src/app/shared/fading-partners/fading-partners.component.ts#L21)                                                                                                                  | **HIDE ou REMOVE** |
 | **CtaBanner**      | `shared/cta-banner/`      | ✅ **COMPLETE**    | Aucun                                                                                                             | —                                                                                                                                                                                                                                               | ✅ Keep            |
 | **FaqAccordion**   | `shared/faq-accordion/`   | ✅ **COMPLETE**    | Aucun (accepte input items)                                                                                       | —                                                                                                                                                                                                                                               | ✅ Keep            |
 | **GsapAnimations** | `core/animations/`        | ✅ **COMPLETE**    | Aucun                                                                                                             | —                                                                                                                                                                                                                                               | ✅ Keep            |

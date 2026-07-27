@@ -7,6 +7,11 @@ source_of_truth: true
 
 # Artefacts générés
 
+## Table des matières
+
+- [Artefacts générés](#artefacts-generes)
+  - [Contenu](#contenu)
+
 Ce dossier regroupe les documents produits par automatisation ou import externe.
 Ils ne doivent pas être modifiés manuellement sauf si le générateur ou la source
 d'origine change dans le même passage.

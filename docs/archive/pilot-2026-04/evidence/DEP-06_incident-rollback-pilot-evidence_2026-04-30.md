@@ -1,5 +1,27 @@
 # DEP-06 - Evidence & Dependencies Validation
 
+## Table des matières
+
+- [DEP-06 - Evidence & Dependencies Validation](#dep-06-evidence-dependencies-validation)
+  - [Dependencies Validation](#dependencies-validation)
+    - [DEP-01: Configuration des environnements (dev/staging/pilot)](#dep-01-configuration-des-environnements-devstagingpilot)
+    - [DEP-05: Observabilité et alerting minimum](#dep-05-observabilite-et-alerting-minimum)
+    - [QAT-06: Checks accessibilité/performance pré-pilot](#qat-06-checks-accessibiliteperformance-pre-pilot)
+  - [DEP-06 Deliverables](#dep-06-deliverables)
+    - [1. Incident Response Playbook ✅](#1-incident-response-playbook-)
+    - [2. Rollback Procedures ✅](#2-rollback-procedures-)
+    - [3. Pilot Launch Checklist ✅](#3-pilot-launch-checklist-)
+  - [Validation Evidence](#validation-evidence)
+    - [Documentation Completeness](#documentation-completeness)
+    - [Operationality Verification](#operationality-verification)
+    - [Compliance with Existing Runbooks](#compliance-with-existing-runbooks)
+  - [Implementation Notes](#implementation-notes)
+    - [Decisions Made](#decisions-made)
+    - [Risk Mitigation](#risk-mitigation)
+    - [Known Limitations](#known-limitations)
+  - [Quality Assurance](#quality-assurance)
+  - [Readiness for Pilot](#readiness-for-pilot)
+
 Date: 2026-04-30  
 Task: DEP-06 - Rédiger runbook incident + rollback + pilot checklist
 

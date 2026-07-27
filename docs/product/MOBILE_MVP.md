@@ -7,6 +7,31 @@ source_of_truth: true
 
 # MVP Mobile
 
+## Table des matières
+
+- [MVP Mobile](#mvp-mobile)
+  - [1. Objectif métier principal](#1-objectif-metier-principal)
+  - [2. Audience mobile principale](#2-audience-mobile-principale)
+  - [3. Actions utilisateurs prioritaires (flux coeur)](#3-actions-utilisateurs-prioritaires-flux-coeur)
+  - [4. Critères de succès (préparation pilote)](#4-criteres-de-succes-preparation-pilote)
+  - [5. Limites de périmètre MVP](#5-limites-de-perimetre-mvp)
+  - [6. Porte de décision produit (fin de phase 1)](#6-porte-de-decision-produit-fin-de-phase-1)
+  - [7. Phase 2 - Decoupage priorise des fonctionnalités (Indispensable/Souhaite/Plus tard)](#7-phase-2-decoupage-priorise-des-fonctionnalites-indispensablesouhaiteplus-tard)
+    - [7.1 Indispensable (critique pilote)](#71-indispensable-critique-pilote)
+    - [7.2 Souhaite (forte valeur, non bloquant lancement)](#72-souhaite-forte-valeur-non-bloquant-lancement)
+    - [7.3 Plus tard (candidats post-pilote)](#73-plus-tard-candidats-post-pilote)
+  - [8. Matrice de correspondance (fonctionnalité -> critères de succès phase 1)](#8-matrice-de-correspondance-fonctionnalite-criteres-de-succes-phase-1)
+  - [9. Recommandation de delivery (2 sprints)](#9-recommandation-de-delivery-2-sprints)
+  - [10. Gel du périmètre MVP (avant design/codage)](#10-gel-du-perimetre-mvp-avant-designcodage)
+    - [10.1 Indispensable (release 1 verrouillée)](#101-indispensable-release-1-verrouillee)
+    - [10.2 Souhaite (non bloquant release 1)](#102-souhaite-non-bloquant-release-1)
+    - [10.3 Plus tard (hors MVP)](#103-plus-tard-hors-mvp)
+    - [10.4 Périmètre de la première release - gelé](#104-perimetre-de-la-premiere-release-gele)
+    - [10.5 Matrice de classification complète (toutes les fonctionnalités demandées)](#105-matrice-de-classification-complete-toutes-les-fonctionnalites-demandees)
+    - [Règles d'exécution](#regles-dexecution)
+  - [11. Preuves de validation - MOB-01 (Initialiser app Ionic Angular)](#11-preuves-de-validation-mob-01-initialiser-app-ionic-angular)
+  - [12. Preuves de validation - MOB-03 (Theming, design tokens et composants UI)](#12-preuves-de-validation-mob-03-theming-design-tokens-et-composants-ui)
+
 ## 1. Objectif métier principal
 
 Le MVP mobile sert à maintenir les participants KRAAK connectés à leur parcours d'apprentissage, de façon simple et fiable.

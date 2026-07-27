@@ -9,6 +9,36 @@ source_of_truth: false
 
 # ARC-17 — Production Release Strategy: Feature Disabling for MVP Deployment
 
+## Table des matières
+
+- [ARC-17 — Production Release Strategy: Feature Disabling for MVP Deployment](#arc-17-production-release-strategy-feature-disabling-for-mvp-deployment)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Diagnostic: Ce Qui Sera Livré En Prod vs Ce Qui Restera Hidden](#2-diagnostic-ce-qui-sera-livre-en-prod-vs-ce-qui-restera-hidden)
+    - [2.1 ✅ PROD READY (site vitrine MVP)](#21-prod-ready-site-vitrine-mvp)
+    - [2.2 🚫 STAGING/LOCAL ONLY (participant area + mobile)](#22-staginglocal-only-participant-area-mobile)
+      - [Web Participant Area](#web-participant-area)
+      - [Mobile App (Full)](#mobile-app-full)
+      - [API Authenticated Endpoints](#api-authenticated-endpoints)
+    - [2.3 ❌ NOT IMPLEMENTED (V1.1+)](#23-not-implemented-v11)
+  - [3 · Stratégie Recommandée](#3-strategie-recommandee)
+    - [3.1 Mécanisme Principal : enableParticipantArea (DÉJÀ EN PLACE ✅)](#31-mecanisme-principal-enableparticipantarea-deja-en-place-)
+    - [3.2 Configuration Render Par Environnement](#32-configuration-render-par-environnement)
+    - [3.3 API Backend (NestJS)](#33-api-backend-nestjs)
+    - [3.4 Mobile](#34-mobile)
+    - [3.5 Supabase Policies](#35-supabase-policies)
+  - [4 · Checklist Avant Tag Release](#4-checklist-avant-tag-release)
+    - [4.1 Configuration Render (À Valider / Configurer)](#41-configuration-render-a-valider-configurer)
+    - [4.2 Build & Bundle](#42-build-bundle)
+    - [4.3 Test Suites (Tous Doivent Passer)](#43-test-suites-tous-doivent-passer)
+    - [4.4 URL & Routing](#44-url-routing)
+    - [4.5 API Accessibility (Prod)](#45-api-accessibility-prod)
+    - [4.6 Git Workflow (Standard)](#46-git-workflow-standard)
+    - [4.7 Post-Release (Documentation)](#47-post-release-documentation)
+  - [5 · Résumé Exécutif](#5-resume-executif)
+  - [6 · Risques & Atténuation](#6-risques-attenuation)
+  - [7 · Questions Pour Validation](#7-questions-pour-validation)
+  - [Prochaines Étapes](#prochaines-etapes)
+
 | Champ          | Valeur                              |
 | -------------- | ----------------------------------- |
 | **Statut**     | À valider avant implémentation      |

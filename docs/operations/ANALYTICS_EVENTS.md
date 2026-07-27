@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Événements analytics publics
 
+## Table des matières
+
+- [Événements analytics publics](#evenements-analytics-publics)
+  - [Événements suivis](#evenements-suivis)
+  - [Surfaces publiques](#surfaces-publiques)
+  - [Règles de maintenance](#regles-de-maintenance)
+
 Ce runbook documente les événements publics envoyés à GA4 lorsque
 `PUBLIC_GA4_ID` est configuré. Les payloads ne doivent pas contenir de nom,
 d'adresse e-mail, de numéro de téléphone, de message libre, ni de donnée de

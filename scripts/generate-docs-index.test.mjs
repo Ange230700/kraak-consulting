@@ -182,6 +182,12 @@ test('Given documentation files, When indexes are built, Then generated content 
     const archiveIndex = indexes.get('docs/archive/README.md');
 
     assert.match(docsIndex, /last_reviewed: 2026-07-24/);
+    assert.match(docsIndex, /## Table des matières/);
+    assert.match(
+      docsIndex,
+      /- \[Carte de documentation\]\(#carte-de-documentation\)/,
+    );
+    assert.match(docsIndex, /\| `pnpm docs:toc:check`\s+\|/);
     assert.match(docsIndex, /## Catalogue des documents actifs/);
     assert.match(
       docsIndex,
@@ -197,11 +203,13 @@ test('Given documentation files, When indexes are built, Then generated content 
       adrIndex,
       /\| `ARC-01` \| \[Premiere decision\]\(ARC-01-first-decision\.md\)\s+\| Acceptee \| 2026-01-01 \|[\s\S]*\| `ARC-02` \| \[Seconde decision\]\(ARC-02-second-decision\.md\) \| Acceptee \| 2026-02-02 \|/,
     );
+    assert.match(adrIndex, /## Table des matières/);
 
     assert.match(
       archiveIndex,
       /\| `pilot\/`\s+\| historical \| 2026-03-01\s+\| Archive pilote \| Ce dossier conserve le pilote historique\. \|/,
     );
+    assert.match(archiveIndex, /## Table des matières/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

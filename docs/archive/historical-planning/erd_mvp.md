@@ -4,6 +4,19 @@
 
 # ERD MVP KRAAK
 
+## Table des matières
+
+- [ERD MVP KRAAK](#erd-mvp-kraak)
+  - [Description](#description)
+  - [Explication](#explication)
+    - [Vue d'ensemble](#vue-densemble)
+    - [Comment lire les cardinalités](#comment-lire-les-cardinalites)
+    - [Rôle de chaque entité](#role-de-chaque-entite)
+    - [Logique métier principale](#logique-metier-principale)
+    - [Contraintes à retenir](#contraintes-a-retenir)
+  - [Exemple](#exemple)
+  - [Diagramme Mermaid](#diagramme-mermaid)
+
 ## Description
 
 Ce document explique le diagramme entité-relation complet du MVP KRAAK.
@@ -143,8 +156,8 @@ direct entre toutes les tables, mais du chaînage :
 
 ## Diagramme Mermaid
 
-Le bloc ci-dessous reprend le diagramme de référence actuellement conservé dans
-[`docs/reference/diagrams/erd-full.mmd`](../../reference/diagrams/erd-full.mmd).
+Le bloc ci-dessous conserve le diagramme de référence historique directement
+dans ce fichier d'archive.
 
 ```mermaid
 erDiagram

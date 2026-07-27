@@ -7,6 +7,40 @@ source_of_truth: true
 
 # Pilotage GitHub Project
 
+## Table des matières
+
+- [Pilotage GitHub Project](#pilotage-github-project)
+  - [Board Actif](#board-actif)
+  - [État Actuel](#etat-actuel)
+  - [Mises À Jour Du Statut Du Projet](#mises-a-jour-du-statut-du-projet)
+  - [Objectif Du Rework](#objectif-du-rework)
+  - [Champs Board Cibles](#champs-board-cibles)
+    - [Champs deja presents](#champs-deja-presents)
+    - [Champs board duo](#champs-board-duo)
+  - [Politique De Labels Phase 10](#politique-de-labels-phase-10)
+  - [Contrat De Champs Et CSV Phase 9](#contrat-de-champs-et-csv-phase-9)
+    - [Statut](#statut)
+    - [Priorité](#priorite)
+    - [Effort](#effort)
+    - [Launch Blocker, Assignee Et Milestone](#launch-blocker-assignee-et-milestone)
+  - [Vue Board Par Défaut (View 1)](#vue-board-par-defaut-view-1)
+  - [Vues Personnalisées (Views 2-7)](#vues-personnalisees-views-2-7)
+    - [2. Master backlog](#2-master-backlog)
+    - [3. Lane A - Web public](#3-lane-a-web-public)
+    - [4. Lane B - Platform & participant](#4-lane-b-platform-participant)
+    - [5. Shared handoff](#5-shared-handoff)
+    - [6. Ready now](#6-ready-now)
+    - [7. Release critical](#7-release-critical)
+  - [Mapping De Travail Recommande](#mapping-de-travail-recommande)
+    - [Lane A - Web public](#lane-a-web-public)
+    - [Lane B - Platform & participant](#lane-b-platform-participant)
+    - [Shared handoff](#shared-handoff)
+  - [Migration (Effectuée)](#migration-effectuee)
+    - [Cycle de vie](#cycle-de-vie)
+  - [Règles De Coordination A Deux](#regles-de-coordination-a-deux)
+  - [Artefacts CSV](#artefacts-csv)
+  - [Decision Opératoire](#decision-operatoire)
+
 ## Board Actif
 
 - GitHub Project principal : `#6 - KRAAK - Product Backlog`

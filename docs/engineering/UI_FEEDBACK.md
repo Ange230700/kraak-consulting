@@ -7,6 +7,15 @@ source_of_truth: true
 
 # Règle d'usage PrimeNG Messages et Toasts (Web)
 
+## Table des matières
+
+- [Règle d'usage PrimeNG Messages et Toasts (Web)](#regle-dusage-primeng-messages-et-toasts-web)
+  - [Principe](#principe)
+  - [Quand utiliser p-message](#quand-utiliser-p-message)
+  - [Quand utiliser p-toast](#quand-utiliser-p-toast)
+  - [Convention technique](#convention-technique)
+  - [Application sur le MVP web](#application-sur-le-mvp-web)
+
 Cette règle s'applique à tout le site web dans apps/client/projects/web.
 
 ## Principe

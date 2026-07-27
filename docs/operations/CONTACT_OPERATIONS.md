@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Opérations de contact public
 
+## Table des matières
+
+- [Opérations de contact public](#operations-de-contact-public)
+  - [Files de triage](#files-de-triage)
+  - [Comportement système](#comportement-systeme)
+  - [Maintenance](#maintenance)
+
 Ce runbook décrit le triage des demandes publiques envoyées depuis `/contact`.
 Il complète la politique publique de réponse sous 48h ouvrées et le fallback par
 e-mail direct ou WhatsApp.

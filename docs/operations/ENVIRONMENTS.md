@@ -7,6 +7,18 @@ source_of_truth: true
 
 # Variables d'environnement
 
+## Table des matières
+
+- [Variables d'environnement](#variables-denvironnement)
+  - [Organisation des fichiers](#organisation-des-fichiers)
+  - [Backend — apps/api/](#backend-appsapi)
+  - [Client — apps/client/](#client-appsclient)
+  - [Supabase — supabase/](#supabase-supabase)
+  - [Domaines publics documentés](#domaines-publics-documentes)
+  - [CI/CD — .env.example (racine)](#cicd-envexample-racine)
+  - [Déploiement — Render (render.yaml)](#deploiement-render-renderyaml)
+  - [Convention de gestion](#convention-de-gestion)
+
 Ce document décrit les variables d'environnement du MVP et leur emplacement
 dans le monorepo. Ne jamais commiter de secrets dans le dépôt.
 

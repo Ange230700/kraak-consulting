@@ -7,6 +7,19 @@ source_of_truth: true
 
 # ARC-07 — Stratégie de release production basée sur les tags
 
+## Table des matières
+
+- [ARC-07 — Stratégie de release production basée sur les tags](#arc-07-strategie-de-release-production-basee-sur-les-tags)
+  - [Contexte](#contexte)
+  - [Décision](#decision)
+    - [Principes directeurs](#principes-directeurs)
+    - [Périmètre couvert par cette décision](#perimetre-couvert-par-cette-decision)
+    - [Pipeline de release production](#pipeline-de-release-production)
+    - [Séparation des projets Supabase](#separation-des-projets-supabase)
+  - [Conséquences](#consequences)
+  - [Conditions de levée / révision](#conditions-de-levee-revision)
+  - [Liens](#liens)
+
 - Statut : Acceptée
 - Date : 2026-05-02
 - Portée : `.github/workflows/`, `render.yaml`, configuration Render,

@@ -7,6 +7,22 @@ source_of_truth: true
 
 # Guideline de publication des packages partagés
 
+## Table des matières
+
+- [Guideline de publication des packages partagés](#guideline-de-publication-des-packages-partages)
+  - [Principes généraux](#principes-generaux)
+  - [Packages existants](#packages-existants)
+  - [Structure canonique d'un package](#structure-canonique-dun-package)
+    - [Champs obligatoires du package.json](#champs-obligatoires-du-packagejson)
+    - [Règles de versioning](#regles-de-versioning)
+  - [Tests](#tests)
+    - [Exigences](#exigences)
+    - [Configuration Vitest](#configuration-vitest)
+    - [Exécution](#execution)
+  - [Ajouter un nouveau package](#ajouter-un-nouveau-package)
+  - [Consommation d'un package interne](#consommation-dun-package-interne)
+  - [Anti-patterns à éviter](#anti-patterns-a-eviter)
+
 Ce document décrit les conventions, la structure et le processus de gestion des
 packages internes du monorepo KRAAK, situés dans `packages/`.
 

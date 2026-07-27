@@ -7,6 +7,19 @@ source_of_truth: false
 
 # Wireframe — Contact `/contact`
 
+## Table des matières
+
+- [Wireframe — Contact /contact](#wireframe-contact-contact)
+  - [Sections](#sections)
+    - [1. HEADER (composant partagé)](#1-header-composant-partage)
+    - [2. PAGE HERO — bannière interne](#2-page-hero-banniere-interne)
+    - [3. CONTENU PRINCIPAL — 2 colonnes desktop](#3-contenu-principal-2-colonnes-desktop)
+      - [Colonne gauche — Formulaire de contact](#colonne-gauche-formulaire-de-contact)
+      - [Colonne droite — Coordonnées](#colonne-droite-coordonnees)
+    - [4. MESSAGE DE CONFIRMATION (état post-envoi)](#4-message-de-confirmation-etat-post-envoi)
+    - [5. FOOTER (composant partagé)](#5-footer-composant-partage)
+  - [Points d'attention implémentation](#points-dattention-implementation)
+
 **Objectif :** proposer un canal de prise de contact simple et rassurant,
 orienter selon le besoin (formation, projet, immigration, autre).  
 **Route Angular :** `ContactComponent` →

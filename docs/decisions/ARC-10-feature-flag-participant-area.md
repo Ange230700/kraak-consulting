@@ -9,6 +9,21 @@ source_of_truth: true
 
 # ARC-10 — Feature flag espace participant
 
+## Table des matières
+
+- [ARC-10 — Feature flag espace participant](#arc-10-feature-flag-espace-participant)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Mécanisme — feature flag runtime](#21-mecanisme-feature-flag-runtime)
+    - [2.2 Comportement quand le flag est false (défaut prod)](#22-comportement-quand-le-flag-est-false-defaut-prod)
+    - [2.3 Configuration par environnement](#23-configuration-par-environnement)
+    - [2.4 Implémentation](#24-implementation)
+  - [3 · Conséquences](#3-consequences)
+    - [3.1 Positives](#31-positives)
+    - [3.2 Négatives / dette](#32-negatives-dette)
+    - [3.3 Sortie du drapeau](#33-sortie-du-drapeau)
+  - [4 · Alternatives écartées](#4-alternatives-ecartees)
+
 | Champ          | Valeur                      |
 | -------------- | --------------------------- |
 | **Statut**     | Acceptée                    |

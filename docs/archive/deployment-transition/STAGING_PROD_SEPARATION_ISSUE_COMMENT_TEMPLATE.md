@@ -4,6 +4,10 @@
 
 # Modèle de commentaire d'issue — preuve d'execution
 
+## Table des matières
+
+- [Modèle de commentaire d'issue — preuve d'execution](#modele-de-commentaire-dissue-preuve-dexecution)
+
 Copier-coller ce bloc dans un commentaire d'issue GitHub pour tracer officiellement la separation staging/prod.
 
 ```md

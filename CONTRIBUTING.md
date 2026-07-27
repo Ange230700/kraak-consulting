@@ -7,6 +7,10 @@ source_of_truth: true
 
 # Contribution
 
+## Table des matières
+
+- [Contribution](#contribution)
+
 Le guide de contribution actif est
 [`docs/engineering/CONTRIBUTION_WORKFLOW.md`](docs/engineering/CONTRIBUTION_WORKFLOW.md).
 

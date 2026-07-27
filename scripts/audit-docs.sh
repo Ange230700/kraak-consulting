@@ -222,7 +222,25 @@ function slug(text) {
     .replace(/\p{Diacritic}/gu, '')
     .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+    .replace(/-+/g, '-') || 'section';
+}
+
+function uniqueSlug(baseSlug, usedSlugs) {
+  if (!usedSlugs.has(baseSlug)) {
+    usedSlugs.add(baseSlug);
+    return baseSlug;
+  }
+
+  let index = 1;
+  let candidate = `${baseSlug}-${index}`;
+
+  while (usedSlugs.has(candidate)) {
+    index += 1;
+    candidate = `${baseSlug}-${index}`;
+  }
+
+  usedSlugs.add(candidate);
+  return candidate;
 }
 
 function stripInlineCode(line) {
@@ -285,6 +303,7 @@ function validateRequiredMetadata(file, relativeFile, metadata) {
 function parseMarkdown(file, content) {
   const lines = content.split(/\r?\n/);
   const headings = [];
+  const usedHeadingSlugs = new Set();
   const links = [];
   let fence = null;
   let mermaidStart = null;
@@ -335,7 +354,11 @@ function parseMarkdown(file, content) {
     const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
 
     if (heading) {
-      headings.push({ line: lineNumber, slug: slug(heading[2]), text: heading[2] });
+      headings.push({
+        line: lineNumber,
+        slug: uniqueSlug(slug(heading[2]), usedHeadingSlugs),
+        text: heading[2],
+      });
     }
 
     const searchableLine = stripInlineCode(line);

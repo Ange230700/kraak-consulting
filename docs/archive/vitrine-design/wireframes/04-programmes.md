@@ -7,6 +7,22 @@ source_of_truth: false
 
 # Wireframe — Programmes `/programmes`
 
+## Table des matières
+
+- [Wireframe — Programmes /programmes](#wireframe-programmes-programmes)
+  - [Sections](#sections)
+    - [1. HEADER (composant partagé)](#1-header-composant-partage)
+    - [2. PAGE HERO — bannière interne](#2-page-hero-banniere-interne)
+    - [3. INTRODUCTION PROGRAMMES](#3-introduction-programmes)
+    - [4. LISTE DES PROGRAMMES — cartes](#4-liste-des-programmes-cartes)
+    - [5. PROCESSUS D'INSCRIPTION — étapes](#5-processus-dinscription-etapes)
+    - [6. RÉSULTATS ATTENDUS](#6-resultats-attendus)
+    - [7. TÉMOIGNAGES — section réassurance (placeholder)](#7-temoignages-section-reassurance-placeholder)
+    - [8. FAQ PROGRAMMES (optionnel MVP)](#8-faq-programmes-optionnel-mvp)
+    - [9. CTA PRINCIPAL](#9-cta-principal)
+    - [10. FOOTER (composant partagé)](#10-footer-composant-partage)
+  - [Points d'attention implémentation](#points-dattention-implementation)
+
 **Objectif :** présenter les programmes concrets, déclencher une inscription ou
 une demande d'information, rassurer sur les résultats attendus.  
 **Route Angular :** `ProgrammesComponent` →

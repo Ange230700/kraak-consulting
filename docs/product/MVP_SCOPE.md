@@ -7,6 +7,19 @@ source_of_truth: true
 
 # Périmètre MVP — Site web KRAAK
 
+## Table des matières
+
+- [Périmètre MVP — Site web KRAAK](#perimetre-mvp-site-web-kraak)
+  - [1. Objectif du MVP 🎯](#1-objectif-du-mvp-)
+  - [2. Publics cibles principaux 👥](#2-publics-cibles-principaux-)
+    - [1) Jeunes professionnels / étudiants](#1-jeunes-professionnels-etudiants)
+    - [2) Entreprises / start-ups](#2-entreprises-start-ups)
+    - [3) Personnes intéressées par l’international](#3-personnes-interessees-par-linternational)
+  - [3. Actions de conversion prioritaires ✅](#3-actions-de-conversion-prioritaires-)
+  - [4. Critères de réussite du MVP 📈](#4-criteres-de-reussite-du-mvp-)
+  - [5. Portée recommandée du MVP 🌐](#5-portee-recommandee-du-mvp-)
+  - [6. Résultat attendu](#6-resultat-attendu)
+
 ## 1. Objectif du MVP 🎯
 
 Le MVP du site web de **KRAAK** a pour objectif principal de **présenter

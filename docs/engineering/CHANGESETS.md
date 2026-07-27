@@ -9,6 +9,25 @@ source_of_truth: true
 
 # CHANGESETS — Versionnage et release
 
+## Table des matières
+
+- [CHANGESETS — Versionnage et release](#changesets-versionnage-et-release)
+  - [1 · Objectif](#1-objectif)
+  - [2 · Flux global](#2-flux-global)
+  - [3 · Quand créer un changeset](#3-quand-creer-un-changeset)
+  - [4 · Créer un changeset](#4-creer-un-changeset)
+  - [5 · PR de travail](#5-pr-de-travail)
+  - [6 · Validation sur staging](#6-validation-sur-staging)
+  - [7 · Release](#7-release)
+  - [8 · Version PR](#8-version-pr)
+  - [9 · Troubleshooting](#9-troubleshooting)
+    - [Aucun changeset n'a été ajouté](#aucun-changeset-na-ete-ajoute)
+    - [La PR de version est incorrecte](#la-pr-de-version-est-incorrecte)
+    - [Le tag SemVer n'a pas déclenché la release](#le-tag-semver-na-pas-declenche-la-release)
+    - [Un changeset a été mergé sans release](#un-changeset-a-ete-merge-sans-release)
+  - [10 · Anti-patterns](#10-anti-patterns)
+  - [11 · Checklist PR](#11-checklist-pr)
+
 ## 1 · Objectif
 
 Changesets sert à documenter les changements versionnés avant une release.

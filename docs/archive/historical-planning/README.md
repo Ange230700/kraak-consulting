@@ -6,6 +6,14 @@ archived_on: 2026-07-23
 
 # Archive planning historique
 
+## Table des matières
+
+- [Archive planning historique](#archive-planning-historique)
+  - [Pourquoi ces documents sont archivés](#pourquoi-ces-documents-sont-archives)
+  - [Date d'archivage](#date-darchivage)
+  - [Documents actifs de remplacement](#documents-actifs-de-remplacement)
+  - [Suppression ultérieure](#suppression-ulterieure)
+
 ## Pourquoi ces documents sont archivés
 
 Ce dossier conserve les anciens artefacts de planification : backlog initial,

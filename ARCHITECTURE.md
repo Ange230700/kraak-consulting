@@ -9,6 +9,14 @@ source_of_truth: true
 
 # Architecture KRAAK
 
+## Table des matières
+
+- [Architecture KRAAK](#architecture-kraak)
+  - [Décision globale](#decision-globale)
+  - [Stack active](#stack-active)
+  - [Garde-fous](#garde-fous)
+  - [Sources de décision](#sources-de-decision)
+
 Ce fichier est la synthèse d'architecture active du dépôt. Les détails
 d'onboarding sont dans [`docs/architecture/OVERVIEW.md`](docs/architecture/OVERVIEW.md)
 et les raisons des choix sont dans [`docs/decisions/`](docs/decisions/).

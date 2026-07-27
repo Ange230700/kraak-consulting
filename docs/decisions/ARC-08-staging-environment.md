@@ -7,6 +7,27 @@ source_of_truth: false
 
 # ARC-08 — Environnement de staging stable et branche longue `staging`
 
+## Table des matières
+
+- [ARC-08 — Environnement de staging stable et branche longue staging](#arc-08-environnement-de-staging-stable-et-branche-longue-staging)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Exception explicite à ARC-02](#21-exception-explicite-a-arc-02)
+    - [2.2 Flux complet de promotion](#22-flux-complet-de-promotion)
+    - [2.3 Périmètre couvert par cette décision](#23-perimetre-couvert-par-cette-decision)
+    - [2.4 Ce que cette décision ne change pas](#24-ce-que-cette-decision-ne-change-pas)
+  - [3 · Justification](#3-justification)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Création initiale de la branche](#41-creation-initiale-de-la-branche)
+    - [4.2 Protection GitHub de staging](#42-protection-github-de-staging)
+    - [4.3 Configuration Render](#43-configuration-render)
+    - [4.4 Configuration Render (UI)](#44-configuration-render-ui)
+    - [4.5 Promotion staging-first](#45-promotion-staging-first)
+    - [4.6 Rollback staging](#46-rollback-staging)
+  - [5 · Conséquences](#5-consequences)
+  - [6 · Conditions de levée / révision](#6-conditions-de-levee-revision)
+  - [7 · Références](#7-references)
+
 > ⚠️ **Mise à jour 2026-05-03** : les sections « 2.1 Exception à ARC-02 »
 > et « 2.2 Flux complet de promotion » sont **remplacées par
 > [ARC-09](./ARC-09-inversion-main-staging.md)**. Dans le modèle actuel,

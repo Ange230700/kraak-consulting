@@ -7,6 +7,24 @@ source_of_truth: true
 
 # ARC-15 - Positionnement de la page `/ressources` dans la vitrine
 
+## Table des matières
+
+- [ARC-15 - Positionnement de la page /ressources dans la vitrine](#arc-15-positionnement-de-la-page-ressources-dans-la-vitrine)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Nature de la route](#21-nature-de-la-route)
+    - [2.2 Ce que /ressources n'est pas](#22-ce-que-ressources-nest-pas)
+    - [2.3 Conséquence de périmètre](#23-consequence-de-perimetre)
+  - [3 · Justification](#3-justification)
+    - [3.1 Clarté produit](#31-clarte-produit)
+    - [3.2 Anti-scope-creep](#32-anti-scope-creep)
+    - [3.3 Séparation avec le produit participant](#33-separation-avec-le-produit-participant)
+  - [4 · Implémentation](#4-implementation)
+  - [5 · Conséquences](#5-consequences)
+    - [5.1 Positives](#51-positives)
+    - [5.2 Contraintes](#52-contraintes)
+  - [6 · Alternatives écartées](#6-alternatives-ecartees)
+
 | Champ          | Valeur                              |
 | -------------- | ----------------------------------- |
 | **Statut**     | Acceptée                            |

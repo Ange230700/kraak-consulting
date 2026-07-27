@@ -7,6 +7,15 @@ source_of_truth: true
 
 # Configuration Supabase Auth
 
+## Table des matières
+
+- [Configuration Supabase Auth](#configuration-supabase-auth)
+  - [Source de vérité locale](#source-de-verite-locale)
+  - [Variables côté API](#variables-cote-api)
+  - [Configuration hébergée à répliquer](#configuration-hebergee-a-repliquer)
+  - [Validation minimale](#validation-minimale)
+  - [Politique de rate-limit email (staging)](#politique-de-rate-limit-email-staging)
+
 Ce runbook décrit la configuration Auth minimale attendue pour le MVP KRAAK.
 
 ## Source de vérité locale

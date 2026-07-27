@@ -7,6 +7,12 @@ source_of_truth: true
 
 # Snapshots de planification générés
 
+## Table des matières
+
+- [Snapshots de planification générés](#snapshots-de-planification-generes)
+  - [Fichiers](#fichiers)
+  - [Régénération](#regeneration)
+
 Ce dossier contient les exports reproductibles issus du GitHub Project #6. Le
 board GitHub live reste la source opérationnelle de vérité ; ces fichiers sont
 des snapshots techniques de comparaison et d'import.

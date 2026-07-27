@@ -9,6 +9,21 @@ source_of_truth: true
 
 # ARC-13 - Gating des routes non vitrines côté web
 
+## Table des matières
+
+- [ARC-13 - Gating des routes non vitrines côté web](#arc-13-gating-des-routes-non-vitrines-cote-web)
+  - [Décision](#decision)
+  - [Source de vérité](#source-de-verite)
+  - [Routes concernées](#routes-concernees)
+  - [Mise en œuvre](#mise-en-œuvre)
+    - [1. Remplacement du module de routes au build](#1-remplacement-du-module-de-routes-au-build)
+    - [2. Inclusion conditionnelle dans buildRoutes()](#2-inclusion-conditionnelle-dans-buildroutes)
+    - [3. Verrou runtime complémentaire](#3-verrou-runtime-complementaire)
+    - [4. Navigation cohérente](#4-navigation-coherente)
+    - [5. Prerender limité aux pages publiques](#5-prerender-limite-aux-pages-publiques)
+  - [Conséquences](#consequences)
+  - [Validation attendue](#validation-attendue)
+
 **Date :** 2026-05-14  
 **Statut :** Appliqué
 

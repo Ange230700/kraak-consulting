@@ -7,6 +7,22 @@ source_of_truth: false
 
 # Wireframe — Services `/services`
 
+## Table des matières
+
+- [Wireframe — Services /services](#wireframe-services-services)
+  - [Sections](#sections)
+    - [1. HEADER (composant partagé)](#1-header-composant-partage)
+    - [2. PAGE HERO — bannière interne](#2-page-hero-banniere-interne)
+    - [3. INTRODUCTION SERVICES](#3-introduction-services)
+    - [4. PÔLE 1 — FORMATION](#4-pole-1-formation)
+    - [5. PÔLE 2 — GESTION DE PROJET](#5-pole-2-gestion-de-projet)
+    - [6. PÔLE 3 — CONSEIL EN IMMIGRATION](#6-pole-3-conseil-en-immigration)
+    - [7. COMMENT ÇA MARCHE — processus en 4 étapes](#7-comment-ca-marche-processus-en-4-etapes)
+    - [8. FAQ (optionnel MVP)](#8-faq-optionnel-mvp)
+    - [9. CTA PRINCIPAL](#9-cta-principal)
+    - [10. FOOTER (composant partagé)](#10-footer-composant-partage)
+  - [Points d'attention implémentation](#points-dattention-implementation)
+
 **Objectif :** expliquer clairement les trois pôles d'activité, lever les
 questions, orienter vers la prise de contact.  
 **Route Angular :** `ServicesComponent` → `apps/client/projects/web/src/app/features/services/`

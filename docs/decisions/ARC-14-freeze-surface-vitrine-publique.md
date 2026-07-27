@@ -9,6 +9,24 @@ source_of_truth: true
 
 # ARC-14 - Gel de la surface vitrine publique
 
+## Table des matières
+
+- [ARC-14 - Gel de la surface vitrine publique](#arc-14-gel-de-la-surface-vitrine-publique)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Surface vitrine publique déclarée complète](#21-surface-vitrine-publique-declaree-complete)
+    - [2.2 Règle de gel](#22-regle-de-gel)
+    - [2.3 Ce qui n'appartient pas à cette surface](#23-ce-qui-nappartient-pas-a-cette-surface)
+  - [3 · Justification](#3-justification)
+    - [3.1 Clarté produit](#31-clarte-produit)
+    - [3.2 Priorisation](#32-priorisation)
+    - [3.3 Cohérence avec les décisions existantes](#33-coherence-avec-les-decisions-existantes)
+  - [4 · Implémentation](#4-implementation)
+  - [5 · Conséquences](#5-consequences)
+    - [5.1 Positives](#51-positives)
+    - [5.2 Contraintes](#52-contraintes)
+  - [6 · Alternatives écartées](#6-alternatives-ecartees)
+
 | Champ          | Valeur                      |
 | -------------- | --------------------------- |
 | **Statut**     | Acceptée                    |

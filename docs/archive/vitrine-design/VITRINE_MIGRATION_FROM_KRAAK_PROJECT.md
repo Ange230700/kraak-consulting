@@ -4,6 +4,26 @@
 
 # Migration vitrine depuis shadracirie8-crypto/kraak_project
 
+## Table des matières
+
+- [Migration vitrine depuis shadracirie8-crypto/kraakproject](#migration-vitrine-depuis-shadracirie8-cryptokraakproject)
+  - [Contexte](#contexte)
+  - [Sources externes observées](#sources-externes-observees)
+  - [Mapping vers ce dépôt](#mapping-vers-ce-depot)
+    - [Cibles Angular existantes](#cibles-angular-existantes)
+    - [État rapide](#etat-rapide)
+  - [Éléments à reprendre (priorisés)](#elements-a-reprendre-priorises)
+  - [P1 - Forte valeur vitrine](#p1-forte-valeur-vitrine)
+  - [P2 - Valeur UX/engagement](#p2-valeur-uxengagement)
+  - [P3 - À adapter au contexte actuel](#p3-a-adapter-au-contexte-actuel)
+  - [Règles de reprise](#regles-de-reprise)
+  - [Plan d'exécution proposé](#plan-dexecution-propose)
+  - [Lot A (rapide, impact immédiat)](#lot-a-rapide-impact-immediat)
+  - [Lot B (réassurance institutionnelle)](#lot-b-reassurance-institutionnelle)
+  - [Lot C (contact augmenté)](#lot-c-contact-augmente)
+  - [Critères d'acceptation](#criteres-dacceptation)
+  - [Décision à prendre](#decision-a-prendre)
+
 ## Contexte
 
 Ce document sert de plan de reprise des éléments intéressants de la proposition

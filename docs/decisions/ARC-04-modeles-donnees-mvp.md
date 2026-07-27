@@ -7,6 +7,27 @@ source_of_truth: true
 
 # ARC-04 — Modèles de données MVP
 
+## Table des matières
+
+- [ARC-04 — Modèles de données MVP](#arc-04-modeles-de-donnees-mvp)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Entités](#21-entites)
+    - [2.2 Types enum](#22-types-enum)
+  - [3 · Justification](#3-justification)
+    - [3.1 Choix du nombre d'entités](#31-choix-du-nombre-dentites)
+    - [3.2 Comparaison des approches](#32-comparaison-des-approches)
+    - [3.3 Sécurité RLS](#33-securite-rls)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Migration initiale](#41-migration-initiale)
+    - [4.2 Conventions de nommage](#42-conventions-de-nommage)
+    - [4.3 Relations clés](#43-relations-cles)
+    - [4.3bis Diagramme entité-relation (ERD)](#43bis-diagramme-entite-relation-erd)
+    - [4.4 Contraintes notables](#44-contraintes-notables)
+  - [5 · Alternatives considérées](#5-alternatives-considerees)
+  - [6 · Limites et évolutions](#6-limites-et-evolutions)
+  - [7 · Références](#7-references)
+
 | Champ          | Valeur       |
 | -------------- | ------------ |
 | **Statut**     | Acceptée     |

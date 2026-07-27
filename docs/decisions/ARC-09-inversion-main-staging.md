@@ -7,6 +7,24 @@ source_of_truth: true
 
 # ARC-09 — Inversion `main` ↔ `staging` : staging devient la branche d'intégration
 
+## Table des matières
+
+- [ARC-09 — Inversion main ↔ staging : staging devient la branche d'intégration](#arc-09-inversion-main-staging-staging-devient-la-branche-dintegration)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Règles de branchage (remplace ARC-02 § Workflow Git)](#21-regles-de-branchage-remplace-arc-02-workflow-git)
+    - [2.2 Flux complet](#22-flux-complet)
+    - [2.3 Protections de branche (appliquées par script)](#23-protections-de-branche-appliquees-par-script)
+      - [staging (intégration)](#staging-integration)
+      - [main (release)](#main-release)
+    - [2.4 Check supprimé sur main](#24-check-supprime-sur-main)
+  - [3 · Conséquences](#3-consequences)
+    - [Positives](#positives)
+    - [Négatives / à surveiller](#negatives-a-surveiller)
+    - [Migration](#migration)
+  - [4 · Conditions de levée / révision](#4-conditions-de-levee-revision)
+  - [5 · Références](#5-references)
+
 | Champ           | Valeur                                                                                  |
 | --------------- | --------------------------------------------------------------------------------------- |
 | **Statut**      | Acceptée                                                                                |

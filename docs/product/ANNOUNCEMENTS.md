@@ -7,6 +7,20 @@ source_of_truth: true
 
 # Format des annonces et règles de publication MVP (ANN-01)
 
+## Table des matières
+
+- [Format des annonces et règles de publication MVP (ANN-01)](#format-des-annonces-et-regles-de-publication-mvp-ann-01)
+  - [Objectif](#objectif)
+  - [Format annonce MVP](#format-annonce-mvp)
+    - [Champs obligatoires](#champs-obligatoires)
+    - [Champs conditionnels](#champs-conditionnels)
+  - [Règles de publication MVP](#regles-de-publication-mvp)
+    - [1) Ciblage audience](#1-ciblage-audience)
+    - [2) Cohérence statut/horodatage](#2-coherence-statuthorodatage)
+    - [3) Priorisation d'affichage](#3-priorisation-daffichage)
+  - [Alignement avec les sources de référence](#alignement-avec-les-sources-de-reference)
+  - [Critères d'acceptation ANN-01 couverts](#criteres-dacceptation-ann-01-couverts)
+
 ## Objectif
 
 Définir un format d'annonce stable pour le MVP KRAAK, afin de garantir:

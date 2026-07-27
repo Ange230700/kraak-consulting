@@ -4,6 +4,17 @@
 
 # GIT_WORKFLOW_CHEATSHEET — Workflow Git courant
 
+## Table des matières
+
+- [GITWORKFLOWCHEATSHEET — Workflow Git courant](#gitworkflowcheatsheet-workflow-git-courant)
+  - [🚀 Première fois (Setup)](#-premiere-fois-setup)
+  - [Règle centrale](#regle-centrale)
+  - [Démarrer une tâche](#demarrer-une-tache)
+  - [Rebaser avant push](#rebaser-avant-push)
+  - [Ouvrir la PR](#ouvrir-la-pr)
+  - [Après merge](#apres-merge)
+  - [Release production](#release-production)
+
 > Commandes et étapes rapides pour développer dans KRAAK.
 
 ## 🚀 Première fois (Setup)

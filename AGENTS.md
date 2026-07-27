@@ -9,6 +9,34 @@ source_of_truth: true
 
 # AGENTS.md
 
+## Table des matières
+
+- [AGENTS.md](#agentsmd)
+  - [Objectif](#objectif)
+  - [Stade Actuel Du Projet](#stade-actuel-du-projet)
+  - [Règles Transverses de Qualité et de Maintenabilité (Obligatoires)](#regles-transverses-de-qualite-et-de-maintenabilite-obligatoires)
+  - [Garde-Fous Du Périmètre Produit](#garde-fous-du-perimetre-produit)
+    - [MVP (à construire maintenant)](#mvp-a-construire-maintenant)
+    - [Hors MVP (V1.1+)](#hors-mvp-v11)
+  - [Architecture Active](#architecture-active)
+    - [Structure Obligatoire Des Composants Et Pages (Client)](#structure-obligatoire-des-composants-et-pages-client)
+    - [Structure Obligatoire Minimale Des Modules API (NestJS)](#structure-obligatoire-minimale-des-modules-api-nestjs)
+    - [Règle De Style Des Composants (Obligatoire)](#regle-de-style-des-composants-obligatoire)
+  - [Règles D’Organisation Du Dépôt](#regles-dorganisation-du-depot)
+  - [Règles De Workflow Git](#regles-de-workflow-git)
+    - [Jalons Git / GitHub À Respecter](#jalons-git-github-a-respecter)
+  - [Gestion Des GitHub Projects](#gestion-des-github-projects)
+  - [Règle TDD (Obligatoire)](#regle-tdd-obligatoire)
+  - [Règle BDD + E2E](#regle-bdd-e2e)
+  - [Politique De Langue (Obligatoire)](#politique-de-langue-obligatoire)
+  - [Règle De Documentation API (Obligatoire)](#regle-de-documentation-api-obligatoire)
+  - [Modèle De Travail Pour Les Agents](#modele-de-travail-pour-les-agents)
+    - [Non-négociables](#non-negociables)
+  - [Attentes De Validation](#attentes-de-validation)
+  - [Attentes De Documentation](#attentes-de-documentation)
+    - [Règle De Rendu Mermaid (Obligatoire)](#regle-de-rendu-mermaid-obligatoire)
+  - [Définition De Terminé](#definition-de-termine)
+
 ## Objectif
 
 Ce dépôt sert à construire **KRAAK**, en priorité son **site web MVP** et, à terme,

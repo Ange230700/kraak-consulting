@@ -6,6 +6,14 @@ archived_on: 2026-07-23
 
 # Archive design vitrine
 
+## Table des matières
+
+- [Archive design vitrine](#archive-design-vitrine)
+  - [Pourquoi ces documents sont archivés](#pourquoi-ces-documents-sont-archives)
+  - [Date d'archivage](#date-darchivage)
+  - [Documents actifs de remplacement](#documents-actifs-de-remplacement)
+  - [Suppression ultérieure](#suppression-ulterieure)
+
 ## Pourquoi ces documents sont archivés
 
 Ce dossier conserve l'historique de conception de la vitrine publique :

@@ -4,6 +4,15 @@
 
 # Phase 7 - Hygiène du dépôt
 
+## Table des matières
+
+- [Phase 7 - Hygiène du dépôt](#phase-7-hygiene-du-depot)
+  - [Synthèse](#synthese)
+  - [Stashes audités](#stashes-audites)
+  - [Artefacts retirés du suivi](#artefacts-retires-du-suivi)
+  - [Gros fichiers suivis](#gros-fichiers-suivis)
+  - [Dépendances](#dependances)
+
 Date d'audit : 2026-07-22
 
 ## Synthèse

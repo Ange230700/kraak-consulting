@@ -7,6 +7,35 @@ source_of_truth: true
 
 # CLI_TOOLS — Outils en ligne de commande Render, Supabase et GitHub
 
+## Table des matières
+
+- [CLITOOLS — Outils en ligne de commande Render, Supabase et GitHub](#clitools-outils-en-ligne-de-commande-render-supabase-et-github)
+  - [1 · Versions cibles](#1-versions-cibles)
+  - [2 · Installation](#2-installation)
+    - [2.1 Supabase CLI](#21-supabase-cli)
+    - [2.2 Render CLI](#22-render-cli)
+  - [3 · Authentification](#3-authentification)
+    - [3.1 Mode interactif (poste de dev humain)](#31-mode-interactif-poste-de-dev-humain)
+    - [3.2 Mode token (agents IA, scripts, CI)](#32-mode-token-agents-ia-scripts-ci)
+    - [3.3 Permissions minimales](#33-permissions-minimales)
+  - [4 · Liaison des projets locaux](#4-liaison-des-projets-locaux)
+    - [4.1 Supabase](#41-supabase)
+    - [4.2 Render](#42-render)
+  - [5 · Commandes utiles](#5-commandes-utiles)
+    - [5.1 Render](#51-render)
+    - [5.2 Render](#52-render)
+    - [5.3 Supabase](#53-supabase)
+    - [Splinter (Supabase Postgres LINTER)](#splinter-supabase-postgres-linter)
+    - [5.4 Newman / régression API](#54-newman-regression-api)
+  - [6 · Vérification post-installation](#6-verification-post-installation)
+  - [7 · Anti-patterns](#7-anti-patterns)
+  - [8 · GitHub CLI (gh)](#8-github-cli-gh)
+    - [8.1 Installation](#81-installation)
+    - [8.2 Authentification](#82-authentification)
+    - [8.3 Configuration locale du dépôt](#83-configuration-locale-du-depot)
+    - [8.4 Commandes utiles](#84-commandes-utiles)
+    - [8.5 Convention de cible des PR (ARC-09)](#85-convention-de-cible-des-pr-arc-09)
+
 > Référence opérationnelle pour installer, authentifier et utiliser les CLI
 > Render, Supabase et GitHub (`gh`) sur un poste de développement
 > (Windows / macOS / Linux). Conçu pour permettre à un mainteneur (ou à un

@@ -1,5 +1,16 @@
 # Evidence DEP-08 - Epic Deployment pilot launch
 
+## Table des matières
+
+- [Evidence DEP-08 - Epic Deployment pilot launch](#evidence-dep-08-epic-deployment-pilot-launch)
+  - [Commandes et sorties clefs](#commandes-et-sorties-clefs)
+    - [1) Lint](#1-lint)
+    - [2) Typecheck](#2-typecheck)
+    - [3) Tests scripts workspace](#3-tests-scripts-workspace)
+    - [4) Check observabilité pilote](#4-check-observabilite-pilote)
+    - [5) Vérification directe API health](#5-verification-directe-api-health)
+  - [Conclusion evidence](#conclusion-evidence)
+
 Date: 2026-04-30
 Issue: #158
 

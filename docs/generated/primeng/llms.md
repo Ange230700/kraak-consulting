@@ -1,5 +1,11 @@
 # PrimeNG
 
+## Table des matières
+
+- [PrimeNG](#primeng)
+  - [Guides](#guides)
+  - [Components](#components)
+
 > The Most Complete Angular UI Component Library
 
 ## Guides

@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Architecture web
 
+## Table des matières
+
+- [Architecture web](#architecture-web)
+  - [Contrat courant](#contrat-courant)
+  - [Implémentation active](#implementation-active)
+  - [Sources liées](#sources-liees)
+
 Le site web KRAAK est l'application Angular publique située dans
 `apps/client/projects/web`.
 

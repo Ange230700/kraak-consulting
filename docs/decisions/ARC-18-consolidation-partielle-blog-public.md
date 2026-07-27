@@ -7,6 +7,27 @@ source_of_truth: true
 
 # ARC-18 - Consolidation partielle du blog public
 
+## Table des matières
+
+- [ARC-18 - Consolidation partielle du blog public](#arc-18-consolidation-partielle-du-blog-public)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+  - [3 · Justification](#3-justification)
+    - [3.1 Alignement produit](#31-alignement-produit)
+    - [3.2 Cohérence d'architecture](#32-coherence-darchitecture)
+    - [3.3 Réversibilité](#33-reversibilite)
+  - [4 · Implémentation attendue](#4-implementation-attendue)
+    - [4.1 À conserver tant qu'un consommateur actif existe](#41-a-conserver-tant-quun-consommateur-actif-existe)
+    - [4.2 À consolider dans une PR dédiée](#42-a-consolider-dans-une-pr-dediee)
+    - [4.3 À supprimer dans une PR dédiée après consolidation](#43-a-supprimer-dans-une-pr-dediee-apres-consolidation)
+    - [4.4 Hors périmètre de cette décision](#44-hors-perimetre-de-cette-decision)
+  - [5 · Conséquences](#5-consequences)
+    - [5.1 Positives](#51-positives)
+    - [5.2 Contraintes](#52-contraintes)
+  - [6 · Alternatives écartées](#6-alternatives-ecartees)
+  - [7 · Validation attendue](#7-validation-attendue)
+  - [8 · Références](#8-references)
+
 | Champ          | Valeur                          |
 | -------------- | ------------------------------- |
 | **Statut**     | Acceptée                        |

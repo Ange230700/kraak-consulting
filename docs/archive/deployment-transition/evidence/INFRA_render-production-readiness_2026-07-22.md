@@ -1,5 +1,13 @@
 # INFRA - Render production readiness
 
+## Table des matières
+
+- [INFRA - Render production readiness](#infra-render-production-readiness)
+  - [Constat initial vérifié](#constat-initial-verifie)
+  - [Diagnostic CI](#diagnostic-ci)
+  - [Corrections repo](#corrections-repo)
+  - [Limites de vérification](#limites-de-verification)
+
 Date: 2026-07-22
 Branche: `fix/infra-render-production-readiness`
 Issue principale: [#608](https://github.com/Ange230700/kraak-consulting/issues/608)

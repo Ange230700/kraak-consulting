@@ -7,6 +7,20 @@ source_of_truth: true
 
 # Observabilité et alerting minimum
 
+## Table des matières
+
+- [Observabilité et alerting minimum](#observabilite-et-alerting-minimum)
+  - [Objectif](#objectif)
+  - [Dépendances](#dependances)
+  - [Portée](#portee)
+  - [Contrat de santé API](#contrat-de-sante-api)
+  - [Workflow d'alerte minimum](#workflow-dalerte-minimum)
+  - [Exploitation manuelle](#exploitation-manuelle)
+  - [Checklist de validation](#checklist-de-validation)
+  - [Artefacts de preuve](#artefacts-de-preuve)
+  - [Risques résiduels](#risques-residuels)
+  - [Runbooks liés](#runbooks-lies)
+
 > Origine historique : DEP-05, 2026-04-30. Ce fichier est désormais le runbook
 > actif d'observabilité.
 

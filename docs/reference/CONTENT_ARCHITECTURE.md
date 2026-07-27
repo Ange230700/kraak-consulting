@@ -7,6 +7,22 @@ source_of_truth: false
 
 # Point 4 — Architecture du contenu (KRAAK)
 
+## Table des matières
+
+- [Point 4 — Architecture du contenu (KRAAK)](#point-4-architecture-du-contenu-kraak)
+  - [1. Ton éditorial 🎙️](#1-ton-editorial-)
+  - [2. Hiérarchie de contenu standard 🧱](#2-hierarchie-de-contenu-standard-)
+  - [3. Éléments de confiance 🔐](#3-elements-de-confiance-)
+  - [4. Plan du site 🌐](#4-plan-du-site-)
+  - [5. Carte des sections par page 📄](#5-carte-des-sections-par-page-)
+  - [5.1 Accueil](#51-accueil)
+  - [5.2 À propos](#52-a-propos)
+  - [5.3 Services](#53-services)
+  - [5.4 Programmes / Formations](#54-programmes-formations)
+  - [5.5 Contact](#55-contact)
+  - [6. Résumé structurel 🧩](#6-resume-structurel-)
+  - [7. Résultat attendu](#7-resultat-attendu)
+
 ## 1. Ton éditorial 🎙️
 
 - Professionnel, clair, structuré

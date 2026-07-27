@@ -9,6 +9,14 @@ source_of_truth: true
 
 # ARC-16 — Render uniquement pour l'hébergement web
 
+## Table des matières
+
+- [ARC-16 — Render uniquement pour l'hébergement web](#arc-16-render-uniquement-pour-lhebergement-web)
+  - [1 · Décision](#1-decision)
+  - [2 · Contraintes](#2-contraintes)
+  - [3 · Règles opérationnelles](#3-regles-operationnelles)
+  - [4 · Conséquences](#4-consequences)
+
 - **Statut** : Acceptée
 - **Date** : 2026-07-02
 - **Portée** : hébergement web staging + production, workflows CI/CD, docs, tests

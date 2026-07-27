@@ -1,5 +1,36 @@
 # Angular Button Component
 
+## Table des matières
+
+- [Angular Button Component](#angular-button-component)
+  - [Accessibility](#accessibility)
+  - [Badge](#badge)
+  - [Basic](#basic)
+  - [Button Group](#button-group)
+  - [buttonset-doc](#buttonset-doc)
+  - [Directive](#directive)
+  - [Disabled](#disabled)
+  - [Icons](#icons)
+  - [iconsonly-doc](#iconsonly-doc)
+  - [Link](#link)
+  - [Loading](#loading)
+  - [Outlined](#outlined)
+  - [Raised](#raised)
+  - [Raised Text](#raised-text)
+  - [Rounded](#rounded)
+  - [Severity](#severity)
+  - [Sizes](#sizes)
+  - [Template](#template)
+  - [Text](#text)
+  - [Button](#button)
+    - [Props](#props)
+    - [Emits](#emits)
+    - [Templates](#templates)
+  - [Pass Through Options](#pass-through-options)
+  - [Theming](#theming)
+    - [CSS Classes](#css-classes)
+    - [Design Tokens](#design-tokens)
+
 Button is an extension to standard button element with icons and theming.
 
 ## Accessibility

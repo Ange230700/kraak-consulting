@@ -7,6 +7,21 @@ source_of_truth: false
 
 # Wireframe — Accueil `/`
 
+## Table des matières
+
+- [Wireframe — Accueil /](#wireframe-accueil-)
+  - [Sections (ordre desktop et mobile identique)](#sections-ordre-desktop-et-mobile-identique)
+    - [1. HEADER (composant partagé)](#1-header-composant-partage)
+    - [2. HERO — section pleine largeur](#2-hero-section-pleine-largeur)
+    - [3. RÉSUMÉ MISSION — bande alternée](#3-resume-mission-bande-alternee)
+    - [4. DOMAINES D'EXPERTISE — grille 3 colonnes](#4-domaines-dexpertise-grille-3-colonnes)
+    - [5. POURQUOI KRAAK — bande alternée](#5-pourquoi-kraak-bande-alternee)
+    - [6. IMPACT — bande chiffres clés](#6-impact-bande-chiffres-cles)
+    - [7. TÉMOIGNAGES — carrousel (placeholder)](#7-temoignages-carrousel-placeholder)
+    - [8. CTA PRINCIPAL — bande de conversion](#8-cta-principal-bande-de-conversion)
+    - [9. FOOTER (composant partagé)](#9-footer-composant-partage)
+  - [Points d'attention implémentation](#points-dattention-implementation)
+
 **Objectif :** comprendre KRAAK en 5 secondes, orienter vers l'action.  
 **Route Angular :** `HomeComponent` → `apps/client/projects/web/src/app/features/home/`
 

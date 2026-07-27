@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Espace participant
 
+## Table des matières
+
+- [Espace participant](#espace-participant)
+  - [Contrat produit](#contrat-produit)
+  - [Hors périmètre MVP vitrine](#hors-perimetre-mvp-vitrine)
+  - [Sources liées](#sources-liees)
+
 L'espace participant est une surface applicative protégée. Il n'appartient pas à
 la vitrine publique gelée et ne doit pas rouvrir le périmètre public sans ADR
 explicite.

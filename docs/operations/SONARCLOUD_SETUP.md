@@ -7,6 +7,21 @@ source_of_truth: true
 
 # Runbook — Configuration SonarQube Cloud & SonarLint
 
+## Table des matières
+
+- [Runbook — Configuration SonarQube Cloud & SonarLint](#runbook-configuration-sonarqube-cloud-sonarlint)
+  - [Métadonnées du projet](#metadonnees-du-projet)
+  - [Fichiers de configuration](#fichiers-de-configuration)
+  - [Mise en service côté SonarCloud](#mise-en-service-cote-sonarcloud)
+  - [Mise en service côté SonarLint (VS Code)](#mise-en-service-cote-sonarlint-vs-code)
+  - [Couverture de code](#couverture-de-code)
+    - [Politique d'exclusion pragmatique](#politique-dexclusion-pragmatique)
+  - [Validation locale (optionnel)](#validation-locale-optionnel)
+  - [Bootstrap local automatique du token (recommande)](#bootstrap-local-automatique-du-token-recommande)
+    - [Git Bash (/.bashrc)](#git-bash-bashrc)
+    - [PowerShell ($PROFILE)](#powershell-profile)
+  - [Points d'attention](#points-dattention)
+
 Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) et
 **SonarLint** (analyse côté éditeur) pour le monorepo `kraak-group`.
 

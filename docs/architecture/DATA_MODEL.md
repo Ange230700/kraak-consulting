@@ -7,6 +7,51 @@ source_of_truth: true
 
 # Modèle de données MVP
 
+## Table des matières
+
+- [Modèle de données MVP](#modele-de-donnees-mvp)
+  - [Objectif](#objectif)
+  - [1. Rôles Utilisateur](#1-roles-utilisateur)
+    - [Rôles retenus](#roles-retenus)
+    - [Définition des rôles](#definition-des-roles)
+      - [participant](#participant)
+      - [admin](#admin)
+      - [trainer (optionnel)](#trainer-optionnel)
+  - [2. Cycle De Vie Participant](#2-cycle-de-vie-participant)
+    - [Statuts retenus](#statuts-retenus)
+    - [Signification](#signification)
+      - [invited](#invited)
+      - [registered](#registered)
+      - [active](#active)
+      - [completed](#completed)
+      - [inactive](#inactive)
+    - [Transitions minimales autorisées](#transitions-minimales-autorisees)
+  - [3. Entités Métier Coeur](#3-entites-metier-coeur)
+  - [4. Relations Entre Entités](#4-relations-entre-entites)
+    - [Diagramme ER autoritaire](#diagramme-er-autoritaire)
+    - [Règles métier minimales](#regles-metier-minimales)
+  - [5. Règles De Visibilité](#5-regles-de-visibilite)
+    - [Visibilité participant](#visibilite-participant)
+    - [Visibilité admin](#visibilite-admin)
+    - [Visibilité trainer](#visibilite-trainer)
+  - [6. Données Éditables Par Participant Vs Admin](#6-donnees-editables-par-participant-vs-admin)
+    - [Modifiables par participant](#modifiables-par-participant)
+    - [Modifiables par admin](#modifiables-par-admin)
+    - [Modifiables par trainer si rôle activé](#modifiables-par-trainer-si-role-active)
+  - [7. Champs Minimums Par Entité](#7-champs-minimums-par-entite)
+    - [User](#user)
+    - [Participant](#participant-1)
+    - [Program](#program)
+    - [Cohort](#cohort)
+    - [Session](#session)
+    - [Resource](#resource)
+    - [Announcement](#announcement)
+    - [Enrollment](#enrollment)
+    - [Notification](#notification)
+    - [SupportRequest](#supportrequest)
+  - [8. Décisions Simples De Modélisation À Garder](#8-decisions-simples-de-modelisation-a-garder)
+  - [9. Prochaine Utilisation De Cette Spec](#9-prochaine-utilisation-de-cette-spec)
+
 ## Objectif
 
 Ce document définit le modèle produit minimum de l'application KRAAK pour

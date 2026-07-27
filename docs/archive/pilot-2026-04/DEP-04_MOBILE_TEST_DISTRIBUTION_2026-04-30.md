@@ -4,6 +4,21 @@
 
 # DEP-04 - Distribution mobile de test (APK / TestFlight interne)
 
+## Table des matières
+
+- [DEP-04 - Distribution mobile de test (APK / TestFlight interne)](#dep-04-distribution-mobile-de-test-apk-testflight-interne)
+  - [Objectif](#objectif)
+  - [Dépendances](#dependances)
+  - [Portée DEP-04](#portee-dep-04)
+  - [Distribution Android interne (APK)](#distribution-android-interne-apk)
+    - [Variante A - CI (recommande)](#variante-a-ci-recommande)
+    - [Variante B - local (fallback)](#variante-b-local-fallback)
+  - [Distribution iOS interne (TestFlight)](#distribution-ios-interne-testflight)
+  - [Checklist de validation DEP-04](#checklist-de-validation-dep-04)
+  - [Artefacts de preuve](#artefacts-de-preuve)
+  - [Risques résiduels](#risques-residuels)
+  - [Prochaine étape](#prochaine-etape)
+
 Date: 2026-04-30  
 Issue: #121  
 Epic: DEP

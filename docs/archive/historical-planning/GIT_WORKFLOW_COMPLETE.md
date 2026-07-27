@@ -6,6 +6,37 @@
 
 # GIT_WORKFLOW_COMPLETE — Workflow Git complet
 
+## Table des matières
+
+- [GITWORKFLOWCOMPLETE — Workflow Git complet](#gitworkflowcomplete-workflow-git-complet)
+  - [1 · Vue d'ensemble](#1-vue-densemble)
+  - [2 · Préparer son environnement](#2-preparer-son-environnement)
+  - [3 · Démarrer une tâche](#3-demarrer-une-tache)
+  - [4 · Développer](#4-developper)
+  - [5 · Commits](#5-commits)
+  - [6 · Rebaser avant push](#6-rebaser-avant-push)
+  - [7 · Pousser la branche](#7-pousser-la-branche)
+  - [8 · Ouvrir une PR vers staging](#8-ouvrir-une-pr-vers-staging)
+  - [9 · Checks requis](#9-checks-requis)
+  - [10 · Merge vers staging](#10-merge-vers-staging)
+  - [11 · Déploiement staging](#11-deploiement-staging)
+  - [12 · Corrections après validation staging](#12-corrections-apres-validation-staging)
+  - [13 · Release vers main](#13-release-vers-main)
+  - [14 · Tag SemVer](#14-tag-semver)
+  - [15 · Hotfix](#15-hotfix)
+  - [16 · Migrations Supabase](#16-migrations-supabase)
+  - [17 · Changesets](#17-changesets)
+  - [18 · Nettoyage de branche](#18-nettoyage-de-branche)
+  - [19 · Récupération locale](#19-recuperation-locale)
+    - [Annuler des changements non commités](#annuler-des-changements-non-commites)
+    - [Annuler tous les changements non commités](#annuler-tous-les-changements-non-commites)
+    - [Désindexer sans perdre les changements](#desindexer-sans-perdre-les-changements)
+    - [Réaligner une branche courte sur staging](#realigner-une-branche-courte-sur-staging)
+  - [20 · Anti-patterns](#20-anti-patterns)
+  - [21 · Résumé opérationnel](#21-resume-operationnel)
+  - [22 · Diagramme détaillé](#22-diagramme-detaille)
+  - [23 · Validation documentaire](#23-validation-documentaire)
+
 > Référence active : `staging` est la branche d'intégration ; `main` est la
 > branche de release.
 >

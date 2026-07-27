@@ -7,6 +7,19 @@ source_of_truth: false
 
 # Kit d'implementation motion - Web vitrine KRAAK
 
+## Table des matières
+
+- [Kit d'implementation motion - Web vitrine KRAAK](#kit-dimplementation-motion-web-vitrine-kraak)
+  - [1) Bloc tokens CSS/Tailwind pret a coller](#1-bloc-tokens-csstailwind-pret-a-coller)
+  - [2) Blueprint Angular (route transitions + reveal directive)](#2-blueprint-angular-route-transitions-reveal-directive)
+    - [2.1 Route transitions (Angular 21 + View Transitions)](#21-route-transitions-angular-21-view-transitions)
+    - [2.2 Directive reveal au scroll](#22-directive-reveal-au-scroll)
+    - [2.3 Enregistrement de la directive](#23-enregistrement-de-la-directive)
+    - [2.4 Blueprint d'integration shell](#24-blueprint-dintegration-shell)
+    - [2.5 Notes d'implementation](#25-notes-dimplementation)
+  - [3) Matrice QA motion (desktop/mobile/reduced-motion)](#3-matrice-qa-motion-desktopmobilereduced-motion)
+  - [Sequence d'implementation recommandée (3 PRs)](#sequence-dimplementation-recommandee-3-prs)
+
 Ce document fournit des artefacts prêts a coder pour:
 
 1. Un bloc de tokens CSS/Tailwind pret a coller.

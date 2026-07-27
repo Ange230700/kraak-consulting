@@ -7,6 +7,27 @@ source_of_truth: true
 
 # Vue d'ensemble de la stack technique
 
+## Table des matières
+
+- [Vue d'ensemble de la stack technique](#vue-densemble-de-la-stack-technique)
+  - [Vue d'ensemble](#vue-densemble)
+  - [Frontend](#frontend)
+    - [Angular (v21)](#angular-v21)
+    - [PrimeNG (v21)](#primeng-v21)
+    - [Tailwind CSS (v4)](#tailwind-css-v4)
+    - [Ionic + Capacitor (mobile)](#ionic-capacitor-mobile)
+  - [Backend](#backend)
+    - [NestJS (v11)](#nestjs-v11)
+  - [Base de données et services](#base-de-donnees-et-services)
+    - [Supabase](#supabase)
+  - [Outils de développement](#outils-de-developpement)
+    - [pnpm](#pnpm)
+    - [TypeScript](#typescript)
+    - [Prettier et ESLint](#prettier-et-eslint)
+  - [Déploiement](#deploiement)
+  - [Règle documentaire](#regle-documentaire)
+  - [Pour aller plus loin](#pour-aller-plus-loin)
+
 Ce document explique les technologies utilisées dans le projet KRAAK, à destination des personnes qui les découvrent.
 
 ---

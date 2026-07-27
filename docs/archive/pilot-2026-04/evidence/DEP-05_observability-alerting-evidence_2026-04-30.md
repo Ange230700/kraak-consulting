@@ -1,5 +1,15 @@
 # Evidence DEP-05 - Observabilité et alerting minimum
 
+## Table des matières
+
+- [Evidence DEP-05 - Observabilité et alerting minimum](#evidence-dep-05-observabilite-et-alerting-minimum)
+  - [Validation exécutée](#validation-executee)
+    - [API health contract](#api-health-contract)
+    - [Script d'observabilité](#script-dobservabilite)
+    - [Typecheck cible](#typecheck-cible)
+  - [Couverture DEP-02 / DEP-03 vérifiée](#couverture-dep-02-dep-03-verifiee)
+  - [Preuve structurelle ajoutée](#preuve-structurelle-ajoutee)
+
 Date: 2026-04-30
 
 ## Validation exécutée

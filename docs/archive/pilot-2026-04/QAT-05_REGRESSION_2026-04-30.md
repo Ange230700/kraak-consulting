@@ -4,6 +4,17 @@
 
 # QAT-05 - Campagne de regression
 
+## Table des matières
+
+- [QAT-05 - Campagne de regression](#qat-05-campagne-de-regression)
+  - [Objectif](#objectif)
+  - [Dépendances](#dependances)
+  - [Commandes exécutées](#commandes-executees)
+  - [Contrôle API Newman](#controle-api-newman)
+  - [Résultats](#resultats)
+  - [Blockers](#blockers)
+  - [Conclusion](#conclusion)
+
 Date: 2026-04-30
 Scope: campagne de regression MVP (web, mobile, API, libs, E2E)
 Issue: #116

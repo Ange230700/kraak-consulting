@@ -9,6 +9,13 @@ source_of_truth: false
 
 # ARC-11 — Consolidation de l'hébergement web sur un service unique
 
+## Table des matières
+
+- [ARC-11 — Consolidation de l'hébergement web sur un service unique](#arc-11-consolidation-de-lhebergement-web-sur-un-service-unique)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision historique](#2-decision-historique)
+  - [3 · Statut actuel](#3-statut-actuel)
+
 - **Statut** : Remplacée
 - **Date** : 2026-05-03
 - **Remplace** : aspects d'ARC-08 et ARC-09 sur la duplication des cibles web

@@ -7,6 +7,16 @@ source_of_truth: false
 
 # Wireframes MVP — Site vitrine KRAAK
 
+## Table des matières
+
+- [Wireframes MVP — Site vitrine KRAAK](#wireframes-mvp-site-vitrine-kraak)
+  - [Pages couvertes](#pages-couvertes)
+  - [Conventions de lecture](#conventions-de-lecture)
+  - [Palette et tokens de référence](#palette-et-tokens-de-reference)
+  - [Composants partagés (header / footer)](#composants-partages-header-footer)
+    - [Header — présent sur toutes les pages](#header-present-sur-toutes-les-pages)
+    - [Footer — présent sur toutes les pages](#footer-present-sur-toutes-les-pages)
+
 Wireframes textuels (lo-fi) du site vitrine KRAAK, structurés par page.  
 Chaque fichier décrit les blocs, leur ordre, leur contenu minimal et les points
 d'interaction clés. Ces wireframes servent de référence pour l'implémentation

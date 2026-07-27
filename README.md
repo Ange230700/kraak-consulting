@@ -9,6 +9,25 @@ source_of_truth: true
 
 # KRAAK Consulting
 
+## Table des matières
+
+- [KRAAK Consulting](#kraak-consulting)
+  - [Quickstart (5 minutes)](#quickstart-5-minutes)
+    - [Prérequis](#prerequis)
+    - [Cloner et installer](#cloner-et-installer)
+    - [Configurer les variables d'environnement](#configurer-les-variables-denvironnement)
+    - [Lancer en mode développement](#lancer-en-mode-developpement)
+    - [Lancer avec Docker Compose (local uniquement)](#lancer-avec-docker-compose-local-uniquement)
+  - [Structure du monorepo](#structure-du-monorepo)
+  - [Stack technique (résumé)](#stack-technique-resume)
+  - [Surface vitrine publique](#surface-vitrine-publique)
+  - [Statut de phase](#statut-de-phase)
+  - [Scripts disponibles](#scripts-disponibles)
+  - [Contribuer](#contribuer)
+  - [Documentation complémentaire](#documentation-complementaire)
+    - [Validation API](#validation-api)
+  - [État courant du dépôt](#etat-courant-du-depot)
+
 Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
 ---
@@ -210,6 +229,8 @@ publique de contenu. Voir
 | `pnpm lint`                 | Linter tous les projets                                   |
 | `pnpm format`               | Formater le code (Prettier)                               |
 | `pnpm format:check`         | Vérifier le formatage                                     |
+| `pnpm docs:toc:check`       | Vérifier les tables des matières Markdown                 |
+| `pnpm docs:toc:write`       | Ajouter ou régénérer les tables des matières Markdown     |
 | `pnpm commit`               | Ouvrir le prompt interactif Commitizen                    |
 
 ---

@@ -4,6 +4,31 @@
 
 # Complete Git Workflow Setup — Summary
 
+## Table des matières
+
+- [Complete Git Workflow Setup — Summary](#complete-git-workflow-setup-summary)
+  - [What Was Set Up](#what-was-set-up)
+    - [1. ✅ Changesets Integration](#1-changesets-integration)
+    - [2. ✅ GitHub Actions Workflows](#2-github-actions-workflows)
+      - [changesets.yml](#changesetsyml)
+      - [publish-release.yml (NEW)](#publish-releaseyml-new)
+      - [release-prod.yml (existing)](#release-prodyml-existing)
+    - [3. ✅ Developer Scripts](#3-developer-scripts)
+    - [4. ✅ Documentation](#4-documentation)
+  - [Complete Workflow](#complete-workflow)
+  - [Developer Quick Start](#developer-quick-start)
+    - [First Time Setup](#first-time-setup)
+    - [Feature Workflow](#feature-workflow)
+  - [Workflow Rules](#workflow-rules)
+  - [Documentation Links](#documentation-links)
+  - [Workflows Deployed](#workflows-deployed)
+  - [Next Steps](#next-steps)
+  - [Troubleshooting](#troubleshooting)
+    - ["Version PR doesn't appear"](#version-pr-doesnt-appear)
+    - ["Tags aren't created"](#tags-arent-created)
+    - ["Staging isn't deploying"](#staging-isnt-deploying)
+  - [Everything is automated](#everything-is-automated)
+
 > ✅ **Complete Git workflow automation for KRAAK monorepo**
 >
 > Everything is now configured for automatic versioning, tagging, and releases.

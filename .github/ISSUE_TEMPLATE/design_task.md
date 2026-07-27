@@ -1,5 +1,13 @@
 # Design Task
 
+## Table des matières
+
+- [Design Task](#design-task)
+  - [Objectif design](#objectif-design)
+  - [Écrans/composants concernés](#ecranscomposants-concernes)
+  - [Contraintes](#contraintes)
+  - [Critères d'acceptation](#criteres-dacceptation)
+
 ---
 
 name: 'Tâche design'

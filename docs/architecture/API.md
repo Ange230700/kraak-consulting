@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Architecture API
 
+## Table des matières
+
+- [Architecture API](#architecture-api)
+  - [Contrat courant](#contrat-courant)
+  - [Structure minimale](#structure-minimale)
+  - [Sources liées](#sources-liees)
+
 L'API KRAAK est l'application NestJS située dans `apps/api`.
 
 ## Contrat courant

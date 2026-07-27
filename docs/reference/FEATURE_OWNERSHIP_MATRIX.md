@@ -7,6 +7,26 @@ source_of_truth: false
 
 # Matrice De Propriété Par Fonctionnalité
 
+## Table des matières
+
+- [Matrice De Propriété Par Fonctionnalité](#matrice-de-propriete-par-fonctionnalite)
+  - [Convention De Lecture](#convention-de-lecture)
+  - [Matrice Par Fonctionnalité](#matrice-par-fonctionnalite)
+    - [1. Auth (AUT)](#1-auth-aut)
+    - [2. Onboarding](#2-onboarding)
+    - [3. Dashboard (DSH)](#3-dashboard-dsh)
+    - [4. Programs (PRG)](#4-programs-prg)
+    - [5. Resources (RES)](#5-resources-res)
+    - [6. Announcements (ANN)](#6-announcements-ann)
+    - [7. Support (SUP)](#7-support-sup)
+    - [8. Billing](#8-billing)
+  - [Vue Synthétique — Répertoires Par Surface](#vue-synthetique-repertoires-par-surface)
+    - [apps/client/projects/web/src/app/features/](#appsclientprojectswebsrcappfeatures)
+    - [apps/client/projects/mobile/src/app/features/](#appsclientprojectsmobilesrcappfeatures)
+    - [packages/](#packages)
+    - [apps/api/src/ (modules NestJS)](#appsapisrc-modules-nestjs)
+  - [Règle De Décision : Web Vs Mobile Vs Shared](#regle-de-decision-web-vs-mobile-vs-shared)
+
 > Référence : backlog (`docs/planning/GITHUB_PROJECT.md`), modèle produit
 > (`docs/architecture/DATA_MODEL.md`), MVP mobile (`docs/product/MOBILE_MVP.md`),
 > architecture (`ARCHITECTURE.md`).

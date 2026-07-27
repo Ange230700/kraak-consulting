@@ -7,6 +7,27 @@ source_of_truth: true
 
 # Validation staging et préparation release
 
+## Table des matières
+
+- [Validation staging et préparation release](#validation-staging-et-preparation-release)
+  - [1 · Principe](#1-principe)
+  - [2 · Préconditions](#2-preconditions)
+  - [3 · Services staging](#3-services-staging)
+  - [4 · Mise à jour locale](#4-mise-a-jour-locale)
+  - [5 · Vérification staging](#5-verification-staging)
+    - [5.1 · API](#51-api)
+    - [5.2 · Web](#52-web)
+    - [5.3 · Supabase](#53-supabase)
+  - [6 · Smoke tests recommandés](#6-smoke-tests-recommandes)
+  - [7 · En cas d'échec](#7-en-cas-dechec)
+  - [8 · Préparer une release](#8-preparer-une-release)
+  - [9 · Rollback staging](#9-rollback-staging)
+    - [9.1 · Correction applicative](#91-correction-applicative)
+    - [9.2 · Rollback exceptionnel](#92-rollback-exceptionnel)
+    - [9.3 · Migrations Supabase](#93-migrations-supabase)
+  - [10 · Anti-patterns interdits](#10-anti-patterns-interdits)
+  - [11 · Tableau de synthèse](#11-tableau-de-synthese)
+
 > Malgré son nom historique, ce document ne décrit plus une promotion depuis
 > `main` vers `staging`.
 >

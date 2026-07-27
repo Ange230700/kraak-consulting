@@ -7,6 +7,16 @@ source_of_truth: true
 
 # Déploiement Render
 
+## Table des matières
+
+- [Déploiement Render](#deploiement-render)
+  - [1 · Cadrage technique](#1-cadrage-technique)
+  - [2 · Variables d'environnement Render (web)](#2-variables-denvironnement-render-web)
+  - [3 · Stratégie de transition recommandée](#3-strategie-de-transition-recommandee)
+  - [4 · Checklist de validation staging (obligatoire)](#4-checklist-de-validation-staging-obligatoire)
+  - [5 · Rollback rapide](#5-rollback-rapide)
+  - [6 · Notes opérationnelles](#6-notes-operationnelles)
+
 Ce runbook décrit le déploiement courant du web Angular prerender et de l'API
 NestJS sur Render. L'ancienne bascule vers Render est conservée dans
 [`../archive/deployment-transition/`](../archive/deployment-transition/).

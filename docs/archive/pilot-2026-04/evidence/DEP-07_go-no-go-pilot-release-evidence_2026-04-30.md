@@ -1,5 +1,25 @@
 # Evidence DEP-07 - Go/No-Go Pilote et Release Pilote
 
+## Table des matières
+
+- [Evidence DEP-07 - Go/No-Go Pilote et Release Pilote](#evidence-dep-07-gono-go-pilote-et-release-pilote)
+  - [Résumé de décision](#resume-de-decision)
+  - [1. Validation des dépendances](#1-validation-des-dependances)
+    - [DEP-02 — Pipeline déploiement web](#dep-02-pipeline-deploiement-web)
+    - [DEP-03 — Pipeline déploiement API](#dep-03-pipeline-deploiement-api)
+    - [DEP-04 — Distribution mobile test](#dep-04-distribution-mobile-test)
+    - [DEP-06 — Runbook incident + rollback + checklist](#dep-06-runbook-incident-rollback-checklist)
+  - [2. Grille go/no-go - Résultats](#2-grille-gono-go-resultats)
+  - [Résumé critères P0 : ✅ GO](#resume-criteres-p0-go)
+  - [3. Commandes de validation exécutées](#3-commandes-de-validation-executees)
+    - [Vérification observabilité](#verification-observabilite)
+    - [Vérification test observabilité local](#verification-test-observabilite-local)
+    - [Typecheck API](#typecheck-api)
+    - [Tests unitaires API](#tests-unitaires-api)
+    - [E2E parcours participant](#e2e-parcours-participant)
+  - [4. Tag Git de release](#4-tag-git-de-release)
+  - [5. Statut acceptance DEP-07](#5-statut-acceptance-dep-07)
+
 Date: 2026-04-30  
 Issue: #124
 

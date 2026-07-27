@@ -4,6 +4,22 @@
 
 # QAT-07 - Vérification conformité fonctionnelle, qualité et robustesse MVP
 
+## Table des matières
+
+- [QAT-07 - Vérification conformité fonctionnelle, qualité et robustesse MVP](#qat-07-verification-conformite-fonctionnelle-qualite-et-robustesse-mvp)
+  - [Objectif](#objectif)
+  - [Commandes exécutées](#commandes-executees)
+  - [Résultats](#resultats)
+    - [Qualité statique](#qualite-statique)
+    - [Robustesse scripts et packages partagés](#robustesse-scripts-et-packages-partages)
+    - [Robustesse API](#robustesse-api)
+    - [Robustesse client (unit)](#robustesse-client-unit)
+    - [Conformité fonctionnelle MVP (E2E)](#conformite-fonctionnelle-mvp-e2e)
+  - [Blocages PR et contraintes de revue](#blocages-pr-et-contraintes-de-revue)
+  - [Conclusion](#conclusion)
+  - [Limites et risques résiduels](#limites-et-risques-residuels)
+  - [Addendum - Definition of Done vitrine fermée (PR-06)](#addendum-definition-of-done-vitrine-fermee-pr-06)
+
 Date: 2026-04-30
 Issue: #157
 Scope: vérification transversale MVP (web, mobile, api, packages partagés, scripts workspace)

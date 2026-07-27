@@ -7,6 +7,15 @@ source_of_truth: true
 
 # Correspondance de composants — Web (PrimeNG) ↔ Mobile (Ionic)
 
+## Table des matières
+
+- [Correspondance de composants — Web (PrimeNG) ↔ Mobile (Ionic)](#correspondance-de-composants-web-primeng-mobile-ionic)
+  - [Principes](#principes)
+  - [Table de correspondance](#table-de-correspondance)
+  - [Éléments partagés (packages communs)](#elements-partages-packages-communs)
+  - [Mapping des tokens vers Ionic](#mapping-des-tokens-vers-ionic)
+  - [Mapping des tokens vers PrimeNG](#mapping-des-tokens-vers-primeng)
+
 > Ce document décrit la correspondance entre les composants utilisés sur le site
 > web (Angular + PrimeNG) et l'application mobile (Angular + Ionic). Le but est
 > de partager les **tokens de design**, les **modèles de données**, les

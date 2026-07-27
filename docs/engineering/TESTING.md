@@ -7,6 +7,18 @@ source_of_truth: true
 
 # Tests et couverture MVP
 
+## Table des matières
+
+- [Tests et couverture MVP](#tests-et-couverture-mvp)
+  - [1) Objectif](#1-objectif)
+  - [2) Preconditions (dépendances)](#2-preconditions-dependances)
+  - [3) Definition de done coverage (minimum)](#3-definition-de-done-coverage-minimum)
+  - [4) Matrice de couverture cible](#4-matrice-de-couverture-cible)
+  - [5) Scénarios critiques prioritaires](#5-scenarios-critiques-prioritaires)
+  - [6) Mapping vers les suites existantes (état au 30/04/2026)](#6-mapping-vers-les-suites-existantes-etat-au-30042026)
+  - [7) Evidence de validation QAT-01](#7-evidence-de-validation-qat-01)
+  - [8) Utilisation opérationnelle pour les prochaines tâches](#8-utilisation-operationnelle-pour-les-prochaines-taches)
+
 Mise à jour: 30 avril 2026
 Portée: MVP KRAAK (web public, web participant, mobile participant, API support)
 

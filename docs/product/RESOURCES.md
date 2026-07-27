@@ -7,6 +7,17 @@ source_of_truth: true
 
 # Taxonomie des ressources (RES-01)
 
+## Table des matières
+
+- [Taxonomie des ressources (RES-01)](#taxonomie-des-ressources-res-01)
+  - [Objectif](#objectif)
+  - [Dimensions retenues](#dimensions-retenues)
+    - [1) Type (resourceType)](#1-type-resourcetype)
+    - [2) Thème (resourceTheme)](#2-theme-resourcetheme)
+    - [3) Audience (resourceAudience)](#3-audience-resourceaudience)
+  - [Alignement avec les documents de référence](#alignement-avec-les-documents-de-reference)
+  - [Critères d'acceptation RES-01 couverts](#criteres-dacceptation-res-01-couverts)
+
 ## Objectif
 
 Définir une taxonomie minimale et stable des ressources pour permettre:

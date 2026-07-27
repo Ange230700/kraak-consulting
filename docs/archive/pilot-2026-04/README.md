@@ -6,6 +6,14 @@ archived_on: 2026-07-23
 
 # Archive pilote avril 2026
 
+## Table des matières
+
+- [Archive pilote avril 2026](#archive-pilote-avril-2026)
+  - [Pourquoi ces documents sont archivés](#pourquoi-ces-documents-sont-archives)
+  - [Date d'archivage](#date-darchivage)
+  - [Documents actifs de remplacement](#documents-actifs-de-remplacement)
+  - [Suppression ultérieure](#suppression-ulterieure)
+
 ## Pourquoi ces documents sont archivés
 
 Ce dossier conserve les runbooks, checklists et preuves du pilote du 30 avril 2026. Ces documents décrivent un état passé de lancement, de distribution mobile,

@@ -7,6 +7,21 @@ source_of_truth: false
 
 # Wireframe — À propos `/a-propos`
 
+## Table des matières
+
+- [Wireframe — À propos /a-propos](#wireframe-a-propos-a-propos)
+  - [Sections (ordre desktop et mobile identique)](#sections-ordre-desktop-et-mobile-identique)
+    - [1. HEADER (composant partagé)](#1-header-composant-partage)
+    - [2. PAGE HERO — bannière interne](#2-page-hero-banniere-interne)
+    - [3. HISTOIRE / CONTEXTE](#3-histoire-contexte)
+    - [4. MISSION + VISION — deux colonnes côte à côte](#4-mission-vision-deux-colonnes-cote-a-cote)
+    - [5. VALEURS — grille 3 × 3 (max 7 valeurs)](#5-valeurs-grille-3-3-max-7-valeurs)
+    - [6. LEADERSHIP / ÉQUIPE — fondateur](#6-leadership-equipe-fondateur)
+    - [7. PREUVES / RÉALISATIONS](#7-preuves-realisations)
+    - [8. CTA](#8-cta)
+    - [9. FOOTER (composant partagé)](#9-footer-composant-partage)
+  - [Points d'attention implémentation](#points-dattention-implementation)
+
 **Objectif :** établir la crédibilité de KRAAK, ancrer l'identité, donner envie
 de travailler avec l'organisation.  
 **Route Angular :** `AboutComponent` → `apps/client/projects/web/src/app/features/about/`

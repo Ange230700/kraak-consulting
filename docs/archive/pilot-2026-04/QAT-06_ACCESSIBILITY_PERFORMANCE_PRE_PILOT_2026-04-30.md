@@ -4,6 +4,17 @@
 
 # QAT-06 - Checks accessibilité/performance pré-pilot
 
+## Table des matières
+
+- [QAT-06 - Checks accessibilité/performance pré-pilot](#qat-06-checks-accessibiliteperformance-pre-pilot)
+  - [Objectif](#objectif)
+  - [Dépendances](#dependances)
+  - [Commande exécutée](#commande-executee)
+  - [Résultats par route](#resultats-par-route)
+  - [Écart détecté](#ecart-detecte)
+  - [Plan d'action écarts](#plan-daction-ecarts)
+  - [Conclusion](#conclusion)
+
 Date: 2026-04-30
 Issue: #117
 Scope: vérification pré-pilot web (surface vitrine publique complète + pages support statut)

@@ -7,6 +7,15 @@ source_of_truth: true
 
 # ARC-12 - Retrait des sections de prévisualisation du bundle de production
 
+## Table des matières
+
+- [ARC-12 - Retrait des sections de prévisualisation du bundle de production](#arc-12-retrait-des-sections-de-previsualisation-du-bundle-de-production)
+  - [Décision](#decision)
+  - [Mise en œuvre](#mise-en-œuvre)
+  - [Composants concernés](#composants-concernes)
+  - [Conséquences](#consequences)
+  - [Validation attendue](#validation-attendue)
+
 **Date :** 2026-05-14  
 **Statut :** Appliqué
 

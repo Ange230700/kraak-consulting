@@ -9,6 +9,31 @@ source_of_truth: true
 
 # Guide de contribution
 
+## Table des matières
+
+- [Guide de contribution](#guide-de-contribution)
+  - [Branches](#branches)
+    - [Nommage](#nommage)
+  - [Nommage Angular (Pages Et Composants)](#nommage-angular-pages-et-composants)
+  - [Règles Transverses de Qualité et de Maintenabilité (Obligatoires)](#regles-transverses-de-qualite-et-de-maintenabilite-obligatoires)
+  - [Commits (Conventional Commits)](#commits-conventional-commits)
+    - [Types de commit](#types-de-commit)
+    - [Scope (obligatoire)](#scope-obligatoire)
+    - [Prompt interactif avec Commitizen](#prompt-interactif-avec-commitizen)
+  - [Règle Documentation](#regle-documentation)
+  - [Règle Debug](#regle-debug)
+  - [Workflow Git complet](#workflow-git-complet)
+    - [Interdiction de contournement des hooks](#interdiction-de-contournement-des-hooks)
+    - [Stratégie de fusion : rebase uniquement](#strategie-de-fusion-rebase-uniquement)
+    - [Séquence type](#sequence-type)
+  - [Hooks Git (Husky)](#hooks-git-husky)
+    - [Si un hook échoue](#si-un-hook-echoue)
+  - [Pull Requests](#pull-requests)
+  - [Formatage du code](#formatage-du-code)
+    - [Qualité documentaire](#qualite-documentaire)
+  - [Politique de langue](#politique-de-langue)
+  - [Release](#release)
+
 Ce document explique comment contribuer au dépôt KRAAK Group.
 
 ---
@@ -321,6 +346,8 @@ Les index documentaires générés se contrôlent avec :
 ```bash
 pnpm docs:index:check
 pnpm docs:index:write
+pnpm docs:toc:check
+pnpm docs:toc:write
 ```
 
 Le workflow `.github/workflows/docs-quality.yml` exécute sur pull request :
@@ -330,6 +357,8 @@ Le workflow `.github/workflows/docs-quality.yml` exécute sur pull request :
   métadonnées actives, références de fournisseur retiré, doublons ADR,
   marqueurs de merge et blocs Mermaid invalides ;
 - `pnpm docs:index:check` pour empêcher un index ADR ou documentaire obsolète.
+- `pnpm docs:toc:check` pour empêcher une table des matières Markdown absente
+  ou obsolète.
 
 Le hook `pre-commit` reste volontairement léger : il s'appuie sur `lint-staged`
 pour les fichiers indexés et ne lance ni vérification réseau, ni audit complet

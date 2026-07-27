@@ -4,6 +4,21 @@
 
 # DEP-08 - Epic Deployment: lancement pilote maîtrisé
 
+## Table des matières
+
+- [DEP-08 - Epic Deployment: lancement pilote maîtrisé](#dep-08-epic-deployment-lancement-pilote-maitrise)
+  - [Objectif](#objectif)
+  - [État des taches DEP](#etat-des-taches-dep)
+  - [Commandes exécutées (revérification)](#commandes-executees-reverification)
+  - [Résultats](#resultats)
+    - [Qualité statique et robustesse scripts](#qualite-statique-et-robustesse-scripts)
+    - [Revérifications runtime pilote](#reverifications-runtime-pilote)
+  - [Décision de lancement maîtrisé](#decision-de-lancement-maitrise)
+  - [Actions de déblocage obligatoires](#actions-de-deblocage-obligatoires)
+  - [Addendum PR-06 - Cloture vitrine et handoff](#addendum-pr-06-cloture-vitrine-et-handoff)
+  - [Blocages PR et contraintes de review](#blocages-pr-et-contraintes-de-review)
+  - [Références](#references)
+
 Date: 2026-04-30
 Issue: #158
 Scope: clôture epic DEP (préparation + exécution pilote + vérification de contrôle)

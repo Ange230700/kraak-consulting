@@ -7,6 +7,28 @@ source_of_truth: true
 
 # Guide du mode développement
 
+## Table des matières
+
+- [Guide du mode développement](#guide-du-mode-developpement)
+  - [Prérequis](#prerequis)
+    - [Configurer les variables d'environnement](#configurer-les-variables-denvironnement)
+    - [Profil DB local prêt à l'emploi (Supabase + Docker Compose)](#profil-db-local-pret-a-lemploi-supabase-docker-compose)
+  - [Lancer le site web (Angular SSR)](#lancer-le-site-web-angular-ssr)
+    - [Structure du code web](#structure-du-code-web)
+  - [Lancer l'API (NestJS)](#lancer-lapi-nestjs)
+    - [Structure du code API](#structure-du-code-api)
+  - [Lancer l'app mobile (Ionic + Capacitor)](#lancer-lapp-mobile-ionic-capacitor)
+  - [Lancer plusieurs apps en même temps](#lancer-plusieurs-apps-en-meme-temps)
+  - [Commandes de test](#commandes-de-test)
+  - [Commandes de build](#commandes-de-build)
+  - [Commandes de qualité](#commandes-de-qualite)
+  - [Dépannage courant](#depannage-courant)
+    - [pnpm install échoue](#pnpm-install-echoue)
+    - [Le port 4200 ou 3000 est déjà utilisé](#le-port-4200-ou-3000-est-deja-utilise)
+    - [Les hooks Git bloquent mon commit](#les-hooks-git-bloquent-mon-commit)
+    - [Les variables d'environnement ne sont pas reconnues](#les-variables-denvironnement-ne-sont-pas-reconnues)
+    - [Vite échoue avec EPERM ... .angular/cache ... depstemp](#vite-echoue-avec-eperm-angularcache-depstemp)
+
 Ce guide explique comment lancer et utiliser chaque application du monorepo en développement.
 
 ---

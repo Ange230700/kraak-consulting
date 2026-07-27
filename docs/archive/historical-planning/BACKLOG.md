@@ -4,6 +4,43 @@
 
 # Backlog Produit MVP KRAAK - Epics, Issues Et Milestones
 
+## Table des matières
+
+- [Backlog Produit MVP KRAAK - Epics, Issues Et Milestones](#backlog-produit-mvp-kraak-epics-issues-et-milestones)
+  - [Cadre Du Backlog](#cadre-du-backlog)
+  - [Règles De Découpage Pour Travail A Deux](#regles-de-decoupage-pour-travail-a-deux)
+  - [Milestones](#milestones)
+  - [Epic 1 - Architecture (ARC)](#epic-1-architecture-arc)
+  - [Epic 2 - Workspace Setup (SET)](#epic-2-workspace-setup-set)
+  - [Epic 3 - Shared Libraries (LIB)](#epic-3-shared-libraries-lib)
+  - [Epic 4 - Website (WEB)](#epic-4-website-web)
+  - [Epic 5 - Mobile Shell (MOB)](#epic-5-mobile-shell-mob)
+  - [Epic 6 - Auth (AUT)](#epic-6-auth-aut)
+  - [Epic 7 - Dashboard (DSH)](#epic-7-dashboard-dsh)
+  - [Epic 8 - Programs (PRG)](#epic-8-programs-prg)
+  - [Epic 9 - Resources (RES)](#epic-9-resources-res)
+  - [Epic 10 - Announcements (ANN)](#epic-10-announcements-ann)
+  - [Epic 11 - Support (SUP)](#epic-11-support-sup)
+  - [Epic 12 - QA (QAT)](#epic-12-qa-qat)
+  - [Epic 13 - Deployment (DEP)](#epic-13-deployment-dep)
+  - [Vue Dépendances Entre Epics](#vue-dependances-entre-epics)
+  - [Definition Of Done Par Milestone](#definition-of-done-par-milestone)
+  - [Sequence Recommandée](#sequence-recommandee)
+  - [Notes D'Exécution](#notes-dexecution)
+  - [Phase V1.1 — Hors MVP](#phase-v11-hors-mvp)
+    - [Cadre V1.1](#cadre-v11)
+    - [Milestones V1.1](#milestones-v11)
+    - [Epics V1.1](#epics-v11)
+      - [[EPIC] [PAY] Paiement en ligne — #329 — M8 — P0](#epic-pay-paiement-en-ligne-329-m8-p0)
+      - [[EPIC] [LMS] Apprentissage et certification — #330 — M9 — P0](#epic-lms-apprentissage-et-certification-330-m9-p0)
+      - [[EPIC] [DOC] Documents participants — #331 — M9 — P1](#epic-doc-documents-participants-331-m9-p1)
+      - [[EPIC] [CMS] Gestion de contenu admin — #332 — M9 — P1](#epic-cms-gestion-de-contenu-admin-332-m9-p1)
+      - [[EPIC] [CRM] Relation client et marketing — #333 — M10 — P2](#epic-crm-relation-client-et-marketing-333-m10-p2)
+      - [[EPIC] [QA2] Qualité et couverture V1.1 — #334 — M10 — P0](#epic-qa2-qualite-et-couverture-v11-334-m10-p0)
+      - [[EPIC] [DEP2] Déploiement V1.1 — #335 — M10 — P0](#epic-dep2-deploiement-v11-335-m10-p0)
+    - [Definition Of Done Par Milestone V1.1](#definition-of-done-par-milestone-v11)
+    - [Sequence Recommandée V1.1](#sequence-recommandee-v11)
+
 - Projet : KRAAK (MVP web + base mobile)
 - Dépôt : <https://github.com/Ange230700/kraak-consulting>
 - Project board : voir le board actif documenté dans `docs/planning/GITHUB_PROJECT.md`

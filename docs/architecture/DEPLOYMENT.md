@@ -7,6 +7,13 @@ source_of_truth: true
 
 # Architecture de déploiement
 
+## Table des matières
+
+- [Architecture de déploiement](#architecture-de-deploiement)
+  - [Topologie courante](#topologie-courante)
+  - [Branches et déclencheurs](#branches-et-declencheurs)
+  - [Sources liées](#sources-liees)
+
 KRAAK utilise Render pour le web et l'API, avec Supabase par environnement.
 
 ## Topologie courante
