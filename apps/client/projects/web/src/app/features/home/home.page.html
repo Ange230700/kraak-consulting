@@ -35,8 +35,7 @@
       <div class="mt-10 flex flex-wrap gap-4 lg:mt-10 lg:gap-5 xl:mt-10.5">
         <a
           pButton
-          routerLink="/contact"
-          href="/contact"
+          [routerLink]="'contact' | localizedPublicPath"
           label="Réserver une consultation"
           icon="pi pi-calendar"
           aria-label="Réserver une consultation"
@@ -44,8 +43,7 @@
         ></a>
         <a
           pButton
-          routerLink="/programmes"
-          href="/programmes"
+          [routerLink]="'programs' | localizedPublicPath"
           label="Découvrir nos programmes"
           icon="pi pi-bolt"
           aria-label="Découvrir nos programmes"
@@ -182,7 +180,7 @@
           employabilité, leur posture et leurs outils de candidature.
         </p>
         <a
-          routerLink="/services"
+          [routerLink]="'services' | localizedPublicPath"
           class="kr-link mt-5 inline-flex font-semibold"
         >
           Voir les formations
@@ -201,7 +199,7 @@
           doivent cadrer, planifier et faire avancer une initiative utile.
         </p>
         <a
-          routerLink="/services"
+          [routerLink]="'services' | localizedPublicPath"
           class="kr-link mt-5 inline-flex font-semibold"
         >
           Structurer un projet
@@ -219,7 +217,10 @@
           Pour les profils qui visent les études, le travail ou une mobilité
           internationale avec une préparation claire et progressive.
         </p>
-        <a routerLink="/contact" class="kr-link mt-5 inline-flex font-semibold">
+        <a
+          [routerLink]="'contact' | localizedPublicPath"
+          class="kr-link mt-5 inline-flex font-semibold"
+        >
           Qualifier mon projet
         </a>
       </article>
@@ -411,12 +412,12 @@
       </h2>
 
       <a
-        routerLink="/contact"
+        [routerLink]="'contact' | localizedPublicPath"
         kraakPublicConversion="conversion_cta_click"
         [kraakPublicConversionPayload]="{
           cta_context: 'home_main_cta',
           cta_label: 'Prendre rendez-vous maintenant',
-          cta_link: '/contact',
+          cta_link: 'contact' | localizedPublicPath,
         }"
         class="bg-brand-white text-brand-navy hover:bg-brand-cyan hover:text-brand-white mt-8 inline-flex items-center justify-center rounded-2xl px-12 py-5 text-sm font-black tracking-widest uppercase shadow-xl transition-all duration-300"
         aria-label="Prendre rendez-vous maintenant"

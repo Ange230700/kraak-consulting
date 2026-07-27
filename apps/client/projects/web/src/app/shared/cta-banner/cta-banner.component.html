@@ -19,7 +19,7 @@
       @if (ctaLabel && ctaLink) {
         <a
           pButton
-          [routerLink]="ctaLink"
+          [routerLink]="resolvedCtaLink()"
           [attr.aria-label]="ctaLabel"
           (click)="onCtaClick()"
           class="bg-brand-white text-brand-navy hover:bg-brand-cyan hover:text-brand-white mt-8 inline-flex items-center justify-center rounded-2xl px-10 py-4 text-sm font-black tracking-widest uppercase shadow-xl transition-all duration-300"

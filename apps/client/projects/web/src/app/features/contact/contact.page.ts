@@ -10,6 +10,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import type { ContactFormDto } from '@kraak/contracts';
 import { logDebugError } from '@kraak/api-client';
 import { ButtonDirective, Button } from 'primeng/button';
@@ -31,6 +32,7 @@ import {
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -147,9 +149,11 @@ const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
     InputText,
     Textarea,
     Message,
+    RouterLink,
     CtaBanner,
     PublicConversionTrackingDirective,
     RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
   ],
   templateUrl: './contact.page.html',
   styles: [

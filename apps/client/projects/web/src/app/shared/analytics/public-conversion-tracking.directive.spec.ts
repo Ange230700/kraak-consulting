@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
 
 import { AnalyticsService } from '../../core/analytics/analytics.service';
@@ -49,8 +48,12 @@ describe('PublicConversionTrackingDirective', () => {
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('button'));
-    button.triggerEventHandler('click');
+    const button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement | null;
+
+    expect(button).not.toBeNull();
+    button?.click();
 
     expect(analyticsServiceMock.trackEvent).toHaveBeenCalledWith(
       'cta_clicked',
@@ -66,8 +69,12 @@ describe('PublicConversionTrackingDirective', () => {
     fixture.componentInstance.eventName = '   ';
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('button'));
-    button.triggerEventHandler('click');
+    const button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement | null;
+
+    expect(button).not.toBeNull();
+    button?.click();
 
     expect(analyticsServiceMock.trackEvent).not.toHaveBeenCalled();
   });

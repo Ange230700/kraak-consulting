@@ -6,7 +6,7 @@ import { TestBed } from '@angular/core/testing';
 import { Navbar } from './navbar.component';
 
 interface NavbarInternals {
-  links: { label: string; path: string }[];
+  links: { label: string; pageId: string }[];
   mobileMenuOpen: () => boolean;
 }
 
@@ -47,7 +47,11 @@ describe('Navbar', () => {
       'CONTACT',
     ]);
 
-    const companyName = host.querySelector('a[routerlink="/"] span');
+    const brandLink =
+      host.querySelector<HTMLAnchorElement>('a.kr-navbar-brand');
+    const companyName = brandLink?.querySelector('span') ?? null;
+
+    expect(brandLink?.getAttribute('href')).toMatch(/^\/fr\/?$/);
     expect(companyName).not.toBeNull();
     expect(companyName?.classList.contains('hidden')).toBe(true);
     expect(companyName?.classList.contains('lg:inline')).toBe(true);

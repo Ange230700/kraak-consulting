@@ -10,6 +10,7 @@ import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 
 const FAQ_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/home-hero-workshop.avif',
@@ -18,7 +19,7 @@ const FAQ_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 @Component({
   selector: 'kraak-faq-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, FaqAccordion],
+  imports: [NgStyle, RouterLink, FaqAccordion, LocalizedPublicPathPipe],
   templateUrl: './faq.page.html',
 })
 export default class FaqPage {

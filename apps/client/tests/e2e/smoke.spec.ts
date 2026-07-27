@@ -32,6 +32,7 @@ async function revealNavigation(page: Page) {
 test.describe(`Page d'accueil — smoke tests`, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page).toHaveURL(/\/fr\/?$/);
   });
 
   test(`Given la page d'accueil, When elle se charge, Then le titre du document contient "KRAAK"`, async ({
@@ -88,7 +89,7 @@ test.describe(`Page d'accueil — smoke tests`, () => {
   test(`Given la navigation publique, When le visiteur ouvre la page à propos, Then le titre et le contenu principal sont visibles`, async ({
     page,
   }) => {
-    await page.goto('/a-propos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/fr/a-propos', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveTitle(/À propos|A propos/i);
     await expect(page.locator('h1').first()).toContainText(/capital humain/i);

@@ -1,0 +1,183 @@
+{
+  "locales": [
+    {
+      "locale": "fr-CI",
+      "segment": "fr",
+      "htmlLang": "fr-CI",
+      "openGraphLocale": "fr_CI",
+      "defaultIndexable": true
+    },
+    {
+      "locale": "en-GB",
+      "segment": "en",
+      "htmlLang": "en-GB",
+      "openGraphLocale": "en_GB",
+      "defaultIndexable": false
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "component": "home",
+      "seoPath": "",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/",
+        "en-GB": "/en/"
+      },
+      "legacyAliases": ["/"]
+    },
+    {
+      "id": "about",
+      "component": "about",
+      "seoPath": "a-propos",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/a-propos",
+        "en-GB": "/en/about"
+      },
+      "legacyAliases": ["/a-propos", "/about"]
+    },
+    {
+      "id": "services",
+      "component": "services",
+      "seoPath": "services",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/services",
+        "en-GB": "/en/services"
+      },
+      "legacyAliases": ["/services"]
+    },
+    {
+      "id": "faq",
+      "component": "faq",
+      "seoPath": "faq",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/faq",
+        "en-GB": "/en/faq"
+      },
+      "legacyAliases": ["/faq"]
+    },
+    {
+      "id": "programs",
+      "component": "programs",
+      "seoPath": "programmes",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/programmes",
+        "en-GB": "/en/programs"
+      },
+      "legacyAliases": ["/programmes", "/programs"]
+    },
+    {
+      "id": "resources",
+      "component": "resources",
+      "seoPath": "ressources",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/ressources",
+        "en-GB": "/en/resources"
+      },
+      "legacyAliases": ["/ressources", "/resources"]
+    },
+    {
+      "id": "contact",
+      "component": "contact",
+      "seoPath": "contact",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/contact",
+        "en-GB": "/en/contact"
+      },
+      "legacyAliases": ["/contact"]
+    },
+    {
+      "id": "legalNotice",
+      "component": "legalNotice",
+      "seoPath": "mentions-legales",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/mentions-legales",
+        "en-GB": "/en/legal-notice"
+      },
+      "legacyAliases": ["/mentions-legales"]
+    },
+    {
+      "id": "privacyPolicy",
+      "component": "privacyPolicy",
+      "seoPath": "politique-de-confidentialite",
+      "includeInSitemap": true,
+      "paths": {
+        "fr-CI": "/fr/politique-de-confidentialite",
+        "en-GB": "/en/privacy-policy"
+      },
+      "legacyAliases": ["/politique-de-confidentialite"]
+    },
+    {
+      "id": "unauthorized",
+      "component": "unauthorized",
+      "seoPath": "401",
+      "includeInSitemap": false,
+      "indexableByLocale": {
+        "fr-CI": false,
+        "en-GB": false
+      },
+      "statusCode": 401,
+      "paths": {
+        "fr-CI": "/fr/401",
+        "en-GB": "/en/401"
+      },
+      "legacyAliases": ["/401"]
+    },
+    {
+      "id": "forbidden",
+      "component": "forbidden",
+      "seoPath": "403",
+      "includeInSitemap": false,
+      "indexableByLocale": {
+        "fr-CI": false,
+        "en-GB": false
+      },
+      "statusCode": 403,
+      "paths": {
+        "fr-CI": "/fr/403",
+        "en-GB": "/en/403"
+      },
+      "legacyAliases": ["/403"]
+    },
+    {
+      "id": "notFound",
+      "component": "notFound",
+      "seoPath": "404",
+      "includeInSitemap": false,
+      "indexableByLocale": {
+        "fr-CI": false,
+        "en-GB": false
+      },
+      "statusCode": 404,
+      "paths": {
+        "fr-CI": "/fr/404",
+        "en-GB": "/en/404"
+      },
+      "legacyAliases": ["/404"]
+    },
+    {
+      "id": "serverError",
+      "component": "serverError",
+      "seoPath": "500",
+      "includeInSitemap": false,
+      "indexableByLocale": {
+        "fr-CI": false,
+        "en-GB": false
+      },
+      "statusCode": 500,
+      "paths": {
+        "fr-CI": "/fr/500",
+        "en-GB": "/en/500"
+      },
+      "legacyAliases": ["/500"]
+    }
+  ]
+}

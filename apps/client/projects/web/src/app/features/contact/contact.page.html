@@ -43,8 +43,7 @@
         ></a>
         <a
           pButton
-          routerLink="/services"
-          href="/services"
+          [routerLink]="'services' | localizedPublicPath"
           label="Voir les services"
           icon="pi pi-compass"
           aria-label="Voir les services"

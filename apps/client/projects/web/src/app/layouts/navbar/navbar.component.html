@@ -8,7 +8,7 @@
     class="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 lg:px-6"
   >
     <a
-      routerLink="/"
+      [routerLink]="'home' | localizedPublicPath"
       class="kr-navbar-brand kr-navbar-interactive flex items-center gap-0 no-underline lg:gap-3"
       (click)="closeMobileMenu()"
     >
@@ -37,15 +37,16 @@
       <ul
         class="flex grow flex-col gap-2 lg:flex-row lg:items-center lg:justify-center lg:gap-6"
       >
-        @for (link of links; track link.path) {
+        @for (link of links; track link.pageId) {
+          @let localizedPath = link.pageId | localizedPublicPath;
           <li>
             <a
-              [routerLink]="link.path"
+              [routerLink]="localizedPath"
               routerLinkActive="text-brand-navy after:scale-x-100"
               kraakPublicConversion="nav_cta_click"
               [kraakPublicConversionPayload]="{
                 nav_label: link.label,
-                nav_path: link.path,
+                nav_path: localizedPath,
                 nav_surface: 'primary_nav',
               }"
               class="kr-nav-link kr-navbar-interactive uppercase"

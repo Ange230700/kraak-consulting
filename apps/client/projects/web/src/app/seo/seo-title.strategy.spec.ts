@@ -68,7 +68,7 @@ describe('SeoTitleStrategy', () => {
 
       expect(applyPageSeo).toHaveBeenCalledOnce();
       const [calledWith] = applyPageSeo.mock.calls[0] as [SeoPageDefinition];
-      expect(calledWith.path).toBe('');
+      expect(calledWith.path).toBe('/fr/');
     });
 
     it('Given a child route with SEO data, when updateTitle is called, then the child page definition is used', () => {

@@ -60,7 +60,7 @@ describe('ProgramsPage', () => {
     const page = fixture.nativeElement as HTMLElement;
 
     const registrationLink = page.querySelector(
-      'a[href="/contact"]',
+      'a[href="/fr/contact"]',
     ) as HTMLAnchorElement | null;
 
     expect(registrationLink).toBeTruthy();

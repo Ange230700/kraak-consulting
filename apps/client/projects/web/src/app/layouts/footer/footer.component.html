@@ -14,12 +14,12 @@
     </div>
 
     <a
-      routerLink="/contact"
+      [routerLink]="'contact' | localizedPublicPath"
       kraakPublicConversion="footer_cta_click"
       [kraakPublicConversionPayload]="{
         cta_label: 'Nous contacter',
         cta_surface: 'footer_top_band',
-        cta_path: '/contact',
+        cta_path: 'contact' | localizedPublicPath,
       }"
       class="kr-footer-fade-left bg-brand-cyan shadow-brand-cyan/20 hover:bg-brand-white hover:shadow-brand-cyan/30 inline-flex items-center rounded-full px-10 py-4 text-sm font-black tracking-widest text-neutral-900 uppercase shadow-xl transition-all duration-300 hover:scale-[1.035] hover:shadow-2xl"
     >
@@ -32,7 +32,7 @@
   >
     <div class="space-y-6">
       <a
-        routerLink="/"
+        [routerLink]="'home' | localizedPublicPath"
         class="group inline-flex items-center gap-3"
         aria-label="Retour à l'accueil KRAAK"
       >
@@ -87,10 +87,11 @@
         Navigation
       </h4>
       <ul class="space-y-4 text-sm font-medium">
-        @for (link of navigationLinks; track link.path + link.label) {
+        @for (link of navigationLinks; track link.pageId + link.label) {
+          @let localizedPath = link.pageId | localizedPublicPath;
           <li>
             <a
-              [routerLink]="link.path"
+              [routerLink]="localizedPath"
               class="hover:text-brand-cyan transition-all duration-200 hover:translate-x-px"
             >
               {{ link.label }}
@@ -157,9 +158,10 @@
       <div
         class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 md:justify-end"
       >
-        @for (link of policyLinks; track link.path + link.label) {
+        @for (link of policyLinks; track link.pageId + link.label) {
+          @let localizedPath = link.pageId | localizedPublicPath;
           <a
-            [routerLink]="link.path"
+            [routerLink]="localizedPath"
             class="hover:text-brand-white transition-colors duration-200"
           >
             {{ link.label }}

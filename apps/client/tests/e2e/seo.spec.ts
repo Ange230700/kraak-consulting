@@ -1,164 +1,160 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-test.describe(`SEO technique du site vitrine`, () => {
-  test(`Given la page à propos, When elle se charge, Then le title, la canonical et les balises Open Graph correspondent a la route`, async ({
-    page,
-  }) => {
-    await page.goto('/a-propos');
+type SeoRuntimeErrors = {
+  readonly consoleErrors: string[];
+  readonly pageErrors: string[];
+};
 
-    await expect(page).toHaveTitle(
-      /À propos \| Capital humain, impact et trajectoires \| KRAAK Consulting/i,
-    );
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
-      'content',
-      /capital humain, l'employabilit[eé] des jeunes et des trajectoires durables/i,
-    );
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-      'href',
-      /\/a-propos$/,
-    );
-    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
-      'content',
-      /À propos de KRAAK Consulting/i,
-    );
-    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
-      'content',
-      /\/a-propos$/,
-    );
+function captureSeoRuntimeErrors(page: Page): SeoRuntimeErrors {
+  const errors: SeoRuntimeErrors = {
+    consoleErrors: [],
+    pageErrors: [],
+  };
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') {
+      errors.consoleErrors.push(message.text());
+    }
+  });
+  page.on('pageerror', (error) => {
+    errors.pageErrors.push(error.message);
   });
 
-  test(`Given la page services, When elle se charge, Then le title, la canonical et les balises Open Graph correspondent a la route`, async ({
+  return errors;
+}
+
+async function expectHeadLinkCount(
+  page: Page,
+  selector: string,
+  count: number,
+): Promise<void> {
+  await expect(page.locator(selector)).toHaveCount(count);
+}
+
+async function expectCanonicalPath(page: Page, path: string): Promise<void> {
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    new RegExp(`${escapeRegExp(path)}$`),
+  );
+}
+
+async function expectAlternatePath(
+  page: Page,
+  hreflang: string,
+  path: string,
+): Promise<void> {
+  await expect(
+    page.locator(`link[rel="alternate"][hreflang="${hreflang}"]`),
+  ).toHaveAttribute('href', new RegExp(`${escapeRegExp(path)}$`));
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+test.describe(`SEO i18n du site vitrine`, () => {
+  test(`Given la racine publique, When elle se charge, Then elle rejoint la route française canonique sans erreur d'hydratation`, async ({
     page,
   }) => {
-    await page.goto('/services');
+    const errors = captureSeoRuntimeErrors(page);
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveURL(/\/fr\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr-CI');
+    await expectCanonicalPath(page, '/fr/');
+    await expectAlternatePath(page, 'fr-CI', '/fr/');
+    await expectAlternatePath(page, 'x-default', '/fr/');
+    await expect(page.locator('link[hreflang="en-GB"]')).toHaveCount(0);
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
+  });
+
+  test(`Given une route française localisée, When elle se charge, Then canonical hreflang et indexation restent français`, async ({
+    page,
+  }) => {
+    const errors = captureSeoRuntimeErrors(page);
+
+    await page.goto('/fr/services', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveTitle(
       /Services \| Formation, projets, études, immigration et entreprises/i,
     );
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr-CI');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      /formation, recherche et gestion de projets, études et immigration, et solutions entreprises/i,
+      /index, follow/i,
     );
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-      'href',
-      /\/services$/,
-    );
-    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute(
       'content',
-      /Services/,
+      'fr_CI',
     );
-    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
-      'content',
-      /\/services$/,
-    );
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
-      'content',
-      /assets\/site-visuals\/photos\/home-hero-workshop\.jpg$/,
-    );
+    await expectCanonicalPath(page, '/fr/services');
+    await expectAlternatePath(page, 'fr-CI', '/fr/services');
+    await expectAlternatePath(page, 'x-default', '/fr/services');
+    await expect(page.locator('link[hreflang="en-GB"]')).toHaveCount(0);
+    await expectHeadLinkCount(page, 'link[rel="canonical"]', 1);
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
   });
 
-  test(`Given la page contact, When elle se charge, Then ses métadonnées SEO orientent vers la prise de contact`, async ({
+  test(`Given une route anglaise scaffold, When elle se charge, Then elle reste canonique mais non indexable`, async ({
     page,
   }) => {
-    await page.goto('/contact');
+    const errors = captureSeoRuntimeErrors(page);
 
-    await expect(page).toHaveTitle(/Contact \| Parlons de votre projet/i);
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    await page.goto('/en/services', { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveTitle(/English route scaffold/i);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      /formation, gestion de projets, immigration ou besoin entreprise/i,
+      /noindex, nofollow/i,
     );
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-      'href',
-      /\/contact$/,
-    );
-    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute(
       'content',
-      /Parlons de votre projet/i,
+      'en_GB',
     );
-    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
-      'content',
-      /\/contact$/,
-    );
+    await expectCanonicalPath(page, '/en/services');
+    await expectAlternatePath(page, 'fr-CI', '/fr/services');
+    await expectAlternatePath(page, 'x-default', '/fr/services');
+    await expect(page.locator('link[hreflang="en-GB"]')).toHaveCount(0);
+    await expectHeadLinkCount(page, 'link[rel="canonical"]', 1);
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
   });
 
-  test(`Given les pages programmes et ressources, When elles se chargent, Then leurs métadonnées SEO restent cohérentes avec leurs routes`, async ({
+  test(`Given un alias public historique, When il est ouvert, Then il rejoint temporairement la route française`, async ({
     page,
   }) => {
-    const routes = [
-      {
-        path: '/programmes',
-        title:
-          /Programmes \| Orientation et formats d'accompagnement \| KRAAK/i,
-        description: /catalogue détaillé est partagé après orientation/i,
-        ogTitle: /Programmes KRAAK Consulting/i,
-      },
-      {
-        path: '/ressources',
-        title:
-          /Ressources d'orientation \| Formation, projet et immigration \| KRAAK/i,
-        description:
-          /page d'orientation vitrine pour clarifier votre prochaine étape/i,
-        ogTitle: /Ressources d'orientation KRAAK Consulting/i,
-      },
-    ];
+    const errors = captureSeoRuntimeErrors(page);
 
-    for (const route of routes) {
-      await page.goto(route.path);
+    await page.goto('/about', { waitUntil: 'domcontentloaded' });
 
-      await expect(page).toHaveTitle(route.title);
-      await expect(page.locator('meta[name="description"]')).toHaveAttribute(
-        'content',
-        route.description,
-      );
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-        'href',
-        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
-      );
-      await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
-        'content',
-        route.ogTitle,
-      );
-      await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
-        'content',
-        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
-      );
-    }
+    await expect(page).toHaveURL(/\/fr\/a-propos$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr-CI');
+    await expectCanonicalPath(page, '/fr/a-propos');
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
   });
 
-  test(`Given les pages FAQ et légales, When elles se chargent, Then title canonical et og:url restent alignés`, async ({
+  test(`Given une route anglaise inconnue, When elle se charge, Then la 404 conserve la locale anglaise et reste noindex`, async ({
     page,
   }) => {
-    const routes = [
-      {
-        path: '/faq',
-        title: /FAQ \| Aide et orientation \| KRAAK Consulting/i,
-      },
-      {
-        path: '/mentions-legales',
-        title: /Mentions légales \| KRAAK Consulting/i,
-      },
-      {
-        path: '/politique-de-confidentialite',
-        title: /Politique de confidentialité \| KRAAK Consulting/i,
-      },
-    ];
+    const errors = captureSeoRuntimeErrors(page);
 
-    for (const route of routes) {
-      await page.goto(route.path);
+    await page.goto('/en/unknown-route', { waitUntil: 'domcontentloaded' });
 
-      await expect(page).toHaveTitle(route.title);
-      await expect(page.locator('meta[name="description"]')).toHaveAttribute(
-        'content',
-        /.+/,
-      );
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-        'href',
-        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
-      );
-      await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
-        'content',
-        new RegExp(String.raw`${route.path.replaceAll('/', '/')}$`),
-      );
-    }
+    await expect(page).toHaveTitle(/English route scaffold/i);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      /noindex, nofollow/i,
+    );
+    await expectCanonicalPath(page, '/en/404');
+    await expectAlternatePath(page, 'x-default', '/fr/404');
+    await expect(page.locator('link[hreflang="en-GB"]')).toHaveCount(0);
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
   });
 });

@@ -97,8 +97,9 @@ describe('SSR SEO routes integration', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('application/xml');
-    expect(body).toContain('<loc>https://seo.kraak.test/</loc>');
-    expect(body).toContain('<loc>https://seo.kraak.test/contact</loc>');
+    expect(body).toContain('<loc>https://seo.kraak.test/fr/</loc>');
+    expect(body).toContain('<loc>https://seo.kraak.test/fr/contact</loc>');
+    expect(body).not.toContain('<loc>https://seo.kraak.test/en/contact</loc>');
     expect(body).not.toContain(legacyHostMarker);
   });
 

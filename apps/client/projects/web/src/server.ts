@@ -10,6 +10,7 @@ import express from 'express';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
+import { registerPublicRedirectRoutes } from './public-redirects';
 import { registerSeoRoutes } from './seo-routes';
 import { buildPrerenderedHtmlPath } from './ssr-path';
 
@@ -19,6 +20,7 @@ const resolvedBrowserDistFolder = resolve(browserDistFolder);
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+registerPublicRedirectRoutes(app);
 registerSeoRoutes(app);
 
 /**

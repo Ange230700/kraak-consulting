@@ -26,10 +26,13 @@ Le site web KRAAK est l'application Angular publique située dans
 - Style : classes Tailwind et composants PrimeNG, sans `style` inline ni fichier
   CSS/SCSS par composant.
 - Icônes : PrimeIcons pour les icônes UI.
-- Surface publique gelée : `/`, `/a-propos`, `/services`, `/faq`,
-  `/programmes`, `/ressources`, `/contact`, pages légales et pages d'erreur.
-- Internationalisation : `fr-CI` restera la locale source et de repli, `en-GB`
-  sera la première locale anglaise cible selon ARC-19.
+- Surface publique canonique : `/fr/`, `/fr/a-propos`, `/fr/services`,
+  `/fr/faq`, `/fr/programmes`, `/fr/ressources`, `/fr/contact`, pages légales
+  et pages d'erreur sous `/fr/...`.
+- Internationalisation : `fr-CI` est la locale source et de repli, `en-GB` est
+  la première locale anglaise cible selon ARC-19. Les routes `/en/...` existent
+  comme scaffold technique non indexable tant que les contenus anglais relus ne
+  sont pas fournis.
 
 ## Implémentation active
 
@@ -42,18 +45,29 @@ Le site web KRAAK est l'application Angular publique située dans
 
 ## Internationalisation cible
 
-Les routes publiques web utiliseront plus tard des chemins canoniques préfixés
-par locale : `/fr/...` pour le français et `/en/...` pour l'anglais. La racine
-`/` devra rediriger durablement vers `/fr/`, et les chemins publics français
-existants devront rediriger vers leurs équivalents `/fr/...`.
+Les routes publiques web utilisent des chemins canoniques préfixés par locale :
+`/fr/...` pour le français et `/en/...` pour l'anglais. La racine `/` redirige
+vers `/fr/`, et les chemins publics français historiques redirigent vers leurs
+équivalents `/fr/...`.
 
 Le prerender, les métadonnées SEO, les canonicals, les liens `hreflang`, les
-entrées sitemap et l'attribut `<html lang>` devront être générés par locale. Les
-routes d'authentification technique, notamment les callbacks et liens de
-réinitialisation, devront rester compatibles avec Supabase Auth avant toute
-localisation de chemin.
+entrées sitemap et l'attribut `<html lang>` sont générés par locale depuis le
+modèle de routes web localisées.
 
-Cette PR ne modifie aucune route, aucun catalogue et aucun comportement web.
+Pour le scaffold PR3, les routes anglaises sont pré-rendues mais restent
+`noindex, nofollow`, exclues du sitemap de production et non annoncées en
+`hreflang="en-GB"` depuis les pages françaises indexables. `x-default` pointe
+vers la route française correspondante jusqu'à la revue des contenus anglais en
+PR4.
+
+Les routes d'authentification technique, notamment les callbacks et liens de
+réinitialisation, restent compatibles avec Supabase Auth avant toute localisation
+de chemin.
+
+Sur Render static, les redirects HTTP permanents non racine sont déclarés dans
+`render.yaml`. La racine `/` est couverte par la redirection Angular/SSR et par
+une page statique générée en fin de prerender, car Render ne permet pas les
+redirects ciblant directement `/` dans les règles de réécriture.
 
 ## Sources liées
 

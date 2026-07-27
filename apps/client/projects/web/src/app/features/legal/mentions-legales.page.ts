@@ -9,11 +9,17 @@ import {
   WHATSAPP_CONTACT_HREF,
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 
 @Component({
   selector: 'kraak-mentions-legales-page',
   standalone: true,
-  imports: [CtaBanner, RouterLink, PublicConversionTrackingDirective],
+  imports: [
+    CtaBanner,
+    RouterLink,
+    PublicConversionTrackingDirective,
+    LocalizedPublicPathPipe,
+  ],
   templateUrl: './mentions-legales.page.html',
 })
 export default class MentionsLegalesPage {

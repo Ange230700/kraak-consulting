@@ -18,7 +18,10 @@ export class SeoService {
 
   applyPageSeo(page: SeoPageDefinition, siteUrl = environment.siteUrl): void {
     const publicSiteUrl = resolvePublicSiteUrl(siteUrl);
-    const canonicalUrl = buildAbsoluteUrl(page.path, publicSiteUrl);
+    const canonicalUrl = buildAbsoluteUrl(
+      page.canonicalPath ?? page.path,
+      publicSiteUrl,
+    );
     const openGraphImageUrl = buildAbsoluteUrl(
       page.openGraph.imagePath,
       publicSiteUrl,
@@ -63,7 +66,7 @@ export class SeoService {
     });
     this.meta.updateTag({
       property: 'og:locale',
-      content: seoDefaults.locale,
+      content: page.openGraphLocale ?? seoDefaults.locale,
     });
     this.meta.updateTag({
       name: 'twitter:card',
@@ -83,6 +86,9 @@ export class SeoService {
     });
 
     this.updateCanonicalLink(canonicalUrl);
+    this.updateAlternateLinks(page, publicSiteUrl);
+    this.updateOpenGraphLocaleAlternates(page);
+    this.updateDocumentLanguage(page.htmlLang ?? 'fr-CI');
   }
 
   private updateCanonicalLink(canonicalUrl: string): void {
@@ -98,5 +104,49 @@ export class SeoService {
     }
 
     canonicalLink.setAttribute('href', canonicalUrl);
+  }
+
+  private updateAlternateLinks(
+    page: SeoPageDefinition,
+    publicSiteUrl: string,
+  ): void {
+    this.document.head
+      .querySelectorAll('link[rel="alternate"][hreflang]')
+      .forEach((element) => element.remove());
+
+    for (const link of page.hreflangLinks ?? []) {
+      const alternateLink = this.document.createElement('link');
+      alternateLink.setAttribute('rel', 'alternate');
+      alternateLink.setAttribute('hreflang', link.hreflang);
+      alternateLink.setAttribute(
+        'href',
+        buildAbsoluteUrl(link.path, publicSiteUrl),
+      );
+      this.document.head.appendChild(alternateLink);
+    }
+  }
+
+  private updateOpenGraphLocaleAlternates(page: SeoPageDefinition): void {
+    this.document.head
+      .querySelectorAll('meta[property="og:locale:alternate"]')
+      .forEach((element) => element.remove());
+
+    const localeAlternates = new Set(
+      (page.hreflangLinks ?? [])
+        .filter((link) => link.hreflang !== 'x-default')
+        .filter((link) => link.hreflang !== page.locale)
+        .map((link) => link.hreflang.replace('-', '_')),
+    );
+
+    for (const locale of localeAlternates) {
+      this.meta.addTag({
+        property: 'og:locale:alternate',
+        content: locale,
+      });
+    }
+  }
+
+  private updateDocumentLanguage(htmlLang: string): void {
+    this.document.documentElement.setAttribute('lang', htmlLang);
   }
 }

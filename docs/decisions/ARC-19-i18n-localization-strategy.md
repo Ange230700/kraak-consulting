@@ -46,9 +46,10 @@ source_of_truth: true
 | **Portée**     | Web Angular, mobile Ionic Angular, API NestJS, packages partagés, SEO, e-mails, notifications, contenu CMS et déploiement Render |
 | **Dépendance** | ARC-01, ARC-03, ARC-04, ARC-14, ARC-16                                                                                           |
 
-Cette décision définit l'architecture cible d'internationalisation. Elle ne
-signifie pas que les traductions, les routes localisées, les catalogues, les
-migrations ou la configuration Render sont déjà implémentés.
+Cette décision définit l'architecture cible d'internationalisation. Les PRs 1 à
+3 ont posé le contrat de locales, l'adaptateur runtime et le scaffold web
+localisé. Les traductions publiques anglaises revues, les migrations, les
+templates e-mail et les contenus CMS localisés restent hors de ce scaffold.
 
 ## 2. Contexte
 
@@ -67,13 +68,13 @@ Angular i18n, de sitemap localisé ou de stratégie de persistance de locale.
 KRAAK adopte une architecture d'internationalisation runtime partagée entre le
 web et le mobile, protégée par un petit adaptateur applicatif KRAAK.
 
-Le site web public utilisera plus tard des routes canoniques préfixées par la
-locale pour préserver le SEO et le prerender. Le mobile changera de langue au
-runtime sans dépendre des routes. L'API exposera des codes d'erreur
+Le site web public utilise des routes canoniques préfixées par la locale pour
+préserver le SEO et le prerender. Le mobile changera de langue au runtime sans
+dépendre des routes. L'API exposera des codes d'erreur
 machine-readable stables, et les clients traduiront les messages visibles.
 
-La sélection exacte de la bibliothèque runtime de traduction appartient à la PR 2. Cette ADR fixe les exigences et les frontières, sans installer ni nommer une
-dépendance comme choix final dans la PR 1.
+La sélection exacte de la bibliothèque runtime de traduction a été traitée en
+PR 2. Cette ADR fixe les exigences et les frontières.
 
 ## 4. Locales source, supportées et de repli
 
@@ -87,16 +88,19 @@ nécessaire, par exemple `fr_CI` pour certains champs Open Graph.
 
 ## 5. Stratégie d'URL web publique
 
-Les routes publiques canoniques utiliseront à terme :
+Les routes publiques canoniques utilisent :
 
 - `/fr/...` pour le français ;
 - `/en/...` pour l'anglais.
 
-La racine `/` redirigera durablement vers `/fr/`. Les chemins publics français
-existants redirigeront plus tard vers leurs équivalents `/fr/...` afin de
-préserver les liens, favoris, indexations et campagnes existants.
+La racine `/` redirige vers `/fr/`. Les chemins publics français existants
+redirigent vers leurs équivalents `/fr/...` afin de préserver les liens, favoris,
+indexations et campagnes existants.
 
-Cette PR ne modifiera aucune route.
+Les routes anglaises `/en/...` existent comme scaffold technique pré-rendu mais
+restent non indexables tant que la PR 4 n'a pas fourni les contenus anglais
+relus. Les alias anglais historiques `/about`, `/programs` et `/resources`
+redirigent temporairement vers les routes françaises correspondantes.
 
 ## 6. Politique des routes privées, admin et mobile
 
@@ -111,9 +115,8 @@ URLs configurées côté Supabase Auth.
 
 ## 7. Architecture d'adaptateur runtime web/mobile
 
-Le dépôt introduira plus tard un adaptateur i18n applicatif unique qui masquera
-la bibliothèque de traduction choisie. Cet adaptateur devra rester compatible
-avec :
+Le dépôt utilise un adaptateur i18n applicatif unique qui masque la bibliothèque
+de traduction choisie. Cet adaptateur devra rester compatible avec :
 
 - Angular web avec SSR/prerender ;
 - Ionic Angular mobile ;
@@ -122,8 +125,8 @@ avec :
 - les tests unitaires et E2E ;
 - les garde-fous de clés manquantes.
 
-La PR 1 introduit uniquement un contrat de locale framework-free dans
-`@kraak/domain`.
+La PR 1 a introduit le contrat de locale framework-free dans `@kraak/domain`, et
+la PR 2 a introduit l'adaptateur runtime web/mobile.
 
 ## 8. Propriété des catalogues de traduction
 
@@ -238,7 +241,7 @@ mais cette synchronisation ne fait pas partie de la PR 1.
 
 ## 17. SEO, prerender, canonicals, hreflang et sitemap
 
-Les pages publiques localisées devront produire :
+Les pages publiques localisées produisent progressivement :
 
 - un titre et une description localisés ;
 - un attribut `<html lang>` localisé ;
@@ -248,14 +251,16 @@ Les pages publiques localisées devront produire :
 - des entrées sitemap localisées avec alternates ;
 - des routes prerender explicites pour chaque locale supportée.
 
-Les pages privées, admin, auth sensibles et erreurs devront conserver leurs
-directives d'indexation adaptées.
+Dans le scaffold PR3, les pages françaises indexables annoncent `fr-CI` et
+`x-default`, les pages anglaises restent `noindex, nofollow` et ne sont pas
+incluses dans le sitemap de production. Les pages privées, admin, auth sensibles
+et erreurs conservent leurs directives d'indexation adaptées.
 
 ## 18. Modèle de sortie Render
 
-Le modèle cible gardera un service Render static par environnement. La sortie
-web pourra plus tard être organisée sous un seul dossier publié, avec des
-sous-arbres localisés tels que :
+Le modèle cible garde un service Render static par environnement. La sortie web
+est organisée sous un seul dossier publié, avec des sous-arbres localisés tels
+que :
 
 ```text
 public/
@@ -267,8 +272,9 @@ public/
   404.html
 ```
 
-Cette PR ne modifiera ni `render.yaml`, ni les commandes de build, ni les
-variables Render.
+Le scaffold PR3 ajoute uniquement les redirects publics non racine vérifiés dans
+`render.yaml`. Les commandes Render, les variables d'environnement, les plans et
+les déclencheurs restent inchangés.
 
 ## 19. Tests et CI
 

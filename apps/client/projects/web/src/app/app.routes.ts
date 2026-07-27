@@ -2,11 +2,42 @@
 
 import { Route, Routes } from '@angular/router';
 
-import { findSeoPageByPath, type SeoPageDefinition } from './seo/site-seo';
 import { adminAreaRoutes } from './admin-area.routes';
+import { webRouteLocaleResolver } from './i18n/web-route-locale.resolver';
 import { participantAreaRoutes } from './participant-area.routes';
+import {
+  LOCALIZED_PUBLIC_LOCALES,
+  findLocalizedPublicRouteEntry,
+  localizedPublicRouteEntries,
+  renderPublicRedirects,
+  toAngularRoutePath,
+  type LocalizedPublicComponentKey,
+  type LocalizedPublicRouteEntry,
+} from './routing/localized-public-routes';
+import {
+  findLocalizedSeoPageByPath,
+  findSeoPageByPath,
+  type SeoPageDefinition,
+} from './seo/site-seo';
 
 export { participantAreaCanMatch } from './participant-area.routes';
+
+const publicComponentLoaders = {
+  home: () => import('./features/home/home.page'),
+  about: () => import('./features/about/about.page'),
+  services: () => import('./features/services/services.page'),
+  faq: () => import('./features/support/faq.page'),
+  programs: () => import('./features/programs/programs.page'),
+  resources: () => import('./features/resources/resources.page'),
+  contact: () => import('./features/contact/contact.page'),
+  legalNotice: () => import('./features/legal/mentions-legales.page'),
+  privacyPolicy: () =>
+    import('./features/legal/politique-de-confidentialite.page'),
+  unauthorized: () => import('./features/support/unauthorized.page'),
+  forbidden: () => import('./features/support/forbidden.page'),
+  notFound: () => import('./features/support/not-found.page'),
+  serverError: () => import('./features/support/server-error.page'),
+} satisfies Record<LocalizedPublicComponentKey, Route['loadComponent']>;
 
 export const buildMarketingRoute = (
   path: string,
@@ -26,130 +57,78 @@ export const buildMarketingRoute = (
   };
 };
 
-const marketingRoutes: Routes = [
-  buildMarketingRoute('', () => import('./features/home/home.page')),
-  buildMarketingRoute('a-propos', () => import('./features/about/about.page')),
-  buildMarketingRoute(
-    'services',
-    () => import('./features/services/services.page'),
-  ),
-  buildMarketingRoute('faq', () => import('./features/support/faq.page')),
-  buildMarketingRoute(
-    'programmes',
-    () => import('./features/programs/programs.page'),
-  ),
-  buildMarketingRoute(
-    'ressources',
-    () => import('./features/resources/resources.page'),
-  ),
-  buildMarketingRoute(
-    'contact',
-    () => import('./features/contact/contact.page'),
-  ),
-  buildMarketingRoute(
-    'mentions-legales',
-    () => import('./features/legal/mentions-legales.page'),
-  ),
-  buildMarketingRoute(
-    'politique-de-confidentialite',
-    () => import('./features/legal/politique-de-confidentialite.page'),
-  ),
-  buildMarketingRoute(
-    'auth/reset',
-    () => import('./features/auth/auth-reset.page'),
-  ),
-  {
-    path: 'about',
-    redirectTo: 'a-propos',
+const authResetRoute = buildMarketingRoute(
+  'auth/reset',
+  () => import('./features/auth/auth-reset.page'),
+);
+
+function buildLocalizedPublicRoutes(): Routes {
+  return LOCALIZED_PUBLIC_LOCALES.map((localeDefinition) => {
+    const notFoundEntry = findLocalizedPublicRouteEntry(
+      'notFound',
+      localeDefinition.locale,
+    );
+    const notFoundSeo = findRequiredLocalizedSeoPage(notFoundEntry.path);
+    const childRoutes = localizedPublicRouteEntries
+      .filter((entry) => entry.locale === localeDefinition.locale)
+      .map((entry) => buildLocalizedPublicPageRoute(entry));
+
+    return {
+      path: localeDefinition.segment,
+      data: { locale: localeDefinition.locale },
+      resolve: { locale: webRouteLocaleResolver },
+      runGuardsAndResolvers: 'always',
+      children: [
+        ...childRoutes,
+        {
+          path: '**',
+          title: notFoundSeo.title,
+          data: {
+            locale: localeDefinition.locale,
+            seo: notFoundSeo,
+          },
+          loadComponent: publicComponentLoaders.notFound,
+        },
+      ],
+    };
+  });
+}
+
+function buildLocalizedPublicPageRoute(
+  entry: LocalizedPublicRouteEntry,
+): Route {
+  const seo = findRequiredLocalizedSeoPage(entry.path);
+
+  return {
+    path: entry.childPath,
+    ...(entry.childPath === '' ? { pathMatch: 'full' as const } : {}),
+    title: seo.title,
+    data: {
+      locale: entry.locale,
+      pageId: entry.pageId,
+      seo,
+    },
+    loadComponent: publicComponentLoaders[entry.component],
+  };
+}
+
+function buildLegacyRedirectRoutes(): Routes {
+  return renderPublicRedirects.map((redirect) => ({
+    path: toAngularRoutePath(redirect.source),
+    redirectTo: redirect.destination,
     pathMatch: 'full',
-  },
-  {
-    path: 'programs',
-    redirectTo: 'programmes',
-    pathMatch: 'full',
-  },
-  {
-    path: 'resources',
-    redirectTo: 'ressources',
-    pathMatch: 'full',
-  },
-];
+  }));
+}
 
-const notFoundSeo: SeoPageDefinition = {
-  path: '404',
-  title: 'Page introuvable | KRAAK Consulting',
-  description:
-    "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
-  openGraph: {
-    title: 'Page introuvable | KRAAK Consulting',
-    description:
-      "La page demandée est introuvable. Retrouvez la FAQ, l'accueil ou le formulaire de contact KRAAK.",
-    imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt:
-      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
-  },
-  sitemap: {
-    changeFrequency: 'never',
-    priority: 0.1,
-  },
-};
+function findRequiredLocalizedSeoPage(path: string): SeoPageDefinition {
+  const seo = findLocalizedSeoPageByPath(path);
 
-const unauthorizedSeo: SeoPageDefinition = {
-  path: '401',
-  title: 'Authentification requise | KRAAK Consulting',
-  description:
-    'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
-  openGraph: {
-    title: 'Authentification requise | KRAAK Consulting',
-    description:
-      'Cette ressource nécessite une authentification. Connectez-vous pour poursuivre votre parcours KRAAK.',
-    imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt:
-      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
-  },
-  sitemap: {
-    changeFrequency: 'never',
-    priority: 0.1,
-  },
-};
+  if (!seo) {
+    throw new Error(`Missing localized SEO configuration for "${path}".`);
+  }
 
-const forbiddenSeo: SeoPageDefinition = {
-  path: '403',
-  title: 'Accès refusé | KRAAK Consulting',
-  description:
-    'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
-  openGraph: {
-    title: 'Accès refusé | KRAAK Consulting',
-    description:
-      'Cette ressource est protégée. Contactez KRAAK si vous pensez disposer des droits nécessaires.',
-    imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt:
-      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
-  },
-  sitemap: {
-    changeFrequency: 'never',
-    priority: 0.1,
-  },
-};
-
-const serverErrorSeo: SeoPageDefinition = {
-  path: '500',
-  title: 'Incident technique | KRAAK Consulting',
-  description:
-    'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
-  openGraph: {
-    title: 'Incident technique | KRAAK Consulting',
-    description:
-      'Une erreur technique est survenue. Réessayez dans un instant ou contactez KRAAK.',
-    imagePath: '/assets/site-visuals/photos/home-hero-workshop.jpg',
-    imageAlt:
-      "Photo d'un atelier KRAAK Consulting avec des participants en session de travail.",
-  },
-  sitemap: {
-    changeFrequency: 'never',
-    priority: 0.1,
-  },
-};
+  return seo;
+}
 
 interface BuildRoutesOptions {
   readonly includeParticipantArea?: boolean;
@@ -157,40 +136,24 @@ interface BuildRoutesOptions {
 
 export function buildRoutes(options: BuildRoutesOptions = {}): Routes {
   const includeParticipantArea = options.includeParticipantArea ?? true;
+  const fallbackNotFoundSeo = findRequiredLocalizedSeoPage('/fr/404');
 
   return [
-    ...marketingRoutes,
+    {
+      path: '',
+      redirectTo: '/fr/',
+      pathMatch: 'full',
+    },
+    ...buildLegacyRedirectRoutes(),
+    ...buildLocalizedPublicRoutes(),
     ...adminAreaRoutes,
     ...(includeParticipantArea ? participantAreaRoutes : []),
-    {
-      path: '401',
-      title: unauthorizedSeo.title,
-      data: { seo: unauthorizedSeo },
-      loadComponent: () => import('./features/support/unauthorized.page'),
-    },
-    {
-      path: '403',
-      title: forbiddenSeo.title,
-      data: { seo: forbiddenSeo },
-      loadComponent: () => import('./features/support/forbidden.page'),
-    },
-    {
-      path: '500',
-      title: serverErrorSeo.title,
-      data: { seo: serverErrorSeo },
-      loadComponent: () => import('./features/support/server-error.page'),
-    },
-    {
-      path: '404',
-      title: notFoundSeo.title,
-      data: { seo: notFoundSeo },
-      loadComponent: () => import('./features/support/not-found.page'),
-    },
+    authResetRoute,
     {
       path: '**',
-      title: notFoundSeo.title,
-      data: { seo: notFoundSeo },
-      loadComponent: () => import('./features/support/not-found.page'),
+      title: fallbackNotFoundSeo.title,
+      data: { seo: fallbackNotFoundSeo },
+      loadComponent: publicComponentLoaders.notFound,
     },
   ];
 }

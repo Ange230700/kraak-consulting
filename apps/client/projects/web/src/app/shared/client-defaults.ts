@@ -55,7 +55,7 @@ function resolveDefaultsProfile(): DefaultsProfile {
 
 const BASE_DEFAULTS: Omit<ClientDefaults, 'siteUrl'> = {
   siteName: 'KRAAK',
-  locale: 'fr_FR',
+  locale: 'fr_CI',
   robots: 'index, follow',
   publicAssetBaseUrl:
     'https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images',

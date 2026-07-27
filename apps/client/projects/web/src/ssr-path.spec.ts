@@ -9,12 +9,12 @@ describe('Given the web SSR prerender lookup', () => {
     const fileExists = vi.fn(() => true);
 
     const prerenderedHtmlPath = buildPrerenderedHtmlPath(
-      '/a-propos',
+      '/fr/a-propos',
       '/app/browser',
       fileExists,
     );
 
-    expect(prerenderedHtmlPath).toBe('/app/browser/a-propos/index.html');
+    expect(prerenderedHtmlPath).toBe('/app/browser/fr/a-propos/index.html');
     expect(fileExists).toHaveBeenCalledTimes(1);
   });
 
@@ -54,36 +54,40 @@ describe('Given the web SSR prerender lookup', () => {
     const fileExists = vi.fn(() => false);
 
     const prerenderedHtmlPath = buildPrerenderedHtmlPath(
-      '/contact',
+      '/fr/contact',
       '/app/browser',
       fileExists,
     );
 
     expect(prerenderedHtmlPath).toBeUndefined();
-    expect(fileExists).toHaveBeenCalledWith('/app/browser/contact/index.html');
+    expect(fileExists).toHaveBeenCalledWith(
+      '/app/browser/fr/contact/index.html',
+    );
   });
 
   it('When browser path and route contain mixed slashes, Then the generated path is normalized', () => {
     const prerenderedHtmlPath = buildPrerenderedHtmlPath(
-      '/services/',
+      '/fr/services/',
       'C:\\dist\\browser\\',
       () => true,
     );
 
-    expect(prerenderedHtmlPath).toBe('C:/dist/browser/services/index.html');
+    expect(prerenderedHtmlPath).toBe('C:/dist/browser/fr/services/index.html');
   });
 
   it('When the route has trailing slashes, Then the route segment is trimmed before building the index path', () => {
     const fileExists = vi.fn(() => true);
 
     const prerenderedHtmlPath = buildPrerenderedHtmlPath(
-      '/a-propos///',
+      '/fr/a-propos///',
       '/app/browser',
       fileExists,
     );
 
-    expect(prerenderedHtmlPath).toBe('/app/browser/a-propos/index.html');
-    expect(fileExists).toHaveBeenCalledWith('/app/browser/a-propos/index.html');
+    expect(prerenderedHtmlPath).toBe('/app/browser/fr/a-propos/index.html');
+    expect(fileExists).toHaveBeenCalledWith(
+      '/app/browser/fr/a-propos/index.html',
+    );
   });
 
   it('When a route contains backslashes, Then the lookup is rejected as unsafe', () => {

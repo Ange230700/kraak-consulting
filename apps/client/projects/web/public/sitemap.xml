@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kraak-web-prod.onrender.com/</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/a-propos</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/a-propos</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/a-propos" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/a-propos" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/services</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/services</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/services" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/services" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/programmes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kraak-web-prod.onrender.com/ressources</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kraak-web-prod.onrender.com/contact</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kraak-web-prod.onrender.com/faq</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/faq</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/faq" />
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/mentions-legales</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/programmes</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/programmes" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/programmes" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kraak-web-prod.onrender.com/fr/ressources</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/ressources" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/ressources" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kraak-web-prod.onrender.com/fr/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/contact" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kraak-web-prod.onrender.com/fr/mentions-legales</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/mentions-legales" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/mentions-legales" />
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/politique-de-confidentialite</loc>
+    <loc>https://kraak-web-prod.onrender.com/fr/politique-de-confidentialite</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/politique-de-confidentialite" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/politique-de-confidentialite" />
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

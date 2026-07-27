@@ -5,7 +5,11 @@ import {
   TitleStrategy,
 } from '@angular/router';
 
-import { SeoPageDefinition, findSeoPageByPath } from './site-seo';
+import {
+  SeoPageDefinition,
+  findLocalizedSeoPageByPath,
+  findSeoPageByPath,
+} from './site-seo';
 import { SeoService } from './seo.service';
 
 @Injectable()
@@ -13,7 +17,10 @@ export class SeoTitleStrategy extends TitleStrategy {
   private readonly seoService = inject(SeoService);
 
   override updateTitle(snapshot: RouterStateSnapshot): void {
-    const page = this.findSeoPage(snapshot.root) ?? findSeoPageByPath('');
+    const page =
+      this.findSeoPage(snapshot.root) ??
+      findLocalizedSeoPageByPath('/fr/') ??
+      findSeoPageByPath('');
 
     if (page) {
       this.seoService.applyPageSeo(page);

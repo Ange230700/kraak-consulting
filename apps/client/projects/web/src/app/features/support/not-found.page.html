@@ -45,7 +45,7 @@
       <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           pButton
-          routerLink="/"
+          [routerLink]="'home' | localizedPublicPath"
           label="Retour à l'accueil"
           icon="pi pi-home"
           size="large"
@@ -56,7 +56,7 @@
         </a>
         <a
           pButton
-          routerLink="/faq"
+          [routerLink]="'faq' | localizedPublicPath"
           label="Consulter l'aide"
           icon="pi pi-question-circle"
           size="large"
@@ -67,7 +67,7 @@
         </a>
         <a
           pButton
-          routerLink="/contact"
+          [routerLink]="'contact' | localizedPublicPath"
           label="Nous contacter"
           icon="pi pi-envelope"
           size="large"
@@ -80,7 +80,7 @@
 
       <div class="mt-12 grid gap-4 text-left md:grid-cols-3">
         <a
-          routerLink="/"
+          [routerLink]="'home' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">
@@ -92,7 +92,7 @@
           </p>
         </a>
         <a
-          routerLink="/faq"
+          [routerLink]="'faq' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">
@@ -104,7 +104,7 @@
           </p>
         </a>
         <a
-          routerLink="/contact"
+          [routerLink]="'contact' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">

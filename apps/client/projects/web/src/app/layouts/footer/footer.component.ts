@@ -11,11 +11,13 @@ import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import type { LocalizedPublicPageId } from '../../routing/localized-public-routes';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 
 interface FooterLink {
   label: string;
-  path: string;
+  pageId: LocalizedPublicPageId;
 }
 
 interface FooterOfficeItem {
@@ -27,7 +29,11 @@ interface FooterOfficeItem {
 @Component({
   selector: 'kraak-footer',
   standalone: true,
-  imports: [RouterLink, PublicConversionTrackingDirective],
+  imports: [
+    RouterLink,
+    PublicConversionTrackingDirective,
+    LocalizedPublicPathPipe,
+  ],
   templateUrl: './footer.component.html',
 })
 export class Footer implements AfterViewInit, OnDestroy {
@@ -39,11 +45,11 @@ export class Footer implements AfterViewInit, OnDestroy {
   protected readonly currentYear = new Date().getFullYear();
 
   protected readonly navigationLinks: FooterLink[] = [
-    { label: 'Accueil', path: '/' },
-    { label: 'Services', path: '/services' },
-    { label: 'Programmes', path: '/programmes' },
-    { label: '\u00C0 propos', path: '/a-propos' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Accueil', pageId: 'home' },
+    { label: 'Services', pageId: 'services' },
+    { label: 'Programmes', pageId: 'programs' },
+    { label: '\u00C0 propos', pageId: 'about' },
+    { label: 'Contact', pageId: 'contact' },
   ];
 
   protected readonly expertiseItems: readonly string[] = [
@@ -72,11 +78,11 @@ export class Footer implements AfterViewInit, OnDestroy {
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
 
   protected readonly policyLinks: FooterLink[] = [
-    { label: 'Mentions l\u00E9gales', path: '/mentions-legales' },
-    { label: 'FAQ', path: '/faq' },
+    { label: 'Mentions l\u00E9gales', pageId: 'legalNotice' },
+    { label: 'FAQ', pageId: 'faq' },
     {
       label: 'Politique de confidentialité',
-      path: '/politique-de-confidentialite',
+      pageId: 'privacyPolicy',
     },
   ];
 

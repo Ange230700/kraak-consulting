@@ -3,6 +3,8 @@ import { InjectionToken, Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
+import { resolveLocaleFromPublicPath } from '../../routing/localized-public-routes';
+
 /**
  * Identifiant de mesure GA4 (`G-XXXXXXX`) injecté à la racine de l'application.
  * Quand la valeur est vide, l'analytics est complètement désactivée.
@@ -99,8 +101,17 @@ export class AnalyticsService {
       )
       .subscribe((event) => {
         const target = this.getGtagWindow();
-        target.gtag?.('event', 'page_view', {
+        const locale = resolveLocaleFromPublicPath(event.urlAfterRedirects);
+        const pageViewParams: Record<string, unknown> = {
           page_path: event.urlAfterRedirects,
+        };
+
+        if (locale) {
+          pageViewParams['locale'] = locale;
+        }
+
+        target.gtag?.('event', 'page_view', {
+          ...pageViewParams,
         });
       });
   }

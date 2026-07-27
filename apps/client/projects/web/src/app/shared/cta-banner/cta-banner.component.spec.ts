@@ -23,7 +23,7 @@ describe('CtaBanner', () => {
       .compileComponents();
   });
 
-  it('should render a gradient surface and CTA button', () => {
+  it('Given CTA inputs, when the component renders, then the CTA button uses the localized fallback URL', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('heading', 'Parlons de votre projet');
     fixture.componentRef.setInput(
@@ -38,9 +38,12 @@ describe('CtaBanner', () => {
 
     expect(element.querySelector('.bg-linear-to-r')).toBeTruthy();
     expect(element.querySelector('.p-button')).toBeTruthy();
+    expect(element.querySelector('a')?.getAttribute('href')).toBe(
+      '/fr/contact',
+    );
   });
 
-  it('should track a conversion event when the CTA click handler is triggered', () => {
+  it('Given a CTA link, when the click handler is triggered, then the conversion event keeps a language-neutral name and localized URL', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('heading', 'Parlons de votre projet');
     fixture.componentRef.setInput('ctaLabel', 'Nous contacter');
@@ -55,7 +58,7 @@ describe('CtaBanner', () => {
       {
         cta_context: 'home_hero',
         cta_label: 'Nous contacter',
-        cta_link: '/contact',
+        cta_link: '/fr/contact',
       },
     );
   });
@@ -91,7 +94,7 @@ describe('CtaBanner', () => {
       {
         cta_context: 'unknown',
         cta_label: 'Nous contacter',
-        cta_link: '/contact',
+        cta_link: '/fr/contact',
       },
     );
   });

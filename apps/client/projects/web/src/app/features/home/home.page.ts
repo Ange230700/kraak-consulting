@@ -15,6 +15,7 @@ import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 
 const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/programs-workshop.avif',
@@ -30,6 +31,7 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
     FaqAccordion,
     PublicConversionTrackingDirective,
     RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
   ],
   templateUrl: './home.page.html',
   styles: [

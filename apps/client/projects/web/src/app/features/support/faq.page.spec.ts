@@ -38,12 +38,12 @@ describe('FaqPage', () => {
     expect(content).toContain('Vous ne trouvez pas votre réponse ?');
 
     const contactLinks = fixture.nativeElement.querySelectorAll(
-      'a[routerLink="/contact"]',
+      'a[href="/fr/contact"]',
     );
     expect(contactLinks.length).toBeGreaterThan(0);
 
     const serviceLinks = fixture.nativeElement.querySelectorAll(
-      'a[routerLink="/services"]',
+      'a[href="/fr/services"]',
     );
     expect(serviceLinks.length).toBeGreaterThan(0);
   });

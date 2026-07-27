@@ -14,6 +14,7 @@ import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 
 const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/services-hero-project-planning.avif',
@@ -28,6 +29,7 @@ const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
     FaqAccordion,
     CtaBanner,
     RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
   ],
   templateUrl: './services.page.html',
 })

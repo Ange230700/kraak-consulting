@@ -172,14 +172,38 @@ describe('AnalyticsService', () => {
       calls.push(args);
     };
 
-    router.events.next(new NavigationEnd(1, '/services', '/services'));
+    router.events.next(new NavigationEnd(1, '/fr/services', '/fr/services'));
 
     const pageViewCall = calls.find(
       (args) => args[0] === 'event' && args[1] === 'page_view',
     );
     expect(pageViewCall).toBeDefined();
     const params = pageViewCall?.[2] as Record<string, unknown> | undefined;
-    expect(params?.['page_path']).toBe('/services');
+    expect(params?.['page_path']).toBe('/fr/services');
+    expect(params?.['locale']).toBe('fr-CI');
+  });
+
+  it("Given une route privée stable, When un page_view est envoyé, Then aucune locale implicite n'est ajoutée", () => {
+    const { router } = setupAnalyticsTestBed('G-ABC123');
+    const service = TestBed.inject(AnalyticsService);
+    service.initialize();
+
+    const calls: unknown[][] = [];
+    getWindow().gtag = (...args: unknown[]) => {
+      calls.push(args);
+    };
+
+    router.events.next(
+      new NavigationEnd(1, '/participant/dashboard', '/participant/dashboard'),
+    );
+
+    const pageViewCall = calls.find(
+      (args) => args[0] === 'event' && args[1] === 'page_view',
+    );
+    const params = pageViewCall?.[2] as Record<string, unknown> | undefined;
+
+    expect(params?.['page_path']).toBe('/participant/dashboard');
+    expect(params).not.toHaveProperty('locale');
   });
 
   // Given un identifiant GA4 absent

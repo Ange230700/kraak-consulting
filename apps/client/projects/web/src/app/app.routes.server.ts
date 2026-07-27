@@ -2,64 +2,32 @@
 
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
-import { seoPages } from './seo/site-seo';
+import { localizedPublicPrerenderPaths } from './routing/localized-public-routes';
 
-const supportPrerenderPaths = ['401', '403', '404', '500'];
-
-const clientOnlyPaths = new Set([
+const clientOnlyPaths = [
   'connexion',
   'inscription',
   'mot-de-passe-oublie',
   'auth/reset',
-]);
-
-const isClientOnlyPath = (path: string): boolean => clientOnlyPaths.has(path);
-
-const isIndexableSeoPage = (page: { robots?: string }): boolean =>
-  !(page.robots ?? '').toLowerCase().includes('noindex');
-
-const publicPrerenderPaths = [
-  ...seoPages
-    .filter(isIndexableSeoPage)
-    .map((page) => page.path)
-    .filter((path) => !isClientOnlyPath(path)),
-  ...supportPrerenderPaths,
+  'participant',
+  'participant/**',
 ];
 
-const publicPrerenderRoutes: ServerRoute[] = publicPrerenderPaths.map(
+const publicPrerenderRoutes: ServerRoute[] = localizedPublicPrerenderPaths.map(
   (path) => ({
     path,
     renderMode: RenderMode.Prerender,
   }),
 );
 
+const clientOnlyRoutes: ServerRoute[] = clientOnlyPaths.map((path) => ({
+  path,
+  renderMode: RenderMode.Client,
+}));
+
 export const serverRoutes: ServerRoute[] = [
   ...publicPrerenderRoutes,
-
-  {
-    path: 'connexion',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'inscription',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'mot-de-passe-oublie',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'auth/reset',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'participant',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'participant/**',
-    renderMode: RenderMode.Client,
-  },
+  ...clientOnlyRoutes,
 
   {
     path: '**',
