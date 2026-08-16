@@ -1,4 +1,11 @@
-import { Component, Injector, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  Injector,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+} from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
@@ -16,10 +23,84 @@ import {
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 
 const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/programs-workshop.avif',
 );
+
+interface HomeTextTranslation {
+  readonly textKey: string;
+}
+
+interface HomeCardTranslation {
+  readonly titleKey: string;
+  readonly descriptionKey: string;
+}
+
+const HOME_SOLUTION_TRANSLATIONS: readonly HomeTextTranslation[] = [
+  { textKey: 'web.home.solutions.items.personalDevelopment' },
+  { textKey: 'web.home.solutions.items.professionalLanguages' },
+  { textKey: 'web.home.solutions.items.leadership' },
+  { textKey: 'web.home.solutions.items.interviewPreparation' },
+  { textKey: 'web.home.solutions.items.projectStructuring' },
+  { textKey: 'web.home.solutions.items.businessSupport' },
+  { textKey: 'web.home.solutions.items.internationalMobility' },
+  { textKey: 'web.home.solutions.items.recruitment' },
+];
+
+const HOME_PROOF_TRANSLATIONS: readonly HomeCardTranslation[] = [
+  {
+    titleKey: 'web.home.proof.items.socioeconomicIntegration.title',
+    descriptionKey: 'web.home.proof.items.socioeconomicIntegration.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.twoWayApproach.title',
+    descriptionKey: 'web.home.proof.items.twoWayApproach.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.internationalExperience.title',
+    descriptionKey: 'web.home.proof.items.internationalExperience.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.structuredSupport.title',
+    descriptionKey: 'web.home.proof.items.structuredSupport.description',
+  },
+];
+
+const HOME_WHY_CHOOSE_TRANSLATIONS: readonly HomeCardTranslation[] = [
+  {
+    titleKey: 'web.home.whyChoose.items.internationalExpertise.title',
+    descriptionKey:
+      'web.home.whyChoose.items.internationalExpertise.description',
+  },
+  {
+    titleKey: 'web.home.whyChoose.items.personalisedSupport.title',
+    descriptionKey: 'web.home.whyChoose.items.personalisedSupport.description',
+  },
+  {
+    titleKey: 'web.home.whyChoose.items.measurableResults.title',
+    descriptionKey: 'web.home.whyChoose.items.measurableResults.description',
+  },
+];
+
+const HOME_FAQ_TRANSLATIONS = [
+  {
+    questionKey: 'web.home.faq.items.gettingStarted.question',
+    answerKey: 'web.home.faq.items.gettingStarted.answer',
+  },
+  {
+    questionKey: 'web.home.faq.items.businessSupport.question',
+    answerKey: 'web.home.faq.items.businessSupport.answer',
+  },
+  {
+    questionKey: 'web.home.faq.items.consultationFormat.question',
+    answerKey: 'web.home.faq.items.consultationFormat.answer',
+  },
+] as const;
 
 @Component({
   selector: 'kraak-home-page',
@@ -32,6 +113,7 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
     PublicConversionTrackingDirective,
     RevealOnScrollDirective,
     LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './home.page.html',
   styles: [
@@ -86,60 +168,23 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 export default class HomePage implements OnInit, OnDestroy {
   readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE;
 
-  protected readonly whyChooseItems: readonly {
-    readonly title: string;
-    readonly description: string;
-  }[] = [
-    {
-      title: "Expertise reconnue à l'international",
-      description:
-        'Un savoir-faire activé sur plusieurs terrains pour des besoins locaux et internationaux.',
-    },
-    {
-      title: 'Accompagnement personnalisé',
-      description:
-        'Chaque profil est unique : nous ajustons le cadre, le rythme et les livrables au contexte réel.',
-    },
-    {
-      title: 'Résultats concrets et mesurables',
-      description:
-        'Notre approche relie chaque action à une prochaine étape observable et utile.',
-    },
-  ];
+  protected readonly keySolutions = HOME_SOLUTION_TRANSLATIONS;
+  protected readonly proofItems = HOME_PROOF_TRANSLATIONS;
+  protected readonly whyChooseItems = HOME_WHY_CHOOSE_TRANSLATIONS;
 
-  protected readonly keySolutions: readonly string[] = [
-    'Développement personnel et professionnel',
-    'Anglais et français professionnel',
-    'Leadership et prise de parole',
-    'Préparation aux entretiens',
-    'Structuration de projets',
-    "Accompagnement d'entreprises et startups",
-    'Conseils en mobilité internationale',
-    'Recrutement et placement en emploi',
-  ];
-
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question:
-        'Je ne sais pas par où commencer, quelle est la première étape ?',
-      answer:
-        "Commencez par partager votre objectif, votre contexte et votre délai via le formulaire de contact. Nous vous orientons ensuite vers le bon point d'entrée.",
-    },
-    {
-      question: 'Proposez-vous un accompagnement pour les entreprises ?',
-      answer:
-        "Oui. KRAAK accompagne aussi les organisations sur la gestion de projets, la formation du personnel, le recrutement et la performance d'équipe.",
-    },
-    {
-      question: 'Les consultations sont-elles présentiel ou à distance ?',
-      answer:
-        'Les échanges peuvent se faire à distance ou en présentiel selon le besoin, le service et les contraintes du projet.',
-    },
-  ];
-
+  private readonly i18n = inject(KraakI18nService);
   private readonly injector = inject(Injector);
   private gsapService: GsapAnimationsService | null = null;
   private isDestroyed = false;
+
+  protected readonly faqItems = computed<readonly FaqItem[]>(() => {
+    this.i18n.locale();
+
+    return HOME_FAQ_TRANSLATIONS.map(({ questionKey, answerKey }) => ({
+      question: this.i18n.translate(questionKey),
+      answer: this.i18n.translate(answerKey),
+    }));
+  });
 
   ngOnInit(): void {
     void this.initializeAnimations();

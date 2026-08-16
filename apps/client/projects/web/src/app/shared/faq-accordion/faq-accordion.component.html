@@ -5,7 +5,7 @@
     <img
       class="relative z-0 h-full w-full object-cover"
       [src]="backgroundImageUrl"
-      alt="Arrière-plan de la section questions fréquentes"
+      [alt]="backgroundAlt"
       loading="lazy"
       decoding="async"
       fetchpriority="low"
@@ -18,11 +18,10 @@
       <h2
         class="text-brand-white text-3xl leading-tight font-semibold lg:text-4xl"
       >
-        Questions fréquentes
+        {{ heading }}
       </h2>
       <p class="text-brand-white/80 text-base leading-relaxed">
-        Retrouvez ici les réponses rapides aux questions les plus posées sur nos
-        parcours, nos modalités d'accompagnement et nos délais de réponse.
+        {{ description }}
       </p>
     </div>
 

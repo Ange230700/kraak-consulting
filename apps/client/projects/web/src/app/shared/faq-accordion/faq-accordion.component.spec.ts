@@ -50,6 +50,28 @@ describe('FaqAccordion', () => {
     expect(answers).toHaveLength(SAMPLE_ITEMS.length);
   });
 
+  it('Given des libellés localisés, When le composant est rendu, Then le titre, la description et le texte alternatif utilisent les entrées fournies', () => {
+    const fixture = TestBed.createComponent(FaqAccordion);
+    fixture.componentRef.setInput('items', SAMPLE_ITEMS);
+    fixture.componentRef.setInput('heading', 'Frequently asked questions');
+    fixture.componentRef.setInput(
+      'description',
+      'Answers to common questions.',
+    );
+    fixture.componentRef.setInput('backgroundAlt', 'Advisory conversation');
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('h2')?.textContent).toContain(
+      'Frequently asked questions',
+    );
+    expect(host.textContent).toContain('Answers to common questions.');
+    expect(host.querySelector('img')?.getAttribute('alt')).toBe(
+      'Advisory conversation',
+    );
+  });
+
   it('Given une liste d items, When une question est ouverte, Then la réponse devient visible', async () => {
     const fixture = TestBed.createComponent(FaqAccordion);
     fixture.componentRef.setInput('items', SAMPLE_ITEMS);

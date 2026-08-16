@@ -1,9 +1,10 @@
 // apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta.component.spec.ts
 
-import { Component } from '@angular/core';
+import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import { ParticipantNavCta } from './participant-nav-cta.component';
 
 @Component({
@@ -16,6 +17,7 @@ async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [ParticipantNavCta],
     providers: [
+      provideKraakI18n(),
       provideRouter([
         {
           path: 'participant',
@@ -29,6 +31,8 @@ async function compile(): Promise<void> {
       ]),
     ],
   }).compileComponents();
+
+  await TestBed.inject(ApplicationInitStatus).donePromise;
 }
 
 describe('ParticipantNavCta', () => {

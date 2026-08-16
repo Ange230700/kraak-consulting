@@ -8,6 +8,165 @@
       "icuSelectPath": "{audience, select, learner {Learner journey} leader {Leadership journey} other {KRAAK journey}}"
     }
   },
+  "web": {
+    "nav": {
+      "primaryLabel": "Main navigation",
+      "brandSymbolAlt": "KRAAK symbol",
+      "links": {
+        "home": "HOME",
+        "services": "SERVICES",
+        "programs": "PROGRAMMES",
+        "about": "ABOUT",
+        "contact": "CONTACT"
+      },
+      "mobileMenu": {
+        "openLabel": "Open navigation menu",
+        "closeLabel": "Close navigation menu"
+      },
+      "languageSwitcher": {
+        "label": "Choose language",
+        "frenchShort": "FR",
+        "englishShort": "EN",
+        "frenchCurrentLabel": "French, current language",
+        "englishCurrentLabel": "English, current language",
+        "switchToFrenchLabel": "View the site in French",
+        "switchToEnglishLabel": "View the site in English"
+      },
+      "participantArea": "Participant area"
+    },
+    "home": {
+      "hero": {
+        "titleSkills": "Build your skills.",
+        "titleProjects": "Launch your projects.",
+        "titleOpportunities": "Access international opportunities.",
+        "description": "KRAAK Consulting supports students, professionals, businesses and members of the diaspora with practical solutions in training, project management and immigration.",
+        "primaryCta": "Book a consultation",
+        "secondaryCta": "Explore our programmes",
+        "logoAlt": "Large KRAAK logo"
+      },
+      "need": {
+        "eyebrow": "A practical need",
+        "title": "An offer structured around employability, projects and mobility.",
+        "description": "We step in where progress stalls: clarifying goals, strengthening application tools, structuring projects, recruiting, planning international mobility and defining the next useful step."
+      },
+      "highlights": {
+        "training": {
+          "imageAlt": "Participants attending a professional development session in a collaborative workshop",
+          "caption": "Employability, professional confidence and language development."
+        },
+        "projects": {
+          "imageAlt": "A team meeting around a table to scope a project",
+          "caption": "Scoping, structuring and supporting projects that matter."
+        },
+        "mobility": {
+          "imageAlt": "An advisory meeting with documents to prepare an international mobility plan",
+          "caption": "Methodical preparation for study, work and international mobility."
+        }
+      },
+      "pillars": {
+        "title": "Our three areas of expertise",
+        "training": {
+          "title": "Training",
+          "description": "For young people and professionals who want to strengthen their employability, professional presence and application toolkit.",
+          "cta": "Explore our training"
+        },
+        "projects": {
+          "title": "Research & Project Management",
+          "description": "For start-ups, businesses and project leaders who need to scope, plan and move a worthwhile initiative forward.",
+          "cta": "Plan a project"
+        },
+        "mobility": {
+          "title": "Study & Immigration",
+          "description": "For people pursuing study, work or international mobility with clear, step-by-step preparation.",
+          "cta": "Discuss my plans"
+        }
+      },
+      "solutions": {
+        "eyebrow": "Key solutions",
+        "title": "Practical starting points for your goals.",
+        "description": "You do not need a perfectly defined brief: we start with a concrete goal, then clarify the right form of support.",
+        "items": {
+          "personalDevelopment": "Personal and professional development",
+          "professionalLanguages": "Professional English and French",
+          "leadership": "Leadership and public speaking",
+          "interviewPreparation": "Interview preparation",
+          "projectStructuring": "Project structuring",
+          "businessSupport": "Support for businesses and start-ups",
+          "internationalMobility": "International mobility advice",
+          "recruitment": "Recruitment and job placement"
+        }
+      },
+      "proof": {
+        "eyebrow": "Our approach in practice",
+        "title": "Support grounded in real needs.",
+        "description": "KRAAK works within a clear framework: a careful understanding of needs, practical formats and a focus on meaningful impact for individuals and organisations alike.",
+        "items": {
+          "socioeconomicIntegration": {
+            "title": "Employability and career integration",
+            "description": "Young people's employability remains at the heart of our offer: guidance, application tools, interviews, professional confidence and tangible progress towards employment."
+          },
+          "twoWayApproach": {
+            "title": "A two-way approach",
+            "description": "We support both talent and organisations to narrow the gap between market needs, available skills and expected performance."
+          },
+          "internationalExperience": {
+            "title": "International experience",
+            "description": "Our work and field experience draw on assignments in Canada, the United States, Spain, France, Colombia, Cuba, Ghana, Cameroon, Togo and Côte d'Ivoire."
+          },
+          "structuredSupport": {
+            "title": "Structured support",
+            "description": "Every engagement connects a clear understanding of the need with the next step, an action plan and follow-up. Our aim is not to multiply promises, but to make the path ahead clearer."
+          }
+        }
+      },
+      "whyChoose": {
+        "eyebrow": "How we stand apart",
+        "title": "Why choose KRAAK?",
+        "description": "Rigorous, practical support grounded in your real goals.",
+        "items": {
+          "internationalExpertise": {
+            "title": "Internationally recognised expertise",
+            "description": "Expertise applied across several settings to meet both local and international needs."
+          },
+          "personalisedSupport": {
+            "title": "Personalised support",
+            "description": "Every profile is unique, so we adapt the framework, pace and deliverables to the real context."
+          },
+          "measurableResults": {
+            "title": "Tangible, measurable results",
+            "description": "Our approach connects every action to an observable and useful next step."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "Frequently asked questions",
+        "title": "Clarify your starting point before you begin.",
+        "description": "This initial selection of questions will help you identify the right service and the most useful next step for your needs.",
+        "backgroundAlt": "A KRAAK adviser guiding a participant through her options",
+        "panelTitle": "A first step towards clarity",
+        "panelDescription": "Review the answers to our most frequently asked questions before telling us about your needs.",
+        "items": {
+          "gettingStarted": {
+            "question": "I am not sure where to start. What is the first step?",
+            "answer": "Start by sharing your goal, context and timeframe through the contact form. We will then guide you to the right starting point."
+          },
+          "businessSupport": {
+            "question": "Do you offer support for businesses?",
+            "answer": "Yes. KRAAK also supports organisations with project management, staff training, recruitment and team performance."
+          },
+          "consultationFormat": {
+            "question": "Are consultations available in person or remotely?",
+            "answer": "Consultations can take place remotely or in person, depending on your needs, the service and the project's constraints."
+          }
+        }
+      },
+      "closing": {
+        "titleLine1": "You know where you want to go.",
+        "titleLine2": "We know how to help you get there.",
+        "cta": "Book an appointment now"
+      }
+    }
+  },
   "primeng": {
     "accept": "Accept",
     "reject": "Reject",

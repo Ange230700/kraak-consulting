@@ -14,39 +14,34 @@
       <h1
         class="text-brand-white text-4xl leading-[1.08] font-black md:text-6xl lg:leading-[1.05]"
       >
-        Développez vos
-        <span class="text-brand-cyan">compétences</span>.
+        {{ 'web.home.hero.titleSkills' | kraakTranslate }}
         <br />
-        Lancez vos <span class="text-brand-cyan">projets</span>.
+        {{ 'web.home.hero.titleProjects' | kraakTranslate }}
         <br />
-        Accédez aux
-        <span class="text-brand-cyan">opportunités</span>
-        internationales.
+        {{ 'web.home.hero.titleOpportunities' | kraakTranslate }}
       </h1>
 
       <p
         class="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-200 md:text-xl lg:mt-9"
       >
-        KRAAK Consulting accompagne étudiants, professionnels, entreprises et
-        diaspora avec des solutions concrètes en formation, gestion de projets
-        et immigration.
+        {{ 'web.home.hero.description' | kraakTranslate }}
       </p>
 
       <div class="mt-10 flex flex-wrap gap-4 lg:mt-10 lg:gap-5 xl:mt-10.5">
         <a
           pButton
           [routerLink]="'contact' | localizedPublicPath"
-          label="Réserver une consultation"
+          [label]="'web.home.hero.primaryCta' | kraakTranslate"
           icon="pi pi-calendar"
-          aria-label="Réserver une consultation"
+          [attr.aria-label]="'web.home.hero.primaryCta' | kraakTranslate"
           class="kr-button-primary rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase"
         ></a>
         <a
           pButton
           [routerLink]="'programs' | localizedPublicPath"
-          label="Découvrir nos programmes"
+          [label]="'web.home.hero.secondaryCta' | kraakTranslate"
           icon="pi pi-bolt"
-          aria-label="Découvrir nos programmes"
+          [attr.aria-label]="'web.home.hero.secondaryCta' | kraakTranslate"
           class="kr-button-ghost border-brand-white/20 bg-brand-white/10 rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md"
         ></a>
       </div>
@@ -60,7 +55,7 @@
       >
         <img
           src="/kraak-logo.avif"
-          alt="Logo KRAAK grand format"
+          [alt]="'web.home.hero.logoAlt' | kraakTranslate"
           class="h-full w-full object-contain"
           loading="eager"
           decoding="async"
@@ -80,17 +75,13 @@
     <p
       class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
     >
-      Un besoin concret
+      {{ 'web.home.need.eyebrow' | kraakTranslate }}
     </p>
     <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-      Une offre structurée autour de l'employabilité, des projets et de la
-      mobilité.
+      {{ 'web.home.need.title' | kraakTranslate }}
     </h2>
     <p class="text-brand-navy mx-auto mt-6 max-w-3xl text-lg">
-      Nous intervenons là où les trajectoires se bloquent : clarification de
-      projet, outils de candidature, structuration de projet, recrutement,
-      orientation internationale et mise en mouvement de la prochaine étape
-      utile.
+      {{ 'web.home.need.description' | kraakTranslate }}
     </p>
   </div>
 </section>
@@ -110,14 +101,14 @@
       >
         <img
           src="/assets/site-visuals/photos/home-services-training.avif"
-          alt="Participants en formation professionnelle dans un atelier collaboratif"
+          [alt]="'web.home.highlights.training.imageAlt' | kraakTranslate"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
           class="h-52 w-full object-cover"
         />
         <figcaption class="text-brand-navy p-4 text-sm">
-          Employabilité, posture professionnelle et progression linguistique.
+          {{ 'web.home.highlights.training.caption' | kraakTranslate }}
         </figcaption>
       </figure>
       <figure
@@ -128,14 +119,14 @@
       >
         <img
           src="/assets/site-visuals/photos/home-services-project-planning.avif"
-          alt="Équipe en réunion autour d'une table pour cadrer un projet"
+          [alt]="'web.home.highlights.projects.imageAlt' | kraakTranslate"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
           class="h-52 w-full object-cover"
         />
         <figcaption class="text-brand-navy p-4 text-sm">
-          Cadrage, structuration et accompagnement de projets utiles.
+          {{ 'web.home.highlights.projects.caption' | kraakTranslate }}
         </figcaption>
       </figure>
       <figure
@@ -146,14 +137,14 @@
       >
         <img
           src="/assets/site-visuals/photos/services-immigration.avif"
-          alt="Entretien d'accompagnement avec documents pour préparer un projet international"
+          [alt]="'web.home.highlights.mobility.imageAlt' | kraakTranslate"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
           class="h-52 w-full object-cover"
         />
         <figcaption class="text-brand-navy p-4 text-sm">
-          Études, travail et orientation internationale préparés avec méthode.
+          {{ 'web.home.highlights.mobility.caption' | kraakTranslate }}
         </figcaption>
       </figure>
     </div>
@@ -166,7 +157,9 @@
   [revealDelayMs]="80"
 >
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos 3 pôles</h2>
+    <h2 class="text-center text-3xl font-bold lg:text-4xl">
+      {{ 'web.home.pillars.title' | kraakTranslate }}
+    </h2>
     <div class="mt-10 grid gap-8 md:grid-cols-3">
       <article class="rounded-card bg-brand-white shadow-card p-6">
         <div
@@ -174,16 +167,17 @@
         >
           <i class="pi pi-graduation-cap text-2xl" aria-hidden="true"></i>
         </div>
-        <h3 class="text-xl font-bold">Formation</h3>
+        <h3 class="text-xl font-bold">
+          {{ 'web.home.pillars.training.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-3">
-          Pour les jeunes et les professionnels qui veulent renforcer leur
-          employabilité, leur posture et leurs outils de candidature.
+          {{ 'web.home.pillars.training.description' | kraakTranslate }}
         </p>
         <a
           [routerLink]="'services' | localizedPublicPath"
           class="kr-link mt-5 inline-flex font-semibold"
         >
-          Voir les formations
+          {{ 'web.home.pillars.training.cta' | kraakTranslate }}
         </a>
       </article>
 
@@ -193,16 +187,17 @@
         >
           <i class="pi pi-chart-bar text-2xl" aria-hidden="true"></i>
         </div>
-        <h3 class="text-xl font-bold">Recherche &amp; Gestion de projets</h3>
+        <h3 class="text-xl font-bold">
+          {{ 'web.home.pillars.projects.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-3">
-          Pour les startups, les entreprises et les porteurs de projets qui
-          doivent cadrer, planifier et faire avancer une initiative utile.
+          {{ 'web.home.pillars.projects.description' | kraakTranslate }}
         </p>
         <a
           [routerLink]="'services' | localizedPublicPath"
           class="kr-link mt-5 inline-flex font-semibold"
         >
-          Structurer un projet
+          {{ 'web.home.pillars.projects.cta' | kraakTranslate }}
         </a>
       </article>
 
@@ -212,16 +207,17 @@
         >
           <i class="pi pi-globe text-2xl" aria-hidden="true"></i>
         </div>
-        <h3 class="text-xl font-bold">Études &amp; Immigration</h3>
+        <h3 class="text-xl font-bold">
+          {{ 'web.home.pillars.mobility.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-3">
-          Pour les profils qui visent les études, le travail ou une mobilité
-          internationale avec une préparation claire et progressive.
+          {{ 'web.home.pillars.mobility.description' | kraakTranslate }}
         </p>
         <a
           [routerLink]="'contact' | localizedPublicPath"
           class="kr-link mt-5 inline-flex font-semibold"
         >
-          Qualifier mon projet
+          {{ 'web.home.pillars.mobility.cta' | kraakTranslate }}
         </a>
       </article>
     </div>
@@ -239,19 +235,17 @@
         <p
           class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
         >
-          Solutions clés
+          {{ 'web.home.solutions.eyebrow' | kraakTranslate }}
         </p>
         <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-          Des points d'entrée concrets selon votre objectif.
+          {{ 'web.home.solutions.title' | kraakTranslate }}
         </h2>
         <p class="text-brand-navy mt-4 text-lg">
-          Vous n'avez pas besoin d'arriver avec un besoin parfaitement formulé :
-          nous partons d'un objectif concret, puis nous clarifions le bon format
-          d'appui.
+          {{ 'web.home.solutions.description' | kraakTranslate }}
         </p>
       </div>
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        @for (solution of keySolutions; track solution) {
+        @for (solution of keySolutions; track solution.textKey) {
           <article class="rounded-card w-full bg-neutral-50 p-5 text-center">
             <span
               class="bg-brand-white text-brand-blue mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold shadow-sm"
@@ -259,7 +253,7 @@
               {{ $index + 1 }}
             </span>
             <p class="text-brand-navy text-lg leading-snug font-medium">
-              {{ solution }}
+              {{ solution.textKey | kraakTranslate }}
             </p>
           </article>
         }
@@ -278,62 +272,27 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Preuves d'approche
+        {{ 'web.home.proof.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Une proposition ancrée dans des besoins réels.
+        {{ 'web.home.proof.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mx-auto mt-4 max-w-3xl text-lg">
-        KRAAK avance avec un cadre clair : une lecture fine des besoins, des
-        formats concrets et une logique d'impact utile pour les personnes comme
-        pour les organisations.
+        {{ 'web.home.proof.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10 grid gap-6 md:grid-cols-2">
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Insertion socioprofessionnelle
-        </p>
-        <p class="text-brand-navy mt-3">
-          L'employabilité des jeunes reste au cœur de l'offre : orientation,
-          outils de candidature, entretiens, posture professionnelle et
-          progression concrète vers l'emploi.
-        </p>
-      </article>
-
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Approche bidirectionnelle
-        </p>
-        <p class="text-brand-navy mt-3">
-          Nous accompagnons les talents comme les organisations afin de réduire
-          le décalage entre besoins du marché, compétences disponibles et
-          performance attendue.
-        </p>
-      </article>
-
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Expérience internationale
-        </p>
-        <p class="text-brand-navy mt-3">
-          Nos interventions et expériences de terrain s'appuient sur des
-          missions menées au Canada, aux États-Unis, en Espagne, en France, en
-          Colombie, à Cuba, au Ghana, au Cameroun, au Togo et en Côte d'Ivoire.
-        </p>
-      </article>
-
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Accompagnement structuré
-        </p>
-        <p class="text-brand-navy mt-3">
-          Chaque accompagnement relie clarification du besoin, prochaine étape,
-          plan d'action et suivi. Le but n'est pas de multiplier les promesses,
-          mais de rendre la trajectoire plus lisible.
-        </p>
-      </article>
+      @for (item of proofItems; track item.titleKey) {
+        <article class="rounded-card bg-brand-white p-6 shadow-sm">
+          <p class="text-primary text-sm font-semibold uppercase">
+            {{ item.titleKey | kraakTranslate }}
+          </p>
+          <p class="text-brand-navy mt-3">
+            {{ item.descriptionKey | kraakTranslate }}
+          </p>
+        </article>
+      }
     </div>
   </div>
 </section>
@@ -344,18 +303,18 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Différenciation
+        {{ 'web.home.whyChoose.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Pourquoi choisir KRAAK ?
+        {{ 'web.home.whyChoose.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mx-auto mt-4 max-w-3xl text-lg">
-        Un accompagnement exigeant, concret et ancré dans vos objectifs réels.
+        {{ 'web.home.whyChoose.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10 grid gap-4 md:grid-cols-2">
-      @for (item of whyChooseItems; track item.title) {
+      @for (item of whyChooseItems; track item.titleKey) {
         <article class="rounded-card bg-neutral-50 p-6">
           <div class="flex items-start gap-4">
             <span
@@ -365,10 +324,10 @@
             </span>
             <div>
               <h3 class="text-brand-navy text-lg font-bold">
-                {{ item.title }}
+                {{ item.titleKey | kraakTranslate }}
               </h3>
               <p class="text-brand-navy mt-2 text-sm leading-6">
-                {{ item.description }}
+                {{ item.descriptionKey | kraakTranslate }}
               </p>
             </div>
           </div>
@@ -384,19 +343,23 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Questions fréquentes
+        {{ 'web.home.faq.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Clarifiez votre point de départ avant de vous lancer.
+        {{ 'web.home.faq.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mx-auto mt-4 max-w-3xl text-lg">
-        Cette première sélection de questions aide à situer le bon service et la
-        prochaine étape la plus utile selon votre besoin.
+        {{ 'web.home.faq.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10">
-      <kraak-faq-accordion [items]="faqItems" />
+      <kraak-faq-accordion
+        [items]="faqItems()"
+        [heading]="'web.home.faq.panelTitle' | kraakTranslate"
+        [description]="'web.home.faq.panelDescription' | kraakTranslate"
+        [backgroundAlt]="'web.home.faq.backgroundAlt' | kraakTranslate"
+      />
     </div>
   </div>
 </section>
@@ -407,8 +370,8 @@
       class="from-brand-navy via-brand-blue to-brand-cyan text-brand-white shadow-brand-navy/20 overflow-hidden rounded-[3rem] bg-linear-to-r px-8 py-14 text-center shadow-2xl md:px-12 md:py-18 lg:px-20 lg:py-20"
     >
       <h2 class="text-3xl leading-tight font-black text-white md:text-5xl">
-        Vous savez où vous voulez aller.<br />
-        Nous savons comment vous y amener.
+        {{ 'web.home.closing.titleLine1' | kraakTranslate }}<br />
+        {{ 'web.home.closing.titleLine2' | kraakTranslate }}
       </h2>
 
       <a
@@ -416,13 +379,13 @@
         kraakPublicConversion="conversion_cta_click"
         [kraakPublicConversionPayload]="{
           cta_context: 'home_main_cta',
-          cta_label: 'Prendre rendez-vous maintenant',
+          cta_label: 'web.home.closing.cta' | kraakTranslate,
           cta_link: 'contact' | localizedPublicPath,
         }"
         class="bg-brand-white text-brand-navy hover:bg-brand-cyan hover:text-brand-white mt-8 inline-flex items-center justify-center rounded-2xl px-12 py-5 text-sm font-black tracking-widest uppercase shadow-xl transition-all duration-300"
-        aria-label="Prendre rendez-vous maintenant"
+        [attr.aria-label]="'web.home.closing.cta' | kraakTranslate"
       >
-        Prendre rendez-vous maintenant
+        {{ 'web.home.closing.cta' | kraakTranslate }}
       </a>
     </div>
   </div>

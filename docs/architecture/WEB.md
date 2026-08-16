@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-08-16
 source_of_truth: true
 ---
 
@@ -30,14 +30,18 @@ Le site web KRAAK est l'application Angular publique située dans
   `/fr/faq`, `/fr/programmes`, `/fr/ressources`, `/fr/contact`, pages légales
   et pages d'erreur sous `/fr/...`.
 - Internationalisation : `fr-CI` est la locale source et de repli, `en-GB` est
-  la première locale anglaise cible selon ARC-19. Les routes `/en/...` existent
-  comme scaffold technique non indexable tant que les contenus anglais relus ne
-  sont pas fournis.
+  la première locale anglaise selon ARC-19. La page d'accueil `/fr/` ou `/en/`
+  et la barre de navigation forment le premier incrément public bilingue. Les
+  autres pages `/en/...` restent un scaffold technique non indexable tant que
+  leurs contenus anglais ne sont pas traduits et relus.
 
 ## Implémentation active
 
 - Routes publiques : [`../../apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts).
 - Prerender public : [`../../apps/client/projects/web/src/app/app.routes.server.ts`](../../apps/client/projects/web/src/app/app.routes.server.ts).
+- Catalogues runtime : [`../../apps/client/projects/shared/i18n/catalogs/`](../../apps/client/projects/shared/i18n/catalogs/),
+  avec les espaces de clés `web.home` et `web.nav` pour le premier incrément
+  public bilingue.
 - Tests de surface : [`../../apps/client/projects/web/src/app/app.routes.spec.ts`](../../apps/client/projects/web/src/app/app.routes.spec.ts)
   et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
 - Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
@@ -54,11 +58,18 @@ Le prerender, les métadonnées SEO, les canonicals, les liens `hreflang`, les
 entrées sitemap et l'attribut `<html lang>` sont générés par locale depuis le
 modèle de routes web localisées.
 
-Pour le scaffold PR3, les routes anglaises sont pré-rendues mais restent
-`noindex, nofollow`, exclues du sitemap de production et non annoncées en
-`hreflang="en-GB"` depuis les pages françaises indexables. `x-default` pointe
-vers la route française correspondante jusqu'à la revue des contenus anglais en
-PR4.
+La page d'accueil et la barre de navigation servent désormais leur contenu
+français ou anglais depuis les catalogues selon la locale de l'URL. Un sélecteur
+de langue relie les variantes d'une même page publique lorsque le mapping
+existe, puis revient à la page d'accueil de la langue cible lorsqu'aucune
+variante publique n'est disponible.
+
+Cette première tranche de contenu ne modifie pas encore la politique SEO du
+scaffold anglais : les routes anglaises restent `noindex, nofollow`, exclues du
+sitemap de production et non annoncées en `hreflang="en-GB"` depuis les pages
+françaises indexables. Leurs métadonnées anglaises restent temporaires jusqu'à
+une traduction et une revue SEO dédiées. `x-default` continue de pointer vers la
+route française correspondante.
 
 Les routes d'authentification technique, notamment les callbacks et liens de
 réinitialisation, restent compatibles avec Supabase Auth avant toute localisation

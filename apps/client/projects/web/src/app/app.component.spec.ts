@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   Event as RouterEvent,
@@ -8,23 +9,26 @@ import {
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
+import { provideKraakI18n } from '../../../shared/i18n';
 import { App } from './app.component';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), MessageService],
+      providers: [provideRouter([]), provideKraakI18n(), MessageService],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
-  it('should create the app', () => {
+  it('Given the application shell When it is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it('should render the app shell with navbar, main, and footer', async () => {
+  it('Given the application shell When it renders Then it includes the navbar, main content, and footer', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -33,7 +37,7 @@ describe('App', () => {
     expect(compiled.querySelector('kraak-footer')).toBeTruthy();
   });
 
-  it('should expose a skip link and main landmark target for keyboard users', async () => {
+  it('Given a keyboard user When the application shell renders Then it exposes a skip link and main landmark target', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();

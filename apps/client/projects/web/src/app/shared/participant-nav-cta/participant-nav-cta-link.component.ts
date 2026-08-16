@@ -3,12 +3,13 @@
 import { Component, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { KraakTranslatePipe } from '../../../../../shared/i18n';
 import { isParticipantAreaEnabled } from '../../core/runtime/runtime-config';
 
 @Component({
   selector: 'kraak-participant-nav-cta-link',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, KraakTranslatePipe],
   templateUrl: './participant-nav-cta-link.component.html',
 })
 export class ParticipantNavCtaLink {

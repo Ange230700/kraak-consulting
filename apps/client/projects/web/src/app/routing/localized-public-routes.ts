@@ -167,6 +167,20 @@ export function findLocalizedPublicRouteEntryByPath(
   );
 }
 
+export function buildLocalizedPublicLocalePath(
+  currentUrl: string,
+  targetLocaleCandidate: string | null | undefined,
+): string {
+  const { path, suffix } = splitPublicUrl(currentUrl);
+  const currentEntry = findLocalizedPublicRouteEntryByPath(path);
+  const targetEntry = findLocalizedPublicRouteEntry(
+    currentEntry?.pageId ?? 'home',
+    targetLocaleCandidate,
+  );
+
+  return currentEntry ? `${targetEntry.path}${suffix}` : targetEntry.path;
+}
+
 export function findLegacyPublicRedirectBySourcePath(
   path: string,
 ): PublicRedirectRule | undefined {
@@ -278,4 +292,22 @@ function trimSlashes(value: string): string {
   }
 
   return value.slice(start, end);
+}
+
+function splitPublicUrl(url: string): {
+  readonly path: string;
+  readonly suffix: string;
+} {
+  const fragmentIndex = url.indexOf('#');
+  const fragment = fragmentIndex >= 0 ? url.slice(fragmentIndex) : '';
+  const pathAndQuery = fragmentIndex >= 0 ? url.slice(0, fragmentIndex) : url;
+  const queryIndex = pathAndQuery.indexOf('?');
+  const query = queryIndex >= 0 ? pathAndQuery.slice(queryIndex) : '';
+  const path =
+    queryIndex >= 0 ? pathAndQuery.slice(0, queryIndex) : pathAndQuery;
+
+  return {
+    path: path || '/',
+    suffix: `${query}${fragment}`,
+  };
 }

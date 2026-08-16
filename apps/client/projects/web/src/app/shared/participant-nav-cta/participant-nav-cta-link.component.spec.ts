@@ -1,11 +1,12 @@
 // apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta-link.component.spec.ts
 
-import { Component } from '@angular/core';
+import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { environment } from '../../../environments/environment';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { ParticipantNavCtaLink } from './participant-nav-cta-link.component';
 
 @Component({
@@ -18,6 +19,7 @@ async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [ParticipantNavCtaLink],
     providers: [
+      provideKraakI18n(),
       provideRouter([
         {
           path: 'participant',
@@ -31,6 +33,8 @@ async function compile(): Promise<void> {
       ]),
     ],
   }).compileComponents();
+
+  await TestBed.inject(ApplicationInitStatus).donePromise;
 }
 
 describe('ParticipantNavCtaLink', () => {
@@ -46,7 +50,9 @@ describe('ParticipantNavCtaLink', () => {
       await compile();
     });
 
-    it('When the CTA renders Then it exposes the participant dashboard link', () => {
+    it('When the CTA renders in French Then it exposes the localized participant dashboard link', async () => {
+      await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+
       const fixture = TestBed.createComponent(ParticipantNavCtaLink);
       fixture.detectChanges();
 
@@ -56,6 +62,23 @@ describe('ParticipantNavCtaLink', () => {
 
       expect(participantCta).toBeTruthy();
       expect(participantCta?.textContent).toContain('Espace participant');
+      expect(participantCta?.getAttribute('href')).toBe(
+        '/participant/dashboard',
+      );
+    });
+
+    it('When the CTA renders in English Then it exposes the localized participant dashboard link', async () => {
+      await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+      const fixture = TestBed.createComponent(ParticipantNavCtaLink);
+      fixture.detectChanges();
+
+      const participantCta = (
+        fixture.nativeElement as HTMLElement
+      ).querySelector<HTMLAnchorElement>('a[aria-label="Participant area"]');
+
+      expect(participantCta).toBeTruthy();
+      expect(participantCta?.textContent?.trim()).toBe('Participant area');
       expect(participantCta?.getAttribute('href')).toBe(
         '/participant/dashboard',
       );

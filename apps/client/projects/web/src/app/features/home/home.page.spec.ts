@@ -1,8 +1,23 @@
+import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import HomePage from './home.page';
+
+@Component({
+  standalone: true,
+  template: '',
+})
+class BlankRouteComponent {}
+
+function normalizedText(element: Element | null): string {
+  return (element?.textContent ?? '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.!?])/g, '$1')
+    .trim();
+}
 
 const gsapAnimationsServiceMock: Pick<
   GsapAnimationsService,
@@ -28,13 +43,16 @@ describe('HomePage', () => {
     await TestBed.configureTestingModule({
       imports: [HomePage],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: '**', component: BlankRouteComponent }]),
+        provideKraakI18n(),
         {
           provide: GsapAnimationsService,
           useValue: gsapAnimationsServiceMock,
         },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('Given the home page component When it is created Then the instance exists', () => {
@@ -59,6 +77,90 @@ describe('HomePage', () => {
     expect(element.textContent).toContain('Recherche & Gestion de projets');
   });
 
+  it('Given the French public homepage When it renders Then the hero and primary action come from the French catalog', async () => {
+    await TestBed.inject(Router).navigateByUrl('/fr/');
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const hero = normalizedText(host.querySelector('h1'));
+
+    expect(hero).toContain('Développez vos compétences.');
+    expect(hero).toContain('Lancez vos projets.');
+    expect(hero).toContain('Accédez aux opportunités internationales.');
+    expect(normalizedText(host)).toContain('Réserver une consultation');
+  });
+
+  it('Given the English public homepage When it renders Then the hero and primary action come from the English catalog', async () => {
+    await TestBed.inject(Router).navigateByUrl('/en/');
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const hero = normalizedText(host.querySelector('h1'));
+
+    expect(hero).toContain('Build your skills.');
+    expect(hero).toContain('Launch your projects.');
+    expect(hero).toContain('Access international opportunities.');
+    expect(normalizedText(host)).toContain('Book a consultation');
+  });
+
+  it('Given the English public homepage When every section renders Then representative content and FAQ copy come from the English catalog', async () => {
+    await TestBed.inject(Router).navigateByUrl('/en/');
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const content = normalizedText(fixture.nativeElement as HTMLElement);
+
+    expect(content).toContain('Our three areas of expertise');
+    expect(content).toContain('Research & Project Management');
+    expect(content).toContain('Personal and professional development');
+    expect(content).toContain('Employability and career integration');
+    expect(content).toContain('Internationally recognised expertise');
+    expect(content).toContain(
+      'I am not sure where to start. What is the first step?',
+    );
+    expect(content).toContain('You know where you want to go.');
+    expect(content).not.toContain('[missing:web.home.');
+  });
+
+  it('Given an already rendered French homepage When the locale changes to English Then the FAQ content updates in the same fixture', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('fr-CI');
+
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(normalizedText(host)).toContain(
+      'Je ne sais pas par où commencer. Quelle est la première étape?',
+    );
+
+    await i18n.setLocale('en-GB');
+    fixture.detectChanges();
+
+    const content = normalizedText(host);
+    expect(content).toContain(
+      'I am not sure where to start. What is the first step?',
+    );
+    expect(content).toContain('A first step towards clarity');
+    expect(content).toContain(
+      'Review the answers to our most frequently asked questions',
+    );
+    expect(
+      host.querySelector('kraak-faq-accordion img')?.getAttribute('alt'),
+    ).toBe('A KRAAK adviser guiding a participant through her options');
+    expect(content).not.toContain(
+      'Je ne sais pas par où commencer. Quelle est la première étape?',
+    );
+  });
+
   it('Given the home page component When reading the hero background Then it exposes the expected style object', () => {
     const fixture = TestBed.createComponent(HomePage);
     const component = fixture.componentInstance;
@@ -78,7 +180,7 @@ describe('HomePage', () => {
     const content = fixture.nativeElement.textContent as string;
 
     expect(content).toContain('Développement personnel et professionnel');
-    expect(content).toContain('Anglais et français professionnel');
+    expect(content).toContain('Anglais et français professionnels');
     expect(content).toContain('Leadership et prise de parole');
     expect(content).toContain('Préparation aux entretiens');
     expect(content).toContain('Structuration de projets');
@@ -134,7 +236,7 @@ describe('HomePage', () => {
     expect(content).toContain('Prendre rendez-vous maintenant');
   });
 
-  it('should render home-specific FAQ section', () => {
+  it('Given the home page When its FAQ renders Then it shows the home-specific questions', () => {
     const fixture = TestBed.createComponent(HomePage);
     fixture.detectChanges();
 
@@ -142,7 +244,7 @@ describe('HomePage', () => {
 
     expect(content).toContain('Questions fréquentes');
     expect(content).toContain(
-      'Je ne sais pas par où commencer, quelle est la première étape ?',
+      'Je ne sais pas par où commencer. Quelle est la première étape ?',
     );
   });
 });

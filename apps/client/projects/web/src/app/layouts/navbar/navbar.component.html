@@ -4,7 +4,7 @@
   class="bg-brand-white/92 border-brand-blue/10 shadow-brand-navy/10 sticky top-0 z-50 border-b shadow-lg backdrop-blur-sm"
 >
   <nav
-    aria-label="Navigation principale"
+    [attr.aria-label]="'web.nav.primaryLabel' | kraakTranslate"
     class="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 lg:px-6"
   >
     <a
@@ -14,7 +14,7 @@
     >
       <img
         src="/kraak_symbol.svg"
-        alt="Symbole KRAAK"
+        [attr.alt]="'web.nav.brandSymbolAlt' | kraakTranslate"
         width="44"
         height="44"
         fetchpriority="high"
@@ -30,7 +30,7 @@
     </a>
 
     <div
-      class="border-brand-blue/10 bg-brand-white absolute top-full left-0 z-50 w-full items-center justify-between border-t px-4 py-4 shadow-sm lg:static lg:flex lg:w-auto lg:grow lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+      class="border-brand-blue/10 bg-brand-white absolute top-full left-0 z-50 w-full flex-col items-stretch justify-between gap-4 border-t px-4 py-4 shadow-sm lg:static lg:flex lg:w-auto lg:grow lg:flex-row lg:items-center lg:gap-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
       [class.hidden]="!mobileMenuOpen()"
       [class.flex]="mobileMenuOpen()"
     >
@@ -39,26 +39,73 @@
       >
         @for (link of links; track link.pageId) {
           @let localizedPath = link.pageId | localizedPublicPath;
+          @let navLabel = link.labelKey | kraakTranslate;
           <li>
             <a
               [routerLink]="localizedPath"
               routerLinkActive="text-brand-navy after:scale-x-100"
               kraakPublicConversion="nav_cta_click"
               [kraakPublicConversionPayload]="{
-                nav_label: link.label,
+                nav_label: navLabel,
                 nav_path: localizedPath,
                 nav_surface: 'primary_nav',
               }"
               class="kr-nav-link kr-navbar-interactive uppercase"
               (click)="closeMobileMenu()"
             >
-              {{ link.label }}
+              {{ navLabel }}
             </a>
           </li>
         }
       </ul>
+      <div
+        role="group"
+        [attr.aria-label]="'web.nav.languageSwitcher.label' | kraakTranslate"
+        class="border-brand-blue/15 flex items-center self-start rounded-full border p-1 lg:mr-3 lg:self-auto"
+      >
+        @let frenchIsCurrent = locale() === 'fr-CI';
+        @let englishIsCurrent = locale() === 'en-GB';
+        <a
+          [attr.href]="buildLanguageHref('fr-CI')"
+          hreflang="fr-CI"
+          [attr.aria-current]="frenchIsCurrent ? 'page' : null"
+          [attr.aria-label]="
+            (frenchIsCurrent
+              ? 'web.nav.languageSwitcher.frenchCurrentLabel'
+              : 'web.nav.languageSwitcher.switchToFrenchLabel'
+            ) | kraakTranslate
+          "
+          class="kr-navbar-interactive rounded-full px-3 py-1.5 text-xs font-bold"
+          [class.bg-brand-navy]="frenchIsCurrent"
+          [class.text-brand-white]="frenchIsCurrent"
+          (click)="closeMobileMenu()"
+        >
+          <span lang="fr-CI">
+            {{ 'web.nav.languageSwitcher.frenchShort' | kraakTranslate }}
+          </span>
+        </a>
+        <a
+          [attr.href]="buildLanguageHref('en-GB')"
+          hreflang="en-GB"
+          [attr.aria-current]="englishIsCurrent ? 'page' : null"
+          [attr.aria-label]="
+            (englishIsCurrent
+              ? 'web.nav.languageSwitcher.englishCurrentLabel'
+              : 'web.nav.languageSwitcher.switchToEnglishLabel'
+            ) | kraakTranslate
+          "
+          class="kr-navbar-interactive rounded-full px-3 py-1.5 text-xs font-bold"
+          [class.bg-brand-navy]="englishIsCurrent"
+          [class.text-brand-white]="englishIsCurrent"
+          (click)="closeMobileMenu()"
+        >
+          <span lang="en-GB">
+            {{ 'web.nav.languageSwitcher.englishShort' | kraakTranslate }}
+          </span>
+        </a>
+      </div>
       <kraak-participant-nav-cta
-        class="mt-4 flex lg:mt-0"
+        class="flex self-start lg:self-auto"
         (activated)="closeMobileMenu()"
       />
     </div>
@@ -69,7 +116,12 @@
         class="kr-navbar-interactive border-brand-blue/25 bg-brand-white text-brand-navy hover:border-brand-blue/45 hover:bg-brand-cyan/8 shadow-brand-navy/20 inline-flex items-center justify-center rounded-(--kr-radius-btn) border px-3 py-3 shadow-xl"
         (click)="toggleMobileMenu()"
         [attr.aria-expanded]="mobileMenuOpen()"
-        aria-label="Menu de navigation"
+        [attr.aria-label]="
+          (mobileMenuOpen()
+            ? 'web.nav.mobileMenu.closeLabel'
+            : 'web.nav.mobileMenu.openLabel'
+          ) | kraakTranslate
+        "
       >
         <i
           [class]="mobileMenuOpen() ? 'pi pi-times' : 'pi pi-bars'"

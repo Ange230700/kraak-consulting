@@ -3,6 +3,7 @@ import { SOURCE_LOCALE, SUPPORTED_LOCALES } from '@kraak/domain';
 import {
   LOCALIZED_PUBLIC_LOCALES,
   LOCALIZED_PUBLIC_PAGES,
+  buildLocalizedPublicLocalePath,
   findLocalizedPublicRouteEntry,
   findLocalizedPublicRouteEntryByPath,
   findLocalizedPublicRouteEntryByLegacyPath,
@@ -126,6 +127,47 @@ describe('Given the localized public route model', () => {
     expect(
       findLocalizedPublicRouteEntryByLegacyPath('/contact', 'en-GB')?.path,
     ).toBe('/en/contact');
+  });
+
+  describe('Given a requested public locale switch', () => {
+    it('Given a localized page with query and fragment, When English is requested, Then the equivalent English page preserves both suffixes', () => {
+      expect(
+        buildLocalizedPublicLocalePath(
+          '/fr/programmes?campaign=summer#offres',
+          'en-GB',
+        ),
+      ).toBe('/en/programs?campaign=summer#offres');
+    });
+
+    it('Given an English page with a translated slug, When French is requested, Then the equivalent French slug is returned', () => {
+      expect(buildLocalizedPublicLocalePath('/en/about', 'fr-CI')).toBe(
+        '/fr/a-propos',
+      );
+    });
+
+    it.each([
+      ['/fr/inconnu?stale=1#old', 'en-GB', '/en/'],
+      ['/participant/dashboard?stale=1#old', 'fr-CI', '/fr/'],
+    ] as const)(
+      'Given an unmapped path %s, When %s is requested, Then the target homepage is returned without stale suffixes',
+      (currentUrl, targetLocale, expectedPath) => {
+        expect(buildLocalizedPublicLocalePath(currentUrl, targetLocale)).toBe(
+          expectedPath,
+        );
+      },
+    );
+
+    it.each([
+      ['/fr/', 'en-GB', '/en/'],
+      ['/en/', 'fr-CI', '/fr/'],
+    ] as const)(
+      'Given a localized homepage %s, When %s is requested, Then the target homepage keeps its trailing slash',
+      (currentUrl, targetLocale, expectedPath) => {
+        expect(buildLocalizedPublicLocalePath(currentUrl, targetLocale)).toBe(
+          expectedPath,
+        );
+      },
+    );
   });
 
   it('Given prerender paths, when the route set is generated, then every localized public path is present once', () => {

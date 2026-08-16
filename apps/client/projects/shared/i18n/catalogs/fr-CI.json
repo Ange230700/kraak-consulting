@@ -8,6 +8,165 @@
       "icuSelectPath": "{audience, select, learner {Parcours apprenant} leader {Parcours leadership} other {Parcours KRAAK}}"
     }
   },
+  "web": {
+    "nav": {
+      "primaryLabel": "Navigation principale",
+      "brandSymbolAlt": "Symbole KRAAK",
+      "links": {
+        "home": "ACCUEIL",
+        "services": "SERVICES",
+        "programs": "PROGRAMMES",
+        "about": "À PROPOS",
+        "contact": "CONTACT"
+      },
+      "mobileMenu": {
+        "openLabel": "Ouvrir le menu de navigation",
+        "closeLabel": "Fermer le menu de navigation"
+      },
+      "languageSwitcher": {
+        "label": "Choisir la langue",
+        "frenchShort": "FR",
+        "englishShort": "EN",
+        "frenchCurrentLabel": "Français, langue actuelle",
+        "englishCurrentLabel": "Anglais, langue actuelle",
+        "switchToFrenchLabel": "Afficher le site en français",
+        "switchToEnglishLabel": "Afficher le site en anglais"
+      },
+      "participantArea": "Espace participant"
+    },
+    "home": {
+      "hero": {
+        "titleSkills": "Développez vos compétences.",
+        "titleProjects": "Lancez vos projets.",
+        "titleOpportunities": "Accédez aux opportunités internationales.",
+        "description": "KRAAK Consulting accompagne les étudiants, les professionnels, les entreprises et la diaspora avec des solutions concrètes en formation, en gestion de projets et en immigration.",
+        "primaryCta": "Réserver une consultation",
+        "secondaryCta": "Découvrir nos programmes",
+        "logoAlt": "Logo KRAAK grand format"
+      },
+      "need": {
+        "eyebrow": "Un besoin concret",
+        "title": "Une offre structurée autour de l'employabilité, des projets et de la mobilité.",
+        "description": "Nous intervenons là où les trajectoires se bloquent : clarification de projet, outils de candidature, structuration de projet, recrutement, orientation internationale et mise en mouvement de la prochaine étape utile."
+      },
+      "highlights": {
+        "training": {
+          "imageAlt": "Participants en formation professionnelle dans un atelier collaboratif",
+          "caption": "Employabilité, posture professionnelle et progression linguistique."
+        },
+        "projects": {
+          "imageAlt": "Équipe en réunion autour d'une table pour cadrer un projet",
+          "caption": "Cadrage, structuration et accompagnement de projets utiles."
+        },
+        "mobility": {
+          "imageAlt": "Entretien d'accompagnement avec des documents pour préparer un projet international",
+          "caption": "Études, travail et orientation internationale préparés avec méthode."
+        }
+      },
+      "pillars": {
+        "title": "Nos 3 pôles",
+        "training": {
+          "title": "Formation",
+          "description": "Pour les jeunes et les professionnels qui veulent renforcer leur employabilité, leur posture et leurs outils de candidature.",
+          "cta": "Voir les formations"
+        },
+        "projects": {
+          "title": "Recherche & Gestion de projets",
+          "description": "Pour les startups, les entreprises et les porteurs de projets qui doivent cadrer, planifier et faire avancer une initiative utile.",
+          "cta": "Structurer un projet"
+        },
+        "mobility": {
+          "title": "Études & Immigration",
+          "description": "Pour les profils qui visent les études, le travail ou une mobilité internationale avec une préparation claire et progressive.",
+          "cta": "Qualifier mon projet"
+        }
+      },
+      "solutions": {
+        "eyebrow": "Solutions clés",
+        "title": "Des points d'entrée concrets selon votre objectif.",
+        "description": "Vous n'avez pas besoin d'arriver avec un besoin parfaitement formulé : nous partons d'un objectif concret, puis nous clarifions le bon format d'appui.",
+        "items": {
+          "personalDevelopment": "Développement personnel et professionnel",
+          "professionalLanguages": "Anglais et français professionnels",
+          "leadership": "Leadership et prise de parole",
+          "interviewPreparation": "Préparation aux entretiens",
+          "projectStructuring": "Structuration de projets",
+          "businessSupport": "Accompagnement d'entreprises et startups",
+          "internationalMobility": "Conseils en mobilité internationale",
+          "recruitment": "Recrutement et placement en emploi"
+        }
+      },
+      "proof": {
+        "eyebrow": "Preuves d'approche",
+        "title": "Une proposition ancrée dans des besoins réels.",
+        "description": "KRAAK avance avec un cadre clair : une lecture fine des besoins, des formats concrets et une logique d'impact utile pour les personnes comme pour les organisations.",
+        "items": {
+          "socioeconomicIntegration": {
+            "title": "Insertion socioprofessionnelle",
+            "description": "L'employabilité des jeunes reste au cœur de l'offre : orientation, outils de candidature, entretiens, posture professionnelle et progression concrète vers l'emploi."
+          },
+          "twoWayApproach": {
+            "title": "Approche bidirectionnelle",
+            "description": "Nous accompagnons les talents comme les organisations afin de réduire le décalage entre les besoins du marché, les compétences disponibles et la performance attendue."
+          },
+          "internationalExperience": {
+            "title": "Expérience internationale",
+            "description": "Nos interventions et expériences de terrain s'appuient sur des missions menées au Canada, aux États-Unis, en Espagne, en France, en Colombie, à Cuba, au Ghana, au Cameroun, au Togo et en Côte d'Ivoire."
+          },
+          "structuredSupport": {
+            "title": "Accompagnement structuré",
+            "description": "Chaque accompagnement relie la clarification du besoin, la prochaine étape, le plan d'action et le suivi. Le but n'est pas de multiplier les promesses, mais de rendre la trajectoire plus lisible."
+          }
+        }
+      },
+      "whyChoose": {
+        "eyebrow": "Différenciation",
+        "title": "Pourquoi choisir KRAAK ?",
+        "description": "Un accompagnement exigeant, concret et ancré dans vos objectifs réels.",
+        "items": {
+          "internationalExpertise": {
+            "title": "Expertise reconnue à l'international",
+            "description": "Un savoir-faire activé sur plusieurs terrains pour des besoins locaux et internationaux."
+          },
+          "personalisedSupport": {
+            "title": "Accompagnement personnalisé",
+            "description": "Chaque profil est unique : nous ajustons le cadre, le rythme et les livrables au contexte réel."
+          },
+          "measurableResults": {
+            "title": "Résultats concrets et mesurables",
+            "description": "Notre approche relie chaque action à une prochaine étape observable et utile."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "Questions fréquentes",
+        "title": "Clarifiez votre point de départ avant de vous lancer.",
+        "description": "Cette première sélection de questions aide à situer le bon service et la prochaine étape la plus utile selon votre besoin.",
+        "backgroundAlt": "Échange d'orientation entre une conseillère KRAAK et une participante",
+        "panelTitle": "Un premier repère pour avancer",
+        "panelDescription": "Consultez les réponses aux questions les plus fréquentes avant de nous présenter votre besoin.",
+        "items": {
+          "gettingStarted": {
+            "question": "Je ne sais pas par où commencer. Quelle est la première étape ?",
+            "answer": "Commencez par partager votre objectif, votre contexte et votre délai via le formulaire de contact. Nous vous orientons ensuite vers le bon point d'entrée."
+          },
+          "businessSupport": {
+            "question": "Proposez-vous un accompagnement pour les entreprises ?",
+            "answer": "Oui. KRAAK accompagne aussi les organisations sur la gestion de projets, la formation du personnel, le recrutement et la performance d'équipe."
+          },
+          "consultationFormat": {
+            "question": "Les consultations ont-elles lieu en présentiel ou à distance ?",
+            "answer": "Les échanges peuvent se faire à distance ou en présentiel selon le besoin, le service et les contraintes du projet."
+          }
+        }
+      },
+      "closing": {
+        "titleLine1": "Vous savez où vous voulez aller.",
+        "titleLine2": "Nous savons comment vous y amener.",
+        "cta": "Prendre rendez-vous maintenant"
+      }
+    }
+  },
   "primeng": {
     "accept": "Accepter",
     "reject": "Refuser",

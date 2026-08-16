@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-08-16
 source_of_truth: true
 ---
 
@@ -57,9 +57,14 @@ Les locales applicatives retenues sont :
 - source et repli : `fr-CI` ;
 - anglais initial : `en-GB`.
 
-Cette décision ne signifie pas que les traductions, les catalogues ou les routes
-localisées sont déjà implémentés. Les PRs d'implémentation devront avancer par
-incréments courts, documentés et validés.
+Les routes publiques localisées et l'adaptateur runtime partagé sont actifs. La
+page d'accueil et la barre de navigation constituent le premier incrément public
+entièrement bilingue alimenté par les catalogues `fr-CI` et `en-GB`. Les autres
+pages publiques anglaises et leurs métadonnées SEO restent dans l'état de
+scaffold non indexable jusqu'à leur traduction et leur revue dédiées.
+
+Les incréments suivants doivent rester courts, documentés et validés sans
+localiser implicitement les routes privées, admin ou mobiles.
 
 ## Garde-fous
 

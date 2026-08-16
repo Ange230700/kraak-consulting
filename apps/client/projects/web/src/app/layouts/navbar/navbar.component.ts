@@ -1,15 +1,26 @@
 // apps\client\projects\web\src\app\layouts\navbar\navbar.component.ts
 
-import { Component, signal } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import type { SupportedLocale } from '@kraak/domain';
+
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+  type TranslationKey,
+} from '../../../../../shared/i18n';
 
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
-import type { LocalizedPublicPageId } from '../../routing/localized-public-routes';
+import {
+  buildLocalizedPublicLocalePath,
+  type LocalizedPublicPageId,
+} from '../../routing/localized-public-routes';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { ParticipantNavCta } from '../../shared/participant-nav-cta/participant-nav-cta.component';
 
 interface NavLink {
-  label: string;
+  labelKey: TranslationKey;
   pageId: LocalizedPublicPageId;
 }
 
@@ -21,19 +32,31 @@ interface NavLink {
     PublicConversionTrackingDirective,
     ParticipantNavCta,
     LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './navbar.component.html',
 })
 export class Navbar {
+  private readonly location = inject(Location);
+  private readonly i18n = inject(KraakI18nService);
+
   protected readonly links: NavLink[] = [
-    { label: 'ACCUEIL', pageId: 'home' },
-    { label: 'SERVICES', pageId: 'services' },
-    { label: 'PROGRAMMES', pageId: 'programs' },
-    { label: '\u00C0 PROPOS', pageId: 'about' },
-    { label: 'CONTACT', pageId: 'contact' },
+    { labelKey: 'web.nav.links.home', pageId: 'home' },
+    { labelKey: 'web.nav.links.services', pageId: 'services' },
+    { labelKey: 'web.nav.links.programs', pageId: 'programs' },
+    { labelKey: 'web.nav.links.about', pageId: 'about' },
+    { labelKey: 'web.nav.links.contact', pageId: 'contact' },
   ];
 
+  protected readonly locale = this.i18n.locale;
   protected readonly mobileMenuOpen = signal(false);
+
+  protected buildLanguageHref(targetLocale: SupportedLocale): string {
+    return buildLocalizedPublicLocalePath(
+      this.location.path(true),
+      targetLocale,
+    );
+  }
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update((v) => !v);

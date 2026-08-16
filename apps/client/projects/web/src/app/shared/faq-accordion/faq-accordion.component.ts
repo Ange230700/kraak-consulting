@@ -8,8 +8,8 @@ import {
 import { FAQ_BACKGROUND_IMAGE_URL } from '../brand/brand-constants';
 
 export interface FaqItem {
-  question: string;
-  answer: string;
+  readonly question: string;
+  readonly answer: string;
 }
 
 @Component({
@@ -38,7 +38,11 @@ export interface FaqItem {
   encapsulation: ViewEncapsulation.None,
 })
 export class FaqAccordion {
-  @Input({ required: true }) items: FaqItem[] = [];
+  @Input({ required: true }) items: readonly FaqItem[] = [];
+  @Input() heading = 'Questions fréquentes';
+  @Input() description =
+    "Retrouvez ici les réponses rapides aux questions les plus posées sur nos parcours, nos modalités d'accompagnement et nos délais de réponse.";
+  @Input() backgroundAlt = 'Arrière-plan de la section questions fréquentes';
 
   protected readonly backgroundImageUrl = FAQ_BACKGROUND_IMAGE_URL;
 }
