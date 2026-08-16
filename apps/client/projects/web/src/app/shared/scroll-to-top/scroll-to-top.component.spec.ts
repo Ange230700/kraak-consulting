@@ -1,6 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { ApplicationInitStatus, DebugElement } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { DebugElement } from '@angular/core';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { ScrollToTop } from './scroll-to-top.component';
 
 describe('ScrollToTop', () => {
@@ -11,7 +13,10 @@ describe('ScrollToTop', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ScrollToTop],
+      providers: [provideKraakI18n()],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
     fixture = TestBed.createComponent(ScrollToTop);
     component = fixture.componentInstance;
@@ -33,9 +38,24 @@ describe('ScrollToTop', () => {
       expect(button).toBeTruthy();
     });
 
-    it('Given the scroll button renders When accessibility attributes are inspected Then it should expose an aria label', () => {
+    it('Given the French public shell When the scroll control renders Then its accessible name uses the French catalog copy', async () => {
+      await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+      fixture.detectChanges();
+
       const button = debugElement.nativeElement.querySelector('button');
-      expect(button?.getAttribute('aria-label')).toBeTruthy();
+
+      expect(button?.getAttribute('aria-label')).toBe(
+        'Remonter vers le haut de la page',
+      );
+    });
+
+    it('Given the English public shell When the scroll control renders Then its accessible name uses the English catalog copy', async () => {
+      await TestBed.inject(KraakI18nService).setLocale('en-GB');
+      fixture.detectChanges();
+
+      const button = debugElement.nativeElement.querySelector('button');
+
+      expect(button?.getAttribute('aria-label')).toBe('Back to top');
     });
   });
 
@@ -44,6 +64,8 @@ describe('ScrollToTop', () => {
       const button = debugElement.nativeElement.querySelector('button');
       expect(button?.classList.contains('opacity-0')).toBe(true);
       expect(button?.classList.contains('pointer-events-none')).toBe(true);
+      expect(button?.getAttribute('tabindex')).toBe('-1');
+      expect(button?.getAttribute('aria-hidden')).toBe('true');
     });
   });
 
@@ -62,7 +84,7 @@ describe('ScrollToTop', () => {
       scrollToSpy.mockRestore();
     });
 
-    it('Given a non-browser environment, when scrollToTop is called, then it exits without scrolling', () => {
+    it('Given a non-browser environment When scrollToTop is called Then it exits without scrolling', () => {
       const scrollToSpy = vi.spyOn(globalThis, 'scrollTo');
       Object.defineProperty(component, 'isBrowser', {
         value: false,
@@ -94,8 +116,12 @@ describe('ScrollToTop', () => {
       });
 
       component.updateVisibility();
+      fixture.detectChanges();
 
       expect(component.isVisible).toBe(true);
+      const button = debugElement.nativeElement.querySelector('button');
+      expect(button?.getAttribute('tabindex')).toBe('0');
+      expect(button?.getAttribute('aria-hidden')).toBeNull();
     });
 
     it('Given the scroll position is before the threshold When visibility updates Then the button should be hidden', () => {
@@ -125,7 +151,7 @@ describe('ScrollToTop', () => {
       addEventListenerSpy.mockRestore();
     });
 
-    it('Given a non-browser environment, when ngOnInit runs, then no listener is attached', () => {
+    it('Given a non-browser environment When ngOnInit runs Then no listener is attached', () => {
       const addEventListenerSpy = vi.spyOn(globalThis, 'addEventListener');
       Object.defineProperty(component, 'isBrowser', {
         value: false,

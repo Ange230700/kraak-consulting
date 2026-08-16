@@ -1,4 +1,6 @@
-<a href="#main-content" class="kr-skip-link">Aller au contenu principal</a>
+<a href="#main-content" class="kr-skip-link" (click)="focusMainContent($event)">
+  {{ 'web.shell.skipToMainContent' | kraakTranslate }}
+</a>
 <kraak-navbar />
 <main id="main-content" tabindex="-1" class="min-h-dvh">
   <router-outlet />

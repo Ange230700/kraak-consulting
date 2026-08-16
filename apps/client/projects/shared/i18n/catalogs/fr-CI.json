@@ -34,6 +34,46 @@
       },
       "participantArea": "Espace participant"
     },
+    "shell": {
+      "skipToMainContent": "Aller au contenu principal",
+      "scrollToTopLabel": "Remonter vers le haut de la page",
+      "footer": {
+        "cta": {
+          "title": "Prêt à passer à l'action ?",
+          "description": "Rejoignez l'écosystème KRAAK et propulsez vos ambitions.",
+          "label": "Nous contacter"
+        },
+        "brand": {
+          "homeLabel": "Retour à l'accueil KRAAK",
+          "symbolAlt": "Symbole KRAAK",
+          "description": "L'excellence opérationnelle au service du développement humain. Expertise stratégique en Afrique et accompagnement international."
+        },
+        "socialNavigationLabel": "Réseaux sociaux",
+        "sections": {
+          "navigation": "Navigation",
+          "expertise": "Expertises",
+          "offices": "Bureaux"
+        },
+        "navigationLinks": {
+          "home": "Accueil",
+          "services": "Services",
+          "programs": "Programmes",
+          "about": "À propos",
+          "contact": "Contact"
+        },
+        "expertiseItems": {
+          "professionalTraining": "Formation professionnelle",
+          "projectManagement": "Pilotage de projets",
+          "internationalMobility": "Mobilité internationale"
+        },
+        "policyLinks": {
+          "legalNotice": "Mentions légales",
+          "faq": "FAQ",
+          "privacyPolicy": "Politique de confidentialité"
+        },
+        "copyright": "© {{ year }} KRAAK. Tous droits réservés."
+      }
+    },
     "home": {
       "hero": {
         "titleSkills": "Développez vos compétences.",

@@ -34,6 +34,46 @@
       },
       "participantArea": "Participant area"
     },
+    "shell": {
+      "skipToMainContent": "Skip to main content",
+      "scrollToTopLabel": "Back to top",
+      "footer": {
+        "cta": {
+          "title": "Ready to take action?",
+          "description": "Join the KRAAK ecosystem and take your ambitions further.",
+          "label": "Contact us"
+        },
+        "brand": {
+          "homeLabel": "Back to the KRAAK homepage",
+          "symbolAlt": "KRAAK symbol",
+          "description": "Operational excellence in service of human development. Strategic expertise in Africa and international support."
+        },
+        "socialNavigationLabel": "Social media",
+        "sections": {
+          "navigation": "Navigation",
+          "expertise": "Expertise",
+          "offices": "Offices"
+        },
+        "navigationLinks": {
+          "home": "Home",
+          "services": "Services",
+          "programs": "Programmes",
+          "about": "About",
+          "contact": "Contact"
+        },
+        "expertiseItems": {
+          "professionalTraining": "Professional training",
+          "projectManagement": "Project management",
+          "internationalMobility": "International mobility"
+        },
+        "policyLinks": {
+          "legalNotice": "Legal notice",
+          "faq": "FAQ",
+          "privacyPolicy": "Privacy policy"
+        },
+        "copyright": "© {{ year }} KRAAK. All rights reserved."
+      }
+    },
     "home": {
       "hero": {
         "titleSkills": "Build your skills.",

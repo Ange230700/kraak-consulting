@@ -1,6 +1,8 @@
 <button
   (click)="scrollToTop()"
-  aria-label="Remonter vers le haut de la page"
+  [attr.aria-label]="'web.shell.scrollToTopLabel' | kraakTranslate"
+  [attr.aria-hidden]="isVisible ? null : true"
+  [attr.tabindex]="isVisible ? 0 : -1"
   class="fixed right-6 bottom-6 z-40 rounded-full bg-blue-600 text-white shadow-lg transition-all duration-300 hover:bg-blue-700"
   [class.opacity-0]="!isVisible"
   [class.pointer-events-none]="!isVisible"

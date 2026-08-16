@@ -8,6 +8,10 @@ import {
 import { RouterLink } from '@angular/router';
 
 import {
+  KraakTranslatePipe,
+  type TranslationKey,
+} from '../../../../../shared/i18n';
+import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
@@ -16,7 +20,7 @@ import type { LocalizedPublicPageId } from '../../routing/localized-public-route
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 
 interface FooterLink {
-  label: string;
+  labelKey: TranslationKey;
   pageId: LocalizedPublicPageId;
 }
 
@@ -33,6 +37,7 @@ interface FooterOfficeItem {
     RouterLink,
     PublicConversionTrackingDirective,
     LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './footer.component.html',
 })
@@ -44,18 +49,33 @@ export class Footer implements AfterViewInit, OnDestroy {
 
   protected readonly currentYear = new Date().getFullYear();
 
-  protected readonly navigationLinks: FooterLink[] = [
-    { label: 'Accueil', pageId: 'home' },
-    { label: 'Services', pageId: 'services' },
-    { label: 'Programmes', pageId: 'programs' },
-    { label: '\u00C0 propos', pageId: 'about' },
-    { label: 'Contact', pageId: 'contact' },
+  protected readonly navigationLinks: readonly FooterLink[] = [
+    {
+      labelKey: 'web.shell.footer.navigationLinks.home',
+      pageId: 'home',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.services',
+      pageId: 'services',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.programs',
+      pageId: 'programs',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.about',
+      pageId: 'about',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.contact',
+      pageId: 'contact',
+    },
   ];
 
-  protected readonly expertiseItems: readonly string[] = [
-    'Formation professionnelle',
-    'Pilotage de projets',
-    'Mobilité internationale',
+  protected readonly expertiseItems: readonly TranslationKey[] = [
+    'web.shell.footer.expertiseItems.professionalTraining',
+    'web.shell.footer.expertiseItems.projectManagement',
+    'web.shell.footer.expertiseItems.internationalMobility',
   ];
 
   protected readonly officeItems: readonly FooterOfficeItem[] = [
@@ -77,11 +97,14 @@ export class Footer implements AfterViewInit, OnDestroy {
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
 
-  protected readonly policyLinks: FooterLink[] = [
-    { label: 'Mentions l\u00E9gales', pageId: 'legalNotice' },
-    { label: 'FAQ', pageId: 'faq' },
+  protected readonly policyLinks: readonly FooterLink[] = [
     {
-      label: 'Politique de confidentialité',
+      labelKey: 'web.shell.footer.policyLinks.legalNotice',
+      pageId: 'legalNotice',
+    },
+    { labelKey: 'web.shell.footer.policyLinks.faq', pageId: 'faq' },
+    {
+      labelKey: 'web.shell.footer.policyLinks.privacyPolicy',
       pageId: 'privacyPolicy',
     },
   ];

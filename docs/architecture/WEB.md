@@ -31,17 +31,19 @@ Le site web KRAAK est l'application Angular publique située dans
   et pages d'erreur sous `/fr/...`.
 - Internationalisation : `fr-CI` est la locale source et de repli, `en-GB` est
   la première locale anglaise selon ARC-19. La page d'accueil `/fr/` ou `/en/`
-  et la barre de navigation forment le premier incrément public bilingue. Les
-  autres pages `/en/...` restent un scaffold technique non indexable tant que
-  leurs contenus anglais ne sont pas traduits et relus.
+  et la barre de navigation forment le premier incrément public bilingue. La
+  coque publique partagée (pied de page, lien d'accès rapide et commande de
+  retour en haut) forme le deuxième incrément. Les autres pages `/en/...`
+  restent un scaffold technique non indexable tant que leurs contenus anglais
+  ne sont pas traduits et relus.
 
 ## Implémentation active
 
 - Routes publiques : [`../../apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts).
 - Prerender public : [`../../apps/client/projects/web/src/app/app.routes.server.ts`](../../apps/client/projects/web/src/app/app.routes.server.ts).
 - Catalogues runtime : [`../../apps/client/projects/shared/i18n/catalogs/`](../../apps/client/projects/shared/i18n/catalogs/),
-  avec les espaces de clés `web.home` et `web.nav` pour le premier incrément
-  public bilingue.
+  avec les espaces de clés `web.home`, `web.nav` et `web.shell` pour les deux
+  premiers incréments publics bilingues.
 - Tests de surface : [`../../apps/client/projects/web/src/app/app.routes.spec.ts`](../../apps/client/projects/web/src/app/app.routes.spec.ts)
   et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
 - Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
@@ -58,18 +60,24 @@ Le prerender, les métadonnées SEO, les canonicals, les liens `hreflang`, les
 entrées sitemap et l'attribut `<html lang>` sont générés par locale depuis le
 modèle de routes web localisées.
 
-La page d'accueil et la barre de navigation servent désormais leur contenu
-français ou anglais depuis les catalogues selon la locale de l'URL. Un sélecteur
-de langue relie les variantes d'une même page publique lorsque le mapping
-existe, puis revient à la page d'accueil de la langue cible lorsqu'aucune
-variante publique n'est disponible.
+La page d'accueil, la barre de navigation et la coque publique partagée servent
+désormais leur contenu français ou anglais depuis les catalogues selon la locale
+de l'URL. Un sélecteur de langue relie les variantes d'une même page publique
+lorsque le mapping existe, puis revient à la page d'accueil de la langue cible
+lorsqu'aucune variante publique n'est disponible.
 
-Cette première tranche de contenu ne modifie pas encore la politique SEO du
-scaffold anglais : les routes anglaises restent `noindex, nofollow`, exclues du
-sitemap de production et non annoncées en `hreflang="en-GB"` depuis les pages
-françaises indexables. Leurs métadonnées anglaises restent temporaires jusqu'à
-une traduction et une revue SEO dédiées. `x-default` continue de pointer vers la
-route française correspondante.
+Les prochaines pages de conversion doivent être localisées séparément, avec une
+seule page par PR, dans cet ordre : Contact, Services, Programmes, puis À propos.
+L'activation de l'indexation anglaise, des entrées sitemap et des liens
+`hreflang` réciproques reste conditionnée à une revue humaine du contenu anglais
+de chaque page.
+
+Ces deux premières tranches de contenu ne modifient pas encore la politique SEO
+du scaffold anglais : les routes anglaises restent `noindex, nofollow`, exclues
+du sitemap de production et non annoncées en `hreflang="en-GB"` depuis les
+pages françaises indexables. Leurs métadonnées anglaises restent temporaires
+jusqu'à une traduction et une revue SEO dédiées. `x-default` continue de pointer
+vers la route française correspondante.
 
 Les routes d'authentification technique, notamment les callbacks et liens de
 réinitialisation, restent compatibles avec Supabase Auth avant toute localisation
