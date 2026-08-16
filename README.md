@@ -226,7 +226,9 @@ publique de contenu. Voir
 | `pnpm typecheck`            | Vérifier le typage web, mobile et API                     |
 | `pnpm test:unit`            | Tests unitaires client                                    |
 | `pnpm test:e2e`             | Tests E2E (Playwright)                                    |
-| `pnpm lint`                 | Linter tous les projets                                   |
+| `pnpm lint`                 | Linter le code, l'outillage racine et le Markdown         |
+| `pnpm lint:root`            | Linter les scripts et configurations racine               |
+| `pnpm lint:markdown`        | Linter tous les fichiers Markdown                         |
 | `pnpm format`               | Formater le code (Prettier)                               |
 | `pnpm format:check`         | Vérifier le formatage                                     |
 | `pnpm docs:toc:check`       | Vérifier les tables des matières Markdown                 |

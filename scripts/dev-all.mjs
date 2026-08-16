@@ -154,18 +154,29 @@ async function clearAngularViteCache(projectName) {
     return;
   }
 
-  const cacheRoot = path.resolve(process.cwd(), 'apps', 'client', '.angular', 'cache');
+  const cacheRoot = path.resolve(
+    process.cwd(),
+    'apps',
+    'client',
+    '.angular',
+    'cache',
+  );
 
   if (!isPathInsideWorkspace(cacheRoot)) {
     throw new Error(`Refus de supprimer un cache hors workspace: ${cacheRoot}`);
   }
 
-  let versionEntries = [];
+  let versionEntries;
 
   try {
     versionEntries = await readdir(cacheRoot, { withFileTypes: true });
   } catch (error) {
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'ENOENT'
+    ) {
       return;
     }
 
@@ -180,7 +191,9 @@ async function clearAngularViteCache(projectName) {
     const projectCachePath = path.resolve(cacheRoot, entry.name, projectName);
 
     if (!isPathInsideWorkspace(projectCachePath)) {
-      throw new Error(`Refus de supprimer un cache hors workspace: ${projectCachePath}`);
+      throw new Error(
+        `Refus de supprimer un cache hors workspace: ${projectCachePath}`,
+      );
     }
 
     await rm(projectCachePath, {
@@ -216,7 +229,11 @@ function shutdown(exitCode = 0) {
   }, 2000);
 }
 
-export function resolveSpawnCommand(command, args, platform = process.platform) {
+export function resolveSpawnCommand(
+  command,
+  args,
+  platform = process.platform,
+) {
   if (platform !== 'win32') {
     return {
       command,
@@ -401,6 +418,9 @@ async function main() {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   await main();
 }

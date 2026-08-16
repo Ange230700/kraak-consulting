@@ -130,12 +130,18 @@ branche GitHub pour garantir un historique propre et bisectable.
 
 ### 4.1 Fichiers de configuration
 
-- `commitlint.config.js` — règles Conventional Commits + scopes autorisés
+- `commit-scopes.cjs` — source canonique des scopes de commit autorisés
+- `.czrc.cjs` — configuration du prompt Commitizen
+- `commitlint.config.js` — règles Conventional Commits basées sur les scopes
+  canoniques
 - `.husky/commit-msg` — hook commitlint
-- `.husky/pre-commit` — hook Prettier
+- `.husky/pre-commit` — hook lint-staged
 - `.husky/pre-push` — hook validate-branch-name + typecheck + tests
 - `.validate-branch-namerc.json` — pattern de validation des noms de branche
 - `.prettierrc` / `.prettierignore` — configuration Prettier
+- `eslint.config.mjs` — lint des scripts et configurations racine
+- `.markdownlint-cli2.jsonc` — règles et périmètre du lint Markdown
+- `lint-staged.config.cjs` — lint et formatage ciblés avant commit
 
 ### 4.2 Scripts pnpm
 

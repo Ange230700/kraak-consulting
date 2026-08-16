@@ -56,9 +56,13 @@
     "test:integration": "pnpm --filter @kraak/api test:integration",
     "test:coverage": "pnpm --filter @kraak/api test:cov && pnpm --filter @kraak/client test:coverage && pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test:coverage",
     "lint:api": "pnpm --filter @kraak/api lint",
-    "lint": "pnpm -r lint && pnpm splinter:linked",
-    "lint:code": "pnpm -r lint",
-    "lint:fix": "pnpm -r lint:fix",
+    "lint": "pnpm lint:code && pnpm splinter:linked",
+    "lint:code": "pnpm lint:root && pnpm -r lint && pnpm lint:markdown",
+    "lint:fix": "pnpm lint:root:fix && pnpm -r lint:fix && pnpm lint:markdown:fix",
+    "lint:root": "eslint \"scripts/**/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs,jsonc}\" \"apps/*/eslint.config.{js,cjs,mjs}\" \"packages/*/eslint.config.{js,cjs,mjs}\"",
+    "lint:root:fix": "eslint \"scripts/**/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs,jsonc}\" \"apps/*/eslint.config.{js,cjs,mjs}\" \"packages/*/eslint.config.{js,cjs,mjs}\" --fix",
+    "lint:markdown": "markdownlint-cli2",
+    "lint:markdown:fix": "markdownlint-cli2 --fix",
     "affected:lint": "node ./scripts/affected-workspaces.mjs lint",
     "affected:test": "node ./scripts/affected-workspaces.mjs test",
     "affected:build": "node ./scripts/affected-workspaces.mjs build",
@@ -74,7 +78,7 @@
     "check:prepilot:web": "pnpm --filter @kraak/client e2e:prepilot",
     "format": "prettier --write \"**/*.{ts,html,scss,css,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,html,scss,css,json,md}\"",
-    "precommit:staged": "lint-staged --concurrent true",
+    "precommit:staged": "lint-staged --concurrent false",
     "prepush:smart": "node ./scripts/husky-pre-push.mjs",
     "commit": "git-cz",
     "prepare": "husky",
@@ -91,49 +95,20 @@
       "path": "cz-git"
     }
   },
-  "lint-staged": {
-    "apps/api/src/**/*.ts": [
-      "pnpm --filter @kraak/api exec eslint --fix --cache --cache-location .cache/eslint/.eslintcache --max-warnings=0"
-    ],
-    "apps/client/{projects,tests}/**/*.{ts,html}": [
-      "pnpm --filter @kraak/client exec eslint --fix --cache --cache-location .cache/eslint/.eslintcache --max-warnings=0"
-    ],
-    "**/*.{ts,js,mjs,cjs,html,scss,css,json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
-  "cz-git": {
-    "disableEmoji": true,
-    "useEmoji": false,
-    "allowCustomScopes": false,
-    "scopes": [
-      "root",
-      "repo",
-      "workspace",
-      "config",
-      "docs",
-      "scripts",
-      "web",
-      "mobile",
-      "api",
-      "client",
-      "contracts",
-      "domain",
-      "api-client",
-      "tokens",
-      "infra",
-      "ci"
-    ]
-  },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@vitest/coverage-v8": "4.1.4",
     "commitizen": "^4.3.1",
     "cz-git": "^1.12.0",
+    "eslint": "^10.2.0",
+    "eslint-plugin-jsonc": "^3.3.0",
+    "globals": "^17.8.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
+    "markdownlint-cli2": "^0.23.2",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "sharp": "^0.34.5",

@@ -91,7 +91,7 @@ function stripMarkdown(value) {
   return stripHtmlTags(value)
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\\([\\`*{}\[\]()#+\-.!_>])/g, '$1')
+    .replace(/\\([\\`*{}\x5b\x5d()#+\-.!_>])/g, '$1')
     .replaceAll('**', '')
     .replaceAll('__', '')
     .replaceAll('*', '')

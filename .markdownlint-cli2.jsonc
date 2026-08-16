@@ -1,0 +1,27 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD025": false,
+    "MD051": false,
+    "MD024": {
+      "siblings_only": true,
+    },
+  },
+  "globs": [
+    "**/*.md",
+    "!**/.git/**",
+    "!.github/instructions/**",
+    "!**/node_modules/**",
+    "!**/.venv/**",
+    "!**/.angular/**",
+    "!**/.reports/**",
+    "!**/.scannerwork/**",
+    "!**/coverage/**",
+    "!**/dist/**",
+    "!**/test-results/**",
+    "!docs/archive/**",
+    "!docs/generated/primeng/**",
+    "!pr-*-export/**",
+  ],
+}

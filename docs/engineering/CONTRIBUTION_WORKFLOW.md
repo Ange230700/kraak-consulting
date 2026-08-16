@@ -169,7 +169,14 @@ Ce sont les mêmes que les préfixes de branche : `feat`, `fix`, `docs`, `chore`
 
 Indique la partie du projet concernée. Scopes autorisés :
 `root`, `repo`, `workspace`, `config`, `docs`, `scripts`, `web`, `mobile`,
-`api`, `client`, `contracts`, `domain`, `api-client`, `tokens`, `infra`, `ci`.
+`api`, `client`, `contracts`, `domain`, `api-client`, `tokens`, `infra`, `ci`,
+`supabase`. La liste canonique est définie dans `commit-scopes.cjs` et partagée
+par Commitizen et commitlint.
+
+Le lint Markdown s'applique aux documents actifs. Les archives, les instructions
+d'outillage et la référence PrimeNG générée sont exclus. La validité des ancres
+des tables des matières est contrôlée par `pnpm docs:toc:check` plutôt que par la
+règle markdownlint `MD051`.
 
 ### Prompt interactif avec Commitizen
 
@@ -327,7 +334,12 @@ pnpm format
 pnpm format:check
 ```
 
-Le hook `pre-commit` s'appuie maintenant sur `lint-staged` pour n'exécuter formatage et lint que sur les fichiers indexés. Le hook `pre-push` exécute `pnpm affected:lint`, `pnpm affected:test` et `pnpm test:integration` sur les zones modifiées, puis garde `pnpm test:workspace` uniquement quand les scripts du dépôt changent, ce qui évite les E2E locales et les checks globaux inutiles.
+Le hook `pre-commit` s'appuie sur `lint-staged.config.cjs` pour n'exécuter le
+formatage et le lint que sur les fichiers indexés. Il applique Prettier avant
+markdownlint sur les fichiers Markdown. Le hook `pre-push` exécute
+`pnpm affected:lint`, `pnpm affected:test` et `pnpm test:integration` sur les
+zones modifiées, puis garde `pnpm test:workspace` uniquement quand les scripts
+du dépôt changent, ce qui évite les E2E locales et les checks globaux inutiles.
 
 Les hooks définissent `GIT_EXECUTABLE` avec un chemin absolu vers `git` (ou utilisent une valeur déjà fournie par l'environnement) pour verrouiller le binaire appelé. En CI, `GIT_EXECUTABLE` est fixé globalement à `/usr/bin/git`.
 

@@ -19,7 +19,6 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isWindows = os.platform() === 'win32';
 
 // Configure paths
@@ -128,11 +127,15 @@ function runWithoutShell(command, args, env) {
     // SECURITY: command provient uniquement de parseRunCommand (tokens hardcodés).
     // Les scripts .cmd/.bat Windows sont lancés via cmd.exe avec shell: false.
     const comSpec = process.env.ComSpec ?? 'cmd.exe';
-    return spawnSync(comSpec, ['/d', '/s', '/c', commandWithExtension, ...args], {
-      env,
-      shell: false,
-      stdio: 'inherit',
-    });
+    return spawnSync(
+      comSpec,
+      ['/d', '/s', '/c', commandWithExtension, ...args],
+      {
+        env,
+        shell: false,
+        stdio: 'inherit',
+      },
+    );
   }
 
   return spawnSync(command, args, {

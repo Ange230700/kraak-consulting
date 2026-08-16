@@ -51,6 +51,12 @@ jobs:
       - name: Lint (ESLint)
         run: pnpm affected:lint
 
+      - name: Linter les scripts et configurations racine
+        run: pnpm lint:root
+
+      - name: Linter la documentation Markdown
+        run: pnpm lint:markdown
+
       - name: Lint Supabase lié
         if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
         env:

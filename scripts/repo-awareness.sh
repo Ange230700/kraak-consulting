@@ -154,7 +154,7 @@ run() {
 run_shell() {
   local command="$1"
   printf '\n%s$%s %s\n' "$C_GREEN" "$C_RESET" "$command"
-  bash -lc "$command" 2>&1 || {
+  bash -c "$command" 2>&1 || {
     local status=$?
     warn "Command exited with status $status; report generation continues."
     return 0

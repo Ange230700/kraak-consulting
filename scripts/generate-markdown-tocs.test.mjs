@@ -122,12 +122,12 @@ test('Given tracked and non-ignored Markdown files, When ToCs are written, Then 
 
     assert.match(tracked, /## Table des matières/);
     assert.match(tracked, /- \[Guide\]\(#guide\)/);
-    assert.match(tracked, /  - \[Même section\]\(#meme-section\)/);
+    assert.match(tracked, / {2}- \[Même section\]\(#meme-section\)/);
     assert.match(
       tracked,
-      /  - \[\[TASK\]\[DOCS\] Section balisée\]\(#taskdocs-section-balisee\)/,
+      / {2}- \[\[TASK\]\[DOCS\] Section balisée\]\(#taskdocs-section-balisee\)/,
     );
-    assert.match(tracked, /  - \[Même section\]\(#meme-section-1\)/);
+    assert.match(tracked, / {2}- \[Même section\]\(#meme-section-1\)/);
     assert.match(untracked, /## Table des matières/);
     assert.doesNotMatch(ignored, /## Table des matières/);
 

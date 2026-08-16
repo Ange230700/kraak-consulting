@@ -10,7 +10,7 @@ const renderConfig = readFileSync(
 const extractServiceBlock = (name) => {
   const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(`^    name: ${escapedName}\\s*$`, 'm');
-  const serviceBlocks = renderConfig.split(/\n(?=  - type: web\n)/);
+  const serviceBlocks = renderConfig.split(/\n(?= {2}- type: web\n)/);
   const match = serviceBlocks.find((block) => pattern.test(block));
 
   return match ?? '';
