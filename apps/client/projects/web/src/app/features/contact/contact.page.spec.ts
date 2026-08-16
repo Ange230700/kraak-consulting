@@ -1,13 +1,16 @@
 // apps\client\projects\web\src\app\features\contact\contact.page.spec.ts
 
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
+
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { AnalyticsService } from '../../core/analytics/analytics.service';
 import {
   CONTACT_PHONE_DISPLAY,
@@ -33,6 +36,13 @@ function dispatchTrackedClick(link: HTMLAnchorElement): void {
   );
 }
 
+function normalizedText(element: Element | null): string {
+  return (element?.textContent ?? '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.!?])/g, '$1')
+    .trim();
+}
+
 describe('ContactPage', () => {
   let httpTestingController: HttpTestingController;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
@@ -49,9 +59,12 @@ describe('ContactPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
+        provideKraakI18n(),
         { provide: AnalyticsService, useValue: analyticsService },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
     httpTestingController = TestBed.inject(HttpTestingController);
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
@@ -79,6 +92,199 @@ describe('ContactPage', () => {
     fixture.detectChanges();
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading?.textContent).toContain('Parlez-nous de votre objectif.');
+  });
+
+  it('Given the French contact route When the page renders Then visitor copy and accessible text preserve the French source content', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+
+    expect(normalizedText(page.querySelector('h1'))).toBe(
+      'Parlez-nous de votre objectif.',
+    );
+    expect(normalizedText(page)).toContain('Envoyez votre demande');
+    expect(normalizedText(page)).toContain('Nos coordonnées');
+    expect(page.querySelector('aside')?.getAttribute('aria-label')).toBe(
+      'Informations de contact KRAAK',
+    );
+    expect(page.querySelector('aside img')?.getAttribute('alt')).toBe(
+      "Entretien d'orientation pour clarifier un besoin d'accompagnement",
+    );
+    expect(normalizedText(page)).toContain(
+      'File interne : formation/orientation-public. Workflow : orientation formation sous 48h ouvrées.',
+    );
+    expect(normalizedText(page)).not.toContain('[missing:web.contact.');
+  });
+
+  it('Given the English contact route When every section renders Then visitor copy links and accessible text come from the English catalog', async () => {
+    vi.spyOn(TestBed.inject(Router), 'url', 'get').mockReturnValue(
+      '/en/contact',
+    );
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    const content = normalizedText(page);
+    const serviceLink = page.querySelector(
+      'a[href="/en/services"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(normalizedText(page.querySelector('h1'))).toBe(
+      'Tell us about your goal.',
+    );
+    expect(content).toContain('Send an enquiry');
+    expect(content).toContain('Give us the right information to guide you.');
+    expect(content).toContain('Send your enquiry');
+    expect(content).toContain('Project management');
+    expect(content).toContain('Our contact details');
+    expect(content).toContain('Let’s discuss your next step.');
+    expect(serviceLink?.textContent).toContain('Explore our services');
+    expect(page.querySelector('aside')?.getAttribute('aria-label')).toBe(
+      'KRAAK contact details',
+    );
+    expect(page.querySelector('aside img')?.getAttribute('alt')).toBe(
+      'A guidance meeting to clarify support needs',
+    );
+    expect(
+      page.querySelector('nav[aria-label]')?.getAttribute('aria-label'),
+    ).toBe('KRAAK social media');
+    expect(page.querySelector('#name')?.getAttribute('placeholder')).toBe(
+      'Your name',
+    );
+    expect(page.querySelector('#country')?.getAttribute('placeholder')).toBe(
+      'Your country of residence',
+    );
+    expect(content).toContain(
+      'Internal queue: formation/orientation-public. Workflow: training guidance within 48 business hours.',
+    );
+    expect(content).not.toContain('Envoyez votre demande');
+    expect(content).not.toContain('Nos coordonnées');
+    expect(content).not.toContain('[missing:web.contact.');
+  });
+
+  it('Given an empty English contact form When it is submitted Then every validation message is shown in English and analytics values stay language-neutral', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+
+    fixture.componentInstance.onSubmit();
+    fixture.detectChanges();
+
+    const content = normalizedText(fixture.nativeElement as HTMLElement);
+
+    expect(content).toContain('Name is required.');
+    expect(content).toContain('Email address is required.');
+    expect(content).toContain('Goal is required.');
+    expect(content).toContain('Country is required.');
+    expect(content).toContain('Message is required.');
+    expect(content).not.toContain('Le nom est requis.');
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'contact_submit_failure',
+      expect.objectContaining({
+        contact_category: 'training',
+        failure_type: 'validation',
+        service_type: 'formation',
+      }),
+    );
+  });
+
+  it('Given a valid English contact form When the API accepts it Then the success feedback is displayed in English', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: 'Alice Smith',
+      email: 'alice@example.com',
+      subject: 'Discuss training support',
+      country: 'Ghana',
+      serviceType: 'formation',
+      message: 'I would like to discuss the right training programme.',
+    });
+
+    component.onSubmit();
+    const request = httpTestingController.expectOne((candidate) =>
+      candidate.url.endsWith('/contact'),
+    );
+
+    expect(request.request.body.message).toContain('Country: Ghana');
+    expect(request.request.body.message).toContain('Service type: Training');
+    expect(request.request.body.message).toContain(
+      'Internal queue: formation/orientation-public',
+    );
+    expect(request.request.body.message).toContain(
+      'Response workflow: training guidance within 48 business hours',
+    );
+    expect(request.request.body.message).toContain(
+      'Operational fallback: direct email or WhatsApp',
+    );
+
+    request.flush({ success: true, message: 'Request received.' });
+    fixture.detectChanges();
+
+    const content = normalizedText(fixture.nativeElement as HTMLElement);
+
+    expect(content).toContain(
+      'Your message has been sent. We will get back to you as soon as possible.',
+    );
+    expect(content).not.toContain('Votre message a bien été envoyé.');
+  });
+
+  it('Given a valid English contact form When the API returns French-only details Then localized fallback feedback is shown without leaking French copy', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: 'Alice Smith',
+      email: 'alice@example.com',
+      subject: 'Discuss project support',
+      country: 'Ghana',
+      serviceType: 'project',
+      message: 'I would like to discuss support for a new project.',
+    });
+
+    component.onSubmit();
+    httpTestingController
+      .expectOne((request) => request.url.endsWith('/contact'))
+      .flush(
+        {
+          errors: [
+            "Le formulaire est temporairement indisponible. Veuillez utiliser l'e-mail direct ou WhatsApp indiqué sur la page contact.",
+            'Le nom est requis.',
+          ],
+        },
+        { status: 500, statusText: 'Internal Server Error' },
+      );
+    fixture.detectChanges();
+
+    const content = normalizedText(fixture.nativeElement as HTMLElement);
+
+    expect(content).toContain('Something went wrong. Please try again later.');
+    expect(content).toContain(
+      'Alternative contact options: you can continue your enquiry without the form.',
+    );
+    expect(content).not.toContain('Le formulaire est temporairement');
+    expect(content).not.toContain('Fallback opérationnel');
+    expect(content).not.toContain('Le nom est requis.');
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'contact_submit_failure',
+      expect.objectContaining({
+        error_count: 2,
+        failure_type: 'api',
+        status: 500,
+      }),
+    );
   });
 
   // Given le formulaire de contact est affiché
@@ -564,7 +770,7 @@ describe('ContactPage', () => {
   // Given un formulaire valide
   // When l'API répond avec une erreur sans tableau errors structuré
   // Then le message d'erreur générique est affiché
-  it('devrait afficher le message générique si la réponse erreur ne contient pas de tableau errors', () => {
+  it("Given un formulaire valide When l'API renvoie une réponse sans tableau errors Then le message générique est affiché", () => {
     const fixture = TestBed.createComponent(ContactPage);
     fixture.detectChanges();
     const component = fixture.componentInstance;

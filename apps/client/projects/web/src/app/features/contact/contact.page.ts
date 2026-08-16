@@ -33,6 +33,10 @@ import { PublicConversionTrackingDirective } from '../../shared/analytics/public
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -52,89 +56,60 @@ interface ServiceOption {
   fallbackWorkflow: string;
 }
 
-const GENERIC_CONTACT_ERROR_MESSAGE =
-  'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.';
-
 const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/services-coaching.avif',
 );
 
-type ServiceOptionDefinition = readonly [
-  label: string,
-  value: ServiceType,
-  category: ContactFormDto['category'],
-  triagePath: string,
-  responseWorkflow: string,
-  fallbackWorkflow: string,
-];
-
-function createServiceOption([
-  label,
-  value,
-  category,
-  triagePath,
-  responseWorkflow,
-  fallbackWorkflow,
-]: ServiceOptionDefinition): ServiceOption {
-  return {
-    label,
-    value,
-    category,
-    triagePath,
-    responseWorkflow,
-    fallbackWorkflow,
-  };
+interface ServiceOptionDefinition {
+  readonly translationId:
+    | 'training'
+    | 'project'
+    | 'immigration'
+    | 'business'
+    | 'partnership'
+    | 'other';
+  readonly value: ServiceType;
+  readonly category: ContactFormDto['category'];
+  readonly triagePath: string;
 }
 
 const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
-  [
-    'Formation',
-    'formation',
-    'training',
-    'formation/orientation-public',
-    'orientation formation sous 48h ouvrées',
-    'e-mail direct ou WhatsApp',
-  ],
-  [
-    'Gestion de projets',
-    'project',
-    'project_management',
-    'conseil/gestion-de-projets',
-    'cadrage projet sous 48h ouvrées',
-    'e-mail direct ou WhatsApp',
-  ],
-  [
-    'Conseil en immigration',
-    'immigration',
-    'immigration',
-    'conseil/mobilite-internationale',
-    'orientation mobilité sans dépôt de dossier sensible',
-    'WhatsApp ou e-mail direct',
-  ],
-  [
-    'Solutions entreprises',
-    'business',
-    'business',
-    'partenariats/organisations-et-entreprises',
-    'qualification organisation sous 48h ouvrées',
-    'e-mail direct',
-  ],
-  [
-    'Partenariat',
-    'program',
-    'partnership',
-    'partenariats/institutionnel',
-    'qualification partenariat sous 48h ouvrées',
-    'e-mail direct ou WhatsApp',
-  ],
-  [
-    'Autre demande',
-    'other',
-    'other',
-    'intake/general',
-    'triage général puis réorientation sous 48h ouvrées',
-    'e-mail direct ou WhatsApp',
-  ],
+  {
+    translationId: 'training',
+    value: 'formation',
+    category: 'training',
+    triagePath: 'formation/orientation-public',
+  },
+  {
+    translationId: 'project',
+    value: 'project',
+    category: 'project_management',
+    triagePath: 'conseil/gestion-de-projets',
+  },
+  {
+    translationId: 'immigration',
+    value: 'immigration',
+    category: 'immigration',
+    triagePath: 'conseil/mobilite-internationale',
+  },
+  {
+    translationId: 'business',
+    value: 'business',
+    category: 'business',
+    triagePath: 'partenariats/organisations-et-entreprises',
+  },
+  {
+    translationId: 'partnership',
+    value: 'program',
+    category: 'partnership',
+    triagePath: 'partenariats/institutionnel',
+  },
+  {
+    translationId: 'other',
+    value: 'other',
+    category: 'other',
+    triagePath: 'intake/general',
+  },
 ];
 
 @Component({
@@ -154,6 +129,7 @@ const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
     PublicConversionTrackingDirective,
     RevealOnScrollDirective,
     LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './contact.page.html',
   styles: [
@@ -176,9 +152,33 @@ export default class ContactPage implements OnInit, OnDestroy {
   private readonly contactService = inject(ContactService);
   private readonly gsapService = inject(GsapAnimationsService);
   private readonly analyticsService = inject(AnalyticsService);
+  private readonly i18n = inject(KraakI18nService);
 
-  protected readonly serviceOptions =
-    SERVICE_OPTION_DEFINITIONS.map(createServiceOption);
+  protected get serviceOptions(): readonly ServiceOption[] {
+    this.i18n.locale();
+
+    return SERVICE_OPTION_DEFINITIONS.map((definition) => {
+      const translationPrefix =
+        'web.contact.form.serviceOptions.' + definition.translationId;
+
+      return {
+        value: definition.value,
+        category: definition.category,
+        triagePath: definition.triagePath,
+        label: this.i18n.translate(translationPrefix + '.label'),
+        responseWorkflow: this.i18n.translate(
+          translationPrefix + '.responseWorkflow',
+        ),
+        fallbackWorkflow: this.i18n.translate(
+          translationPrefix + '.fallbackWorkflow',
+        ),
+      };
+    });
+  }
+
+  protected get helpLabelSeparator(): string {
+    return this.i18n.locale() === 'fr-CI' ? ' :' : ':';
+  }
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
   protected readonly whatsappLink =
@@ -274,22 +274,39 @@ export default class ContactPage implements OnInit, OnDestroy {
       },
       error: (errorResponse: HttpErrorResponse) => {
         this.loading.set(false);
-        const extractedErrors = this.extractApiErrors(errorResponse);
-        this.apiErrors.set(extractedErrors);
+        const resolvedErrors = this.resolveApiErrors(errorResponse);
+        this.apiErrors.set(resolvedErrors.messages);
         this.trackContactSubmitFailure('api', selectedOption, {
-          error_count: extractedErrors.length,
+          error_count: resolvedErrors.sourceCount,
           status: errorResponse.status,
         });
         logDebugError('web.contact.submit', errorResponse, {
           route: '/contact',
           status: errorResponse.status,
-          apiErrorCount: extractedErrors.length,
+          apiErrorCount: resolvedErrors.sourceCount,
         });
       },
     });
   }
 
-  private extractApiErrors(errorResponse: HttpErrorResponse): string[] {
+  private resolveApiErrors(errorResponse: HttpErrorResponse): {
+    messages: string[];
+    sourceCount: number;
+  } {
+    const sourceErrors = this.extractSourceApiErrors(errorResponse);
+    const genericError = this.i18n.translate('web.contact.form.genericError');
+    const messages =
+      this.i18n.locale() === 'fr-CI' && sourceErrors.length > 0
+        ? sourceErrors
+        : [genericError];
+
+    return {
+      messages,
+      sourceCount: Math.max(sourceErrors.length, 1),
+    };
+  }
+
+  private extractSourceApiErrors(errorResponse: HttpErrorResponse): string[] {
     const errorBody = errorResponse.error as
       | { errors?: unknown; message?: unknown }
       | undefined;
@@ -311,7 +328,7 @@ export default class ContactPage implements OnInit, OnDestroy {
       return [errorBody.message.trim()];
     }
 
-    return [GENERIC_CONTACT_ERROR_MESSAGE];
+    return [];
   }
 
   private buildPayload(selectedOption: ServiceOption): ContactFormDto {
@@ -326,14 +343,34 @@ export default class ContactPage implements OnInit, OnDestroy {
 
   private buildMessage(selectedOption: ServiceOption): string {
     return [
-      `Pays : ${this.form.value.country!}`,
-      `Type de service : ${selectedOption.label}`,
-      `File interne : ${selectedOption.triagePath}`,
-      `Workflow de réponse : ${selectedOption.responseWorkflow}`,
-      `Fallback opérationnel : ${selectedOption.fallbackWorkflow}`,
+      this.buildMessageLine(
+        'web.contact.form.fields.country.label',
+        this.form.value.country!,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.label',
+        selectedOption.label,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.internalQueueLabel',
+        selectedOption.triagePath,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.responseWorkflowLabel',
+        selectedOption.responseWorkflow,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.fallbackWorkflowLabel',
+        selectedOption.fallbackWorkflow,
+      ),
       '',
       this.form.value.message!,
     ].join('\n');
+  }
+
+  private buildMessageLine(labelKey: string, value: string): string {
+    const separator = this.i18n.locale() === 'fr-CI' ? ' : ' : ': ';
+    return this.i18n.translate(labelKey) + separator + value;
   }
 
   protected getSelectedServiceOption(): ServiceOption {

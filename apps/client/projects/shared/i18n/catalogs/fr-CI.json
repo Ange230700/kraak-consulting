@@ -205,6 +205,124 @@
         "titleLine2": "Nous savons comment vous y amener.",
         "cta": "Prendre rendez-vous maintenant"
       }
+    },
+    "contact": {
+      "hero": {
+        "eyebrow": "Contact KRAAK",
+        "titleLead": "Parlez-nous de votre",
+        "titleEmphasis": "objectif",
+        "description": "Vous souhaitez suivre une formation, structurer un projet, préparer une mobilité internationale ou discuter d'un partenariat ? L'équipe KRAAK est disponible pour vous orienter vers l'accompagnement le plus adapté.",
+        "primaryCta": "Envoyer une demande",
+        "primaryCtaAriaLabel": "Aller au formulaire de contact",
+        "secondaryCta": "Voir les services"
+      },
+      "details": {
+        "ariaLabel": "Informations de contact KRAAK",
+        "imageAlt": "Entretien d'orientation pour clarifier un besoin d'accompagnement",
+        "heading": "Donnez-nous les bons repères pour vous orienter.",
+        "description": "Formation, projets, leadership, mobilité internationale : décrivez votre priorité et nous revenons vers vous avec un plan d'action clair.",
+        "serviceArea": "Afrique & international",
+        "whatsappPrefix": "WhatsApp :",
+        "openWhatsApp": "Ouvrir WhatsApp",
+        "responseTime": "Réponse sous 48h ouvrées",
+        "socialNavigationLabel": "Réseaux sociaux KRAAK"
+      },
+      "form": {
+        "heading": "Envoyez votre demande",
+        "description": "Décrivez brièvement votre objectif : formation, projet, immigration, partenariat, ou autre demande. Nous vous répondrons dans les meilleurs délais.",
+        "success": "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.",
+        "genericError": "Une erreur est survenue. Veuillez réessayer plus tard.",
+        "fallback": {
+          "heading": "Fallback opérationnel : votre demande peut continuer sans le formulaire.",
+          "emailLead": "Écrivez directement à",
+          "whatsappConnector": "ou ouvrez",
+          "instruction": "Indiquez le type de demande sélectionné pour garder le triage interne."
+        },
+        "fields": {
+          "name": {
+            "label": "Nom complet",
+            "placeholder": "Votre nom",
+            "required": "Le nom est requis.",
+            "minLength": "Le nom doit contenir au moins 2 caractères."
+          },
+          "email": {
+            "label": "Adresse e-mail",
+            "placeholder": "votre.email@exemple.com",
+            "required": "L'adresse e-mail est requise.",
+            "invalid": "Veuillez saisir une adresse e-mail valide."
+          },
+          "subject": {
+            "label": "Objectif",
+            "placeholder": "Ex. lancer un projet, trouver une formation, évaluer un profil",
+            "required": "L'objectif est requis."
+          },
+          "country": {
+            "label": "Pays",
+            "placeholder": "Votre pays de résidence",
+            "required": "Le pays est requis."
+          },
+          "serviceType": {
+            "label": "Type de service",
+            "internalQueueLabel": "File interne",
+            "workflowLabel": "Workflow",
+            "responseWorkflowLabel": "Workflow de réponse",
+            "fallbackWorkflowLabel": "Fallback opérationnel"
+          },
+          "message": {
+            "label": "Message",
+            "placeholder": "Décrivez votre besoin, votre calendrier ou la prochaine décision à prendre...",
+            "required": "Le message est requis.",
+            "minLength": "Le message doit contenir au moins 10 caractères."
+          }
+        },
+        "actions": {
+          "submit": "Envoyer ma demande",
+          "whatsapp": "Discuter sur WhatsApp"
+        },
+        "serviceOptions": {
+          "training": {
+            "label": "Formation",
+            "responseWorkflow": "orientation formation sous 48h ouvrées",
+            "fallbackWorkflow": "e-mail direct ou WhatsApp"
+          },
+          "project": {
+            "label": "Gestion de projets",
+            "responseWorkflow": "cadrage projet sous 48h ouvrées",
+            "fallbackWorkflow": "e-mail direct ou WhatsApp"
+          },
+          "immigration": {
+            "label": "Conseil en immigration",
+            "responseWorkflow": "orientation mobilité sans dépôt de dossier sensible",
+            "fallbackWorkflow": "WhatsApp ou e-mail direct"
+          },
+          "business": {
+            "label": "Solutions entreprises",
+            "responseWorkflow": "qualification organisation sous 48h ouvrées",
+            "fallbackWorkflow": "e-mail direct"
+          },
+          "partnership": {
+            "label": "Partenariat",
+            "responseWorkflow": "qualification partenariat sous 48h ouvrées",
+            "fallbackWorkflow": "e-mail direct ou WhatsApp"
+          },
+          "other": {
+            "label": "Autre demande",
+            "responseWorkflow": "triage général puis réorientation sous 48h ouvrées",
+            "fallbackWorkflow": "e-mail direct ou WhatsApp"
+          }
+        }
+      },
+      "coordinates": {
+        "heading": "Nos coordonnées",
+        "emailLabel": "E-mail",
+        "whatsappLabel": "WhatsApp",
+        "areaHeading": "Zone d'intervention",
+        "areaDescription": "Afrique & international — accompagnement à distance et en présentiel."
+      },
+      "closing": {
+        "heading": "Parlons de votre prochaine étape.",
+        "body": "Envoyez votre demande via le formulaire ou lancez directement un échange sur WhatsApp."
+      }
     }
   },
   "primeng": {

@@ -60,9 +60,10 @@ Les locales applicatives retenues sont :
 Les routes publiques localisées et l'adaptateur runtime partagé sont actifs. La
 page d'accueil et la barre de navigation constituent le premier incrément public
 entièrement bilingue alimenté par les catalogues `fr-CI` et `en-GB`. La coque
-publique partagée constitue le deuxième incrément. Les pages de conversion
-seront ensuite localisées dans des PR distinctes, dans l'ordre Contact, Services,
-Programmes, puis À propos. Les autres pages publiques anglaises et leurs
+publique partagée constitue le deuxième incrément et la page Contact le
+troisième. Les autres pages de conversion seront localisées dans des PR
+distinctes, dans l'ordre Services, Programmes, puis À propos. Les autres pages
+publiques anglaises et leurs
 métadonnées SEO restent dans l'état de scaffold non indexable jusqu'à leur
 traduction et leur revue humaine dédiées. L'indexation anglaise, les entrées
 sitemap et les liens `hreflang` réciproques ne sont activés qu'après cette revue
