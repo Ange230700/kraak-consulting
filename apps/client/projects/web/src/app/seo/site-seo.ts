@@ -1,6 +1,7 @@
 import { SOURCE_LOCALE, type SupportedLocale } from '@kraak/domain';
 
 import blogSitemapDefinitions from './blog-sitemap-pages.json';
+import englishSiteSeoDefinitions from './site-seo.en-GB.json';
 import siteSeoDefinitions from './site-seo.json';
 import { resolveSiteUrl } from '../core/runtime/runtime-config';
 import {
@@ -72,6 +73,11 @@ const runtimeGlobals = globalThis as typeof globalThis & {
 };
 
 export const seoPages = siteSeoDefinitions as readonly SeoPageDefinition[];
+const reviewedSeoPagesByLocale: Partial<
+  Record<SupportedLocale, readonly SeoPageDefinition[]>
+> = {
+  'en-GB': englishSiteSeoDefinitions as readonly SeoPageDefinition[],
+};
 const blogSitemapPages = blogSitemapDefinitions as readonly SeoPageDefinition[];
 
 const statusSeoPages = Object.freeze([
@@ -233,12 +239,14 @@ function buildLocalizedSeoPage(
     };
   }
 
+  const reviewedSeo = findReviewedSeoPage(entry, sourceSeo);
+
   return {
-    ...sourceSeo,
+    ...reviewedSeo,
     path: entry.path,
     robots: entry.indexable
-      ? sourceSeo.robots
-      : (sourceSeo.robots ?? NOINDEX_ROBOTS_DIRECTIVE),
+      ? reviewedSeo.robots
+      : (reviewedSeo.robots ?? NOINDEX_ROBOTS_DIRECTIVE),
     locale: entry.locale,
     htmlLang: entry.htmlLang,
     openGraphLocale: entry.openGraphLocale,
@@ -247,6 +255,28 @@ function buildLocalizedSeoPage(
     temporary: false,
     hreflangLinks: buildHreflangLinks(entry),
   };
+}
+
+function findReviewedSeoPage(
+  entry: LocalizedPublicRouteEntry,
+  sourceSeo: SeoPageDefinition,
+): SeoPageDefinition {
+  if (entry.locale === SOURCE_LOCALE) {
+    return sourceSeo;
+  }
+
+  const localizedSeo = reviewedSeoPagesByLocale[entry.locale]?.find(
+    (page) =>
+      normalizeRoutePath(page.path) === normalizeRoutePath(entry.seoPath),
+  );
+
+  if (!localizedSeo) {
+    throw new Error(
+      `Métadonnées SEO révisées introuvables pour la route publique "${entry.path}".`,
+    );
+  }
+
+  return localizedSeo;
 }
 
 function findRawSeoPageByPath(path: string): SeoPageDefinition | undefined {

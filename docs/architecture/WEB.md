@@ -71,23 +71,17 @@ de langue relie les variantes d'une même page publique lorsque le mapping exist
 puis revient à la page d'accueil de la langue cible lorsqu'aucune variante
 publique n'est disponible.
 
-Les quatre pages de conversion prévues dans cette série sont désormais
-localisées. L'activation de l'indexation anglaise, des entrées sitemap et des
-liens `hreflang` réciproques reste conditionnée à une revue humaine du contenu
-anglais de chaque page.
+La revue humaine du contenu anglais de l'accueil, de la coque publique et des
+quatre pages de conversion a été approuvée le 16 août 2026. `/en/` dispose
+désormais de métadonnées anglaises révisées, est indexable, figure dans le
+sitemap et échange des liens `hreflang="fr-CI"` et `hreflang="en-GB"` avec
+`/fr/`. `x-default` continue de pointer vers `/fr/`.
 
-Les copies anglaises de Contact, Services, Programmes et À propos sont proposées
-mais n'ont pas encore reçu de revue humaine. En conséquence, `/en/contact`,
-`/en/services`, `/en/programs` et `/en/about` restent `noindex, nofollow`, hors
-du sitemap de production et sans lien `hreflang="en-GB"` réciproque depuis leur
-page française respective.
-
-Ces incréments de contenu ne modifient pas encore la politique SEO du scaffold
-anglais : les routes anglaises restent `noindex, nofollow`, exclues
-du sitemap de production et non annoncées en `hreflang="en-GB"` depuis les
-pages françaises indexables. Leurs métadonnées anglaises restent temporaires
-jusqu'à une traduction et une revue SEO dédiées. `x-default` continue de pointer
-vers la route française correspondante.
+Les activations SEO des pages de conversion restent livrées une par une afin de
+garder chaque changement vérifiable et réversible. Malgré leur copie approuvée,
+`/en/contact`, `/en/services`, `/en/programs` et `/en/about` restent donc
+temporairement `noindex, nofollow`, hors du sitemap et sans lien
+`hreflang="en-GB"` réciproque jusqu'à leur PR d'activation respective.
 
 Les routes d'authentification technique, notamment les callbacks et liens de
 réinitialisation, restent compatibles avec Supabase Auth avant toute localisation

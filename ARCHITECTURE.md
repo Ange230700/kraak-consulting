@@ -64,14 +64,14 @@ publique partagée constitue le deuxième incrément et la page Contact le
 troisième. La page Services constitue le quatrième incrément public localisé.
 La page Programmes constitue le cinquième et la page À propos le sixième. Les
 quatre pages de conversion de cette série, Contact, Services, Programmes et À
-propos, sont désormais localisées. Leurs copies anglaises restent proposées et
-n'ont pas encore reçu de revue humaine : `/en/contact`, `/en/services`,
-`/en/programs` et `/en/about` restent donc `noindex, nofollow`, hors du sitemap
-et sans lien `hreflang="en-GB"` réciproque depuis leur page française. Les autres
-pages publiques anglaises et leurs métadonnées SEO restent dans l'état de
-scaffold non indexable jusqu'à leur traduction et leur revue humaine dédiées.
-L'indexation anglaise, les entrées sitemap et les liens `hreflang` réciproques ne
-sont activés qu'après cette revue pour chaque page.
+propos, sont désormais localisées. La revue humaine de leur copie anglaise, de
+celle de l'accueil et de la coque publique a été approuvée le 16 août 2026.
+`/en/` est désormais indexable, présent dans le sitemap et relié à `/fr/` par
+des liens `hreflang` réciproques. Contact, Services, Programmes et À propos
+restent temporairement `noindex, nofollow`, hors du sitemap et sans
+`hreflang="en-GB"` réciproque jusqu'à leur PR d'activation SEO respective. Les
+autres pages publiques anglaises restent dans l'état de scaffold non indexable
+jusqu'à leur traduction et leur revue humaine dédiées.
 
 Les incréments suivants doivent rester courts, documentés et validés sans
 localiser implicitement les routes privées, admin ou mobiles.

@@ -28,6 +28,22 @@ const seoPages = JSON.parse(
     'utf8',
   ),
 );
+const approvedEnglishHomeSeo = JSON.parse(
+  readFileSync(
+    join(
+      repoRoot,
+      'apps',
+      'client',
+      'projects',
+      'web',
+      'src',
+      'app',
+      'seo',
+      'site-seo.en-GB.json',
+    ),
+    'utf8',
+  ),
+);
 const routeModel = JSON.parse(
   readFileSync(
     join(
@@ -44,13 +60,28 @@ const routeModel = JSON.parse(
     'utf8',
   ),
 );
+const localizedSeoPages = { 'en-GB': approvedEnglishHomeSeo };
 
-test('Given the PR 3 route model, When localized sitemap pages are built, Then only indexable French public routes are included', () => {
-  const pages = buildLocalizedSitemapPages({ seoPages, routeModel });
+function buildHomeApprovedRouteModel() {
+  const approvedRouteModel = structuredClone(routeModel);
+  const home = approvedRouteModel.pages.find((page) => page.id === 'home');
+
+  home.indexableByLocale = { 'en-GB': true };
+
+  return approvedRouteModel;
+}
+
+test('Given the approved English homepage, When localized sitemap pages are built, Then it joins the indexable French routes', () => {
+  const pages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages,
+    routeModel,
+  });
   const paths = pages.map((page) => page.path);
 
   assert.deepEqual(paths, [
     '/fr/',
+    '/en/',
     '/fr/a-propos',
     '/fr/services',
     '/fr/faq',
@@ -62,8 +93,12 @@ test('Given the PR 3 route model, When localized sitemap pages are built, Then o
   ]);
 });
 
-test('Given the PR 3 route model, When sitemap XML is generated, Then English scaffold and private routes are excluded', () => {
-  const pages = buildLocalizedSitemapPages({ seoPages, routeModel });
+test('Given the approved English homepage, When sitemap XML is generated, Then unreviewed English and private routes are excluded', () => {
+  const pages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages,
+    routeModel,
+  });
   const sitemap = buildSitemapXml({
     pages,
     routeModel,
@@ -75,6 +110,10 @@ test('Given the PR 3 route model, When sitemap XML is generated, Then English sc
     sitemap,
     /<loc>https:\/\/kraak-web-prod\.onrender\.com\/fr\/services<\/loc>/,
   );
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/kraak-web-prod\.onrender\.com\/en\/<\/loc>/,
+  );
   assert.doesNotMatch(sitemap, /\/en\/services/);
   assert.doesNotMatch(sitemap, /\/connexion/);
   assert.doesNotMatch(sitemap, /\/auth\/reset/);
@@ -84,8 +123,12 @@ test('Given the PR 3 route model, When sitemap XML is generated, Then English sc
   );
 });
 
-test('Given localized French sitemap entries, When alternates are generated, Then fr-CI and x-default are present without en-GB', () => {
-  const pages = buildLocalizedSitemapPages({ seoPages, routeModel });
+test('Given localized sitemap entries, When alternates are generated, Then only approved pages expose reciprocal en-GB links', () => {
+  const pages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages,
+    routeModel,
+  });
   const sitemap = buildSitemapXml({
     pages,
     routeModel,
@@ -100,31 +143,40 @@ test('Given localized French sitemap entries, When alternates are generated, The
     sitemap,
     /<xhtml:link rel="alternate" hreflang="x-default" href="https:\/\/kraak-web-prod\.onrender\.com\/fr\/services" \/>/,
   );
-  assert.doesNotMatch(sitemap, /hreflang="en-GB"/);
-});
-
-test('Given English indexability is enabled later, When sitemap pages are built, Then English URLs and hreflang pairs are supported by data only', () => {
-  const futureRouteModel = structuredClone(routeModel);
-  futureRouteModel.locales = futureRouteModel.locales.map((localeDefinition) =>
-    localeDefinition.locale === 'en-GB'
-      ? { ...localeDefinition, defaultIndexable: true }
-      : localeDefinition,
-  );
-  const pages = buildLocalizedSitemapPages({
-    seoPages,
-    routeModel: futureRouteModel,
-  });
-  const sitemap = buildSitemapXml({
-    pages,
-    routeModel: futureRouteModel,
-    siteUrl: defaultSiteUrl,
-  });
-
   assert.match(
     sitemap,
-    /<loc>https:\/\/kraak-web-prod\.onrender\.com\/en\/services<\/loc>/,
+    /hreflang="en-GB" href="https:\/\/kraak-web-prod\.onrender\.com\/en\/"/,
   );
-  assert.match(sitemap, /hreflang="en-GB"/);
+  assert.doesNotMatch(
+    sitemap,
+    /hreflang="en-GB" href="https:\/\/kraak-web-prod\.onrender\.com\/en\/services"/,
+  );
+});
+
+test('Given approved locale metadata for an indexable English homepage, When sitemap pages are built, Then the reviewed English metadata is selected', () => {
+  const approvedRouteModel = buildHomeApprovedRouteModel();
+  const pages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages: { 'en-GB': approvedEnglishHomeSeo },
+    routeModel: approvedRouteModel,
+  });
+  const englishHome = pages.find((page) => page.path === '/en/');
+
+  assert.equal(englishHome?.title, approvedEnglishHomeSeo[0].title);
+});
+
+test('Given an indexable English homepage without reviewed locale metadata, When sitemap pages are built, Then activation is rejected', () => {
+  const approvedRouteModel = buildHomeApprovedRouteModel();
+
+  assert.throws(
+    () =>
+      buildLocalizedSitemapPages({
+        seoPages,
+        localizedSeoPages: { 'en-GB': [] },
+        routeModel: approvedRouteModel,
+      }),
+    /SEO anglais revu introuvable pour la route \/en\//,
+  );
 });
 
 test('Given XML-sensitive values, When sitemap XML is generated, Then URLs are escaped', () => {
@@ -148,7 +200,11 @@ test('Given XML-sensitive values, When sitemap XML is generated, Then URLs are e
 });
 
 test('Given sitemap generation, When it is run twice, Then output ordering is deterministic', () => {
-  const pages = buildLocalizedSitemapPages({ seoPages, routeModel });
+  const pages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages,
+    routeModel,
+  });
   const first = buildSitemapXml({ pages, routeModel, siteUrl: defaultSiteUrl });
   const second = buildSitemapXml({
     pages,

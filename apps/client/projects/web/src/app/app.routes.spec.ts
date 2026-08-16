@@ -117,7 +117,7 @@ describe('Web routes', () => {
       }
     });
 
-    it('When inspecting English scaffold routes Then their SEO policy blocks indexing', () => {
+    it('Given the approved English homepage, When inspecting English routes, Then only the homepage is indexable', () => {
       const englishRoute = localeRoute(
         buildRoutes({ includeParticipantArea: false }),
         'en',
@@ -125,8 +125,12 @@ describe('Web routes', () => {
       const pageRoutes = (englishRoute?.children ?? []).filter(
         (route) => route.path !== '**',
       );
+      const homeRoute = pageRoutes.find((route) => route.path === '');
 
-      for (const route of pageRoutes) {
+      expect(homeRoute?.data?.['seo']?.robots).toBeUndefined();
+      expect(homeRoute?.data?.['seo']?.temporary).toBe(false);
+
+      for (const route of pageRoutes.filter((route) => route.path !== '')) {
         expect(route.data?.['seo']?.robots).toBe('noindex, nofollow');
         expect(route.data?.['seo']?.temporary).toBe(true);
       }

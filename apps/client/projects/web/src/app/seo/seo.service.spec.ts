@@ -155,7 +155,7 @@ describe('SeoService', () => {
     ).toBe('en_GB');
   });
 
-  it('Given canonical and alternate links already exist, when applyPageSeo is called again, then existing SEO links are updated without duplicates', () => {
+  it('Given canonical and alternate links already exist, When approved homepage SEO is applied again, Then reciprocal links are updated without duplicates', () => {
     const service = TestBed.inject(SeoService);
     const contactPage = findLocalizedSeoPageByPath('/fr/contact');
     const homePage = findLocalizedSeoPageByPath('/fr/');
@@ -170,8 +170,13 @@ describe('SeoService', () => {
     expect(
       document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe(LOCAL_HOME_URL);
-    expect(
-      document.querySelectorAll('link[rel="alternate"][hreflang]'),
-    ).toHaveLength(2);
+    const alternateLinks = [
+      ...document.querySelectorAll('link[rel="alternate"][hreflang]'),
+    ];
+
+    expect(alternateLinks).toHaveLength(3);
+    expect(alternateLinks.map((link) => link.getAttribute('hreflang'))).toEqual(
+      ['fr-CI', 'en-GB', 'x-default'],
+    );
   });
 });

@@ -64,8 +64,45 @@ test.describe(`SEO i18n du site vitrine`, () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr-CI');
     await expectCanonicalPath(page, '/fr/');
     await expectAlternatePath(page, 'fr-CI', '/fr/');
+    await expectAlternatePath(page, 'en-GB', '/en/');
     await expectAlternatePath(page, 'x-default', '/fr/');
-    await expect(page.locator('link[hreflang="en-GB"]')).toHaveCount(0);
+    expect(errors.consoleErrors).toEqual([]);
+    expect(errors.pageErrors).toEqual([]);
+  });
+
+  test(`Given the approved English homepage, When it loads, Then reviewed metadata indexing reciprocal hreflang and sitemap discovery are active`, async ({
+    page,
+  }) => {
+    const errors = captureSeoRuntimeErrors(page);
+
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+
+    await expect(page).toHaveTitle(
+      'Build your skills. Launch your projects. | KRAAK Consulting',
+    );
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      'content',
+      'KRAAK Consulting supports students, professionals, businesses and members of the diaspora with practical solutions in training, project management and immigration.',
+    );
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      /index, follow/i,
+    );
+    await expectCanonicalPath(page, '/en/');
+    await expectAlternatePath(page, 'fr-CI', '/fr/');
+    await expectAlternatePath(page, 'en-GB', '/en/');
+    await expectAlternatePath(page, 'x-default', '/fr/');
+
+    const sitemapResponse = await page.request.get('/sitemap.xml');
+    expect(sitemapResponse.ok()).toBe(true);
+    const sitemap = await sitemapResponse.text();
+    expect(sitemap).toContain(
+      '<loc>https://kraak-web-prod.onrender.com/en/</loc>',
+    );
+    expect(sitemap).not.toContain(
+      '<loc>https://kraak-web-prod.onrender.com/en/contact</loc>',
+    );
     expect(errors.consoleErrors).toEqual([]);
     expect(errors.pageErrors).toEqual([]);
   });

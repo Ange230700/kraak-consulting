@@ -49,6 +49,22 @@ describe('Given the localized public route model', () => {
     expect(findLocalizedPublicRouteEntry('home', 'en').path).toBe('/en/');
   });
 
+  it('Given human approval for the English homepage, When route policy is resolved, Then only that English conversion entry is indexable', () => {
+    expect(findLocalizedPublicRouteEntry('home', 'en-GB').indexable).toBe(true);
+    expect(findLocalizedPublicRouteEntry('contact', 'en-GB').indexable).toBe(
+      false,
+    );
+    expect(findLocalizedPublicRouteEntry('services', 'en-GB').indexable).toBe(
+      false,
+    );
+    expect(findLocalizedPublicRouteEntry('programs', 'en-GB').indexable).toBe(
+      false,
+    );
+    expect(findLocalizedPublicRouteEntry('about', 'en-GB').indexable).toBe(
+      false,
+    );
+  });
+
   it('Given localized paths, when the model is checked, then every public path is unique', () => {
     const paths = localizedPublicRouteEntries.map((entry) => entry.path);
 

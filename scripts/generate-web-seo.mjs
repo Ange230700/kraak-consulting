@@ -17,6 +17,17 @@ const seoSourcePath = join(
   'seo',
   'site-seo.json',
 );
+const englishSeoSourcePath = join(
+  repoRoot,
+  'apps',
+  'client',
+  'projects',
+  'web',
+  'src',
+  'app',
+  'seo',
+  'site-seo.en-GB.json',
+);
 const blogSitemapSourcePath = join(
   repoRoot,
   'apps',
@@ -137,19 +148,29 @@ export function buildLocalizedRouteEntries(routeModel) {
 
 export function buildLocalizedSitemapPages({
   seoPages,
+  localizedSeoPages = {},
   routeModel,
   entries = buildLocalizedRouteEntries(routeModel),
 }) {
-  const seoByPath = new Map(
-    seoPages.map((page) => [trimSlashes(page.path), page]),
+  const seoByLocaleAndPath = buildSeoByLocaleAndPath(
+    seoPages,
+    localizedSeoPages,
   );
 
   return entries
     .filter((entry) => entry.includeInSitemap && entry.indexable)
     .map((entry) => {
-      const seo = seoByPath.get(trimSlashes(entry.seoPath));
+      const seo = seoByLocaleAndPath
+        .get(entry.locale)
+        ?.get(trimSlashes(entry.seoPath));
 
       if (!seo) {
+        if (entry.locale !== sourceLocale) {
+          throw new Error(
+            `SEO anglais revu introuvable pour la route ${entry.path}.`,
+          );
+        }
+
         throw new Error(`SEO introuvable pour la route ${entry.path}.`);
       }
 
@@ -161,6 +182,20 @@ export function buildLocalizedSitemapPages({
         alternates: buildSitemapAlternates(entry, entries),
       };
     });
+}
+
+function buildSeoByLocaleAndPath(seoPages, localizedSeoPages) {
+  const entries = [
+    [sourceLocale, seoPages],
+    ...Object.entries(localizedSeoPages),
+  ];
+
+  return new Map(
+    entries.map(([locale, pages]) => [
+      locale,
+      new Map(pages.map((page) => [trimSlashes(page.path), page])),
+    ]),
+  );
 }
 
 export function buildSitemapXml({
@@ -202,9 +237,14 @@ async function readJson(filePath) {
 
 const main = async () => {
   const seoPages = await readJson(seoSourcePath);
+  const englishSeoPages = await readJson(englishSeoSourcePath);
   const blogSitemapPages = await readJson(blogSitemapSourcePath);
   const routeModel = await readJson(routeModelSourcePath);
-  const sitemapPages = buildLocalizedSitemapPages({ seoPages, routeModel });
+  const sitemapPages = buildLocalizedSitemapPages({
+    seoPages,
+    localizedSeoPages: { 'en-GB': englishSeoPages },
+    routeModel,
+  });
   const siteUrl = normalizeSiteUrl(
     process.env['PUBLIC_SITE_URL'] || defaultSiteUrl,
   );

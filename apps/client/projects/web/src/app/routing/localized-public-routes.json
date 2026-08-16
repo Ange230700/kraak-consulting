@@ -21,6 +21,9 @@
       "component": "home",
       "seoPath": "",
       "includeInSitemap": true,
+      "indexableByLocale": {
+        "en-GB": true
+      },
       "paths": {
         "fr-CI": "/fr/",
         "en-GB": "/en/"
