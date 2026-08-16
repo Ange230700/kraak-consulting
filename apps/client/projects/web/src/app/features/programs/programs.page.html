@@ -15,21 +15,21 @@
       <p
         class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
       >
-        Programmes KRAAK
+        {{ 'web.programs.hero.eyebrow' | kraakTranslate }}
       </p>
       <h1
         class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
       >
-        Orientation d'abord, format
-        <span class="text-brand-cyan">adapté</span> ensuite.
+        {{ 'web.programs.hero.titlePrefix' | kraakTranslate }}
+        <span class="text-brand-cyan">
+          {{ 'web.programs.hero.titleHighlight' | kraakTranslate }}
+        </span>
+        {{ 'web.programs.hero.titleSuffix' | kraakTranslate }}
       </h1>
       <p
         class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
       >
-        Le catalogue public détaillé est en cours de finalisation. Aujourd'hui,
-        KRAAK oriente chaque demande vers le bon format selon l'objectif, le
-        profil, le pays concerné et la disponibilité des cohortes ou des
-        partenaires.
+        {{ 'web.programs.hero.description' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -41,106 +41,41 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Formats actuellement proposés
+        {{ 'web.programs.formats.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Ce que nous pouvons déjà orienter avec clarté.
+        {{ 'web.programs.formats.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mt-4 text-lg">
-        Nous publions ici les formats que nous activons déjà. Les intitulés
-        détaillés, calendriers et modalités exactes sont confirmés après
-        orientation.
+        {{ 'web.programs.formats.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      <article
-        data-motion="reversible"
-        class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
-      >
-        <i
-          class="pi pi-briefcase text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          Ateliers d'employabilité et de posture professionnelle
-        </h2>
-        <p class="text-brand-navy mt-3 text-sm">
-          Format : atelier court ou mini-parcours.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Public : jeunes, étudiants, jeunes professionnels.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Cadence : sessions ponctuelles ou cohortes selon calendrier.
-        </p>
-      </article>
-
-      <article
-        data-motion="reversible"
-        class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
-      >
-        <i
-          class="pi pi-language text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          Préparation linguistique et tests de langue
-        </h2>
-        <p class="text-brand-navy mt-3 text-sm">
-          Format : accompagnement ciblé ou atelier.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Public : profils visant emploi, études ou mobilité.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Cadence : selon niveau, objectif et disponibilité.
-        </p>
-      </article>
-
-      <article
-        data-motion="reversible"
-        class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
-      >
-        <i
-          class="pi pi-globe text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          Orientation études, travail et mobilité internationale
-        </h2>
-        <p class="text-brand-navy mt-3 text-sm">
-          Format : consultation d'orientation et préparation.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Public : candidats à un projet international.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Cadence : sur rendez-vous ou selon cohorte d'accompagnement.
-        </p>
-      </article>
-
-      <article
-        data-motion="reversible"
-        class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
-      >
-        <i
-          class="pi pi-users text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          Interventions collectives pour écoles, associations et entreprises
-        </h2>
-        <p class="text-brand-navy mt-3 text-sm">
-          Format : conférence, forum, atelier ou module sur mesure.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Public : structures éducatives, communautaires ou professionnelles.
-        </p>
-        <p class="text-brand-navy mt-2 text-sm">
-          Cadence : sur demande ou via partenariat.
-        </p>
-      </article>
+      @for (programFormat of programFormats; track programFormat.titleKey) {
+        <article
+          data-motion="reversible"
+          class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
+        >
+          <i
+            class="pi text-brand-navy-soft text-3xl"
+            [ngClass]="programFormat.iconClass"
+            aria-hidden="true"
+          ></i>
+          <h2 class="mt-4 text-xl font-bold">
+            {{ programFormat.titleKey | kraakTranslate }}
+          </h2>
+          <p class="text-brand-navy mt-3 text-sm">
+            {{ programFormat.formatKey | kraakTranslate }}
+          </p>
+          <p class="text-brand-navy mt-2 text-sm">
+            {{ programFormat.audienceKey | kraakTranslate }}
+          </p>
+          <p class="text-brand-navy mt-2 text-sm">
+            {{ programFormat.cadenceKey | kraakTranslate }}
+          </p>
+        </article>
+      }
     </div>
   </div>
 </section>
@@ -151,45 +86,27 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Catalogue public
+        {{ 'web.programs.catalog.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Ce que nous confirmons après orientation.
+        {{ 'web.programs.catalog.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mt-4 text-lg">
-        Pour rester honnêtes sur l'offre, nous ne publions pas encore un
-        catalogue figé avec tous les détails. L'orientation permet de confirmer
-        les bonnes informations au bon moment.
+        {{ 'web.programs.catalog.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Intitulé exact
-        </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Le format ou le programme précis correspondant à votre besoin.
-        </p>
-      </article>
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">Calendrier</p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Les prochaines dates, cohortes ou fenêtres d'intervention disponibles.
-        </p>
-      </article>
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">Éligibilité</p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Les prérequis, le public visé et le niveau d'appui attendu.
-        </p>
-      </article>
-      <article class="rounded-card bg-brand-white p-6 shadow-sm">
-        <p class="text-primary text-sm font-semibold uppercase">Modalités</p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Le rythme, le cadre, les documents utiles et les conditions pratiques.
-        </p>
-      </article>
+      @for (catalogItem of catalogItems; track catalogItem.titleKey) {
+        <article class="rounded-card bg-brand-white p-6 shadow-sm">
+          <p class="text-primary text-sm font-semibold uppercase">
+            {{ catalogItem.titleKey | kraakTranslate }}
+          </p>
+          <p class="text-brand-navy mt-3 text-sm">
+            {{ catalogItem.descriptionKey | kraakTranslate }}
+          </p>
+        </article>
+      }
     </div>
   </div>
 </section>
@@ -197,41 +114,22 @@
 <section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Comment être orienté vers le bon programme ?
+      {{ 'web.programs.process.title' | kraakTranslate }}
     </h2>
     <div class="mt-10 grid gap-8 md:grid-cols-4">
-      <div class="text-center">
-        <p class="text-brand-navy-soft text-3xl font-bold">1</p>
-        <h3 class="mt-2 text-lg font-bold">Demande de contact</h3>
-        <p class="text-brand-navy mt-1">
-          Dites-nous votre objectif, votre pays et le type de besoin que vous
-          cherchez à clarifier.
-        </p>
-      </div>
-      <div class="text-center">
-        <p class="text-brand-navy-soft text-3xl font-bold">2</p>
-        <h3 class="mt-2 text-lg font-bold">Entretien d'orientation</h3>
-        <p class="text-brand-navy mt-1">
-          Un échange rapide permet de qualifier votre situation et le bon niveau
-          d'appui.
-        </p>
-      </div>
-      <div class="text-center">
-        <p class="text-brand-navy-soft text-3xl font-bold">3</p>
-        <h3 class="mt-2 text-lg font-bold">Proposition de format</h3>
-        <p class="text-brand-navy mt-1">
-          Nous vous orientons vers un atelier, une cohorte, une consultation ou
-          une intervention collective.
-        </p>
-      </div>
-      <div class="text-center">
-        <p class="text-brand-navy-soft text-3xl font-bold">4</p>
-        <h3 class="mt-2 text-lg font-bold">Confirmation</h3>
-        <p class="text-brand-navy mt-1">
-          Vous recevez les modalités utiles pour confirmer votre place ou votre
-          prochaine étape.
-        </p>
-      </div>
+      @for (processStep of processSteps; track processStep.step) {
+        <div class="text-center">
+          <p class="text-brand-navy-soft text-3xl font-bold">
+            {{ processStep.step }}
+          </p>
+          <h3 class="mt-2 text-lg font-bold">
+            {{ processStep.titleKey | kraakTranslate }}
+          </h3>
+          <p class="text-brand-navy mt-1">
+            {{ processStep.descriptionKey | kraakTranslate }}
+          </p>
+        </div>
+      }
     </div>
   </div>
 </section>
@@ -239,21 +137,18 @@
 <section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="100">
   <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
     <h2 class="text-3xl font-bold lg:text-4xl">
-      Vous n'avez pas à choisir seul dans un catalogue inachevé.
+      {{ 'web.programs.reassurance.title' | kraakTranslate }}
     </h2>
     <p class="text-brand-navy mt-4">
-      Le bon programme dépend souvent de votre objectif, de votre calendrier, de
-      votre niveau de préparation et du cadre de votre projet. Nous assumons
-      cette posture d'orientation pour vous donner une information utile, pas
-      une liste floue.
+      {{ 'web.programs.reassurance.description' | kraakTranslate }}
     </p>
   </div>
 </section>
 
 <kraak-cta-banner
-  heading="Demandez une orientation KRAAK."
-  body="Expliquez votre objectif et nous vous dirons quel format, quel rythme et quelle prochaine étape sont les plus pertinents."
-  ctaLabel="Demander une orientation"
+  [heading]="'web.programs.cta.heading' | kraakTranslate"
+  [body]="'web.programs.cta.body' | kraakTranslate"
+  [ctaLabel]="'web.programs.cta.label' | kraakTranslate"
   ctaLink="/contact"
   ctaContext="programs_main_cta"
 />

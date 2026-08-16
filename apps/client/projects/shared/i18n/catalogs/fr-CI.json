@@ -451,6 +451,99 @@
         "description": "Une consultation suffit souvent à définir l'offre, le format et la prochaine étape les plus pertinents.",
         "cta": "Réserver une consultation"
       }
+    },
+    "programs": {
+      "hero": {
+        "eyebrow": "Programmes KRAAK",
+        "titlePrefix": "Orientation d'abord, format",
+        "titleHighlight": "adapté",
+        "titleSuffix": "ensuite.",
+        "description": "Le catalogue public détaillé est en cours de finalisation. Aujourd'hui, KRAAK oriente chaque demande vers le bon format selon l'objectif, le profil, le pays concerné et la disponibilité des cohortes ou des partenaires."
+      },
+      "formats": {
+        "eyebrow": "Formats actuellement proposés",
+        "title": "Ce que nous pouvons déjà orienter avec clarté.",
+        "description": "Nous publions ici les formats que nous activons déjà. Les intitulés détaillés, calendriers et modalités exactes sont confirmés après orientation.",
+        "items": {
+          "employability": {
+            "title": "Ateliers d'employabilité et de posture professionnelle",
+            "format": "Format : atelier court ou mini-parcours.",
+            "audience": "Public : jeunes, étudiants, jeunes professionnels.",
+            "cadence": "Cadence : sessions ponctuelles ou cohortes selon calendrier."
+          },
+          "languagePreparation": {
+            "title": "Préparation linguistique et tests de langue",
+            "format": "Format : accompagnement ciblé ou atelier.",
+            "audience": "Public : profils visant emploi, études ou mobilité.",
+            "cadence": "Cadence : selon niveau, objectif et disponibilité."
+          },
+          "internationalMobility": {
+            "title": "Orientation études, travail et mobilité internationale",
+            "format": "Format : consultation d'orientation et préparation.",
+            "audience": "Public : candidats à un projet international.",
+            "cadence": "Cadence : sur rendez-vous ou selon cohorte d'accompagnement."
+          },
+          "collectiveInterventions": {
+            "title": "Interventions collectives pour écoles, associations et entreprises",
+            "format": "Format : conférence, forum, atelier ou module sur mesure.",
+            "audience": "Public : structures éducatives, communautaires ou professionnelles.",
+            "cadence": "Cadence : sur demande ou via partenariat."
+          }
+        }
+      },
+      "catalog": {
+        "eyebrow": "Catalogue public",
+        "title": "Ce que nous confirmons après orientation.",
+        "description": "Pour rester honnêtes sur l'offre, nous ne publions pas encore un catalogue figé avec tous les détails. L'orientation permet de confirmer les bonnes informations au bon moment.",
+        "items": {
+          "exactTitle": {
+            "title": "Intitulé exact",
+            "description": "Le format ou le programme précis correspondant à votre besoin."
+          },
+          "schedule": {
+            "title": "Calendrier",
+            "description": "Les prochaines dates, cohortes ou fenêtres d'intervention disponibles."
+          },
+          "eligibility": {
+            "title": "Éligibilité",
+            "description": "Les prérequis, le public visé et le niveau d'appui attendu."
+          },
+          "arrangements": {
+            "title": "Modalités",
+            "description": "Le rythme, le cadre, les documents utiles et les conditions pratiques."
+          }
+        }
+      },
+      "process": {
+        "title": "Comment être orienté vers le bon programme ?",
+        "steps": {
+          "contactRequest": {
+            "title": "Demande de contact",
+            "description": "Dites-nous votre objectif, votre pays et le type de besoin que vous cherchez à clarifier."
+          },
+          "guidanceConversation": {
+            "title": "Entretien d'orientation",
+            "description": "Un échange rapide permet de qualifier votre situation et le bon niveau d'appui."
+          },
+          "formatProposal": {
+            "title": "Proposition de format",
+            "description": "Nous vous orientons vers un atelier, une cohorte, une consultation ou une intervention collective."
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "description": "Vous recevez les modalités utiles pour confirmer votre place ou votre prochaine étape."
+          }
+        }
+      },
+      "reassurance": {
+        "title": "Vous n'avez pas à choisir seul dans un catalogue inachevé.",
+        "description": "Le bon programme dépend souvent de votre objectif, de votre calendrier, de votre niveau de préparation et du cadre de votre projet. Nous assumons cette posture d'orientation pour vous donner une information utile, pas une liste floue."
+      },
+      "cta": {
+        "heading": "Demandez une orientation KRAAK.",
+        "body": "Expliquez votre objectif et nous vous dirons quel format, quel rythme et quelle prochaine étape sont les plus pertinents.",
+        "label": "Demander une orientation"
+      }
     }
   },
   "primeng": {

@@ -62,14 +62,16 @@ page d'accueil et la barre de navigation constituent le premier incrément publi
 entièrement bilingue alimenté par les catalogues `fr-CI` et `en-GB`. La coque
 publique partagée constitue le deuxième incrément et la page Contact le
 troisième. La page Services constitue le quatrième incrément public localisé.
-Sa copie anglaise est proposée mais n'a pas encore reçu de revue humaine :
-`/en/services` reste donc `noindex, nofollow`, hors du sitemap et sans lien
-`hreflang="en-GB"` réciproque. Les pages Programmes puis À propos seront
-localisées dans des PR distinctes. Les autres pages publiques anglaises et leurs
-métadonnées SEO restent dans l'état de scaffold non indexable jusqu'à leur
-traduction et leur revue humaine dédiées. L'indexation anglaise, les entrées
-sitemap et les liens `hreflang` réciproques ne sont activés qu'après cette revue
-pour chaque page.
+La page Programmes constitue le cinquième. Les copies anglaises proposées de
+Services et de Programmes n'ont pas encore reçu de revue humaine :
+`/en/services` et `/en/programs` restent donc `noindex, nofollow`, hors du
+sitemap et sans lien `hreflang="en-GB"` réciproque depuis leur page française.
+Parmi les pages de conversion de cette série, seule la page À propos reste à
+localiser dans une PR distincte. Les autres pages publiques anglaises et leurs
+métadonnées SEO restent dans l'état de scaffold non
+indexable jusqu'à leur traduction et leur revue humaine dédiées. L'indexation
+anglaise, les entrées sitemap et les liens `hreflang` réciproques ne sont activés
+qu'après cette revue pour chaque page.
 
 Les incréments suivants doivent rester courts, documentés et validés sans
 localiser implicitement les routes privées, admin ou mobiles.

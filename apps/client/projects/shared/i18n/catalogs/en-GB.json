@@ -451,6 +451,99 @@
         "description": "One consultation is often enough to identify the most relevant offer, format and next step.",
         "cta": "Book a consultation"
       }
+    },
+    "programs": {
+      "hero": {
+        "eyebrow": "KRAAK programmes",
+        "titlePrefix": "Guidance first. The",
+        "titleHighlight": "right format",
+        "titleSuffix": "follows.",
+        "description": "Our detailed public catalogue is currently being finalised. For now, KRAAK guides each enquiry towards the right format based on the goal, profile, country involved and the availability of cohorts or partners."
+      },
+      "formats": {
+        "eyebrow": "Formats currently offered",
+        "title": "What we can already recommend with confidence.",
+        "description": "Here are the formats we already offer. Detailed titles, schedules and exact arrangements are confirmed after a guidance conversation.",
+        "items": {
+          "employability": {
+            "title": "Employability and professional presence workshops",
+            "format": "Format: short workshop or mini-programme.",
+            "audience": "Audience: young people, students and early-career professionals.",
+            "cadence": "Schedule: one-off sessions or cohorts, depending on the calendar."
+          },
+          "languagePreparation": {
+            "title": "Language preparation and language testing",
+            "format": "Format: targeted support or a workshop.",
+            "audience": "Audience: people preparing for work, study or mobility.",
+            "cadence": "Schedule: based on level, goal and availability."
+          },
+          "internationalMobility": {
+            "title": "Guidance for study, work and international mobility",
+            "format": "Format: guidance consultation and preparation.",
+            "audience": "Audience: people pursuing an international plan.",
+            "cadence": "Schedule: by appointment or as part of a support cohort."
+          },
+          "collectiveInterventions": {
+            "title": "Group sessions for schools, associations and businesses",
+            "format": "Format: conference, forum, workshop or tailored module.",
+            "audience": "Audience: educational, community or professional organisations.",
+            "cadence": "Schedule: on request or through a partnership."
+          }
+        }
+      },
+      "catalog": {
+        "eyebrow": "Public catalogue",
+        "title": "What we confirm after your guidance conversation.",
+        "description": "To be transparent about our offer, we do not yet publish a fixed catalogue with every detail. The guidance stage allows us to confirm the right information at the right time.",
+        "items": {
+          "exactTitle": {
+            "title": "Exact title",
+            "description": "The specific format or programme that matches your needs."
+          },
+          "schedule": {
+            "title": "Schedule",
+            "description": "Upcoming dates, cohorts or available delivery windows."
+          },
+          "eligibility": {
+            "title": "Eligibility",
+            "description": "Prerequisites, intended audience and expected level of support."
+          },
+          "arrangements": {
+            "title": "Practical arrangements",
+            "description": "Pace, setting, useful documents and practical requirements."
+          }
+        }
+      },
+      "process": {
+        "title": "How do you find the right programme?",
+        "steps": {
+          "contactRequest": {
+            "title": "Contact request",
+            "description": "Tell us your goal, your country and the type of need you want to clarify."
+          },
+          "guidanceConversation": {
+            "title": "Guidance conversation",
+            "description": "A short conversation helps us understand your situation and identify the right level of support."
+          },
+          "formatProposal": {
+            "title": "Format recommendation",
+            "description": "We guide you towards a workshop, cohort, consultation or group session."
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "description": "You receive the practical details you need to confirm your place or next step."
+          }
+        }
+      },
+      "reassurance": {
+        "title": "You should not have to choose alone from an unfinished catalogue.",
+        "description": "The right programme often depends on your goal, schedule, level of preparation and the context of your project. We take responsibility for guiding you so that you receive useful information, not a vague list."
+      },
+      "cta": {
+        "heading": "Ask KRAAK for guidance.",
+        "body": "Tell us your goal and we will recommend the most suitable format, pace and next step.",
+        "label": "Request guidance"
+      }
     }
   },
   "primeng": {
