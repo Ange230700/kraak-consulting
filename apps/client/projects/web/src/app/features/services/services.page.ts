@@ -1,6 +1,14 @@
-import { Component, Injector, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  Injector,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+} from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ButtonDirective } from 'primeng/button';
 
 import {
   initializeMarketingPageAnimations,
@@ -15,10 +23,29 @@ import {
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 
 const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/services-hero-project-planning.avif',
 );
+
+const SERVICES_FAQ_TRANSLATIONS = [
+  {
+    questionKey: 'web.services.faq.items.serviceChoice.question',
+    answerKey: 'web.services.faq.items.serviceChoice.answer',
+  },
+  {
+    questionKey: 'web.services.faq.items.initialGuidance.question',
+    answerKey: 'web.services.faq.items.initialGuidance.answer',
+  },
+  {
+    questionKey: 'web.services.faq.items.organisationSupport.question',
+    answerKey: 'web.services.faq.items.organisationSupport.answer',
+  },
+] as const;
 
 @Component({
   selector: 'kraak-services-page',
@@ -26,36 +53,31 @@ const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   imports: [
     NgStyle,
     RouterLink,
+    ButtonDirective,
     FaqAccordion,
     CtaBanner,
     RevealOnScrollDirective,
     LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './services.page.html',
 })
 export default class ServicesPage implements OnInit, OnDestroy {
   protected readonly heroBackgroundStyle = SERVICES_HERO_BACKGROUND_STYLE;
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question: 'Comment choisir le service le plus adapté à mon objectif ?',
-      answer:
-        'Nous commençons par votre objectif principal, votre contexte et votre contrainte prioritaire. Si besoin, nous vous orientons vers la bonne combinaison entre formation, projet, immigration ou offre entreprise.',
-    },
-    {
-      question: 'Proposez-vous une première orientation avant de démarrer ?',
-      answer:
-        "Oui. Une première consultation permet de clarifier le besoin, d'identifier le bon format et de définir la prochaine étape utile.",
-    },
-    {
-      question: 'Les accompagnements sont-ils réservés aux particuliers ?',
-      answer:
-        'Non. KRAAK accompagne aussi les entreprises, startups, organisations et fonctions RH selon le type de besoin et le niveau de structuration attendu.',
-    },
-  ];
 
+  private readonly i18n = inject(KraakI18nService);
   private readonly injector = inject(Injector);
   private gsapService: GsapAnimationsService | null = null;
   private isDestroyed = false;
+
+  protected readonly faqItems = computed<readonly FaqItem[]>(() => {
+    this.i18n.locale();
+
+    return SERVICES_FAQ_TRANSLATIONS.map(({ questionKey, answerKey }) => ({
+      question: this.i18n.translate(questionKey),
+      answer: this.i18n.translate(answerKey),
+    }));
+  });
 
   ngOnInit(): void {
     void this.initializeAnimations();

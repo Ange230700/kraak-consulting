@@ -15,20 +15,21 @@
       <p
         class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
       >
-        Services KRAAK
+        {{ 'web.services.hero.eyebrow' | kraakTranslate }}
       </p>
       <h1
         class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
       >
-        Des offres <span class="text-brand-cyan">claires</span> pour renforcer
-        les parcours, les projets et les organisations.
+        {{ 'web.services.hero.titlePrefix' | kraakTranslate }}
+        <span class="text-brand-cyan">{{
+          'web.services.hero.titleEmphasis' | kraakTranslate
+        }}</span>
+        {{ 'web.services.hero.titleSuffix' | kraakTranslate }}
       </h1>
       <p
         class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
       >
-        KRAAK Consulting intervient à travers trois pôles complémentaires et une
-        offre dédiée aux entreprises. Chaque intervention part d'un besoin
-        concret, d'un cadre clair et d'une prochaine étape identifiable.
+        {{ 'web.services.hero.description' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -43,17 +44,13 @@
           aria-hidden="true"
         ></i>
         <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
-          KRAAK Training Centre
+          {{ 'web.services.training.eyebrow' | kraakTranslate }}
         </p>
         <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-          Former des profils plus confiants, plus lisibles et plus prêts pour
-          l'emploi.
+          {{ 'web.services.training.title' | kraakTranslate }}
         </h2>
         <p class="text-brand-navy mt-4 text-lg">
-          Ce pôle accompagne les jeunes, les étudiants et les jeunes
-          professionnels qui doivent clarifier leur trajectoire, renforcer leurs
-          outils de candidature et mieux se positionner sur le marché du
-          travail.
+          {{ 'web.services.training.description' | kraakTranslate }}
         </p>
         <div
           class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
@@ -61,19 +58,23 @@
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Demander un diagnostic"
+            [label]="'web.services.training.primaryCta' | kraakTranslate"
             icon="pi pi-comments"
             size="large"
-            aria-label="Demander un diagnostic"
+            [attr.aria-label]="
+              'web.services.training.primaryCta' | kraakTranslate
+            "
             class="kr-button-primary"
           ></a>
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Recevoir les formats"
+            [label]="'web.services.training.secondaryCta' | kraakTranslate"
             icon="pi pi-file"
             size="large"
-            aria-label="Recevoir les formats"
+            [attr.aria-label]="
+              'web.services.training.secondaryCta' | kraakTranslate
+            "
             class="kr-button-ghost"
           ></a>
         </div>
@@ -82,11 +83,10 @@
       <div class="grid gap-4 sm:grid-cols-2">
         <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Pour qui
+            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Jeunes, étudiants, jeunes professionnels, profils en
-            repositionnement ou en reconversion.
+            {{ 'web.services.training.audience' | kraakTranslate }}
           </p>
         </article>
         <article
@@ -96,30 +96,26 @@
           [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Problématique
+            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Vous avez du potentiel mais devez clarifier votre projet, renforcer
-            vos outils de candidature et gagner en assurance.
+            {{ 'web.services.training.challenge' | kraakTranslate }}
           </p>
         </article>
         <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Ce que nous livrons
+            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Orientation de carrière, CV et lettres en français et en anglais,
-            préparation aux entretiens, anglais / français professionnel,
-            ateliers de développement personnel et compétences transférables.
+            {{ 'web.services.training.deliverables' | kraakTranslate }}
           </p>
         </article>
         <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Prochaine étape
+            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Réserver un diagnostic pour identifier le bon format : atelier
-            court, accompagnement ciblé ou programme plus complet.
+            {{ 'web.services.training.nextStep' | kraakTranslate }}
           </p>
         </article>
       </div>
@@ -127,22 +123,26 @@
 
     <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Développement personnel et professionnel
+        {{
+          'web.services.training.offers.personalDevelopment' | kraakTranslate
+        }}
       </p>
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Anglais / français professionnel
+        {{
+          'web.services.training.offers.professionalLanguages' | kraakTranslate
+        }}
       </p>
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Préparation aux tests de langue
+        {{ 'web.services.training.offers.languageTests' | kraakTranslate }}
       </p>
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Stratégies modernes de recherche d'emploi
+        {{ 'web.services.training.offers.jobSearch' | kraakTranslate }}
       </p>
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Estime de soi et valorisation du potentiel
+        {{ 'web.services.training.offers.selfWorth' | kraakTranslate }}
       </p>
       <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        Reconversion professionnelle
+        {{ 'web.services.training.offers.careerChange' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -157,17 +157,13 @@
           aria-hidden="true"
         ></i>
         <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
-          Centre de Recherche et d'Innovation
+          {{ 'web.services.projects.eyebrow' | kraakTranslate }}
         </p>
         <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-          Structurer une idée, mobiliser les bonnes ressources, faire avancer un
-          projet utile.
+          {{ 'web.services.projects.title' | kraakTranslate }}
         </h2>
         <p class="text-brand-navy mt-4 text-lg">
-          Ce pôle accompagne les entreprises, startups, organisations et
-          porteurs de projets qui ont besoin de cadrage, de planification, de
-          partenariats ou d'un appui opérationnel pour passer d'une intention à
-          une trajectoire pilotable.
+          {{ 'web.services.projects.description' | kraakTranslate }}
         </p>
         <div
           class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
@@ -175,19 +171,23 @@
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Planifier un cadrage"
+            [label]="'web.services.projects.primaryCta' | kraakTranslate"
             icon="pi pi-rocket"
             size="large"
-            aria-label="Planifier un cadrage"
+            [attr.aria-label]="
+              'web.services.projects.primaryCta' | kraakTranslate
+            "
             class="kr-button-primary"
           ></a>
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Présenter mon besoin"
+            [label]="'web.services.projects.secondaryCta' | kraakTranslate"
             icon="pi pi-briefcase"
             size="large"
-            aria-label="Présenter mon besoin"
+            [attr.aria-label]="
+              'web.services.projects.secondaryCta' | kraakTranslate
+            "
             class="kr-button-ghost"
           ></a>
         </div>
@@ -199,11 +199,10 @@
           kraakRevealOnScroll
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Pour qui
+            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Entreprises, startups, organisations, associations et porteurs de
-            projets.
+            {{ 'web.services.projects.audience' | kraakTranslate }}
           </p>
         </article>
         <article
@@ -213,34 +212,30 @@
           [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Problématique
+            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Vous devez passer d'une intention à un projet lisible, finançable,
-            pilotable ou recrutable.
+            {{ 'web.services.projects.challenge' | kraakTranslate }}
           </p>
         </article>
         <article
           class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Ce que nous livrons
+            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Cadrage et planification, développement de partenariats,
-            identification de talents, accompagnement d'entreprises et de
-            startups, préparation et placement en entreprise.
+            {{ 'web.services.projects.deliverables' | kraakTranslate }}
           </p>
         </article>
         <article
           class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Prochaine étape
+            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Partager votre besoin pour définir le périmètre, les priorités et le
-            type d'appui le plus utile.
+            {{ 'web.services.projects.nextStep' | kraakTranslate }}
           </p>
         </article>
       </div>
@@ -250,32 +245,34 @@
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Accompagnement d'entreprise et de startup
+        {{ 'web.services.projects.offers.businessSupport' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Gestion de projets
+        {{ 'web.services.projects.offers.projectManagement' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Développement de partenariats
+        {{
+          'web.services.projects.offers.partnershipDevelopment' | kraakTranslate
+        }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Identification et recrutement de talents
+        {{ 'web.services.projects.offers.talentRecruitment' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Préparation et placement en entreprise
+        {{ 'web.services.projects.offers.workplacePlacement' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Accompagnement opérationnel des initiatives
+        {{ 'web.services.projects.offers.operationalSupport' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -290,22 +287,19 @@
           aria-hidden="true"
         ></i>
         <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
-          Centre de Conseils en Immigration
+          {{ 'web.services.mobility.eyebrow' | kraakTranslate }}
         </p>
         <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-          Études, travail et mobilité internationale préparés avec méthode.
+          {{ 'web.services.mobility.title' | kraakTranslate }}
         </h2>
         <p class="text-brand-navy mt-4 text-lg">
-          Ce pôle accompagne les personnes et les organisations qui doivent
-          clarifier un projet international, comprendre les options disponibles
-          et préparer les étapes cohérentes selon le profil, l'objectif et la
-          destination.
+          {{ 'web.services.mobility.description' | kraakTranslate }}
         </p>
         <p class="rounded-card text-brand-navy mt-4 bg-neutral-50 p-5">
-          <strong>Note de conformité :</strong> les informations fournies dans
-          ce cadre servent à l'orientation et à la préparation du projet. Les
-          exigences officielles peuvent varier selon le pays, le programme et
-          l'évolution des procédures.
+          <strong>{{
+            'web.services.mobility.complianceLabel' | kraakTranslate
+          }}</strong>
+          {{ 'web.services.mobility.complianceBody' | kraakTranslate }}
         </p>
         <div
           class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
@@ -313,19 +307,23 @@
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Réserver une orientation"
+            [label]="'web.services.mobility.primaryCta' | kraakTranslate"
             icon="pi pi-calendar"
             size="large"
-            aria-label="Réserver une orientation"
+            [attr.aria-label]="
+              'web.services.mobility.primaryCta' | kraakTranslate
+            "
             class="kr-button-primary"
           ></a>
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Qualifier mon projet"
+            [label]="'web.services.mobility.secondaryCta' | kraakTranslate"
             icon="pi pi-send"
             size="large"
-            aria-label="Qualifier mon projet"
+            [attr.aria-label]="
+              'web.services.mobility.secondaryCta' | kraakTranslate
+            "
             class="kr-button-ghost"
           ></a>
         </div>
@@ -334,12 +332,10 @@
       <div class="grid gap-4 sm:grid-cols-2">
         <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Pour qui
+            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Personnes visant les études ou le travail à l'étranger, porteurs
-            d'opportunités d'affaires et structures qui ont un besoin
-            d'orientation internationale.
+            {{ 'web.services.mobility.audience' | kraakTranslate }}
           </p>
         </article>
         <article
@@ -349,31 +345,26 @@
           [revealDelayMobileMs]="25"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Problématique
+            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Vous devez clarifier les options, comprendre les démarches et
-            préparer un projet cohérent avec votre profil.
+            {{ 'web.services.mobility.challenge' | kraakTranslate }}
           </p>
         </article>
         <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Ce que nous livrons
+            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Orientation stratégique, conseils sur les études et le travail à
-            l'étranger, exploration d'opportunités d'affaires, politiques et
-            stratégies d'immigration, préparation à l'intégration
-            socio-professionnelle.
+            {{ 'web.services.mobility.deliverables' | kraakTranslate }}
           </p>
         </article>
         <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Prochaine étape
+            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Réserver une consultation pour qualifier votre objectif, votre pays
-            cible et les étapes préparatoires.
+            {{ 'web.services.mobility.nextStep' | kraakTranslate }}
           </p>
         </article>
       </div>
@@ -390,16 +381,13 @@
           aria-hidden="true"
         ></i>
         <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
-          Offres entreprises
+          {{ 'web.services.business.eyebrow' | kraakTranslate }}
         </p>
         <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-          Des solutions ciblées pour le capital humain, la cohésion et la
-          performance.
+          {{ 'web.services.business.title' | kraakTranslate }}
         </h2>
         <p class="text-brand-navy mt-4 text-lg">
-          Cette offre dédiée s'adresse aux structures qui veulent mieux
-          recruter, mieux faire collaborer leurs équipes, renforcer leur
-          leadership interne ou améliorer la performance organisationnelle.
+          {{ 'web.services.business.description' | kraakTranslate }}
         </p>
         <div
           class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
@@ -407,19 +395,23 @@
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Partager un besoin entreprise"
+            [label]="'web.services.business.primaryCta' | kraakTranslate"
             icon="pi pi-building"
             size="large"
-            aria-label="Partager un besoin entreprise"
+            [attr.aria-label]="
+              'web.services.business.primaryCta' | kraakTranslate
+            "
             class="kr-button-primary"
           ></a>
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
-            label="Demander une proposition"
+            [label]="'web.services.business.secondaryCta' | kraakTranslate"
             icon="pi pi-cog"
             size="large"
-            aria-label="Demander une proposition"
+            [attr.aria-label]="
+              'web.services.business.secondaryCta' | kraakTranslate
+            "
             class="kr-button-secondary"
           ></a>
         </div>
@@ -428,43 +420,38 @@
       <div class="grid gap-4 sm:grid-cols-2">
         <article class="rounded-card bg-brand-white p-5 shadow-sm">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Pour qui
+            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            PME, startups, organisations, directions et fonctions RH.
+            {{ 'web.services.business.audience' | kraakTranslate }}
           </p>
         </article>
         <article class="rounded-card bg-brand-white p-5 shadow-sm">
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Problématique
+            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Vous avez besoin de mieux recruter, mieux intégrer, mieux faire
-            collaborer ou faire progresser vos équipes.
+            {{ 'web.services.business.challenge' | kraakTranslate }}
           </p>
         </article>
         <article
           class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Ce que nous livrons
+            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Détection de talents, appui au recrutement, ateliers de
-            développement professionnel, formation du personnel, leadership
-            organisationnel, amélioration de la performance et cohésion
-            d'équipe.
+            {{ 'web.services.business.deliverables' | kraakTranslate }}
           </p>
         </article>
         <article
           class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
         >
           <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            Prochaine étape
+            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
           </p>
           <p class="text-brand-navy mt-2 text-sm">
-            Exposer votre contexte pour recevoir une proposition sur mesure ou
-            une intervention ciblée.
+            {{ 'web.services.business.nextStep' | kraakTranslate }}
           </p>
         </article>
       </div>
@@ -474,32 +461,37 @@
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Formation du personnel
+        {{ 'web.services.business.offers.staffTraining' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Cohésion d'équipe
+        {{ 'web.services.business.offers.teamCohesion' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Gestion des conflits
+        {{ 'web.services.business.offers.conflictManagement' | kraakTranslate }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Leadership organisationnel
+        {{
+          'web.services.business.offers.organisationalLeadership'
+            | kraakTranslate
+        }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Performance en entreprise
+        {{
+          'web.services.business.offers.businessPerformance' | kraakTranslate
+        }}
       </p>
       <p
         class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
       >
-        Culture de travail et santé relationnelle
+        {{ 'web.services.business.offers.workplaceCulture' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -508,7 +500,7 @@
 <section class="bg-brand-white py-16">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Notre méthode d'intervention
+      {{ 'web.services.method.title' | kraakTranslate }}
     </h2>
     <div class="mt-10 grid gap-8 md:grid-cols-3">
       <div
@@ -516,10 +508,11 @@
         class="services-method-step gsap-reversible-on-scroll text-center"
       >
         <p class="text-brand-navy-soft text-3xl font-bold">1</p>
-        <h3 class="mt-2 text-lg font-bold">Clarifier</h3>
+        <h3 class="mt-2 text-lg font-bold">
+          {{ 'web.services.method.items.clarify.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-1">
-          Nous partons du besoin réel, du niveau de maturité et de la décision à
-          prendre.
+          {{ 'web.services.method.items.clarify.description' | kraakTranslate }}
         </p>
       </div>
       <div
@@ -527,10 +520,13 @@
         class="services-method-step gsap-reversible-on-scroll text-center"
       >
         <p class="text-brand-navy-soft text-3xl font-bold">2</p>
-        <h3 class="mt-2 text-lg font-bold">Structurer</h3>
+        <h3 class="mt-2 text-lg font-bold">
+          {{ 'web.services.method.items.structure.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-1">
-          Nous définissons le bon format, les livrables attendus et les
-          priorités opérationnelles.
+          {{
+            'web.services.method.items.structure.description' | kraakTranslate
+          }}
         </p>
       </div>
       <div
@@ -538,10 +534,11 @@
         class="services-method-step gsap-reversible-on-scroll text-center"
       >
         <p class="text-brand-navy-soft text-3xl font-bold">3</p>
-        <h3 class="mt-2 text-lg font-bold">Avancer</h3>
+        <h3 class="mt-2 text-lg font-bold">
+          {{ 'web.services.method.items.advance.title' | kraakTranslate }}
+        </h3>
         <p class="text-brand-navy mt-1">
-          Nous mettons en mouvement la prochaine étape avec un cadre de suivi
-          lisible.
+          {{ 'web.services.method.items.advance.description' | kraakTranslate }}
         </p>
       </div>
     </div>
@@ -554,27 +551,31 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
       >
-        Questions fréquentes
+        {{ 'web.services.faq.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Clarifiez le bon service avant de démarrer.
+        {{ 'web.services.faq.title' | kraakTranslate }}
       </h2>
       <p class="text-brand-navy mx-auto mt-4 max-w-3xl text-lg">
-        KRAAK vous aide à traduire votre objectif en un format d'accompagnement
-        clair, lisible et utile.
+        {{ 'web.services.faq.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-10">
-      <kraak-faq-accordion [items]="faqItems" />
+      <kraak-faq-accordion
+        [items]="faqItems()"
+        [heading]="'web.services.faq.panelTitle' | kraakTranslate"
+        [description]="'web.services.faq.panelDescription' | kraakTranslate"
+        backgroundAlt=""
+      />
     </div>
   </div>
 </section>
 
 <kraak-cta-banner
-  heading="Choisissez le bon point d'entrée pour votre besoin."
-  body="Une consultation suffit souvent à définir l'offre, le format et la prochaine étape les plus pertinents."
-  ctaLabel="Réserver une consultation"
+  [heading]="'web.services.closing.title' | kraakTranslate"
+  [body]="'web.services.closing.description' | kraakTranslate"
+  [ctaLabel]="'web.services.closing.cta' | kraakTranslate"
   ctaLink="/contact"
   ctaContext="services_main_cta"
 />

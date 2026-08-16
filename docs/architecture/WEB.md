@@ -34,17 +34,17 @@ Le site web KRAAK est l'application Angular publique située dans
   et la barre de navigation forment le premier incrément public bilingue. La
   coque publique partagée (pied de page, lien d'accès rapide et commande de
   retour en haut) forme le deuxième incrément. La page Contact constitue le
-  troisième incrément localisé. Les autres pages `/en/...` restent un scaffold
-  technique non indexable tant que leurs contenus anglais ne sont pas traduits
-  et relus.
+  troisième incrément localisé et la page Services le quatrième. Les autres
+  pages `/en/...` restent un scaffold technique non indexable tant que leurs
+  contenus anglais ne sont pas traduits et relus.
 
 ## Implémentation active
 
 - Routes publiques : [`../../apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts).
 - Prerender public : [`../../apps/client/projects/web/src/app/app.routes.server.ts`](../../apps/client/projects/web/src/app/app.routes.server.ts).
 - Catalogues runtime : [`../../apps/client/projects/shared/i18n/catalogs/`](../../apps/client/projects/shared/i18n/catalogs/),
-  avec les espaces de clés `web.home`, `web.nav`, `web.shell` et
-  `web.contact` pour les incréments publics bilingues livrés.
+  avec les espaces de clés `web.home`, `web.nav`, `web.shell`, `web.contact` et
+  `web.services` pour les incréments publics bilingues livrés.
 - Tests de surface : [`../../apps/client/projects/web/src/app/app.routes.spec.ts`](../../apps/client/projects/web/src/app/app.routes.spec.ts)
   et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
 - Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
@@ -61,17 +61,22 @@ Le prerender, les métadonnées SEO, les canonicals, les liens `hreflang`, les
 entrées sitemap et l'attribut `<html lang>` sont générés par locale depuis le
 modèle de routes web localisées.
 
-La page d'accueil, la barre de navigation, la coque publique partagée et la page
-Contact servent désormais leur contenu français ou anglais depuis les catalogues
-selon la locale de l'URL. Un sélecteur de langue relie les variantes d'une même
-page publique lorsque le mapping existe, puis revient à la page d'accueil de la
-langue cible lorsqu'aucune variante publique n'est disponible.
+La page d'accueil, la barre de navigation, la coque publique partagée, la page
+Contact et la page Services servent désormais leur contenu français ou anglais
+depuis les catalogues selon la locale de l'URL. Un sélecteur de langue relie les
+variantes d'une même page publique lorsque le mapping existe, puis revient à la
+page d'accueil de la langue cible lorsqu'aucune variante publique n'est
+disponible.
 
 Les prochaines pages de conversion doivent être localisées séparément, avec une
-seule page par PR, dans cet ordre : Services, Programmes, puis À propos.
-L'activation de l'indexation anglaise, des entrées sitemap et des liens
-`hreflang` réciproques reste conditionnée à une revue humaine du contenu anglais
-de chaque page.
+seule page par PR, dans cet ordre : Programmes, puis À propos. L'activation de
+l'indexation anglaise, des entrées sitemap et des liens `hreflang` réciproques
+reste conditionnée à une revue humaine du contenu anglais de chaque page.
+
+La copie anglaise de Services est proposée mais n'a pas encore reçu cette revue
+humaine. En conséquence, `/en/services` reste `noindex, nofollow`, hors du
+sitemap de production et sans lien `hreflang="en-GB"` réciproque depuis
+`/fr/services`.
 
 Ces incréments de contenu ne modifient pas encore la politique SEO du scaffold
 anglais : les routes anglaises restent `noindex, nofollow`, exclues

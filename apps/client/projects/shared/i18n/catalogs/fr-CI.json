@@ -323,6 +323,134 @@
         "heading": "Parlons de votre prochaine étape.",
         "body": "Envoyez votre demande via le formulaire ou lancez directement un échange sur WhatsApp."
       }
+    },
+    "services": {
+      "hero": {
+        "eyebrow": "Services KRAAK",
+        "titlePrefix": "Des offres",
+        "titleEmphasis": "claires",
+        "titleSuffix": "pour renforcer les parcours, les projets et les organisations.",
+        "description": "KRAAK Consulting intervient à travers trois pôles complémentaires et une offre dédiée aux entreprises. Chaque intervention part d'un besoin concret, d'un cadre clair et d'une prochaine étape identifiable."
+      },
+      "cardLabels": {
+        "audience": "Pour qui",
+        "challenge": "Problématique",
+        "deliverables": "Ce que nous livrons",
+        "nextStep": "Prochaine étape"
+      },
+      "training": {
+        "eyebrow": "KRAAK Training Centre",
+        "title": "Former des profils plus confiants, plus lisibles et plus prêts pour l'emploi.",
+        "description": "Ce pôle accompagne les jeunes, les étudiants et les jeunes professionnels qui doivent clarifier leur trajectoire, renforcer leurs outils de candidature et mieux se positionner sur le marché du travail.",
+        "primaryCta": "Demander un diagnostic",
+        "secondaryCta": "Recevoir les formats",
+        "audience": "Jeunes, étudiants, jeunes professionnels, profils en repositionnement ou en reconversion.",
+        "challenge": "Vous avez du potentiel mais devez clarifier votre projet, renforcer vos outils de candidature et gagner en assurance.",
+        "deliverables": "Orientation de carrière, CV et lettres en français et en anglais, préparation aux entretiens, anglais / français professionnel, ateliers de développement personnel et compétences transférables.",
+        "nextStep": "Réserver un diagnostic pour identifier le bon format : atelier court, accompagnement ciblé ou programme plus complet.",
+        "offers": {
+          "personalDevelopment": "Développement personnel et professionnel",
+          "professionalLanguages": "Anglais / français professionnel",
+          "languageTests": "Préparation aux tests de langue",
+          "jobSearch": "Stratégies modernes de recherche d'emploi",
+          "selfWorth": "Estime de soi et valorisation du potentiel",
+          "careerChange": "Reconversion professionnelle"
+        }
+      },
+      "projects": {
+        "eyebrow": "Centre de Recherche et d'Innovation",
+        "title": "Structurer une idée, mobiliser les bonnes ressources, faire avancer un projet utile.",
+        "description": "Ce pôle accompagne les entreprises, startups, organisations et porteurs de projets qui ont besoin de cadrage, de planification, de partenariats ou d'un appui opérationnel pour passer d'une intention à une trajectoire pilotable.",
+        "primaryCta": "Planifier un cadrage",
+        "secondaryCta": "Présenter mon besoin",
+        "audience": "Entreprises, startups, organisations, associations et porteurs de projets.",
+        "challenge": "Vous devez passer d'une intention à un projet lisible, finançable, pilotable ou recrutable.",
+        "deliverables": "Cadrage et planification, développement de partenariats, identification de talents, accompagnement d'entreprises et de startups, préparation et placement en entreprise.",
+        "nextStep": "Partager votre besoin pour définir le périmètre, les priorités et le type d'appui le plus utile.",
+        "offers": {
+          "businessSupport": "Accompagnement d'entreprise et de startup",
+          "projectManagement": "Gestion de projets",
+          "partnershipDevelopment": "Développement de partenariats",
+          "talentRecruitment": "Identification et recrutement de talents",
+          "workplacePlacement": "Préparation et placement en entreprise",
+          "operationalSupport": "Accompagnement opérationnel des initiatives"
+        }
+      },
+      "mobility": {
+        "eyebrow": "Centre de Conseils en Immigration",
+        "title": "Études, travail et mobilité internationale préparés avec méthode.",
+        "description": "Ce pôle accompagne les personnes et les organisations qui doivent clarifier un projet international, comprendre les options disponibles et préparer les étapes cohérentes selon le profil, l'objectif et la destination.",
+        "complianceLabel": "Note de conformité :",
+        "complianceBody": "les informations fournies dans ce cadre servent à l'orientation et à la préparation du projet. Les exigences officielles peuvent varier selon le pays, le programme et l'évolution des procédures.",
+        "primaryCta": "Réserver une orientation",
+        "secondaryCta": "Qualifier mon projet",
+        "audience": "Personnes visant les études ou le travail à l'étranger, porteurs d'opportunités d'affaires et structures qui ont un besoin d'orientation internationale.",
+        "challenge": "Vous devez clarifier les options, comprendre les démarches et préparer un projet cohérent avec votre profil.",
+        "deliverables": "Orientation stratégique, conseils sur les études et le travail à l'étranger, exploration d'opportunités d'affaires, politiques et stratégies d'immigration, préparation à l'intégration socio-professionnelle.",
+        "nextStep": "Réserver une consultation pour qualifier votre objectif, votre pays cible et les étapes préparatoires."
+      },
+      "business": {
+        "eyebrow": "Offres entreprises",
+        "title": "Des solutions ciblées pour le capital humain, la cohésion et la performance.",
+        "description": "Cette offre dédiée s'adresse aux structures qui veulent mieux recruter, mieux faire collaborer leurs équipes, renforcer leur leadership interne ou améliorer la performance organisationnelle.",
+        "primaryCta": "Partager un besoin entreprise",
+        "secondaryCta": "Demander une proposition",
+        "audience": "PME, startups, organisations, directions et fonctions RH.",
+        "challenge": "Vous avez besoin de mieux recruter, mieux intégrer, mieux faire collaborer ou faire progresser vos équipes.",
+        "deliverables": "Détection de talents, appui au recrutement, ateliers de développement professionnel, formation du personnel, leadership organisationnel, amélioration de la performance et cohésion d'équipe.",
+        "nextStep": "Exposer votre contexte pour recevoir une proposition sur mesure ou une intervention ciblée.",
+        "offers": {
+          "staffTraining": "Formation du personnel",
+          "teamCohesion": "Cohésion d'équipe",
+          "conflictManagement": "Gestion des conflits",
+          "organisationalLeadership": "Leadership organisationnel",
+          "businessPerformance": "Performance en entreprise",
+          "workplaceCulture": "Culture de travail et santé relationnelle"
+        }
+      },
+      "method": {
+        "title": "Notre méthode d'intervention",
+        "items": {
+          "clarify": {
+            "title": "Clarifier",
+            "description": "Nous partons du besoin réel, du niveau de maturité et de la décision à prendre."
+          },
+          "structure": {
+            "title": "Structurer",
+            "description": "Nous définissons le bon format, les livrables attendus et les priorités opérationnelles."
+          },
+          "advance": {
+            "title": "Avancer",
+            "description": "Nous mettons en mouvement la prochaine étape avec un cadre de suivi lisible."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "Questions fréquentes",
+        "title": "Clarifiez le bon service avant de démarrer.",
+        "description": "KRAAK vous aide à traduire votre objectif en un format d'accompagnement clair, lisible et utile.",
+        "panelTitle": "Questions fréquentes",
+        "panelDescription": "Retrouvez ici les réponses rapides aux questions les plus posées sur nos parcours, nos modalités d'accompagnement et nos délais de réponse.",
+        "items": {
+          "serviceChoice": {
+            "question": "Comment choisir le service le plus adapté à mon objectif ?",
+            "answer": "Nous commençons par votre objectif principal, votre contexte et votre contrainte prioritaire. Si besoin, nous vous orientons vers la bonne combinaison entre formation, projet, immigration ou offre entreprise."
+          },
+          "initialGuidance": {
+            "question": "Proposez-vous une première orientation avant de démarrer ?",
+            "answer": "Oui. Une première consultation permet de clarifier le besoin, d'identifier le bon format et de définir la prochaine étape utile."
+          },
+          "organisationSupport": {
+            "question": "Les accompagnements sont-ils réservés aux particuliers ?",
+            "answer": "Non. KRAAK accompagne aussi les entreprises, startups, organisations et fonctions RH selon le type de besoin et le niveau de structuration attendu."
+          }
+        }
+      },
+      "closing": {
+        "title": "Choisissez le bon point d'entrée pour votre besoin.",
+        "description": "Une consultation suffit souvent à définir l'offre, le format et la prochaine étape les plus pertinents.",
+        "cta": "Réserver une consultation"
+      }
     }
   },
   "primeng": {

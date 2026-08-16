@@ -323,6 +323,134 @@
         "heading": "Let’s discuss your next step.",
         "body": "Send your enquiry through the form or start a conversation directly on WhatsApp."
       }
+    },
+    "services": {
+      "hero": {
+        "eyebrow": "KRAAK Services",
+        "titlePrefix": "Clear",
+        "titleEmphasis": "solutions",
+        "titleSuffix": "to strengthen careers, projects and organisations.",
+        "description": "KRAAK Consulting works across three complementary areas of expertise, alongside a dedicated offer for organisations. Every engagement starts with a concrete need, a clear framework and an identifiable next step."
+      },
+      "cardLabels": {
+        "audience": "Who it is for",
+        "challenge": "Your challenge",
+        "deliverables": "What we deliver",
+        "nextStep": "Next step"
+      },
+      "training": {
+        "eyebrow": "KRAAK Training Centre",
+        "title": "Help people present themselves with confidence, clarity and job-ready skills.",
+        "description": "This area supports young people, students and early-career professionals who need to clarify their direction, strengthen their application toolkit and position themselves more effectively in the job market.",
+        "primaryCta": "Book an initial assessment",
+        "secondaryCta": "Explore our formats",
+        "audience": "Young people, students, early-career professionals and people repositioning themselves or changing careers.",
+        "challenge": "You have potential but need to clarify your plans, strengthen your application toolkit and build confidence.",
+        "deliverables": "Career guidance, CVs and cover letters in French and English, interview preparation, professional English and French, personal development workshops and transferable skills.",
+        "nextStep": "Book an initial assessment to identify the right format: a short workshop, focused support or a more comprehensive programme.",
+        "offers": {
+          "personalDevelopment": "Personal and professional development",
+          "professionalLanguages": "Professional English and French",
+          "languageTests": "Language test preparation",
+          "jobSearch": "Modern job-search strategies",
+          "selfWorth": "Self-confidence and recognising your potential",
+          "careerChange": "Career change support"
+        }
+      },
+      "projects": {
+        "eyebrow": "Research and Innovation Centre",
+        "title": "Structure an idea, mobilise the right resources and move a valuable project forward.",
+        "description": "This area supports businesses, start-ups, organisations and project leaders who need scoping, planning, partnerships or operational support to turn an intention into a manageable path forward.",
+        "primaryCta": "Schedule a scoping session",
+        "secondaryCta": "Tell us about your needs",
+        "audience": "Businesses, start-ups, organisations, associations and project leaders.",
+        "challenge": "You need to turn an idea into a clear, fundable and manageable project that can attract the right people.",
+        "deliverables": "Scoping and planning, partnership development, talent identification, support for businesses and start-ups, workplace preparation and placement.",
+        "nextStep": "Share your needs so we can define the scope, priorities and most useful form of support.",
+        "offers": {
+          "businessSupport": "Business and start-up support",
+          "projectManagement": "Project management",
+          "partnershipDevelopment": "Partnership development",
+          "talentRecruitment": "Talent identification and recruitment",
+          "workplacePlacement": "Workplace preparation and placement",
+          "operationalSupport": "Operational support for initiatives"
+        }
+      },
+      "mobility": {
+        "eyebrow": "Immigration Advisory Centre",
+        "title": "Prepare for international study, work and mobility with a clear method.",
+        "description": "This area supports individuals and organisations that need to clarify an international plan, understand the available options and prepare appropriate steps for the profile, goal and destination.",
+        "complianceLabel": "Compliance note:",
+        "complianceBody": "the information provided in this context is intended to guide and prepare your plans. Official requirements may vary by country or programme and may change as procedures evolve.",
+        "primaryCta": "Book a guidance session",
+        "secondaryCta": "Assess my plans",
+        "audience": "People seeking to study or work abroad, business opportunity seekers and organisations needing international guidance.",
+        "challenge": "You need to clarify the options, understand the procedures and prepare plans that fit your profile.",
+        "deliverables": "Strategic guidance, advice on studying and working abroad, exploration of business opportunities, immigration policies and strategies, and preparation for social and professional integration.",
+        "nextStep": "Book a consultation to clarify your goal, target country and preparatory steps."
+      },
+      "business": {
+        "eyebrow": "Business solutions",
+        "title": "Targeted solutions for human capital, team cohesion and performance.",
+        "description": "This dedicated offer is for organisations seeking to recruit more effectively, improve collaboration, strengthen internal leadership or raise organisational performance.",
+        "primaryCta": "Discuss a business need",
+        "secondaryCta": "Request a proposal",
+        "audience": "SMEs, start-ups, organisations, leadership teams and HR teams.",
+        "challenge": "You need to recruit and onboard more effectively, improve collaboration or help your teams progress.",
+        "deliverables": "Talent identification, recruitment support, professional development workshops, staff training, organisational leadership, performance improvement and team cohesion.",
+        "nextStep": "Tell us about your context to receive a tailored proposal or focused intervention.",
+        "offers": {
+          "staffTraining": "Staff training",
+          "teamCohesion": "Team cohesion",
+          "conflictManagement": "Conflict management",
+          "organisationalLeadership": "Organisational leadership",
+          "businessPerformance": "Business performance",
+          "workplaceCulture": "Workplace culture and healthy working relationships"
+        }
+      },
+      "method": {
+        "title": "Our approach",
+        "items": {
+          "clarify": {
+            "title": "Clarify",
+            "description": "We start with the real need, the level of maturity and the decision that needs to be made."
+          },
+          "structure": {
+            "title": "Structure",
+            "description": "We define the right format, expected deliverables and operational priorities."
+          },
+          "advance": {
+            "title": "Move forward",
+            "description": "We put the next step into motion within a clear framework for follow-up."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "Frequently asked questions",
+        "title": "Identify the right service before you begin.",
+        "description": "KRAAK helps turn your goal into a clear, practical and useful form of support.",
+        "panelTitle": "Frequently asked questions",
+        "panelDescription": "Find quick answers to common questions about our services, support formats and response times.",
+        "items": {
+          "serviceChoice": {
+            "question": "How do I choose the service best suited to my goal?",
+            "answer": "We start with your main goal, your context and your most important constraint. Where needed, we guide you towards the right combination of training, project support, immigration guidance or business services."
+          },
+          "initialGuidance": {
+            "question": "Do you offer an initial guidance session before we begin?",
+            "answer": "Yes. An initial consultation helps clarify the need, identify the right format and define the next useful step."
+          },
+          "organisationSupport": {
+            "question": "Is your support only available to individuals?",
+            "answer": "No. KRAAK also supports businesses, start-ups, organisations and HR teams according to the type of need and the level of structure required."
+          }
+        }
+      },
+      "closing": {
+        "title": "Choose the right starting point for your needs.",
+        "description": "One consultation is often enough to identify the most relevant offer, format and next step.",
+        "cta": "Book a consultation"
+      }
     }
   },
   "primeng": {
