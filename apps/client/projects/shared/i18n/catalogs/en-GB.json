@@ -544,6 +544,97 @@
         "body": "Tell us your goal and we will recommend the most suitable format, pace and next step.",
         "label": "Request guidance"
       }
+    },
+    "about": {
+      "hero": {
+        "eyebrow": "About KRAAK",
+        "titlePrefix": "A",
+        "titleEmphasis": "purpose-driven organisation",
+        "titleSuffix": "for human capital and sustainable pathways.",
+        "description": "KRAAK Consulting builds young people's capabilities, supports organisations and creates valuable bridges between potential, opportunity and lasting impact in Côte d'Ivoire and internationally."
+      },
+      "focusAreas": {
+        "skillsDevelopment": {
+          "title": "Skills development",
+          "description": "Practical training to build clarity, confidence and professional competitiveness."
+        },
+        "projectStructuring": {
+          "title": "Project structuring",
+          "description": "A method for turning intentions into clear, monitored initiatives capable of delivering results."
+        },
+        "internationalOpportunities": {
+          "title": "Access to international opportunities",
+          "description": "Reliable support for approaching study, work and mobility with a coherent strategy."
+        }
+      },
+      "direction": {
+        "eyebrow": "Our direction",
+        "title": "A clear mission and a meaningful vision.",
+        "description": "These guideposts give our support and partnerships a clear direction.",
+        "mission": {
+          "label": "Mission",
+          "title": "Unlock potential, build skills and support young people through transformation.",
+          "description": "KRAAK Consulting's mission is to unlock young people's potential, build strong technical and interpersonal skills, help them integrate into demanding environments and support lasting value creation for themselves, their communities and future generations.",
+          "activationLabel": "What we set in motion",
+          "activationItems": {
+            "potential": "Discovering and asserting potential",
+            "skills": "Strong, practical skills"
+          },
+          "outcomeLabel": "Intended outcome",
+          "outcomeDescription": "Clearer, more confident and more sustainable pathways for the young people we support."
+        },
+        "vision": {
+          "label": "Vision",
+          "title": "A leading partner for young African professionals.",
+          "description": "KRAAK Consulting aims to become a leading organisation in the training and support of young African professionals, helping to shape a generation that understands its value, is ready to practise purposeful leadership and contributes to a fairer, more inclusive society that is open to opportunity.",
+          "ambitionLabel": "Ambition",
+          "ambitionDescription": "Develop leaders who understand their value and serve their communities.",
+          "impactLabel": "Impact",
+          "impactDescription": "Contribute to a more inclusive society with sustainable opportunities."
+        }
+      },
+      "values": {
+        "title": "Our values",
+        "items": {
+          "humanism": {
+            "title": "Humanism",
+            "description": "We uphold respect for every individual, human dignity and inclusion, without discrimination."
+          },
+          "personalResponsibility": {
+            "title": "Personal responsibility",
+            "description": "We encourage everyone to take ownership of their development, choices and future."
+          },
+          "servantLeadership": {
+            "title": "Servant leadership",
+            "description": "We develop leaders who rise, lift others and create positive impact."
+          },
+          "solidarity": {
+            "title": "Solidarity and collective strength",
+            "description": "We believe in collective strength, collaboration and mutual support."
+          },
+          "resilience": {
+            "title": "Resilience and courage",
+            "description": "We prepare young people and organisations to face challenges, overcome barriers and make progress."
+          },
+          "globalConnection": {
+            "title": "Openness and global connection",
+            "description": "We foster intercultural exchange, lifelong learning and transferable skills."
+          }
+        }
+      },
+      "quote": {
+        "ariaLabel": "Quote from the Chief Executive Officer",
+        "portraitAlt": "Portrait of Mr AKA, Chief Executive Officer and Co-Founder of KRAAK",
+        "symbolAlt": "KRAAK symbol",
+        "text": "\"KRAAK Consulting is more than a business venture; it is a life mission. We are here to break down the barriers that prevent African talent from expressing itself on the global stage.\"",
+        "author": "Mr AKA",
+        "role": "Chief Executive Officer / Co-Founder"
+      },
+      "closing": {
+        "title": "Do you share this ambition?",
+        "description": "Let us explore how KRAAK can contribute to your journey or organisation.",
+        "cta": "Contact us"
+      }
     }
   },
   "primeng": {

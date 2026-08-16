@@ -5,6 +5,7 @@ import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n';
 
 const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
@@ -13,7 +14,7 @@ const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
-  imports: [NgStyle, CtaBanner, RevealOnScrollDirective],
+  imports: [NgStyle, CtaBanner, RevealOnScrollDirective, KraakTranslatePipe],
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {

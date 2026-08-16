@@ -544,6 +544,97 @@
         "body": "Expliquez votre objectif et nous vous dirons quel format, quel rythme et quelle prochaine étape sont les plus pertinents.",
         "label": "Demander une orientation"
       }
+    },
+    "about": {
+      "hero": {
+        "eyebrow": "À propos de KRAAK",
+        "titlePrefix": "Une structure",
+        "titleEmphasis": "engagée",
+        "titleSuffix": "pour le capital humain et les trajectoires durables.",
+        "description": "KRAAK Consulting renforce les capacités des jeunes, accompagne les organisations et construit des passerelles utiles entre potentiel, opportunités et impact durable en Côte d'Ivoire et à l'international."
+      },
+      "focusAreas": {
+        "skillsDevelopment": {
+          "title": "Développement des compétences",
+          "description": "Des formations utiles pour gagner en clarté, en confiance et en compétitivité professionnelle."
+        },
+        "projectStructuring": {
+          "title": "Structuration des projets",
+          "description": "Une méthode pour transformer les intentions en initiatives lisibles, suivies et capables de produire des résultats."
+        },
+        "internationalOpportunities": {
+          "title": "Accès aux opportunités internationales",
+          "description": "Un accompagnement fiable pour aborder les études, le travail et la mobilité avec une stratégie cohérente."
+        }
+      },
+      "direction": {
+        "eyebrow": "Notre cap",
+        "title": "Une mission claire, une vision utile.",
+        "description": "Ces repères donnent une direction lisible à nos accompagnements et à nos partenariats.",
+        "mission": {
+          "label": "Mission",
+          "title": "Révéler, former et accompagner les jeunes dans leur transformation.",
+          "description": "KRAAK Consulting a pour mission de révéler le potentiel des jeunes, de développer des compétences techniques et interpersonnelles solides, de faciliter leur intégration dans des environnements exigeants et de soutenir la création de valeur durable pour eux-mêmes, leurs communautés et les générations futures.",
+          "activationLabel": "Ce que nous activons",
+          "activationItems": {
+            "potential": "Découverte et affirmation du potentiel",
+            "skills": "Compétences solides et utiles"
+          },
+          "outcomeLabel": "Résultat attendu",
+          "outcomeDescription": "Des trajectoires plus lisibles, plus confiantes et plus durables pour les jeunes que nous accompagnons."
+        },
+        "vision": {
+          "label": "Vision",
+          "title": "Un acteur de référence pour les jeunes professionnels africains.",
+          "description": "KRAAK Consulting se projette comme un acteur de référence dans la formation et l'accompagnement des jeunes professionnels africains, capable de faire émerger une génération consciente de sa valeur, prête à exercer un leadership utile et à contribuer à une société plus juste, plus inclusive et plus ouverte aux opportunités.",
+          "ambitionLabel": "Ambition",
+          "ambitionDescription": "Former des leaders conscients de leur valeur et utiles à leur environnement.",
+          "impactLabel": "Impact",
+          "impactDescription": "Contribuer à une société plus inclusive et porteuse d'opportunités durables."
+        }
+      },
+      "values": {
+        "title": "Nos valeurs",
+        "items": {
+          "humanism": {
+            "title": "Humanisme",
+            "description": "Nous défendons le respect de chaque individu, la dignité humaine et l'inclusion, sans discrimination."
+          },
+          "personalResponsibility": {
+            "title": "Responsabilité personnelle",
+            "description": "Nous encourageons chacun à prendre en main son développement, ses choix et son avenir."
+          },
+          "servantLeadership": {
+            "title": "Leadership par le service",
+            "description": "Nous formons des leaders qui s'élèvent, élèvent les autres et créent un impact positif."
+          },
+          "solidarity": {
+            "title": "Solidarité et esprit collectif",
+            "description": "Nous croyons à la force du collectif, de la collaboration et de l'entraide."
+          },
+          "resilience": {
+            "title": "Résilience et courage",
+            "description": "Nous préparons les jeunes et les organisations à affronter les défis, dépasser les barrières et progresser."
+          },
+          "globalConnection": {
+            "title": "Ouverture et connexion globale",
+            "description": "Nous favorisons les échanges interculturels, l'apprentissage continu et les compétences transférables."
+          }
+        }
+      },
+      "quote": {
+        "ariaLabel": "Citation du Directeur Général",
+        "portraitAlt": "Portrait de Mr AKA, Directeur Général et Co-Fondateur de KRAAK",
+        "symbolAlt": "Symbole KRAAK",
+        "text": "\"KRAAK Consulting n'est pas qu'un projet commercial, c'est une mission de vie. Nous sommes ici pour briser les barrières qui empêchent le talent africain de s'exprimer sur la scène mondiale.\"",
+        "author": "Mr AKA",
+        "role": "Directeur Général /Co-Fondateur"
+      },
+      "closing": {
+        "title": "Vous partagez cette ambition ?",
+        "description": "Découvrons ensemble comment KRAAK peut contribuer à votre trajectoire ou à votre organisation.",
+        "cta": "Nous contacter"
+      }
     }
   },
   "primeng": {

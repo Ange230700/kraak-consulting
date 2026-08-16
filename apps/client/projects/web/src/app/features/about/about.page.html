@@ -15,20 +15,21 @@
       <p
         class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
       >
-        À propos de KRAAK
+        {{ 'web.about.hero.eyebrow' | kraakTranslate }}
       </p>
       <h1
         class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
       >
-        Une structure <span class="text-brand-cyan">engagée</span> pour le
-        capital humain et les trajectoires durables.
+        {{ 'web.about.hero.titlePrefix' | kraakTranslate }}
+        <span class="text-brand-cyan">{{
+          'web.about.hero.titleEmphasis' | kraakTranslate
+        }}</span>
+        {{ 'web.about.hero.titleSuffix' | kraakTranslate }}
       </h1>
       <p
         class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
       >
-        KRAAK Consulting renforce les capacités des jeunes, accompagne les
-        organisations et construit des passerelles utiles entre potentiel,
-        opportunités et impact durable en Côte d'Ivoire et à l'international.
+        {{ 'web.about.hero.description' | kraakTranslate }}
       </p>
     </div>
   </div>
@@ -42,10 +43,14 @@
           class="pi pi-graduation-cap text-brand-navy-soft text-3xl"
           aria-hidden="true"
         ></i>
-        <h2 class="mt-4 text-xl font-bold">Développement des compétences</h2>
+        <h2 class="mt-4 text-xl font-bold">
+          {{ 'web.about.focusAreas.skillsDevelopment.title' | kraakTranslate }}
+        </h2>
         <p class="mt-3 text-neutral-700">
-          Des formations utiles pour gagner en clarté, en confiance et en
-          compétitivité professionnelle.
+          {{
+            'web.about.focusAreas.skillsDevelopment.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
       <article
@@ -58,10 +63,14 @@
           class="pi pi-sitemap text-brand-navy-soft text-3xl"
           aria-hidden="true"
         ></i>
-        <h2 class="mt-4 text-xl font-bold">Structuration des projets</h2>
+        <h2 class="mt-4 text-xl font-bold">
+          {{ 'web.about.focusAreas.projectStructuring.title' | kraakTranslate }}
+        </h2>
         <p class="mt-3 text-neutral-700">
-          Une méthode pour transformer les intentions en initiatives lisibles,
-          suivies et capables de produire des résultats.
+          {{
+            'web.about.focusAreas.projectStructuring.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
       <article
@@ -75,11 +84,16 @@
           aria-hidden="true"
         ></i>
         <h2 class="mt-4 text-xl font-bold">
-          Accès aux opportunités internationales
+          {{
+            'web.about.focusAreas.internationalOpportunities.title'
+              | kraakTranslate
+          }}
         </h2>
         <p class="mt-3 text-neutral-700">
-          Un accompagnement fiable pour aborder les études, le travail et la
-          mobilité avec une stratégie cohérente.
+          {{
+            'web.about.focusAreas.internationalOpportunities.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
     </div>
@@ -99,14 +113,13 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.2em] uppercase"
       >
-        Notre cap
+        {{ 'web.about.direction.eyebrow' | kraakTranslate }}
       </p>
       <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Une mission claire, une vision utile.
+        {{ 'web.about.direction.title' | kraakTranslate }}
       </h2>
       <p class="mt-4 text-lg text-neutral-700">
-        Ces repères donnent une direction lisible à nos accompagnements et à nos
-        partenariats.
+        {{ 'web.about.direction.description' | kraakTranslate }}
       </p>
     </div>
 
@@ -123,17 +136,13 @@
             class="bg-primary/10 text-primary inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm font-semibold"
           >
             <i class="pi pi-compass" aria-hidden="true"></i>
-            Mission
+            {{ 'web.about.direction.mission.label' | kraakTranslate }}
           </div>
           <h3 class="text-brand-navy mt-5 text-2xl font-bold lg:text-3xl">
-            Révéler, former et accompagner les jeunes dans leur transformation.
+            {{ 'web.about.direction.mission.title' | kraakTranslate }}
           </h3>
           <p class="mt-4 text-lg text-neutral-700">
-            KRAAK Consulting a pour mission de révéler le potentiel des jeunes,
-            de développer des compétences techniques et interpersonnelles
-            solides, de faciliter leur intégration dans des environnements
-            exigeants et de soutenir la création de valeur durable pour
-            eux-mêmes, leurs communautés et les générations futures.
+            {{ 'web.about.direction.mission.description' | kraakTranslate }}
           </p>
 
           <div class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -141,7 +150,9 @@
               <p
                 class="text-brand-navy-soft text-xs font-semibold tracking-[0.18em] uppercase"
               >
-                Ce que nous activons
+                {{
+                  'web.about.direction.mission.activationLabel' | kraakTranslate
+                }}
               </p>
               <ul class="mt-3 space-y-2 text-sm text-neutral-700">
                 <li class="flex gap-3">
@@ -149,14 +160,20 @@
                     class="pi pi-check text-primary mt-0.5"
                     aria-hidden="true"
                   ></i>
-                  <span>Découverte et affirmation du potentiel</span>
+                  <span>{{
+                    'web.about.direction.mission.activationItems.potential'
+                      | kraakTranslate
+                  }}</span>
                 </li>
                 <li class="flex gap-3">
                   <i
                     class="pi pi-check text-primary mt-0.5"
                     aria-hidden="true"
                   ></i>
-                  <span>Compétences solides et utiles</span>
+                  <span>{{
+                    'web.about.direction.mission.activationItems.skills'
+                      | kraakTranslate
+                  }}</span>
                 </li>
               </ul>
             </div>
@@ -165,11 +182,15 @@
               <p
                 class="text-brand-navy-soft text-xs font-semibold tracking-[0.18em] uppercase"
               >
-                Résultat attendu
+                {{
+                  'web.about.direction.mission.outcomeLabel' | kraakTranslate
+                }}
               </p>
               <p class="mt-3 text-sm text-neutral-700">
-                Des trajectoires plus lisibles, plus confiantes et plus durables
-                pour les jeunes que nous accompagnons.
+                {{
+                  'web.about.direction.mission.outcomeDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
           </div>
@@ -188,17 +209,13 @@
             class="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90"
           >
             <i class="pi pi-eye" aria-hidden="true"></i>
-            Vision
+            {{ 'web.about.direction.vision.label' | kraakTranslate }}
           </div>
           <h3 class="mt-5 text-2xl font-bold text-white lg:text-3xl">
-            Un acteur de référence pour les jeunes professionnels africains.
+            {{ 'web.about.direction.vision.title' | kraakTranslate }}
           </h3>
           <p class="mt-4 text-lg text-white/80">
-            KRAAK Consulting se projette comme un acteur de référence dans la
-            formation et l'accompagnement des jeunes professionnels africains,
-            capable de faire émerger une génération consciente de sa valeur,
-            prête à exercer un leadership utile et à contribuer à une société
-            plus juste, plus inclusive et plus ouverte aux opportunités.
+            {{ 'web.about.direction.vision.description' | kraakTranslate }}
           </p>
 
           <div
@@ -208,11 +225,15 @@
               <p
                 class="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase"
               >
-                Ambition
+                {{
+                  'web.about.direction.vision.ambitionLabel' | kraakTranslate
+                }}
               </p>
               <p class="mt-3 text-sm text-white/80">
-                Former des leaders conscients de leur valeur et utiles à leur
-                environnement.
+                {{
+                  'web.about.direction.vision.ambitionDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
 
@@ -220,11 +241,13 @@
               <p
                 class="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase"
               >
-                Impact
+                {{ 'web.about.direction.vision.impactLabel' | kraakTranslate }}
               </p>
               <p class="mt-3 text-sm text-white/80">
-                Contribuer à une société plus inclusive et porteuse
-                d'opportunités durables.
+                {{
+                  'web.about.direction.vision.impactDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
           </div>
@@ -236,13 +259,16 @@
 
 <section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos valeurs</h2>
+    <h2 class="text-center text-3xl font-bold lg:text-4xl">
+      {{ 'web.about.values.title' | kraakTranslate }}
+    </h2>
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
-        <p class="text-primary text-center text-lg font-bold">Humanisme</p>
+        <p class="text-primary text-center text-lg font-bold">
+          {{ 'web.about.values.items.humanism.title' | kraakTranslate }}
+        </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous défendons le respect de chaque individu, la dignité humaine et
-          l'inclusion, sans discrimination.
+          {{ 'web.about.values.items.humanism.description' | kraakTranslate }}
         </p>
       </article>
       <article
@@ -251,11 +277,16 @@
         [revealDelayMs]="50"
       >
         <p class="text-primary text-center text-lg font-bold">
-          Responsabilité personnelle
+          {{
+            'web.about.values.items.personalResponsibility.title'
+              | kraakTranslate
+          }}
         </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous encourageons chacun à prendre en main son développement, ses
-          choix et son avenir.
+          {{
+            'web.about.values.items.personalResponsibility.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
       <article
@@ -264,38 +295,42 @@
         [revealDelayMs]="100"
       >
         <p class="text-primary text-center text-lg font-bold">
-          Leadership par le service
+          {{
+            'web.about.values.items.servantLeadership.title' | kraakTranslate
+          }}
         </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous formons des leaders qui s'élèvent, élèvent les autres et créent
-          un impact positif.
+          {{
+            'web.about.values.items.servantLeadership.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
       <article class="rounded-card bg-neutral-50 p-5">
         <p class="text-primary text-center text-lg font-bold">
-          Solidarité et esprit collectif
+          {{ 'web.about.values.items.solidarity.title' | kraakTranslate }}
         </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous croyons à la force du collectif, de la collaboration et de
-          l'entraide.
+          {{ 'web.about.values.items.solidarity.description' | kraakTranslate }}
         </p>
       </article>
       <article class="rounded-card bg-neutral-50 p-5">
         <p class="text-primary text-center text-lg font-bold">
-          Résilience et courage
+          {{ 'web.about.values.items.resilience.title' | kraakTranslate }}
         </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous préparons les jeunes et les organisations à affronter les défis,
-          dépasser les barrières et progresser.
+          {{ 'web.about.values.items.resilience.description' | kraakTranslate }}
         </p>
       </article>
       <article class="rounded-card bg-neutral-50 p-5">
         <p class="text-primary text-center text-lg font-bold">
-          Ouverture et connexion globale
+          {{ 'web.about.values.items.globalConnection.title' | kraakTranslate }}
         </p>
         <p class="text-brand-navy mt-3 text-sm">
-          Nous favorisons les échanges interculturels, l'apprentissage continu
-          et les compétences transférables.
+          {{
+            'web.about.values.items.globalConnection.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
     </div>
@@ -310,7 +345,7 @@
   <div class="mx-auto max-w-5xl px-4 lg:px-6">
     <article
       class="relative flex flex-col items-center gap-8 rounded-[3rem] border border-neutral-200 bg-neutral-50 p-8 md:flex-row md:items-stretch md:gap-10 md:p-12"
-      aria-label="Citation du Directeur Général"
+      [attr.aria-label]="'web.about.quote.ariaLabel' | kraakTranslate"
       kraakRevealOnScroll
       [revealDelayMs]="80"
       [revealDelayMobileMs]="30"
@@ -318,7 +353,7 @@
       <div class="md:max-w-[36%] md:flex-1">
         <img
           src="/assets/site-visuals/photos/about-ceo-mr-aka.png"
-          alt="Portrait de Mr AKA, Directeur Général et Co-Fondateur de KRAAK"
+          [alt]="'web.about.quote.portraitAlt' | kraakTranslate"
           class="h-56 w-full rounded-3xl object-cover object-[52%_18%] sm:h-64 md:h-full md:min-h-[280px] md:object-[50%_30%] lg:object-[50%_26%]"
           loading="lazy"
           decoding="async"
@@ -331,7 +366,7 @@
         >
           <img
             src="/kraak-symbol.png"
-            alt="Symbole KRAAK"
+            [alt]="'web.about.quote.symbolAlt' | kraakTranslate"
             width="30"
             height="30"
             loading="lazy"
@@ -343,19 +378,17 @@
         <blockquote
           class="mt-5 max-w-[40ch] text-lg leading-relaxed text-neutral-700 italic sm:text-xl"
         >
-          "KRAAK Consulting n'est pas qu'un projet commercial, c'est une mission
-          de vie. Nous sommes ici pour briser les barrières qui empêchent le
-          talent africain de s'exprimer sur la scène mondiale."
+          {{ 'web.about.quote.text' | kraakTranslate }}
         </blockquote>
 
         <div class="mt-6 border-t border-neutral-200 pt-4">
           <p class="text-brand-navy text-base font-bold tracking-tight">
-            Mr AKA
+            {{ 'web.about.quote.author' | kraakTranslate }}
           </p>
           <p
             class="text-brand-navy-soft mt-1 text-xs font-semibold tracking-[0.12em] uppercase"
           >
-            Directeur Général /Co-Fondateur
+            {{ 'web.about.quote.role' | kraakTranslate }}
           </p>
         </div>
       </div>
@@ -364,9 +397,9 @@
 </section>
 
 <kraak-cta-banner
-  heading="Vous partagez cette ambition ?"
-  body="Découvrons ensemble comment KRAAK peut contribuer à votre trajectoire ou à votre organisation."
-  ctaLabel="Nous contacter"
+  [heading]="'web.about.closing.title' | kraakTranslate"
+  [body]="'web.about.closing.description' | kraakTranslate"
+  [ctaLabel]="'web.about.closing.cta' | kraakTranslate"
   ctaLink="/contact"
   ctaContext="about_main_cta"
 />

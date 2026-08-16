@@ -35,10 +35,10 @@ Le site web KRAAK est l'application Angular publique située dans
   coque publique partagée (pied de page, lien d'accès rapide et commande de
   retour en haut) forme le deuxième incrément. La page Contact constitue le
   troisième incrément localisé, la page Services le quatrième et la page
-  Programmes le cinquième. Parmi les pages de conversion de cette série, seule
-  la page À propos reste à localiser dans une PR dédiée. Les autres pages
-  `/en/...` restent un scaffold technique non indexable tant que leurs contenus
-  anglais ne sont pas traduits et relus.
+  Programmes le cinquième. La page À propos constitue le sixième incrément. Les
+  quatre pages de conversion de cette série sont désormais localisées. Les
+  autres pages `/en/...` restent un scaffold technique non indexable tant que
+  leurs contenus anglais ne sont pas traduits et relus.
 
 ## Implémentation active
 
@@ -46,7 +46,8 @@ Le site web KRAAK est l'application Angular publique située dans
 - Prerender public : [`../../apps/client/projects/web/src/app/app.routes.server.ts`](../../apps/client/projects/web/src/app/app.routes.server.ts).
 - Catalogues runtime : [`../../apps/client/projects/shared/i18n/catalogs/`](../../apps/client/projects/shared/i18n/catalogs/),
   avec les espaces de clés `web.home`, `web.nav`, `web.shell`, `web.contact`,
-  `web.services` et `web.programs` pour les incréments publics bilingues livrés.
+  `web.services`, `web.programs` et `web.about` pour les incréments publics
+  bilingues livrés.
 - Tests de surface : [`../../apps/client/projects/web/src/app/app.routes.spec.ts`](../../apps/client/projects/web/src/app/app.routes.spec.ts)
   et [`../../apps/client/projects/web/src/app/app.routes.server.spec.ts`](../../apps/client/projects/web/src/app/app.routes.server.spec.ts).
 - Historique design : [`../archive/vitrine-design/`](../archive/vitrine-design/),
@@ -64,26 +65,22 @@ entrées sitemap et l'attribut `<html lang>` sont générés par locale depuis l
 modèle de routes web localisées.
 
 La page d'accueil, la barre de navigation, la coque publique partagée, les pages
-Contact, Services et Programmes servent désormais leur contenu français ou
-anglais depuis les catalogues selon la locale de l'URL. Un sélecteur de langue
-relie les variantes d'une même page publique lorsque le mapping existe, puis
-revient à la page d'accueil de la langue cible lorsqu'aucune variante publique
-n'est disponible.
+Contact, Services, Programmes et À propos servent désormais leur contenu
+français ou anglais depuis les catalogues selon la locale de l'URL. Un sélecteur
+de langue relie les variantes d'une même page publique lorsque le mapping existe,
+puis revient à la page d'accueil de la langue cible lorsqu'aucune variante
+publique n'est disponible.
 
-Parmi les pages de conversion de cette série, seule la page À propos reste à
-localiser dans une PR distincte. L'activation de l'indexation anglaise, des
-entrées sitemap et des liens `hreflang` réciproques reste conditionnée à une
-revue humaine du contenu anglais de chaque page.
+Les quatre pages de conversion prévues dans cette série sont désormais
+localisées. L'activation de l'indexation anglaise, des entrées sitemap et des
+liens `hreflang` réciproques reste conditionnée à une revue humaine du contenu
+anglais de chaque page.
 
-La copie anglaise de Services est proposée mais n'a pas encore reçu cette revue
-humaine. En conséquence, `/en/services` reste `noindex, nofollow`, hors du
-sitemap de production et sans lien `hreflang="en-GB"` réciproque depuis
-`/fr/services`.
-
-La copie anglaise de Programmes est elle aussi proposée mais n'a pas encore reçu
-de revue humaine. En conséquence, `/en/programs` reste `noindex, nofollow`, hors
-du sitemap de production et sans lien `hreflang="en-GB"` réciproque depuis
-`/fr/programmes`.
+Les copies anglaises de Contact, Services, Programmes et À propos sont proposées
+mais n'ont pas encore reçu de revue humaine. En conséquence, `/en/contact`,
+`/en/services`, `/en/programs` et `/en/about` restent `noindex, nofollow`, hors
+du sitemap de production et sans lien `hreflang="en-GB"` réciproque depuis leur
+page française respective.
 
 Ces incréments de contenu ne modifient pas encore la politique SEO du scaffold
 anglais : les routes anglaises restent `noindex, nofollow`, exclues
