@@ -1,5 +1,6 @@
 <div class="space-y-8">
   <section
+    kraakRevealOnScroll
     class="relative grid gap-8 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] p-6 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_24px_64px_-32px_rgba(18,43,74,0.45)] sm:p-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)] lg:items-end lg:p-10"
     aria-labelledby="participant-dashboard-title"
   >
@@ -53,6 +54,9 @@
   </section>
 
   <section
+    kraakRevealOnScroll
+    [revealDelayMs]="60"
+    [revealDelayMobileMs]="30"
     class="rounded-[2rem] bg-white p-5 text-slate-950 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-7 lg:p-8"
     aria-labelledby="dashboard-synthesis-title"
   >
@@ -148,6 +152,9 @@
   </section>
 
   <section
+    kraakRevealOnScroll
+    [revealDelayMs]="100"
+    [revealDelayMobileMs]="50"
     class="rounded-[2rem] bg-white p-5 text-slate-950 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-7 lg:p-8"
     aria-labelledby="dashboard-overview-title"
   >
@@ -401,6 +408,9 @@
   </section>
 
   <section
+    kraakRevealOnScroll
+    [revealDelayMs]="140"
+    [revealDelayMobileMs]="70"
     class="rounded-[2rem] border border-white/12 bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_100%)] p-5 text-white shadow-[0_12px_32px_-16px_rgba(18,43,74,0.5)] sm:p-7"
     aria-labelledby="dashboard-quicklinks-title"
   >
@@ -416,7 +426,7 @@
       @for (quickLink of quickLinks; track quickLink.href) {
         <a
           [routerLink]="quickLink.href"
-          class="group flex items-center justify-between gap-5 rounded-2xl border border-white/12 bg-white/8 p-4 text-white no-underline shadow-[0_2px_5px_rgba(255,255,255,0.04)_inset] transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
+          class="motion-hover-lift motion-press group flex items-center justify-between gap-5 rounded-2xl border border-white/12 bg-white/8 p-4 text-white no-underline shadow-[0_2px_5px_rgba(255,255,255,0.04)_inset] transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
         >
           <span>
             <span class="block text-base font-semibold">

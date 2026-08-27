@@ -45,6 +45,7 @@
     </section>
   } @else if (session(); as sess) {
     <header
+      kraakRevealOnScroll
       class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] px-6 py-8 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.75)] sm:px-8 sm:py-10 lg:px-12"
     >
       <div
@@ -91,7 +92,12 @@
       </div>
     </header>
 
-    <section class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <section
+      kraakRevealOnScroll
+      [revealDelayMs]="60"
+      [revealDelayMobileMs]="30"
+      class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]"
+    >
       <div class="space-y-8">
         <article
           class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.16)] sm:p-8"
@@ -166,7 +172,7 @@
                 [href]="sess.meetingLink"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+                class="motion-hover-lift motion-press inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950"
               >
                 Rejoindre la session
                 <i class="pi pi-arrow-up-right text-xs" aria-hidden="true"></i>

@@ -48,6 +48,7 @@
     </section>
   } @else if (programDetail(); as detail) {
     <header
+      kraakRevealOnScroll
       class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_50%,#1673ae_100%)] px-6 py-8 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.75)] sm:px-8 sm:py-10 lg:px-12 lg:py-12"
     >
       <div
@@ -140,6 +141,9 @@
     </header>
 
     <section
+      kraakRevealOnScroll
+      [revealDelayMs]="60"
+      [revealDelayMobileMs]="30"
       class="grid gap-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.55fr)]"
     >
       <article
@@ -222,7 +226,12 @@
       </aside>
     </section>
 
-    <section aria-labelledby="program-sessions-title">
+    <section
+      kraakRevealOnScroll
+      [revealDelayMs]="100"
+      [revealDelayMobileMs]="50"
+      aria-labelledby="program-sessions-title"
+    >
       <div
         class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
       >
@@ -324,6 +333,9 @@
     </section>
 
     <section
+      kraakRevealOnScroll
+      [revealDelayMs]="140"
+      [revealDelayMobileMs]="70"
       class="grid gap-8 lg:grid-cols-2"
       aria-label="Ressources et annonces du programme"
     >
@@ -367,7 +379,7 @@
                       [href]="resource.url"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white transition hover:-translate-y-0.5"
+                      class="motion-hover-lift motion-press flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white"
                       [attr.aria-label]="'Ouvrir ' + resource.title"
                     >
                       <i

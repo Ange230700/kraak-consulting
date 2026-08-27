@@ -17,6 +17,7 @@ import { Message } from 'primeng/message';
 import { environment } from '../../../../environments/environment';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
+import { RevealOnScrollDirective } from '../../../shared/motion/reveal-on-scroll.directive';
 
 interface DashboardQuickLink {
   readonly label: string;
@@ -47,7 +48,7 @@ const QUICK_LINKS: readonly DashboardQuickLink[] = [
 @Component({
   selector: 'kraak-web-participant-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, Message],
+  imports: [CommonModule, RouterLink, Message, RevealOnScrollDirective],
   templateUrl: './dashboard.page.html',
 })
 export default class DashboardPage implements OnInit {

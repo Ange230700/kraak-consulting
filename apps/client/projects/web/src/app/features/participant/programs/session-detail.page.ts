@@ -11,11 +11,12 @@ import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
 import { environment } from '../../../../environments/environment';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
+import { RevealOnScrollDirective } from '../../../shared/motion/reveal-on-scroll.directive';
 
 @Component({
   selector: 'kraak-web-participant-session-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RevealOnScrollDirective],
   templateUrl: './session-detail.page.html',
 })
 export default class SessionDetailPage implements OnInit {
