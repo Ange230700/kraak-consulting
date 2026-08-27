@@ -233,19 +233,21 @@
               <div
                 class="mt-5 flex items-start justify-between gap-4 border-t border-dashed border-slate-200 pt-4"
               >
-                <div>
+                <div class="min-w-0">
                   <p
                     class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
                   >
                     Cohorte
                   </p>
-                  <p class="mt-1 text-sm font-semibold text-slate-700">
+                  <p
+                    class="mt-1 text-sm font-semibold break-words text-slate-700"
+                  >
                     {{ program.cohort.name }}
                   </p>
                 </div>
 
                 @if (program.cohort.startDate) {
-                  <div class="text-right">
+                  <div class="shrink-0 text-right">
                     <p
                       class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
                     >

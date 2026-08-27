@@ -263,7 +263,7 @@
             let index = $index
           ) {
             <article
-              class="grid gap-5 py-6 first:pt-0 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center"
+              class="grid gap-5 py-6 first:pt-0 sm:grid-cols-[3rem_minmax(0,1fr)] sm:items-start lg:grid-cols-[3rem_minmax(0,1fr)_auto] lg:items-center"
             >
               <span
                 class="text-brand-blue flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-sm font-semibold shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
@@ -313,7 +313,7 @@
                   'sessions',
                   session.id,
                 ]"
-                class="text-brand-blue inline-flex w-fit items-center gap-2 text-sm font-semibold transition hover:gap-3"
+                class="text-brand-blue inline-flex w-fit items-center gap-2 text-sm font-semibold transition hover:gap-3 sm:col-start-2 lg:col-start-auto"
               >
                 Ouvrir la session
                 <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
@@ -363,8 +363,8 @@
             @for (resource of detail.resources; track resource.id) {
               <div class="py-5 first:pt-0">
                 <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <p class="font-semibold text-slate-950">
+                  <div class="min-w-0">
+                    <p class="font-semibold break-words text-slate-950">
                       {{ resource.title }}
                     </p>
                     <p
