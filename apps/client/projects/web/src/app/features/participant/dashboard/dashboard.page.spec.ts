@@ -158,7 +158,7 @@ describe('Web Participant Dashboard Page', () => {
       expect(text).toContain('Rappel documents');
       expect(text).toContain('Cohorte printemps');
       expect(linkHrefs).toEqual(
-        expect.arrayContaining(['/programmes', '/contact']),
+        expect.arrayContaining(['/participant/programmes', '/contact']),
       );
     });
 

@@ -1,0 +1,292 @@
+<div class="space-y-10">
+  <a
+    [routerLink]="['/participant/programmes', programId()]"
+    class="hover:text-brand-blue inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition"
+  >
+    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+    Retour au programme
+  </a>
+
+  @if (errorMessage()) {
+    <section
+      class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-8"
+      role="alert"
+    >
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-700"
+        aria-hidden="true"
+      >
+        <i class="pi pi-exclamation-circle"></i>
+      </span>
+
+      <h1 class="mt-5 text-2xl font-semibold text-slate-950">
+        Impossible de charger cette session
+      </h1>
+
+      <p class="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+        {{ errorMessage() }}
+      </p>
+
+      <button
+        type="button"
+        class="kr-button-primary mt-6"
+        (click)="reloadSession()"
+      >
+        Réessayer
+      </button>
+    </section>
+  } @else if (loading()) {
+    <section aria-label="Chargement de la session" aria-busy="true">
+      <div class="h-72 animate-pulse rounded-[2rem] bg-slate-200 lg:h-80"></div>
+      <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_22rem]">
+        <div class="h-72 animate-pulse rounded-[2rem] bg-white"></div>
+        <div class="h-72 animate-pulse rounded-[2rem] bg-white"></div>
+      </div>
+    </section>
+  } @else if (session(); as sess) {
+    <header
+      class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] px-6 py-8 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.75)] sm:px-8 sm:py-10 lg:px-12"
+    >
+      <div
+        aria-hidden="true"
+        class="absolute -top-28 -right-20 h-72 w-72 rounded-full bg-cyan-300/24 blur-3xl"
+      ></div>
+      <div
+        aria-hidden="true"
+        class="absolute -bottom-36 -left-16 h-80 w-80 rounded-full bg-amber-300/12 blur-3xl"
+      ></div>
+
+      <div class="relative max-w-4xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            class="inline-flex rounded-full border border-white/16 bg-white/12 px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase backdrop-blur-xl"
+          >
+            {{ sessionStatusLabel(sess.status) }}
+          </span>
+
+          <span
+            class="inline-flex rounded-full border border-white/16 bg-white/8 px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-white/72 uppercase backdrop-blur-xl"
+          >
+            {{ locationTypeLabel(sess.locationType) }}
+          </span>
+        </div>
+
+        <p
+          class="mt-8 text-xs font-semibold tracking-[0.22em] text-cyan-100/72 uppercase"
+        >
+          Session · {{ programDetail()?.program?.title }}
+        </p>
+
+        <h1
+          class="mt-3 max-w-3xl text-3xl leading-tight font-semibold sm:text-4xl lg:text-5xl"
+        >
+          {{ sess.title }}
+        </h1>
+
+        @if (sess.description) {
+          <p class="mt-5 max-w-2xl text-base leading-7 text-white/72">
+            {{ sess.description }}
+          </p>
+        }
+      </div>
+    </header>
+
+    <section class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div class="space-y-8">
+        <article
+          class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.16)] sm:p-8"
+        >
+          <p
+            class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+          >
+            Rendez-vous
+          </p>
+          <h2 class="mt-2 text-2xl font-semibold text-slate-950">
+            Informations de session
+          </h2>
+
+          <dl class="mt-7 grid gap-5 sm:grid-cols-2">
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                Début
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ formatDateTime(sess.startsAt) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                Fin
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ formatDateTime(sess.endsAt) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                Format
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ locationTypeLabel(sess.locationType) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                Lieu
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ sess.locationLabel || 'Non précisé' }}
+              </dd>
+            </div>
+          </dl>
+
+          @if (sess.meetingLink) {
+            <div
+              class="mt-6 flex flex-col gap-4 rounded-3xl bg-slate-950 p-5 text-white sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p class="text-sm font-semibold">Session en ligne</p>
+                <p class="mt-1 text-xs leading-5 text-white/56">
+                  Ouvrez le lien de réunion dans un nouvel onglet.
+                </p>
+              </div>
+
+              <a
+                [href]="sess.meetingLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5"
+              >
+                Rejoindre la session
+                <i class="pi pi-arrow-up-right text-xs" aria-hidden="true"></i>
+              </a>
+            </div>
+          }
+        </article>
+      </div>
+
+      <aside
+        class="h-fit rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.16)] sm:p-8"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p
+              class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+            >
+              Progression
+            </p>
+            <h2 class="mt-2 text-xl font-semibold text-slate-950">
+              Votre suivi
+            </h2>
+          </div>
+
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-2xl"
+            [class.bg-emerald-50]="isSessionCompleted()"
+            [class.text-emerald-700]="isSessionCompleted()"
+            [class.bg-slate-100]="!isSessionCompleted()"
+            [class.text-slate-500]="!isSessionCompleted()"
+            aria-hidden="true"
+          >
+            <i
+              class="pi"
+              [class.pi-check]="isSessionCompleted()"
+              [class.pi-clock]="!isSessionCompleted()"
+            ></i>
+          </span>
+        </div>
+
+        <p class="mt-5 text-sm leading-6 text-slate-600">
+          @if (isSessionCompleted()) {
+            Session marquée comme terminée.
+          } @else {
+            Session non terminée.
+          }
+        </p>
+
+        @if (markErrorMessage()) {
+          <p
+            class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
+            role="alert"
+          >
+            {{ markErrorMessage() }}
+          </p>
+        }
+
+        @if (isSessionCompleted()) {
+          <button
+            type="button"
+            class="kr-button-secondary mt-6 w-full"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(false)"
+          >
+            Marquer comme non terminée
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="kr-button-primary mt-6 w-full"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(true)"
+          >
+            Marquer comme terminée
+          </button>
+        }
+
+        @if (programDetail(); as detail) {
+          <div class="mt-7 border-t border-dashed border-slate-200 pt-6">
+            <div class="flex items-end justify-between gap-3">
+              <span class="text-xs font-semibold text-slate-500">
+                Progression globale
+              </span>
+              <span class="text-sm font-semibold text-slate-950">
+                {{ detail.progress.completionRate }}%
+              </span>
+            </div>
+
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div
+                class="h-full rounded-full bg-[linear-gradient(90deg,#1673ae_0%,#4cc3d9_100%)]"
+                [style.width.%]="detail.progress.completionRate"
+              ></div>
+            </div>
+
+            <p class="mt-2 text-xs leading-5 text-slate-500">
+              {{ detail.progress.completedSessions }}/{{
+                detail.progress.totalSessions
+              }}
+              sessions terminées
+            </p>
+          </div>
+        }
+      </aside>
+    </section>
+  } @else {
+    <section
+      class="rounded-[2rem] bg-white p-8 text-center shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)]"
+    >
+      <h1 class="text-2xl font-semibold text-slate-950">Session introuvable</h1>
+      <p class="mt-3 text-sm leading-6 text-slate-600">
+        La session n'a pas pu être trouvée dans ce programme.
+      </p>
+
+      <a
+        [routerLink]="['/participant/programmes', programId()]"
+        class="kr-button-primary mt-6"
+      >
+        Retour au programme
+      </a>
+    </section>
+  }
+</div>

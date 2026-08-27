@@ -34,9 +34,8 @@ interface DashboardSummaryIndicator {
 const QUICK_LINKS: readonly DashboardQuickLink[] = [
   {
     label: 'Voir les programmes',
-    detail:
-      "Retrouver l'offre, les parcours et les informations publiques utiles.",
-    href: '/programmes',
+    detail: 'Retrouver vos parcours inscrits et suivre votre progression.',
+    href: '/participant/programmes',
   },
   {
     label: "Contacter l'équipe",

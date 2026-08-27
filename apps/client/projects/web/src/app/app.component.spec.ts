@@ -1,4 +1,4 @@
-import { ApplicationInitStatus } from '@angular/core';
+import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   Event as RouterEvent,
@@ -11,6 +11,12 @@ import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 import { KraakI18nService, provideKraakI18n } from '../../../shared/i18n';
 import { App } from './app.component';
+
+@Component({
+  standalone: true,
+  template: '<p>Participant test page</p>',
+})
+class ParticipantTestPage {}
 
 describe('App', () => {
   beforeEach(async () => {
@@ -35,6 +41,40 @@ describe('App', () => {
     expect(compiled.querySelector('kraak-navbar')).toBeTruthy();
     expect(compiled.querySelector('main')).toBeTruthy();
     expect(compiled.querySelector('kraak-footer')).toBeTruthy();
+  });
+
+  it('Given a participant app shell route, When navigation completes, Then public navbar and footer are hidden while main remains', async () => {
+    TestBed.resetTestingModule();
+
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [
+        provideRouter([
+          {
+            path: 'participant-test',
+            data: { appShell: 'participant' },
+            loadComponent: () => Promise.resolve(ParticipantTestPage),
+          },
+        ]),
+        provideKraakI18n(),
+        MessageService,
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+
+    const router = TestBed.inject(Router);
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    await router.navigateByUrl('/participant-test');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('kraak-navbar')).toBeNull();
+    expect(compiled.querySelector('kraak-footer')).toBeNull();
+    expect(compiled.querySelector('main#main-content')).toBeTruthy();
   });
 
   it('Given a keyboard user When the application shell renders Then it exposes a skip link and main landmark target', async () => {

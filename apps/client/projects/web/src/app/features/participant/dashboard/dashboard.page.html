@@ -1,339 +1,440 @@
-<main
-  class="min-h-screen bg-[radial-gradient(circle_at_top,rgba(76,195,217,0.22),transparent_42%),linear-gradient(180deg,#f8fbfd_0%,#eef3f7_100%)]"
->
-  <div class="container-page py-10 sm:py-12">
-    <section
-      class="grid gap-6 rounded-4xl bg-white/88 p-6 shadow-sm ring-1 ring-slate-200/80 backdrop-blur sm:p-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,0.9fr)]"
+<div class="space-y-8">
+  <section
+    class="relative grid gap-8 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] p-6 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_24px_64px_-32px_rgba(18,43,74,0.45)] sm:p-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)] lg:items-end lg:p-10"
+    aria-labelledby="participant-dashboard-title"
+  >
+    <div class="max-w-3xl">
+      <p
+        class="text-sm font-semibold tracking-[0.24em] text-white/56 uppercase"
+      >
+        Accueil participant
+      </p>
+
+      <h1
+        id="participant-dashboard-title"
+        class="mt-4 text-3xl leading-tight font-semibold text-white sm:text-4xl lg:text-5xl"
+      >
+        Bonjour {{ currentProfile()?.appUser?.firstName || 'Participant' }},
+        <span class="text-white/64">voici votre vue d'ensemble.</span>
+      </h1>
+
+      <p class="mt-5 max-w-2xl text-base leading-7 text-white/64 sm:text-lg">
+        Retrouvez en un coup d'œil vos programmes, vos prochaines sessions et
+        les dernières informations utiles à votre parcours KRAAK.
+      </p>
+    </div>
+
+    <aside
+      class="rounded-3xl border border-white/12 bg-white/10 p-5 text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_12px_20px_rgba(0,0,0,0.06)] backdrop-blur-[48px] sm:p-6"
+      aria-labelledby="dashboard-attention-title"
     >
-      <div class="space-y-4">
+      <span
+        class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white/10 shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset]"
+        aria-hidden="true"
+      >
+        <i class="pi pi-compass text-cyan-200"></i>
+      </span>
+
+      <p
+        class="mt-5 text-xs font-semibold tracking-[0.2em] text-cyan-100/80 uppercase"
+      >
+        Point d'attention
+      </p>
+
+      <h2 id="dashboard-attention-title" class="mt-2 text-xl font-semibold">
+        Rester aligné sur la prochaine étape
+      </h2>
+
+      <p class="mt-3 text-sm leading-6 text-white/64">
+        Votre espace rassemble les éléments prioritaires de votre parcours pour
+        vous aider à avancer sans perdre le fil.
+      </p>
+    </aside>
+  </section>
+
+  <section
+    class="rounded-[2rem] bg-white p-5 text-slate-950 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-7 lg:p-8"
+    aria-labelledby="dashboard-synthesis-title"
+  >
+    <div
+      class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+    >
+      <div>
         <p
-          class="text-brand-blue text-sm font-semibold tracking-[0.28em] uppercase"
+          class="text-sm font-semibold tracking-[0.2em] text-slate-400 uppercase"
         >
-          Accueil participant
+          Mon dashboard
         </p>
-        <div class="space-y-3">
-          <h1 class="text-3xl font-semibold text-slate-950 sm:text-4xl">
-            Bonjour {{ currentProfile()?.appUser?.firstName || 'Participant' }},
-            voici votre vue d'ensemble.
-          </h1>
-          <p class="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            Ce dashboard MVP synthétise les contenus prioritaires issus de votre
-            parcours: programmes suivis, prochaines sessions et dernières
-            annonces, alimentés par le service dashboard de KRAAK.
-          </p>
-        </div>
+        <h2
+          id="dashboard-synthesis-title"
+          class="mt-2 text-2xl font-semibold text-slate-950"
+        >
+          Synthèse utile
+        </h2>
       </div>
 
-      <aside
-        class="rounded-3xl bg-slate-950 p-5 text-white shadow-sm"
-        aria-labelledby="dashboard-attention-title"
-      >
-        <p
-          class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
-        >
-          Point d'attention
+      @if (!loading() && !errorMessage()) {
+        <p class="text-sm font-medium text-slate-500">
+          {{ totalSummaryLabel() }}
         </p>
-        <h2 id="dashboard-attention-title" class="mt-3 text-2xl font-semibold">
-          Rester aligné sur la prochaine étape
-        </h2>
-        <p class="mt-3 text-sm leading-6 text-slate-200">
-          L'accueil sert de repère rapide: programmes actifs, prochaines
-          sessions et annonces récentes sont consolidés ici.
-        </p>
-      </aside>
-    </section>
+      }
+    </div>
 
-    <section
-      class="mt-8 rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-slate-200/80 sm:p-7"
-      aria-labelledby="dashboard-synthesis-title"
-    >
-      <div
-        class="flex flex-col gap-3 border-b border-slate-200/80 pb-4 sm:flex-row sm:items-end sm:justify-between"
-      >
-        <div>
-          <p
-            class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase"
-          >
-            Accueil participant
-          </p>
-          <h2
-            id="dashboard-synthesis-title"
-            class="mt-2 text-2xl font-semibold text-slate-950"
-          >
-            Synthèse utile
-          </h2>
+    @if (loading()) {
+      <p class="mt-6 text-sm leading-6 text-slate-600">
+        La synthèse se met à jour avec vos dernières informations.
+      </p>
+    } @else if (errorMessage()) {
+      <p-message
+        severity="warn"
+        text="La synthèse n'a pas pu être chargée pour le moment."
+        [closable]="false"
+        styleClass="mt-6 w-full"
+      ></p-message>
+    } @else {
+      <div class="mt-7 grid gap-4 lg:grid-cols-[1.5fr_minmax(17rem,0.75fr)]">
+        <div class="grid gap-3 sm:grid-cols-3">
+          @for (indicator of summaryIndicators(); track indicator.id) {
+            <article
+              class="motion-hover-lift rounded-2xl bg-slate-50 p-5 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+            >
+              <p
+                class="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase"
+              >
+                {{ indicator.label }}
+              </p>
+
+              <p class="mt-3 text-3xl font-semibold text-slate-950">
+                {{ indicator.value }}
+              </p>
+
+              <p class="mt-2 text-xs leading-5 text-slate-500">
+                {{ indicator.detail }}
+              </p>
+            </article>
+          }
         </div>
-        @if (!loading() && !errorMessage()) {
-          <p class="text-sm font-medium text-slate-600">
-            {{ totalSummaryLabel() }}
+
+        <aside
+          class="rounded-3xl bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_100%)] p-5 text-white shadow-[0_12px_32px_-16px_rgba(18,43,74,0.58)]"
+          aria-labelledby="dashboard-next-step-title"
+        >
+          <span
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10"
+            aria-hidden="true"
+          >
+            <i class="pi pi-calendar text-cyan-200"></i>
+          </span>
+
+          <p
+            class="mt-5 text-xs font-semibold tracking-[0.18em] text-cyan-100 uppercase"
+          >
+            Prochaine étape
           </p>
-        }
+
+          <h3
+            id="dashboard-next-step-title"
+            class="mt-2 text-lg font-semibold text-white"
+          >
+            Prochaine session
+          </h3>
+
+          <p class="mt-3 text-sm leading-6 text-white/68">
+            {{ nextSessionSummary() }}
+          </p>
+        </aside>
+      </div>
+    }
+  </section>
+
+  <section
+    class="rounded-[2rem] bg-white p-5 text-slate-950 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-7 lg:p-8"
+    aria-labelledby="dashboard-overview-title"
+  >
+    <div
+      class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+    >
+      <div>
+        <p
+          class="text-sm font-semibold tracking-[0.2em] text-slate-400 uppercase"
+        >
+          Votre parcours
+        </p>
+
+        <h2
+          id="dashboard-overview-title"
+          class="mt-2 text-2xl font-semibold text-slate-950"
+        >
+          Votre vue d'ensemble personnalisée
+        </h2>
       </div>
 
       @if (loading()) {
-        <p class="mt-4 text-sm leading-6 text-slate-600">
-          La synthèse se met à jour avec vos dernières informations.
-        </p>
-      } @else if (errorMessage()) {
-        <p-message
-          severity="warn"
-          text="La synthèse n'a pas pu être chargée pour le moment."
-          [closable]="false"
-          styleClass="mt-4 w-full"
-        ></p-message>
-      } @else {
-        <div class="mt-5 grid gap-4 lg:grid-cols-[1.65fr_minmax(16rem,1fr)]">
-          <div class="grid gap-3 sm:grid-cols-3">
-            @for (indicator of summaryIndicators(); track indicator.id) {
-              <article
-                class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/80"
-              >
-                <p
-                  class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase"
-                >
-                  {{ indicator.label }}
-                </p>
-                <p class="mt-2 text-3xl font-semibold text-slate-950">
-                  {{ indicator.value }}
-                </p>
-                <p class="mt-2 text-xs leading-5 text-slate-600">
-                  {{ indicator.detail }}
-                </p>
-              </article>
-            }
-          </div>
-
-          <aside
-            class="rounded-2xl bg-slate-950 p-4 text-white ring-1 ring-slate-900"
-            aria-labelledby="dashboard-next-step-title"
-          >
-            <p
-              class="text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase"
-            >
-              Prochaine étape
-            </p>
-            <h3
-              id="dashboard-next-step-title"
-              class="mt-2 text-lg font-semibold"
-            >
-              Prochaine session
-            </h3>
-            <p class="mt-2 text-sm leading-6 text-slate-200">
-              {{ nextSessionSummary() }}
-            </p>
-          </aside>
-        </div>
+        <output
+          class="text-sm font-medium tracking-[0.14em] text-slate-400 uppercase"
+          aria-live="polite"
+        >
+          Chargement&hellip;
+        </output>
       }
-    </section>
+    </div>
 
-    <section
-      class="mt-8 rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-slate-200/80 sm:p-7"
-      aria-labelledby="dashboard-overview-title"
-    >
-      <div
-        class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
-      >
-        <div>
-          <p
-            class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase"
-          >
-            Mon dashboard
-          </p>
-          <h2
-            id="dashboard-overview-title"
-            class="mt-2 text-2xl font-semibold text-slate-950"
-          >
-            Votre vue d'ensemble personnalisée
-          </h2>
-        </div>
-        @if (loading()) {
-          <output
-            class="text-sm font-medium tracking-[0.18em] text-slate-500 uppercase"
-            aria-live="polite"
-          >
-            Chargement&hellip;
-          </output>
-        }
+    @if (errorMessage()) {
+      <div class="mt-7 space-y-4">
+        <p-message
+          severity="error"
+          [text]="errorMessage()!"
+          [closable]="false"
+          styleClass="w-full"
+        ></p-message>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="reloadDashboard()"
+        >
+          Réessayer
+        </button>
       </div>
+    } @else if (loading()) {
+      <p class="mt-7 text-sm leading-6 text-slate-600">
+        Chargement de votre dashboard&hellip;
+      </p>
+    } @else if (!hasDashboardContent()) {
+      <div
+        class="mt-7 rounded-3xl bg-slate-50 px-5 py-10 text-center shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+      >
+        <span
+          class="text-brand-blue mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+          aria-hidden="true"
+        >
+          <i class="pi pi-inbox"></i>
+        </span>
 
-      @if (errorMessage()) {
-        <div class="mt-6 space-y-3">
-          <p-message
-            severity="error"
-            [text]="errorMessage()!"
-            [closable]="false"
-            styleClass="w-full"
-          ></p-message>
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="reloadDashboard()"
-          >
-            Réessayer
-          </button>
-        </div>
-      } @else if (loading()) {
-        <p class="mt-6 text-sm leading-6 text-slate-600">
-          Chargement de votre dashboard&hellip;
-        </p>
-      } @else if (!hasDashboardContent()) {
-        <p class="mt-6 text-sm leading-6 text-slate-600">
+        <p class="mt-4 text-sm leading-6 text-slate-600">
           Aucun contenu n'est disponible pour l'instant sur votre espace.
         </p>
-      } @else {
-        <div class="mt-6 grid gap-6 lg:grid-cols-3">
-          <article
-            class="rounded-[1.4rem] border border-slate-200/80 bg-slate-50 p-5"
-            aria-labelledby="dashboard-programs-title"
-          >
-            <p
-              class="text-brand-blue text-xs font-semibold tracking-[0.24em] uppercase"
-            >
-              Programmes actifs
-            </p>
-            <h3
-              id="dashboard-programs-title"
-              class="mt-2 text-lg font-semibold text-slate-950"
-            >
-              Vos parcours en cours
-            </h3>
-            @if (programs().length === 0) {
-              <p class="mt-3 text-sm leading-6 text-slate-600">
-                Aucun programme actif actuellement.
-              </p>
-            } @else {
-              <ul class="mt-4 space-y-3">
-                @for (program of programs(); track program.enrollmentId) {
-                  <li class="rounded-2xl bg-white p-4 ring-1 ring-slate-200/80">
-                    <p class="text-sm font-semibold text-slate-950">
-                      {{ program.title }}
-                    </p>
-                    @if (program.summary) {
-                      <p class="mt-1 text-xs leading-5 text-slate-600">
-                        {{ program.summary }}
-                      </p>
-                    }
-                    @if (program.cohortName) {
-                      <p
-                        class="mt-2 text-xs font-medium tracking-[0.16em] text-slate-500 uppercase"
-                      >
-                        {{ program.cohortName }}
-                      </p>
-                    }
-                  </li>
-                }
-              </ul>
-            }
-          </article>
-
-          <article
-            class="rounded-[1.4rem] border border-slate-200/80 bg-slate-50 p-5"
-            aria-labelledby="dashboard-sessions-title"
-          >
-            <p
-              class="text-brand-blue text-xs font-semibold tracking-[0.24em] uppercase"
-            >
-              Prochaines sessions
-            </p>
-            <h3
-              id="dashboard-sessions-title"
-              class="mt-2 text-lg font-semibold text-slate-950"
-            >
-              Les rappels à ne pas manquer
-            </h3>
-            @if (upcomingSessions().length === 0) {
-              <p class="mt-3 text-sm leading-6 text-slate-600">
-                Aucune session planifiée pour le moment.
-              </p>
-            } @else {
-              <ul class="mt-4 space-y-3">
-                @for (session of upcomingSessions(); track session.id) {
-                  <li class="rounded-2xl bg-white p-4 ring-1 ring-slate-200/80">
-                    <p class="text-sm font-semibold text-slate-950">
-                      {{ session.title }}
-                    </p>
-                    <p class="mt-1 text-xs leading-5 text-slate-600">
-                      {{ session.programTitle }}
-                    </p>
-                    <p
-                      class="mt-2 text-xs font-medium tracking-[0.16em] text-slate-500 uppercase"
-                    >
-                      {{ session.startsAt }}
-                    </p>
-                  </li>
-                }
-              </ul>
-            }
-          </article>
-
-          <article
-            class="rounded-[1.4rem] border border-slate-200/80 bg-slate-50 p-5"
-            aria-labelledby="dashboard-announcements-title"
-          >
-            <p
-              class="text-brand-blue text-xs font-semibold tracking-[0.24em] uppercase"
-            >
-              Annonces récentes
-            </p>
-            <h3
-              id="dashboard-announcements-title"
-              class="mt-2 text-lg font-semibold text-slate-950"
-            >
-              Ce qu'il faut suivre
-            </h3>
-            @if (recentAnnouncements().length === 0) {
-              <p class="mt-3 text-sm leading-6 text-slate-600">
-                Aucune annonce récente pour l'instant.
-              </p>
-            } @else {
-              <ul class="mt-4 space-y-3">
-                @for (
-                  announcement of recentAnnouncements();
-                  track announcement.id
-                ) {
-                  <li class="rounded-2xl bg-white p-4 ring-1 ring-slate-200/80">
-                    <p class="text-sm font-semibold text-slate-950">
-                      {{ announcement.title }}
-                    </p>
-                    <p class="mt-1 text-xs leading-5 text-slate-600">
-                      {{ announcement.body }}
-                    </p>
-                  </li>
-                }
-              </ul>
-            }
-          </article>
-        </div>
-      }
-    </section>
-
-    <section
-      class="mt-8 rounded-[1.75rem] bg-slate-950 p-6 text-white shadow-sm sm:p-7"
-      aria-labelledby="dashboard-quicklinks-title"
-    >
-      <p
-        class="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase"
-      >
-        Accès rapides
-      </p>
-      <h2 id="dashboard-quicklinks-title" class="mt-2 text-2xl font-semibold">
-        Des sorties utiles depuis votre espace
-      </h2>
-      <div class="mt-6 grid gap-3 sm:grid-cols-2">
-        @for (quickLink of quickLinks; track quickLink.href) {
-          <a
-            [routerLink]="quickLink.href"
-            class="block rounded-[1.25rem] border border-white/12 bg-white/7 p-4 transition hover:border-cyan-200/60 hover:bg-white/12"
-          >
-            <span class="block text-lg font-semibold">{{
-              quickLink.label
-            }}</span>
-            <span class="mt-2 block text-sm leading-6 text-slate-200">{{
-              quickLink.detail
-            }}</span>
-          </a>
-        }
       </div>
-    </section>
-  </div>
-</main>
+    } @else {
+      <div
+        class="mt-8 grid gap-10 lg:grid-cols-3 lg:gap-0 lg:divide-x lg:divide-dashed lg:divide-slate-200"
+      >
+        <article class="lg:pr-7" aria-labelledby="dashboard-programs-title">
+          <div class="flex items-start gap-3">
+            <span
+              class="text-brand-blue flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+              aria-hidden="true"
+            >
+              <i class="pi pi-book"></i>
+            </span>
+
+            <div>
+              <p
+                class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+              >
+                Programmes actifs
+              </p>
+              <h3
+                id="dashboard-programs-title"
+                class="mt-1 text-lg font-semibold text-slate-950"
+              >
+                Vos parcours en cours
+              </h3>
+            </div>
+          </div>
+
+          @if (programs().length === 0) {
+            <p class="mt-5 text-sm leading-6 text-slate-500">
+              Aucun programme actif actuellement.
+            </p>
+          } @else {
+            <ul class="mt-6">
+              @for (
+                program of programs();
+                track program.enrollmentId;
+                let last = $last
+              ) {
+                <li
+                  class="py-4"
+                  [class.border-b]="!last"
+                  [class.border-dashed]="!last"
+                  [class.border-slate-200]="!last"
+                >
+                  <p class="text-sm font-semibold text-slate-950">
+                    {{ program.title }}
+                  </p>
+
+                  @if (program.summary) {
+                    <p class="mt-1.5 text-xs leading-5 text-slate-500">
+                      {{ program.summary }}
+                    </p>
+                  }
+
+                  @if (program.cohortName) {
+                    <span
+                      class="mt-3 inline-flex h-7 items-center rounded-full bg-slate-50 px-3 text-[11px] font-semibold tracking-[0.12em] text-slate-500 uppercase shadow-[0_1px_2px_rgba(164,172,185,0.2),0_0_0_1px_rgba(18,55,105,0.06)]"
+                    >
+                      {{ program.cohortName }}
+                    </span>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </article>
+
+        <article class="lg:px-7" aria-labelledby="dashboard-sessions-title">
+          <div class="flex items-start gap-3">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-700 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+              aria-hidden="true"
+            >
+              <i class="pi pi-calendar-clock"></i>
+            </span>
+
+            <div>
+              <p
+                class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+              >
+                Prochaines sessions
+              </p>
+              <h3
+                id="dashboard-sessions-title"
+                class="mt-1 text-lg font-semibold text-slate-950"
+              >
+                Les rappels à ne pas manquer
+              </h3>
+            </div>
+          </div>
+
+          @if (upcomingSessions().length === 0) {
+            <p class="mt-5 text-sm leading-6 text-slate-500">
+              Aucune session planifiée pour le moment.
+            </p>
+          } @else {
+            <ul class="mt-6">
+              @for (
+                session of upcomingSessions();
+                track session.id;
+                let last = $last
+              ) {
+                <li
+                  class="py-4"
+                  [class.border-b]="!last"
+                  [class.border-dashed]="!last"
+                  [class.border-slate-200]="!last"
+                >
+                  <p class="text-sm font-semibold text-slate-950">
+                    {{ session.title }}
+                  </p>
+                  <p class="mt-1.5 text-xs leading-5 text-slate-500">
+                    {{ session.programTitle }}
+                  </p>
+                  <span
+                    class="mt-3 inline-flex h-7 items-center rounded-full bg-slate-50 px-3 text-[11px] font-semibold tracking-[0.1em] text-slate-500 uppercase shadow-[0_1px_2px_rgba(164,172,185,0.2),0_0_0_1px_rgba(18,55,105,0.06)]"
+                  >
+                    {{ session.startsAt }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+
+        <article
+          class="lg:pl-7"
+          aria-labelledby="dashboard-announcements-title"
+        >
+          <div class="flex items-start gap-3">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+              aria-hidden="true"
+            >
+              <i class="pi pi-megaphone"></i>
+            </span>
+
+            <div>
+              <p
+                class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+              >
+                Annonces récentes
+              </p>
+              <h3
+                id="dashboard-announcements-title"
+                class="mt-1 text-lg font-semibold text-slate-950"
+              >
+                Ce qu'il faut suivre
+              </h3>
+            </div>
+          </div>
+
+          @if (recentAnnouncements().length === 0) {
+            <p class="mt-5 text-sm leading-6 text-slate-500">
+              Aucune annonce récente pour l'instant.
+            </p>
+          } @else {
+            <ul class="mt-6">
+              @for (
+                announcement of recentAnnouncements();
+                track announcement.id;
+                let last = $last
+              ) {
+                <li
+                  class="py-4"
+                  [class.border-b]="!last"
+                  [class.border-dashed]="!last"
+                  [class.border-slate-200]="!last"
+                >
+                  <p class="text-sm font-semibold text-slate-950">
+                    {{ announcement.title }}
+                  </p>
+                  <p class="mt-1.5 text-xs leading-5 text-slate-500">
+                    {{ announcement.body }}
+                  </p>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+      </div>
+    }
+  </section>
+
+  <section
+    class="rounded-[2rem] border border-white/12 bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_100%)] p-5 text-white shadow-[0_12px_32px_-16px_rgba(18,43,74,0.5)] sm:p-7"
+    aria-labelledby="dashboard-quicklinks-title"
+  >
+    <p class="text-sm font-semibold tracking-[0.2em] text-white/52 uppercase">
+      Accès rapides
+    </p>
+
+    <h2 id="dashboard-quicklinks-title" class="mt-2 text-2xl font-semibold">
+      Des sorties utiles depuis votre espace
+    </h2>
+
+    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+      @for (quickLink of quickLinks; track quickLink.href) {
+        <a
+          [routerLink]="quickLink.href"
+          class="group flex items-center justify-between gap-5 rounded-2xl border border-white/12 bg-white/8 p-4 text-white no-underline shadow-[0_2px_5px_rgba(255,255,255,0.04)_inset] transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
+        >
+          <span>
+            <span class="block text-base font-semibold">
+              {{ quickLink.label }}
+            </span>
+            <span class="mt-1.5 block text-sm leading-6 text-white/60">
+              {{ quickLink.detail }}
+            </span>
+          </span>
+
+          <span
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 transition group-hover:bg-white/16"
+            aria-hidden="true"
+          >
+            <i class="pi pi-arrow-right text-sm"></i>
+          </span>
+        </a>
+      }
+    </div>
+  </section>
+</div>

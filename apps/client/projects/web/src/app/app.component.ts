@@ -1,6 +1,11 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+  type ActivatedRouteSnapshot,
+} from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { filter } from 'rxjs';
 
@@ -25,27 +30,49 @@ export class App implements OnInit {
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
 
+  protected readonly usesParticipantShell = signal(false);
+
   protected focusMainContent(event: Event): void {
     event.preventDefault();
     this.document.getElementById('main-content')?.focus();
   }
 
   ngOnInit(): void {
-    // Only set up scroll-to-top in browser environment (not during SSR)
+    this.refreshAppShell();
+
+    // Only set up browser navigation effects outside SSR.
     if (globalThis.window === undefined || document === undefined) {
       return;
     }
 
-    // Scroll to top smoothly when navigating to a new page
+    // Refresh route-aware shell state and reset scroll on navigation.
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
-        // Smoothly reset scroll position on each route change.
+        this.refreshAppShell();
+
         globalThis.window.scrollTo({
           top: 0,
           left: 0,
           behavior: 'smooth',
         });
       });
+  }
+
+  private refreshAppShell(): void {
+    let currentRoute: ActivatedRouteSnapshot | null =
+      this.router.routerState.snapshot.root;
+    let appShell: unknown;
+
+    while (currentRoute) {
+      const routeShell = currentRoute.data['appShell'];
+      if (routeShell !== undefined) {
+        appShell = routeShell;
+      }
+
+      currentRoute = currentRoute.firstChild;
+    }
+
+    this.usesParticipantShell.set(appShell === 'participant');
   }
 }

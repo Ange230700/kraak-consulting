@@ -96,9 +96,16 @@ export const participantAreaRoutes: Routes = [
   },
   {
     path: 'participant',
-    data: { seo: participantDashboardSeo },
+    data: {
+      seo: participantDashboardSeo,
+      appShell: 'participant',
+    },
     canActivate: [participantRoleGuard],
     canActivateChild: [participantRoleChildGuard],
+    loadComponent: () =>
+      import('./features/participant/layout/participant-shell.component').then(
+        (m) => m.default,
+      ),
     children: [
       {
         path: '',
@@ -109,6 +116,27 @@ export const participantAreaRoutes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./features/participant/dashboard/dashboard.page').then(
+            (m) => m.default,
+          ),
+      },
+      {
+        path: 'programmes',
+        loadComponent: () =>
+          import('./features/participant/programs/program-list.page').then(
+            (m) => m.default,
+          ),
+      },
+      {
+        path: 'programmes/:programId/sessions/:sessionId',
+        loadComponent: () =>
+          import('./features/participant/programs/session-detail.page').then(
+            (m) => m.default,
+          ),
+      },
+      {
+        path: 'programmes/:programId',
+        loadComponent: () =>
+          import('./features/participant/programs/program-detail.page').then(
             (m) => m.default,
           ),
       },
