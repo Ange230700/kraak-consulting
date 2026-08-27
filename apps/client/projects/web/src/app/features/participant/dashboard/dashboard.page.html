@@ -85,9 +85,28 @@
     </div>
 
     @if (loading()) {
-      <p class="mt-6 text-sm leading-6 text-slate-600">
-        La synthèse se met à jour avec vos dernières informations.
-      </p>
+      <div
+        class="mt-6 grid gap-4 sm:grid-cols-3"
+        aria-label="Chargement de la synthèse"
+        aria-busy="true"
+      >
+        @for (placeholder of [1, 2, 3]; track placeholder) {
+          <div
+            class="rounded-2xl bg-slate-50 p-5 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)]"
+            aria-hidden="true"
+          >
+            <div
+              class="h-3 w-20 rounded-full bg-slate-200 motion-safe:animate-pulse"
+            ></div>
+            <div
+              class="mt-4 h-8 w-16 rounded-full bg-slate-200 motion-safe:animate-pulse"
+            ></div>
+            <div
+              class="mt-3 h-3 w-28 max-w-full rounded-full bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+          </div>
+        }
+      </div>
     } @else if (errorMessage()) {
       <p-message
         severity="warn"
@@ -204,9 +223,43 @@
         </button>
       </div>
     } @else if (loading()) {
-      <p class="mt-7 text-sm leading-6 text-slate-600">
-        Chargement de votre dashboard&hellip;
-      </p>
+      <div
+        class="mt-8 grid gap-6 lg:grid-cols-3"
+        aria-label="Chargement de votre vue d'ensemble"
+        aria-busy="true"
+      >
+        @for (placeholder of [1, 2, 3]; track placeholder) {
+          <div
+            class="rounded-3xl bg-slate-50 p-5 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)]"
+            aria-hidden="true"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="h-10 w-10 shrink-0 rounded-2xl bg-slate-200 motion-safe:animate-pulse"
+              ></div>
+              <div class="min-w-0 flex-1 space-y-2">
+                <div
+                  class="h-3 w-20 rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+                <div
+                  class="h-5 w-32 max-w-full rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+              </div>
+            </div>
+            <div class="mt-6 space-y-3">
+              <div
+                class="h-4 w-full rounded-full bg-slate-100 motion-safe:animate-pulse"
+              ></div>
+              <div
+                class="h-4 w-4/5 rounded-full bg-slate-100 motion-safe:animate-pulse"
+              ></div>
+              <div
+                class="h-7 w-28 rounded-full bg-slate-100 motion-safe:animate-pulse"
+              ></div>
+            </div>
+          </div>
+        }
+      </div>
     } @else if (!hasDashboardContent()) {
       <div
         class="mt-7 rounded-3xl bg-slate-50 px-5 py-10 text-center shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"

@@ -37,10 +37,86 @@
     </section>
   } @else if (loading()) {
     <section aria-label="Chargement de la session" aria-busy="true">
-      <div class="h-72 animate-pulse rounded-[2rem] bg-slate-200 lg:h-80"></div>
+      <div
+        class="relative min-h-72 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] p-6 shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.5)] sm:p-8 lg:min-h-80 lg:p-12"
+        aria-hidden="true"
+      >
+        <div
+          class="absolute -top-28 -right-20 h-72 w-72 rounded-full bg-cyan-300/16 blur-3xl"
+        ></div>
+        <div class="relative max-w-2xl">
+          <div
+            class="h-7 w-32 rounded-full bg-white/12 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-10 h-3 w-28 rounded-full bg-white/14 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-4 h-10 w-4/5 rounded-full bg-white/18 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-6 h-4 w-2/3 rounded-full bg-white/12 motion-safe:animate-pulse"
+          ></div>
+        </div>
+      </div>
+
       <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_22rem]">
-        <div class="h-72 animate-pulse rounded-[2rem] bg-white"></div>
-        <div class="h-72 animate-pulse rounded-[2rem] bg-white"></div>
+        <div
+          class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.14)] sm:p-8"
+          aria-hidden="true"
+        >
+          <div
+            class="h-3 w-28 rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-4 h-7 w-44 rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+
+          <div class="mt-7 grid gap-4 sm:grid-cols-2">
+            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+              <div class="rounded-3xl bg-slate-50 p-5">
+                <div
+                  class="h-3 w-16 rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+                <div
+                  class="mt-3 h-4 w-24 rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div
+          class="h-fit rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.14)] sm:p-8"
+          aria-hidden="true"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <div class="space-y-3">
+              <div
+                class="h-3 w-20 rounded-full bg-slate-200 motion-safe:animate-pulse"
+              ></div>
+              <div
+                class="h-6 w-32 rounded-full bg-slate-200 motion-safe:animate-pulse"
+              ></div>
+            </div>
+            <div
+              class="h-10 w-10 rounded-2xl bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+          </div>
+
+          <div class="mt-6 space-y-3">
+            <div
+              class="h-4 w-full rounded-full bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+            <div
+              class="h-4 w-4/5 rounded-full bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+          </div>
+
+          <div
+            class="mt-7 h-10 w-full rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+        </div>
       </div>
     </section>
   } @else if (session(); as sess) {
@@ -280,10 +356,19 @@
     </section>
   } @else {
     <section
-      class="rounded-[2rem] bg-white p-8 text-center shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)]"
+      class="rounded-[2rem] bg-white px-6 py-12 text-center shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:px-10"
     >
-      <h1 class="text-2xl font-semibold text-slate-950">Session introuvable</h1>
-      <p class="mt-3 text-sm leading-6 text-slate-600">
+      <span
+        class="text-brand-blue mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+        aria-hidden="true"
+      >
+        <i class="pi pi-calendar-times text-lg"></i>
+      </span>
+
+      <h1 class="mt-5 text-2xl font-semibold text-slate-950">
+        Session introuvable
+      </h1>
+      <p class="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-600">
         La session n'a pas pu être trouvée dans ce programme.
       </p>
 
