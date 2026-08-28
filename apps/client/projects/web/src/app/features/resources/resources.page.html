@@ -1,153 +1,437 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
-  [ngStyle]="heroBackgroundStyle"
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8">
   <div
-    aria-hidden="true"
-    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
-  ></div>
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
 
-  <div class="relative z-10 mx-auto max-w-4xl px-4 lg:px-6">
-    <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
-      Ressources d'orientation pour clarifier votre prochaine étape
-    </h1>
-    <p class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg">
-      Cette page n'est pas un hub d'actualités ou une bibliothèque de contenus.
-      Elle sert à vous orienter rapidement vers le bon point d'entrée KRAAK
-      selon votre besoin.
-    </p>
-  </div>
-</section>
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(24rem,1.05fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          Ressources KRAAK
+        </span>
 
-<section class="bg-brand-white py-10">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-6 md:grid-cols-2">
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          Ressources d'orientation pour clarifier votre prochaine étape
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/76 sm:text-lg sm:leading-8"
+        >
+          Cette page n'est pas un hub d'actualités ou une bibliothèque de
+          contenus. Elle sert à vous orienter rapidement vers le bon point
+          d'entrée KRAAK selon votre besoin.
+        </p>
+      </div>
+
       <figure
-        class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[31rem]"
       >
         <img
           src="/assets/site-visuals/photos/resources-training-guidance.avif"
           alt="Participants en atelier de formation pour renforcer leurs compétences"
-          loading="lazy"
-          class="h-56 w-full object-cover"
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
         />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_32%,rgba(18,43,74,0.44)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/22 px-4 py-3 backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+          >
+            Orientation · Formation · Projet · Mobilité
+          </span>
+        </div>
       </figure>
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-white py-16 lg:py-24">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div
+      class="grid items-stretch gap-8 lg:grid-cols-[minmax(22rem,0.92fr)_minmax(0,1.08fr)] lg:gap-12"
+    >
       <figure
-        class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
+        class="reveal-on-scroll group relative min-h-[25rem] overflow-hidden rounded-[2rem] bg-slate-100 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-42px_rgba(18,43,74,0.38)] lg:min-h-[36rem]"
       >
         <img
           src="/assets/site-visuals/photos/services-project-presentation.avif"
           alt="Entretien d'orientation entre deux personnes pour clarifier la prochaine étape"
           loading="lazy"
-          class="h-56 w-full object-cover"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
         />
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_35%,rgba(18,43,74,0.38)_100%)]"
+        ></div>
       </figure>
-    </div>
-  </div>
-</section>
 
-<section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-6 md:grid-cols-2">
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-brand-navy-soft text-sm font-semibold uppercase">
-          Ce que cette page est
-        </p>
-        <p class="mt-3 text-neutral-700">
+      <div class="flex min-w-0 flex-col justify-center">
+        <span
+          class="text-brand-navy-soft inline-flex w-fit items-center rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold tracking-[0.15em] uppercase shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          Point d'entrée
+        </span>
+
+        <h2
+          class="text-brand-navy mt-6 max-w-2xl text-3xl leading-tight font-semibold sm:text-4xl lg:text-5xl"
+        >
+          Un repère simple avant de passer à l'action
+        </h2>
+
+        <p
+          class="text-brand-navy mt-5 max-w-2xl text-base leading-7 sm:text-lg"
+        >
           Un repère de triage simple pour distinguer un besoin de formation, de
           projet, de mobilité internationale ou de solution entreprise avant de
           passer à l'action.
         </p>
-      </article>
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-brand-navy-soft text-sm font-semibold uppercase">
-          Ce qu'elle n'est pas
-        </p>
-        <p class="mt-3 text-neutral-700">
-          Ni blog, ni média, ni bibliothèque publique d'articles, de
-          téléchargements ou d'annonces. Toute surface de contenu éditorial à
-          volume relève d'un chantier distinct.
-        </p>
-      </article>
-    </div>
 
-    <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
-        <i
-          class="pi pi-graduation-cap text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-2xl font-bold">Formation</h2>
-        <p class="mt-3 text-neutral-700">
-          Identifier les compétences à renforcer et le bon format pour avancer :
-          langues, leadership, soft skills ou employabilité.
-        </p>
-      </article>
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
-        <i
-          class="pi pi-chart-bar text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-2xl font-bold">Projet</h2>
-        <p class="mt-3 text-neutral-700">
-          Passer d'une idée à un premier cadre de travail : objectif, priorités,
-          ressources, partenaires et suivi.
-        </p>
-      </article>
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
-        <i
-          class="pi pi-globe text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-2xl font-bold">Immigration</h2>
-        <p class="mt-3 text-neutral-700">
-          Préparer les questions d'études, de travail, d'installation et
-          d'intégration avant une orientation plus ciblée.
-        </p>
-      </article>
-      <article class="rounded-card shadow-card bg-neutral-50 p-6">
-        <i
-          class="pi pi-building text-brand-navy-soft text-3xl"
-          aria-hidden="true"
-        ></i>
-        <h2 class="mt-4 text-2xl font-bold">Entreprise</h2>
-        <p class="mt-3 text-neutral-700">
-          Cadrer un besoin d'équipe : formation, cohésion, conflits, leadership,
-          recrutement ou culture interne.
-        </p>
-      </article>
+        <div class="mt-8 border-t border-slate-200">
+          <article class="border-b border-slate-200 py-6">
+            <div class="flex gap-5">
+              <span
+                class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-compass text-lg"></i>
+              </span>
+
+              <div>
+                <p
+                  class="text-brand-navy-soft text-xs font-semibold tracking-[0.14em] uppercase"
+                >
+                  Ce que cette page est
+                </p>
+                <p class="mt-3 text-sm leading-6 text-slate-700 sm:text-base">
+                  Un repère de triage simple pour distinguer un besoin de
+                  formation, de projet, de mobilité internationale ou de
+                  solution entreprise avant de passer à l'action.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="border-b border-slate-200 py-6">
+            <div class="flex gap-5">
+              <span
+                class="bg-brand-gold/14 text-brand-navy flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-filter-slash text-lg"></i>
+              </span>
+
+              <div>
+                <p
+                  class="text-brand-navy-soft text-xs font-semibold tracking-[0.14em] uppercase"
+                >
+                  Ce qu'elle n'est pas
+                </p>
+                <p class="mt-3 text-sm leading-6 text-slate-700 sm:text-base">
+                  Ni blog, ni média, ni bibliothèque publique d'articles, de
+                  téléchargements ou d'annonces. Toute surface de contenu
+                  éditorial à volume relève d'un chantier distinct.
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Trois questions pour s'orienter
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-3">
-      <div class="rounded-card bg-brand-white p-6 text-center shadow-sm">
-        <p class="text-brand-navy-soft text-3xl font-bold">1</p>
-        <h3 class="mt-2 text-lg font-bold">Où voulez-vous arriver ?</h3>
-        <p class="mt-2 text-neutral-700">
-          Emploi, projet, mobilité, leadership ou performance d'équipe.
+<section class="bg-brand-white py-16 lg:py-24">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div
+      class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#163c67_52%,#1c4e86_100%)] px-6 py-10 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-42px_rgba(18,43,74,0.48)] sm:px-8 lg:px-12 lg:py-14"
+    >
+      <span
+        aria-hidden="true"
+        class="bg-brand-cyan/12 pointer-events-none absolute -top-40 -right-24 h-96 w-96 rounded-full blur-3xl"
+      ></span>
+      <span
+        aria-hidden="true"
+        class="bg-brand-gold/8 pointer-events-none absolute -bottom-44 -left-24 h-96 w-96 rounded-full blur-3xl"
+      ></span>
+
+      <div class="relative z-10">
+        <div class="max-w-3xl">
+          <span
+            class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+          >
+            Quatre points d'entrée
+          </span>
+
+          <h2
+            class="mt-6 text-3xl leading-tight font-semibold text-white sm:text-4xl lg:text-5xl"
+          >
+            Identifier la nature du besoin avant de choisir l'accompagnement
+          </h2>
+
+          <p
+            class="mt-5 max-w-2xl text-base leading-7 text-white/72 sm:text-lg"
+          >
+            Chaque situation commence par un besoin différent. Ces quatre
+            repères permettent de situer rapidement le bon point de départ.
+          </p>
+        </div>
+
+        <div class="mt-10 border-t border-white/14 lg:mt-12">
+          <article
+            class="group grid gap-5 border-b border-white/14 py-7 sm:grid-cols-[4rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(12rem,0.42fr)_minmax(0,1fr)_3rem] lg:items-center lg:gap-8"
+          >
+            <p class="text-brand-cyan text-sm font-semibold tracking-[0.14em]">
+              01
+            </p>
+
+            <div class="flex items-center gap-4">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/14 bg-white/10 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-graduation-cap text-brand-cyan text-lg"></i>
+              </span>
+              <h2 class="text-2xl font-semibold text-white">Formation</h2>
+            </div>
+
+            <p
+              class="text-sm leading-6 text-white/72 sm:text-base sm:leading-7"
+            >
+              Identifier les compétences à renforcer et le bon format pour
+              avancer : langues, leadership, soft skills ou employabilité.
+            </p>
+
+            <span
+              aria-hidden="true"
+              class="hidden h-10 w-10 items-center justify-center rounded-full border border-white/14 text-white/60 transition-transform group-hover:translate-x-1 lg:flex"
+            >
+              <i class="pi pi-arrow-right"></i>
+            </span>
+          </article>
+
+          <article
+            class="group grid gap-5 border-b border-white/14 py-7 sm:grid-cols-[4rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(12rem,0.42fr)_minmax(0,1fr)_3rem] lg:items-center lg:gap-8"
+          >
+            <p class="text-brand-cyan text-sm font-semibold tracking-[0.14em]">
+              02
+            </p>
+
+            <div class="flex items-center gap-4">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/14 bg-white/10 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-chart-bar text-brand-cyan text-lg"></i>
+              </span>
+              <h2 class="text-2xl font-semibold text-white">Projet</h2>
+            </div>
+
+            <p
+              class="text-sm leading-6 text-white/72 sm:text-base sm:leading-7"
+            >
+              Passer d'une idée à un premier cadre de travail : objectif,
+              priorités, ressources, partenaires et suivi.
+            </p>
+
+            <span
+              aria-hidden="true"
+              class="hidden h-10 w-10 items-center justify-center rounded-full border border-white/14 text-white/60 transition-transform group-hover:translate-x-1 lg:flex"
+            >
+              <i class="pi pi-arrow-right"></i>
+            </span>
+          </article>
+
+          <article
+            class="group grid gap-5 border-b border-white/14 py-7 sm:grid-cols-[4rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(12rem,0.42fr)_minmax(0,1fr)_3rem] lg:items-center lg:gap-8"
+          >
+            <p class="text-brand-cyan text-sm font-semibold tracking-[0.14em]">
+              03
+            </p>
+
+            <div class="flex items-center gap-4">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/14 bg-white/10 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-globe text-brand-cyan text-lg"></i>
+              </span>
+              <h2 class="text-2xl font-semibold text-white">Immigration</h2>
+            </div>
+
+            <p
+              class="text-sm leading-6 text-white/72 sm:text-base sm:leading-7"
+            >
+              Préparer les questions d'études, de travail, d'installation et
+              d'intégration avant une orientation plus ciblée.
+            </p>
+
+            <span
+              aria-hidden="true"
+              class="hidden h-10 w-10 items-center justify-center rounded-full border border-white/14 text-white/60 transition-transform group-hover:translate-x-1 lg:flex"
+            >
+              <i class="pi pi-arrow-right"></i>
+            </span>
+          </article>
+
+          <article
+            class="group grid gap-5 py-7 sm:grid-cols-[4rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(12rem,0.42fr)_minmax(0,1fr)_3rem] lg:items-center lg:gap-8"
+          >
+            <p class="text-brand-cyan text-sm font-semibold tracking-[0.14em]">
+              04
+            </p>
+
+            <div class="flex items-center gap-4">
+              <span
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/14 bg-white/10 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-building text-brand-cyan text-lg"></i>
+              </span>
+              <h2 class="text-2xl font-semibold text-white">Entreprise</h2>
+            </div>
+
+            <p
+              class="text-sm leading-6 text-white/72 sm:text-base sm:leading-7"
+            >
+              Cadrer un besoin d'équipe : formation, cohésion, conflits,
+              leadership, recrutement ou culture interne.
+            </p>
+
+            <span
+              aria-hidden="true"
+              class="hidden h-10 w-10 items-center justify-center rounded-full border border-white/14 text-white/60 transition-transform group-hover:translate-x-1 lg:flex"
+            >
+              <i class="pi pi-arrow-right"></i>
+            </span>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-white py-16 lg:py-24">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div
+      class="overflow-hidden rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+    >
+      <div class="max-w-3xl">
+        <span
+          class="text-brand-navy-soft inline-flex items-center rounded-full bg-white px-4 py-2 text-xs font-semibold tracking-[0.15em] uppercase shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          Avant de choisir
+        </span>
+
+        <h2
+          class="text-brand-navy mt-6 text-3xl leading-tight font-semibold sm:text-4xl lg:text-5xl"
+        >
+          Trois questions pour s'orienter
+        </h2>
+
+        <p
+          class="text-brand-navy mt-5 max-w-2xl text-base leading-7 sm:text-lg"
+        >
+          Clarifier la destination, le principal blocage et le premier pas utile
+          permet d'éviter un accompagnement mal adapté.
         </p>
       </div>
-      <div class="rounded-card bg-brand-white p-6 text-center shadow-sm">
-        <p class="text-brand-navy-soft text-3xl font-bold">2</p>
-        <h3 class="mt-2 text-lg font-bold">Qu'est-ce qui bloque ?</h3>
-        <p class="mt-2 text-neutral-700">
-          Compétence, structure, information, dossier, réseau ou passage à
-          l'action.
-        </p>
-      </div>
-      <div class="rounded-card bg-brand-white p-6 text-center shadow-sm">
-        <p class="text-brand-navy-soft text-3xl font-bold">3</p>
-        <h3 class="mt-2 text-lg font-bold">Quel premier pas est utile ?</h3>
-        <p class="mt-2 text-neutral-700">
-          Une consultation, un programme, une formation ou un accompagnement sur
-          mesure.
-        </p>
+
+      <div class="relative mt-10 lg:mt-14">
+        <div
+          aria-hidden="true"
+          class="absolute top-7 right-[16.5%] left-[16.5%] hidden border-t border-dashed border-slate-300 lg:block"
+        ></div>
+
+        <div class="relative grid gap-8 lg:grid-cols-3 lg:gap-10">
+          <div>
+            <div class="flex items-center gap-4 lg:block">
+              <span
+                class="text-brand-navy-soft relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-sm font-semibold shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.08)]"
+              >
+                01
+              </span>
+              <h3
+                class="text-brand-navy text-xl leading-tight font-semibold lg:mt-7 lg:text-2xl"
+              >
+                Où voulez-vous arriver ?
+              </h3>
+            </div>
+            <p
+              class="mt-4 max-w-sm text-sm leading-6 text-slate-700 sm:text-base"
+            >
+              Emploi, projet, mobilité, leadership ou performance d'équipe.
+            </p>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-4 lg:block">
+              <span
+                class="text-brand-navy-soft relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-sm font-semibold shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.08)]"
+              >
+                02
+              </span>
+              <h3
+                class="text-brand-navy text-xl leading-tight font-semibold lg:mt-7 lg:text-2xl"
+              >
+                Qu'est-ce qui bloque ?
+              </h3>
+            </div>
+            <p
+              class="mt-4 max-w-sm text-sm leading-6 text-slate-700 sm:text-base"
+            >
+              Compétence, structure, information, dossier, réseau ou passage à
+              l'action.
+            </p>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-4 lg:block">
+              <span
+                class="text-brand-navy-soft relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-sm font-semibold shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.08)]"
+              >
+                03
+              </span>
+              <h3
+                class="text-brand-navy text-xl leading-tight font-semibold lg:mt-7 lg:text-2xl"
+              >
+                Quel premier pas est utile ?
+              </h3>
+            </div>
+            <p
+              class="mt-4 max-w-sm text-sm leading-6 text-slate-700 sm:text-base"
+            >
+              Une consultation, un programme, une formation ou un accompagnement
+              sur mesure.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
