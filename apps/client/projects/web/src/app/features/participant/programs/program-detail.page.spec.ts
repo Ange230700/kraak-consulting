@@ -160,6 +160,7 @@ describe('Web Participant ProgramDetailPage', () => {
     expect(text).toContain('En ligne');
     expect(text).toContain('Guide de formation');
     expect(text).toContain('Document de référence.');
+    expect(text).toContain('Formation');
     expect(text).toContain('Bienvenue dans le programme');
 
     const externalResource = element.querySelector(

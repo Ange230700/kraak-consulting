@@ -126,6 +126,21 @@ export default class ProgramDetailPage implements OnInit {
     }
   }
 
+  protected resourceThemeLabel(
+    theme: ParticipantProgramDetailDto['resources'][number]['resourceTheme'],
+  ): string {
+    switch (theme) {
+      case 'training':
+        return 'Formation';
+      case 'project_management':
+        return 'Gestion de projet';
+      case 'immigration':
+        return 'Immigration';
+      case 'career':
+        return 'Carrière';
+    }
+  }
+
   protected formatDate(rawDate: string | null): string {
     if (!rawDate) {
       return 'À venir';

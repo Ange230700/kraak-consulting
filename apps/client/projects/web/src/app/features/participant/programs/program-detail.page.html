@@ -455,43 +455,75 @@
         </div>
 
         @if (detail.resources.length > 0) {
-          <div class="mt-6 divide-y divide-dashed divide-slate-200">
+          <div class="mt-6 flex flex-col gap-4">
             @for (resource of detail.resources; track resource.id) {
-              <div class="py-5 first:pt-0">
-                <div class="flex items-start justify-between gap-4">
-                  <div class="min-w-0">
-                    <p class="font-semibold break-words text-slate-950">
-                      {{ resource.title }}
-                    </p>
-                    <p
-                      class="mt-1 text-[11px] font-semibold tracking-[0.12em] text-slate-400 uppercase"
-                    >
-                      {{ resourceTypeLabel(resource.resourceType) }}
-                    </p>
-                  </div>
+              <article
+                class="motion-hover-lift group grid min-w-0 gap-4 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center"
+              >
+                <div
+                  class="relative flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_55%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_14px_28px_-20px_rgba(18,43,74,0.55)]"
+                  aria-hidden="true"
+                >
+                  <span
+                    class="absolute -top-5 -right-5 h-12 w-12 rounded-full bg-cyan-300/30 blur-lg"
+                  ></span>
 
-                  @if (resource.url) {
-                    <a
-                      [href]="resource.url"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="motion-hover-lift motion-press flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white"
-                      [attr.aria-label]="'Ouvrir ' + resource.title"
-                    >
-                      <i
-                        class="pi pi-arrow-up-right text-xs"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
+                  @switch (resource.resourceType) {
+                    @case ('link') {
+                      <i class="pi pi-link relative text-xl"></i>
+                    }
+                    @case ('video') {
+                      <i class="pi pi-play relative text-xl"></i>
+                    }
+                    @case ('file') {
+                      <i class="pi pi-file relative text-xl"></i>
+                    }
+                    @default {
+                      <i class="pi pi-file relative text-xl"></i>
+                    }
                   }
                 </div>
 
-                @if (resource.description) {
-                  <p class="mt-3 text-sm leading-6 text-slate-600">
-                    {{ resource.description }}
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span
+                      class="bg-brand-cyan/15 text-brand-navy inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.1em] uppercase"
+                    >
+                      {{ resourceTypeLabel(resource.resourceType) }}
+                    </span>
+                    <span
+                      class="bg-brand-blue/10 text-brand-navy inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                    >
+                      {{ resourceThemeLabel(resource.resourceTheme) }}
+                    </span>
+                  </div>
+
+                  <p class="mt-3 font-semibold break-words text-slate-950">
+                    {{ resource.title }}
                   </p>
+
+                  @if (resource.description) {
+                    <p class="mt-2 text-sm leading-6 text-slate-600">
+                      {{ resource.description }}
+                    </p>
+                  }
+                </div>
+
+                @if (resource.url) {
+                  <a
+                    [href]="resource.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="motion-hover-lift motion-press hover:bg-brand-blue focus-visible:ring-brand-blue flex h-10 w-10 shrink-0 items-center justify-center justify-self-start rounded-full bg-slate-950 text-white transition focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:justify-self-end"
+                    [attr.aria-label]="'Ouvrir ' + resource.title"
+                  >
+                    <i
+                      class="pi pi-arrow-up-right text-xs"
+                      aria-hidden="true"
+                    ></i>
+                  </a>
                 }
-              </div>
+              </article>
             }
           </div>
         } @else {
