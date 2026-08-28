@@ -1,18 +1,13 @@
 import { Component, Injector, OnInit, OnDestroy, inject } from '@angular/core';
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 import {
   KraakTranslatePipe,
   type TranslationKey,
 } from '../../../../../shared/i18n';
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-
-const PROGRAMS_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/programs-hero-adult-learning.avif',
-);
 
 interface ProgramFormatTranslation {
   readonly iconClass: string;
@@ -108,17 +103,10 @@ const PROGRAM_PROCESS_TRANSLATIONS = [
 @Component({
   selector: 'kraak-programs-page',
   standalone: true,
-  imports: [
-    NgClass,
-    NgStyle,
-    CtaBanner,
-    RevealOnScrollDirective,
-    KraakTranslatePipe,
-  ],
+  imports: [NgClass, CtaBanner, RevealOnScrollDirective, KraakTranslatePipe],
   templateUrl: './programs.page.html',
 })
 export default class ProgramsPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = PROGRAMS_HERO_BACKGROUND_STYLE;
   protected readonly programFormats = PROGRAM_FORMAT_TRANSLATIONS;
   protected readonly catalogItems = PROGRAM_CATALOG_TRANSLATIONS;
   protected readonly processSteps = PROGRAM_PROCESS_TRANSLATIONS;

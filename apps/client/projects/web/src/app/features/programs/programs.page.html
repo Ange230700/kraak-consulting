@@ -1,147 +1,363 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
-  [ngStyle]="heroBackgroundStyle"
-  kraakRevealOnScroll
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
   <div
-    aria-hidden="true"
-    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
-  ></div>
-
-  <div
-    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
   >
-    <div class="max-w-3xl text-left">
-      <p
-        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
-      >
-        {{ 'web.programs.hero.eyebrow' | kraakTranslate }}
-      </p>
-      <h1
-        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
-      >
-        {{ 'web.programs.hero.titlePrefix' | kraakTranslate }}
-        <span class="text-brand-cyan">
-          {{ 'web.programs.hero.titleHighlight' | kraakTranslate }}
-        </span>
-        {{ 'web.programs.hero.titleSuffix' | kraakTranslate }}
-      </h1>
-      <p
-        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
-      >
-        {{ 'web.programs.hero.description' | kraakTranslate }}
-      </p>
-    </div>
-  </div>
-</section>
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="40">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="mx-auto max-w-3xl text-center">
-      <p
-        class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
-      >
-        {{ 'web.programs.formats.eyebrow' | kraakTranslate }}
-      </p>
-      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        {{ 'web.programs.formats.title' | kraakTranslate }}
-      </h2>
-      <p class="text-brand-navy mt-4 text-lg">
-        {{ 'web.programs.formats.description' | kraakTranslate }}
-      </p>
-    </div>
-
-    <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      @for (programFormat of programFormats; track programFormat.titleKey) {
-        <article
-          data-motion="reversible"
-          class="gsap-reversible-on-scroll rounded-card shadow-card bg-neutral-50 p-6"
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(24rem,1.1fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
         >
-          <i
-            class="pi text-brand-navy-soft text-3xl"
-            [ngClass]="programFormat.iconClass"
-            aria-hidden="true"
-          ></i>
-          <h2 class="mt-4 text-xl font-bold">
-            {{ programFormat.titleKey | kraakTranslate }}
-          </h2>
-          <p class="text-brand-navy mt-3 text-sm">
-            {{ programFormat.formatKey | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ programFormat.audienceKey | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ programFormat.cadenceKey | kraakTranslate }}
-          </p>
-        </article>
-      }
-    </div>
-  </div>
-</section>
+          {{ 'web.programs.hero.eyebrow' | kraakTranslate }}
+        </span>
 
-<section class="bg-neutral-50 py-16" kraakRevealOnScroll [revealDelayMs]="60">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="mx-auto max-w-3xl text-center">
-      <p
-        class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.programs.hero.titlePrefix' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.programs.hero.titleHighlight' | kraakTranslate
+          }}</span>
+          {{ 'web.programs.hero.titleSuffix' | kraakTranslate }}
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.programs.hero.description' | kraakTranslate }}
+        </p>
+      </div>
+
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[32rem]"
       >
-        {{ 'web.programs.catalog.eyebrow' | kraakTranslate }}
-      </p>
-      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        {{ 'web.programs.catalog.title' | kraakTranslate }}
-      </h2>
-      <p class="text-brand-navy mt-4 text-lg">
-        {{ 'web.programs.catalog.description' | kraakTranslate }}
-      </p>
-    </div>
+        <img
+          src="/assets/site-visuals/photos/programs-hero-adult-learning.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
 
-    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      @for (catalogItem of catalogItems; track catalogItem.titleKey) {
-        <article class="rounded-card bg-brand-white p-6 shadow-sm">
-          <p class="text-primary text-sm font-semibold uppercase">
-            {{ catalogItem.titleKey | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-3 text-sm">
-            {{ catalogItem.descriptionKey | kraakTranslate }}
-          </p>
-        </article>
-      }
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_32%,rgba(18,43,74,0.44)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/22 px-4 py-3 backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
+      </figure>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
+<section
+  class="bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="40"
+>
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      {{ 'web.programs.process.title' | kraakTranslate }}
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-4">
-      @for (processStep of processSteps; track processStep.step) {
-        <div class="text-center">
-          <p class="text-brand-navy-soft text-3xl font-bold">
-            {{ processStep.step }}
+    <div
+      class="overflow-hidden rounded-[2rem] bg-neutral-50 px-6 py-8 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 sm:py-10 lg:px-12 lg:py-12"
+    >
+      <div
+        class="grid items-center gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(22rem,1.08fr)] lg:gap-14"
+      >
+        <div>
+          <p
+            class="text-brand-navy-soft text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.programs.formats.eyebrow' | kraakTranslate }}
           </p>
-          <h3 class="mt-2 text-lg font-bold">
-            {{ processStep.titleKey | kraakTranslate }}
-          </h3>
-          <p class="text-brand-navy mt-1">
-            {{ processStep.descriptionKey | kraakTranslate }}
+
+          <h2
+            class="mt-4 max-w-xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+          >
+            {{ 'web.programs.formats.title' | kraakTranslate }}
+          </h2>
+
+          <p
+            class="text-brand-navy mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+          >
+            {{ 'web.programs.formats.description' | kraakTranslate }}
           </p>
         </div>
-      }
+
+        <figure
+          class="group relative min-h-64 overflow-hidden rounded-[1.75rem] bg-slate-200 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-80 lg:min-h-96"
+        >
+          <img
+            src="/assets/site-visuals/photos/programs-workshop.avif"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <div
+            aria-hidden="true"
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_42%,rgba(18,43,74,0.46)_100%)]"
+          ></div>
+        </figure>
+      </div>
+
+      <div class="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-2">
+        @for (programFormat of programFormats; track programFormat.titleKey) {
+          <article
+            data-motion="reversible"
+            class="gsap-reversible-on-scroll border-t border-slate-200 pt-7"
+          >
+            <div
+              class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+            >
+              <i
+                class="pi text-xl"
+                [ngClass]="programFormat.iconClass"
+                aria-hidden="true"
+              ></i>
+            </div>
+
+            <h2 class="mt-5 max-w-md text-xl font-semibold text-slate-950">
+              {{ programFormat.titleKey | kraakTranslate }}
+            </h2>
+
+            <div class="mt-5 space-y-3">
+              <p class="text-brand-navy text-sm leading-6">
+                {{ programFormat.formatKey | kraakTranslate }}
+              </p>
+              <p class="text-brand-navy text-sm leading-6">
+                {{ programFormat.audienceKey | kraakTranslate }}
+              </p>
+              <p class="text-brand-navy text-sm leading-6">
+                {{ programFormat.cadenceKey | kraakTranslate }}
+              </p>
+            </div>
+          </article>
+        }
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="100">
-  <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
-    <h2 class="text-3xl font-bold lg:text-4xl">
-      {{ 'web.programs.reassurance.title' | kraakTranslate }}
-    </h2>
-    <p class="text-brand-navy mt-4">
-      {{ 'web.programs.reassurance.description' | kraakTranslate }}
-    </p>
+<section
+  class="bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="60"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div
+      class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_58%,#1673ae_100%)] px-6 py-8 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.58)] sm:px-8 sm:py-10 lg:px-12 lg:py-12"
+    >
+      <span
+        aria-hidden="true"
+        class="bg-brand-cyan/16 pointer-events-none absolute -top-40 -right-24 h-96 w-96 rounded-full blur-3xl"
+      ></span>
+
+      <div
+        class="relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.82fr)] lg:gap-14"
+      >
+        <div>
+          <p
+            class="text-brand-cyan text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.programs.catalog.eyebrow' | kraakTranslate }}
+          </p>
+
+          <h2
+            class="mt-4 max-w-2xl text-3xl leading-tight font-semibold text-white lg:text-5xl"
+          >
+            {{ 'web.programs.catalog.title' | kraakTranslate }}
+          </h2>
+
+          <p
+            class="mt-5 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+          >
+            {{ 'web.programs.catalog.description' | kraakTranslate }}
+          </p>
+        </div>
+
+        <figure
+          class="group relative min-h-60 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_20px_42px_-28px_rgba(0,0,0,0.48)] sm:min-h-72"
+        >
+          <img
+            src="/assets/site-visuals/photos/programs-analytics.avif"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <div
+            aria-hidden="true"
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_35%,rgba(18,43,74,0.42)_100%)]"
+          ></div>
+        </figure>
+      </div>
+
+      <div
+        class="relative z-10 mt-10 grid gap-x-8 gap-y-7 border-t border-white/14 pt-8 md:grid-cols-2 lg:grid-cols-4"
+      >
+        @for (catalogItem of catalogItems; track catalogItem.titleKey) {
+          <article class="border-t border-white/12 pt-5">
+            <p
+              class="text-brand-cyan text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ catalogItem.titleKey | kraakTranslate }}
+            </p>
+
+            <p class="mt-3 text-sm leading-6 text-white/72">
+              {{ catalogItem.descriptionKey | kraakTranslate }}
+            </p>
+          </article>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<section
+  class="bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="80"
+>
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <div
+      class="grid items-stretch gap-10 lg:grid-cols-[minmax(20rem,0.88fr)_minmax(0,1.12fr)] lg:gap-14"
+    >
+      <figure
+        class="group relative min-h-80 overflow-hidden rounded-[2rem] bg-slate-200 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-[30rem] lg:min-h-full"
+      >
+        <img
+          src="/assets/site-visuals/photos/programs-team-workshop.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_36%,rgba(18,43,74,0.52)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 rounded-2xl border border-white/14 bg-slate-950/24 px-4 py-3 backdrop-blur-xl"
+        >
+          <span
+            class="text-xs font-semibold tracking-[0.14em] text-white/84 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
+      </figure>
+
+      <div class="flex min-w-0 flex-col justify-center">
+        <h2
+          class="max-w-2xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+        >
+          {{ 'web.programs.process.title' | kraakTranslate }}
+        </h2>
+
+        <div class="mt-10 border-t border-slate-200">
+          @for (processStep of processSteps; track processStep.step) {
+            <div
+              class="grid gap-4 border-b border-slate-200 py-6 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-6"
+            >
+              <div
+                class="bg-brand-navy flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold text-white shadow-[0_2px_5px_rgba(18,55,105,0.10),0_8px_20px_-12px_rgba(18,43,74,0.45)]"
+              >
+                0{{ processStep.step }}
+              </div>
+
+              <div>
+                <h3 class="text-xl font-semibold text-slate-950">
+                  {{ processStep.titleKey | kraakTranslate }}
+                </h3>
+
+                <p
+                  class="text-brand-navy mt-2 max-w-xl text-sm leading-6 sm:text-base sm:leading-7"
+                >
+                  {{ processStep.descriptionKey | kraakTranslate }}
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section
+  class="bg-brand-white px-4 py-16 sm:px-6 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="100"
+>
+  <div
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_58%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.58)]"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.9fr)] lg:gap-14 lg:px-12 lg:py-12"
+    >
+      <div>
+        <h2
+          class="max-w-2xl text-3xl leading-tight font-semibold text-white lg:text-5xl"
+        >
+          {{ 'web.programs.reassurance.title' | kraakTranslate }}
+        </h2>
+
+        <p
+          class="mt-5 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.programs.reassurance.description' | kraakTranslate }}
+        </p>
+      </div>
+
+      <figure
+        class="group relative min-h-56 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_20px_42px_-28px_rgba(0,0,0,0.48)] sm:min-h-72"
+      >
+        <img
+          src="/assets/site-visuals/photos/programs-community-impact.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_38%,rgba(18,43,74,0.38)_100%)]"
+        ></div>
+      </figure>
+    </div>
   </div>
 </section>
 
