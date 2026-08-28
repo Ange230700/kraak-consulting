@@ -1,60 +1,136 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
-  [ngStyle]="heroBackgroundStyle"
-  kraakRevealOnScroll
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
   <div
-    aria-hidden="true"
-    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
-  ></div>
-
-  <div
-    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
   >
-    <div class="max-w-3xl text-left">
-      <p
-        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(24rem,1.1fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          {{ 'web.services.hero.eyebrow' | kraakTranslate }}
+        </span>
+
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.services.hero.titlePrefix' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.services.hero.titleEmphasis' | kraakTranslate
+          }}</span>
+          {{ 'web.services.hero.titleSuffix' | kraakTranslate }}
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.services.hero.description' | kraakTranslate }}
+        </p>
+      </div>
+
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[32rem]"
       >
-        {{ 'web.services.hero.eyebrow' | kraakTranslate }}
-      </p>
-      <h1
-        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
-      >
-        {{ 'web.services.hero.titlePrefix' | kraakTranslate }}
-        <span class="text-brand-cyan">{{
-          'web.services.hero.titleEmphasis' | kraakTranslate
-        }}</span>
-        {{ 'web.services.hero.titleSuffix' | kraakTranslate }}
-      </h1>
-      <p
-        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
-      >
-        {{ 'web.services.hero.description' | kraakTranslate }}
-      </p>
+        <img
+          src="/assets/site-visuals/photos/services-hero-project-planning.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_32%,rgba(18,43,74,0.42)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 h-px bg-linear-to-r from-transparent via-white/45 to-transparent"
+        ></div>
+      </figure>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="40">
+<section
+  class="bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="40"
+>
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-      <div>
-        <i
-          class="pi pi-graduation-cap text-brand-navy-soft text-4xl"
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:items-center lg:gap-14"
+    >
+      <figure
+        class="group relative min-h-80 overflow-hidden rounded-[2rem] bg-slate-100 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-[28rem] lg:min-h-[38rem]"
+        kraakRevealOnScroll
+      >
+        <img
+          src="/assets/site-visuals/photos/services-training-centre.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
           aria-hidden="true"
-        ></i>
-        <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_35%,rgba(18,43,74,0.54)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center justify-between gap-4 rounded-2xl border border-white/14 bg-slate-950/24 px-4 py-3 backdrop-blur-xl"
+        >
+          <span class="flex items-center gap-3">
+            <span
+              class="bg-brand-cyan text-brand-navy flex h-9 w-9 items-center justify-center rounded-full shadow-[0_2px_5px_rgba(255,255,255,0.08)_inset]"
+            >
+              <i class="pi pi-graduation-cap text-base" aria-hidden="true"></i>
+            </span>
+            <span
+              class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+            >
+              {{ 'web.services.training.eyebrow' | kraakTranslate }}
+            </span>
+          </span>
+
+          <span class="bg-brand-gold h-2.5 w-2.5 shrink-0 rounded-full"></span>
+        </div>
+      </figure>
+
+      <div class="min-w-0">
+        <div
+          class="bg-brand-navy-soft/8 text-brand-navy-soft inline-flex min-h-9 items-center rounded-full px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase"
+        >
           {{ 'web.services.training.eyebrow' | kraakTranslate }}
-        </p>
-        <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        </div>
+
+        <h2
+          class="mt-6 max-w-xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+        >
           {{ 'web.services.training.title' | kraakTranslate }}
         </h2>
-        <p class="text-brand-navy mt-4 text-lg">
+
+        <p
+          class="text-brand-navy mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+        >
           {{ 'web.services.training.description' | kraakTranslate }}
         </p>
-        <div
-          class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -66,6 +142,7 @@
             "
             class="kr-button-primary"
           ></a>
+
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -78,96 +155,148 @@
             class="kr-button-ghost"
           ></a>
         </div>
-      </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.training.audience' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-neutral-50 p-5"
-          kraakRevealOnScroll
-          [revealDelayMs]="60"
-          [revealDelayMobileMs]="25"
+        <div
+          class="mt-10 grid gap-x-8 gap-y-7 border-t border-slate-200 pt-8 sm:grid-cols-2"
         >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.training.challenge' | kraakTranslate }}
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.training.deliverables' | kraakTranslate }}
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.training.nextStep' | kraakTranslate }}
-          </p>
-        </article>
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.audience' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.training.audience' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.training.challenge' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.training.deliverables' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.training.nextStep' | kraakTranslate }}
+            </p>
+          </article>
+        </div>
       </div>
     </div>
 
-    <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{
-          'web.services.training.offers.personalDevelopment' | kraakTranslate
-        }}
-      </p>
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{
-          'web.services.training.offers.professionalLanguages' | kraakTranslate
-        }}
-      </p>
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{ 'web.services.training.offers.languageTests' | kraakTranslate }}
-      </p>
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{ 'web.services.training.offers.jobSearch' | kraakTranslate }}
-      </p>
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{ 'web.services.training.offers.selfWorth' | kraakTranslate }}
-      </p>
-      <p class="rounded-card bg-neutral-50 p-4 text-sm font-semibold">
-        {{ 'web.services.training.offers.careerChange' | kraakTranslate }}
-      </p>
+    <div class="mt-12 border-t border-slate-200 pt-8">
+      <div
+        class="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3"
+        aria-label="KRAAK Training Centre"
+      >
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.training.offers.personalDevelopment' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.training.offers.professionalLanguages'
+              | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.training.offers.languageTests' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.training.offers.jobSearch' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.training.offers.selfWorth' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.training.offers.careerChange' | kraakTranslate }}
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16" kraakRevealOnScroll [revealDelayMs]="60">
+<section
+  class="bg-neutral-50 py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="60"
+>
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-      <div>
-        <i
-          class="pi pi-chart-bar text-brand-navy-soft text-4xl"
-          aria-hidden="true"
-        ></i>
-        <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)] lg:items-center lg:gap-14"
+    >
+      <div class="min-w-0">
+        <div
+          class="bg-brand-navy-soft/8 text-brand-navy-soft inline-flex min-h-9 items-center rounded-full px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase"
+        >
           {{ 'web.services.projects.eyebrow' | kraakTranslate }}
-        </p>
-        <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        </div>
+
+        <h2
+          class="mt-6 max-w-xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+        >
           {{ 'web.services.projects.title' | kraakTranslate }}
         </h2>
-        <p class="text-brand-navy mt-4 text-lg">
+
+        <p
+          class="text-brand-navy mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+        >
           {{ 'web.services.projects.description' | kraakTranslate }}
         </p>
-        <div
-          class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -179,6 +308,7 @@
             "
             class="kr-button-primary"
           ></a>
+
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -191,119 +321,238 @@
             class="kr-button-ghost"
           ></a>
         </div>
+
+        <div
+          class="mt-10 grid gap-x-8 gap-y-7 border-t border-slate-200 pt-8 sm:grid-cols-2"
+        >
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.audience' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.projects.audience' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.projects.challenge' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.projects.deliverables' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.projects.nextStep' | kraakTranslate }}
+            </p>
+          </article>
+        </div>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm"
-          kraakRevealOnScroll
+      <figure
+        class="group relative min-h-80 overflow-hidden rounded-[2rem] bg-slate-200 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-[28rem] lg:min-h-[38rem]"
+        kraakRevealOnScroll
+        [revealDelayMs]="80"
+        [revealDelayMobileMs]="30"
+      >
+        <img
+          src="/assets/site-visuals/photos/services-project-presentation.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_35%,rgba(18,43,74,0.56)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center justify-between gap-4 rounded-2xl border border-white/14 bg-slate-950/24 px-4 py-3 backdrop-blur-xl"
         >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.projects.audience' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm"
-          kraakRevealOnScroll
-          [revealDelayMs]="60"
-          [revealDelayMobileMs]="25"
-        >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.projects.challenge' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
-        >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.projects.deliverables' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
-        >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.projects.nextStep' | kraakTranslate }}
-          </p>
-        </article>
-      </div>
+          <span class="flex items-center gap-3">
+            <span
+              class="bg-brand-cyan text-brand-navy flex h-9 w-9 items-center justify-center rounded-full shadow-[0_2px_5px_rgba(255,255,255,0.08)_inset]"
+            >
+              <i class="pi pi-chart-bar text-base" aria-hidden="true"></i>
+            </span>
+            <span
+              class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+            >
+              {{ 'web.services.projects.eyebrow' | kraakTranslate }}
+            </span>
+          </span>
+
+          <span class="bg-brand-gold h-2.5 w-2.5 shrink-0 rounded-full"></span>
+        </div>
+      </figure>
     </div>
 
-    <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.projects.offers.businessSupport' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.projects.offers.projectManagement' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{
-          'web.services.projects.offers.partnershipDevelopment' | kraakTranslate
-        }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.projects.offers.talentRecruitment' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.projects.offers.workplacePlacement' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.projects.offers.operationalSupport' | kraakTranslate }}
-      </p>
+    <div class="mt-12 border-t border-slate-200 pt-8">
+      <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.projects.offers.businessSupport' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.projects.offers.projectManagement' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.projects.offers.partnershipDevelopment'
+              | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.projects.offers.talentRecruitment' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.projects.offers.workplacePlacement' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.projects.offers.operationalSupport' | kraakTranslate
+          }}
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
+<section
+  class="bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="80"
+>
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-      <div>
-        <i
-          class="pi pi-globe text-brand-navy-soft text-4xl"
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:items-center lg:gap-14"
+    >
+      <figure
+        class="group relative min-h-80 overflow-hidden rounded-[2rem] bg-slate-100 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-[28rem] lg:min-h-[38rem]"
+        kraakRevealOnScroll
+      >
+        <img
+          src="/assets/site-visuals/photos/services-immigration.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
           aria-hidden="true"
-        ></i>
-        <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_35%,rgba(18,43,74,0.58)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center justify-between gap-4 rounded-2xl border border-white/14 bg-slate-950/24 px-4 py-3 backdrop-blur-xl"
+        >
+          <span class="flex items-center gap-3">
+            <span
+              class="bg-brand-cyan text-brand-navy flex h-9 w-9 items-center justify-center rounded-full shadow-[0_2px_5px_rgba(255,255,255,0.08)_inset]"
+            >
+              <i class="pi pi-globe text-base" aria-hidden="true"></i>
+            </span>
+            <span
+              class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+            >
+              {{ 'web.services.mobility.eyebrow' | kraakTranslate }}
+            </span>
+          </span>
+
+          <span class="bg-brand-gold h-2.5 w-2.5 shrink-0 rounded-full"></span>
+        </div>
+      </figure>
+
+      <div class="min-w-0">
+        <div
+          class="bg-brand-navy-soft/8 text-brand-navy-soft inline-flex min-h-9 items-center rounded-full px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase"
+        >
           {{ 'web.services.mobility.eyebrow' | kraakTranslate }}
-        </p>
-        <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        </div>
+
+        <h2
+          class="mt-6 max-w-xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+        >
           {{ 'web.services.mobility.title' | kraakTranslate }}
         </h2>
-        <p class="text-brand-navy mt-4 text-lg">
+
+        <p
+          class="text-brand-navy mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+        >
           {{ 'web.services.mobility.description' | kraakTranslate }}
         </p>
-        <p class="rounded-card text-brand-navy mt-4 bg-neutral-50 p-5">
-          <strong>{{
-            'web.services.mobility.complianceLabel' | kraakTranslate
-          }}</strong>
-          {{ 'web.services.mobility.complianceBody' | kraakTranslate }}
-        </p>
+
         <div
-          class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          class="border-brand-cyan/20 bg-brand-cyan/8 text-brand-navy mt-6 rounded-2xl border px-5 py-4 text-sm leading-6 shadow-[0_1px_2px_rgba(164,172,185,0.14)]"
         >
+          <strong class="font-semibold">
+            {{ 'web.services.mobility.complianceLabel' | kraakTranslate }}
+          </strong>
+          {{ 'web.services.mobility.complianceBody' | kraakTranslate }}
+        </div>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -315,6 +564,7 @@
             "
             class="kr-button-primary"
           ></a>
+
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -327,71 +577,88 @@
             class="kr-button-ghost"
           ></a>
         </div>
-      </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.mobility.audience' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-neutral-50 p-5"
-          kraakRevealOnScroll
-          [revealDelayMs]="60"
-          [revealDelayMobileMs]="25"
+        <div
+          class="mt-10 grid gap-x-8 gap-y-7 border-t border-slate-200 pt-8 sm:grid-cols-2"
         >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.mobility.challenge' | kraakTranslate }}
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.mobility.deliverables' | kraakTranslate }}
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.mobility.nextStep' | kraakTranslate }}
-          </p>
-        </article>
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.audience' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.mobility.audience' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.mobility.challenge' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.mobility.deliverables' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.mobility.nextStep' | kraakTranslate }}
+            </p>
+          </article>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="bg-neutral-50 py-16">
+<section
+  class="bg-neutral-50 py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="100"
+>
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-      <div>
-        <i
-          class="pi pi-building text-brand-navy-soft text-4xl"
-          aria-hidden="true"
-        ></i>
-        <p class="text-brand-navy-soft mt-4 text-sm font-semibold uppercase">
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)] lg:items-center lg:gap-14"
+    >
+      <div class="min-w-0">
+        <div
+          class="bg-brand-navy-soft/8 text-brand-navy-soft inline-flex min-h-9 items-center rounded-full px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase"
+        >
           {{ 'web.services.business.eyebrow' | kraakTranslate }}
-        </p>
-        <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+        </div>
+
+        <h2
+          class="mt-6 max-w-xl text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+        >
           {{ 'web.services.business.title' | kraakTranslate }}
         </h2>
-        <p class="text-brand-navy mt-4 text-lg">
+
+        <p
+          class="text-brand-navy mt-5 max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+        >
           {{ 'web.services.business.description' | kraakTranslate }}
         </p>
-        <div
-          class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -403,6 +670,7 @@
             "
             class="kr-button-primary"
           ></a>
+
           <a
             pButton
             [routerLink]="'contact' | localizedPublicPath"
@@ -415,131 +683,245 @@
             class="kr-button-secondary"
           ></a>
         </div>
+
+        <div
+          class="mt-10 grid gap-x-8 gap-y-7 border-t border-slate-200 pt-8 sm:grid-cols-2"
+        >
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.audience' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.business.audience' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.business.challenge' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.business.deliverables' | kraakTranslate }}
+            </p>
+          </article>
+
+          <article>
+            <p
+              class="text-brand-navy-soft text-xs font-semibold tracking-[0.12em] uppercase"
+            >
+              {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
+            </p>
+            <p class="text-brand-navy mt-3 text-sm leading-6">
+              {{ 'web.services.business.nextStep' | kraakTranslate }}
+            </p>
+          </article>
+        </div>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article class="rounded-card bg-brand-white p-5 shadow-sm">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.audience' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.business.audience' | kraakTranslate }}
-          </p>
-        </article>
-        <article class="rounded-card bg-brand-white p-5 shadow-sm">
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.challenge' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.business.challenge' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
+      <figure
+        class="group relative min-h-80 overflow-hidden rounded-[2rem] bg-slate-200 shadow-[0_1px_2px_rgba(164,172,185,0.20),0_18px_44px_-28px_rgba(18,43,74,0.34)] sm:min-h-[28rem] lg:min-h-[38rem]"
+        kraakRevealOnScroll
+        [revealDelayMs]="80"
+        [revealDelayMobileMs]="30"
+      >
+        <img
+          src="/assets/site-visuals/photos/services-coaching.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_35%,rgba(18,43,74,0.58)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center justify-between gap-4 rounded-2xl border border-white/14 bg-slate-950/24 px-4 py-3 backdrop-blur-xl"
         >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.deliverables' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.business.deliverables' | kraakTranslate }}
-          </p>
-        </article>
-        <article
-          class="rounded-card bg-brand-white p-5 shadow-sm sm:col-span-2"
-        >
-          <p class="text-brand-navy-soft text-xs font-semibold uppercase">
-            {{ 'web.services.cardLabels.nextStep' | kraakTranslate }}
-          </p>
-          <p class="text-brand-navy mt-2 text-sm">
-            {{ 'web.services.business.nextStep' | kraakTranslate }}
-          </p>
-        </article>
-      </div>
+          <span class="flex items-center gap-3">
+            <span
+              class="bg-brand-cyan text-brand-navy flex h-9 w-9 items-center justify-center rounded-full shadow-[0_2px_5px_rgba(255,255,255,0.08)_inset]"
+            >
+              <i class="pi pi-building text-base" aria-hidden="true"></i>
+            </span>
+            <span
+              class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+            >
+              {{ 'web.services.business.eyebrow' | kraakTranslate }}
+            </span>
+          </span>
+
+          <span class="bg-brand-gold h-2.5 w-2.5 shrink-0 rounded-full"></span>
+        </div>
+      </figure>
     </div>
 
-    <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.business.offers.staffTraining' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.business.offers.teamCohesion' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.business.offers.conflictManagement' | kraakTranslate }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{
-          'web.services.business.offers.organisationalLeadership'
-            | kraakTranslate
-        }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{
-          'web.services.business.offers.businessPerformance' | kraakTranslate
-        }}
-      </p>
-      <p
-        class="rounded-card bg-brand-white p-4 text-sm font-semibold shadow-sm"
-      >
-        {{ 'web.services.business.offers.workplaceCulture' | kraakTranslate }}
-      </p>
+    <div class="mt-12 border-t border-slate-200 pt-8">
+      <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.business.offers.staffTraining' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.business.offers.teamCohesion' | kraakTranslate }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.business.offers.conflictManagement' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.business.offers.organisationalLeadership'
+              | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{
+            'web.services.business.offers.businessPerformance' | kraakTranslate
+          }}
+        </p>
+
+        <p class="flex items-start gap-3 text-sm font-semibold text-slate-800">
+          <span
+            aria-hidden="true"
+            class="bg-brand-cyan mt-1.5 h-2 w-2 shrink-0 rounded-full"
+          ></span>
+          {{ 'web.services.business.offers.workplaceCulture' | kraakTranslate }}
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      {{ 'web.services.method.title' | kraakTranslate }}
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-3">
-      <div
-        data-motion="reversible"
-        class="services-method-step gsap-reversible-on-scroll text-center"
+<section class="bg-brand-white px-4 py-16 sm:px-6 lg:py-24" kraakRevealOnScroll>
+  <div
+    class="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <div class="mx-auto max-w-3xl text-center">
+      <h2
+        class="text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
       >
-        <p class="text-brand-navy-soft text-3xl font-bold">1</p>
-        <h3 class="mt-2 text-lg font-bold">
-          {{ 'web.services.method.items.clarify.title' | kraakTranslate }}
-        </h3>
-        <p class="text-brand-navy mt-1">
-          {{ 'web.services.method.items.clarify.description' | kraakTranslate }}
-        </p>
-      </div>
+        {{ 'web.services.method.title' | kraakTranslate }}
+      </h2>
+    </div>
+
+    <div class="relative mt-12 lg:mt-16">
       <div
-        data-motion="reversible"
-        class="services-method-step gsap-reversible-on-scroll text-center"
-      >
-        <p class="text-brand-navy-soft text-3xl font-bold">2</p>
-        <h3 class="mt-2 text-lg font-bold">
-          {{ 'web.services.method.items.structure.title' | kraakTranslate }}
-        </h3>
-        <p class="text-brand-navy mt-1">
-          {{
-            'web.services.method.items.structure.description' | kraakTranslate
-          }}
-        </p>
-      </div>
-      <div
-        data-motion="reversible"
-        class="services-method-step gsap-reversible-on-scroll text-center"
-      >
-        <p class="text-brand-navy-soft text-3xl font-bold">3</p>
-        <h3 class="mt-2 text-lg font-bold">
-          {{ 'web.services.method.items.advance.title' | kraakTranslate }}
-        </h3>
-        <p class="text-brand-navy mt-1">
-          {{ 'web.services.method.items.advance.description' | kraakTranslate }}
-        </p>
+        aria-hidden="true"
+        class="border-brand-cyan/35 absolute top-8 right-[16.666%] left-[16.666%] hidden border-t-2 border-dashed lg:block"
+      ></div>
+
+      <div class="relative grid gap-10 md:grid-cols-3 lg:gap-12">
+        <div
+          data-motion="reversible"
+          class="services-method-step gsap-reversible-on-scroll text-center"
+        >
+          <div
+            class="bg-brand-navy relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full border-4 border-slate-50 text-base font-semibold text-white shadow-[0_2px_5px_rgba(18,55,105,0.10),0_8px_20px_-12px_rgba(18,43,74,0.45)]"
+          >
+            01
+          </div>
+
+          <h3 class="mt-7 text-xl font-semibold text-slate-950">
+            {{ 'web.services.method.items.clarify.title' | kraakTranslate }}
+          </h3>
+
+          <p
+            class="text-brand-navy mx-auto mt-3 max-w-xs text-sm leading-6 sm:text-base sm:leading-7"
+          >
+            {{
+              'web.services.method.items.clarify.description' | kraakTranslate
+            }}
+          </p>
+        </div>
+
+        <div
+          data-motion="reversible"
+          class="services-method-step gsap-reversible-on-scroll text-center"
+        >
+          <div
+            class="bg-brand-navy relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full border-4 border-slate-50 text-base font-semibold text-white shadow-[0_2px_5px_rgba(18,55,105,0.10),0_8px_20px_-12px_rgba(18,43,74,0.45)]"
+          >
+            02
+          </div>
+
+          <h3 class="mt-7 text-xl font-semibold text-slate-950">
+            {{ 'web.services.method.items.structure.title' | kraakTranslate }}
+          </h3>
+
+          <p
+            class="text-brand-navy mx-auto mt-3 max-w-xs text-sm leading-6 sm:text-base sm:leading-7"
+          >
+            {{
+              'web.services.method.items.structure.description' | kraakTranslate
+            }}
+          </p>
+        </div>
+
+        <div
+          data-motion="reversible"
+          class="services-method-step gsap-reversible-on-scroll text-center"
+        >
+          <div
+            class="bg-brand-navy relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full border-4 border-slate-50 text-base font-semibold text-white shadow-[0_2px_5px_rgba(18,55,105,0.10),0_8px_20px_-12px_rgba(18,43,74,0.45)]"
+          >
+            03
+          </div>
+
+          <h3 class="mt-7 text-xl font-semibold text-slate-950">
+            {{ 'web.services.method.items.advance.title' | kraakTranslate }}
+          </h3>
+
+          <p
+            class="text-brand-navy mx-auto mt-3 max-w-xs text-sm leading-6 sm:text-base sm:leading-7"
+          >
+            {{
+              'web.services.method.items.advance.description' | kraakTranslate
+            }}
+          </p>
+        </div>
       </div>
     </div>
   </div>

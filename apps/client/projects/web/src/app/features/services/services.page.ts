@@ -6,7 +6,6 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
@@ -14,7 +13,6 @@ import {
   initializeMarketingPageAnimations,
   teardownMarketingPageAnimations,
 } from '../../core/animations/marketing-page-animations';
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
@@ -27,10 +25,6 @@ import {
   KraakI18nService,
   KraakTranslatePipe,
 } from '../../../../../shared/i18n';
-
-const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/services-hero-project-planning.avif',
-);
 
 const SERVICES_FAQ_TRANSLATIONS = [
   {
@@ -51,7 +45,6 @@ const SERVICES_FAQ_TRANSLATIONS = [
   selector: 'kraak-services-page',
   standalone: true,
   imports: [
-    NgStyle,
     RouterLink,
     ButtonDirective,
     FaqAccordion,
@@ -63,8 +56,6 @@ const SERVICES_FAQ_TRANSLATIONS = [
   templateUrl: './services.page.html',
 })
 export default class ServicesPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = SERVICES_HERO_BACKGROUND_STYLE;
-
   private readonly i18n = inject(KraakI18nService);
   private readonly injector = inject(Injector);
   private gsapService: GsapAnimationsService | null = null;
