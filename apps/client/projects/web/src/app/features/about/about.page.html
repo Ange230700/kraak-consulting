@@ -1,36 +1,74 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
-  [ngStyle]="heroBackgroundStyle"
-  kraakRevealOnScroll
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
   <div
-    aria-hidden="true"
-    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
-  ></div>
-
-  <div
-    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
   >
-    <div class="max-w-3xl text-left">
-      <p
-        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-36 -right-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(24rem,1.08fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          {{ 'web.about.hero.eyebrow' | kraakTranslate }}
+        </span>
+
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.about.hero.titlePrefix' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.about.hero.titleEmphasis' | kraakTranslate
+          }}</span>
+          {{ 'web.about.hero.titleSuffix' | kraakTranslate }}
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.about.hero.description' | kraakTranslate }}
+        </p>
+      </div>
+
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[34rem]"
       >
-        {{ 'web.about.hero.eyebrow' | kraakTranslate }}
-      </p>
-      <h1
-        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
-      >
-        {{ 'web.about.hero.titlePrefix' | kraakTranslate }}
-        <span class="text-brand-cyan">{{
-          'web.about.hero.titleEmphasis' | kraakTranslate
-        }}</span>
-        {{ 'web.about.hero.titleSuffix' | kraakTranslate }}
-      </h1>
-      <p
-        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
-      >
-        {{ 'web.about.hero.description' | kraakTranslate }}
-      </p>
+        <img
+          src="/assets/site-visuals/photos/about-hero-community-dialogue.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_35%,rgba(18,43,74,0.40)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/20 px-4 py-3 shadow-[0_2px_5px_rgba(255,255,255,0.04)_inset] backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.14em] text-white/82 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
+      </figure>
     </div>
   </div>
 </section>
@@ -257,76 +295,124 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="80">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      {{ 'web.about.values.title' | kraakTranslate }}
-    </h2>
-    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <article class="rounded-card bg-neutral-50 p-5" kraakRevealOnScroll>
-        <p class="text-primary text-center text-lg font-bold">
+<section
+  class="kr-perf-section bg-brand-white px-4 py-16 sm:px-6 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="80"
+>
+  <div
+    class="mx-auto max-w-6xl rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <div class="max-w-3xl">
+      <h2
+        class="text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+      >
+        {{ 'web.about.values.title' | kraakTranslate }}
+      </h2>
+    </div>
+
+    <div class="mt-12 grid gap-x-10 gap-y-10 lg:grid-cols-2">
+      <article
+        kraakRevealOnScroll
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{ 'web.about.values.items.humanism.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{ 'web.about.values.items.humanism.description' | kraakTranslate }}
         </p>
       </article>
+
       <article
-        class="rounded-card bg-neutral-50 p-5"
         kraakRevealOnScroll
         [revealDelayMs]="50"
+        [revealDelayMobileMs]="20"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
       >
-        <p class="text-primary text-center text-lg font-bold">
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{
             'web.about.values.items.personalResponsibility.title'
               | kraakTranslate
           }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{
             'web.about.values.items.personalResponsibility.description'
               | kraakTranslate
           }}
         </p>
       </article>
+
       <article
-        class="rounded-card bg-neutral-50 p-5"
         kraakRevealOnScroll
         [revealDelayMs]="100"
+        [revealDelayMobileMs]="40"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
       >
-        <p class="text-primary text-center text-lg font-bold">
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{
             'web.about.values.items.servantLeadership.title' | kraakTranslate
           }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{
             'web.about.values.items.servantLeadership.description'
               | kraakTranslate
           }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
+
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="150"
+        [revealDelayMobileMs]="60"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{ 'web.about.values.items.solidarity.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{ 'web.about.values.items.solidarity.description' | kraakTranslate }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
+
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="200"
+        [revealDelayMobileMs]="80"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{ 'web.about.values.items.resilience.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{ 'web.about.values.items.resilience.description' | kraakTranslate }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
+
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="250"
+        [revealDelayMobileMs]="100"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
           {{ 'web.about.values.items.globalConnection.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
           {{
             'web.about.values.items.globalConnection.description'
               | kraakTranslate
