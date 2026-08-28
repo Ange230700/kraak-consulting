@@ -14,7 +14,7 @@
     <div
       class="relative mx-auto w-full max-w-6xl px-4 pt-6 pb-10 lg:px-6 lg:pt-7 lg:pb-14"
     >
-      <header class="flex flex-wrap items-center justify-between gap-4">
+      <header class="flex flex-wrap items-center justify-between gap-5">
         <a
           routerLink="/participant/dashboard"
           class="focus-visible:ring-offset-brand-navy flex items-center gap-3 rounded-full text-white no-underline outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2"
@@ -44,20 +44,22 @@
           </span>
         </a>
 
-        <div class="flex items-center gap-3">
+        <div
+          class="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 p-1.5 pl-1.5 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_12px_24px_rgba(0,0,0,0.06)] backdrop-blur-[48px] sm:pl-4"
+        >
           <div class="hidden text-right sm:block">
             <p class="text-sm font-medium text-white">
               {{ displayName() }}
             </p>
             @if (currentProfile()?.appUser?.email; as email) {
-              <p class="mt-0.5 max-w-48 truncate text-xs text-white/60">
+              <p class="mt-0.5 max-w-48 truncate text-xs text-white/56">
                 {{ email }}
               </p>
             }
           </div>
 
           <span
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/16 bg-white/12 text-sm font-semibold text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_12px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/16 bg-white/14 text-sm font-semibold text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)] backdrop-blur-xl"
             aria-hidden="true"
           >
             {{ initials() }}
@@ -65,7 +67,7 @@
 
           <button
             type="button"
-            class="motion-hover-lift motion-press flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/16 bg-white/8 text-white/72 shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset] backdrop-blur-xl transition hover:bg-white/16 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
+            class="motion-hover-lift motion-press flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/12 bg-white/6 text-white/72 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl transition hover:bg-white/14 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
             aria-label="Se déconnecter"
             (click)="logout()"
           >
@@ -76,30 +78,30 @@
 
       <nav
         aria-label="Navigation de l'espace participant"
-        class="mx-auto mt-8 flex w-full max-w-[calc(100%_-_1rem)] flex-col items-center gap-2 rounded-3xl bg-white/12 p-2 shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_12px_20px_rgba(0,0,0,0.06)] backdrop-blur-[48px] md:max-w-none md:flex-row md:rounded-full"
+        class="mx-auto mt-10 flex w-full max-w-[calc(100%_-_1rem)] flex-col items-center gap-2 rounded-3xl border border-white/8 bg-white/16 p-2 shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_12px_20px_rgba(0,0,0,0.06)] backdrop-blur-[48px] md:max-w-[55rem] md:flex-row md:rounded-full"
       >
         <a
           routerLink="/participant/dashboard"
-          routerLinkActive="bg-white/16 text-white"
+          routerLinkActive="bg-white/20 text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)]"
           [routerLinkActiveOptions]="{ exact: true }"
           ariaCurrentWhenActive="page"
-          class="flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition hover:bg-white/10 hover:text-white md:flex-1"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
         >
           Tableau de bord
         </a>
 
         <a
           routerLink="/participant/programmes"
-          routerLinkActive="bg-white/16 text-white"
+          routerLinkActive="bg-white/20 text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)]"
           ariaCurrentWhenActive="page"
-          class="flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition hover:bg-white/10 hover:text-white md:flex-1"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
         >
           Programmes
         </a>
 
         <a
           routerLink="/contact"
-          class="flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition hover:bg-white/10 hover:text-white md:flex-1"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
         >
           Support
         </a>
