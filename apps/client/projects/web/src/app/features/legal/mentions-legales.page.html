@@ -1,127 +1,139 @@
-<main class="mx-auto max-w-3xl px-6 py-16 md:px-12">
-  <h1 class="text-primary mb-8 text-3xl font-bold tracking-tight">
-    Mentions légales
-  </h1>
+<main class="bg-brand-white px-4 py-16 sm:px-6 lg:py-24">
+  <article
+    class="mx-auto max-w-5xl rounded-[2rem] border border-slate-200/80 bg-white px-6 py-8 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-46px_rgba(18,43,74,0.28)] sm:px-8 sm:py-10 lg:px-12 lg:py-14"
+  >
+    <h1
+      class="text-brand-navy mb-5 text-4xl leading-tight font-semibold tracking-tight sm:text-5xl"
+    >
+      Mentions légales
+    </h1>
 
-  <p class="text-secondary mb-8 leading-7">
-    Dernière mise à jour : mai 2026. Cette page présente les informations
-    légales applicables au site vitrine public de KRAAK Consulting.
-  </p>
+    <p class="max-w-3xl text-lg leading-8 text-slate-600">
+      Dernière mise à jour : mai 2026. Cette page présente les informations
+      légales applicables au site vitrine public de KRAAK Consulting.
+    </p>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Éditeur du site</h2>
-    <p class="text-secondary leading-7">
-      KRAAK Consulting est une structure en cours d'immatriculation. Les
-      informations légales complémentaires, notamment la forme juridique, le
-      numéro d'immatriculation et l'adresse administrative de référence, seront
-      publiées dès leur finalisation.
-    </p>
-    <p class="text-secondary mt-4 leading-7">
-      Coordonnées publiques :
-      <a
-        [href]="contactEmailHref"
-        kraakPublicConversion="direct_email_click"
-        [kraakPublicConversionPayload]="{
-          contact_method: 'email',
-          contact_surface: 'legal_mentions',
-          link_url: contactEmailHref,
-        }"
-        class="text-brand-blue hover:underline"
-        >{{ contactEmail }}</a
-      >,
-      <a [href]="contactPhoneHref" class="text-brand-blue hover:underline">{{
-        contactPhoneDisplay
-      }}</a>
-      et
-      <a
-        [href]="whatsappContactHref"
-        target="_blank"
-        rel="noopener noreferrer"
-        kraakPublicConversion="whatsapp_click"
-        [kraakPublicConversionPayload]="{
-          contact_method: 'whatsapp',
-          contact_surface: 'legal_mentions',
-          link_url: whatsappContactHref,
-        }"
-        class="text-brand-blue hover:underline"
-        >WhatsApp</a
-      >.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Éditeur du site
+      </h2>
+      <p class="leading-7 text-slate-600">
+        KRAAK Consulting est une structure en cours d'immatriculation. Les
+        informations légales complémentaires, notamment la forme juridique, le
+        numéro d'immatriculation et l'adresse administrative de référence,
+        seront publiées dès leur finalisation.
+      </p>
+      <p class="mt-4 leading-7 text-slate-600">
+        Coordonnées publiques :
+        <a
+          [href]="contactEmailHref"
+          kraakPublicConversion="direct_email_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'email',
+            contact_surface: 'legal_mentions',
+            link_url: contactEmailHref,
+          }"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >{{ contactEmail }}</a
+        >,
+        <a
+          [href]="contactPhoneHref"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >{{ contactPhoneDisplay }}</a
+        >
+        et
+        <a
+          [href]="whatsappContactHref"
+          target="_blank"
+          rel="noopener noreferrer"
+          kraakPublicConversion="whatsapp_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'whatsapp',
+            contact_surface: 'legal_mentions',
+            link_url: whatsappContactHref,
+          }"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >WhatsApp</a
+        >.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Direction de publication
-    </h2>
-    <p class="text-secondary leading-7">
-      La direction de publication est assurée par KRAAK Consulting. Pour toute
-      demande relative au site, aux contenus publiés ou aux données
-      personnelles, utilisez les coordonnées publiques indiquées ci-dessus.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Direction de publication
+      </h2>
+      <p class="leading-7 text-slate-600">
+        La direction de publication est assurée par KRAAK Consulting. Pour toute
+        demande relative au site, aux contenus publiés ou aux données
+        personnelles, utilisez les coordonnées publiques indiquées ci-dessus.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Hébergement</h2>
-    <p class="text-secondary leading-7">
-      Le site web et l'API sont hébergés par Render Services, Inc., 525 Brannan
-      Street, Suite 300, San Francisco, CA 94107, États-Unis (<a
-        href="https://render.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-brand-blue hover:underline"
-        >render.com</a
-      >).<br />
-      Base de données, authentification et stockage : Supabase Inc. (<a
-        href="https://supabase.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-brand-blue hover:underline"
-        >supabase.com</a
-      >).
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Hébergement
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Le site web et l'API sont hébergés par Render Services, Inc., 525
+        Brannan Street, Suite 300, San Francisco, CA 94107, États-Unis (<a
+          href="https://render.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >render.com</a
+        >).<br />
+        Base de données, authentification et stockage : Supabase Inc. (<a
+          href="https://supabase.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >supabase.com</a
+        >).
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Propriété intellectuelle
-    </h2>
-    <p class="text-secondary leading-7">
-      Les textes, visuels, logos, éléments graphiques, parcours et structures de
-      page publiés sur ce site appartiennent à KRAAK Consulting ou sont utilisés
-      avec une autorisation adaptée. Toute reproduction, adaptation ou
-      réutilisation substantielle sans autorisation écrite préalable est
-      interdite.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Propriété intellectuelle
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Les textes, visuels, logos, éléments graphiques, parcours et structures
+        de page publiés sur ce site appartiennent à KRAAK Consulting ou sont
+        utilisés avec une autorisation adaptée. Toute reproduction, adaptation
+        ou réutilisation substantielle sans autorisation écrite préalable est
+        interdite.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Informations et responsabilité
-    </h2>
-    <p class="text-secondary leading-7">
-      KRAAK Consulting s'efforce de publier des informations exactes,
-      compréhensibles et à jour. Les contenus du site ont une vocation
-      d'information, d'orientation et de prise de contact : ils ne constituent
-      ni une garantie de visa, d'admission, de financement, d'emploi, de
-      résultat administratif, ni un avis juridique individualisé.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Informations et responsabilité
+      </h2>
+      <p class="leading-7 text-slate-600">
+        KRAAK Consulting s'efforce de publier des informations exactes,
+        compréhensibles et à jour. Les contenus du site ont une vocation
+        d'information, d'orientation et de prise de contact : ils ne constituent
+        ni une garantie de visa, d'admission, de financement, d'emploi, de
+        résultat administratif, ni un avis juridique individualisé.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Données personnelles et cookies
-    </h2>
-    <p class="text-secondary leading-7">
-      Les traitements de données personnelles, la conservation des demandes de
-      contact et l'usage éventuel de cookies de mesure d'audience sont détaillés
-      dans notre
-      <a
-        [routerLink]="'privacyPolicy' | localizedPublicPath"
-        class="text-brand-blue hover:underline"
-        >politique de confidentialité</a
-      >.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Données personnelles et cookies
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Les traitements de données personnelles, la conservation des demandes de
+        contact et l'usage éventuel de cookies de mesure d'audience sont
+        détaillés dans notre
+        <a
+          [routerLink]="'privacyPolicy' | localizedPublicPath"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >politique de confidentialité</a
+        >.
+      </p>
+    </section>
+  </article>
 </main>
 
 <kraak-cta-banner

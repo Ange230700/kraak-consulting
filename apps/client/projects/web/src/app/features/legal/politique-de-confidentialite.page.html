@@ -1,193 +1,211 @@
-<main class="mx-auto max-w-3xl px-6 py-16 md:px-12">
-  <h1 class="text-primary mb-8 text-3xl font-bold tracking-tight">
-    Politique de confidentialité
-  </h1>
+<main class="bg-brand-white px-4 py-16 sm:px-6 lg:py-24">
+  <article
+    class="mx-auto max-w-5xl rounded-[2rem] border border-slate-200/80 bg-white px-6 py-8 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-46px_rgba(18,43,74,0.28)] sm:px-8 sm:py-10 lg:px-12 lg:py-14"
+  >
+    <h1
+      class="text-brand-navy mb-5 text-4xl leading-tight font-semibold tracking-tight sm:text-5xl"
+    >
+      Politique de confidentialité
+    </h1>
 
-  <p class="text-secondary mb-8 leading-7">
-    Dernière mise à jour : mai 2026. Cette politique explique comment KRAAK
-    Consulting protège les données personnelles transmises via son site public,
-    ses formulaires, ses échanges par e-mail, WhatsApp ou téléphone, et ses
-    outils légers de mesure d'audience.
-  </p>
+    <p class="max-w-3xl text-lg leading-8 text-slate-600">
+      Dernière mise à jour : mai 2026. Cette politique explique comment KRAAK
+      Consulting protège les données personnelles transmises via son site
+      public, ses formulaires, ses échanges par e-mail, WhatsApp ou téléphone,
+      et ses outils légers de mesure d'audience.
+    </p>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Responsable du traitement
-    </h2>
-    <p class="text-secondary leading-7">
-      Le responsable du traitement est KRAAK Consulting, structure en cours
-      d'immatriculation. Pour toute demande relative à vos données, contactez
-      KRAAK Consulting à
-      <a
-        [href]="contactEmailHref"
-        kraakPublicConversion="direct_email_click"
-        [kraakPublicConversionPayload]="{
-          contact_method: 'email',
-          contact_surface: 'privacy_controller',
-          link_url: contactEmailHref,
-        }"
-        class="text-brand-blue hover:underline"
-        >{{ contactEmail }}</a
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Responsable du traitement
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Le responsable du traitement est KRAAK Consulting, structure en cours
+        d'immatriculation. Pour toute demande relative à vos données, contactez
+        KRAAK Consulting à
+        <a
+          [href]="contactEmailHref"
+          kraakPublicConversion="direct_email_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'email',
+            contact_surface: 'privacy_controller',
+            link_url: contactEmailHref,
+          }"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >{{ contactEmail }}</a
+        >
+        ou au
+        <a
+          [href]="contactPhoneHref"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >{{ contactPhoneDisplay }}</a
+        >.
+      </p>
+    </section>
+
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Données collectées
+      </h2>
+      <p class="mb-3 leading-7 text-slate-600">
+        Nous collectons uniquement les informations nécessaires à la
+        compréhension et au traitement de votre demande :
+      </p>
+      <ul
+        class="marker:text-brand-blue list-disc space-y-2 pl-6 leading-7 text-slate-600"
       >
-      ou au
-      <a [href]="contactPhoneHref" class="text-brand-blue hover:underline">{{
-        contactPhoneDisplay
-      }}</a
-      >.
-    </p>
-  </section>
+        <li>Nom, prénom ou nom de l'organisation si vous les indiquez</li>
+        <li>Adresse e-mail et numéro de téléphone transmis volontairement</li>
+        <li>Objet, catégorie, contexte et contenu de la demande</li>
+        <li>
+          Informations utiles à l'orientation demandée, sans dossier sensible
+          complet
+        </li>
+        <li>
+          Données techniques limitées liées à la sécurité ou à la mesure
+          d'audience
+        </li>
+      </ul>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Données collectées</h2>
-    <p class="text-secondary mb-3 leading-7">
-      Nous collectons uniquement les informations nécessaires à la compréhension
-      et au traitement de votre demande :
-    </p>
-    <ul class="text-secondary list-disc space-y-1 pl-6 leading-7">
-      <li>Nom, prénom ou nom de l'organisation si vous les indiquez</li>
-      <li>Adresse e-mail et numéro de téléphone transmis volontairement</li>
-      <li>Objet, catégorie, contexte et contenu de la demande</li>
-      <li>
-        Informations utiles à l'orientation demandée, sans dossier sensible
-        complet
-      </li>
-      <li>
-        Données techniques limitées liées à la sécurité ou à la mesure
-        d'audience
-      </li>
-    </ul>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Finalités et bases légales
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Vos données sont utilisées pour répondre à vos demandes, proposer une
+        orientation adaptée, organiser un échange si nécessaire, sécuriser le
+        site et améliorer la clarté du parcours public. Les bases légales
+        mobilisées sont votre consentement lorsque vous nous contactez
+        volontairement, l'intérêt légitime de KRAAK Consulting à traiter et
+        suivre les demandes, et, si nécessaire, l'exécution de mesures
+        précontractuelles ou le respect d'une obligation légale.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Finalités et bases légales
-    </h2>
-    <p class="text-secondary leading-7">
-      Vos données sont utilisées pour répondre à vos demandes, proposer une
-      orientation adaptée, organiser un échange si nécessaire, sécuriser le site
-      et améliorer la clarté du parcours public. Les bases légales mobilisées
-      sont votre consentement lorsque vous nous contactez volontairement,
-      l'intérêt légitime de KRAAK Consulting à traiter et suivre les demandes,
-      et, si nécessaire, l'exécution de mesures précontractuelles ou le respect
-      d'une obligation légale.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Consentement de contact
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Lorsque vous envoyez un formulaire, un e-mail, un message WhatsApp ou
+        que vous appelez KRAAK Consulting, vous consentez à ce que KRAAK
+        Consulting utilise les informations transmises pour analyser votre
+        demande, vous répondre et assurer un suivi raisonnable. Vous pouvez
+        retirer ce consentement ou demander l'arrêt du suivi à tout moment via
+        les coordonnées indiquées sur cette page.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Consentement de contact
-    </h2>
-    <p class="text-secondary leading-7">
-      Lorsque vous envoyez un formulaire, un e-mail, un message WhatsApp ou que
-      vous appelez KRAAK Consulting, vous consentez à ce que KRAAK Consulting
-      utilise les informations transmises pour analyser votre demande, vous
-      répondre et assurer un suivi raisonnable. Vous pouvez retirer ce
-      consentement ou demander l'arrêt du suivi à tout moment via les
-      coordonnées indiquées sur cette page.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Partage des données
+      </h2>
+      <p class="leading-7 text-slate-600">
+        KRAAK Consulting ne revend pas vos données personnelles. Elles ne sont
+        pas transmises à des tiers à des fins commerciales. Elles peuvent
+        uniquement être communiquées à des prestataires techniques nécessaires
+        au fonctionnement du site, aux outils de contact, à l'hébergement, à la
+        sécurité ou à la mesure d'audience, ou lorsqu'une obligation légale
+        l'impose.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Partage des données</h2>
-    <p class="text-secondary leading-7">
-      KRAAK Consulting ne revend pas vos données personnelles. Elles ne sont pas
-      transmises à des tiers à des fins commerciales. Elles peuvent uniquement
-      être communiquées à des prestataires techniques nécessaires au
-      fonctionnement du site, aux outils de contact, à l'hébergement, à la
-      sécurité ou à la mesure d'audience, ou lorsqu'une obligation légale
-      l'impose.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Durée de conservation
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Les données issues des formulaires, e-mails, appels et messages de
+        contact sont conservées pendant 3 ans à compter de la dernière
+        interaction utile, sauf demande de suppression recevable, obligation
+        légale contraire ou nécessité de conserver une preuve liée à un échange
+        en cours.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Durée de conservation
-    </h2>
-    <p class="text-secondary leading-7">
-      Les données issues des formulaires, e-mails, appels et messages de contact
-      sont conservées pendant 3 ans à compter de la dernière interaction utile,
-      sauf demande de suppression recevable, obligation légale contraire ou
-      nécessité de conserver une preuve liée à un échange en cours.
-    </p>
-  </section>
-
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">Vos droits</h2>
-    <p class="text-secondary mb-3 leading-7">
-      Selon le droit applicable, vous pouvez demander :
-    </p>
-    <ul class="text-secondary list-disc space-y-1 pl-6 leading-7">
-      <li>L'accès à vos données</li>
-      <li>La rectification d'une information inexacte</li>
-      <li>L'effacement de données qui n'ont plus à être conservées</li>
-      <li>La limitation ou l'opposition à certains traitements</li>
-      <li>La portabilité des données que vous avez fournies</li>
-      <li>Le retrait de votre consentement pour les traitements concernés</li>
-    </ul>
-    <p class="text-secondary mt-3 leading-7">
-      Pour exercer ces droits, écrivez à
-      <a
-        [href]="contactEmailHref"
-        kraakPublicConversion="direct_email_click"
-        [kraakPublicConversionPayload]="{
-          contact_method: 'email',
-          contact_surface: 'privacy_rights',
-          link_url: contactEmailHref,
-        }"
-        class="text-brand-blue hover:underline"
-        >{{ contactEmail }}</a
-      >. Vous pouvez également introduire une réclamation auprès de l'autorité
-      de contrôle compétente si vous estimez que vos droits ne sont pas
-      respectés.
-    </p>
-  </section>
-
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Cookies et mesure d'audience
-    </h2>
-    <p class="text-secondary leading-7">
-      Le site ne dépose volontairement aucun cookie publicitaire. Google
-      Analytics 4 peut être activé uniquement lorsqu'un identifiant
-      <code class="rounded bg-slate-100 px-1 py-0.5 text-sm"
-        >PUBLIC_GA4_ID</code
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Vos droits
+      </h2>
+      <p class="mb-3 leading-7 text-slate-600">
+        Selon le droit applicable, vous pouvez demander :
+      </p>
+      <ul
+        class="marker:text-brand-blue list-disc space-y-2 pl-6 leading-7 text-slate-600"
       >
-      est configuré pour l'environnement concerné ; sinon, aucun script Google
-      Analytics n'est chargé. Lorsque cette mesure d'audience est active, elle
-      sert à produire des statistiques agrégées sur la navigation publique, avec
-      anonymisation IP configurée côté site. Vous pouvez limiter ou bloquer les
-      cookies et identifiants de mesure depuis les paramètres de votre
-      navigateur.
-    </p>
-  </section>
+        <li>L'accès à vos données</li>
+        <li>La rectification d'une information inexacte</li>
+        <li>L'effacement de données qui n'ont plus à être conservées</li>
+        <li>La limitation ou l'opposition à certains traitements</li>
+        <li>La portabilité des données que vous avez fournies</li>
+        <li>Le retrait de votre consentement pour les traitements concernés</li>
+      </ul>
+      <p class="mt-3 leading-7 text-slate-600">
+        Pour exercer ces droits, écrivez à
+        <a
+          [href]="contactEmailHref"
+          kraakPublicConversion="direct_email_click"
+          [kraakPublicConversionPayload]="{
+            contact_method: 'email',
+            contact_surface: 'privacy_rights',
+            link_url: contactEmailHref,
+          }"
+          class="text-brand-blue font-medium underline-offset-4 hover:underline"
+          >{{ contactEmail }}</a
+        >. Vous pouvez également introduire une réclamation auprès de l'autorité
+        de contrôle compétente si vous estimez que vos droits ne sont pas
+        respectés.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Hébergement et transferts techniques
-    </h2>
-    <p class="text-secondary leading-7">
-      Le site web et l'API sont hébergés par Render Services, Inc. La base de
-      données, l'authentification et le stockage sont fournis par Supabase Inc.
-      Ces prestataires peuvent traiter des données techniques nécessaires à
-      l'hébergement, à la sécurité et à la disponibilité du service. Lorsque des
-      transferts hors de votre pays de résidence sont nécessaires, KRAAK
-      Consulting s'appuie sur les garanties contractuelles et techniques
-      proposées par ses prestataires.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Cookies et mesure d'audience
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Le site ne dépose volontairement aucun cookie publicitaire. Google
+        Analytics 4 peut être activé uniquement lorsqu'un identifiant
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-sm"
+          >PUBLIC_GA4_ID</code
+        >
+        est configuré pour l'environnement concerné ; sinon, aucun script Google
+        Analytics n'est chargé. Lorsque cette mesure d'audience est active, elle
+        sert à produire des statistiques agrégées sur la navigation publique,
+        avec anonymisation IP configurée côté site. Vous pouvez limiter ou
+        bloquer les cookies et identifiants de mesure depuis les paramètres de
+        votre navigateur.
+      </p>
+    </section>
 
-  <section class="mb-10">
-    <h2 class="text-primary mb-3 text-xl font-semibold">
-      Limites des demandes sensibles
-    </h2>
-    <p class="text-secondary leading-7">
-      Le site public n'est pas destiné au dépôt de dossiers administratifs
-      complets, de documents d'identité, de justificatifs financiers ou de
-      données sensibles. Si une analyse approfondie devient nécessaire, KRAAK
-      Consulting vous indiquera le canal approprié et les informations
-      strictement utiles à transmettre.
-    </p>
-  </section>
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Hébergement et transferts techniques
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Le site web et l'API sont hébergés par Render Services, Inc. La base de
+        données, l'authentification et le stockage sont fournis par Supabase
+        Inc. Ces prestataires peuvent traiter des données techniques nécessaires
+        à l'hébergement, à la sécurité et à la disponibilité du service. Lorsque
+        des transferts hors de votre pays de résidence sont nécessaires, KRAAK
+        Consulting s'appuie sur les garanties contractuelles et techniques
+        proposées par ses prestataires.
+      </p>
+    </section>
+
+    <section class="mt-10 border-t border-slate-200/80 pt-8">
+      <h2 class="text-brand-navy mb-3 text-xl font-semibold tracking-tight">
+        Limites des demandes sensibles
+      </h2>
+      <p class="leading-7 text-slate-600">
+        Le site public n'est pas destiné au dépôt de dossiers administratifs
+        complets, de documents d'identité, de justificatifs financiers ou de
+        données sensibles. Si une analyse approfondie devient nécessaire, KRAAK
+        Consulting vous indiquera le canal approprié et les informations
+        strictement utiles à transmettre.
+      </p>
+    </section>
+  </article>
 </main>
 
 <kraak-cta-banner
