@@ -1,28 +1,35 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
-  [ngStyle]="heroBackgroundStyle"
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8">
   <div
-    aria-hidden="true"
-    class="from-brand-navy/10 via-brand-navy/35 to-brand-navy/80 absolute inset-0 bg-linear-to-b"
-  ></div>
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
 
-  <div class="relative z-10 mx-auto max-w-6xl px-4 lg:px-6">
     <div
-      class="border-brand-blue/15 bg-brand-white/95 grid gap-10 rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] backdrop-blur-sm lg:grid-cols-[1.05fr_0.95fr] lg:px-10"
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.96fr)_minmax(24rem,1.04fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
     >
-      <div>
-        <p
-          class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
         >
           FAQ
-        </p>
+        </span>
+
         <h1
-          class="text-brand-navy mt-4 text-4xl leading-tight font-bold lg:text-5xl"
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
         >
           Les réponses utiles pour avancer avec plus de clarté.
         </h1>
-        <p class="text-brand-navy mt-5 max-w-2xl text-lg leading-relaxed">
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/76 sm:text-lg sm:leading-8"
+        >
           Retrouvez les questions les plus fréquentes sur nos services, nos
           parcours, les modalités d'accompagnement et les délais de réponse. Si
           votre besoin est spécifique, nous vous orientons directement.
@@ -37,9 +44,10 @@
             <i class="pi pi-comments" aria-hidden="true"></i>
             <span>Parler à un conseiller KRAAK</span>
           </a>
+
           <a
             [routerLink]="'services' | localizedPublicPath"
-            class="kr-button-ghost inline-flex items-center justify-center gap-2"
+            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/16 bg-white/10 px-5 py-3 text-sm font-semibold text-white shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl transition hover:bg-white/15"
             aria-label="Voir les services KRAAK"
           >
             <span>Voir nos services</span>
@@ -48,38 +56,73 @@
         </div>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article class="rounded-card bg-neutral-50 p-5">
-          <i
-            class="pi pi-compass text-brand-blue text-2xl"
-            aria-hidden="true"
-          ></i>
-          <h2 class="mt-4 text-lg font-bold">Orientation rapide</h2>
-          <p class="text-brand-navy mt-2 text-sm leading-6">
-            Clarifiez votre besoin avant d'investir du temps ou de l'énergie
-            dans la mauvaise piste.
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5">
-          <i
-            class="pi pi-globe text-brand-navy-soft text-2xl"
-            aria-hidden="true"
-          ></i>
-          <h2 class="mt-4 text-lg font-bold">Ouverture internationale</h2>
-          <p class="text-brand-navy mt-2 text-sm leading-6">
-            Programmes, projets et mobilité: nous structurons des parcours
-            réalistes et progressifs.
-          </p>
-        </article>
-        <article class="rounded-card bg-neutral-50 p-5 sm:col-span-2">
-          <i class="pi pi-bolt text-brand-gold text-2xl" aria-hidden="true"></i>
-          <h2 class="mt-4 text-lg font-bold">Réponse concrète</h2>
-          <p class="text-brand-navy mt-2 text-sm leading-6">
-            Nous privilégions des réponses courtes, actionnables et reliées à
-            votre prochaine étape utile.
-          </p>
-        </article>
-      </div>
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[31rem]"
+      >
+        <img
+          src="/assets/site-visuals/photos/home-hero-workshop.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_25%,rgba(18,43,74,0.78)_100%)]"
+        ></div>
+
+        <div class="absolute right-5 bottom-5 left-5 grid gap-2 sm:grid-cols-3">
+          <article
+            class="rounded-2xl border border-white/14 bg-slate-950/28 p-4 backdrop-blur-xl"
+          >
+            <i
+              class="pi pi-compass text-brand-cyan text-lg"
+              aria-hidden="true"
+            ></i>
+            <h2 class="mt-3 text-sm font-semibold text-white">
+              Orientation rapide
+            </h2>
+            <p class="mt-2 text-xs leading-5 text-white/72">
+              Clarifiez votre besoin avant d'investir du temps ou de l'énergie
+              dans la mauvaise piste.
+            </p>
+          </article>
+
+          <article
+            class="rounded-2xl border border-white/14 bg-slate-950/28 p-4 backdrop-blur-xl"
+          >
+            <i
+              class="pi pi-globe text-brand-cyan text-lg"
+              aria-hidden="true"
+            ></i>
+            <h2 class="mt-3 text-sm font-semibold text-white">
+              Ouverture internationale
+            </h2>
+            <p class="mt-2 text-xs leading-5 text-white/72">
+              Programmes, projets et mobilité: nous structurons des parcours
+              réalistes et progressifs.
+            </p>
+          </article>
+
+          <article
+            class="rounded-2xl border border-white/14 bg-slate-950/28 p-4 backdrop-blur-xl"
+          >
+            <i
+              class="pi pi-bolt text-brand-gold text-lg"
+              aria-hidden="true"
+            ></i>
+            <h2 class="mt-3 text-sm font-semibold text-white">
+              Réponse concrète
+            </h2>
+            <p class="mt-2 text-xs leading-5 text-white/72">
+              Nous privilégions des réponses courtes, actionnables et reliées à
+              votre prochaine étape utile.
+            </p>
+          </article>
+        </div>
+      </figure>
     </div>
   </div>
 </section>
@@ -90,19 +133,44 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-5xl px-4 text-center lg:px-6">
+<section class="bg-brand-white px-4 py-16 sm:px-6 lg:py-24">
+  <div
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#163c67_58%,#1c4e86_100%)] px-6 py-10 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-42px_rgba(18,43,74,0.48)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/12 pointer-events-none absolute -top-36 -right-20 h-80 w-80 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/8 pointer-events-none absolute -bottom-40 -left-20 h-80 w-80 rounded-full blur-3xl"
+    ></span>
+
     <div
-      class="border-brand-blue/10 rounded-3xl border bg-neutral-50 px-6 py-10 lg:px-10"
+      class="relative z-10 grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12"
     >
-      <h2 class="text-brand-navy text-3xl font-bold lg:text-4xl">
-        Vous ne trouvez pas votre réponse ?
-      </h2>
-      <p class="text-brand-navy mx-auto mt-4 max-w-2xl text-base leading-7">
-        Expliquez-nous votre contexte. Nous vous aidons à identifier la bonne
-        porte d'entrée selon votre besoin, votre profil et vos objectifs.
-      </p>
-      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+      <div class="max-w-3xl">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          Besoin spécifique
+        </span>
+
+        <h2
+          class="mt-6 text-3xl leading-tight font-semibold text-white sm:text-4xl lg:text-5xl"
+        >
+          Vous ne trouvez pas votre réponse ?
+        </h2>
+
+        <p class="mt-5 max-w-2xl text-base leading-7 text-white/74 sm:text-lg">
+          Expliquez-nous votre contexte. Nous vous aidons à identifier la bonne
+          porte d'entrée selon votre besoin, votre profil et vos objectifs.
+        </p>
+      </div>
+
+      <div
+        class="flex w-full flex-col gap-3 sm:flex-row lg:w-auto lg:flex-col xl:flex-row"
+      >
         <a
           [routerLink]="'contact' | localizedPublicPath"
           class="kr-button-primary inline-flex items-center justify-center gap-2"
@@ -111,9 +179,10 @@
           <i class="pi pi-send" aria-hidden="true"></i>
           <span>Nous contacter</span>
         </a>
+
         <a
           [routerLink]="'programs' | localizedPublicPath"
-          class="kr-button-ghost inline-flex items-center justify-center gap-2"
+          class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/16 bg-white/10 px-5 py-3 text-sm font-semibold text-white shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl transition hover:bg-white/15"
           aria-label="Explorer les programmes KRAAK"
         >
           <i class="pi pi-book" aria-hidden="true"></i>
