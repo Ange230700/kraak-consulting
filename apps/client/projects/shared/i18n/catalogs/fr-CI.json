@@ -82,7 +82,8 @@
         "description": "KRAAK Consulting accompagne les étudiants, les professionnels, les entreprises et la diaspora avec des solutions concrètes en formation, en gestion de projets et en immigration.",
         "primaryCta": "Réserver une consultation",
         "secondaryCta": "Découvrir nos programmes",
-        "logoAlt": "Logo KRAAK grand format"
+        "logoAlt": "Logo KRAAK grand format",
+        "imageAlt": "Photo d'un atelier KRAAK Consulting avec des participants en session de travail."
       },
       "need": {
         "eyebrow": "Un besoin concret",

@@ -82,7 +82,8 @@
         "description": "KRAAK Consulting supports students, professionals, businesses and members of the diaspora with practical solutions in training, project management and immigration.",
         "primaryCta": "Book a consultation",
         "secondaryCta": "Explore our programmes",
-        "logoAlt": "Large KRAAK logo"
+        "logoAlt": "Large KRAAK logo",
+        "imageAlt": "KRAAK Consulting workshop with participants in a collaborative working session."
       },
       "need": {
         "eyebrow": "A practical need",

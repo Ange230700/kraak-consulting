@@ -161,16 +161,16 @@ describe('HomePage', () => {
     );
   });
 
-  it('Given the home page component When reading the hero background Then it exposes the expected style object', () => {
+  it('Given the home page When the hero renders Then it presents the KRAAK workshop as real media', () => {
     const fixture = TestBed.createComponent(HomePage);
-    const component = fixture.componentInstance;
+    fixture.detectChanges();
 
-    expect(component.heroBackgroundStyle.background).toContain(
-      'programs-workshop.avif',
-    );
-    expect(component.heroBackgroundStyle.backgroundBlendMode).toBe(
-      'normal, multiply, lighten, normal',
-    );
+    const image = fixture.nativeElement.querySelector(
+      'img[src="/assets/site-visuals/photos/programs-workshop.avif"]',
+    ) as HTMLImageElement | null;
+
+    expect(image).not.toBeNull();
+    expect(image?.getAttribute('alt')).toContain('atelier KRAAK Consulting');
   });
 
   it('Given the home page When it renders Then it lists the key solutions without collapsing them into one service label', () => {

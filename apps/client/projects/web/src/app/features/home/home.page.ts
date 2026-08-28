@@ -6,7 +6,6 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
@@ -14,7 +13,6 @@ import {
   initializeMarketingPageAnimations,
   teardownMarketingPageAnimations,
 } from '../../core/animations/marketing-page-animations';
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
@@ -27,10 +25,6 @@ import {
   KraakI18nService,
   KraakTranslatePipe,
 } from '../../../../../shared/i18n';
-
-const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/programs-workshop.avif',
-);
 
 interface HomeTextTranslation {
   readonly textKey: string;
@@ -106,7 +100,6 @@ const HOME_FAQ_TRANSLATIONS = [
   selector: 'kraak-home-page',
   standalone: true,
   imports: [
-    NgStyle,
     RouterLink,
     ButtonDirective,
     FaqAccordion,
@@ -166,8 +159,6 @@ const HOME_FAQ_TRANSLATIONS = [
   ],
 })
 export default class HomePage implements OnInit, OnDestroy {
-  readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE;
-
   protected readonly keySolutions = HOME_SOLUTION_TRANSLATIONS;
   protected readonly proofItems = HOME_PROOF_TRANSLATIONS;
   protected readonly whyChooseItems = HOME_WHY_CHOOSE_TRANSLATIONS;
