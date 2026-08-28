@@ -1,78 +1,121 @@
 <!-- apps\client\projects\web\src\app\features\contact\contact.page.html -->
 
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
-  [ngStyle]="heroBackgroundStyle"
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
   <div
-    aria-hidden="true"
-    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
-  ></div>
-
-  <div
-    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
   >
-    <div class="max-w-3xl text-left">
-      <p
-        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
-      >
-        {{ 'web.contact.hero.eyebrow' | kraakTranslate }}
-      </p>
-      <h1
-        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
-      >
-        {{ 'web.contact.hero.titleLead' | kraakTranslate }}
-        <span class="text-brand-cyan">{{
-          'web.contact.hero.titleEmphasis' | kraakTranslate
-        }}</span
-        >.
-      </h1>
-      <p
-        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
-      >
-        {{ 'web.contact.hero.description' | kraakTranslate }}
-      </p>
-      <div
-        class="mt-8 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-4"
-      >
-        <a
-          pButton
-          [routerLink]="[]"
-          fragment="contact-form"
-          queryParamsHandling="preserve"
-          [label]="'web.contact.hero.primaryCta' | kraakTranslate"
-          icon="pi pi-send"
-          [attr.aria-label]="
-            'web.contact.hero.primaryCtaAriaLabel' | kraakTranslate
-          "
-          class="kr-button-primary w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase sm:w-auto"
-        ></a>
-        <a
-          pButton
-          [routerLink]="'services' | localizedPublicPath"
-          [label]="'web.contact.hero.secondaryCta' | kraakTranslate"
-          icon="pi pi-compass"
-          [attr.aria-label]="'web.contact.hero.secondaryCta' | kraakTranslate"
-          class="kr-button-ghost border-brand-white/20 bg-brand-white/10 w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md sm:w-auto"
-        ></a>
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(24rem,1.08fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          {{ 'web.contact.hero.eyebrow' | kraakTranslate }}
+        </span>
+
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.contact.hero.titleLead' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.contact.hero.titleEmphasis' | kraakTranslate
+          }}</span
+          >.
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.contact.hero.description' | kraakTranslate }}
+        </p>
+
+        <div
+          class="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4"
+        >
+          <a
+            pButton
+            [routerLink]="[]"
+            fragment="contact-form"
+            queryParamsHandling="preserve"
+            [label]="'web.contact.hero.primaryCta' | kraakTranslate"
+            icon="pi pi-send"
+            [attr.aria-label]="
+              'web.contact.hero.primaryCtaAriaLabel' | kraakTranslate
+            "
+            class="kr-button-primary w-full justify-center sm:w-auto"
+          ></a>
+
+          <a
+            pButton
+            [routerLink]="'services' | localizedPublicPath"
+            [label]="'web.contact.hero.secondaryCta' | kraakTranslate"
+            icon="pi pi-compass"
+            [attr.aria-label]="'web.contact.hero.secondaryCta' | kraakTranslate"
+            class="kr-button-ghost w-full justify-center border-white/16 bg-white/10 text-white backdrop-blur-xl sm:w-auto"
+          ></a>
+        </div>
       </div>
+
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[32rem]"
+      >
+        <img
+          src="/assets/site-visuals/photos/services-coaching.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_32%,rgba(18,43,74,0.44)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/22 px-4 py-3 backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
+      </figure>
     </div>
   </div>
 </section>
 
 <section
   id="contact-form"
-  class="kr-perf-section bg-neutral-50 py-16 lg:py-20"
+  class="kr-perf-section bg-brand-white py-16 lg:py-24"
   kraakRevealOnScroll
   [revealDelayMs]="60"
 >
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
     <div
-      class="border-brand-blue/15 bg-brand-white overflow-hidden rounded-3xl border shadow-[0_24px_60px_rgb(18_43_74/12%)]"
+      class="bg-brand-white overflow-hidden rounded-[2rem] border border-slate-200/80 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-40px_rgba(18,43,74,0.38)]"
     >
-      <div class="flex flex-col lg:min-h-184 lg:flex-row">
+      <div
+        class="grid lg:min-h-[46rem] lg:grid-cols-[minmax(20rem,0.88fr)_minmax(0,1.12fr)]"
+      >
         <aside
-          class="bg-brand-navy relative order-2 min-h-96 flex-1 lg:order-1 lg:min-h-full"
+          class="bg-brand-navy relative order-2 min-h-[28rem] overflow-hidden lg:order-1 lg:min-h-full"
           [attr.aria-label]="'web.contact.details.ariaLabel' | kraakTranslate"
         >
           <img
@@ -85,30 +128,32 @@
           />
 
           <div
-            class="via-brand-navy/30 to-brand-navy/92 absolute inset-0 bg-linear-to-b from-transparent"
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.08)_8%,rgba(18,43,74,0.42)_48%,rgba(18,43,74,0.96)_100%)]"
           ></div>
 
           <div
-            class="relative z-10 flex h-full flex-col justify-end gap-6 p-6 lg:p-10"
+            class="relative z-10 flex h-full flex-col justify-end gap-7 p-6 sm:p-8 lg:p-10 xl:p-12"
           >
             <div>
               <p
-                class="text-brand-cyan text-xs font-semibold tracking-[0.18em] uppercase"
+                class="text-brand-cyan inline-flex min-h-8 items-center rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] uppercase backdrop-blur-xl"
               >
                 {{ 'web.contact.hero.eyebrow' | kraakTranslate }}
               </p>
               <h2
-                class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
+                class="mt-5 max-w-md text-3xl leading-tight font-semibold text-white lg:text-5xl"
               >
                 {{ 'web.contact.details.heading' | kraakTranslate }}
               </h2>
-              <p class="text-brand-white mt-4 text-sm leading-6">
+              <p
+                class="mt-4 max-w-md text-sm leading-6 text-white/78 sm:text-base sm:leading-7"
+              >
                 {{ 'web.contact.details.description' | kraakTranslate }}
               </p>
             </div>
 
             <address class="not-italic">
-              <ul class="text-brand-white space-y-3 text-sm leading-6">
+              <ul class="space-y-4 text-sm leading-6 text-white/86">
                 <li class="flex items-center gap-3">
                   <i
                     class="pi pi-envelope text-brand-cyan"
@@ -194,7 +239,7 @@
                     link_label: social.label,
                     link_url: social.href,
                   }"
-                  class="border-brand-white/35 hover:border-brand-cyan hover:text-brand-cyan text-brand-white bg-brand-white/10 flex h-12 w-12 items-center justify-center rounded-full border shadow-sm transition-all hover:-translate-y-px hover:scale-[1.03]"
+                  class="hover:border-brand-cyan hover:text-brand-cyan flex h-12 w-12 items-center justify-center rounded-full border border-white/16 bg-white/10 text-white shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] transition-all hover:-translate-y-px hover:scale-[1.03]"
                   [attr.aria-label]="social.label"
                   [attr.title]="social.label"
                 >
@@ -208,14 +253,16 @@
           </div>
         </aside>
 
-        <div class="order-1 flex-1 p-6 lg:order-2 lg:p-10">
+        <div class="order-1 bg-white p-6 sm:p-8 lg:order-2 lg:p-12 xl:p-14">
           <div class="mb-8 space-y-3">
             <h2
-              class="text-brand-navy text-3xl leading-tight font-bold lg:text-4xl"
+              class="text-brand-navy max-w-xl text-3xl leading-tight font-semibold lg:text-5xl"
             >
               {{ 'web.contact.form.heading' | kraakTranslate }}
             </h2>
-            <p class="text-brand-navy text-base leading-relaxed">
+            <p
+              class="text-brand-navy max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+            >
               {{ 'web.contact.form.description' | kraakTranslate }}
             </p>
           </div>
@@ -291,7 +338,7 @@
               [formGroup]="form"
               (ngSubmit)="onSubmit()"
               novalidate
-              class="space-y-5"
+              class="space-y-6"
             >
               <div class="grid gap-5 sm:grid-cols-2">
                 <div>
@@ -613,17 +660,36 @@
   </div>
 </section>
 
-<section class="kr-perf-section bg-neutral-50 py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      {{ 'web.contact.coordinates.heading' | kraakTranslate }}
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-2">
-      <div class="text-center">
-        <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">
+<section
+  class="kr-perf-section bg-brand-white px-4 py-16 sm:px-6 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="100"
+>
+  <div
+    class="mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <div class="mx-auto max-w-3xl text-center">
+      <h2
+        class="text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+      >
+        {{ 'web.contact.coordinates.heading' | kraakTranslate }}
+      </h2>
+    </div>
+
+    <div
+      class="mt-10 grid gap-8 border-t border-slate-200 pt-8 md:grid-cols-2 lg:mt-12 lg:grid-cols-3"
+    >
+      <div class="border-t border-slate-200 pt-6 md:border-t-0 md:pt-0">
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-envelope text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
           {{ 'web.contact.coordinates.emailLabel' | kraakTranslate }}
         </h3>
+
         <a
           [href]="contactEmailHref"
           kraakPublicConversion="direct_email_click"
@@ -632,19 +698,30 @@
             contact_surface: 'contact_coordinates',
             link_url: contactEmailHref,
           }"
-          class="kr-link mt-1 block"
+          class="kr-link mt-3 inline-block text-sm font-semibold break-all"
         >
           {{ contactEmail }}
         </a>
       </div>
-      <div class="text-center">
-        <i class="pi pi-whatsapp text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">
+
+      <div class="border-t border-slate-200 pt-6 md:border-t-0 md:pt-0">
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-whatsapp text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
           {{ 'web.contact.coordinates.whatsappLabel' | kraakTranslate }}
         </h3>
-        <a [href]="contactPhoneHref" class="kr-link mt-1 block">
+
+        <a
+          [href]="contactPhoneHref"
+          class="kr-link mt-3 block text-sm font-semibold"
+        >
           {{ contactPhone }}
         </a>
+
         <a
           [href]="whatsappLink"
           target="_blank"
@@ -655,17 +732,26 @@
             contact_surface: 'contact_coordinates',
             link_url: whatsappLink,
           }"
-          class="kr-link mt-2 inline-block"
+          class="kr-link mt-2 inline-block text-sm font-semibold"
         >
           {{ 'web.contact.details.openWhatsApp' | kraakTranslate }}
         </a>
       </div>
-      <div class="text-center md:col-span-2">
-        <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">
+
+      <div
+        class="border-t border-slate-200 pt-6 md:col-span-2 lg:col-span-1 lg:border-t-0 lg:pt-0"
+      >
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-map-marker text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
           {{ 'web.contact.coordinates.areaHeading' | kraakTranslate }}
         </h3>
-        <p class="mt-1 text-neutral-700">
+
+        <p class="text-brand-navy mt-3 max-w-md text-sm leading-6 sm:text-base">
           {{ 'web.contact.coordinates.areaDescription' | kraakTranslate }}
         </p>
       </div>

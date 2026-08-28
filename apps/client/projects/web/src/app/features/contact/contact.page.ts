@@ -1,6 +1,6 @@
 // apps\client\projects\web\src\app\features\contact\contact.page.ts
 
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import {
@@ -26,7 +26,6 @@ import {
   CONTACT_PHONE_HREF,
   CONTACT_VISUAL_URL,
   KRAAK_SOCIAL_LINKS,
-  buildHeroBackgroundStyle,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
@@ -55,10 +54,6 @@ interface ServiceOption {
   responseWorkflow: string;
   fallbackWorkflow: string;
 }
-
-const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/services-coaching.avif',
-);
 
 interface ServiceOptionDefinition {
   readonly translationId:
@@ -118,7 +113,6 @@ const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
   imports: [
     ReactiveFormsModule,
     NgClass,
-    NgStyle,
     ButtonDirective,
     Button,
     InputText,
@@ -147,7 +141,6 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
   protected readonly contactPhone = CONTACT_PHONE_DISPLAY;
   protected readonly contactPhoneHref = CONTACT_PHONE_HREF;
-  protected readonly heroBackgroundStyle = CONTACT_HERO_BACKGROUND_STYLE;
 
   private readonly contactService = inject(ContactService);
   private readonly gsapService = inject(GsapAnimationsService);
