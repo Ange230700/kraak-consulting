@@ -255,6 +255,10 @@ pnpm test:api:journey:strict           # contrat nominal strict en local (strict
 pnpm test:api:journey:strict:staging   # contrat strict contre l'API staging
 ```
 
+La collection source est versionnée sous
+`apps/api/test/collections/`; Newman est épinglé dans les dépendances racine et
+verrouillé par `pnpm-lock.yaml`.
+
 Utilisation recommandée:
 
 - La CI principale et les vérifications rapides utilisent `pnpm test:api:journey`.
