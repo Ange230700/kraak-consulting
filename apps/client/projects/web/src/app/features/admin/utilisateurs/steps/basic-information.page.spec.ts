@@ -120,13 +120,13 @@ describe('BasicInformationPage', () => {
     const phoneInput = host.querySelector('#phone') as HTMLInputElement;
 
     firstNameInput.value = 'Lina';
-    firstNameInput.dispatchEvent(new Event('input'));
+    firstNameInput.dispatchEvent(new globalThis.window.Event('input'));
     lastNameInput.value = 'Nkosi';
-    lastNameInput.dispatchEvent(new Event('input'));
+    lastNameInput.dispatchEvent(new globalThis.window.Event('input'));
     emailInput.value = 'lina@example.com';
-    emailInput.dispatchEvent(new Event('input'));
+    emailInput.dispatchEvent(new globalThis.window.Event('input'));
     phoneInput.value = '+243810000000';
-    phoneInput.dispatchEvent(new Event('input'));
+    phoneInput.dispatchEvent(new globalThis.window.Event('input'));
     fixture.detectChanges();
 
     expect(formState.state().firstName).toBe('Lina');

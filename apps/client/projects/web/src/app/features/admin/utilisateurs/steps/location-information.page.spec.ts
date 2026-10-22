@@ -108,15 +108,15 @@ describe('LocationInformationPage', () => {
     ) as HTMLInputElement;
 
     countryInput.value = 'RDC';
-    countryInput.dispatchEvent(new Event('input'));
+    countryInput.dispatchEvent(new globalThis.window.Event('input'));
     cityInput.value = 'Lubumbashi';
-    cityInput.dispatchEvent(new Event('input'));
+    cityInput.dispatchEvent(new globalThis.window.Event('input'));
     postalCodeInput.value = '00001';
-    postalCodeInput.dispatchEvent(new Event('input'));
+    postalCodeInput.dispatchEvent(new globalThis.window.Event('input'));
     address1Input.value = '10 Avenue Kasa-Vubu';
-    address1Input.dispatchEvent(new Event('input'));
+    address1Input.dispatchEvent(new globalThis.window.Event('input'));
     address2Input.value = 'Bloc A';
-    address2Input.dispatchEvent(new Event('input'));
+    address2Input.dispatchEvent(new globalThis.window.Event('input'));
     fixture.detectChanges();
 
     expect(formState.state().country).toBe('RDC');

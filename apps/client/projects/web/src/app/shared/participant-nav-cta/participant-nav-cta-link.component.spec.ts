@@ -2,7 +2,7 @@
 
 import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { environment } from '../../../environments/environment';
@@ -88,6 +88,7 @@ describe('ParticipantNavCtaLink', () => {
     it('When the CTA is clicked Then it emits the activation event', async () => {
       const fixture = TestBed.createComponent(ParticipantNavCtaLink);
       const emitSpy = vi.fn();
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       fixture.componentInstance.activated.subscribe(emitSpy);
       fixture.detectChanges();
