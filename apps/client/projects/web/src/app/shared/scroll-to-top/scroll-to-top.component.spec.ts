@@ -100,7 +100,7 @@ describe('ScrollToTop', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
 
       // Simulate scroll event
-      globalThis.dispatchEvent(new Event('scroll'));
+      globalThis.dispatchEvent(new globalThis.window.Event('scroll'));
 
       expect(updateVisibilitySpy).toHaveBeenCalled();
 

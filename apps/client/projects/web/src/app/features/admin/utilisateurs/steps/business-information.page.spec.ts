@@ -131,11 +131,11 @@ describe('BusinessInformationPage', () => {
     ) as HTMLInputElement;
 
     roleSelect.value = 'trainer';
-    roleSelect.dispatchEvent(new Event('change'));
+    roleSelect.dispatchEvent(new globalThis.window.Event('change'));
     positionInput.value = 'Coach principal';
-    positionInput.dispatchEvent(new Event('input'));
+    positionInput.dispatchEvent(new globalThis.window.Event('input'));
     departmentInput.value = 'Programme';
-    departmentInput.dispatchEvent(new Event('input'));
+    departmentInput.dispatchEvent(new globalThis.window.Event('input'));
     fixture.detectChanges();
 
     expect(formState.state().role).toBe('trainer');

@@ -386,8 +386,8 @@ describe('GsapAnimationsService', () => {
       document.body.appendChild(article);
 
       service.initializeInteractiveCardAnimations();
-      article.dispatchEvent(new Event('mouseenter'));
-      article.dispatchEvent(new Event('mouseleave'));
+      article.dispatchEvent(new globalThis.window.Event('mouseenter'));
+      article.dispatchEvent(new globalThis.window.Event('mouseleave'));
 
       expect(toSpy).toHaveBeenCalledTimes(2);
       article.remove();
@@ -509,10 +509,10 @@ describe('GsapAnimationsService', () => {
       document.body.appendChild(button);
 
       service.initializeButtonTransitions();
-      button.dispatchEvent(new Event('mouseenter'));
-      button.dispatchEvent(new Event('mouseleave'));
-      button.dispatchEvent(new Event('mousedown'));
-      button.dispatchEvent(new Event('mouseup'));
+      button.dispatchEvent(new globalThis.window.Event('mouseenter'));
+      button.dispatchEvent(new globalThis.window.Event('mouseleave'));
+      button.dispatchEvent(new globalThis.window.Event('mousedown'));
+      button.dispatchEvent(new globalThis.window.Event('mouseup'));
 
       expect(killTweensSpy).toHaveBeenCalledTimes(2);
       expect(toSpy).toHaveBeenCalledTimes(4);
@@ -564,8 +564,8 @@ describe('GsapAnimationsService', () => {
       document.body.appendChild(input);
 
       service.initializeFormFieldAnimations();
-      input.dispatchEvent(new Event('focus'));
-      input.dispatchEvent(new Event('blur'));
+      input.dispatchEvent(new globalThis.window.Event('focus'));
+      input.dispatchEvent(new globalThis.window.Event('blur'));
 
       expect(toSpy).toHaveBeenCalledTimes(2);
       input.remove();
@@ -747,8 +747,8 @@ describe('GsapAnimationsService', () => {
       document.body.appendChild(svg);
 
       service.initializeIconAnimations();
-      svg.dispatchEvent(new Event('mouseenter'));
-      svg.dispatchEvent(new Event('mouseleave'));
+      svg.dispatchEvent(new globalThis.window.Event('mouseenter'));
+      svg.dispatchEvent(new globalThis.window.Event('mouseleave'));
 
       expect(toSpy).toHaveBeenCalledTimes(2);
       svg.remove();
@@ -1098,8 +1098,8 @@ describe('GsapAnimationsService', () => {
       document.body.appendChild(link);
 
       service.initializeMouseFollowAnimations();
-      link.dispatchEvent(new Event('mouseenter'));
-      link.dispatchEvent(new Event('mouseleave'));
+      link.dispatchEvent(new globalThis.window.Event('mouseenter'));
+      link.dispatchEvent(new globalThis.window.Event('mouseleave'));
 
       expect(toSpy).toHaveBeenCalledTimes(2);
       link.remove();
