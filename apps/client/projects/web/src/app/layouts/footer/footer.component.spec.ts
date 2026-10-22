@@ -71,13 +71,13 @@ describe('Footer', () => {
 
   it('Given the footer remains below the viewport, When the scroll handler runs, Then animations stay pending', () => {
     const fixture = TestBed.createComponent(Footer);
-    const HTMLElementConstructor =
-      fixture.nativeElement.ownerDocument.defaultView?.HTMLElement;
-    if (!HTMLElementConstructor) {
+    const ElementConstructor =
+      fixture.nativeElement.ownerDocument.defaultView?.Element;
+    if (!ElementConstructor) {
       throw new Error('The footer test requires a browser DOM window.');
     }
     vi.spyOn(
-      HTMLElementConstructor.prototype,
+      ElementConstructor.prototype,
       'getBoundingClientRect',
     ).mockReturnValue({
       bottom: 1_200,
