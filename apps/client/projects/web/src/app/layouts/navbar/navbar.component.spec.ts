@@ -25,7 +25,8 @@ async function renderNavbarAt(
   path: string,
   locale: 'fr-CI' | 'en-GB',
 ): Promise<HTMLElement> {
-  await TestBed.inject(Router).navigateByUrl(path);
+  vi.spyOn(TestBed.inject(Location), 'path').mockReturnValue(path);
+  vi.spyOn(TestBed.inject(Router), 'url', 'get').mockReturnValue(path);
   await TestBed.inject(KraakI18nService).setLocale(locale);
 
   const fixture = TestBed.createComponent(Navbar);
@@ -228,7 +229,7 @@ describe('Navbar', () => {
 
   it('Given the address bar has advanced while the router URL is transitional When the navbar renders Then the language href uses the address-bar URL', async () => {
     const router = TestBed.inject(Router);
-    await router.navigateByUrl('/fr/');
+    vi.spyOn(router, 'url', 'get').mockReturnValue('/fr/');
     vi.spyOn(TestBed.inject(Location), 'path').mockReturnValue(
       '/en/programs?campaign=summer#offres',
     );

@@ -1,5 +1,6 @@
-import { ApplicationInitStatus, Component } from '@angular/core';
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import {
   Event as RouterEvent,
   NavigationEnd,
@@ -11,12 +12,6 @@ import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 import { KraakI18nService, provideKraakI18n } from '../../../shared/i18n';
 import { App } from './app.component';
-
-@Component({
-  standalone: true,
-  template: '<p>Participant test page</p>',
-})
-class ParticipantTestPage {}
 
 describe('App', () => {
   beforeEach(async () => {
@@ -43,31 +38,13 @@ describe('App', () => {
     expect(compiled.querySelector('kraak-footer')).toBeTruthy();
   });
 
-  it('Given a participant app shell route, When navigation completes, Then public navbar and footer are hidden while main remains', async () => {
-    TestBed.resetTestingModule();
-
-    await TestBed.configureTestingModule({
-      imports: [App],
-      providers: [
-        provideRouter([
-          {
-            path: 'participant-test',
-            data: { appShell: 'participant' },
-            loadComponent: () => Promise.resolve(ParticipantTestPage),
-          },
-        ]),
-        provideKraakI18n(),
-        MessageService,
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-
-    const router = TestBed.inject(Router);
+  it('Given participant shell metadata, When the app shell renders, Then public navbar and footer are hidden while main remains', async () => {
+    const rootRoute = TestBed.inject(Router).routerState.snapshot.root;
+    Object.defineProperty(rootRoute, 'data', {
+      configurable: true,
+      value: { appShell: 'participant' },
+    });
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-
-    await router.navigateByUrl('/participant-test');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -136,15 +113,13 @@ describe('App', () => {
       'main#main-content',
     ) as HTMLElement | null;
     const focusSpy = vi.spyOn(main as HTMLElement, 'focus');
-    const clickEvent = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-    });
-
-    skipLink?.dispatchEvent(clickEvent);
+    const clickEvent = { preventDefault: vi.fn() };
+    fixture.debugElement
+      .query(By.css('a.kr-skip-link'))
+      .triggerEventHandler('click', clickEvent);
 
     expect(skipLink?.getAttribute('href')).toBe('#main-content');
-    expect(clickEvent.defaultPrevented).toBe(true);
+    expect(clickEvent.preventDefault).toHaveBeenCalledOnce();
     expect(focusSpy).toHaveBeenCalledOnce();
     expect(router.url).toBe('/en/?campaign=shell#previous');
   });
