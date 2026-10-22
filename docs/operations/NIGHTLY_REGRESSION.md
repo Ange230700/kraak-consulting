@@ -46,6 +46,14 @@ Newman est épinglé dans les dépendances de développement racine et installé
 volée. Le rapport JSON est un artefact généré sous
 `test-results/postman/`, et n'est jamais utilisé comme entrée.
 
+Le script staging génère aussi `test-results/postman/api-user-journey.junit.xml`.
+Le workflow publie uniquement ce rapport JUnit dans l'artefact
+`newman-strict-staging`, conservé sept jours, même si des assertions échouent.
+Le JSON brut reste local au runner : il peut contenir des identifiants, des
+jetons ou des corps de requêtes et de réponses.
+Un échec d'assertion conserve son statut bloquant ; la publication du rapport
+ne transforme pas le run en succès.
+
 ## Règles d'usage
 
 - La CI principale garde uniquement les vérifications rapides et les tests non bloquants.

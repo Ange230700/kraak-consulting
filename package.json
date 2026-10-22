@@ -51,7 +51,7 @@
     "test:api": "pnpm --filter @kraak/api test",
     "test:api:journey": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json",
     "test:api:journey:strict": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json --env-var strictAuth=true",
-    "test:api:journey:strict:staging": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json --env-var strictAuth=true --env-var baseUrl=https://kraak-api-staging.onrender.com",
+    "test:api:journey:strict:staging": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json,junit --reporter-json-export test-results/postman/api-user-journey.report.json --reporter-junit-export test-results/postman/api-user-journey.junit.xml --env-var strictAuth=true --env-var baseUrl=https://kraak-api-staging.onrender.com",
     "test:libs": "pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test",
     "test:api:unit": "pnpm --filter @kraak/api test:unit",
     "test:integration": "pnpm --filter @kraak/api test:integration",
