@@ -1,6 +1,5 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import BasicInformationPage from './basic-information.page';
@@ -9,6 +8,12 @@ import {
   provideKraakI18n,
 } from '../../../../../../../shared/i18n';
 import { UserFormStateService } from '../user-form-state.service';
+
+function dispatchDomEvent(target: Element, type: string): void {
+  const event = target.ownerDocument.createEvent('Event');
+  event.initEvent(type, true, true);
+  target.dispatchEvent(event);
+}
 
 describe('BasicInformationPage', () => {
   beforeEach(async () => {
@@ -121,21 +126,13 @@ describe('BasicInformationPage', () => {
     const phoneInput = host.querySelector('#phone') as HTMLInputElement;
 
     firstNameInput.value = 'Lina';
-    fixture.debugElement
-      .query(By.css('#firstName'))
-      .triggerEventHandler('input', { target: firstNameInput });
+    dispatchDomEvent(firstNameInput, 'input');
     lastNameInput.value = 'Nkosi';
-    fixture.debugElement
-      .query(By.css('#lastName'))
-      .triggerEventHandler('input', { target: lastNameInput });
+    dispatchDomEvent(lastNameInput, 'input');
     emailInput.value = 'lina@example.com';
-    fixture.debugElement
-      .query(By.css('#email'))
-      .triggerEventHandler('input', { target: emailInput });
+    dispatchDomEvent(emailInput, 'input');
     phoneInput.value = '+243810000000';
-    fixture.debugElement
-      .query(By.css('#phone'))
-      .triggerEventHandler('input', { target: phoneInput });
+    dispatchDomEvent(phoneInput, 'input');
     fixture.detectChanges();
 
     expect(formState.state().firstName).toBe('Lina');

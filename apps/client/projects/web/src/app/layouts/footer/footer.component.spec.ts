@@ -1,12 +1,10 @@
 import { ApplicationInitStatus } from '@angular/core';
-import { By } from '@angular/platform-browser';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { AnalyticsService } from '../../core/analytics/analytics.service';
-import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { Footer } from './footer.component';
 
 interface FooterAnimationInternals {
@@ -72,7 +70,16 @@ describe('Footer', () => {
   });
 
   it('Given the footer remains below the viewport, When the scroll handler runs, Then animations stay pending', () => {
-    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+    const fixture = TestBed.createComponent(Footer);
+    const HTMLElementConstructor =
+      fixture.nativeElement.ownerDocument.defaultView?.HTMLElement;
+    if (!HTMLElementConstructor) {
+      throw new Error('The footer test requires a browser DOM window.');
+    }
+    vi.spyOn(
+      HTMLElementConstructor.prototype,
+      'getBoundingClientRect',
+    ).mockReturnValue({
       bottom: 1_200,
       height: 300,
       left: 0,
@@ -87,8 +94,6 @@ describe('Footer', () => {
       globalThis.window,
       'removeEventListener',
     );
-    const fixture = TestBed.createComponent(Footer);
-
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
@@ -230,19 +235,17 @@ describe('Footer', () => {
 
   it('Given an English footer CTA When the visitor activates it Then analytics receives its localized label and path', async () => {
     vi.spyOn(TestBed.inject(Router), 'url', 'get').mockReturnValue('/en/');
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     await TestBed.inject(KraakI18nService).setLocale('en-GB');
 
     const fixture = TestBed.createComponent(Footer);
     fixture.detectChanges();
 
-    const ctaTracking = fixture.debugElement
-      .queryAll(By.directive(PublicConversionTrackingDirective))
-      .map((debugElement) =>
-        debugElement.injector.get(PublicConversionTrackingDirective),
-      )
-      .find((tracking) => tracking.eventName === 'footer_cta_click');
-
-    ctaTracking?.trackClick();
+    const ctaLink = fixture.nativeElement.querySelector(
+      'a.kr-footer-fade-left',
+    ) as HTMLAnchorElement | null;
+    expect(ctaLink).not.toBeNull();
+    ctaLink?.click();
 
     expect(analyticsServiceMock.trackEvent).toHaveBeenCalledWith(
       'footer_cta_click',
