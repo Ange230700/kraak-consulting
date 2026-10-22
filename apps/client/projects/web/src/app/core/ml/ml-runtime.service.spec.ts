@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
@@ -23,6 +23,10 @@ function asSpyTarget(service: MlRuntimeService): MlRuntimeServiceSpyTarget {
   return service as unknown as MlRuntimeServiceSpyTarget;
 }
 describe('MlRuntimeService', () => {
+  beforeEach(() => {
+    MlRuntimeService.resetForTests();
+  });
+
   afterEach(() => {
     MlRuntimeService.resetForTests();
     vi.doUnmock('@tensorflow/tfjs');

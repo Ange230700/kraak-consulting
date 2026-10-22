@@ -2,7 +2,8 @@
 
 import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
+import { vi } from 'vitest';
 
 import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { ParticipantNavCta } from './participant-nav-cta.component';
@@ -64,6 +65,7 @@ describe('ParticipantNavCta', () => {
     it('When the CTA link is clicked Then the wrapper emits the activation event', async () => {
       const fixture = TestBed.createComponent(ParticipantNavCta);
       const emitSpy = vi.fn();
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       fixture.componentInstance.activated.subscribe(emitSpy);
       fixture.detectChanges();
