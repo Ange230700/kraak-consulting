@@ -3,7 +3,6 @@
 import { Location } from '@angular/common';
 import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 
@@ -115,9 +114,7 @@ describe('Navbar', () => {
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
 
-    fixture.debugElement
-      .query(By.css('button[aria-label="Ouvrir le menu de navigation"]'))
-      .triggerEventHandler('click');
+    (button as HTMLButtonElement).click();
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('true');
@@ -125,17 +122,9 @@ describe('Navbar', () => {
       'Fermer le menu de navigation',
     );
 
-    const firstNavLink = host.querySelector('a.kr-nav-link');
+    const firstNavLink = host.querySelector<HTMLAnchorElement>('a.kr-nav-link');
     expect(firstNavLink).not.toBeNull();
-    fixture.debugElement
-      .query(By.css('a.kr-nav-link'))
-      .triggerEventHandler('click', {
-        button: 0,
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-      });
+    firstNavLink?.click();
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');

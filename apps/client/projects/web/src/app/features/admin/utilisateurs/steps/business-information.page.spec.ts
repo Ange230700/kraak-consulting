@@ -1,6 +1,5 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import BusinessInformationPage from './business-information.page';
@@ -9,6 +8,12 @@ import {
   provideKraakI18n,
 } from '../../../../../../../shared/i18n';
 import { UserFormStateService } from '../user-form-state.service';
+
+function dispatchDomEvent(target: Element, type: string): void {
+  const event = target.ownerDocument.createEvent('Event');
+  event.initEvent(type, true, true);
+  target.dispatchEvent(event);
+}
 
 describe('BusinessInformationPage', () => {
   beforeEach(async () => {
@@ -132,17 +137,11 @@ describe('BusinessInformationPage', () => {
     ) as HTMLInputElement;
 
     roleSelect.value = 'trainer';
-    fixture.debugElement
-      .query(By.css('#role'))
-      .triggerEventHandler('change', { target: roleSelect });
+    dispatchDomEvent(roleSelect, 'change');
     positionInput.value = 'Coach principal';
-    fixture.debugElement
-      .query(By.css('#position'))
-      .triggerEventHandler('input', { target: positionInput });
+    dispatchDomEvent(positionInput, 'input');
     departmentInput.value = 'Programme';
-    fixture.debugElement
-      .query(By.css('#department'))
-      .triggerEventHandler('input', { target: departmentInput });
+    dispatchDomEvent(departmentInput, 'input');
     fixture.detectChanges();
 
     expect(formState.state().role).toBe('trainer');

@@ -1,6 +1,5 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import {
   Event as RouterEvent,
   NavigationEnd,
@@ -113,13 +112,14 @@ describe('App', () => {
       'main#main-content',
     ) as HTMLElement | null;
     const focusSpy = vi.spyOn(main as HTMLElement, 'focus');
-    const clickEvent = { preventDefault: vi.fn() };
-    fixture.debugElement
-      .query(By.css('a.kr-skip-link'))
-      .triggerEventHandler('click', clickEvent);
+    const clickEvents: MouseEvent[] = [];
+    skipLink?.addEventListener('click', (event) => {
+      clickEvents.push(event);
+    });
+    skipLink?.click();
 
     expect(skipLink?.getAttribute('href')).toBe('#main-content');
-    expect(clickEvent.preventDefault).toHaveBeenCalledOnce();
+    expect(clickEvents[0]?.defaultPrevented).toBe(true);
     expect(focusSpy).toHaveBeenCalledOnce();
     expect(router.url).toBe('/en/?campaign=shell#previous');
   });
