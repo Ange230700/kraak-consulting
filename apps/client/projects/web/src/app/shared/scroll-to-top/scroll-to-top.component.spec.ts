@@ -1,4 +1,4 @@
-import { ApplicationInitStatus, DebugElement } from '@angular/core';
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,7 +8,6 @@ import { ScrollToTop } from './scroll-to-top.component';
 describe('ScrollToTop', () => {
   let component: ScrollToTop;
   let fixture: ComponentFixture<ScrollToTop>;
-  let debugElement: DebugElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -20,7 +19,6 @@ describe('ScrollToTop', () => {
 
     fixture = TestBed.createComponent(ScrollToTop);
     component = fixture.componentInstance;
-    debugElement = fixture.debugElement;
     fixture.detectChanges();
   });
 
@@ -34,7 +32,9 @@ describe('ScrollToTop', () => {
     });
 
     it('Given the component renders When the DOM is inspected Then it should display a button', () => {
-      const button = debugElement.nativeElement.querySelector('button');
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        'button',
+      );
       expect(button).toBeTruthy();
     });
 
@@ -42,7 +42,9 @@ describe('ScrollToTop', () => {
       await TestBed.inject(KraakI18nService).setLocale('fr-CI');
       fixture.detectChanges();
 
-      const button = debugElement.nativeElement.querySelector('button');
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        'button',
+      );
 
       expect(button?.getAttribute('aria-label')).toBe(
         'Remonter vers le haut de la page',
@@ -53,7 +55,9 @@ describe('ScrollToTop', () => {
       await TestBed.inject(KraakI18nService).setLocale('en-GB');
       fixture.detectChanges();
 
-      const button = debugElement.nativeElement.querySelector('button');
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        'button',
+      );
 
       expect(button?.getAttribute('aria-label')).toBe('Back to top');
     });
@@ -61,7 +65,9 @@ describe('ScrollToTop', () => {
 
   describe('Visibility', () => {
     it('Given the page is at the top When the component renders Then it should initially hide the button', () => {
-      const button = debugElement.nativeElement.querySelector('button');
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        'button',
+      );
       expect(button?.classList.contains('opacity-0')).toBe(true);
       expect(button?.classList.contains('pointer-events-none')).toBe(true);
       expect(button?.getAttribute('tabindex')).toBe('-1');
@@ -119,7 +125,9 @@ describe('ScrollToTop', () => {
       fixture.detectChanges();
 
       expect(component.isVisible).toBe(true);
-      const button = debugElement.nativeElement.querySelector('button');
+      const button = (fixture.nativeElement as HTMLElement).querySelector(
+        'button',
+      );
       expect(button?.getAttribute('tabindex')).toBe('0');
       expect(button?.getAttribute('aria-hidden')).toBeNull();
     });
