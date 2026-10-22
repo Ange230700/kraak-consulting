@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-22
 source_of_truth: true
 ---
 
@@ -172,6 +172,10 @@ check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
   un `git checkout -b feat/x main` casserait la chaîne d'intégration.
 - La PR de release `staging → main` doit être traitée comme un livrable
   (titre clair, changelog, vérification finale avant tag).
+- Une promotion est bloquée si `main` n'est pas un ancêtre de `staging`.
+  L'état de divergence courant, son historique commun et la procédure
+  reproductible de vérification sont consignés dans
+  [`STAGING_VALIDATION.md`](../operations/STAGING_VALIDATION.md#81-controle-de-la-lignee-des-branches).
 
 ### Migration
 

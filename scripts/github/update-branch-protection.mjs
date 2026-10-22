@@ -65,6 +65,7 @@ const COMMON_CHECKS_STAGING = [
 const COMMON_CHECKS_MAIN = [
   'SonarCloud Analysis',
   'SonarCloud Code Analysis',
+  'Branch Lineage',
   'Tests unitaires',
   'Tests E2E',
   'Android Debug APK',
