@@ -12,10 +12,14 @@ const scriptPath = path.join(
   'github',
   'check-branch-lineage.mjs',
 );
+const gitExecutionEnvironment = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+);
 
 function runGit(cwd, args) {
   const result = spawnSync('git', args, {
     cwd,
+    env: gitExecutionEnvironment,
     encoding: 'utf8',
   });
 
@@ -62,6 +66,7 @@ function withRepository(run) {
 function runLineageCheck(repositoryPath, ...args) {
   return spawnSync(process.execPath, [scriptPath, ...args], {
     cwd: repositoryPath,
+    env: gitExecutionEnvironment,
     encoding: 'utf8',
   });
 }
