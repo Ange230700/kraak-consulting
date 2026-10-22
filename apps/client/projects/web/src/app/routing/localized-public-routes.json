@@ -89,7 +89,7 @@
       "id": "blog",
       "component": "blog",
       "seoPath": "blog",
-      "includeInSitemap": true,
+      "includeInSitemap": false,
       "paths": {
         "fr-CI": "/fr/blog",
         "en-GB": "/en/blog"

@@ -50,17 +50,17 @@ L'état produit courant ne positionne plus ce blog comme une surface MVP active 
 - ARC-14 déclare la surface vitrine publique complète sans route `/blog` ;
 - ARC-15 confirme que `/ressources` est une page d'orientation statique, pas un
   blog, un média ou une bibliothèque publique d'articles ;
-- les routes Angular publiques ne déclarent plus `/blog` ni `/blog/:slug` ;
-- les routes de prerender et les entrées de sitemap ne publient plus d'URL de
-  blog ;
+- le sitemap exclut `/fr/blog`, mais le modèle Angular déclare encore les
+  routes `/fr/blog`, `/en/blog` et `/blog/:slug` ; le prerender les conserve
+  également jusqu'au nettoyage dédié décrit en section 4.3 ;
 - le test E2E du blog saute explicitement quand la route est indisponible ;
 - le fichier `blog.data.ts` reste consommé par le tableau de bord
   d'administration.
 
 Le risque n'est donc pas seulement du code mort. Une suppression globale du
-domaine `blog` casserait aussi une dépendance encore active côté administration,
-tandis qu'une restauration du blog public rouvrirait une surface éditoriale
-hors MVP.
+domaine `blog` casserait aussi une dépendance encore active côté administration.
+Le retrait des routes publiques reste à réaliser dans la PR dédiée ; le
+sitemap, lui, ne doit pas promouvoir le blog comme contenu public indexable.
 
 ## 2 · Décision
 
