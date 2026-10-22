@@ -25,26 +25,16 @@ globalThis.IntersectionObserver = class IntersectionObserver implements Intersec
   readonly rootMargin = '0px';
   readonly thresholds: readonly number[] = [];
 
-  constructor(
-    callback: IntersectionObserverCallback,
-    options?: IntersectionObserverInit,
-  ) {
-    void callback;
-    void options;
-  }
-
   disconnect() {
     /* No-op: In tests, we don't need to perform cleanup since the mock isn't tracking real visibility changes */
   }
-  observe(target: Element) {
-    void target;
+  observe() {
     /* No-op: In tests, we don't need to track element visibility; components handle mock responses directly */
   }
   takeRecords(): IntersectionObserverEntry[] {
     return [];
   }
-  unobserve(target: Element) {
-    void target;
+  unobserve() {
     /* No-op: In tests, there are no real observers to remove; components handle mock responses directly */
   }
 };
