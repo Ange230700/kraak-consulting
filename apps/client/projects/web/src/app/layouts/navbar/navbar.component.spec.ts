@@ -112,7 +112,7 @@ describe('Navbar', () => {
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
 
-    button?.dispatchEvent(new globalThis.window.Event('click'));
+    button?.dispatchEvent(new button.ownerDocument.defaultView!.Event('click'));
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('true');
@@ -122,7 +122,9 @@ describe('Navbar', () => {
 
     const firstNavLink = host.querySelector('a.kr-nav-link');
     expect(firstNavLink).not.toBeNull();
-    firstNavLink?.dispatchEvent(new globalThis.window.Event('click'));
+    firstNavLink?.dispatchEvent(
+      new firstNavLink.ownerDocument.defaultView!.Event('click'),
+    );
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
