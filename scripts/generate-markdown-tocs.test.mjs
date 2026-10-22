@@ -47,6 +47,8 @@ function createFixtureRepository() {
   const root = mkdtempSync(path.join(os.tmpdir(), 'kraak-markdown-tocs-'));
 
   runGit(root, ['init']);
+  runGit(root, ['config', 'user.name', 'KRAAK Test']);
+  runGit(root, ['config', 'user.email', 'kraak-test@example.invalid']);
   writeMarkdown(
     root,
     '.gitignore',
