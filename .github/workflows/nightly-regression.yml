@@ -37,6 +37,15 @@ jobs:
         run: >
           pnpm test:api:journey:strict:staging
 
+      - name: Conserver le rapport JUnit Newman strict
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: newman-strict-staging
+          path: test-results/postman/api-user-journey.junit.xml
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Publier le résumé Newman strict
         if: always()
         run: |
