@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-22
 source_of_truth: true
 ---
 
@@ -21,6 +21,10 @@ source_of_truth: true
   - [6 · Smoke tests recommandés](#6-smoke-tests-recommandes)
   - [7 · En cas d'échec](#7-en-cas-dechec)
   - [8 · Préparer une release](#8-preparer-une-release)
+    - [8.1 Contrôle de la lignée des branches](#81-controle-de-la-lignee-des-branches)
+      - [Écart constaté le 22 octobre 2026](#ecart-constate-le-22-octobre-2026)
+      - [Vérification de l'état courant](#verification-de-letat-courant)
+    - [8.2 Promotion](#82-promotion)
   - [9 · Rollback staging](#9-rollback-staging)
     - [9.1 · Correction applicative](#91-correction-applicative)
     - [9.2 · Rollback exceptionnel](#92-rollback-exceptionnel)
@@ -195,6 +199,59 @@ gh pr create --base staging --head "$(git branch --show-current)"
 ```
 
 ## 8 · Préparer une release
+
+### 8.1 Contrôle de la lignée des branches
+
+Avant de créer une PR de release, récupérer les deux branches et examiner leur
+relation :
+
+```bash
+git fetch origin main staging --no-tags
+pnpm check:branch-lineage
+node scripts/github/check-branch-lineage.mjs \
+  --require-main-ancestor origin/staging origin/main
+```
+
+Le contrôle strict réussit uniquement si `main` est un ancêtre de `staging`.
+La PR de release vers `main` exécute le même contrôle dans le workflow
+`Release Branch Lineage`; le check `Branch Lineage` est requis par le ruleset
+`Protect Main`. La source doit être la branche `staging` du dépôt courant.
+
+#### Écart constaté le 22 octobre 2026
+
+Les références distantes ont été actualisées avant le contrôle. L'état observé
+est :
+
+| Référence        | Commit                                     | Date du commit | Avance exclusive |
+| ---------------- | ------------------------------------------ | -------------- | ---------------: |
+| `origin/staging` | `28669f2f738409723f5a4cf65e7cce77cb287a6a` | 2026-09-08     |      269 commits |
+| `origin/main`    | `fc46d62600510685b8930e1ddbf2b85f9fc9ad61` | 2026-05-24     |      139 commits |
+
+Le dernier ancêtre commun est
+`71e06904a12de4f22597da3577c4d275df3feb29` (2026-05-17). Aucun des deux tips
+n'est ancêtre de l'autre. La comparaison de patchs (`git cherry`) identifie
+15 changements équivalents, mais aussi 254 changements propres à `staging` et
+123 propres à `main`. Le seul compteur de commits ne permet donc pas de conclure
+à un simple retard de release.
+
+Cette divergence est documentée et conservée intentionnellement jusqu'à une
+revue de contenu et une décision de réconciliation. Ne pas fusionner, rebaser,
+réinitialiser ou pousser l'une des branches sur l'autre pour contourner le
+contrôle. Tant que la lignée stricte échoue, aucune release `staging → main`
+n'est autorisée ; la réconciliation doit faire l'objet d'un plan validé et
+traçable avant toute modification de ces branches permanentes.
+
+#### Vérification de l'état courant
+
+```bash
+pnpm check:branch-lineage
+```
+
+La commande rapporte les tips, l'ancêtre commun et les compteurs sans modifier
+les références Git. Pour une promotion, le contrôle strict ci-dessus est
+obligatoire et échoue sur l'état divergent courant.
+
+### 8.2 Promotion
 
 Quand staging est validée :
 
