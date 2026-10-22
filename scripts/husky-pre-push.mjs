@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import process from 'node:process';
 
+import { getGitHookChildEnvironment } from './git-hook-environment.mjs';
 import { getChangedFiles, resolveBaseRef } from './workspace-git-utils.mjs';
 
 function runCommand(command, args, label) {
@@ -9,6 +10,7 @@ function runCommand(command, args, label) {
   const useShell = process.platform === 'win32';
 
   const result = spawnSync(command, args, {
+    env: getGitHookChildEnvironment(),
     stdio: 'inherit',
     shell: useShell,
   });
