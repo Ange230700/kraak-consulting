@@ -21,6 +21,7 @@ module.exports = defineConfig(
   },
   {
     files: [
+      'projects/web/vitest.setup.ts',
       'projects/web/src/**/*.ts',
       'projects/mobile/src/**/*.ts',
       'projects/shared/**/*.ts',
