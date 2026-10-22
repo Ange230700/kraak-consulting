@@ -1,5 +1,6 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import LocationInformationPage from './location-information.page';
@@ -108,25 +109,25 @@ describe('LocationInformationPage', () => {
     ) as HTMLInputElement;
 
     countryInput.value = 'RDC';
-    countryInput.dispatchEvent(
-      new countryInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#country'))
+      .triggerEventHandler('input', { target: countryInput });
     cityInput.value = 'Lubumbashi';
-    cityInput.dispatchEvent(
-      new cityInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#city'))
+      .triggerEventHandler('input', { target: cityInput });
     postalCodeInput.value = '00001';
-    postalCodeInput.dispatchEvent(
-      new postalCodeInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#postalCode'))
+      .triggerEventHandler('input', { target: postalCodeInput });
     address1Input.value = '10 Avenue Kasa-Vubu';
-    address1Input.dispatchEvent(
-      new address1Input.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#addressLine1'))
+      .triggerEventHandler('input', { target: address1Input });
     address2Input.value = 'Bloc A';
-    address2Input.dispatchEvent(
-      new address2Input.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#addressLine2'))
+      .triggerEventHandler('input', { target: address2Input });
     fixture.detectChanges();
 
     expect(formState.state().country).toBe('RDC');

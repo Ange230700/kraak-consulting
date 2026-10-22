@@ -1,5 +1,6 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import BasicInformationPage from './basic-information.page';
@@ -120,21 +121,21 @@ describe('BasicInformationPage', () => {
     const phoneInput = host.querySelector('#phone') as HTMLInputElement;
 
     firstNameInput.value = 'Lina';
-    firstNameInput.dispatchEvent(
-      new firstNameInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#firstName'))
+      .triggerEventHandler('input', { target: firstNameInput });
     lastNameInput.value = 'Nkosi';
-    lastNameInput.dispatchEvent(
-      new lastNameInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#lastName'))
+      .triggerEventHandler('input', { target: lastNameInput });
     emailInput.value = 'lina@example.com';
-    emailInput.dispatchEvent(
-      new emailInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#email'))
+      .triggerEventHandler('input', { target: emailInput });
     phoneInput.value = '+243810000000';
-    phoneInput.dispatchEvent(
-      new phoneInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#phone'))
+      .triggerEventHandler('input', { target: phoneInput });
     fixture.detectChanges();
 
     expect(formState.state().firstName).toBe('Lina');

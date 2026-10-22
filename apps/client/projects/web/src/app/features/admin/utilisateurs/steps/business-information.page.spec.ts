@@ -1,5 +1,6 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import BusinessInformationPage from './business-information.page';
@@ -131,17 +132,17 @@ describe('BusinessInformationPage', () => {
     ) as HTMLInputElement;
 
     roleSelect.value = 'trainer';
-    roleSelect.dispatchEvent(
-      new roleSelect.ownerDocument.defaultView!.Event('change'),
-    );
+    fixture.debugElement
+      .query(By.css('#role'))
+      .triggerEventHandler('change', { target: roleSelect });
     positionInput.value = 'Coach principal';
-    positionInput.dispatchEvent(
-      new positionInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#position'))
+      .triggerEventHandler('input', { target: positionInput });
     departmentInput.value = 'Programme';
-    departmentInput.dispatchEvent(
-      new departmentInput.ownerDocument.defaultView!.Event('input'),
-    );
+    fixture.debugElement
+      .query(By.css('#department'))
+      .triggerEventHandler('input', { target: departmentInput });
     fixture.detectChanges();
 
     expect(formState.state().role).toBe('trainer');

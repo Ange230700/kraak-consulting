@@ -98,13 +98,27 @@ describe('ScrollToTop', () => {
 
     it('Given the page emits a scroll event When the listener runs Then it should update visibility', () => {
       const updateVisibilitySpy = vi.spyOn(component, 'updateVisibility');
+      component.ngOnDestroy();
+      const addEventListenerSpy = vi.spyOn(
+        globalThis.window,
+        'addEventListener',
+      );
+      component.ngOnInit();
+      const scrollListener = addEventListenerSpy.mock.calls.find(
+        ([eventName]) => eventName === 'scroll',
+      )?.[1];
 
-      // Simulate scroll event
-      globalThis.window.dispatchEvent(new globalThis.window.Event('scroll'));
+      expect(scrollListener).toBeDefined();
+      if (typeof scrollListener === 'function') {
+        scrollListener.call(globalThis.window, new Event('scroll'));
+      } else {
+        scrollListener?.handleEvent(new Event('scroll'));
+      }
 
       expect(updateVisibilitySpy).toHaveBeenCalled();
 
       updateVisibilitySpy.mockRestore();
+      addEventListenerSpy.mockRestore();
     });
 
     it('Given the scroll position is past the threshold When visibility updates Then the button should be visible', () => {

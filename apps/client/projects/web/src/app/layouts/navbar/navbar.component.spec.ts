@@ -3,6 +3,7 @@
 import { Location } from '@angular/common';
 import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 
@@ -103,6 +104,7 @@ describe('Navbar', () => {
   it('Given le menu mobile est fermé, When on clique sur le bouton menu, Then il s ouvre puis se referme au clic sur un lien', () => {
     const fixture = TestBed.createComponent(Navbar);
     fixture.detectChanges();
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
     const host = fixture.nativeElement as HTMLElement;
     const button = host.querySelector(
@@ -112,7 +114,9 @@ describe('Navbar', () => {
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
 
-    button?.dispatchEvent(new button.ownerDocument.defaultView!.Event('click'));
+    fixture.debugElement
+      .query(By.css('button[aria-label="Ouvrir le menu de navigation"]'))
+      .triggerEventHandler('click');
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('true');
@@ -122,9 +126,15 @@ describe('Navbar', () => {
 
     const firstNavLink = host.querySelector('a.kr-nav-link');
     expect(firstNavLink).not.toBeNull();
-    firstNavLink?.dispatchEvent(
-      new firstNavLink.ownerDocument.defaultView!.Event('click'),
-    );
+    fixture.debugElement
+      .query(By.css('a.kr-nav-link'))
+      .triggerEventHandler('click', {
+        button: 0,
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+      });
     fixture.detectChanges();
 
     expect(button?.getAttribute('aria-expanded')).toBe('false');
