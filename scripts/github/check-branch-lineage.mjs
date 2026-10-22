@@ -2,8 +2,14 @@
 
 import { spawnSync } from 'node:child_process';
 
+import { resolveGitExecutable } from '../workspace-git-utils.mjs';
+
+const gitExecutable = resolveGitExecutable({
+  errorPrefix: '[branch-lineage]',
+});
+
 function runGit(args) {
-  const result = spawnSync('git', args, {
+  const result = spawnSync(gitExecutable, args, {
     encoding: 'utf8',
     shell: false,
   });
@@ -19,7 +25,7 @@ function runGit(args) {
 
 function isAncestor(ancestorRef, descendantRef) {
   const result = spawnSync(
-    'git',
+    gitExecutable,
     ['merge-base', '--is-ancestor', ancestorRef, descendantRef],
     {
       encoding: 'utf8',
