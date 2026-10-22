@@ -2,13 +2,25 @@
  * Vitest setup file to mock browser APIs required by GSAP and other libraries
  */
 
-import { vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 
-Object.defineProperty(globalThis, 'Event', {
-  configurable: true,
-  writable: true,
-  value: globalThis.window.Event,
-});
+function alignEventConstructor(): void {
+  const browserEvent = globalThis.window?.Event;
+
+  if (!browserEvent) {
+    return;
+  }
+
+  Object.defineProperty(globalThis, 'Event', {
+    configurable: true,
+    writable: true,
+    value: browserEvent,
+  });
+}
+
+alignEventConstructor();
+beforeEach(alignEventConstructor);
+afterEach(alignEventConstructor);
 
 // Mock matchMedia for ScrollTrigger
 Object.defineProperty(globalThis, 'matchMedia', {
