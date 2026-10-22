@@ -119,6 +119,12 @@ services:
       - type: redirect
         source: /resources/
         destination: /fr/ressources
+      - type: redirect
+        source: /blog
+        destination: /fr/blog
+      - type: redirect
+        source: /blog/
+        destination: /fr/blog
     buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web:staging && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
     envVars:
       - key: CLIENT_API_BASE_URL
@@ -227,6 +233,12 @@ services:
       - type: redirect
         source: /resources/
         destination: /fr/ressources
+      - type: redirect
+        source: /blog
+        destination: /fr/blog
+      - type: redirect
+        source: /blog/
+        destination: /fr/blog
     buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
     envVars:
       - key: CLIENT_API_BASE_URL
