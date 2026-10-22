@@ -131,11 +131,17 @@ describe('BusinessInformationPage', () => {
     ) as HTMLInputElement;
 
     roleSelect.value = 'trainer';
-    roleSelect.dispatchEvent(new globalThis.window.Event('change'));
+    roleSelect.dispatchEvent(
+      new roleSelect.ownerDocument.defaultView!.Event('change'),
+    );
     positionInput.value = 'Coach principal';
-    positionInput.dispatchEvent(new globalThis.window.Event('input'));
+    positionInput.dispatchEvent(
+      new positionInput.ownerDocument.defaultView!.Event('input'),
+    );
     departmentInput.value = 'Programme';
-    departmentInput.dispatchEvent(new globalThis.window.Event('input'));
+    departmentInput.dispatchEvent(
+      new departmentInput.ownerDocument.defaultView!.Event('input'),
+    );
     fixture.detectChanges();
 
     expect(formState.state().role).toBe('trainer');
