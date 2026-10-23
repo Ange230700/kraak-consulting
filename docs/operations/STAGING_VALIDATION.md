@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-10-22
+last_reviewed: 2026-10-23
 source_of_truth: true
 ---
 
@@ -151,6 +151,31 @@ pnpm supabase db push
 Règle stricte : les migrations staging doivent être appliquées avant de valider un comportement applicatif qui dépend du nouveau schéma.
 
 ## 6 · Smoke tests recommandés
+
+La CI exécute la suite Playwright sur Chromium, Firefox et WebKit, ainsi que
+sur les profils web responsive Pixel 5 et iPhone 13. Ces profils ne constituent
+pas des tests de l'application native Ionic/Capacitor.
+Le check requis `Tests E2E` ne réussit que si les cinq jobs réussissent.
+
+Les jobs utilisent l'image `mcr.microsoft.com/playwright:v1.59.1-noble`,
+avec navigateurs et dépendances système préinstallés. Aucun
+`playwright install --with-deps` ne doit être exécuté dans ces jobs.
+La version exacte de `@playwright/test`, le lockfile et l'image doivent évoluer
+ensemble ; `pnpm test:workspace` vérifie leur alignement.
+
+Les deux configurations fixent la locale du navigateur à `fr-CI` pour les
+assertions françaises ; les scénarios `/en/` continuent à vérifier la
+traduction anglaise explicitement. Les parcours fonctionnels utilisent
+`prefers-reduced-motion: reduce` pour ne pas dépendre du calendrier des
+transitions ; ils ne valident pas le rendu animé. Les comportements GSAP
+restent couverts par leurs tests unitaires. Les interactions de navigation
+ouvrent le menu mobile avant d'utiliser les liens masqués.
+Le bootstrap SSR active `withEventReplay()` : un scénario retarde le JavaScript
+et vérifie qu'un clic sur le menu effectué avant hydratation est bien rejoué.
+Chaque job conserve ses captures, traces et
+rapports sous l'artefact `playwright-results-<profil>` pendant quatorze jours.
+Les erreurs de contraste sérieuses ou critiques restent bloquantes, y compris
+dans le pied de page.
 
 Vérifier au minimum :
 

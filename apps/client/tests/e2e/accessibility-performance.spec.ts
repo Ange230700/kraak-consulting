@@ -97,35 +97,6 @@ const isTransientNavigationError = (error: unknown): boolean => {
   );
 };
 
-const mobileFooterContrastFragments = [
-  "L'excellence opérationnelle au service du développement humain",
-  'Tous droits réservés',
-  'Mentions légales',
-  'Politique de confidentialité',
-  'FAQ',
-];
-
-const isKnownMobileFooterContrastViolation = (violation: {
-  id: string;
-  impact: string | null;
-  nodes: Array<{ html?: string }>;
-}): boolean => {
-  if (violation.id !== 'color-contrast' || violation.impact !== 'serious') {
-    return false;
-  }
-
-  if (violation.nodes.length === 0) {
-    return false;
-  }
-
-  return violation.nodes.every((node) => {
-    const html = node.html ?? '';
-    return mobileFooterContrastFragments.some((fragment) =>
-      html.includes(fragment),
-    );
-  });
-};
-
 const analyzeWithRetry = async (
   page: InstanceType<typeof AxeBuilder>['page'],
 ) => {
@@ -135,6 +106,7 @@ const analyzeWithRetry = async (
     try {
       return await new AxeBuilder({ page }).analyze();
     } catch (error) {
+      console.warn('Analyse Axe interrompue pendant une navigation.', error);
       if (!isTransientNavigationError(error) || attempt === maxAttempts) {
         throw error;
       }
@@ -154,7 +126,7 @@ const analyzeWithRetry = async (
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(180000);
     const results: RouteReport[] = [];
 
@@ -173,7 +145,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
         { timeout: 30000 },
       );
 
-      // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
+      // Stabilise les animations avant la mesure du contraste.
       await page.addStyleTag({
         content:
           '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}.kr-perf-section,section,figure.reveal-on-scroll,h1,h2,main{opacity:1 !important;transform:none !important;filter:none !important;}',
@@ -193,8 +165,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       }));
       const blockingViolations = axe.violations.filter(
         (violation) =>
-          (violation.impact === 'critical' || violation.impact === 'serious') &&
-          !isKnownMobileFooterContrastViolation(violation),
+          violation.impact === 'critical' || violation.impact === 'serious',
       );
 
       const perf = await page.evaluate<PerfSnapshot>(() => {
@@ -218,7 +189,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       // WebKit peut parfois retourner domContentLoadedEventEnd a 0; on valide alors via le meilleur jalon dispo.
       expect(Math.max(perf.domContentLoadedMs, perf.loadMs)).toBeGreaterThan(0);
       expect(perf.loadMs).toBeGreaterThan(0);
-      expect(blockingViolations).toHaveLength(0);
+      expect.soft(blockingViolations, routeCheck.route).toHaveLength(0);
 
       results.push({
         route: routeCheck.route,
@@ -229,7 +200,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       });
     }
 
-    const outputDirectory = resolve(process.cwd(), 'test-results', 'qat-06');
+    const outputDirectory = testInfo.outputPath('qat-06');
     mkdirSync(outputDirectory, { recursive: true });
 
     const outputFile = resolve(

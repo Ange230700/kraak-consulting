@@ -1,5 +1,5 @@
 # Pipeline CI — kraak-group monorepo
-# Déclenché sur push vers main et sur les pull requests ciblant main.
+# Déclenché sur push et pull request vers staging et main.
 # Couvre : format, lint, build, tests unitaires et integration.
 
 name: CI
@@ -237,24 +237,89 @@ jobs:
         run: pnpm test:integration
 
   # ──────────────────────────────────────────────
-  # Check E2E requis par la protection de branche
-  #
-  # Note: la suite E2E Playwright web est exécutée par le hook husky
-  # pre-push (`pnpm test:e2e:web`), donc tout commit poussé a déjà été
-  # validé localement. Le job CI conserve uniquement le check requis par
-  # la protection de branche pour éviter les échecs d'orchestration CI
-  # (installation Playwright, navigateurs, serveur statique...) qui ne
-  # reproduisent pas la fiabilité de l'exécution locale.
+  # Navigateurs et dépendances système préinstallés, sans téléchargement en CI.
   # ──────────────────────────────────────────────
+  e2e-browsers:
+    name: E2E (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --ipc=host
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            config: playwright.config.ts
+          - project: firefox
+            config: playwright.config.ts
+          - project: webkit
+            config: playwright.config.ts
+          - project: chrome-android
+            config: playwright.mobile.config.ts
+          - project: safari-iphone
+            config: playwright.mobile.config.ts
+    permissions:
+      contents: read
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      KRAAK_E2E_BASE_URL: http://localhost:4200
+      CLIENT_API_BASE_URL: http://localhost:3000
+      CLIENT_SITE_URL: http://localhost:4200
+      KRAAK_E2E_START_WEB_SERVER: 'true'
+      KRAAK_E2E_WEB_SERVER_URL: http://localhost:4200
+      KRAAK_E2E_WEB_SERVER_COMMAND: node ../../scripts/generate-client-runtime-config.mjs --env local && pnpm exec ng serve web --configuration local --port 4200 --prebundle=false --live-reload=false
+      CLIENT_FEATURE_PARTICIPANT_AREA: 'true'
+      KRAAK_E2E_EXPECT_PARTICIPANT_AREA: 'true'
+      KRAAK_E2E_EXPECT_PARTICIPANT_CTA: 'true'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Construire les packages workspace
+        run: pnpm -r --filter "./packages/**" build
+
+      - name: Vérifier le typage des configurations Playwright
+        run: pnpm --filter @kraak/client exec tsc --noEmit --skipLibCheck --target es2022 --module commonjs --moduleResolution node --esModuleInterop playwright.config.ts playwright.mobile.config.ts
+
+      - name: Exécuter les tests E2E
+        timeout-minutes: 25
+        run: pnpm --filter @kraak/client exec playwright test --config=${{ matrix.config }} --project=${{ matrix.project }} --global-timeout=1200000
+
+      - name: Sauvegarder les preuves Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: playwright-results-${{ matrix.project }}
+          path: |
+            apps/client/test-results/
+            apps/client/playwright-report/
+          retention-days: 14
+
   e2e:
     name: Tests E2E
     runs-on: ubuntu-latest
-    needs: lint
+    needs: e2e-browsers
+    if: ${{ always() }}
     permissions:
       contents: read
     steps:
-      - name: Statut E2E CI
-        run: echo "Tests E2E check reported successfully."
+      - name: Vérifier tous les navigateurs
+        env:
+          E2E_RESULT: ${{ needs.e2e-browsers.result }}
+        run: test "$E2E_RESULT" = success
 
   # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)

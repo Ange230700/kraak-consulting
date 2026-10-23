@@ -21,7 +21,7 @@ test.describe('Auth flow - connexion, inscription et reset', () => {
         page.getByRole('textbox', { name: 'Adresse email' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('textbox', { name: 'Mot de passe' }),
+        page.getByLabel('Mot de passe', { exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole('link', { name: 'Créer un compte' }),

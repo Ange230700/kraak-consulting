@@ -35,6 +35,18 @@ describe('Footer', () => {
     vi.restoreAllMocks();
   });
 
+  it('Given le pied de page sombre, When les textes secondaires sont affichés, Then ils utilisent une couleur lisible', () => {
+    const fixture = TestBed.createComponent(Footer);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('.text-neutral-500')).toBeNull();
+    expect(host.querySelector('.text-neutral-600')).toBeNull();
+    expect(host.querySelectorAll('.text-neutral-400').length).toBeGreaterThan(
+      0,
+    );
+  });
+
   it('Given the footer is rendered, When it enters the viewport, Then both animation classes are activated and the scroll listener is cleaned', () => {
     const addListenerSpy = vi.spyOn(globalThis.window, 'addEventListener');
     const removeListenerSpy = vi.spyOn(

@@ -12,7 +12,10 @@ import {
   TitleStrategy,
   withViewTransitions,
 } from '@angular/router';
-import { provideClientHydration } from '@angular/platform-browser';
+import {
+  provideClientHydration,
+  withEventReplay,
+} from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
@@ -41,7 +44,7 @@ export const appConfig: ApplicationConfig = {
       useClass: KraakErrorHandler,
     },
     provideRouter(routes, withViewTransitions()),
-    provideClientHydration(),
+    provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
     providePrimeNG({
       theme: {

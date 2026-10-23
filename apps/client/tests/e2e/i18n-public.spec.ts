@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { getLanguageSelector } from './navigation';
+
 const FRENCH_NAVIGATION_LABELS = [
   'ACCUEIL',
   'SERVICES',
@@ -15,10 +17,6 @@ const ENGLISH_NAVIGATION_LABELS = [
   'ABOUT',
   'CONTACT',
 ];
-
-function getLanguageSelector(page: Page, accessibleName: RegExp) {
-  return page.getByRole('group', { name: accessibleName });
-}
 
 async function expectNavigationLabels(
   page: Page,
@@ -69,7 +67,10 @@ test.describe('Internationalisation publique de la page d’accueil', () => {
   }) => {
     await page.goto('/fr/', { waitUntil: 'domcontentloaded' });
 
-    const languageSelector = getLanguageSelector(page, /langue|language/i);
+    const languageSelector = await getLanguageSelector(
+      page,
+      /langue|language/i,
+    );
     const englishLink = languageSelector.getByRole('link', {
       name: /anglais|english/i,
     });
@@ -100,7 +101,10 @@ test.describe('Internationalisation publique de la page d’accueil', () => {
 
     const header = page.getByRole('banner');
     const navList = header.locator('ul').first();
-    const languageSelector = getLanguageSelector(page, /choose language/i);
+    const languageSelector = await getLanguageSelector(
+      page,
+      /choose language/i,
+    );
     const navListBox = await navList.boundingBox();
     const languageBox = await languageSelector.boundingBox();
 
@@ -131,19 +135,25 @@ test.describe('Internationalisation publique de la page d’accueil', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const englishLink = getLanguageSelector(page, /langue|language/i).getByRole(
-      'link',
-      { name: /anglais|english/i },
-    );
+    const englishLink = (
+      await getLanguageSelector(page, /langue|language/i)
+    ).getByRole('link', { name: /anglais|english/i });
 
+    await expect(englishLink).toHaveAttribute(
+      'href',
+      '/en/programs?campaign=summer#offres',
+    );
     await englishLink.click();
     await expect(page).toHaveURL(/\/en\/programs\?campaign=summer#offres$/);
 
-    const frenchLink = getLanguageSelector(page, /langue|language/i).getByRole(
-      'link',
-      { name: /français|french/i },
-    );
+    const frenchLink = (
+      await getLanguageSelector(page, /langue|language/i)
+    ).getByRole('link', { name: /français|french/i });
 
+    await expect(frenchLink).toHaveAttribute(
+      'href',
+      '/fr/programmes?campaign=summer#offres',
+    );
     await frenchLink.click();
     await expect(page).toHaveURL(/\/fr\/programmes\?campaign=summer#offres$/);
   });
@@ -155,10 +165,9 @@ test.describe('Internationalisation publique de la page d’accueil', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const englishLink = getLanguageSelector(page, /langue|language/i).getByRole(
-      'link',
-      { name: /anglais|english/i },
-    );
+    const englishLink = (
+      await getLanguageSelector(page, /langue|language/i)
+    ).getByRole('link', { name: /anglais|english/i });
 
     await englishLink.click();
 

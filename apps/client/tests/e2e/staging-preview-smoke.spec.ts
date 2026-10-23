@@ -1,26 +1,13 @@
 // apps\client\tests\e2e\staging-preview-smoke.spec.ts
 
-import { expect, test, Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+
+import { revealNavigation } from './navigation';
 
 const participantAreaExpected =
   (process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] ??
     process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
     'true') === 'true';
-
-async function revealNavigation(page: Page) {
-  const mobileMenuButton = page.getByRole('button', {
-    name: 'Menu de navigation',
-  });
-
-  const mobileMenuVisible = await mobileMenuButton
-    .waitFor({ state: 'visible', timeout: 2_000 })
-    .then(() => true)
-    .catch(() => false);
-
-  if (mobileMenuVisible) {
-    await mobileMenuButton.click();
-  }
-}
 
 test.describe('Smoke staging preview - espace participant', () => {
   if (participantAreaExpected) {
@@ -33,7 +20,10 @@ test.describe('Smoke staging preview - espace participant', () => {
         .getByRole('link', { name: 'Espace participant' })
         .first();
       await expect(participantLink).toBeVisible();
-      await expect(participantLink).toHaveAttribute('href', '/participant');
+      await expect(participantLink).toHaveAttribute(
+        'href',
+        '/participant/dashboard',
+      );
     });
   } else {
     test('Given le staging web, When la navigation est ouverte et l’espace est désactivé, Then le lien Espace participant est absent', async ({

@@ -78,6 +78,8 @@ export default defineConfig({
     : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: resolvedBaseUrl,
+    locale: 'fr-CI',
+    contextOptions: { reducedMotion: 'reduce' },
     navigationTimeout: 60_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
