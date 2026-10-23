@@ -182,7 +182,7 @@ test.describe(`SEO i18n du site vitrine`, () => {
 
     await page.goto('/en/unknown-route', { waitUntil: 'domcontentloaded' });
 
-    await expect(page).toHaveTitle(/English route scaffold/i);
+    await expect(page).toHaveTitle(/Page not found/i);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',

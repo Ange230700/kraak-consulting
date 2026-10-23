@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { getLanguageSelector } from './navigation';
+
 const FRENCH_FOCUS_TITLES = [
   'Développement des compétences',
   'Structuration des projets',
@@ -29,10 +31,6 @@ const ENGLISH_VALUE_TITLES = [
   'Resilience and courage',
   'Openness and global connection',
 ] as const;
-
-function getLanguageSelector(page: Page, accessibleName: RegExp) {
-  return page.getByRole('group', { name: accessibleName });
-}
 
 async function expectHeadingsVisible(
   page: Page,
@@ -207,13 +205,18 @@ test.describe('Internationalisation publique de la page À propos', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const frenchLanguageSelector = getLanguageSelector(
+    const frenchLanguageSelector = await getLanguageSelector(
       page,
       /langue|language/i,
     );
-    await frenchLanguageSelector
-      .getByRole('link', { name: /anglais|english/i })
-      .click();
+    const englishLink = frenchLanguageSelector.getByRole('link', {
+      name: /anglais|english/i,
+    });
+    await expect(englishLink).toHaveAttribute(
+      'href',
+      '/en/about?campaign=about#mission',
+    );
+    await englishLink.click();
 
     await expect(page).toHaveURL(/\/en\/about\?campaign=about#mission$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
@@ -224,13 +227,18 @@ test.describe('Internationalisation publique de la page À propos', () => {
       }),
     ).toBeVisible();
 
-    const englishLanguageSelector = getLanguageSelector(
+    const englishLanguageSelector = await getLanguageSelector(
       page,
       /langue|language/i,
     );
-    await englishLanguageSelector
-      .getByRole('link', { name: /français|french/i })
-      .click();
+    const frenchLink = englishLanguageSelector.getByRole('link', {
+      name: /français|french/i,
+    });
+    await expect(frenchLink).toHaveAttribute(
+      'href',
+      '/fr/a-propos?campaign=about#mission',
+    );
+    await frenchLink.click();
 
     await expect(page).toHaveURL(/\/fr\/a-propos\?campaign=about#mission$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr-CI');

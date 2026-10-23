@@ -1,8 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-function getLanguageSelector(page: Page, accessibleName: RegExp) {
-  return page.getByRole('group', { name: accessibleName });
-}
+import { getLanguageSelector } from './navigation';
 
 test.describe('Internationalisation publique de la page Services', () => {
   test('Given la route /fr/services, When la page se charge, Then les quatre familles la méthode la FAQ et le CTA restent en français', async ({
@@ -139,10 +137,9 @@ test.describe('Internationalisation publique de la page Services', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const englishLink = getLanguageSelector(page, /langue|language/i).getByRole(
-      'link',
-      { name: /anglais|english/i },
-    );
+    const englishLink = (
+      await getLanguageSelector(page, /langue|language/i)
+    ).getByRole('link', { name: /anglais|english/i });
     await englishLink.click();
 
     await expect(page).toHaveURL(/\/en\/services\?campaign=services#method$/);

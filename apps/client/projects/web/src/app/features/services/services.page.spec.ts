@@ -70,6 +70,17 @@ describe('ServicesPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('Given les CTA secondaires sur fond clair, When les services sont affichés, Then ils utilisent la variante contrastée', () => {
+    const fixture = TestBed.createComponent(ServicesPage);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    for (const icon of ['pi-file', 'pi-briefcase', 'pi-send']) {
+      const link = host.querySelector(`a[icon="pi ${icon}"]`);
+      expect(link?.classList).toContain('kr-button-secondary');
+    }
+  });
+
   it('Given the services page When it renders Then the page heading is visible', () => {
     const fixture = TestBed.createComponent(ServicesPage);
     fixture.detectChanges();

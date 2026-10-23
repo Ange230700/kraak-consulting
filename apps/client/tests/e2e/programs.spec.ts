@@ -1,4 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+
+import { getLanguageSelector } from './navigation';
 
 const FRENCH_FORMAT_TITLES = [
   "Ateliers d'employabilité et de posture professionnelle",
@@ -27,10 +29,6 @@ const ENGLISH_PROCESS_TITLES = [
   'Format recommendation',
   'Confirmation',
 ] as const;
-
-function getLanguageSelector(page: Page, accessibleName: RegExp) {
-  return page.getByRole('group', { name: accessibleName });
-}
 
 test.describe('Internationalisation publique de la page Programmes', () => {
   test('Given the canonical French Programs route When the page loads Then the complete conversion journey and localized CTA remain French', async ({
@@ -181,10 +179,9 @@ test.describe('Internationalisation publique de la page Programmes', () => {
       waitUntil: 'domcontentloaded',
     });
 
-    const englishLink = getLanguageSelector(page, /langue|language/i).getByRole(
-      'link',
-      { name: /anglais|english/i },
-    );
+    const englishLink = (
+      await getLanguageSelector(page, /langue|language/i)
+    ).getByRole('link', { name: /anglais|english/i });
     await englishLink.click();
 
     await expect(page).toHaveURL(/\/en\/programs\?campaign=programs#process$/);

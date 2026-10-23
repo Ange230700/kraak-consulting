@@ -194,6 +194,17 @@ describe('AboutPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('Given un portrait chargé à la demande, When la page est affichée sur mobile, Then son conteneur conserve une largeur avant le chargement', () => {
+    const fixture = TestBed.createComponent(AboutPage);
+    fixture.detectChanges();
+
+    const page = fixture.nativeElement as HTMLElement;
+    const portrait = page.querySelector('img[src*="about-ceo"]');
+
+    expect(portrait?.getAttribute('loading')).toBe('lazy');
+    expect(portrait?.parentElement?.classList.contains('w-full')).toBe(true);
+  });
+
   it('Given the canonical French About route When the complete page renders Then all historical narrative accessibility copy and CTA remain French', async () => {
     vi.spyOn(TestBed.inject(Router), 'url', 'get').mockReturnValue(
       '/fr/a-propos',

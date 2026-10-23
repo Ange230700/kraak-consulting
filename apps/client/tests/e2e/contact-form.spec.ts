@@ -101,14 +101,14 @@ test.describe(`Page contact — comportement formulaire`, () => {
         { timeout: 500 },
       );
 
-      const submitRequest = page.waitForRequest(
-        (request) =>
-          request.method() === 'POST' && request.url().endsWith('/contact'),
-        { timeout: 10_000 },
-      );
-
-      await page.getByRole('button', { name: 'Envoyer ma demande' }).click();
-      await submitRequest;
+      await Promise.all([
+        page.waitForRequest(
+          (request) =>
+            request.method() === 'POST' && request.url().endsWith('/contact'),
+          { timeout: 10_000 },
+        ),
+        page.getByRole('button', { name: 'Envoyer ma demande' }).click(),
+      ]);
 
       await expect(
         page.getByText(

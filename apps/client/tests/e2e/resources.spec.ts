@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Page ressources - parcours vitrine', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/ressources', { waitUntil: 'domcontentloaded' });
+    await page.goto('/ressources');
     await expect(
       page.getByRole('heading', {
         level: 1,
@@ -42,6 +42,9 @@ test.describe('Page ressources - parcours vitrine', () => {
     const cta = page.getByRole('link', { name: 'Demander une orientation' });
 
     await expect(cta).toBeVisible();
-    await expect(cta).toHaveAttribute('href', '/contact');
+    await expect(cta).toHaveAttribute('href', '/fr/contact');
+    await cta.click();
+    await expect(page).toHaveURL(/\/fr\/contact$/);
+    await expect(page.locator('form')).toBeVisible();
   });
 });

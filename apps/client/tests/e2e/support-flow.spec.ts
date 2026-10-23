@@ -103,7 +103,9 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       await page.goto(`/faq`, { waitUntil: 'domcontentloaded' });
 
       // When: User clicks first contact button
-      const contactButton = page.locator('a[routerLink="/contact"]').first();
+      const contactButton = page.getByRole('link', {
+        name: 'Parler à un conseiller KRAAK',
+      });
       await Promise.all([
         page.waitForURL('**/contact', {
           timeout: 10000,
@@ -168,7 +170,7 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       });
       await programsButton.scrollIntoViewIfNeeded();
       await expect(programsButton).toBeVisible();
-      await expect(programsButton).toHaveAttribute('href', '/programmes');
+      await expect(programsButton).toHaveAttribute('href', '/fr/programmes');
 
       await Promise.all([
         page.waitForURL(/\/programmes$/, {
@@ -185,11 +187,9 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
       page,
     }) => {
       // Given: User is on home page
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await page.goto('/');
 
-      // When: User scrolls to footer
       const footer = page.locator('footer');
-      await footer.scrollIntoViewIfNeeded();
 
       // Then: Footer exposes a working FAQ entry point
       const faqFooterLink = footer.getByRole('link', {
@@ -350,22 +350,24 @@ test.describe('Support flow - FAQ + 404 navigation', () => {
   });
 
   test.describe('Accessibility - Support flow', () => {
-    test('When user navigates 404 page Then buttons are keyboard accessible', async ({
+    test('Given une page 404, When le visiteur active le lien d’aide au clavier, Then la FAQ est affichée', async ({
       page,
     }) => {
-      // Given: User is on 404 page
       await page.goto(`/page-not-found-404`, {
         waitUntil: 'domcontentloaded',
       });
 
-      // When: Pressing Tab key
-      await page.keyboard.press('Tab');
-      const focusedElement = await page.evaluate(
-        () => document.activeElement?.tagName,
-      );
+      const faqLink = page.getByRole('link', {
+        name: 'Consulter la FAQ KRAAK',
+      });
+      await faqLink.focus();
+      await expect(faqLink).toBeFocused();
+      await page.keyboard.press('Enter');
 
-      // Then: Focus should move to first interactive element
-      expect(['A', 'BUTTON']).toContain(focusedElement);
+      await expect(page).toHaveURL(/\/fr\/faq$/);
+      await expect(page.getByRole('heading', { level: 1 })).toContainText(
+        /réponses|questions|faq/i,
+      );
     });
 
     test('When user navigates FAQ page Then accordion is keyboard accessible', async ({

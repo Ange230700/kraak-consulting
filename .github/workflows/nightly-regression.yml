@@ -20,6 +20,12 @@ jobs:
   newman-strict:
     name: Newman strict (staging API)
     runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 10
+    env:
+      KRAAK_JOURNEY_BASE_URL: https://kraak-api-staging.onrender.com
+      KRAAK_JOURNEY_EMAIL: ${{ secrets.KRAAK_JOURNEY_EMAIL }}
+      KRAAK_JOURNEY_PASSWORD: ${{ secrets.KRAAK_JOURNEY_PASSWORD }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -38,7 +44,7 @@ jobs:
           pnpm test:api:journey:strict:staging
 
       - name: Conserver le rapport JUnit Newman strict
-        if: always()
+        if: ${{ !cancelled() && hashFiles('test-results/postman/api-user-journey.junit.xml') != '' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: newman-strict-staging

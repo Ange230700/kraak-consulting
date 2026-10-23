@@ -1,6 +1,8 @@
 // apps\client\tests\e2e\smoke.spec.ts
 
-import { expect, test, Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+
+import { revealNavigation } from './navigation';
 
 const expectParticipantCta =
   process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
@@ -8,23 +10,6 @@ const expectParticipantCta =
   'true';
 const participantCtaExpected = expectParticipantCta === 'true';
 const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
-
-async function revealNavigation(page: Page) {
-  const mobileMenuButton = page.getByRole('button', {
-    name: 'Menu de navigation',
-  });
-
-  await expect(page.getByRole('banner')).toBeVisible();
-
-  const mobileMenuVisible = await mobileMenuButton
-    .waitFor({ state: 'visible', timeout: 2_000 })
-    .then(() => true)
-    .catch(() => false);
-
-  if (mobileMenuVisible) {
-    await mobileMenuButton.click();
-  }
-}
 
 // Smoke E2E — shell web KRAAK
 // Given/When/Then : vérification des éléments visibles après chargement
