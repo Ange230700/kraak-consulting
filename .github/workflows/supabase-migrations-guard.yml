@@ -110,7 +110,6 @@ jobs:
               echo "SUPABASE_DB_URL_PRODUCTION must not be set in staging environment secrets."
               exit 1
             fi
-            echo "db_url=${STAGING_DB_URL}" >> "$GITHUB_OUTPUT"
             echo "target=staging" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -124,7 +123,6 @@ jobs:
               echo "SUPABASE_DB_URL_STAGING must not be set in production environment secrets."
               exit 1
             fi
-            echo "db_url=${PRODUCTION_DB_URL}" >> "$GITHUB_OUTPUT"
             echo "target=production" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -134,7 +132,16 @@ jobs:
 
       - name: Apply migrations to mapped database
         shell: bash
+        env:
+          TARGET: ${{ steps.secrets.outputs.target }}
+          STAGING_DB_URL: ${{ secrets.SUPABASE_DB_URL_STAGING }}
+          PRODUCTION_DB_URL: ${{ secrets.SUPABASE_DB_URL_PRODUCTION }}
         run: |
           set -euo pipefail
-          echo "Applying migrations to '${{ steps.secrets.outputs.target }}' from branch '${GITHUB_REF_NAME}'."
-          supabase db push --db-url "${{ steps.secrets.outputs.db_url }}"
+          if [[ "${TARGET}" == "staging" ]]; then
+            DB_URL="${STAGING_DB_URL}"
+          else
+            DB_URL="${PRODUCTION_DB_URL}"
+          fi
+          echo "Applying migrations to '${TARGET}' from branch '${GITHUB_REF_NAME}'."
+          supabase db push --db-url "${DB_URL}"
