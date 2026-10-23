@@ -42,6 +42,6 @@ test('Given migration list JSON, When parsing it, Then migration rows are return
 test('Given invalid migration list JSON, When parsing it, Then a clear error is thrown', () => {
   assert.throws(
     () => parseMigrationList('not json'),
-    /Unable to parse Supabase migration list/,
+    /Impossible de lire le JSON de la liste des migrations Supabase/,
   );
 });
