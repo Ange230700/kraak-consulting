@@ -418,6 +418,7 @@ gh api repos/Ange230700/kraak-consulting/branches/staging/protection
 # Branch protection (écriture — TOUJOURS via le script ARC-09)
 node scripts/github/update-branch-protection.mjs --dry-run
 node scripts/github/update-branch-protection.mjs
+node scripts/github/update-branch-protection.mjs --staging-only
 
 # GitHub Projects (cycle de vie obligatoire AGENTS.md)
 gh project item-list <project-number> --owner Ange230700
