@@ -4,7 +4,17 @@ import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 function splitTableColumns(line) {
-  return line.split('│').map((column) => column.trim());
+  const separator = line.includes('|') ? '|' : '│';
+  const columns = line.split(separator).map((column) => column.trim());
+
+  if (columns[0] === '') {
+    columns.shift();
+  }
+  if (columns.at(-1) === '') {
+    columns.pop();
+  }
+
+  return columns;
 }
 
 export function parseMigrationList(output) {
@@ -30,18 +40,21 @@ export function parseMigrationList(output) {
 
   const migrations = [];
   for (const line of lines.slice(headerIndex + 1)) {
-    if (!line.trim() || /^[\s─┼]+$/.test(line)) {
+    if (!line.trim() || /^[\s+|\-─┼]+$/.test(line)) {
       continue;
     }
 
     const columns = splitTableColumns(line);
-    if (columns.length !== 3 || (!columns[0] && !columns[1])) {
+    const local = columns[0]?.replaceAll('`', '').trim() ?? '';
+    const remote = columns[1]?.replaceAll('`', '').trim() ?? '';
+
+    if (columns.length !== 3 || (!local && !remote)) {
       throw new Error(
         'La liste Supabase ne contient pas un tableau de migrations valide.',
       );
     }
 
-    migrations.push({ local: columns[0], remote: columns[1] });
+    migrations.push({ local, remote });
   }
 
   return migrations;
