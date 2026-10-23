@@ -130,20 +130,6 @@ jobs:
       - name: Apply migrations to mapped database
         shell: bash
         env:
-<<<<<<< HEAD
-          TARGET: ${{ steps.secrets.outputs.target }}
-          STAGING_DB_URL: ${{ secrets.SUPABASE_DB_URL_STAGING }}
-          PRODUCTION_DB_URL: ${{ secrets.SUPABASE_DB_URL_PRODUCTION }}
-        run: |
-          set -euo pipefail
-          if [[ "${TARGET}" == "staging" ]]; then
-            DB_URL="${STAGING_DB_URL}"
-          else
-            DB_URL="${PRODUCTION_DB_URL}"
-          fi
-          echo "Applying migrations to '${TARGET}' from branch '${GITHUB_REF_NAME}'."
-          supabase db push --db-url "${DB_URL}"
-=======
           STAGING_DB_URL: ${{ secrets.SUPABASE_DB_URL_STAGING }}
           PRODUCTION_DB_URL: ${{ secrets.SUPABASE_DB_URL_PRODUCTION }}
           TARGET_ENVIRONMENT: ${{ needs.guard.outputs.target_environment }}
@@ -166,7 +152,6 @@ jobs:
             echo "::error::URL de base manquante dans l'environnement GitHub '${TARGET_ENVIRONMENT}'."
             exit 1
           fi
-
           echo "Applying migrations to '${TARGET_ENVIRONMENT}' from branch '${GITHUB_REF_NAME}'."
           supabase db push --db-url "${DB_URL}"
->>>>>>> 4e3c6ef (Apply remaining changes)
+          supabase db push --db-url "${DB_URL}"
