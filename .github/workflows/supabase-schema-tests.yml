@@ -1,0 +1,60 @@
+name: Supabase Schema Tests
+
+on:
+  push:
+    branches: [staging, main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/supabase-schema-tests.yml'
+  pull_request:
+    branches: [staging, main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/supabase-schema-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  schema-tests:
+    name: Rejouer le schéma et vérifier les autorisations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_DB: kraak_test
+          POSTGRES_PASSWORD: local-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGDATABASE: kraak_test
+      PGPASSWORD: local-test-only
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Préparer les fixtures Supabase locales
+        run: psql -X -v ON_ERROR_STOP=1 --single-transaction --file supabase/tests/bootstrap.sql
+
+      - name: Rejouer toutes les migrations canoniques
+        shell: bash
+        run: |
+          set -euo pipefail
+          for migration in supabase/migrations/*.sql; do
+            echo "Migration : ${migration}"
+            psql -X -v ON_ERROR_STOP=1 --single-transaction --file "$migration"
+          done
+
+      - name: Vérifier les comportements participant, employé et formateur
+        run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/staging_reconciliation.sql

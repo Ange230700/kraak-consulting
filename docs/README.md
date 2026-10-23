@@ -98,6 +98,7 @@ document obsolète dans le même changement.
 | `operations/DEPLOYMENT.md`                                             | active | true             | Déploiement Render                                                               |
 | `operations/ENVIRONMENTS.md`                                           | active | true             | Variables d'environnement                                                        |
 | `operations/INCIDENT_ROLLBACK.md`                                      | active | true             | Incident, rollback et checklist de lancement                                     |
+| `operations/MIGRATION_RECONCILIATION.md`                               | active | true             | Réconciliation des migrations                                                    |
 | `operations/MOBILE_BUILD.md`                                           | active | true             | Guide de build mobile (Capacitor Android / iOS)                                  |
 | `operations/NIGHTLY_REGRESSION.md`                                     | active | true             | Nightly Regression                                                               |
 | `operations/OBSERVABILITY.md`                                          | active | true             | Observabilité et alerting minimum                                                |
