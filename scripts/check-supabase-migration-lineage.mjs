@@ -17,6 +17,10 @@ function splitTableColumns(line) {
   return columns;
 }
 
+function cleanTableCell(value) {
+  return value.replaceAll('`', '').trim();
+}
+
 export function parseMigrationList(output) {
   const lines = output.split(/\r?\n/);
   const headerIndex = lines.findIndex((line) => {
@@ -45,8 +49,8 @@ export function parseMigrationList(output) {
     }
 
     const columns = splitTableColumns(line);
-    const local = columns[0]?.replaceAll('`', '').trim() ?? '';
-    const remote = columns[1]?.replaceAll('`', '').trim() ?? '';
+    const local = cleanTableCell(columns[0] ?? '');
+    const remote = cleanTableCell(columns[1] ?? '');
 
     if (columns.length !== 3 || (!local && !remote)) {
       throw new Error(
