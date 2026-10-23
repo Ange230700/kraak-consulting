@@ -227,14 +227,18 @@ test('Given PR validation, When configuring CI, Then lineage tests run without d
   assert.doesNotMatch(job, /secrets\.|environment:|setup-cli/);
 });
 
-test('Given production deployment, When applying migrations, Then a read-only lineage check runs first in trusted push context', () => {
-  const workflow = readFileSync(
+function readGuardWorkflow() {
+  return readFileSync(
     new URL(
       '../.github/workflows/supabase-migrations-guard.yml',
       import.meta.url,
     ),
     'utf8',
   );
+}
+
+test('Given production deployment, When applying migrations, Then a read-only lineage check runs first in trusted push context', () => {
+  const workflow = readGuardWorkflow();
   const checkIndex = workflow.indexOf(
     '      - name: Check production migration lineage',
   );
@@ -249,4 +253,21 @@ test('Given production deployment, When applying migrations, Then a read-only li
   assert.match(step, /SUPABASE_EXECUTABLE:/);
   assert.match(step, /exit 1/);
   assert.doesNotMatch(workflow, /pull_request_target:|pull_request:/);
+});
+
+test('Given une URL de base contenant des caractères shell, When les migrations sont appliquées, Then elle transite uniquement par variable d environnement', () => {
+  const workflow = readGuardWorkflow();
+  const applyIndex = workflow.indexOf(
+    '      - name: Apply migrations to mapped database',
+  );
+  assert.ok(applyIndex > 0);
+  const step = workflow.slice(applyIndex).split('\n      - name:')[0];
+  const script = step.split('run: |')[1] ?? '';
+  assert.doesNotMatch(script, /\$\{\{/);
+  assert.match(
+    step,
+    /STAGING_DB_URL: \$\{\{ secrets.SUPABASE_DB_URL_STAGING \}\}/,
+  );
+  assert.match(script, /--db-url "\$\{DB_URL\}"/);
+  assert.doesNotMatch(workflow, /db_url=/);
 });

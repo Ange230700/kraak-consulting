@@ -86,4 +86,7 @@ ne transforme pas le run en succès.
 - Si les requêtes privées échouent après connexion, vérifier les droits du
   compte confirmé et l'application des migrations staging. Une erreur
   `SUPABASE_DB_URL_STAGING` dans le guard nécessite de rétablir le secret de
-  l'environnement staging ; ne jamais réutiliser un accès production.
+  l'environnement staging ; ne jamais réutiliser un accès production. L'URL est
+  transmise à `supabase db push` uniquement par variable d'environnement : ne
+  jamais l'interpoler avec `${{ }}` dans un script, car un mot de passe
+  contenant `$` serait interprété par bash.
