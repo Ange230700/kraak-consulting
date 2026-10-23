@@ -166,6 +166,16 @@ sont déclarées directement dans `apps/api/.env` et `apps/client/.env`.
 > `.github/workflows/release-prod.yml` lors des migrations prod. Voir
 > `docs/operations/RELEASE_PROD.md`.
 
+Le workflow `.github/workflows/supabase-migrations-guard.yml` applique les
+migrations via des secrets d'URL de base de données limités à leur environnement
+GitHub. Ajouter `SUPABASE_DB_URL_STAGING` comme secret de l'environnement
+`staging` (Settings > Environments > staging), avec l'URL PostgreSQL du projet
+Supabase staging et les permissions nécessaires aux migrations. Ajouter aussi
+`SUPABASE_DB_URL_PRODUCTION` comme secret de l'environnement `production`, avec
+l'URL et les permissions du projet Supabase de production. Ne pas créer ces
+valeurs comme secrets de dépôt ni les commiter. Le workflow échoue explicitement
+si un secret requis manque ou si l'URL de l'autre environnement est définie.
+
 La configuration Auth email/password versionnée du MVP ne vit pas dans ces
 fichiers `.env` mais dans `supabase/config.toml`, avec ses templates email
 locaux dans `supabase/templates/auth/`. Voir aussi

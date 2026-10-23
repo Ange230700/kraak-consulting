@@ -288,18 +288,19 @@ test('Given staging migration configuration, When applying migrations, Then the 
   assert.match(validation, /SUPABASE_DB_URL_STAGING/);
   assert.match(
     validation,
-    /::error::Missing secret SUPABASE_DB_URL_STAGING in GitHub environment 'staging'/,
+    /::error::Secret manquant : SUPABASE_DB_URL_STAGING dans l'environnement GitHub 'staging'/,
   );
   assert.match(
     validation,
-    /::error::SUPABASE_DB_URL_PRODUCTION must not be set in GitHub environment 'staging'/,
+    /::error::SUPABASE_DB_URL_PRODUCTION ne doit pas être défini dans l'environnement GitHub 'staging'/,
   );
   assert.match(
     validation,
-    /::error::Missing secret SUPABASE_DB_URL_PRODUCTION in GitHub environment 'production'/,
+    /::error::Secret manquant : SUPABASE_DB_URL_PRODUCTION dans l'environnement GitHub 'production'/,
   );
   assert.match(
     validation,
-    /::error::SUPABASE_DB_URL_STAGING must not be set in GitHub environment 'production'/,
+    /::error::SUPABASE_DB_URL_STAGING ne doit pas être défini dans l'environnement GitHub 'production'/,
   );
+  assert.doesNotMatch(validation, /GITHUB_OUTPUT|db_url=/);
 });
