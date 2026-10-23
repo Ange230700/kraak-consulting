@@ -3,28 +3,45 @@
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-export function parseMigrationList(output) {
-  let result;
+function splitTableColumns(line) {
+  return line.split('│').map((column) => column.trim());
+}
 
-  try {
-    result = JSON.parse(output);
-  } catch {
+export function parseMigrationList(output) {
+  const lines = output.split(/\r?\n/);
+  const headerIndex = lines.findIndex((line) => {
+    const columns = splitTableColumns(line).map((column) =>
+      column.toLowerCase(),
+    );
+
+    return (
+      columns.length === 3 &&
+      columns[0] === 'local' &&
+      columns[1] === 'remote' &&
+      columns[2] === 'time (utc)'
+    );
+  });
+
+  if (headerIndex === -1) {
     throw new Error(
-      'Impossible de lire le JSON de la liste des migrations Supabase.',
+      'La liste Supabase ne contient pas un tableau de migrations valide.',
     );
   }
 
-  const migrations = result?.data?.migrations ?? result?.migrations;
+  const migrations = [];
+  for (const line of lines.slice(headerIndex + 1)) {
+    if (!line.trim() || /^[\s─┼]+$/.test(line)) {
+      continue;
+    }
 
-  if (
-    !Array.isArray(migrations) ||
-    migrations.some(
-      (migration) =>
-        typeof migration?.local !== 'string' ||
-        typeof migration?.remote !== 'string',
-    )
-  ) {
-    throw new Error('La liste Supabase ne contient pas de migrations valides.');
+    const columns = splitTableColumns(line);
+    if (columns.length !== 3 || (!columns[0] && !columns[1])) {
+      throw new Error(
+        'La liste Supabase ne contient pas un tableau de migrations valide.',
+      );
+    }
+
+    migrations.push({ local: columns[0], remote: columns[1] });
   }
 
   return migrations;
@@ -41,7 +58,7 @@ function main() {
   const targetArgs = dbUrl ? ['--db-url', dbUrl] : ['--linked'];
   const result = spawnSync(
     'supabase',
-    ['migration', 'list', ...targetArgs, '--output-format', 'json'],
+    ['migration', 'list', ...targetArgs],
     { encoding: 'utf8', shell: false },
   );
 
