@@ -230,6 +230,19 @@ supabase gen types typescript --linked > packages/contracts/src/db.types.ts
 supabase functions list                # edge functions
 ```
 
+Avant une PR vers `staging`, vérifier que chaque migration déjà appliquée sur
+la cible existe dans le dépôt, sans appliquer de changement :
+
+```bash
+node scripts/check-supabase-migration-lineage.mjs
+```
+
+La commande utilise le projet Supabase lié. Pour choisir explicitement la base
+de comparaison, définir `SUPABASE_DB_URL`. Le contrôle est également exécuté
+par la CI pour les PR internes vers `staging` et les pushes sur cette branche ;
+il nécessite le secret `SUPABASE_DB_URL_STAGING` dans l'environnement GitHub
+`staging`. Les migrations locales non encore appliquées restent autorisées.
+
 ### Splinter (Supabase Postgres LINTER)
 
 `supabase db advisors` est le point d'entrée CLI pour les contrôles Splinter.
