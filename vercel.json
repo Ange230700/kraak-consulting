@@ -4,7 +4,7 @@
   "buildCommand": "pnpm -r --filter \"./packages/**\" build && pnpm --filter @kraak/client run build",
   "outputDirectory": "apps/client/dist/web/browser",
   "framework": null,
-  "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_REF\" in staging) exit 0 ;; *) exit 1 ;; esac",
+  "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_REF\" in staging) exit 1 ;; *) exit 0 ;; esac",
   "headers": [
     {
       "source": "/(.*)",
@@ -27,7 +27,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; script-src-elem 'self' https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://kraak-api-staging.onrender.com https://www.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; script-src-elem 'self' https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://kraak-api-prod.onrender.com https://www.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
         },
         {
           "key": "Access-Control-Allow-Origin",
