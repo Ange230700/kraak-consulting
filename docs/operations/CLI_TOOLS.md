@@ -230,18 +230,52 @@ supabase gen types typescript --linked > packages/contracts/src/db.types.ts
 supabase functions list                # edge functions
 ```
 
-Avant une PR vers `staging`, vérifier que chaque migration déjà appliquée sur
-la cible existe dans le dépôt, sans appliquer de changement :
+Avant un déploiement, vérifier que chaque migration déjà appliquée sur la cible
+existe dans le dépôt, sans appliquer de changement :
 
 ```bash
 node scripts/check-supabase-migration-lineage.mjs
 ```
 
-La commande utilise le projet Supabase lié. Pour choisir explicitement la base
-de comparaison, définir `SUPABASE_DB_URL`. Le contrôle est également exécuté
-par la CI pour les PR internes vers `staging` et les pushes sur cette branche ;
-il nécessite le secret `SUPABASE_DB_URL_STAGING` dans l'environnement GitHub
-`staging`. Les migrations locales non encore appliquées restent autorisées.
+Définir obligatoirement `SUPABASE_EXECUTABLE` avec le chemin absolu d'un binaire
+Supabase CLI installé depuis une source de confiance, dans un répertoire non
+modifiable par des tiers. Aucun binaire n'est recherché via `PATH` ; les shims
+`.cmd` Windows ne sont pas pris en charge, utiliser directement `supabase.exe`.
+Par exemple, sous PowerShell, affecter ce chemin à
+`$env:SUPABASE_EXECUTABLE` avant de lancer la commande.
+
+La commande utilise le projet Supabase lié par défaut. Pour choisir explicitement
+la base de comparaison, définir `SUPABASE_DB_URL` avec une connexion en lecture
+seule. Le rôle doit pouvoir lire `supabase_migrations.schema_migrations`
+(`USAGE` sur le schéma et `SELECT` sur la table), sans droit d'écriture ni de DDL.
+Les migrations locales non encore appliquées restent autorisées ; une migration
+distante absente du dépôt bloque le contrôle et sa version est affichée.
+Les sorties brutes d'échec du CLI ne sont pas affichées pour protéger les
+identifiants de connexion.
+
+La CI des PR vers `staging` **et** `main` exécute uniquement les tests du contrôle
+(`Migration Lineage Tests`), sans secret ni accès distant. Ce succès ne certifie
+pas la lignée de la base. Le workflow `Supabase Migrations Guard` compare la
+production avant `db push`, uniquement sur un push de confiance vers `main`,
+protégée par le ruleset. Il utilise le secret
+`SUPABASE_DB_URL_PRODUCTION_READONLY` dans l'environnement GitHub `production`,
+distinct du compte d'application des migrations. L'absence de ce secret bloque
+le déploiement ; elle ne doit pas être masquée par un succès.
+Le binaire installé par `supabase/setup-cli` est copié dans un répertoire privé
+du runner et exécuté par son chemin absolu.
+
+La promotion vers `main` nécessite d'abord la réconciliation de son historique
+avec `staging` et la configuration du compte de lecture seule. Ne pas changer la
+branche par défaut ni recibler une PR pour contourner cette étape. Le workflow
+historique d'application sur `staging` reste inchangé ; son retrait relève de la
+transition d'infrastructure, pas de ce contrôle. Une vérification distante avant
+fusion reste à organiser dans un contexte de confiance : aucun code de PR ne
+doit recevoir les identifiants de production, y compris via `pull_request_target`.
+
+Pour SonarCloud, conserver les images binaires hors du périmètre source dans
+`sonar-project.properties` : les avertissements UTF-8 sur PNG, JPEG, AVIF ou ICO
+ne doivent pas conduire à changer l'encodage UTF-8 du code. La règle S4036 reste
+active ; aucune suppression n'est nécessaire pour ce contrôle.
 
 ### Splinter (Supabase Postgres LINTER)
 

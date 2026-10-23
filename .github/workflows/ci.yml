@@ -87,13 +87,8 @@ jobs:
           exit $splinter_code
 
   migration-lineage:
-    name: Supabase Migration Lineage
-    if: >-
-      (github.event_name == 'push' && github.ref == 'refs/heads/staging') ||
-      (github.event_name == 'pull_request' && github.base_ref == 'staging' &&
-      github.event.pull_request.head.repo.full_name == github.repository)
+    name: Migration Lineage Tests
     runs-on: ubuntu-latest
-    environment: staging
     permissions:
       contents: read
     steps:
@@ -103,20 +98,8 @@ jobs:
         with:
           node-version-file: package.json
 
-      - name: Install Supabase CLI
-        uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1
-        with:
-          version: latest
-
-      - name: Check migration lineage against staging
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL_STAGING }}
-        run: |
-          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
-            echo "::error::Secret staging requis : SUPABASE_DB_URL_STAGING."
-            exit 1
-          fi
-          node scripts/check-supabase-migration-lineage.mjs
+      - name: Test migration lineage without database access
+        run: node --test scripts/check-supabase-migration-lineage.test.mjs
 
   # ──────────────────────────────────────────────
   # Audit de dépendances reproductible
