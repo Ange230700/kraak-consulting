@@ -161,7 +161,9 @@ Les jobs utilisent l'image `mcr.microsoft.com/playwright:v1.59.1-noble`,
 avec navigateurs et dépendances système préinstallés. Aucun
 `playwright install --with-deps` ne doit être exécuté dans ces jobs.
 La version exacte de `@playwright/test`, le lockfile et l'image doivent évoluer
-ensemble ; `pnpm test:workspace` vérifie leur alignement.
+ensemble ; `pnpm test:workspace` vérifie leur alignement. Le conteneur s'exécute
+en root : les jobs définissent `HOME=/root`, sans quoi Firefox refuse de
+démarrer avec le `HOME` GitHub appartenant à `pwuser`.
 
 Les deux configurations fixent la locale du navigateur à `fr-CI` pour les
 assertions françaises ; les scénarios `/en/` continuent à vérifier la

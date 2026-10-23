@@ -265,6 +265,7 @@ jobs:
       contents: read
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      HOME: /root
       KRAAK_E2E_BASE_URL: http://localhost:4200
       CLIENT_API_BASE_URL: http://localhost:3000
       CLIENT_SITE_URL: http://localhost:4200
