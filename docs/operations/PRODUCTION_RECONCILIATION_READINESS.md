@@ -3,7 +3,7 @@
 **État : BLOQUÉ — ne pas retirer staging ni appliquer de migration en production.**
 **Périmètre :** inspection des branches `main` et `staging`, du site public et des workflows de déploiement. Aucune mutation distante, migration, publication, suppression ou modification de données n’a été effectuée.
 
-Observations du 22 octobre 2026. La branche locale `ange230700-production-reconciliation` est basée sur `origin/main`, commit `fc46d62600510685b8930e1ddbf2b85f9fc9ad61`. Les changements restent non commités; aucun push, merge ou tag n’a été créé.
+Observations de production du 22 octobre 2026. La branche locale `ange230700-production-reconciliation` est basée sur `origin/main`, commit `fc46d62600510685b8930e1ddbf2b85f9fc9ad61`. Les changements locaux ont été conservés dans le commit `9a09f0e0c75dfe04a369fbc92963a0dcb56ba78d`; il n’a été ni poussé ni fusionné, et aucun tag n’a été créé.
 
 ## Résumé exécutif
 
