@@ -152,6 +152,6 @@ jobs:
             echo "::error::URL de base manquante dans l'environnement GitHub '${TARGET_ENVIRONMENT}'."
             exit 1
           fi
+
           echo "Applying migrations to '${TARGET_ENVIRONMENT}' from branch '${GITHUB_REF_NAME}'."
-          supabase db push --db-url "${DB_URL}"
           supabase db push --db-url "${DB_URL}"
