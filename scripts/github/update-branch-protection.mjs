@@ -14,6 +14,7 @@
  * Usage :
  *   node scripts/github/update-branch-protection.mjs            # apply
  *   node scripts/github/update-branch-protection.mjs --dry-run  # show only
+ *   node scripts/github/update-branch-protection.mjs --staging-only # staging only
  *
  * Pré-requis : `gh auth status` OK avec scopes `repo` + `admin:repo_hook`.
  */
@@ -25,6 +26,7 @@ import process from 'node:process';
 
 const REPO = 'Ange230700/kraak-consulting';
 const DRY_RUN = process.argv.includes('--dry-run');
+const STAGING_ONLY = process.argv.includes('--staging-only');
 
 /**
  * Résout le chemin absolu du binaire `gh` en parcourant PATH une seule fois.
@@ -55,11 +57,16 @@ const GH_BIN = resolveGhBinary();
 const COMMON_CHECKS_STAGING = [
   'SonarCloud Analysis',
   'SonarCloud Code Analysis',
+  'Format & Lint',
+  'Migration Lineage Tests',
+  'Audit dépendances',
+  'Build',
   'Tests unitaires',
+  'Tests integration',
   'Tests E2E',
+  'Workspace Checks',
+  'Docker Build',
   'Android Debug APK',
-  // Les checks requis restent centrés sur la CI applicative ; les déploiements
-  // d'hébergement web sont gérés séparément via Render.
 ];
 
 const COMMON_CHECKS_MAIN = [
@@ -71,27 +78,35 @@ const COMMON_CHECKS_MAIN = [
   'Android Debug APK',
 ];
 
-function buildProtectionPayload({ contexts, enforceAdmins }) {
+function buildProtectionPayload({
+  contexts,
+  enforceAdmins,
+  requirePullRequest,
+  strictStatusChecks,
+  requireConversationResolution,
+}) {
   return {
     required_status_checks: {
-      // `strict: false` évite d'imposer un rebase systématique avant chaque
-      // merge dans un workflow solo dev MVP ; les status checks CI restent
-      // obligatoires.
-      strict: false,
+      strict: strictStatusChecks,
       contexts,
     },
     enforce_admins: enforceAdmins,
-    // `null` désactive complètement l'exigence de review (sinon
-    // mergeStateStatus reste BLOCKED même avec required_approving_review_count=0).
-    required_pull_request_reviews: null,
+    // Un compteur à zéro exige une PR sans imposer d'approbation, conformément
+    // au modèle de mainteneur solo.
+    required_pull_request_reviews: requirePullRequest
+      ? {
+          dismiss_stale_reviews: false,
+          require_code_owner_reviews: false,
+          required_approving_review_count: 0,
+          require_last_push_approval: false,
+        }
+      : null,
     restrictions: null,
     required_linear_history: true,
     allow_force_pushes: false,
     allow_deletions: false,
     block_creations: false,
-    // Threads de PR non résolus : peu pertinent en solo dev, génère de la
-    // friction sans bénéfice concret.
-    required_conversation_resolution: false,
+    required_conversation_resolution: requireConversationResolution,
     lock_branch: false,
     allow_fork_syncing: false,
   };
@@ -130,16 +145,24 @@ function main() {
     'staging',
     buildProtectionPayload({
       contexts: COMMON_CHECKS_STAGING,
-      enforceAdmins: false,
+      enforceAdmins: true,
+      requirePullRequest: true,
+      strictStatusChecks: true,
+      requireConversationResolution: true,
     }),
   );
-  applyProtection(
-    'main',
-    buildProtectionPayload({
-      contexts: COMMON_CHECKS_MAIN,
-      enforceAdmins: false,
-    }),
-  );
+  if (!STAGING_ONLY) {
+    applyProtection(
+      'main',
+      buildProtectionPayload({
+        contexts: COMMON_CHECKS_MAIN,
+        enforceAdmins: false,
+        requirePullRequest: false,
+        strictStatusChecks: false,
+        requireConversationResolution: false,
+      }),
+    );
+  }
   console.log('\nDone.');
 }
 
