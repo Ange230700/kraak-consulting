@@ -28,6 +28,13 @@ test('Given la CI E2E, When les navigateurs sont préparés, Then une image Play
   assert.match(workflow, /exec tsc --noEmit/);
 });
 
+test('Given le conteneur Playwright exécuté en root, When Firefox démarre, Then HOME appartient à l’utilisateur courant', () => {
+  assert.match(
+    workflow,
+    /PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'\n\s+HOME: \/root/,
+  );
+});
+
 test('Given les cinq profils E2E, When le check requis est publié, Then il dépend des vrais résultats et conserve les preuves', () => {
   for (const project of [
     'chromium',
