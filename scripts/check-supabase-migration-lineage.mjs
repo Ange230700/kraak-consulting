@@ -1,16 +1,36 @@
 #!/usr/bin/env node
 
 import { spawnSync } from 'node:child_process';
+import { accessSync, constants, statSync } from 'node:fs';
+import { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+const invalidMigrationTableMessage =
+  'La liste Supabase ne contient pas un tableau de migrations valide.';
+
+export function resolveSupabaseExecutable(environment = process.env) {
+  const executable = environment.SUPABASE_EXECUTABLE;
+  if (!executable || !isAbsolute(executable)) {
+    throw new Error(
+      'SUPABASE_EXECUTABLE doit désigner un chemin absolu fiable vers Supabase CLI.',
+    );
+  }
+
+  if (!statSync(executable, { throwIfNoEntry: false })?.isFile()) {
+    throw new Error('Le fichier exécutable Supabase est introuvable.');
+  }
+  accessSync(executable, constants.X_OK);
+  return executable;
+}
 
 function splitTableColumns(line) {
   const separator = line.includes('|') ? '|' : '│';
   const columns = line.split(separator).map((column) => column.trim());
 
-  if (columns[0] === '') {
+  if (columns.length > 3 && columns[0] === '') {
     columns.shift();
   }
-  if (columns.at(-1) === '') {
+  if (columns.length > 3 && columns.at(-1) === '') {
     columns.pop();
   }
 
@@ -37,14 +57,12 @@ export function parseMigrationList(output) {
   });
 
   if (headerIndex === -1) {
-    throw new Error(
-      'La liste Supabase ne contient pas un tableau de migrations valide.',
-    );
+    throw new Error(invalidMigrationTableMessage);
   }
 
   const migrations = [];
   for (const line of lines.slice(headerIndex + 1)) {
-    if (!line.trim() || /^[\s+|\-─┼]+$/.test(line)) {
+    if (!line.trim() || /^[\s+|\-─┼├┤┌┐└┘┬┴]+$/.test(line)) {
       continue;
     }
 
@@ -53,9 +71,7 @@ export function parseMigrationList(output) {
     const remote = cleanTableCell(columns[1] ?? '');
 
     if (columns.length !== 3 || (!local && !remote)) {
-      throw new Error(
-        'La liste Supabase ne contient pas un tableau de migrations valide.',
-      );
+      throw new Error(invalidMigrationTableMessage);
     }
 
     migrations.push({ local, remote });
@@ -70,30 +86,28 @@ export function findRemoteOnlyMigrations(migrations) {
     .map((migration) => migration.remote);
 }
 
-function main() {
-  const dbUrl = process.env.SUPABASE_DB_URL;
+export function checkMigrationLineage({
+  environment = process.env,
+  runCommand = spawnSync,
+} = {}) {
+  const executable = resolveSupabaseExecutable(environment);
+  const dbUrl = environment.SUPABASE_DB_URL;
   const targetArgs = dbUrl ? ['--db-url', dbUrl] : ['--linked'];
-  const result = spawnSync(
-    'supabase',
-    ['migration', 'list', ...targetArgs],
-    { encoding: 'utf8', shell: false },
-  );
+  const result = runCommand(executable, ['migration', 'list', ...targetArgs], {
+    encoding: 'utf8',
+    shell: false,
+  });
 
   if (result.error) {
     throw new Error(
-      `Impossible de lancer Supabase CLI : ${result.error.message}`,
+      'Impossible de lancer Supabase CLI. Vérifiez le binaire et ses permissions.',
     );
   }
 
   if (result.status !== 0) {
-    const rawDetails = (result.stderr || result.stdout || '').trim();
-    const details = dbUrl
-      ? rawDetails.replaceAll(dbUrl, '[URL de connexion masquée]')
-      : rawDetails;
     const status = result.status ?? 'inconnu';
-    const detailMessage = details ? `\n${details}` : '';
     throw new Error(
-      `La liste des migrations Supabase a échoué (code ${status}).${detailMessage}`,
+      `La liste des migrations Supabase a échoué (code ${status}). Vérifiez la connexion et les droits de lecture de l’historique.`,
     );
   }
 
@@ -109,13 +123,13 @@ function main() {
     for (const version of remoteOnlyMigrations) {
       console.error(`  - ${version}`);
     }
-    process.exitCode = 1;
-    return;
+    return 1;
   }
 
   console.log(
     '[migration-lineage] Toutes les migrations distantes sont présentes dans supabase/migrations/.',
   );
+  return 0;
 }
 
 if (
@@ -123,7 +137,7 @@ if (
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
   try {
-    main();
+    process.exitCode = checkMigrationLineage();
   } catch (error) {
     console.error(
       '[migration-lineage] Échec du contrôle :',
