@@ -271,3 +271,35 @@ test('Given une URL de base contenant des caractères shell, When les migrations
   assert.match(script, /--db-url "\$\{DB_URL\}"/);
   assert.doesNotMatch(workflow, /db_url=/);
 });
+
+test('Given staging migration configuration, When applying migrations, Then the environment secret is validated and not exposed as a step output', () => {
+  const workflow = readGuardWorkflow();
+  const validationIndex = workflow.indexOf(
+    '      - name: Validate environment-scoped secrets',
+  );
+  const applyIndex = workflow.indexOf(
+    '      - name: Apply migrations to mapped database',
+  );
+  assert.ok(validationIndex > 0);
+  assert.ok(applyIndex > validationIndex);
+  const validation = workflow.slice(validationIndex, applyIndex);
+
+  assert.match(workflow, /environment: \$\{\{ needs\.guard\.outputs\.target_environment \}\}/);
+  assert.match(validation, /SUPABASE_DB_URL_STAGING/);
+  assert.match(
+    validation,
+    /::error::Missing secret SUPABASE_DB_URL_STAGING in GitHub environment 'staging'/,
+  );
+  assert.match(
+    validation,
+    /::error::SUPABASE_DB_URL_PRODUCTION must not be set in GitHub environment 'staging'/,
+  );
+  assert.match(
+    validation,
+    /::error::Missing secret SUPABASE_DB_URL_PRODUCTION in GitHub environment 'production'/,
+  );
+  assert.match(
+    validation,
+    /::error::SUPABASE_DB_URL_STAGING must not be set in GitHub environment 'production'/,
+  );
+});
