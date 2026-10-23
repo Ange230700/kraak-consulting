@@ -52,7 +52,7 @@ export default defineConfig({
   workers: 1,
   timeout: 60_000,
   reporter: process.env['CI']
-    ? 'github'
+    ? [['list'], ['github'], ['html', { open: 'never' }]]
     : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: resolvedBaseUrl,
@@ -75,6 +75,8 @@ export default defineConfig({
         command: resolvedWebServerCommand,
         url: resolvedWebServerUrl,
         reuseExistingServer,
+        stdout: 'pipe',
+        stderr: 'pipe',
         timeout: 120_000,
         env: {
           CLIENT_FEATURE_PARTICIPANT_AREA: 'true',

@@ -241,6 +241,10 @@ contrôle. Tant que la lignée stricte échoue, aucune release `staging → main
 n'est autorisée ; la réconciliation doit faire l'objet d'un plan validé et
 traçable avant toute modification de ces branches permanentes.
 
+La réconciliation ponctuelle autorisée le 23 octobre 2026 est décrite dans
+[le plan de réconciliation](BRANCH_RECONCILIATION_2026-10.md). Cette exception
+est limitée à cette opération et conserve les contrôles de qualité.
+
 #### Vérification de l'état courant
 
 ```bash
