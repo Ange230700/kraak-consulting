@@ -54,8 +54,15 @@ prises par domaine ; aucune stratégie globale `ours` ou `theirs` n'est utilisé
 | À propos                    | Ne pas réintroduire le test de faux profils d'équipe (`Savannah Nguyen`) dans la page actuelle.                                                                                                                                    |
 
 Le job requis `Tests E2E` de staging ne lançait qu'un `echo`. Il est remplacé
-par l'installation des navigateurs et `pnpm test:e2e:all`, avec un serveur
-local et les variables explicites attendues par les configurations Playwright.
+par une matrice exécutant les cinq projets Playwright (trois navigateurs
+desktop et deux profils mobiles), avec un serveur local et les variables
+explicites attendues par les configurations. L'image officielle
+`mcr.microsoft.com/playwright:v1.59.1-noble`, alignée sur le lockfile, fournit
+les navigateurs et dépendances Linux préinstallés : aucun téléchargement APT
+n'est nécessaire au lancement. Un test vérifie cet alignement de version.
+Chaque projet dispose d'un budget global de 20 minutes, de logs de progression
+et d'un rapport HTML distinct. Le contrôle requis `Tests E2E` échoue si un
+projet échoue, est annulé ou n'est pas exécuté.
 Un test de régression échoue sur l'ancien job et passe sur le job réel.
 
 La validation web a également révélé une boucle GSAP encore active après la
