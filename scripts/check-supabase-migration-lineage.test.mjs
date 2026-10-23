@@ -25,11 +25,11 @@ test('Given pending local migrations, When checking lineage, Then no drift is re
 });
 
 test('Given the Supabase migration table, When parsing it, Then migration rows are returned', () => {
-  const migrations = parseMigrationList(`        LOCAL      │     REMOTE     │     TIME (UTC)
-  ─────────────────┼────────────────┼──────────────────────
-                   │ 20230103054303 │ 2023-01-03 05:43:03
-      20230222032233 │                │ 2023-02-22 03:22:33
-      20230301000000 │ 20230301000000 │ 2023-03-01 00:00:00`);
+  const migrations = parseMigrationList(`     Local      |     Remote     | Time (UTC)
+----------------+----------------+---------------------
+\` \`              | \`20230103054303\` | \`2023-01-03 05:43:03\`
+\`20230222032233\` | \` \`              | \`2023-02-22 03:22:33\`
+\`20230301000000\` | \`20230301000000\` | \`2023-03-01 00:00:00\``);
 
   assert.deepEqual(migrations, [
     { local: '', remote: '20230103054303' },
