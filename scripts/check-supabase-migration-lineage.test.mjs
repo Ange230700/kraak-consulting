@@ -268,7 +268,13 @@ test('Given une URL de base contenant des caractères shell, When les migrations
     step,
     /STAGING_DB_URL: \$\{\{ secrets.SUPABASE_DB_URL_STAGING \}\}/,
   );
-  assert.match(script, /--db-url "\$\{DB_URL\}"/);
+  const migrationCommands = script
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('supabase db push --db-url'));
+  assert.deepEqual(migrationCommands, [
+    'supabase db push --db-url "${DB_URL}"',
+  ]);
   assert.doesNotMatch(workflow, /db_url=/);
 });
 
