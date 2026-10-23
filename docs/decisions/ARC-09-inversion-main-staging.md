@@ -120,17 +120,17 @@ permet d'appliquer uniquement la protection de `staging`.
 
 #### `staging` (intégration)
 
-| Option                             |                  Valeur                   | Justification                                                          |
-| ---------------------------------- | :---------------------------------------: | ---------------------------------------------------------------------- |
-| `lock_branch`                      |                  `false`                  | Branche d'écriture via PR.                                             |
-| `required_linear_history`          |                  `true`                   | Rebase only (cohérent avec ARC-02 résiduel).                           |
-| `allow_force_pushes`               |                  `false`                  | Préserve l'historique partagé.                                         |
-| `allow_deletions`                  |                  `false`                  | Branche permanente.                                                    |
-| `required_conversation_resolution` |              `true`               | Pas de merge avec discussion ouverte.                                        |
-| `required_pull_request_reviews`    | 0 approbation, PR obligatoire     | Modèle mainteneur solo ; passer à 1 approbation dès qu'un second mainteneur rejoint. |
-| `enforce_admins`                   |              `true`               | La protection s'applique aussi aux administrateurs.                         |
-| `required_status_checks.strict`    |              `true`               | La PR doit être à jour avec `staging`.                                       |
-| `required_status_checks.contexts`  | CI complète + SonarCloud         | Tous les jobs CI et les analyses SonarCloud sont requis.                     |
+| Option                             |            Valeur             | Justification                                                                        |
+| ---------------------------------- | :---------------------------: | ------------------------------------------------------------------------------------ |
+| `lock_branch`                      |            `false`            | Branche d'écriture via PR.                                                           |
+| `required_linear_history`          |            `true`             | Rebase only (cohérent avec ARC-02 résiduel).                                         |
+| `allow_force_pushes`               |            `false`            | Préserve l'historique partagé.                                                       |
+| `allow_deletions`                  |            `false`            | Branche permanente.                                                                  |
+| `required_conversation_resolution` |            `true`             | Pas de merge avec discussion ouverte.                                                |
+| `required_pull_request_reviews`    | 0 approbation, PR obligatoire | Modèle mainteneur solo ; passer à 1 approbation dès qu'un second mainteneur rejoint. |
+| `enforce_admins`                   |            `true`             | La protection s'applique aussi aux administrateurs.                                  |
+| `required_status_checks.strict`    |            `true`             | La PR doit être à jour avec `staging`.                                               |
+| `required_status_checks.contexts`  |   CI complète + SonarCloud    | Tous les jobs CI et les analyses SonarCloud sont requis.                             |
 
 Les services Render staging restent configurés avec `autoDeploy: true` sur la
 branche `staging` dans [`render.yaml`](../../render.yaml). Render déploie après
