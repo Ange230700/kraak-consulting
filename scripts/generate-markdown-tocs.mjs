@@ -134,6 +134,10 @@ function uniqueSlug(baseSlug, usedSlugs) {
   return candidate;
 }
 
+export function createHeadingSlug(text, usedSlugs) {
+  return uniqueSlug(slug(text), usedSlugs);
+}
+
 function fenceUpdate(line, fence) {
   const fenceMatch = line.match(/^\s*(```+|~~~+)/);
 
@@ -195,7 +199,7 @@ function extractHeadings(lines) {
 
   return headings.map((heading) => ({
     ...heading,
-    slug: uniqueSlug(slug(heading.rawText), usedSlugs),
+    slug: createHeadingSlug(heading.rawText, usedSlugs),
   }));
 }
 
