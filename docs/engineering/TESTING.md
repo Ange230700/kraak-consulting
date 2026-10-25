@@ -106,6 +106,11 @@ Jest compile l'API avec les métadonnées TypeScript complètes
 (`isolatedModules: false`) : les branches mesurées correspondent au code exécuté
 et non aux gardes de types ajoutées par une transpilation isolée des décorateurs
 NestJS.
+L'alias TypeScript de l'API vers les contrats est relatif au `baseUrl` racine,
+et pointe sur les sources pour fonctionner aussi sans packages précompilés.
+Les tests des outils Windows utilisent un environnement système de fixture.
+Le processus des scénarios d'icônes sélectionne explicitement le reporter TAP
+pour conserver le même contrat de résultat entre versions de Node.
 
 Les tests Angular web et mobile utilisent explicitement la configuration de
 build `test`, sans `fileReplacements`. Ils exécutent ainsi les véritables modules
