@@ -243,7 +243,7 @@ export const blogArticles: readonly BlogArticle[] = [
   },
 ] as const;
 
-function requireFrenchFallbackArticle(id: string): BlogArticle {
+export function requireFrenchFallbackArticle(id: string): BlogArticle {
   const article = blogArticles.find((candidate) => candidate.id === id);
 
   if (!article) {

@@ -2,32 +2,15 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
 );
-const catalogRoot = path.join(
-  repoRoot,
-  'apps',
-  'client',
-  'projects',
-  'shared',
-  'i18n',
-  'catalogs',
-);
-const domainLocalizationPath = path.join(
-  repoRoot,
-  'packages',
-  'domain',
-  'src',
-  'localization.ts',
-);
-
-function main() {
-  const contract = readLocaleContract();
-  const result = validateCatalogs(contract);
+export function main(root = repoRoot) {
+  const contract = readLocaleContract(root);
+  const result = validateCatalogs(contract, root);
 
   if (result.errors.length > 0) {
     for (const error of result.errors) {
@@ -43,7 +26,14 @@ function main() {
   );
 }
 
-function readLocaleContract() {
+export function readLocaleContract(root) {
+  const domainLocalizationPath = path.join(
+    root,
+    'packages',
+    'domain',
+    'src',
+    'localization.ts',
+  );
   const source = readFileSync(domainLocalizationPath, 'utf8');
   const supportedMatch = source.match(
     /SUPPORTED_LOCALES\s*=\s*Object\.freeze\(\s*\[([^\]]+)\]/m,
@@ -73,7 +63,16 @@ function readLocaleContract() {
   return { fallbackLocale, sourceLocale, supportedLocales };
 }
 
-function validateCatalogs(contract) {
+export function validateCatalogs(contract, root) {
+  const catalogRoot = path.join(
+    root,
+    'apps',
+    'client',
+    'projects',
+    'shared',
+    'i18n',
+    'catalogs',
+  );
   const errors = [];
   const files = readdirSync(catalogRoot)
     .filter((file) => file.endsWith('.json'))
@@ -351,7 +350,7 @@ function sameSet(left, right) {
   return true;
 }
 
-function findDuplicateJsonKeys(source) {
+export function findDuplicateJsonKeys(source) {
   const parser = new JsonDuplicateKeyParser(source);
   parser.parse();
   return parser.duplicates;
@@ -521,4 +520,6 @@ class JsonDuplicateKeyParser {
   }
 }
 
-main();
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

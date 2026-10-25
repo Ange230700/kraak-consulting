@@ -6,6 +6,20 @@ import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { CtaBanner } from './cta-banner.component';
 
 describe('CtaBanner', () => {
+  it('Given une destination privée sans alias public, When le CTA est affiché, Then son URL originale est préservée', () => {
+    const fixture = TestBed.createComponent(CtaBanner);
+    fixture.componentRef.setInput('ctaLabel', 'Mon programme');
+    fixture.componentRef.setInput('ctaLink', '/participant/programmes');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe(
+      '/participant/programmes',
+    );
+    fixture.componentInstance.onCtaClick();
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'conversion_cta_click',
+      expect.objectContaining({ cta_link: '/participant/programmes' }),
+    );
+  });
   let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
 
   beforeEach(async () => {

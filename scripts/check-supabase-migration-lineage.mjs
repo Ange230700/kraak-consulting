@@ -67,7 +67,7 @@ export function parseMigrationList(output) {
     }
 
     const columns = splitTableColumns(line);
-    const local = cleanTableCell(columns[0] ?? '');
+    const local = cleanTableCell(columns[0]);
     const remote = cleanTableCell(columns[1] ?? '');
 
     if (columns.length !== 3 || (!local && !remote)) {

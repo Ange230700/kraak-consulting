@@ -68,6 +68,243 @@ const authMock = {
 };
 
 describe('AdminCurriculumPage', () => {
+  function createPage(): AdminCurriculumPage {
+    const page = TestBed.createComponent(AdminCurriculumPage).componentInstance;
+    page.programsClient = { list: vi.fn().mockResolvedValue([]) };
+    page.coursesClient = {
+      list: vi.fn().mockResolvedValue([]),
+      create: vi.fn().mockResolvedValue(course),
+      update: vi.fn().mockResolvedValue({ ...course, title: 'Cours modifié' }),
+      remove: vi.fn().mockResolvedValue(undefined),
+    };
+    page.programCoursesClient = {
+      list: vi.fn().mockResolvedValue([]),
+      create: vi.fn().mockResolvedValue(placement),
+      remove: vi.fn().mockResolvedValue(undefined),
+    };
+    return page;
+  }
+
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When le client réel charge le catalogue, Then les requêtes reçoivent le jeton disponible et la langue',
+    async (currentSession) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response('[]', { status: 200 }));
+      const session = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          currentSession as ReturnType<WebAuthService['currentSession']>,
+        );
+      const page =
+        TestBed.createComponent(AdminCurriculumPage).componentInstance;
+      await page.loadInitialData();
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        currentSession && 'accessToken' in currentSession
+          ? 'Bearer test-token'
+          : null,
+      );
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      expect(page['courses']()).toEqual([]);
+      fetchMock.mockRestore();
+      session.mockRestore();
+    },
+  );
+  it('Given aucun programme, When les données sont chargées, Then la sélection et les affectations sont vides', async () => {
+    const page = createPage();
+    await page.loadInitialData();
+    expect(page['selectedProgramId']()).toBeNull();
+    expect(page['selectedProgram']()).toBeNull();
+    expect(page['placements']()).toEqual([]);
+    expect(page['loading']()).toBe(false);
+  });
+
+  it('Given un catalogue indisponible, When les données sont chargées, Then l’échec est affiché et le chargement se termine', async () => {
+    const page = createPage();
+    page.programsClient.list = vi
+      .fn()
+      .mockRejectedValue(new Error('indisponible'));
+    await page.loadInitialData();
+    expect(page['errorMessage']()).toBe(
+      TestBed.inject(KraakI18nService).translate(
+        'web.admin.curriculum.feedback.loadFailure',
+      ),
+    );
+    expect(page['loading']()).toBe(false);
+  });
+
+  it('Given un programme déjà chargé, When il est sélectionné de nouveau, Then aucune requête supplémentaire n’est envoyée', async () => {
+    const page = createPage();
+    await page.selectProgram(program.id);
+    await page.selectProgram(program.id);
+    expect(page.programCoursesClient.list).toHaveBeenCalledOnce();
+  });
+
+  it('Given une requête d’affectations échouée puis une sélection plus récente, When les réponses arrivent, Then seule l’erreur courante peut être affichée', async () => {
+    const page = createPage();
+    let rejectOlder!: (error: Error) => void;
+    page.programCoursesClient.list = vi
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise((_resolve, reject) => {
+            rejectOlder = reject;
+          }),
+      )
+      .mockResolvedValueOnce([secondPlacement])
+      .mockRejectedValueOnce(new Error('échec courant'));
+    const older = page.selectProgram(program.id);
+    await page.selectProgram(secondProgram.id);
+    rejectOlder(new Error('échec ancien'));
+    await older;
+    expect(page['errorMessage']()).toBeNull();
+    expect(page['placements']()).toEqual([secondPlacement]);
+    await page.loadPlacements(secondProgram.id);
+    expect(page['errorMessage']()).toBeTruthy();
+    expect(page['placementsLoading']()).toBe(false);
+  });
+
+  it('Given un formulaire de cours invalide, When il est soumis, Then les champs sont touchés sans écriture', async () => {
+    const page = createPage();
+    await page.submitCourse();
+    expect(page.courseForm.touched).toBe(true);
+    expect(page.coursesClient.create).not.toHaveBeenCalled();
+  });
+
+  it('Given deux cours réutilisables, When l’un est modifié, Then seul ce cours est remplacé dans le catalogue', async () => {
+    const page = createPage();
+    const other = { ...course, id: 'autre-cours' };
+    page['courses'].set([course, other]);
+    page.openEditCourseForm(course);
+    expect(page['isEditingCourse']()).toBe(true);
+    await page.submitCourse();
+    expect(page.coursesClient.update).toHaveBeenCalledWith(
+      course.id,
+      expect.objectContaining({ title: course.title }),
+    );
+    expect(page['courses']()).toEqual([
+      { ...course, title: 'Cours modifié' },
+      other,
+    ]);
+    expect(page['showCourseForm']()).toBe(false);
+    expect(page['isEditingCourse']()).toBe(false);
+  });
+
+  it('Given un enregistrement rejeté, When le cours est soumis, Then le formulaire reste ouvert avec une erreur', async () => {
+    const page = createPage();
+    page.openEditCourseForm(course);
+    page.coursesClient.update = vi
+      .fn()
+      .mockRejectedValue(new Error('indisponible'));
+    await page.submitCourse();
+    expect(page['showCourseForm']()).toBe(true);
+    expect(page['errorMessage']()).toBeTruthy();
+    expect(page['submittingCourse']()).toBe(false);
+  });
+
+  it('Given un archivage refusé puis accepté, When le cours est archivé, Then les autres cours restent inchangés', async () => {
+    const page = createPage();
+    const other = { ...course, id: 'autre-cours' };
+    page['courses'].set([course, other]);
+    vi.stubGlobal(
+      'confirm',
+      vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
+    );
+    await page.archiveCourse(course);
+    expect(page.coursesClient.remove).not.toHaveBeenCalled();
+    await page.archiveCourse(course);
+    expect(page['courses']()).toEqual([
+      { ...course, status: 'archived' },
+      other,
+    ]);
+    page.coursesClient.remove = vi
+      .fn()
+      .mockRejectedValue(new Error('indisponible'));
+    await page.archiveCourse(other);
+    expect(page['errorMessage']()).toBeTruthy();
+    vi.unstubAllGlobals();
+  });
+
+  it('Given des affectations non prêtes ou aucune sélection, When un cours est affecté, Then aucune écriture ne peut démarrer', async () => {
+    const page = createPage();
+    page.placementForm.setValue({
+      courseId: course.id,
+      sortOrder: 0,
+      isRequired: true,
+    });
+    await page.attachCourse();
+    page['selectedProgramId'].set(program.id);
+    await page.attachCourse();
+    expect(page.programCoursesClient.create).not.toHaveBeenCalled();
+  });
+
+  it('Given un cours absent du catalogue et un ordre existant, When il est affecté, Then le message générique et le tri sont conservés', async () => {
+    const page = createPage();
+    page['selectedProgramId'].set(program.id);
+    page['placementsReady'].set(true);
+    page['placements'].set([{ ...secondPlacement, sortOrder: 4 }]);
+    page.placementForm.setValue({
+      courseId: course.id,
+      sortOrder: 0,
+      isRequired: true,
+    });
+    await page.attachCourse();
+    expect(page['placements']().map((item) => item.sortOrder)).toEqual([0, 4]);
+    expect(page['successMessage']()).toBe(
+      TestBed.inject(KraakI18nService).translate(
+        'web.admin.curriculum.feedback.addCourseFallbackSuccess',
+      ),
+    );
+    page.placementForm.setValue({
+      courseId: course.id,
+      sortOrder: 5,
+      isRequired: true,
+    });
+    page.programCoursesClient.create = vi
+      .fn()
+      .mockRejectedValue(new Error('indisponible'));
+    await page.attachCourse();
+    expect(page['errorMessage']()).toBeTruthy();
+    expect(page['attachingCourse']()).toBe(false);
+  });
+
+  it('Given une affectation orpheline, When son retrait est refusé puis confirmé, Then le message générique est utilisé et les autres affectations restent', async () => {
+    const page = createPage();
+    page['placements'].set([placement, secondPlacement]);
+    vi.stubGlobal(
+      'confirm',
+      vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
+    );
+    await page.detachCourse(placement);
+    expect(page.programCoursesClient.remove).not.toHaveBeenCalled();
+    await page.detachCourse(placement);
+    expect(page['placements']()).toEqual([secondPlacement]);
+    expect(page['successMessage']()).toBe(
+      TestBed.inject(KraakI18nService).translate(
+        'web.admin.curriculum.feedback.removeCourseFallbackSuccess',
+      ),
+    );
+    page.programCoursesClient.remove = vi
+      .fn()
+      .mockRejectedValue(new Error('indisponible'));
+    await page.detachCourse(secondPlacement);
+    expect(page['errorMessage']()).toBeTruthy();
+    vi.unstubAllGlobals();
+  });
+
+  it('Given des valeurs de statut inconnues, When le catalogue de traduction les laisse intactes, Then leur libellé brut est conservé', () => {
+    const page = createPage();
+    const translate = vi
+      .spyOn(TestBed.inject(KraakI18nService), 'translate')
+      .mockImplementation((key) => key);
+    expect(page['getPublicationStatusLabel']('inconnu')).toBe('inconnu');
+    expect(page['getProgramVisibilityLabel']('inconnue')).toBe('inconnue');
+    translate.mockRestore();
+  });
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     await TestBed.configureTestingModule({

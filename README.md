@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-25
 source_of_truth: true
 ---
 
@@ -38,7 +38,7 @@ Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
 | Outil       | Version minimale | Installation                                                  |
 | ----------- | ---------------- | ------------------------------------------------------------- |
-| **Node.js** | 22+              | [nodejs.org](https://nodejs.org/)                             |
+| **Node.js** | 22.12+           | [nodejs.org](https://nodejs.org/)                             |
 | **pnpm**    | 10.23.0          | `corepack enable && corepack prepare pnpm@10.23.0 --activate` |
 | **Git**     | 2.x              | [git-scm.com](https://git-scm.com/)                           |
 
@@ -195,45 +195,48 @@ publique de contenu. Voir
 
 ## Scripts disponibles
 
-| Commande                    | Description                                               |
-| --------------------------- | --------------------------------------------------------- |
-| `pnpm dev`                  | Lancer web, mobile et API avec ports auto pour web/mobile |
-| `pnpm clean`                | Nettoyer les artefacts générés dans tout le monorepo      |
-| `pnpm build`                | Builder tous les projets buildables                       |
-| `pnpm test`                 | Lancer tous les tests disponibles                         |
-| `pnpm test:workspace`       | Vérifier le workflow du runner de test racine             |
-| `pnpm dev:web`              | Lancer le site web en dev (port 4200 par défaut)          |
-| `pnpm dev:web:staging`      | Lancer le site web avec la configuration staging          |
-| `pnpm dev:api`              | Lancer l'API en dev (port 3000)                           |
-| `pnpm dev:api:staging`      | Lancer l'API avec la configuration staging                |
-| `pnpm dev:mobile`           | Lancer l'app mobile en dev (port 4300)                    |
-| `pnpm dev:mobile:staging`   | Lancer l'app mobile avec la configuration staging         |
-| `pnpm build:web`            | Builder le site web                                       |
-| `pnpm build:web:local`      | Builder le site web avec l'environnement local            |
-| `pnpm build:web:staging`    | Builder le site web avec l'environnement staging          |
-| `pnpm build:api`            | Builder l'API                                             |
-| `pnpm build:mobile`         | Builder l'app mobile                                      |
-| `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local           |
-| `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging         |
-| `pnpm test:api`             | Tests unitaires API                                       |
-| `pnpm test:api:unit`        | Tests unitaires API hors intégration                      |
-| `pnpm test:integration`     | Tests d'intégration API                                   |
-| `pnpm splinter:local`       | Lancer Splinter (Supabase Advisors) sur la DB locale      |
-| `pnpm splinter:linked`      | Lancer Splinter (Supabase Advisors) sur le projet lié     |
-| `pnpm splinter:sec`         | Lancer les checks sécurité Splinter sur le projet lié     |
-| `pnpm splinter:perf`        | Lancer les checks performance Splinter sur le projet lié  |
-| `pnpm sonar`                | Lancer l'analyse SonarCloud locale avec `.env.local`      |
-| `pnpm typecheck`            | Vérifier le typage web, mobile et API                     |
-| `pnpm test:unit`            | Tests unitaires client                                    |
-| `pnpm test:e2e`             | Tests E2E (Playwright)                                    |
-| `pnpm lint`                 | Linter le code, l'outillage racine et le Markdown         |
-| `pnpm lint:root`            | Linter les scripts et configurations racine               |
-| `pnpm lint:markdown`        | Linter tous les fichiers Markdown                         |
-| `pnpm format`               | Formater le code (Prettier)                               |
-| `pnpm format:check`         | Vérifier le formatage                                     |
-| `pnpm docs:toc:check`       | Vérifier les tables des matières Markdown                 |
-| `pnpm docs:toc:write`       | Ajouter ou régénérer les tables des matières Markdown     |
-| `pnpm commit`               | Ouvrir le prompt interactif Commitizen                    |
+| Commande                    | Description                                                    |
+| --------------------------- | -------------------------------------------------------------- |
+| `pnpm dev`                  | Lancer web, mobile et API avec ports auto pour web/mobile      |
+| `pnpm clean`                | Nettoyer les artefacts générés dans tout le monorepo           |
+| `pnpm build`                | Builder tous les projets buildables                            |
+| `pnpm test`                 | Lancer tous les tests disponibles                              |
+| `pnpm check`                | Contrôle qualité local/CI, couverture à 100 % par fichier      |
+| `pnpm check:full`           | Contrôle qualité, builds, E2E et SonarCloud bloquant           |
+| `pnpm coverage`             | Mesurer et contrôler la couverture de toutes les surfaces      |
+| `pnpm test:workspace`       | Vérifier le workflow du runner de test racine                  |
+| `pnpm dev:web`              | Lancer le site web en dev (port 4200 par défaut)               |
+| `pnpm dev:web:staging`      | Lancer le site web avec la configuration staging               |
+| `pnpm dev:api`              | Lancer l'API en dev (port 3000)                                |
+| `pnpm dev:api:staging`      | Lancer l'API avec la configuration staging                     |
+| `pnpm dev:mobile`           | Lancer l'app mobile en dev (port 4300)                         |
+| `pnpm dev:mobile:staging`   | Lancer l'app mobile avec la configuration staging              |
+| `pnpm build:web`            | Builder le site web                                            |
+| `pnpm build:web:local`      | Builder le site web avec l'environnement local                 |
+| `pnpm build:web:staging`    | Builder le site web avec l'environnement staging               |
+| `pnpm build:api`            | Builder l'API                                                  |
+| `pnpm build:mobile`         | Builder l'app mobile                                           |
+| `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local                |
+| `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging              |
+| `pnpm test:api`             | Tests unitaires API                                            |
+| `pnpm test:api:unit`        | Tests unitaires API hors intégration                           |
+| `pnpm test:integration`     | Tests d'intégration API                                        |
+| `pnpm splinter:local`       | Lancer Splinter (Supabase Advisors) sur la DB locale           |
+| `pnpm splinter:linked`      | Lancer Splinter (Supabase Advisors) sur le projet lié          |
+| `pnpm splinter:sec`         | Lancer les checks sécurité Splinter sur le projet lié          |
+| `pnpm splinter:perf`        | Lancer les checks performance Splinter sur le projet lié       |
+| `pnpm sonar`                | Lancer l'analyse SonarCloud locale avec `.env.local`           |
+| `pnpm typecheck`            | Vérifier le typage des packages, du web, du mobile et de l'API |
+| `pnpm test:unit`            | Tests unitaires client                                         |
+| `pnpm test:e2e`             | Tests E2E (Playwright)                                         |
+| `pnpm lint`                 | Linter le code, l'outillage racine et le Markdown              |
+| `pnpm lint:root`            | Linter les scripts et configurations racine                    |
+| `pnpm lint:markdown`        | Linter tous les fichiers Markdown                              |
+| `pnpm format`               | Formater le code (Prettier)                                    |
+| `pnpm format:check`         | Vérifier le formatage                                          |
+| `pnpm docs:toc:check`       | Vérifier les tables des matières Markdown                      |
+| `pnpm docs:toc:write`       | Ajouter ou régénérer les tables des matières Markdown          |
+| `pnpm commit`               | Ouvrir le prompt interactif Commitizen                         |
 
 ---
 

@@ -7,11 +7,14 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
-import { buildDocsIndexes } from './generate-docs-index.mjs';
+import {
+  buildDocsIndexes,
+  renderTable,
+  runCli,
+} from './generate-docs-index.mjs';
 
 const repoRoot = process.cwd();
 const scriptPath = path.join(repoRoot, 'scripts', 'generate-docs-index.mjs');
@@ -28,7 +31,10 @@ function writeMarkdown(root, file, content) {
 }
 
 function createFixtureRepository() {
-  const root = mkdtempSync(path.join(os.tmpdir(), 'kraak-docs-index-'));
+  mkdirSync(path.join(repoRoot, '.reports'), { recursive: true });
+  const root = mkdtempSync(
+    path.join(repoRoot, '.reports', 'docs-index-fixture-'),
+  );
 
   writeMarkdown(
     root,
@@ -168,11 +174,11 @@ function runScript(root, args) {
   return spawnSync(process.execPath, [scriptPath, ...args], {
     cwd: root,
     encoding: 'utf8',
-    timeout: 30_000,
+    timeout: 120_000,
   });
 }
 
-test('Given documentation files, When indexes are built, Then generated content is deterministic and ordered', async () => {
+test('Given des documents, When les index sont construits, Then leur contenu est déterministe et ordonné', async () => {
   const root = createFixtureRepository();
 
   try {
@@ -215,7 +221,7 @@ test('Given documentation files, When indexes are built, Then generated content 
   }
 });
 
-test('Given stale generated indexes, When check mode runs, Then it fails without writing files', () => {
+test('Given des index obsolètes, When le contrôle est exécuté, Then il échoue sans écriture', () => {
   const root = createFixtureRepository();
 
   try {
@@ -233,7 +239,7 @@ test('Given stale generated indexes, When check mode runs, Then it fails without
   }
 });
 
-test('Given documentation indexes, When write runs before check, Then the check passes', () => {
+test('Given les index documentaires, When ils sont écrits avant le contrôle, Then celui-ci réussit', () => {
   const root = createFixtureRepository();
 
   try {
@@ -258,5 +264,201 @@ test('Given documentation indexes, When write runs before check, Then the check 
     );
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+function emptyFixture(t) {
+  mkdirSync(path.join(repoRoot, '.reports'), { recursive: true });
+  const root = mkdtempSync(
+    path.join(repoRoot, '.reports', 'docs-empty-fixture-'),
+  );
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  return root;
+}
+
+test('Given une documentation vide, When les index sont construits, Then les tableaux vides et la date courante sont explicites', async (t) => {
+  const root = emptyFixture(t);
+  const indexes = await buildDocsIndexes(root);
+  assert.equal(indexes.size, 3);
+  assert.match(indexes.get('docs/README.md'), /Aucun document actif trouvé/);
+  assert.match(
+    indexes.get('docs/README.md'),
+    new RegExp(`last_reviewed: ${new Date().toISOString().slice(0, 10)}`),
+  );
+  assert.match(
+    indexes.get('docs/decisions/README.md'),
+    /\| -\s+\| -\s+\| -\s+\| -\s+\|/,
+  );
+  assert.match(
+    indexes.get('docs/archive/README.md'),
+    /\| -\s+\| -\s+\| -\s+\| -\s+\| -\s+\|/,
+  );
+});
+
+test('Given des cellules Markdown, When un tableau est rendu, Then les valeurs absentes et caractères spéciaux sont échappés', () => {
+  assert.equal(
+    renderTable(['Titre'], [[undefined], [null], [' a|b\r\nc ']]),
+    '| Titre |\n| --- |\n| - |\n| - |\n| a\\|b c |',
+  );
+});
+
+test('Given des métadonnées conservées ou mal formées, When les documents sont indexés, Then seuls les documents actifs valides sont retenus', async (t) => {
+  const root = emptyFixture(t);
+  writeMarkdown(
+    root,
+    'docs/README.md',
+    '---\nstatus: reference\nowner: editorial\nlast_reviewed: 2025-01-01\nsource_of_truth: false\n---\n# Ancien index',
+  );
+  writeMarkdown(
+    root,
+    'docs/decisions/README.md',
+    '---\nstatus: active\n---\n# Index exclu',
+  );
+  writeMarkdown(
+    root,
+    'docs/product/nested/active.MD',
+    '---\nstatus: "active"\nligne invalide\n: sans clé\nbad key: rejetée\nsource_of_truth: \'true\'\n---\nAucun titre',
+  );
+  writeMarkdown(
+    root,
+    'docs/product/broken.md',
+    '---\nstatus: active\n# Sans fermeture',
+  );
+  writeMarkdown(root, 'docs/product/plain.md', '# Sans métadonnées');
+  writeMarkdown(
+    root,
+    'docs/product/inactive.md',
+    '---\nstatus: historical\n---\n# Inactif',
+  );
+  writeMarkdown(
+    root,
+    'docs/product/default.md',
+    '---\nstatus: active\n---\n# Actif',
+  );
+  writeMarkdown(root, 'docs/product/file.txt', 'non Markdown');
+  const indexes = await buildDocsIndexes(root);
+  const content = indexes.get('docs/README.md');
+  assert.match(content, /status: reference/);
+  assert.match(content, /owner: editorial/);
+  assert.match(content, /last_reviewed: 2025-01-01/);
+  assert.match(content, /source_of_truth: false/);
+  assert.match(
+    content,
+    /product\/nested\/active\.MD.*active.*true.*Sans titre/,
+  );
+  assert.match(content, /product\/default\.md.*active.*false.*Actif/);
+  assert.doesNotMatch(content, /product\/(?:broken|plain|inactive)\.md/);
+  assert.doesNotMatch(content, /Index exclu/);
+});
+
+test('Given des ADR de même numéro et différents formats, When leur index est généré, Then le tri et les champs sont normalisés', async (t) => {
+  const root = emptyFixture(t);
+  writeMarkdown(
+    root,
+    'docs/decisions/ARC-03-z-last.md',
+    '# ARC-03 — **Dernière** `<em>version</em>` <incomplet\n\n**Statut :** **Acceptée**\n**Date :** `2026-03-01`',
+  );
+  writeMarkdown(
+    root,
+    'docs/decisions/ARC-03-a-first.md',
+    '# ARC-03 : Première\n\nSans champs',
+  );
+  writeMarkdown(
+    root,
+    'docs/decisions/arc-01-before.md',
+    '# arc-01 - Avant\n\n- Statut: Proposée\n- Date: 2026-01-01',
+  );
+  writeMarkdown(root, 'docs/decisions/other.md', '# Non ADR');
+  const content = (await buildDocsIndexes(root)).get(
+    'docs/decisions/README.md',
+  );
+  assert.ok(
+    content.indexOf('(arc-01-before.md)') <
+      content.indexOf('(ARC-03-a-first.md)'),
+  );
+  assert.ok(
+    content.indexOf('(ARC-03-a-first.md)') <
+      content.indexOf('(ARC-03-z-last.md)'),
+  );
+  assert.match(content, /Acceptée/);
+  assert.match(content, /2026-03-01/);
+  assert.match(content, /version/);
+  assert.match(content, /incomplet/);
+  assert.doesNotMatch(content, /<em>/);
+  assert.doesNotMatch(content, /Non ADR/);
+});
+
+test('Given plusieurs archives et notices incomplètes, When leur catalogue est généré, Then les résumés et valeurs de repli sont fidèles', async (t) => {
+  const root = emptyFixture(t);
+  mkdirSync(path.join(root, 'docs', 'archive', 'absent'), { recursive: true });
+  writeMarkdown(root, 'docs/archive/file.md', '# Fichier ignoré');
+  const cases = [
+    [
+      'accent',
+      '## Pourquoi ces documents sont archivés\n\nRésumé **important**.\n\n## Suite\n\nÀ exclure.',
+    ],
+    [
+      'feminine',
+      '## Pourquoi ces documents sont archivées\n\nAutre résumé\n\n---\n\nÀ exclure.',
+    ],
+    ['empty', '## Pourquoi ces documents sont archives\n\n'],
+    ['none', 'Aucun résumé.'],
+  ];
+  for (const [name, body] of cases) {
+    writeMarkdown(
+      root,
+      `docs/archive/${name}/README.md`,
+      `# Archive ${name}\n\n${body}`,
+    );
+  }
+  const content = (await buildDocsIndexes(root)).get('docs/archive/README.md');
+  assert.match(content, /README\.md manquant/);
+  assert.match(content, /Résumé important/);
+  assert.match(content, /Autre résumé/);
+  assert.match(content, /`none\/`\s+\| -\s+\| -\s+\| Archive none\s+\| -/);
+  assert.match(content, /`empty\/`\s+\| -\s+\| -\s+\| Archive empty\s+\| -/);
+  assert.doesNotMatch(content, /À exclure|Fichier ignoré/);
+});
+
+test('Given un répertoire à la place d’un index, When le contrôle est exécuté, Then il signale un index obsolète', async (t) => {
+  const root = emptyFixture(t);
+  mkdirSync(path.join(root, 'docs', 'README.md'), { recursive: true });
+  const messages = [];
+  t.mock.method(console, 'error', (message) => messages.push(message));
+  assert.equal(await runCli(['--check'], root), 1);
+  assert.ok(messages.includes('docs/README.md is not up to date.'));
+});
+
+test('Given des options CLI, When elles sont interprétées, Then l’aide et les erreurs ont les codes attendus', async (t) => {
+  const root = emptyFixture(t);
+  const errors = [];
+  const logs = [];
+  t.mock.method(console, 'error', (message) => errors.push(message));
+  t.mock.method(console, 'log', (message) => logs.push(message));
+  for (const args of [['--help'], ['-h'], ['--help', '--inconnue']]) {
+    assert.equal(await runCli(args, root), 0);
+  }
+  for (const args of [[], ['--check', '--write'], ['--inconnue']]) {
+    assert.equal(await runCli(args, root), 2);
+  }
+  assert.ok(logs.every((message) => message.startsWith('Usage:')));
+  assert.ok(errors.includes('Unknown option: --inconnue'));
+  assert.ok(errors.includes('Choose exactly one mode: --check or --write.'));
+});
+
+test('Given un dossier courant isolé, When l’API utilise ses valeurs par défaut, Then elle construit et contrôle uniquement ce dossier', async (t) => {
+  const root = emptyFixture(t);
+  const previous = process.cwd();
+  const previousArgs = process.argv;
+  t.mock.method(console, 'log', () => {});
+  try {
+    process.chdir(root);
+    process.argv = [process.execPath, scriptPath, '--write'];
+    assert.equal((await buildDocsIndexes()).size, 3);
+    assert.equal(await runCli(), 0);
+    assert.equal(await runCli(['--check']), 0);
+  } finally {
+    process.chdir(previous);
+    process.argv = previousArgs;
   }
 });

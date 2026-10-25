@@ -112,6 +112,12 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "fileReplacements": [],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -140,10 +146,12 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "web:build:test",
             "tsConfig": "projects/web/tsconfig.spec.json",
             "runnerConfig": "projects/web/vitest.config.ts",
             "coverage": true,
-            "coverageReporters": ["lcov", "text"]
+            "coverageInclude": ["projects/web/src/**/*.ts"],
+            "coverageReporters": ["lcov", "text-summary", "json-summary"]
           }
         },
         "lint": {
@@ -267,6 +275,12 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "fileReplacements": [],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -308,10 +322,12 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "mobile:build:test",
             "tsConfig": "projects/mobile/tsconfig.spec.json",
             "runnerConfig": "projects/mobile/vitest.config.ts",
             "coverage": true,
-            "coverageReporters": ["lcov", "text"]
+            "coverageInclude": ["projects/mobile/src/**/*.ts"],
+            "coverageReporters": ["lcov", "text-summary", "json-summary"]
           }
         }
       }

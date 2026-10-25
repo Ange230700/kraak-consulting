@@ -98,7 +98,9 @@ test('Given le schéma initial, When on vérifie la sécurité de base, Then les
   ]) {
     assert.match(
       schema,
-      new RegExp(String.raw`ALTER TABLE ${tableName}\s+ENABLE ROW LEVEL SECURITY;`),
+      new RegExp(
+        String.raw`ALTER TABLE ${tableName}\s+ENABLE ROW LEVEL SECURITY;`,
+      ),
     );
   }
 

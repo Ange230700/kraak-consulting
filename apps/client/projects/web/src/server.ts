@@ -58,20 +58,31 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
-  const prerenderedHtmlPath = resolvePrerenderedHtmlPath(req);
+export function createPrerenderedPageMiddleware(
+  browserDistFolder: string,
+  fileExists: (path: string) => boolean = existsSync,
+): express.RequestHandler {
+  return (req, res, next) => {
+    const prerenderedHtmlPath = resolvePrerenderedHtmlPath(
+      req,
+      browserDistFolder,
+      fileExists,
+    );
 
-  if (!prerenderedHtmlPath) {
-    next();
-    return;
-  }
-
-  res.sendFile(prerenderedHtmlPath, (error) => {
-    if (error) {
-      next(error);
+    if (!prerenderedHtmlPath) {
+      next();
+      return;
     }
-  });
-});
+
+    res.sendFile(prerenderedHtmlPath, (error) => {
+      if (error) {
+        next(error);
+      }
+    });
+  };
+}
+
+app.use(createPrerenderedPageMiddleware(resolvedBrowserDistFolder));
 
 /**
  * Handle all other requests by rendering the Angular application.
@@ -106,7 +117,11 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 export const reqHandler = createNodeRequestHandler(app);
 export { app };
 
-function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
+function resolvePrerenderedHtmlPath(
+  req: express.Request,
+  browserDistFolder: string,
+  fileExists: (path: string) => boolean,
+): string | undefined {
   if (!['GET', 'HEAD'].includes(req.method) || !req.accepts('html')) {
     return undefined;
   }
@@ -114,7 +129,7 @@ function resolvePrerenderedHtmlPath(req: express.Request): string | undefined {
   const routePath = parseRequestPath(req);
 
   return routePath
-    ? buildPrerenderedHtmlPath(routePath, resolvedBrowserDistFolder, existsSync)
+    ? buildPrerenderedHtmlPath(routePath, browserDistFolder, fileExists)
     : undefined;
 }
 

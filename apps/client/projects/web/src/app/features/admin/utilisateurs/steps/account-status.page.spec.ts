@@ -11,6 +11,19 @@ import {
 import { UserFormStateService } from '../user-form-state.service';
 
 describe('AccountStatusPage', () => {
+  it('Given les rôles participant et administrateur, When leurs libellés sont demandés, Then ils utilisent les traductions correspondantes', async () => {
+    const page = TestBed.createComponent(AccountStatusPage).componentInstance;
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    const i18n = TestBed.inject(KraakI18nService);
+    expect(page['roleLabel']('participant')).toBe(
+      i18n.translate(
+        'web.admin.users.create.businessInformation.roles.participant',
+      ),
+    );
+    expect(page['roleLabel']('admin')).toBe(
+      i18n.translate('web.admin.users.create.businessInformation.roles.admin'),
+    );
+  });
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     await TestBed.configureTestingModule({

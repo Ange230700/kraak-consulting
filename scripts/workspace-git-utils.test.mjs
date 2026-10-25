@@ -7,7 +7,60 @@ import {
   refExists,
   resolveBaseRef,
   resolveGitExecutable,
+  runGit,
 } from './workspace-git-utils.mjs';
+import { mock } from 'node:test';
+
+test('Given les plateformes Windows et Linux, When Git est résolu, Then les chemins fiables sont utilisés', () => {
+  for (const [platform, expected] of [
+    ['win32', String.raw`C:\Program Files\Git\bin\git.exe`],
+    ['linux', '/usr/local/bin/git'],
+  ]) {
+    assert.equal(
+      resolveGitExecutable({
+        platform,
+        environment: {},
+        fileExists: (candidate) => candidate === expected,
+      }),
+      expected,
+    );
+  }
+});
+
+test('Given Git réel et ses options par défaut, When une commande est exécutée, Then la version et la référence sont lisibles', () => {
+  assert.equal(runGit(['--version']).status, 0);
+  assert.equal(
+    runGit(['--version'], { gitExecutable: resolveGitExecutable() }).status,
+    0,
+  );
+  assert.match(getGitOutput(['--version']), /^git version/);
+  assert.equal(refExists('HEAD'), true);
+  assert.ok(resolveBaseRef());
+  assert.ok(Array.isArray(getChangedFiles('HEAD')));
+});
+
+test('Given aucun ref valide et un upstream invalide, When la base est résolue, Then HEAD précédent est retourné', () => {
+  assert.equal(
+    resolveBaseRef({
+      gitRunner: (args) =>
+        gitResult(args.includes('@{upstream}') ? 0 : 1, 'missing'),
+    }),
+    'HEAD~1',
+  );
+});
+
+test('Given un diff invalide sans message personnalisé, When les fichiers sont demandés, Then un avertissement par défaut est journalisé', () => {
+  const warn = mock.method(console, 'warn', () => {});
+  try {
+    assert.deepEqual(
+      getChangedFiles('missing', { gitRunner: () => gitResult(1) }),
+      [],
+    );
+    assert.match(warn.mock.calls[0].arguments[0], /Impossible/);
+  } finally {
+    warn.mock.restore();
+  }
+});
 
 function gitResult(status, stdout = '') {
   return { status, stdout, stderr: '' };

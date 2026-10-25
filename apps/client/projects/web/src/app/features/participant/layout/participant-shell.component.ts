@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, InjectionToken, computed, inject } from '@angular/core';
 import {
   Router,
   RouterLink,
@@ -13,6 +13,14 @@ import {
   KraakTranslatePipe,
 } from '../../../../../../shared/i18n';
 
+export const PARTICIPANT_SUPPORT_ROUTE = new InjectionToken(
+  'PARTICIPANT_SUPPORT_ROUTE',
+  {
+    providedIn: 'root',
+    factory: () => findLocalizedPublicRouteEntryByLegacyPath,
+  },
+);
+
 @Component({
   selector: 'kraak-web-participant-shell',
   standalone: true,
@@ -23,13 +31,12 @@ export default class ParticipantShell {
   private readonly authService = inject(WebAuthService);
   private readonly i18n = inject(KraakI18nService);
   private readonly router = inject(Router);
+  private readonly supportRoute = inject(PARTICIPANT_SUPPORT_ROUTE);
 
   protected readonly currentProfile = this.authService.currentProfile;
 
   protected readonly supportPath = computed(
-    () =>
-      findLocalizedPublicRouteEntryByLegacyPath('/contact', this.i18n.locale())
-        ?.path ?? '/contact',
+    () => this.supportRoute('/contact', this.i18n.locale())?.path ?? '/contact',
   );
 
   protected readonly displayName = computed(() => {

@@ -253,7 +253,7 @@ export const seoDefaults = {
   siteName: CLIENT_DEFAULTS.siteName,
 };
 
-function buildLocalizedSeoPage(
+export function buildLocalizedSeoPage(
   entry: LocalizedPublicRouteEntry,
 ): SeoPageDefinition {
   const sourceSeo = findRawSeoPageByPath(entry.seoPath);
@@ -426,7 +426,7 @@ function shouldIncludeInSitemap(page: SeoPageDefinition): boolean {
   );
 }
 
-function buildSitemapUrlXml(
+export function buildSitemapUrlXml(
   page: SeoPageDefinition,
   normalizedSiteUrl: string,
 ): string {

@@ -3,6 +3,8 @@ import { SOURCE_LOCALE, SUPPORTED_LOCALES } from '@kraak/domain';
 import {
   LOCALIZED_PUBLIC_LOCALES,
   LOCALIZED_PUBLIC_PAGES,
+  buildLegacyPublicRedirects,
+  buildLocalizedPublicRouteEntry,
   buildLocalizedBlogArticlePath,
   buildLocalizedPublicLocalePath,
   findLocalizedPublicRouteEntry,
@@ -27,6 +29,48 @@ const PRIVATE_ROUTE_PREFIXES = [
 ];
 
 describe('Given the localized public route model', () => {
+  it('Given une page sans ancien alias, When une ancienne destination est recherchée, Then aucune correspondance artificielle n’est créée', () => {
+    expect(
+      findLocalizedPublicRouteEntryByLegacyPath('/absent', 'fr-CI', [
+        { ...LOCALIZED_PUBLIC_PAGES[0], legacyAliases: undefined },
+      ]),
+    ).toBeUndefined();
+  });
+  it('Given une page sans ancien alias, When les redirections sont construites, Then aucune redirection artificielle n’est ajoutée', () => {
+    expect(
+      buildLegacyPublicRedirects([
+        { ...LOCALIZED_PUBLIC_PAGES[0], legacyAliases: undefined },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('Given un slug vide ou imbriqué, When une URL d’article est demandée, Then le chemin invalide est refusé', () => {
+    expect(() => buildLocalizedBlogArticlePath('///')).toThrow(
+      'Invalid Blog article slug',
+    );
+    expect(() => buildLocalizedBlogArticlePath('article/sous-page')).toThrow(
+      'Invalid Blog article slug',
+    );
+    expect(
+      buildLocalizedPublicLocalePath('/fr/blog/article/sous-page', 'en-GB'),
+    ).toBe('/en/');
+  });
+
+  it('Given une page dont le préfixe ne correspond pas à sa locale, When son entrée est construite, Then la configuration invalide est signalée', () => {
+    const page = LOCALIZED_PUBLIC_PAGES[0];
+    expect(() =>
+      buildLocalizedPublicRouteEntry(
+        { ...page, paths: { ...page.paths, 'fr-CI': '/incorrect/contact' } },
+        'fr-CI',
+      ),
+    ).toThrow('does not start with /fr');
+  });
+
+  it('Given un identifiant de page inconnu, When sa route est exigée, Then une erreur explicite identifie la locale', () => {
+    expect(() =>
+      findLocalizedPublicRouteEntry('inconnue' as never, 'fr-CI'),
+    ).toThrow('Missing localized public route for inconnue/fr-CI');
+  });
   it('Given public page identifiers, when routes are flattened, then every page has one French route and one English route', () => {
     for (const page of LOCALIZED_PUBLIC_PAGES) {
       const pageEntries = localizedPublicRouteEntries.filter(

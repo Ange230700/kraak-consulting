@@ -20,6 +20,14 @@ module.exports = defineConfig(
     },
   },
   {
+    files: ['projects/*/vitest.config.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylistic,
+    ],
+  },
+  {
     files: [
       'projects/web/vitest.setup.ts',
       'projects/web/src/**/*.ts',

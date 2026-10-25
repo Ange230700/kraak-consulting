@@ -52,7 +52,7 @@ function escapeCell(value) {
     .trim();
 }
 
-function renderTable(headers, rows) {
+export function renderTable(headers, rows) {
   return [
     `| ${headers.map(escapeCell).join(' | ')} |`,
     `| ${headers.map(() => '---').join(' | ')} |`,
@@ -186,9 +186,10 @@ function walkMarkdown(root, directory) {
 
 function preservedFrontmatter(root, targetFile, today) {
   const absoluteFile = path.join(root, targetFile);
-  const existing = existsSync(absoluteFile)
-    ? parseFrontmatter(readText(absoluteFile))
-    : {};
+  const existing =
+    existsSync(absoluteFile) && statSync(absoluteFile).isFile()
+      ? parseFrontmatter(readText(absoluteFile))
+      : {};
 
   return [
     '---',
@@ -338,13 +339,7 @@ function adrRecords(root) {
     .filter((file) => /^docs\/decisions\/ARC-\d{2}-.+\.md$/i.test(file))
     .map((file) => {
       const record = readMarkdownRecord(root, file);
-      const idMatch = /^(ARC-\d{2})-/i.exec(path.basename(file));
-
-      if (!idMatch) {
-        throw new Error(`ADR sans identifiant ARC valide: ${file}`);
-      }
-
-      const id = idMatch[1].toUpperCase();
+      const id = path.basename(file).slice(0, 6).toUpperCase();
 
       return {
         date: parseAdrField(record.content, 'Date'),

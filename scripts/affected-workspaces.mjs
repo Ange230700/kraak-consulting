@@ -152,43 +152,48 @@ function getCommandPlan(mode, affectedWorkspaceNames) {
   return commandPlan;
 }
 
-function runCommand(commandParts, label) {
+export function runCommand(
+  commandParts,
+  label,
+  { runtime = process, run = spawnSync } = {},
+) {
   console.info(`[affected] ${label}`);
 
-  const useShell = process.platform === 'win32';
-  const commandExecutable =
-    process.platform === 'win32' && commandParts[0] === 'pnpm'
-      ? 'pnpm'
-      : commandParts[0];
-  const result = spawnSync(commandExecutable, commandParts.slice(1), {
+  const useShell = runtime.platform === 'win32';
+  const result = run(commandParts[0], commandParts.slice(1), {
     stdio: 'inherit',
     shell: useShell,
   });
 
   if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+    runtime.exit(result.status ?? 1);
   }
 }
 
-function main() {
-  const mode = process.argv[2];
+export function main({
+  runtime = process,
+  run = spawnSync,
+  getFiles = getChangedFiles,
+  resolveBase = resolveBaseRef,
+} = {}) {
+  const mode = runtime.argv[2];
 
   if (!mode) {
     console.error(
       '[affected] Utilisation: node ./scripts/affected-workspaces.mjs <lint|test|build>',
     );
-    process.exit(1);
+    return runtime.exit(1);
   }
 
   const supportedModes = new Set(['lint', 'test', 'build']);
 
   if (!supportedModes.has(mode)) {
     console.error(`[affected] Mode inconnu: ${mode}`);
-    process.exit(1);
+    return runtime.exit(1);
   }
 
   const gitOptions = { errorPrefix: '[affected]' };
-  const changedFiles = getChangedFiles(resolveBaseRef(gitOptions), {
+  const changedFiles = getFiles(resolveBase(gitOptions), {
     ...gitOptions,
     warningMessage:
       '[affected] Impossible de détecter finement les changements, fallback sur une validation minimale.',
@@ -210,7 +215,19 @@ function main() {
   }
 
   for (const step of commandPlan) {
-    runCommand(step.command, `${mode} -> ${step.workspaceName}`);
+    runCommand(step.command, `${mode} -> ${step.workspaceName}`, {
+      runtime,
+      run,
+    });
+  }
+}
+
+export function runCli(options) {
+  try {
+    main(options);
+  } catch (error) {
+    console.error('[affected] Erreur inattendue durant les contrôles:', error);
+    (options?.runtime ?? process).exit(1);
   }
 }
 
@@ -218,12 +235,7 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
-  try {
-    main();
-  } catch (error) {
-    console.error('[affected] Erreur inattendue durant les contrôles:', error);
-    process.exit(1);
-  }
+  runCli();
 }
 
 export {

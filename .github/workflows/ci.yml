@@ -18,6 +18,45 @@ env:
   GIT_EXECUTABLE: /usr/bin/git
 
 jobs:
+  quality-gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Contrôle qualité complet, identique aux hooks locaux
+        run: pnpm check
+
+      - name: Conserver les rapports de couverture, même en cas de seuil non atteint
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quality-coverage
+          path: |
+            coverage/lcov.info
+            coverage/coverage-summary.json
+            apps/api/coverage/
+            apps/client/coverage/
+            packages/*/coverage/
+          if-no-files-found: warn
+          retention-days: 14
+
   # ──────────────────────────────────────────────
   # Vérifications rapides : format + lint
   # ──────────────────────────────────────────────

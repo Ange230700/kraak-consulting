@@ -119,7 +119,7 @@ export async function runObservabilityChecks(input, options = {}) {
   return results;
 }
 
-function formatSummary(results) {
+export function formatSummary(results) {
   return results
     .map((result) => {
       const details = [`${result.name}: ${result.status}`, result.url];

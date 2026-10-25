@@ -1,14 +1,7 @@
-import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
-import {
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-} from '@ionic/angular/standalone';
+import { provideRouter } from '@angular/router';
+import { provideIonicAngular } from '@ionic/angular/standalone';
 import { describe, it, beforeEach, expect } from 'vitest';
 import { MOBILE_PRIMARY_TABS } from '../../core/navigation/mobile-shell.config';
 import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
@@ -18,29 +11,35 @@ describe('TabsLayout', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TabsLayout],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        { provide: ActivatedRoute, useValue: {} },
-        provideKraakI18n(),
-      ],
-    })
-      .overrideComponent(TabsLayout, {
-        remove: {
-          imports: [
-            IonTabs,
-            IonRouterOutlet,
-            IonTabBar,
-            IonTabButton,
-            IonIcon,
-            IonLabel,
-          ],
-        },
-        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
-      })
-      .compileComponents();
+      providers: [provideRouter([]), provideIonicAngular(), provideKraakI18n()],
+    }).compileComponents();
 
     await TestBed.inject(ApplicationInitStatus).donePromise;
     await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
+
+  describe('TabsLayout avec les composants Ionic réels', () => {
+    it('Given le routeur mobile complet, When le shell Ionic est rendu, Then les quatre onglets conservent leurs destinations accessibles', async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [TabsLayout],
+        providers: [
+          provideRouter([]),
+          provideIonicAngular(),
+          provideKraakI18n(),
+        ],
+      }).compileComponents();
+      await TestBed.inject(ApplicationInitStatus).donePromise;
+      const fixture = TestBed.createComponent(TabsLayout);
+      fixture.detectChanges();
+      const tabs = fixture.nativeElement.querySelectorAll(
+        'ion-tab-button',
+      ) as NodeListOf<HTMLElement & { href: string }>;
+      expect(tabs).toHaveLength(4);
+      expect(Array.from(tabs).map((tab) => tab.href)).toEqual(
+        MOBILE_PRIMARY_TABS.map((tab) => tab.href),
+      );
+    });
   });
 
   it('should create', () => {

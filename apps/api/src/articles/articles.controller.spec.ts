@@ -14,6 +14,55 @@ import { ArticlesService } from './articles.service';
 describe('ArticlesController', () => {
   let controller: ArticlesController;
 
+  it.each(['updateCategory', 'updateTag'] as const)(
+    'Given une taxonomie valide, When %s est appelée, Then le résultat métier est renvoyé',
+    async (operation) => {
+      const payload = { slug: 'leadership', label: 'Leadership' };
+      const result = { id: 'entity-1', ...payload };
+      articlesService[operation].mockResolvedValueOnce(result);
+      await expect(
+        controller[operation]('entity-1', payload, 'Bearer access-token'),
+      ).resolves.toEqual(result);
+      expect(articlesService[operation]).toHaveBeenCalledWith(
+        'access-token',
+        'entity-1',
+        payload,
+      );
+    },
+  );
+
+  it('Given un rejet fournisseur non standard, When une couverture est envoyée, Then une erreur serveur sûre est exposée et diagnostiquée', async () => {
+    const error = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    articlesService.uploadCoverImage.mockRejectedValueOnce('échec fournisseur');
+    await expect(
+      controller.uploadCoverImage(
+        {
+          buffer: Buffer.from('image'),
+          originalname: 'cover.jpg',
+          mimetype: 'image/jpeg',
+          size: 120,
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+    expect(error).toHaveBeenCalledWith(expect.any(String), {
+      context: 'articles.uploadCoverImage',
+      message: 'Erreur inconnue',
+    });
+    error.mockRestore();
+  });
+
+  it.each(['updateCategory', 'updateTag'] as const)(
+    'Given une taxonomie invalide, When %s est appelée, Then le corps est rejeté avant le service',
+    async (operation) => {
+      await expect(
+        controller[operation]('entity-1', {}, 'Bearer access-token'),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    },
+  );
+
   const articlesService = {
     listArticles: jest.fn(),
     getArticleById: jest.fn(),

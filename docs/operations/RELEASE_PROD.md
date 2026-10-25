@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-25
 source_of_truth: true
 ---
 
@@ -79,12 +79,18 @@ des étapes migration ou smoke test.
 - Required pull request reviews avant merge (≥ 1)
 - Required status checks (noms exacts tels que définis dans
   `.github/workflows/ci.yml`) :
+  - `Quality gate`
   - `Format & Lint`
   - `Build`
   - `Tests unitaires`
   - `Workspace Checks`
 - Linear history (rebase only — déjà aligné avec le workflow Git du repo)
 - Restrict who can push : mainteneurs uniquement
+
+Le script `scripts/github/update-branch-protection.mjs` inclut `Quality gate`
+dans les checks requis de `staging` et `main`. Après publication du nouveau job,
+réappliquer la protection depuis une révision validée ; ajouter le fichier de
+workflow seul ne modifie pas les règles déjà actives sur GitHub.
 
 ### 3. Render — service prod
 

@@ -36,6 +36,23 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('ServicesPage', () => {
+  it('Given un rendu serveur, When la page demande ses animations, Then aucun service navigateur n’est résolu', async () => {
+    const page = TestBed.createComponent(ServicesPage).componentInstance;
+    const window = globalThis.window;
+    vi.stubGlobal('window', undefined);
+    await page['initializeAnimations']();
+    vi.stubGlobal('window', window);
+    expect(page['gsapService']).toBeNull();
+  });
+
+  it('Given un service déjà résolu, When les animations sont redemandées, Then la même instance est réutilisée', async () => {
+    const page = TestBed.createComponent(ServicesPage).componentInstance;
+    await page['initializeAnimations']();
+    const service = page['gsapService'];
+    await page['initializeAnimations']();
+    expect(page['gsapService']).toBe(service);
+    expect(service).not.toBeNull();
+  });
   let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
 
   beforeEach(async () => {

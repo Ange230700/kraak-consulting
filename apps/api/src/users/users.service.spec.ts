@@ -79,6 +79,31 @@ describe('UsersService', () => {
   });
 
   describe('findAll', () => {
+    it('Given une invitation sans coordonnées facultatives, When elle est créée, Then le profil conserve des valeurs nulles', async () => {
+      mockInviteUser.mockResolvedValue({
+        data: { user: { id: 'user-1' } },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({ data: mockUserRow, error: null });
+      const invitation = {
+        email: 'alice@example.com',
+        firstName: 'Alice',
+        lastName: 'Martin',
+        role: 'participant',
+      } as Parameters<UsersService['invite']>[0];
+      await expect(service.invite(invitation)).resolves.toMatchObject({
+        id: 'user-1',
+        phone: null,
+      });
+      expect(mockUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          phone: null,
+          preferred_contact_channel: null,
+          is_active: true,
+        }),
+        { onConflict: 'id' },
+      );
+    });
     it('Given users in database, When findAll is called, Then returns mapped DTOs', async () => {
       mockOrder.mockResolvedValueOnce({ data: [mockUserRow], error: null });
 

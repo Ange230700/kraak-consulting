@@ -46,7 +46,7 @@ export class AnalyticsService {
       return;
     }
 
-    this.injectLoader();
+    this.injectLoader(this.measurementId!);
     this.bootstrapGtag();
     this.trackRouterPageViews();
   }
@@ -64,7 +64,7 @@ export class AnalyticsService {
     target.gtag?.('event', name, params);
   }
 
-  private injectLoader(): void {
+  private injectLoader(measurementId: string): void {
     const existing = this.document.head.querySelector(
       `script[${LOADER_ATTRIBUTE}="${LOADER_ATTRIBUTE_VALUE}"]`,
     );
@@ -75,7 +75,7 @@ export class AnalyticsService {
     const script = this.document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
-      this.measurementId ?? '',
+      measurementId,
     )}`;
     script.setAttribute(LOADER_ATTRIBUTE, LOADER_ATTRIBUTE_VALUE);
     this.document.head.appendChild(script);

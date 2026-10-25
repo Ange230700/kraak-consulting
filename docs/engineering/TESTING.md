@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-25
 source_of_truth: true
 ---
 
@@ -13,13 +13,14 @@ source_of_truth: true
   - [1) Objectif](#1-objectif)
   - [2) Preconditions (dépendances)](#2-preconditions-dependances)
   - [3) Definition de done coverage (minimum)](#3-definition-de-done-coverage-minimum)
+    - [Seuils exécutables locaux et CI](#seuils-executables-locaux-et-ci)
   - [4) Matrice de couverture cible](#4-matrice-de-couverture-cible)
   - [5) Scénarios critiques prioritaires](#5-scenarios-critiques-prioritaires)
   - [6) Mapping vers les suites existantes (état au 30/04/2026)](#6-mapping-vers-les-suites-existantes-etat-au-30042026)
   - [7) Evidence de validation QAT-01](#7-evidence-de-validation-qat-01)
   - [8) Utilisation opérationnelle pour les prochaines tâches](#8-utilisation-operationnelle-pour-les-prochaines-taches)
 
-Mise à jour: 30 avril 2026
+Mise à jour: 25 octobre 2026
 Portée: MVP KRAAK (web public, web participant, mobile participant, API support)
 
 ## 1) Objectif
@@ -65,6 +66,67 @@ Une fonctionnalité est considérée couverte si les 3 conditions sont vraies:
 3. Couverture comportement:
    - 1 scénario Given/When/Then testant le parcours utilisateur principal
    - 1 scénario Given/When/Then sur le cas d'échec prioritaire
+
+### Seuils exécutables locaux et CI
+
+`pnpm check` est le contrat commun des hooks Husky et du job CI `Quality gate`.
+`pnpm check:full` ajoute les builds, les E2E et l'analyse SonarCloud bloquante.
+`pnpm coverage` (alias de `pnpm test:coverage`) mesure toutes les surfaces et
+retourne un échec si une seule n'atteint pas ses seuils. Les surfaces de couverture
+continuent à être mesurées après un échec pour conserver un diagnostic complet.
+
+| Surface                          | Outil                 | Sources                                                | Rapports                             |
+| -------------------------------- | --------------------- | ------------------------------------------------------ | ------------------------------------ |
+| Scripts et configurations racine | c8 + Node test runner | `scripts/**/*.mjs` et configurations JS/CJS/MJS racine | `coverage/`                          |
+| API, unités et intégration       | Jest                  | `apps/api/src/**/*.ts`                                 | `apps/api/coverage/`                 |
+| Web et mobile                    | Vitest via Angular    | `apps/client/projects/{web,mobile}/src/**/*.ts`        | `apps/client/coverage/{web,mobile}/` |
+| Packages partagés                | Vitest                | `packages/*/src/**/*.ts`                               | `packages/*/coverage/`               |
+
+Pour chaque fichier exécutable, **instructions, branches, fonctions et lignes
+doivent toutes atteindre 100 %**, pas seulement une moyenne globale. Les
+sources non importées par les tests sont incluses. Les tests et déclarations
+TypeScript ne sont pas des sources à couvrir ; les fichiers de types sans code
+exécutable n'ajoutent pas artificiellement de lignes à la mesure. Les templates,
+CSS et migrations SQL ne relèvent pas de cette mesure JavaScript/TypeScript ;
+leurs validations dédiées restent nécessaires.
+
+Les rapports LCOV et `coverage-summary.json` sont générés pour chaque surface,
+et conservés comme artefacts Actions lorsqu'ils existent, même si un seuil
+échoue. Les tests des scripts sont découverts par les motifs
+`scripts/**/*.test.mjs` et `scripts/**/*.spec.mjs`, sous-répertoires inclus.
+Le runner limite l'exécution à quatre fichiers en parallèle pour éviter la
+saturation des sous-processus natifs sur les machines partagées, sans réduire
+le nombre de tests ni les seuils de couverture.
+Jest compile l'API avec les métadonnées TypeScript complètes
+(`isolatedModules: false`) : les branches mesurées correspondent au code exécuté
+et non aux gardes de types ajoutées par une transpilation isolée des décorateurs
+NestJS.
+
+Les tests Angular web et mobile utilisent explicitement la configuration de
+build `test`, sans `fileReplacements`. Ils exécutent ainsi les véritables modules
+`environment.ts`, local, staging et production au lieu de remplacer le module
+par défaut pendant la compilation. Le module par défaut conserve la configuration
+locale ; les configurations des builds déployés restent inchangées.
+Les scénarios de démarrage SSR disposent d'un délai de 60 secondes pour charger
+à froid le graphe Angular serveur sur une machine partagée. Les autres tests
+conservent leur délai de 15 secondes ; aucune assertion ni exigence de couverture
+n'est retirée.
+
+Sonar utilise les huit rapports LCOV, y compris celui de c8, sans exclusion
+manuelle de services, contrôleurs, pages ou scripts pour améliorer les chiffres.
+Lancer `pnpm coverage`, puis `pnpm sonar` pour publier une mesure locale à jour.
+Le scanner attend le résultat serveur avec `sonar.qualitygate.wait=true` :
+un Quality Gate refusé bloque la commande. `SONAR_TOKEN` provient de
+`.env.local` ou de l'environnement ; en Actions, il provient du secret du dépôt.
+Les PR de forks exécutent les contrôles hors ligne, mais pas le scan authentifié.
+Le Quality Gate distant et la désactivation de l'analyse automatique SonarCloud
+doivent être configurés côté service ; le dépôt ne peut pas les imposer par un
+fichier de propriétés.
+
+Ces règles définissent une **exigence**, pas une attestation de couverture
+actuellement atteinte. Une lacune existante doit être corrigée par de vrais tests,
+jamais par une baisse de seuil, une exclusion métier ou un contournement de hook.
+Tant que le contrôle bloque, ne pas fusionner et laisser le suivi ouvert.
 
 ## 4) Matrice de couverture cible
 

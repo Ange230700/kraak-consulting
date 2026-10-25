@@ -108,6 +108,12 @@ describe('Mobile ProgramDetailPage', () => {
   });
 
   describe('On load', () => {
+    it('Given des dates absentes ou invalides et une place unique, When les libellés sont calculés, Then les valeurs restent lisibles', () => {
+      const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
+      expect(page['formatMediumDate'](null)).toBe('');
+      expect(page['formatMediumDate']('date invalide')).toBe('date invalide');
+      expect(page['getCapacityLabel'](1)).toContain('1');
+    });
     it('Given the page is initialized with a program ID, when program loads successfully, then the detail is displayed', async () => {
       service.getProgramDetail.mockResolvedValue(mockProgramDetail);
       const fixture = TestBed.createComponent(ProgramDetailPage);

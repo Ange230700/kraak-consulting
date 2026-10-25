@@ -10,8 +10,17 @@ export default defineConfig({
     testTimeout: 15000,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
+      include: [resolve(__dirname, 'src/**/*.ts').replaceAll('\\', '/')],
+      exclude: ['**/*.spec.ts', '**/*.d.ts'],
+      reporter: ['text-summary', 'lcov', 'json-summary'],
       reportsDirectory: resolve(__dirname, '../../coverage/web'),
+      thresholds: {
+        perFile: true,
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+      },
     },
   },
 });

@@ -12,6 +12,59 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant ProgramListPage', () => {
+  it('Given tous les états d’inscription et de progression, When les libellés sont demandés, Then chaque état possède sa traduction', () => {
+    const page = TestBed.createComponent(ProgramListPage).componentInstance;
+    const i18n = TestBed.inject(KraakI18nService);
+    for (const status of [
+      'pending',
+      'active',
+      'completed',
+      'cancelled',
+    ] as const) {
+      expect(page['enrollmentStatusLabel'](status)).toBe(
+        i18n.translate(
+          `web.participant.programList.status.enrollment.${status}`,
+        ),
+      );
+    }
+    for (const [status, key] of [
+      ['not_started', 'notStarted'],
+      ['in_progress', 'inProgress'],
+      ['completed', 'completed'],
+    ] as const) {
+      expect(page['progressStatusLabel'](status)).toBe(
+        i18n.translate(`web.participant.programList.status.progress.${key}`),
+      );
+    }
+    expect(page['formatDate']('invalide')).toBe('invalide');
+  });
+
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When la liste est rechargée, Then la requête transmet la langue et l’authentification disponibles',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response('[]', { status: 200 }));
+      vi.spyOn(
+        TestBed.inject(WebAuthService),
+        'currentSession',
+      ).mockReturnValue(
+        session as ReturnType<WebAuthService['currentSession']>,
+      );
+      const page = TestBed.createComponent(ProgramListPage).componentInstance;
+      await page['reloadPrograms']();
+      expect(fetchMock).toHaveBeenCalledOnce();
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(page['programs']()).toEqual([]);
+      fetchMock.mockRestore();
+    },
+  );
   const mockProgram: ParticipantProgramListItemDto = {
     enrollmentId: 'enr-1',
     enrollmentStatus: 'active',

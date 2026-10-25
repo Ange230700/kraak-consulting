@@ -12,6 +12,103 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant ProgramDetailPage', () => {
+  it('Given tous les états du programme, When les libellés sont demandés, Then les traductions couvrent chaque état métier', () => {
+    const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
+    const i18n = TestBed.inject(KraakI18nService);
+    for (const status of [
+      'pending',
+      'active',
+      'completed',
+      'cancelled',
+    ] as const) {
+      expect(page['enrollmentStatusLabel'](status)).toBe(
+        i18n.translate(
+          `web.participant.programDetail.status.enrollment.${status}`,
+        ),
+      );
+    }
+    for (const [status, key] of [
+      ['not_started', 'notStarted'],
+      ['in_progress', 'inProgress'],
+      ['completed', 'completed'],
+    ] as const) {
+      expect(page['progressStatusLabel'](status)).toBe(
+        i18n.translate(`web.participant.programDetail.status.progress.${key}`),
+      );
+    }
+    for (const status of [
+      'scheduled',
+      'live',
+      'completed',
+      'cancelled',
+    ] as const) {
+      expect(page['sessionStatusLabel'](status)).toBe(
+        i18n.translate(
+          `web.participant.programDetail.status.session.${status}`,
+        ),
+      );
+    }
+    for (const type of ['online', 'onsite', 'hybrid'] as const) {
+      expect(page['locationTypeLabel'](type)).toBe(
+        i18n.translate(`web.participant.programDetail.status.location.${type}`),
+      );
+    }
+    for (const type of ['link', 'file', 'video', 'document'] as const) {
+      expect(page['resourceTypeLabel'](type)).toBe(
+        i18n.translate(
+          `web.participant.programDetail.status.resourceType.${type}`,
+        ),
+      );
+    }
+    for (const [theme, key] of [
+      ['training', 'training'],
+      ['project_management', 'projectManagement'],
+      ['immigration', 'immigration'],
+      ['career', 'career'],
+    ] as const) {
+      expect(page['resourceThemeLabel'](theme)).toBe(
+        i18n.translate(
+          `web.participant.programDetail.status.resourceTheme.${key}`,
+        ),
+      );
+    }
+    expect(page['formatDate'](null)).toBe(
+      i18n.translate('web.participant.programDetail.date.upcoming'),
+    );
+    expect(page['formatDate']('invalide')).toBe('invalide');
+    expect(page['formatDateTime']('invalide')).toBe('invalide');
+  });
+
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When le programme est rechargé, Then la requête conserve langue et authentification',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(detail), { status: 200 }),
+        );
+      vi.spyOn(
+        TestBed.inject(WebAuthService),
+        'currentSession',
+      ).mockReturnValue(
+        session as ReturnType<WebAuthService['currentSession']>,
+      );
+      const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
+      await page['reloadProgram']();
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(page['programDetail']()).toEqual(detail);
+      fetchMock.mockRestore();
+    },
+  );
+
+  it('Given aucun identifiant de programme, When le rechargement est demandé, Then aucun appel réseau n’est effectué', async () => {
+    activatedRoute.snapshot.paramMap.get.mockReturnValue(null);
+    const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
+    const getById = vi.fn();
+    page['programsClient'] = { getById };
+    await page['reloadProgram']();
+    expect(getById).not.toHaveBeenCalled();
+  });
   let activatedRoute: {
     snapshot: {
       paramMap: {

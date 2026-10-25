@@ -163,6 +163,35 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('AboutPage', () => {
+  it('Given une page active, When les animations sont résolues puis réutilisées, Then le service anime la page et est nettoyé à la destruction', async () => {
+    const animate = vi.spyOn(gsapAnimationsServiceMock, 'animatePageIn');
+    const kill = vi.spyOn(gsapAnimationsServiceMock, 'killAllAnimations');
+    const page = TestBed.createComponent(AboutPage).componentInstance;
+    await page['initializeAnimations']();
+    const callsBeforeReuse = animate.mock.calls.length;
+    await page['initializeAnimations']();
+    expect(animate).toHaveBeenCalledTimes(callsBeforeReuse + 1);
+    page.ngOnDestroy();
+    expect(kill).toHaveBeenCalledOnce();
+  });
+
+  it('Given une page détruite pendant le chargement, When le service est résolu, Then aucune animation ne démarre', async () => {
+    const animate = vi.spyOn(gsapAnimationsServiceMock, 'animatePageIn');
+    const page = TestBed.createComponent(AboutPage).componentInstance;
+    const pending = page['initializeAnimations']();
+    page.ngOnDestroy();
+    await pending;
+    expect(animate).not.toHaveBeenCalled();
+  });
+
+  it('Given un rendu serveur, When les animations sont demandées, Then aucun service navigateur n’est utilisé', async () => {
+    const page = TestBed.createComponent(AboutPage).componentInstance;
+    const window = globalThis.window;
+    vi.stubGlobal('window', undefined);
+    await page['initializeAnimations']();
+    vi.stubGlobal('window', window);
+    expect(page['gsapService']).toBeNull();
+  });
   let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
 
   beforeEach(async () => {

@@ -1,6 +1,14 @@
 import { apiMessage, translateApiMessage } from './api-message';
 
 describe('API message localization', () => {
+  it('Given une langue inconnue et un paramètre manquant, When le message est traduit, Then le français et son emplacement sont conservés', () => {
+    expect(
+      translateApiMessage(
+        'unsupported' as Parameters<typeof translateApiMessage>[0],
+        apiMessage('validation.requiredField'),
+      ),
+    ).toBe('Le champ {{field}} est requis.');
+  });
   it('preserves legacy string messages unchanged', () => {
     expect(translateApiMessage('en-GB', 'Legacy API message')).toBe(
       'Legacy API message',

@@ -233,25 +233,16 @@ export class GsapAnimationsService {
 
   private motionDebugLog(
     message: string,
-    context?: Record<string, unknown>,
+    context: Record<string, unknown>,
   ): void {
     if (!this.isMotionDebugEnabled()) {
       return;
     }
 
-    if (context) {
-      console.debug(`[motion] ${message}`, context);
-      return;
-    }
-
-    console.debug(`[motion] ${message}`);
+    console.debug(`[motion] ${message}`, context);
   }
 
   private resolveNonOverlappingTargets(selector: string): Element[] {
-    if (typeof document === 'undefined') {
-      return [];
-    }
-
     const targets = Array.from(document.querySelectorAll(selector));
     const filteredTargets = targets.filter(
       (target) => !target.hasAttribute('kraakRevealOnScroll'),
@@ -283,17 +274,6 @@ export class GsapAnimationsService {
     return !globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
-  private prefersReducedMotion(): boolean {
-    if (
-      globalThis.window === undefined ||
-      typeof globalThis.matchMedia !== 'function'
-    ) {
-      return false;
-    }
-
-    return globalThis.matchMedia(MOTION_MEDIA_QUERIES.reducedMotion).matches;
-  }
-
   private isMobileViewport(): boolean {
     if (
       globalThis.window === undefined ||
@@ -322,10 +302,6 @@ export class GsapAnimationsService {
    */
   initializeFigureAnimations(selector = 'figure.reveal-on-scroll'): void {
     if (!this.canAnimate()) {
-      return;
-    }
-
-    if (this.prefersReducedMotion()) {
       return;
     }
 
@@ -383,10 +359,6 @@ export class GsapAnimationsService {
     selector = '[data-motion="reversible"]',
   ): void {
     if (!this.canAnimate()) {
-      return;
-    }
-
-    if (this.prefersReducedMotion()) {
       return;
     }
 
@@ -669,10 +641,6 @@ export class GsapAnimationsService {
       return;
     }
 
-    if (this.prefersReducedMotion()) {
-      return;
-    }
-
     this.ngZone.runOutsideAngular(() => {
       const items = document.querySelectorAll(selector);
       if (items.length === 0) {
@@ -725,10 +693,6 @@ export class GsapAnimationsService {
    */
   initializeTextRevealAnimations(selector = 'p'): void {
     if (!this.canAnimate()) {
-      return;
-    }
-
-    if (this.prefersReducedMotion()) {
       return;
     }
 
@@ -868,10 +832,6 @@ export class GsapAnimationsService {
       return;
     }
 
-    if (this.prefersReducedMotion()) {
-      return;
-    }
-
     this.ngZone.runOutsideAngular(() => {
       const sections = document.querySelectorAll(selector);
       if (sections.length === 0) {
@@ -981,10 +941,6 @@ export class GsapAnimationsService {
    */
   initializeImageParallaxAnimations(selector = 'img'): void {
     if (!this.canAnimate()) {
-      return;
-    }
-
-    if (this.prefersReducedMotion()) {
       return;
     }
 

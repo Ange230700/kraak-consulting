@@ -8,6 +8,10 @@ import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import ProgramListPage from './program-list.page';
 
 describe('Mobile ProgramListPage', () => {
+  it('Given une date invalide, When sa présentation est demandée, Then la valeur originale est conservée', () => {
+    const page = TestBed.createComponent(ProgramListPage).componentInstance;
+    expect(page['formatShortDate']('date invalide')).toBe('date invalide');
+  });
   let service: { listPrograms: ReturnType<typeof vi.fn> };
 
   const mockProgramListItem: ParticipantProgramListItemDto = {

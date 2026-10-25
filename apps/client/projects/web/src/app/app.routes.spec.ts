@@ -6,6 +6,7 @@ import { environment } from '../environments/environment';
 import {
   buildMarketingRoute,
   buildRoutes,
+  findRequiredLocalizedSeoPage,
   participantAreaCanMatch,
   routes,
 } from './app.routes';
@@ -38,6 +39,33 @@ function localeRoute(routeList: Routes, path: 'fr' | 'en') {
 }
 
 describe('Web routes', () => {
+  it('Given la récupération de mot de passe, When son composant lazy est chargé, Then le formulaire dédié est disponible', async () => {
+    expect(
+      await routes.find((route) => route.path === 'auth/reset')!
+        .loadComponent!(),
+    ).toBeDefined();
+  });
+  it('Given les options par défaut, When les routes sont construites, Then l’espace participant reste disponible', () => {
+    expect(buildRoutes().some((route) => route.path === 'participant')).toBe(
+      true,
+    );
+  });
+
+  it('Given un ancien lien d’article, When sa redirection dynamique est résolue, Then le slug est conservé dans la route française', () => {
+    const route = routes.find((entry) => entry.path === 'blog/:slug')!;
+    const redirect = route.redirectTo as unknown as (data: {
+      params: { slug: string };
+    }) => string;
+    expect(redirect({ params: { slug: 'article-test' } })).toBe(
+      '/fr/blog/article-test',
+    );
+  });
+
+  it('Given une route localisée sans SEO, When sa définition est exigée, Then une erreur explicite empêche la publication', () => {
+    expect(() => findRequiredLocalizedSeoPage('/fr/page-absente')).toThrow(
+      'Missing localized SEO configuration',
+    );
+  });
   describe('Given localized public routes', () => {
     it('When building routes Then the public locale route trees are defined', () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: false });

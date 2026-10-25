@@ -12,6 +12,7 @@ import test from 'node:test';
 
 import {
   acquireScanLock,
+  assertLcovReports,
   createSonarScanCommand,
   normalizeLcovContent,
   readLocalSonarEnvironment,
@@ -22,11 +23,30 @@ import {
   resolveSonarEnvironment,
 } from './sonarcloud-scan.mjs';
 
+test('Given des rapports absents ou vides, When le scan est préparé, Then la publication sans couverture est refusée', () => {
+  const directory = mkdtempSync(path.join(os.tmpdir(), 'kraak-lcov-'));
+  const reportPath = path.join(directory, 'lcov.info');
+
+  try {
+    assert.throws(() => assertLcovReports([reportPath]), /absent ou vide/);
+    writeFileSync(reportPath, '');
+    assert.throws(() => assertLcovReports([reportPath]), /absent ou vide/);
+    writeFileSync(reportPath, 'SF:source.ts\nDA:1,1\nend_of_record\n');
+    assert.doesNotThrow(() => assertLcovReports([reportPath]));
+  } finally {
+    rmSync(directory, { force: true, recursive: true });
+  }
+});
+
 test('Given Windows, When the scan command is built, Then pnpm.cmd runs the @sonar/scan package directly', () => {
   const command = createSonarScanCommand('win32');
 
   assert.equal(command.command, 'pnpm.cmd');
-  assert.deepEqual(command.args, ['dlx', '@sonar/scan']);
+  assert.deepEqual(command.args, [
+    'dlx',
+    '@sonar/scan',
+    '-Dsonar.qualitygate.wait=true',
+  ]);
 });
 
 test('Given a local env file, When Sonar variables are read, Then token and host url are loaded', () => {
@@ -147,6 +167,15 @@ test('Given an already prefixed SF path, When content is normalized, Then source
     normalizedContent,
     /SF:apps\/client\/apps\/client\/projects\/web\/src\/ssr-path\.ts/,
   );
+});
+
+test('Given le rapport c8 racine, When les chemins sont normalisés, Then aucun préfixe ni slash absolu ne sont ajoutés', () => {
+  const normalized = normalizeLcovContent(
+    String.raw`SF:scripts\quality-gate.mjs` + '\nDA:1,1\nend_of_record',
+    '',
+  );
+
+  assert.match(normalized, /^SF:scripts\/quality-gate\.mjs\n/);
 });
 
 test('Given stale scanner-report artifacts, When report directory is reset, Then scanner-report is recreated cleanly', () => {

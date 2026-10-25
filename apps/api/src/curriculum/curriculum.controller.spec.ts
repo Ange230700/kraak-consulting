@@ -7,6 +7,133 @@ import { CurriculumService } from './curriculum.service';
 describe('CurriculumController', () => {
   let controller: CurriculumController;
 
+  it.each([
+    [
+      'Course',
+      'Courses',
+      {
+        slug: 'leadership',
+        title: 'Leadership',
+        summary: 'Résumé',
+        description: 'Description',
+        status: 'draft',
+      },
+    ],
+    [
+      'LearningModule',
+      'LearningModules',
+      {
+        slug: 'leadership',
+        title: 'Leadership',
+        summary: 'Résumé',
+        description: 'Description',
+        status: 'draft',
+      },
+    ],
+    [
+      'Lesson',
+      'Lessons',
+      {
+        slug: 'leadership',
+        title: 'Leadership',
+        summary: 'Résumé',
+        description: 'Description',
+        status: 'draft',
+      },
+    ],
+    [
+      'Chapter',
+      'Chapters',
+      {
+        slug: 'leadership',
+        title: 'Leadership',
+        summary: 'Résumé',
+        status: 'draft',
+        learningModuleId: 'module-1',
+        sortOrder: 0,
+      },
+    ],
+    [
+      'ProgramCourse',
+      'ProgramCourses',
+      {
+        programId: 'program-1',
+        courseId: 'course-1',
+        sortOrder: 0,
+        isRequired: false,
+      },
+    ],
+    [
+      'CourseModule',
+      'CourseModules',
+      {
+        courseId: 'course-1',
+        learningModuleId: 'module-1',
+        sortOrder: 0,
+        isRequired: false,
+      },
+    ],
+    [
+      'ChapterLesson',
+      'ChapterLessons',
+      {
+        chapterId: 'chapter-1',
+        lessonId: 'lesson-1',
+        sortOrder: 0,
+        isRequired: false,
+      },
+    ],
+  ] as const)(
+    'Given une entité %s, When un administrateur la gère, Then les résultats métier sont exposés',
+    async (entity, collection, payload) => {
+      const result = { id: 'entity-1' };
+      curriculumService[`list${collection}`].mockResolvedValue([result]);
+      curriculumService[`create${entity}`].mockResolvedValue(result);
+      curriculumService[`update${entity}`].mockResolvedValue(result);
+      const header = 'Bearer access-token';
+      const listArgs = [
+        'Chapter',
+        'ProgramCourse',
+        'CourseModule',
+        'ChapterLesson',
+      ].includes(entity)
+        ? ['parent-1', header]
+        : [header];
+      const list = controller[`list${collection}`] as (
+        ...args: string[]
+      ) => Promise<unknown>;
+      await expect(list.apply(controller, listArgs)).resolves.toEqual([result]);
+      await expect(
+        controller[`create${entity}`](payload, header),
+      ).resolves.toEqual(result);
+      await expect(
+        controller[`update${entity}`]('entity-1', payload, header),
+      ).resolves.toEqual(result);
+      await expect(
+        controller[`create${entity}`](null, header),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      const operation = [
+        'ProgramCourse',
+        'CourseModule',
+        'ChapterLesson',
+      ].includes(entity)
+        ? `delete${entity}`
+        : `archive${entity}`;
+      await expect(
+        (
+          controller as unknown as Record<
+            string,
+            (id: string, authorization: string) => Promise<void>
+          >
+        )[operation]!('entity-1', header),
+      ).resolves.toBeUndefined();
+      expect(curriculumService[`update${entity}`]).toHaveBeenCalledWith(
+        'entity-1',
+        payload,
+      );
+    },
+  );
+
   const curriculumService = {
     listCourses: jest.fn(),
     createCourse: jest.fn(),

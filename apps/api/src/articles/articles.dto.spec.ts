@@ -8,6 +8,18 @@ import {
 } from './articles.dto';
 
 describe('Articles DTO validation', () => {
+  it('Given un statut publié valide, When un article est modifié, Then ce statut est accepté', () => {
+    expect(validateUpdateArticlePayload({ status: 'published' })).toEqual({
+      valid: true,
+      data: { status: 'published' },
+    });
+  });
+  it('Given un statut de publication inconnu, When un article est modifié, Then le statut est rejeté', () => {
+    expect(validateUpdateArticlePayload({ status: 'unknown' })).toMatchObject({
+      valid: false,
+      errors: [{ key: 'validation.invalidField', params: { field: 'status' } }],
+    });
+  });
   it('Given un payload création valide, When validateCreateArticlePayload est appelé, Then le payload normalisé est renvoyé', () => {
     const result = validateCreateArticlePayload({
       slug: '  nouvel-article  ',

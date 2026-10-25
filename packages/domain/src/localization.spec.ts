@@ -85,4 +85,12 @@ describe('localization contract', () => {
   it('Given the supported locale list, When runtime immutability is inspected, Then it is frozen', () => {
     expect(Object.isFrozen(SUPPORTED_LOCALES)).toBe(true);
   });
+
+  it.each(['-', '_', '-GB', '_CI'])(
+    'Given un candidat sans langue %s, When il est normalisé, Then aucune locale non valide n’est acceptée',
+    (candidate) => {
+      expect(normalizeLocaleCandidate(candidate)).toBeUndefined();
+      expect(resolveSupportedLocale(candidate)).toBe(FALLBACK_LOCALE);
+    },
+  );
 });

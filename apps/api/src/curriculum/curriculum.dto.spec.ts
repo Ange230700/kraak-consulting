@@ -14,8 +14,138 @@ import {
   validateUpdateLessonPayload,
   validateUpdateProgramCoursePayload,
 } from './curriculum.dto';
+import * as validators from './curriculum.dto';
+
+describe.each([
+  [
+    'Course',
+    {
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+    },
+  ],
+  [
+    'LearningModule',
+    {
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+    },
+  ],
+  [
+    'Lesson',
+    {
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+    },
+  ],
+  [
+    'Chapter',
+    {
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      status: 'draft',
+      learningModuleId: 'module-1',
+      sortOrder: 0,
+    },
+  ],
+  [
+    'ProgramCourse',
+    {
+      programId: 'program-1',
+      courseId: 'course-1',
+      sortOrder: 0,
+      isRequired: false,
+    },
+  ],
+  [
+    'CourseModule',
+    {
+      courseId: 'course-1',
+      learningModuleId: 'module-1',
+      sortOrder: 0,
+      isRequired: false,
+    },
+  ],
+  [
+    'ChapterLesson',
+    {
+      chapterId: 'chapter-1',
+      lessonId: 'lesson-1',
+      sortOrder: 0,
+      isRequired: false,
+    },
+  ],
+] as const)('Given le contrat %s', (entity, payload) => {
+  const create = validators[`validateCreate${entity}Payload`];
+  const update = validators[`validateUpdate${entity}Payload`];
+
+  it.each([null, [], 'texte', 42])(
+    'When le corps n’est pas un objet (%p), Then création et mise à jour sont rejetées',
+    (body) => {
+      expect(create(body)).toMatchObject({
+        valid: false,
+        errors: expect.any(Array),
+      });
+      expect(update(body)).toMatchObject({
+        valid: false,
+        errors: expect.any(Array),
+      });
+    },
+  );
+
+  it('When le corps est vide, Then création et mise à jour sont rejetées', () => {
+    expect(create({})).toMatchObject({ valid: false });
+    expect(update({})).toMatchObject({ valid: false });
+  });
+
+  it('When tous les champs sont valides, Then le contenu normalisé est accepté', () => {
+    expect(create(payload)).toMatchObject({ valid: true });
+    expect(update(payload)).toMatchObject({ valid: true });
+  });
+
+  it.each(['', null, -1, 0.5])(
+    'When chaque champ reçoit une valeur invalide (%p), Then elle est rejetée',
+    (invalid) => {
+      for (const field of Object.keys(payload)) {
+        expect(create({ ...payload, [field]: invalid })).toMatchObject({
+          valid: false,
+        });
+        expect(update({ [field]: invalid })).toMatchObject({ valid: false });
+      }
+    },
+  );
+});
 
 describe('Curriculum DTO validation', () => {
+  it('Given un slug non compatible avec une URL, When un cours est modifié, Then la validation le rejette', () => {
+    expect(validateUpdateCoursePayload({ slug: 'Invalid Slug' })).toMatchObject(
+      {
+        valid: false,
+        errors: [{ key: 'validation.invalidField', params: { field: 'slug' } }],
+      },
+    );
+  });
+  it('Given un slug non compatible avec une URL, When un cours est créé, Then la validation le rejette', () => {
+    expect(
+      validateCreateCoursePayload({
+        slug: 'Invalid Slug',
+        title: 'Leadership',
+        summary: 'Résumé',
+        description: 'Description',
+        status: 'draft',
+      }),
+    ).toMatchObject({ valid: false });
+  });
   it('Given des entités pédagogiques valides, When les validateurs create sont appelés, Then les payloads sont normalisés', () => {
     expect(
       validateCreateCoursePayload({

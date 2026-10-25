@@ -10,7 +10,10 @@ import {
   KraakI18nService,
   KraakTranslatePipe,
 } from '../../../../../../shared/i18n';
-import { getFallbackBlogArticles } from '../../blog/blog.data';
+import {
+  getFallbackBlogArticles,
+  type BlogArticle,
+} from '../../blog/blog.data';
 
 interface ProgramSnapshot {
   readonly labelKey: string;
@@ -80,6 +83,28 @@ const contentActions: readonly ContentAction[] = [
   },
 ] as const;
 
+export function buildContentSnapshots(
+  articles: readonly BlogArticle[],
+): readonly ContentSnapshot[] {
+  return [
+    {
+      labelKey: 'web.admin.dashboard.snapshots.published.label',
+      value: `${articles.length}`,
+      descriptionKey: 'web.admin.dashboard.snapshots.published.description',
+    },
+    {
+      labelKey: 'web.admin.dashboard.snapshots.featured.label',
+      value: `${articles.filter((article) => article.featured).length}`,
+      descriptionKey: 'web.admin.dashboard.snapshots.featured.description',
+    },
+    {
+      labelKey: 'web.admin.dashboard.snapshots.lastUpdated.label',
+      value: articles[0]?.publishedLabel ?? 'N/A',
+      descriptionKey: 'web.admin.dashboard.snapshots.lastUpdated.description',
+    },
+  ];
+}
+
 @Component({
   selector: 'kraak-admin-dashboard-page',
   standalone: true,
@@ -92,28 +117,7 @@ export default class DashboardPage implements OnInit, OnDestroy {
   protected readonly heroBackgroundStyle = adminHeroStyle;
   protected readonly programSnapshots = programSnapshots;
   protected readonly contentSnapshots = computed<readonly ContentSnapshot[]>(
-    () => {
-      const articles = getFallbackBlogArticles(this.i18n.locale());
-
-      return [
-        {
-          labelKey: 'web.admin.dashboard.snapshots.published.label',
-          value: `${articles.length}`,
-          descriptionKey: 'web.admin.dashboard.snapshots.published.description',
-        },
-        {
-          labelKey: 'web.admin.dashboard.snapshots.featured.label',
-          value: `${articles.filter((article) => article.featured).length}`,
-          descriptionKey: 'web.admin.dashboard.snapshots.featured.description',
-        },
-        {
-          labelKey: 'web.admin.dashboard.snapshots.lastUpdated.label',
-          value: articles[0]?.publishedLabel ?? 'N/A',
-          descriptionKey:
-            'web.admin.dashboard.snapshots.lastUpdated.description',
-        },
-      ];
-    },
+    () => buildContentSnapshots(getFallbackBlogArticles(this.i18n.locale())),
   );
   protected readonly contentActions = contentActions;
   protected readonly recentArticles = computed(() =>

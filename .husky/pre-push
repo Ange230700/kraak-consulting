@@ -1,4 +1,4 @@
-command -v pnpm >/dev/null 2>&1 || exit 0
+command -v pnpm >/dev/null 2>&1 || { echo "[husky] pnpm introuvable." >&2; exit 1; }
 
 if [ -z "${GIT_EXECUTABLE:-}" ]; then
 	if [ -x "/usr/bin/git" ]; then

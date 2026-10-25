@@ -112,13 +112,6 @@ const isIndexablePage = (page) =>
   !`${page.robots ?? ''}`.toLowerCase().includes('noindex');
 
 export function buildLocalizedRouteEntries(routeModel) {
-  const localesByCode = new Map(
-    routeModel.locales.map((localeDefinition) => [
-      localeDefinition.locale,
-      localeDefinition,
-    ]),
-  );
-
   return routeModel.pages.flatMap((page) =>
     routeModel.locales.map((localeDefinition) => {
       const indexable =
@@ -128,10 +121,6 @@ export function buildLocalizedRouteEntries(routeModel) {
         page.paths[localeDefinition.locale],
         routeModel,
       );
-
-      if (!localesByCode.has(localeDefinition.locale)) {
-        throw new Error(`Locale non supportee: ${localeDefinition.locale}`);
-      }
 
       return {
         pageId: page.id,

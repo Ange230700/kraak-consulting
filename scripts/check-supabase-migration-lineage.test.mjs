@@ -106,6 +106,54 @@ const alignedTable = `Local | Remote | Time (UTC)
 20250718000000 | 20250718000000 | 2025-07-18 00:00:00
 20260828233000 | | 2026-08-28 23:30:00`;
 
+test('Given des lignes de migration malformées, When le tableau est analysé, Then les colonnes manquantes ou vides sont refusées', () => {
+  for (const row of ['invalide', '| | date', 'v | r | date | extra']) {
+    assert.throws(
+      () => parseMigrationList(`Local | Remote | Time (UTC)\n${row}`),
+      /tableau de migrations valide/,
+    );
+  }
+  assert.deepEqual(parseMigrationList('Local | Remote | Time (UTC)\n\n'), []);
+  assert.throws(
+    () => resolveSupabaseExecutable({ SUPABASE_EXECUTABLE: process.cwd() }),
+    /introuvable/,
+  );
+  assert.throws(
+    () =>
+      checkMigrationLineage({
+        environment: { SUPABASE_EXECUTABLE: process.execPath },
+        runCommand: () => ({ status: null }),
+      }),
+    /code inconnu/,
+  );
+});
+
+test('Given la CLI de lignée, When le binaire répond ou lève une erreur atypique, Then le résultat est propagé sans accéder à une base réelle', () => {
+  const url = new URL('check-supabase-migration-lineage.mjs', import.meta.url)
+    .href;
+  for (const fail of [false, true]) {
+    const code = `import fs from 'node:fs';import cp from 'node:child_process';import {syncBuiltinESMExports} from 'node:module';import {fileURLToPath} from 'node:url';process.env.SUPABASE_EXECUTABLE=process.execPath;cp.spawnSync=()=>({status:0,stdout:${JSON.stringify(alignedTable)}});${fail ? "fs.statSync=()=>{throw 'erreur atypique'};" : ''}syncBuiltinESMExports();process.argv[1]=fileURLToPath(${JSON.stringify(url)});const mod=await import(${JSON.stringify(url)});${fail ? '' : 'mod.resolveSupabaseExecutable();'}`;
+    const result = spawnSync(
+      process.execPath,
+      ['--input-type=module', '-e', code],
+      { encoding: 'utf8' },
+    );
+    assert.equal(result.status, fail ? 1 : 0, result.stderr);
+    assert.match(
+      fail ? result.stderr : result.stdout,
+      fail ? /erreur atypique/ : /Toutes les migrations distantes/,
+    );
+  }
+  assert.equal(
+    spawnSync(process.execPath, [
+      '--input-type=module',
+      '-e',
+      `await import(${JSON.stringify(url)});`,
+    ]).status,
+    0,
+  );
+});
+
 test('Given a database URL, When checking lineage, Then only the configured binary is executed without a shell', () => {
   const dbUrl = 'postgresql://reader:example@database.invalid/postgres';
   let invocation;
@@ -290,7 +338,10 @@ test('Given staging migration configuration, When applying migrations, Then the 
   assert.ok(applyIndex > validationIndex);
   const validation = workflow.slice(validationIndex, applyIndex);
 
-  assert.match(workflow, /environment: \$\{\{ needs\.guard\.outputs\.target_environment \}\}/);
+  assert.match(
+    workflow,
+    /environment: \$\{\{ needs\.guard\.outputs\.target_environment \}\}/,
+  );
   assert.match(validation, /SUPABASE_DB_URL_STAGING/);
   assert.match(
     validation,

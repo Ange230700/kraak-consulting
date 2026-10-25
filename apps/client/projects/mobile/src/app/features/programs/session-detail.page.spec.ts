@@ -10,6 +10,10 @@ import SessionDetailPage from './session-detail.page';
 const TEST_MEETING_LINK_URL = 'https://meet.example.com/session1';
 
 describe('Mobile SessionDetailPage', () => {
+  it('Given une date invalide, When sa présentation est demandée, Then la valeur originale est conservée', () => {
+    const page = TestBed.createComponent(SessionDetailPage).componentInstance;
+    expect(page['formatMediumDateTime']('date invalide')).toBe('date invalide');
+  });
   let service: {
     getProgramDetail: ReturnType<typeof vi.fn>;
     markSessionProgress: ReturnType<typeof vi.fn>;

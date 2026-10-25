@@ -69,6 +69,45 @@ function createFromTableRouter(
 describe('ArticlesService', () => {
   let service: ArticlesService;
 
+  it('Given un article administrable, When son détail est chargé, Then les relations et le contenu sont renvoyés', async () => {
+    adminClient.from.mockImplementation(
+      createFromTableRouter({
+        app_user: createSingleRowQuery({
+          data: { id: 'user-1', role: 'admin' },
+          error: null,
+        }),
+        article: createSingleRowQuery({
+          data: {
+            id: 'article-1',
+            slug: 'article',
+            title: 'Article',
+            excerpt: 'Résumé',
+            content: '<p>Contenu</p>',
+            status: 'draft',
+            cover_image_url: null,
+            seo_title: null,
+            seo_description: null,
+            published_at: null,
+            author_id: 'user-1',
+            created_at: '2026-01-01',
+            updated_at: '2026-01-01',
+          },
+          error: null,
+        }),
+        article_category: createListQuery({ data: [], error: null }),
+        article_tag: createListQuery({ data: [], error: null }),
+      }),
+    );
+    await expect(
+      service.getArticleById('access-token', 'article-1'),
+    ).resolves.toMatchObject({
+      id: 'article-1',
+      content: '<p>Contenu</p>',
+      categoryIds: [],
+      tagIds: [],
+    });
+  });
+
   const authClient = {
     auth: {
       getUser: jest.fn(),

@@ -1,5 +1,5 @@
 # Analyse SonarQube Cloud — kraak-group
-# Déclenchée sur push vers main et sur les pull requests ciblant main.
+# Déclenchée sur staging/main et leurs pull requests.
 # Nécessite les secrets : SONAR_TOKEN (token utilisateur SonarCloud).
 
 name: SonarCloud
@@ -25,6 +25,7 @@ jobs:
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -43,13 +44,26 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Build workspace packages
-        run: pnpm -r --filter "./packages/**" build
+      - name: Contrôle qualité complet et couverture à 100 % par fichier
+        run: pnpm check
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage
+      - name: Conserver les rapports de couverture
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sonar-coverage
+          path: |
+            coverage/lcov.info
+            coverage/coverage-summary.json
+            apps/api/coverage/
+            apps/client/coverage/
+            packages/*/coverage/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Scan SonarCloud
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        # pnpm sonar impose -Dsonar.qualitygate.wait=true.
         run: pnpm sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

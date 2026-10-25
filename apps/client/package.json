@@ -42,7 +42,7 @@
     "test:watch": "ng test",
     "test:web": "ng test web --watch=false",
     "test:mobile": "ng test mobile --watch=false",
-    "test:coverage": "pnpm test:web && pnpm test:mobile",
+    "test:coverage": "ng test --watch=false --coverage",
     "e2e": "playwright test",
     "e2e:prepilot": "playwright test tests/e2e/accessibility-performance.spec.ts",
     "e2e:ui": "playwright test --ui",

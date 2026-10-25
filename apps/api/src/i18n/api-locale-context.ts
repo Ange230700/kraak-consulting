@@ -51,7 +51,7 @@ function parseLanguagePreference(
   rawPreference: string,
   order: number,
 ): LanguagePreference | undefined {
-  const [rawCandidate = '', ...rawParameters] = rawPreference.split(';');
+  const [rawCandidate, ...rawParameters] = rawPreference.split(';');
   const candidate = rawCandidate.trim();
 
   if (!candidate || candidate === '*') {
@@ -75,7 +75,7 @@ function parseLanguagePreference(
 
     quality = Number(match[1]);
 
-    if (!Number.isFinite(quality) || quality < 0 || quality > 1) {
+    if (!Number.isFinite(quality) || quality > 1) {
       return undefined;
     }
   }
