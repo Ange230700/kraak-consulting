@@ -14,7 +14,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
     "paths": {
-      "@kraak/contracts": ["../../packages/contracts/src/index.ts"]
+      "@kraak/contracts": ["packages/contracts/src/index.ts"]
     }
   }
 }

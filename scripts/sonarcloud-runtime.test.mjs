@@ -273,7 +273,19 @@ test('Given un scanner à interrompre, When le PID ou taskkill varie, Then chaqu
     () => resolveTaskkillExecutablePath({ SystemRoot: root + '-absent' }),
     /introuvable/,
   );
-  assert.ok(resolveTaskkillExecutablePath().endsWith('taskkill.exe'));
+  const originalSystemRoot = process.env.SystemRoot;
+  t.after(() => {
+    if (originalSystemRoot === undefined) {
+      delete process.env.SystemRoot;
+    } else {
+      process.env.SystemRoot = originalSystemRoot;
+    }
+  });
+  process.env.SystemRoot = root;
+  assert.equal(
+    resolveTaskkillExecutablePath(),
+    path.join(root, 'System32', 'taskkill.exe'),
+  );
 });
 
 test('Given un diagnostic strict, When le répertoire disparaît durablement, Then le scanner est interrompu une seule fois', (t) => {

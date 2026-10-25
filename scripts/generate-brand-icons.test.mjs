@@ -18,7 +18,7 @@ if (process.env.NODE_TEST_CONTEXT === 'child-v8') {
     delete env.NODE_TEST_CONTEXT;
     const result = spawnSync(
       process.execPath,
-      [fileURLToPath(import.meta.url)],
+      ['--test-reporter=tap', fileURLToPath(import.meta.url)],
       {
         env,
         encoding: 'utf8',
