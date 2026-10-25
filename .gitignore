@@ -64,6 +64,7 @@ pnpm-debug.log*
 # Divers
 *.tgz
 .cache/
+.artifacts/
 tmp/
 
 # Playwright MCP

@@ -195,6 +195,11 @@ publique de contenu. Voir
 
 ## Scripts disponibles
 
+Pour dériver un document Markdown en PDF, PPTX éditable ou TXT de préparation
+audio : `pnpm docs:export --source README.md --format all`. Les prérequis, les
+sorties locales et les limites sont décrits dans le
+[guide des exports documentaires](docs/engineering/DOCUMENT_EXPORTS.md).
+
 | Commande                    | Description                                                    |
 | --------------------------- | -------------------------------------------------------------- |
 | `pnpm dev`                  | Lancer web, mobile et API avec ports auto pour web/mobile      |

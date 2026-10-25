@@ -87,6 +87,7 @@ document obsolète dans le même changement.
 | `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                        |
 | `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                              |
 | `engineering/CONTRIBUTION_WORKFLOW.md`                                 | active | true             | Guide de contribution                                                            |
+| `engineering/DOCUMENT_EXPORTS.md`                                      | active | true             | Exports documentaires                                                            |
 | `engineering/LOCAL_DEVELOPMENT.md`                                     | active | true             | Guide du mode développement                                                      |
 | `engineering/SHARED_PACKAGES.md`                                       | active | true             | Guideline de publication des packages partagés                                   |
 | `engineering/TESTING.md`                                               | active | true             | Tests et couverture MVP                                                          |
