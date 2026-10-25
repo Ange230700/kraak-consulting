@@ -12,6 +12,73 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant SessionDetailPage', () => {
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session utilisateur %j, When le détail est rechargé, Then le client réel charge le programme avec sa langue',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(detail), { status: 200 }),
+        );
+      const auth = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          session as ReturnType<WebAuthService['currentSession']>,
+        );
+      const page = TestBed.createComponent(SessionDetailPage).componentInstance;
+      await page['reloadSession']();
+      expect(page['programDetail']()).toEqual(detail);
+      expect(
+        new Headers(fetchMock.mock.calls[0][1]?.headers).get('Accept-Language'),
+      ).toBe(TestBed.inject(KraakI18nService).locale());
+      fetchMock.mockRestore();
+      auth.mockRestore();
+    },
+  );
+
+  it('Given aucun identifiant et aucune session métier, When une progression ou un rechargement est demandé, Then aucune requête n’est effectuée', async () => {
+    activatedRoute.snapshot.paramMap.get.mockReturnValue(null);
+    const page = TestBed.createComponent(SessionDetailPage).componentInstance;
+    const client = { getById: vi.fn(), markSessionProgress: vi.fn() };
+    page['programsClient'] = client;
+    await page['reloadSession']();
+    await page['markSessionCompletion'](true);
+    expect(client.getById).not.toHaveBeenCalled();
+    expect(client.markSessionProgress).not.toHaveBeenCalled();
+  });
+
+  it('Given une mise à jour déjà en cours, When la même session est validée de nouveau, Then aucun doublon n’est envoyé', async () => {
+    const page = TestBed.createComponent(SessionDetailPage).componentInstance;
+    const client = { getById: vi.fn(), markSessionProgress: vi.fn() };
+    page['programsClient'] = client;
+    await page['markSessionCompletion'](true);
+    page['programDetail'].set(detail);
+    page['markingProgress'].set(true);
+    await page['markSessionCompletion'](true);
+    expect(client.markSessionProgress).not.toHaveBeenCalled();
+  });
+  it('Given tous les états et lieux de session, When les libellés sont demandés, Then chaque valeur métier est traduite', () => {
+    const page = TestBed.createComponent(SessionDetailPage).componentInstance;
+    const i18n = TestBed.inject(KraakI18nService);
+    for (const status of [
+      'scheduled',
+      'live',
+      'completed',
+      'cancelled',
+    ] as const) {
+      expect(page['sessionStatusLabel'](status)).toBe(
+        i18n.translate(
+          `web.participant.sessionDetail.status.session.${status}`,
+        ),
+      );
+    }
+    for (const type of ['online', 'onsite', 'hybrid'] as const) {
+      expect(page['locationTypeLabel'](type)).toBe(
+        i18n.translate(`web.participant.sessionDetail.status.location.${type}`),
+      );
+    }
+    expect(page['formatDateTime']('invalide')).toBe('invalide');
+  });
   let activatedRoute: {
     snapshot: {
       paramMap: {

@@ -114,6 +114,250 @@ describe('CurriculumService reusable entities', () => {
     jest.clearAllMocks();
   });
 
+  describe.each([
+    ['Course', 'Courses', courseRow],
+    ['LearningModule', 'LearningModules', courseRow],
+    ['Chapter', 'Chapters', chapterRow],
+    ['Lesson', 'Lessons', courseRow],
+    ['ProgramCourse', 'ProgramCourses', programCourseRow],
+    ['CourseModule', 'CourseModules', courseModuleRow],
+    ['ChapterLesson', 'ChapterLessons', chapterLessonRow],
+  ] as const)('Given une entité %s', (entity, collection, row) => {
+    const payload = {
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'published' as const,
+      learningModuleId: 'module-1',
+      programId: 'program-1',
+      courseId: 'course-1',
+      chapterId: 'chapter-1',
+      lessonId: 'lesson-1',
+      sortOrder: 0,
+      isRequired: false,
+    };
+
+    it('When la liste contient une ligne, Then son identité et ses dates sont exposées', async () => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createListQuery({ data: [row], error: null }),
+      );
+      await expect(service[`list${collection}`]('parent-1')).resolves.toEqual([
+        expect.objectContaining({
+          id: row.id,
+          createdAt: timestamps.created_at,
+          updatedAt: timestamps.updated_at,
+        }),
+      ]);
+    });
+
+    it('When la base ne renvoie aucune ligne, Then une liste vide est renvoyée', async () => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createListQuery({ data: null, error: null }),
+      );
+      await expect(service[`list${collection}`]()).resolves.toEqual([]);
+    });
+
+    it('When la lecture échoue, Then une erreur serveur est exposée', async () => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createListQuery({ data: null, error: new Error('indisponible') }),
+      );
+      await expect(service[`list${collection}`]()).rejects.toBeInstanceOf(
+        InternalServerErrorException,
+      );
+    });
+
+    it('When une création réussit, Then la nouvelle entité est renvoyée', async () => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createMutationQuery({ data: row, error: null }),
+      );
+      await expect(service[`create${entity}`](payload)).resolves.toMatchObject({
+        id: row.id,
+      });
+    });
+
+    it.each([
+      { data: null, error: null },
+      { data: row, error: new Error('indisponible') },
+    ])(
+      'When une création échoue ($error), Then une erreur serveur est exposée',
+      async (result) => {
+        mockSupabaseService.getClient.mockReturnValue(
+          createMutationQuery(result),
+        );
+        await expect(
+          service[`create${entity}`](payload),
+        ).rejects.toBeInstanceOf(InternalServerErrorException);
+      },
+    );
+
+    it.each([payload, {}])(
+      'When une mise à jour réussit, Then l’entité actualisée est renvoyée',
+      async (update) => {
+        mockSupabaseService.getClient.mockReturnValue(
+          createMutationQuery({ data: row, error: null }),
+        );
+        await expect(
+          service[`update${entity}`]('entity-1', update),
+        ).resolves.toMatchObject({ id: row.id });
+      },
+    );
+
+    it.each([
+      { data: null, error: null },
+      { data: row, error: new Error('indisponible') },
+    ])(
+      'When la mise à jour ne trouve pas de résultat ($error), Then une erreur introuvable est exposée',
+      async (result) => {
+        mockSupabaseService.getClient.mockReturnValue(
+          createMutationQuery(result),
+        );
+        await expect(
+          service[`update${entity}`]('entity-1', payload),
+        ).rejects.toBeInstanceOf(NotFoundException);
+      },
+    );
+  });
+
+  it.each([
+    'archiveCourse',
+    'archiveLearningModule',
+    'archiveChapter',
+    'archiveLesson',
+    'deleteProgramCourse',
+    'deleteCourseModule',
+    'deleteChapterLesson',
+  ] as const)(
+    'Given une entité existante, When %s réussit, Then aucun contenu n’est renvoyé',
+    async (operation) => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createMutationQuery({ data: { id: 'entity-1' }, error: null }),
+      );
+      await expect(service[operation]('entity-1')).resolves.toBeUndefined();
+    },
+  );
+
+  it.each([
+    { data: null, error: null },
+    { data: { id: 'entity-1' }, error: new Error('indisponible') },
+  ])(
+    'Given une entité absente, When suppression ou archivage échoue, Then une erreur introuvable est exposée',
+    async (result) => {
+      mockSupabaseService.getClient.mockReturnValue(
+        createMutationQuery(result),
+      );
+      await expect(service.archiveCourse('entity-1')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+      await expect(
+        service.deleteProgramCourse('entity-1'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    },
+  );
+
+  describe('Given un curriculum publié', () => {
+    function curriculumClient(
+      overrides: Record<string, { data: unknown; error: Error | null }> = {},
+    ) {
+      const rows: Record<string, unknown[]> = {
+        program_course: [
+          programCourseRow,
+          { ...programCourseRow, course_id: 'absent' },
+          { ...programCourseRow, course_id: 'empty-course' },
+        ],
+        course: [courseRow, { ...courseRow, id: 'empty-course' }],
+        course_module: [
+          courseModuleRow,
+          { ...courseModuleRow, learning_module_id: 'absent' },
+          { ...courseModuleRow, learning_module_id: 'empty-module' },
+        ],
+        learning_module: [
+          { ...courseRow, id: 'module-1' },
+          { ...courseRow, id: 'empty-module' },
+        ],
+        chapter: [chapterRow, { ...chapterRow, id: 'empty-chapter' }],
+        chapter_lesson: [
+          chapterLessonRow,
+          { ...chapterLessonRow, lesson_id: 'absent' },
+        ],
+        lesson: [{ ...courseRow, id: 'lesson-1' }],
+      };
+      return {
+        from: jest.fn((table: string) =>
+          createListQuery(
+            overrides[table] ?? { data: rows[table], error: null },
+          ),
+        ),
+      };
+    }
+
+    it('When certaines références ne sont plus publiées, Then seules les entités disponibles sont renvoyées', async () => {
+      mockSupabaseService.getClient.mockReturnValue(curriculumClient());
+      const result = await service.getPublishedProgramCurriculum('program-1');
+      expect(result.courses).toHaveLength(2);
+      expect(result.courses[1]!.modules).toEqual([]);
+      expect(result.courses[0]!.modules).toHaveLength(2);
+      expect(result.courses[0]!.modules[1]!.chapters).toEqual([]);
+      expect(result.courses[0]!.modules[0]!.chapters[1]!.lessons).toEqual([]);
+      expect(result.courses[0]!.modules[0]!.chapters[0]!.lessons).toHaveLength(
+        1,
+      );
+    });
+
+    it.each([
+      'program_course',
+      'course',
+      'course_module',
+      'learning_module',
+      'chapter',
+      'chapter_lesson',
+      'lesson',
+    ])(
+      'When la lecture de %s échoue, Then aucune hiérarchie partielle n’est exposée',
+      async (table) => {
+        mockSupabaseService.getClient.mockReturnValue(
+          curriculumClient({
+            [table]: { data: null, error: new Error('indisponible') },
+          }),
+        );
+        await expect(
+          service.getPublishedProgramCurriculum('program-1'),
+        ).rejects.toBeInstanceOf(InternalServerErrorException);
+      },
+    );
+
+    it.each([
+      'program_course',
+      'course',
+      'course_module',
+      'learning_module',
+      'chapter',
+      'chapter_lesson',
+      'lesson',
+    ])(
+      'When %s ne contient aucune donnée, Then la hiérarchie conserve seulement les éléments accessibles',
+      async (table) => {
+        mockSupabaseService.getClient.mockReturnValue(
+          curriculumClient({
+            [table]: { data: null, error: null },
+          }),
+        );
+        const result = await service.getPublishedProgramCurriculum('program-1');
+        let descendants: unknown;
+        if (table === 'program_course' || table === 'course') {
+          descendants = result.courses;
+        } else if (table === 'course_module' || table === 'learning_module') {
+          descendants = result.courses[0]!.modules;
+        } else if (table === 'chapter') {
+          descendants = result.courses[0]!.modules[0]!.chapters;
+        } else {
+          descendants = result.courses[0]!.modules[0]!.chapters[0]!.lessons;
+        }
+        expect(descendants).toEqual([]);
+      },
+    );
+  });
+
   it('Given des cours existants, When listCourses est appelé, Then les DTO camelCase sont renvoyés', async () => {
     mockSupabaseService.getClient.mockReturnValue(
       createListQuery({ data: [courseRow], error: null }),

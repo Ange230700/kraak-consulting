@@ -82,6 +82,157 @@ function mockGsapEffects() {
 }
 
 describe('GsapAnimationsService', () => {
+  it('Given des figures et sections sur mobile, When leurs animations sont initialisées, Then les cibles utilisent les préréglages mobiles', () => {
+    allowAnimationsOnMobile();
+    mockGsapMatchMedia();
+    const { fromSpy } = mockGsapEffects();
+    document.body.innerHTML =
+      '<figure class="reveal-on-scroll"></figure><section></section>';
+    service.initializeFigureAnimations();
+    service.initializeSectionAnimations();
+    expect(fromSpy).toHaveBeenCalledWith(
+      document.querySelector('figure'),
+      expect.objectContaining({
+        scrollTrigger: expect.objectContaining({ once: true }),
+      }),
+    );
+    expect(fromSpy).toHaveBeenCalledWith(
+      document.querySelector('section'),
+      expect.objectContaining({
+        scrollTrigger: expect.objectContaining({ once: true }),
+      }),
+    );
+  });
+
+  it('Given aucune cible pour les effets facultatifs, When les animations sont initialisées, Then aucun effet GSAP ne démarre', () => {
+    allowAnimations();
+    const { fromSpy, toSpy } = mockGsapEffects();
+    document.body.innerHTML = '';
+    service.initializeReversibleScrollAnimations();
+    service.initializeIconAnimations();
+    service.initializeBadgeAnimations();
+    expect(fromSpy).not.toHaveBeenCalled();
+    expect(toSpy).not.toHaveBeenCalled();
+  });
+  it('Given des préférences de mouvement réduit, When toutes les animations publiques sont demandées, Then aucun effet GSAP ne démarre', async () => {
+    setReducedMotionPreference();
+    const { fromSpy, toSpy } = mockGsapEffects();
+    const methods = [
+      'initializeFigureAnimations',
+      'initializeReversibleScrollAnimations',
+      'initializeInteractiveCardAnimations',
+      'initializePageEntranceAnimations',
+      'initializeButtonTransitions',
+      'initializeFormFieldAnimations',
+      'initializeListItemAnimations',
+      'initializeTextRevealAnimations',
+      'initializeIconAnimations',
+      'animatePageIn',
+      'initializeSectionAnimations',
+      'initializeBadgeAnimations',
+      'initializeMouseFollowAnimations',
+      'initializeImageParallaxAnimations',
+    ] as const;
+    for (const method of methods) {
+      service[method]();
+    }
+    await service.createPageTransition();
+    expect(fromSpy).not.toHaveBeenCalled();
+    expect(toSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given un viewport mobile tactile, When les cartes et boutons sont survolés ou pressés, Then leurs effets réduits suivent chaque interaction', () => {
+    allowAnimationsOnMobile();
+    const { toSpy } = mockGsapEffects();
+    document.body.innerHTML = '<article></article><button>Action</button>';
+    service.initializeInteractiveCardAnimations();
+    service.initializeButtonTransitions();
+    const card = document.querySelector('article')!;
+    const button = document.querySelector('button')!;
+    for (const event of [
+      'mouseenter',
+      'mouseleave',
+      'focusin',
+      'focusout',
+      'touchstart',
+      'touchend',
+    ]) {
+      card.dispatchEvent(new Event(event));
+    }
+    for (const event of [
+      'mouseenter',
+      'mouseleave',
+      'mousedown',
+      'mouseup',
+      'touchstart',
+      'touchend',
+    ]) {
+      button.dispatchEvent(new Event(event));
+    }
+    expect(toSpy).toHaveBeenCalledWith(
+      card,
+      expect.objectContaining({ y: -1, duration: 0.2 }),
+    );
+    expect(toSpy).toHaveBeenCalledWith(
+      card,
+      expect.objectContaining({ y: 0, duration: 0.18 }),
+    );
+    expect(toSpy).toHaveBeenCalledWith(
+      button,
+      expect.objectContaining({ scale: 1.015, duration: 0.16 }),
+    );
+    expect(toSpy).toHaveBeenCalledWith(
+      button,
+      expect.objectContaining({ scale: 1.01 }),
+    );
+    service.killAllAnimations();
+    toSpy.mockClear();
+    card.dispatchEvent(new Event('touchstart'));
+    button.dispatchEvent(new Event('mouseenter'));
+    expect(toSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given un pointeur précis sur bureau, When les effets interactifs sont installés, Then aucun écouteur tactile n’est nécessaire', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn((query: string) => ({
+        matches:
+          query.includes('hover: hover') || query.includes('min-width: 768px'),
+      })),
+    );
+    const { toSpy } = mockGsapEffects();
+    document.body.innerHTML = '<article></article><button>Action</button>';
+    service.initializeInteractiveCardAnimations();
+    service.initializeButtonTransitions();
+    document.querySelector('article')!.dispatchEvent(new Event('touchstart'));
+    document.querySelector('button')!.dispatchEvent(new Event('touchstart'));
+    expect(toSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given un document sans fenêtre, When les animations sont demandées, Then les valeurs de repli restent sûres', () => {
+    const { toSpy } = mockGsapEffects();
+    document.body.innerHTML = '<article></article><button>Action</button>';
+    vi.stubGlobal('window', undefined);
+    service.initializeFigureAnimations();
+    service.initializeInteractiveCardAnimations();
+    service.initializeButtonTransitions();
+    document.querySelector('article')!.dispatchEvent(new Event('mouseenter'));
+    expect(toSpy).toHaveBeenCalledWith(
+      expect.any(Element),
+      expect.objectContaining({ y: -3 }),
+    );
+  });
+
+  it('Given une plateforme sans stockage ni URLSearchParams, When des cibles sont absentes, Then le diagnostic reste désactivé sans erreur', () => {
+    vi.stubGlobal('window', { localStorage: undefined, location: undefined });
+    vi.stubGlobal('URLSearchParams', undefined);
+    const debug = vi.spyOn(console, 'debug');
+    service.initializeFigureAnimations();
+    service.initializeTextRevealAnimations();
+    service.initializeSectionAnimations();
+    service.initializeImageParallaxAnimations();
+    expect(debug).not.toHaveBeenCalled();
+  });
   let service: GsapAnimationsService;
 
   beforeEach(() => {

@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-25
 source_of_truth: true
 ---
 
@@ -37,7 +37,7 @@ Ce guide explique comment lancer et utiliser chaque application du monorepo en d
 
 Avant de lancer quoi que ce soit :
 
-1. **Node.js 22+** installé (`node -v` pour vérifier)
+1. **Node.js 22.12+** installé (`node -v` pour vérifier), minimum requis par Angular et c8
 2. **pnpm 10.23.0** activé (`pnpm -v` pour vérifier)
 3. Dépendances installées : `pnpm install` à la racine
 4. Fichiers `.env` configurés (voir ci-dessous)
@@ -318,7 +318,7 @@ pnpm lint:api
 
 ### `pnpm install` échoue
 
-- Vérifier la version de Node : `node -v` (doit être >= 22)
+- Vérifier la version de Node : `node -v` (doit être >= 22.12)
 - Vérifier la version de pnpm : `pnpm -v` (doit être 10.23.0)
 - Supprimer le cache et réessayer : `rm -rf node_modules && pnpm install`
 

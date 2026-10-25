@@ -140,7 +140,7 @@ function buildLegacyRedirectRoutes(): Routes {
   }));
 }
 
-function findRequiredLocalizedSeoPage(path: string): SeoPageDefinition {
+export function findRequiredLocalizedSeoPage(path: string): SeoPageDefinition {
   const seo = findLocalizedSeoPageByPath(path);
 
   if (!seo) {

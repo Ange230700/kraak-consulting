@@ -15,6 +15,17 @@ function routeWithLocale(locale: unknown): ActivatedRouteSnapshot {
 const emptyState = {} as RouterStateSnapshot;
 
 describe('Given the web route locale resolver', () => {
+  it('Given une route sans locale textuelle, When la résolution précède le rendu, Then la langue française est sélectionnée', async () => {
+    const setLocale = vi.fn().mockResolvedValue(undefined);
+    TestBed.configureTestingModule({
+      providers: [{ provide: KraakI18nService, useValue: { setLocale } }],
+    });
+    const locale = await TestBed.runInInjectionContext(() =>
+      webRouteLocaleResolver(routeWithLocale(undefined), emptyState),
+    );
+    expect(locale).toBe('fr-CI');
+    expect(setLocale).toHaveBeenCalledWith('fr-CI');
+  });
   it('Given a French public route, when the resolver runs, then fr-CI is activated before rendering', async () => {
     const setLocale = vi.fn<(_: string) => Promise<void>>(() =>
       Promise.resolve(),

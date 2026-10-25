@@ -25,6 +25,22 @@ function createSingleRowQuery(result: { data: unknown; error: unknown }) {
 describe('AuthService', () => {
   let service: AuthService;
 
+  it('Given une erreur fournisseur sans détails, When la réinitialisation est demandée, Then une erreur utilisateur est renvoyée et diagnostiquée', async () => {
+    const warning = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({ error: {} });
+    await expect(
+      service.requestPasswordReset({ email: 'alice@example.com' }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(warning).toHaveBeenCalledWith(expect.any(String), {
+      status: null,
+      code: null,
+      message: null,
+    });
+    warning.mockRestore();
+  });
+
   const authClient = {
     auth: {
       signInWithPassword: jest.fn(),

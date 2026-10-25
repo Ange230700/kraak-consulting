@@ -9,6 +9,7 @@ import {
   KraakI18nService,
   provideKraakI18n,
 } from '../../../../../../shared/i18n';
+import { WebAuthService } from '../../../core/auth/web-auth.service';
 
 interface UsersClientMock {
   list: ReturnType<typeof vi.fn>;
@@ -30,6 +31,44 @@ const baseUser: AppUserDto = {
 };
 
 describe('AdminUserListPage', () => {
+  it('Given deux utilisateurs distincts, When le premier est modifié, Then le second reste inchangé dans la liste', async () => {
+    const page = TestBed.createComponent(AdminUserListPage).componentInstance;
+    const other = { ...baseUser, id: '2', firstName: 'Bob' };
+    const updated = { ...baseUser, firstName: 'Alicia' };
+    page['users'].set([baseUser, other]);
+    page['editingUser'].set(baseUser);
+    vi.spyOn(page['usersClient'], 'update').mockResolvedValue(updated);
+    await page.saveEdit();
+    expect(page['users']()).toEqual([updated, other]);
+    expect(page['users']()[1]).toBe(other);
+  });
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When les utilisateurs sont chargés par le client réel, Then leur liste et les en-têtes de contexte sont conservés',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify([baseUser]), { status: 200 }),
+        );
+      const auth = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          session as ReturnType<WebAuthService['currentSession']>,
+        );
+      const page = TestBed.createComponent(AdminUserListPage).componentInstance;
+      await page.loadUsers();
+      expect(page['users']()).toEqual([baseUser]);
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      fetchMock.mockRestore();
+      auth.mockRestore();
+    },
+  );
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     await TestBed.configureTestingModule({

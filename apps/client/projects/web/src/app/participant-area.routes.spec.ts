@@ -19,6 +19,30 @@ import {
 } from './participant-area.routes';
 
 describe('participant-area.routes', () => {
+  it('Given les parcours d’authentification et participant, When leurs titres et composants sont résolus, Then chaque page conserve son titre traduit et son chargement différé', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: KraakI18nService,
+          useValue: {
+            locale: () => 'fr-CI',
+            translate: (key: string) => `Titre ${key}`,
+          },
+        },
+      ],
+    });
+    for (const route of participantAreaRoutes) {
+      if (typeof route.title === 'function') {
+        const title = TestBed.runInInjectionContext(() =>
+          (route.title as () => string)(),
+        );
+        expect(title).toMatch(/^Titre .* \| KRAAK$/);
+      }
+      if (route.loadComponent) {
+        expect(await route.loadComponent()).toBeDefined();
+      }
+    }
+  });
   it('Given la configuration runtime courante, When participantAreaCanMatch est évalué, Then le résultat reflète isParticipantAreaEnabled', () => {
     const route: Route = { path: 'connexion' };
     expect(participantAreaCanMatch(route, [])).toBe(

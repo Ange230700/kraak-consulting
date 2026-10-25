@@ -1,8 +1,17 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { resolvePublicRedirectDestination } from './public-redirects';
 
 describe('Given public redirect resolution', () => {
+  it('Given un encodage invalide, When la redirection est résolue, Then aucune destination n’est produite et l’erreur est journalisée', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    expect(resolvePublicRedirectDestination('/%invalid')).toBeUndefined();
+    expect(warn).toHaveBeenCalledWith(
+      'web.redirect.invalid-url',
+      expect.objectContaining({ url: '/%invalid', error: expect.any(Error) }),
+    );
+    warn.mockRestore();
+  });
   it('Given the root URL, when redirect destination is resolved, then it points to the localized French home', () => {
     expect(resolvePublicRedirectDestination('/')).toBe('/fr/');
   });

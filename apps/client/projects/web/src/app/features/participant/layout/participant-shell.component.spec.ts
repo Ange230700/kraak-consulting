@@ -12,6 +12,19 @@ import {
   provideKraakI18n,
 } from '../../../../../../shared/i18n';
 describe('ParticipantShell', () => {
+  it('Given un profil absent et une route de support indisponible, When le shell calcule ses repères, Then les valeurs de repli restent utilisables', () => {
+    const originalProfile = currentProfile();
+    currentProfile.set(null as never);
+    const page = TestBed.createComponent(ParticipantShell).componentInstance;
+    vi.spyOn(
+      page as unknown as { supportRoute: () => undefined },
+      'supportRoute',
+    ).mockReturnValue(undefined);
+    expect(page['displayName']()).toBe('Participant');
+    expect(page['initials']()).toBe('KR');
+    expect(page['supportPath']()).toBe('/contact');
+    currentProfile.set(originalProfile);
+  });
   const clearSession = vi.fn();
   const currentProfile = signal({
     appUser: {

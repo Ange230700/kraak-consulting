@@ -9,9 +9,15 @@ import {
   getRelatedBlogArticles,
   mapPublicArticleToBlogArticle,
   mapPublicArticlesToBlogArticles,
+  requireFrenchFallbackArticle,
 } from './blog.data';
 
 describe('blog.data', () => {
+  it('Given une référence éditoriale française absente, When son contenu de repli est exigé, Then la génération signale explicitement l’article manquant', () => {
+    expect(() => requireFrenchFallbackArticle('article-absent')).toThrow(
+      'Missing French fallback Blog article "article-absent".',
+    );
+  });
   it('Given fallback blog articles, When requested by locale, Then the matching editorial dataset is returned', () => {
     expect(getFallbackBlogArticles()).toBe(blogArticles);
     expect(getFallbackBlogArticles('fr-CI')).toBe(blogArticles);

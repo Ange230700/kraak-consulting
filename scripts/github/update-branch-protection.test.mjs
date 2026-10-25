@@ -41,6 +41,7 @@ test('Given staging auto-deploys from protected merges, When protection is confi
   assert.equal(protection.allow_force_pushes, false);
   assert.equal(protection.allow_deletions, false);
   assert.deepEqual(protection.required_status_checks.contexts, [
+    'Quality gate',
     'SonarCloud Analysis',
     'SonarCloud Code Analysis',
     'Format & Lint',

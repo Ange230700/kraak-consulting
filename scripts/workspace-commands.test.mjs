@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createWorkflows } from './workspace-commands.mjs';
+import { createWorkflows, getPnpmCommand } from './workspace-commands.mjs';
+
+test('Given une plateforme, When pnpm est résolu, Then le bon exécutable est choisi', () => {
+  assert.equal(getPnpmCommand('win32'), 'pnpm.cmd');
+  assert.equal(getPnpmCommand('linux'), 'pnpm');
+  assert.equal(
+    getPnpmCommand(),
+    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+  );
+});
 
 test('test workflow runs shared libraries before unit, integration and e2e phases', () => {
   const workflows = createWorkflows();

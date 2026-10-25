@@ -484,6 +484,8 @@ describe('Critical API Modules Integration', () => {
       seoDescription: 'Article public de démonstration',
       publishedAt: '2026-01-04T10:00:00.000Z',
       authorId: 'author-1',
+      categoryIds: [],
+      tagIds: [],
       categories: [],
       tags: [],
       createdAt: '2026-01-04T10:00:00.000Z',

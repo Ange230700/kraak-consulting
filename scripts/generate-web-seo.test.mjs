@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -233,4 +234,103 @@ test('Given route entries, When redirects are not requested, Then legacy sources
   assert.ok(!paths.includes('/about'));
   assert.ok(!paths.includes('/programs'));
   assert.ok(!paths.includes('/resources'));
+});
+
+test('Given des métadonnées manquantes, When une route indexable est générée, Then chaque locale reçoit une erreur explicite', () => {
+  const entry = {
+    pageId: 'home',
+    seoPath: '',
+    path: '/',
+    canonicalPath: '/',
+    includeInSitemap: true,
+    indexable: true,
+  };
+  assert.throws(
+    () =>
+      buildLocalizedSitemapPages({
+        seoPages: [],
+        routeModel,
+        entries: [{ ...entry, locale: 'fr-CI' }],
+      }),
+    /SEO introuvable/,
+  );
+  assert.throws(
+    () =>
+      buildLocalizedSitemapPages({
+        seoPages: [],
+        routeModel,
+        entries: [{ ...entry, locale: 'de-DE' }],
+      }),
+    /SEO anglais revu introuvable/,
+  );
+  const english = buildLocalizedSitemapPages({
+    seoPages: [],
+    localizedSeoPages: { 'en-GB': [{ path: '' }] },
+    routeModel,
+    entries: [{ ...entry, locale: 'en-GB' }],
+  });
+  assert.deepEqual(english[0].alternates, [
+    { hreflang: 'en-GB', path: '/' },
+    { hreflang: 'x-default', path: '/' },
+  ]);
+});
+
+test('Given des articles et URL absolues, When le sitemap est construit, Then noindex est exclu et les chemins racine sont normalisés', () => {
+  const sitemap = { changeFrequency: 'monthly', priority: 0.5 };
+  const xml = buildSitemapXml({
+    pages: [
+      {
+        canonicalPath: '/',
+        alternates: [
+          { hreflang: '"<&>\'', path: 'https://exemple.test/absolu' },
+        ],
+        sitemap,
+      },
+    ],
+    blogSitemapPages: [
+      { path: '/visible/', sitemap },
+      { path: '/cache', robots: 'NoIndex, follow', sitemap },
+    ],
+    routeModel,
+    siteUrl: '///',
+  });
+  assert.match(xml, /https:\/\/kraak-web-prod.onrender.com\/<\/loc>/);
+  assert.match(xml, /https:\/\/exemple.test\/absolu/);
+  assert.match(xml, /&quot;&lt;&amp;&gt;&apos;/);
+  assert.match(xml, /\/visible<\/loc>/);
+  assert.doesNotMatch(xml, /\/cache/);
+  assert.match(
+    buildRobotsTxt('https://exemple.test///', routeModel),
+    /https:\/\/exemple.test\/sitemap.xml/,
+  );
+});
+
+test('Given la CLI SEO, When une URL publique est définie ou absente, Then les deux assets sont écrits au bon emplacement', () => {
+  const url = new URL('generate-web-seo.mjs', import.meta.url).href;
+  for (const configured of [true, false]) {
+    const code = `import fs from 'node:fs/promises';import {syncBuiltinESMExports} from 'node:module';import {fileURLToPath} from 'node:url';const outputs=[];fs.mkdir=async()=>{};fs.writeFile=async(file,content)=>{outputs.push([file,content])};syncBuiltinESMExports();${configured ? "process.env.PUBLIC_SITE_URL='https://exemple.test';" : 'delete process.env.PUBLIC_SITE_URL;'}process.argv[1]=fileURLToPath(${JSON.stringify(url)});await import(${JSON.stringify(url)});console.log(JSON.stringify(outputs));`;
+    const result = spawnSync(
+      process.execPath,
+      ['--input-type=module', '-e', code],
+      { encoding: 'utf8' },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    const outputs = JSON.parse(result.stdout);
+    assert.equal(outputs.length, 2);
+    assert.ok(outputs[0][0].endsWith('robots.txt'));
+    assert.ok(outputs[1][0].endsWith('sitemap.xml'));
+    assert.ok(
+      outputs[0][1].includes(
+        configured ? 'https://exemple.test' : defaultSiteUrl,
+      ),
+    );
+  }
+  assert.equal(
+    spawnSync(process.execPath, [
+      '--input-type=module',
+      '-e',
+      `await import(${JSON.stringify(url)});`,
+    ]).status,
+    0,
+  );
 });

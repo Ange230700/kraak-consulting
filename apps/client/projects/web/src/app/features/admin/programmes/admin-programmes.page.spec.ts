@@ -63,6 +63,42 @@ const programsClientMock = {
 };
 
 describe('AdminProgrammesPage', () => {
+  it('Given des valeurs métier inconnues, When aucune traduction n’existe, Then les libellés bruts restent disponibles', () => {
+    const page = TestBed.createComponent(AdminProgrammesPage).componentInstance;
+    vi.spyOn(TestBed.inject(KraakI18nService), 'translate').mockImplementation(
+      (key) => key,
+    );
+    expect(page['getPublicationStatusLabel']('inconnu')).toBe('inconnu');
+    expect(page['getProgramVisibilityLabel']('inconnue')).toBe('inconnue');
+  });
+
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When le client réel charge les programmes, Then le jeton disponible et la langue sont transmis',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(mockProgrammes), { status: 200 }),
+        );
+      vi.spyOn(
+        TestBed.inject(WebAuthService),
+        'currentSession',
+      ).mockReturnValue(
+        session as ReturnType<WebAuthService['currentSession']>,
+      );
+      const page =
+        TestBed.createComponent(AdminProgrammesPage).componentInstance;
+      await page.loadProgrammes();
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      expect(page['programmes']()).toEqual(mockProgrammes);
+    },
+  );
   afterEach(() => {
     vi.restoreAllMocks();
   });

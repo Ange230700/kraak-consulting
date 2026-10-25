@@ -55,6 +55,7 @@ function resolveGhBinary() {
 const GH_BIN = resolveGhBinary();
 
 const COMMON_CHECKS_STAGING = [
+  'Quality gate',
   'SonarCloud Analysis',
   'SonarCloud Code Analysis',
   'Format & Lint',
@@ -70,6 +71,7 @@ const COMMON_CHECKS_STAGING = [
 ];
 
 const COMMON_CHECKS_MAIN = [
+  'Quality gate',
   'SonarCloud Analysis',
   'SonarCloud Code Analysis',
   'Branch Lineage',

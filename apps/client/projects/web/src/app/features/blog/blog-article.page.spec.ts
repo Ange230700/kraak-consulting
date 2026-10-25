@@ -35,6 +35,52 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('BlogArticlePage', () => {
+  it('Given une route d’article anglaise sans date éditoriale, When les données structurées sont générées, Then la locale et la date de repli sont explicites', () => {
+    TestBed.inject(ActivatedRoute).snapshot.data = { locale: 'en-GB' };
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-25T12:00:00.000Z'));
+    const page = TestBed.createComponent(BlogArticlePage).componentInstance;
+    page['updateStructuredData']({
+      ...blogArticles[0],
+      publishedAt: null,
+      createdAt: undefined,
+      updatedAt: undefined,
+      coverImagePath: 'http://images.example.test/article.jpg',
+    });
+    const script = document.head.querySelector('#kraak-blog-article-jsonld')!;
+    const article = JSON.parse(script.textContent!) as {
+      datePublished: string;
+      dateModified: string;
+      image: string[];
+    };
+    expect(article.datePublished).toBe('2026-10-25T12:00:00.000Z');
+    expect(article.dateModified).toBe(article.datePublished);
+    expect(article.image).toEqual(['http://images.example.test/article.jpg']);
+    expect(page['routeLocale']).toBe('en-GB');
+    vi.useRealTimers();
+  });
+
+  it('Given aucun slug dans la route, When la page est initialisée, Then un article absent est traité sans requête ambiguë', () => {
+    paramMapSubject.next(convertToParamMap({}));
+    Object.defineProperty(TestBed.inject(ActivatedRoute).snapshot, 'paramMap', {
+      value: convertToParamMap({}),
+    });
+    const fixture = TestBed.createComponent(BlogArticlePage);
+    const applyState = vi
+      .spyOn(
+        fixture.componentInstance as unknown as {
+          applyArticleState: (...args: unknown[]) => void;
+        },
+        'applyArticleState',
+      )
+      .mockImplementation(() => undefined);
+    fixture.detectChanges();
+    expect(
+      blogPublicServiceMock.getPublishedArticleBySlug,
+    ).toHaveBeenCalledWith('', null);
+    expect(applyState).toHaveBeenCalledWith('', null, expect.any(Array));
+    expect(fixture.componentInstance['article']).toBeNull();
+  });
   const seoServiceMock = {
     applyPageSeo: vi.fn(),
   };

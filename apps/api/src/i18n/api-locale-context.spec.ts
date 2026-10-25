@@ -5,6 +5,19 @@ import {
 } from './api-locale-context';
 
 describe('API locale context', () => {
+  it.each([
+    [['de;q=0.8', 'en;q=0.8', 'fr;q=0.8'], 'en-GB'],
+    ['*, , en;extension=value', 'en-GB'],
+    ['en;q=1.1, fr', 'fr-CI'],
+    [`en;q=${'9'.repeat(400)}, fr`, 'fr-CI'],
+    ['en;q=-1, fr', 'fr-CI'],
+  ] as const)(
+    'Given des préférences %p, When la langue est résolue, Then elle vaut %s',
+    (header, expected) => {
+      expect(resolveRequestLocale(header)).toBe(expected);
+    },
+  );
+
   it('falls back to fr-CI when Accept-Language is absent', () => {
     expect(resolveRequestLocale(undefined)).toBe('fr-CI');
   });

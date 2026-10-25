@@ -1,8 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import type { Route } from '@angular/router';
 import { adminAreaCanMatch, adminAreaRoutes } from './admin-area.routes';
+import { TestBed } from '@angular/core/testing';
+import { KraakI18nService } from '../../../shared/i18n';
 
 describe('admin-area.routes', () => {
+  it('Given les routes administrateur, When leurs titres sont résolus, Then chaque page utilise sa clé de traduction', () => {
+    const translate = (key: string) => `Titre : ${key}`;
+    TestBed.configureTestingModule({
+      providers: [{ provide: KraakI18nService, useValue: { translate } }],
+    });
+    for (const route of adminAreaRoutes[0].children!.filter(
+      (entry) => typeof entry.title === 'function',
+    )) {
+      const title = TestBed.runInInjectionContext(() =>
+        (route.title as () => string)(),
+      );
+      expect(title).toMatch(/^Titre : web\.admin\.routes\./);
+    }
+  });
   it('Given the admin area route guard, When canMatch is evaluated, Then it returns true', () => {
     const route: Route = { path: 'admin' };
     expect(adminAreaCanMatch(route, [])).toBe(true);

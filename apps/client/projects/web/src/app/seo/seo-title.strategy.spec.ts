@@ -4,7 +4,8 @@ import { vi } from 'vitest';
 
 import type { SeoPageDefinition } from './site-seo';
 import { SeoService } from './seo.service';
-import { SeoTitleStrategy } from './seo-title.strategy';
+import { SEO_PAGE_LOOKUP, SeoTitleStrategy } from './seo-title.strategy';
+import * as siteSeo from './site-seo';
 
 function mockRoute(
   data: Record<string, unknown>,
@@ -33,14 +34,23 @@ const CONTACT_SEO: SeoPageDefinition = {
 describe('SeoTitleStrategy', () => {
   let strategy: SeoTitleStrategy;
   let applyPageSeo: ReturnType<typeof vi.fn>;
+  let pageLookup: {
+    findLocalizedSeoPageByPath: ReturnType<typeof vi.fn>;
+    findSeoPageByPath: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     applyPageSeo = vi.fn();
+    pageLookup = {
+      findLocalizedSeoPageByPath: vi.fn(siteSeo.findLocalizedSeoPageByPath),
+      findSeoPageByPath: vi.fn(siteSeo.findSeoPageByPath),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         SeoTitleStrategy,
         { provide: SeoService, useValue: { applyPageSeo } },
+        { provide: SEO_PAGE_LOOKUP, useValue: pageLookup },
       ],
     });
 
@@ -52,6 +62,31 @@ describe('SeoTitleStrategy', () => {
   });
 
   describe('updateTitle', () => {
+    it('Given le registre SEO par défaut, When une page sans définition est activée, Then les métadonnées réelles de l’accueil sont appliquées', () => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          SeoTitleStrategy,
+          { provide: SeoService, useValue: { applyPageSeo } },
+        ],
+      });
+      TestBed.inject(SeoTitleStrategy).updateTitle(mockSnapshot(mockRoute({})));
+      expect(applyPageSeo).toHaveBeenCalledWith(
+        siteSeo.findLocalizedSeoPageByPath('/fr/'),
+      );
+    });
+    it('Given une page d’accueil localisée absente, When le titre est mis à jour, Then le SEO historique sert de repli', () => {
+      pageLookup.findLocalizedSeoPageByPath.mockReturnValue(undefined);
+      strategy.updateTitle(mockSnapshot(mockRoute({})));
+      expect(applyPageSeo).toHaveBeenCalledWith(siteSeo.findSeoPageByPath(''));
+    });
+
+    it('Given aucune définition SEO disponible, When le titre est mis à jour, Then aucune métadonnée invalide n’est appliquée', () => {
+      pageLookup.findLocalizedSeoPageByPath.mockReturnValue(undefined);
+      pageLookup.findSeoPageByPath.mockReturnValue(undefined);
+      strategy.updateTitle(mockSnapshot(mockRoute({})));
+      expect(applyPageSeo).not.toHaveBeenCalled();
+    });
     it('Given a root route with SEO data, when updateTitle is called, then applyPageSeo is called with that page definition', () => {
       const snapshot = mockSnapshot(mockRoute({ seo: CONTACT_SEO }));
 

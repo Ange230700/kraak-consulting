@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-24
+last_reviewed: 2026-10-25
 source_of_truth: true
 ---
 
@@ -288,11 +288,22 @@ release depuis `staging`, puis par tag SemVer validé.
 
 Des vérifications automatiques s'exécutent à chaque étape :
 
-| Moment       | Vérification                                                         | Effet si échec |
-| ------------ | -------------------------------------------------------------------- | -------------- |
-| `commit-msg` | Format Conventional Commits (commitlint)                             | Commit rejeté  |
-| `pre-commit` | `lint-staged` (formatage/lint uniquement sur les fichiers indexés)   | Commit rejeté  |
-| `pre-push`   | Nom de branche valide + contrôles ciblés selon les fichiers modifiés | Push rejeté    |
+| Moment       | Vérification                                               | Effet si échec |
+| ------------ | ---------------------------------------------------------- | -------------- |
+| `commit-msg` | Format Conventional Commits (commitlint)                   | Commit rejeté  |
+| `pre-commit` | `lint-staged`, puis `pnpm check` sur tout le dépôt         | Commit rejeté  |
+| `pre-push`   | Nom de branche valide, puis `pnpm check` sur tout le dépôt | Push rejeté    |
+
+`pnpm check` vérifie le formatage, le lint du code et du Markdown, construit les
+packages nécessaires, vérifie les types, puis mesure la couverture des scripts,
+de l'API, du web, du mobile et des packages partagés. Chaque fichier exécutable
+doit atteindre **100 %** en instructions, branches, fonctions et lignes.
+L'absence de pnpm est une erreur bloquante, jamais un contrôle réussi.
+
+Le contrôle standard ne demande aucun secret réseau. `pnpm check:full` ajoute les
+builds applicatifs, les E2E web/mobile et SonarCloud. Cette variante exige les
+navigateurs Playwright et `SONAR_TOKEN`. Les E2E restent également exécutés par
+leurs jobs CI dédiés.
 
 ### Si un hook échoue
 
@@ -335,11 +346,11 @@ pnpm format:check
 ```
 
 Le hook `pre-commit` s'appuie sur `lint-staged.config.cjs` pour n'exécuter le
-formatage et le lint que sur les fichiers indexés. Il applique Prettier avant
-markdownlint sur les fichiers Markdown. Le hook `pre-push` exécute
-`pnpm affected:lint`, `pnpm affected:test` et `pnpm test:integration` sur les
-zones modifiées, puis garde `pnpm test:workspace` uniquement quand les scripts
-du dépôt changent, ce qui évite les E2E locales et les checks globaux inutiles.
+formatage et le lint correctifs que sur les fichiers indexés. Il applique
+Prettier avant markdownlint sur les fichiers Markdown, puis lance le contrôle
+global en lecture seule. Le hook `pre-push` réexécute ce même contrôle, même
+pour un changement documentaire ou lorsque le diff ne peut pas être déterminé.
+Le formatage global couvre aussi les scripts JavaScript et les workflows YAML.
 
 Les hooks définissent `GIT_EXECUTABLE` avec un chemin absolu vers `git` (ou utilisent une valeur déjà fournie par l'environnement) pour verrouiller le binaire appelé. En CI, `GIT_EXECUTABLE` est fixé globalement à `/usr/bin/git`.
 
@@ -372,9 +383,9 @@ Le workflow `.github/workflows/docs-quality.yml` exécute sur pull request :
 - `pnpm docs:toc:check` pour empêcher une table des matières Markdown absente
   ou obsolète.
 
-Le hook `pre-commit` reste volontairement léger : il s'appuie sur `lint-staged`
-pour les fichiers indexés et ne lance ni vérification réseau, ni audit complet
-de tout l'arbre documentaire. L'audit hebdomadaire planifié exécute
+Le hook `pre-commit` ne lance ni vérification réseau, ni audit complet de tout
+l'arbre documentaire, mais il impose le contrôle qualité global décrit plus
+haut. L'audit hebdomadaire planifié exécute
 `bash scripts/audit-docs.sh --full --network --output .reports/docs-audit` et
 publie `.reports/docs-audit/` comme artefact GitHub Actions.
 

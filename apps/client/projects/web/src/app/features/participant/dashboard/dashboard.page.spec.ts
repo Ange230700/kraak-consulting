@@ -117,6 +117,34 @@ async function flush(
 }
 
 describe('Web Participant Dashboard Page', () => {
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j et un tableau non chargé, When le client réel récupère les données, Then les listes initiales et les en-têtes restent cohérents',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(EMPTY_AGGREGATE), { status: 200 }),
+        );
+      const auth = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          session as ReturnType<WebAuthService['currentSession']>,
+        );
+      const page = TestBed.createComponent(DashboardPage).componentInstance;
+      expect(page.programs()).toEqual([]);
+      expect(page.upcomingSessions()).toEqual([]);
+      expect(page.recentAnnouncements()).toEqual([]);
+      await page['loadDashboard']();
+      expect(page['dashboardState']()).toEqual(EMPTY_AGGREGATE);
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe('fr-CI');
+      fetchMock.mockRestore();
+      auth.mockRestore();
+    },
+  );
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     globalThis.localStorage?.removeItem(WEB_AUTH_STORAGE_KEY);

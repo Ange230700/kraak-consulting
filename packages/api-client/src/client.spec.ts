@@ -163,6 +163,48 @@ describe('HTTP behaviour', () => {
     vi.stubGlobal('fetch', fetchSpy);
   });
 
+  it.each([undefined, {}, { learningModuleId: '' }])(
+    'Given un filtre vide %j, When les chapitres sont demandés, Then aucune query vide n’est envoyée',
+    async (filter) => {
+      const client = createApiClient(baseConfig());
+      await client.chapters.list(filter);
+      expect(fetchSpy.mock.calls[0][0]).toBe(
+        'https://api.test/curriculum/chapters',
+      );
+    },
+  );
+
+  it('Given un placement de chapitre, When il est créé puis modifié et supprimé, Then le contrat HTTP conserve les identifiants et le contenu', async () => {
+    const client = createApiClient(baseConfig());
+    const placement = {
+      chapterId: 'chapter-1',
+      lessonId: 'lesson-1',
+      sortOrder: 2,
+      isRequired: true,
+    };
+    await client.chapterLessons.create(placement);
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(placement),
+      }),
+    ]);
+    await client.chapterLessons.update('placement-1', { sortOrder: 3 });
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons/placement-1',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify({ sortOrder: 3 }),
+      }),
+    ]);
+    await client.chapterLessons.remove('placement-1');
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons/placement-1',
+      expect.objectContaining({ method: 'DELETE', body: undefined }),
+    ]);
+  });
+
   it('GET /users/42 appelle fetch avec la bonne URL et méthode', async () => {
     const client = createApiClient(baseConfig());
     await client.users.getById('42');

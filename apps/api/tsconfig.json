@@ -5,6 +5,7 @@
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
+    "isolatedModules": false,
     "types": ["jest", "node"],
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,

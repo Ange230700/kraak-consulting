@@ -17,15 +17,12 @@ function readWorkspaceConfig() {
   return JSON.parse(readFileSync(workspaceConfigPath, 'utf8'));
 }
 
-test(
-  'le dev server mobile exclut @kraak/api-client du prebundle Vite',
-  () => {
-    const workspaceConfig = readWorkspaceConfig();
-    const prebundleConfig =
-      workspaceConfig.projects.mobile.architect.serve.options?.prebundle;
+test('le dev server mobile exclut @kraak/api-client du prebundle Vite', () => {
+  const workspaceConfig = readWorkspaceConfig();
+  const prebundleConfig =
+    workspaceConfig.projects.mobile.architect.serve.options?.prebundle;
 
-    assert.deepEqual(prebundleConfig, {
-      exclude: ['@kraak/api-client'],
-    });
-  },
-);
+  assert.deepEqual(prebundleConfig, {
+    exclude: ['@kraak/api-client'],
+  });
+});

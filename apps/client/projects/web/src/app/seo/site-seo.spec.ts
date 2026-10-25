@@ -2,22 +2,108 @@
 
 import {
   buildAbsoluteUrl,
+  buildLocalizedSeoPage,
   buildRobotsTxt,
   buildSitemapXml,
+  buildSitemapUrlXml,
   findLocalizedSeoPageByPath,
   findSeoPageByPath,
   localizedSeoPages,
   normalizeSiteUrl,
+  normalizeRoutePath,
   resolvePublicSiteUrl,
   seoPages,
   type SeoPageDefinition,
 } from './site-seo';
+import { localizedPublicRouteEntries } from '../routing/localized-public-routes';
 
 const DEFAULT_SITE_URL = 'https://kraak-web-prod.onrender.com';
 const EXAMPLE_SITE_URL = 'https://example.com';
 const RUNTIME_CONFIG_SITE_URL = 'https://render-staging.kraak.example';
 
 describe('site-seo', () => {
+  it('Given une page temporaire avec un code non documenté, When son SEO est construit, Then le contenu temporaire générique est conservé', () => {
+    const entry = localizedPublicRouteEntries.find(
+      (item) => item.locale === 'en-GB' && item.pageId === 'contact',
+    )!;
+    const page = buildLocalizedSeoPage({
+      ...entry,
+      temporary: true,
+      statusCode: 418,
+    });
+    expect(page.temporary).toBe(true);
+    expect(page.robots).toContain('noindex');
+    expect(page.title).toContain('KRAAK');
+  });
+
+  it('Given une nouvelle page sans équivalent source, When ses liens linguistiques sont construits, Then sa canonique reste le repli x-default', () => {
+    const entry = localizedPublicRouteEntries[0];
+    const page = buildLocalizedSeoPage({
+      ...entry,
+      pageId: 'nouvelle-page' as never,
+    });
+    expect(page.hreflangLinks).toEqual([
+      { hreflang: 'x-default', path: entry.canonicalPath },
+    ]);
+  });
+
+  it('Given une alternative de langue non prise en charge, When le sitemap est produit, Then seuls les liens reconnus et x-default sont publiés', () => {
+    const page = seoPages.find((item) => item.path === 'contact')!;
+    const xml = buildSitemapUrlXml(
+      {
+        ...page,
+        hreflangLinks: [
+          { hreflang: 'de-DE' as never, path: '/de/contact' },
+          { hreflang: 'x-default', path: '/fr/contact' },
+        ],
+      },
+      EXAMPLE_SITE_URL,
+    );
+    expect(xml).not.toContain('/de/contact');
+    expect(xml).toContain('hreflang="x-default"');
+  });
+  it('Given un chemin entouré de barres, When il est normalisé, Then seules les barres périphériques sont retirées', () => {
+    expect(normalizeRoutePath('///contact///')).toBe('contact');
+    expect(normalizeRoutePath('/')).toBe('');
+  });
+
+  it('Given une entrée publique sans métadonnées source, When le SEO est construit, Then l’erreur identifie la configuration manquante', () => {
+    const entry = localizedPublicRouteEntries[0];
+    expect(() =>
+      buildLocalizedSeoPage({ ...entry, seoPath: 'page-absente' }),
+    ).toThrow('Missing SEO metadata');
+  });
+
+  it('Given une page anglaise sans contenu révisé, When sa publication est demandée, Then la génération refuse une traduction absente', () => {
+    const entry = localizedPublicRouteEntries.find(
+      (item) => item.locale === 'en-GB',
+    )!;
+    expect(() =>
+      buildLocalizedSeoPage({
+        ...entry,
+        temporary: false,
+        seoPath: 'auth/reset',
+      }),
+    ).toThrow('Métadonnées SEO révisées introuvables');
+  });
+
+  it('Given une page non indexable révisée, When le SEO est construit, Then la directive noindex est appliquée', () => {
+    const entry = localizedPublicRouteEntries.find(
+      (item) => item.locale === 'fr-CI' && item.pageId === 'contact',
+    )!;
+    const page = buildLocalizedSeoPage({ ...entry, indexable: false });
+    expect(page.robots).toContain('noindex');
+  });
+
+  it('Given une URL sans alternatives ni canonique, When son XML est produit, Then son propre chemin est utilisé sans lien alternatif vide', () => {
+    const page = seoPages.find((item) => item.path === 'contact')!;
+    const xml = buildSitemapUrlXml(
+      { ...page, hreflangLinks: undefined, canonicalPath: undefined },
+      EXAMPLE_SITE_URL,
+    );
+    expect(xml).toContain('<loc>https://example.com/contact</loc>');
+    expect(xml).not.toContain('<xhtml:link');
+  });
   it('Given the existing SEO source, when raw pages are listed, then the French copy source remains unchanged', () => {
     expect(seoPages.map((page) => page.path)).toEqual([
       '',

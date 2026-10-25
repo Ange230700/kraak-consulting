@@ -27,6 +27,7 @@ const strictDiagnosticDefaultLogPath = path.join(
 );
 const sonarScanPackageName = '@sonar/scan';
 const lcovReportPathToSourcePrefix = {
+  'coverage/lcov.info': '',
   'apps/api/coverage/lcov.info': 'apps/api',
   'apps/client/coverage/web/lcov.info': 'apps/client',
   'apps/client/coverage/mobile/lcov.info': 'apps/client',
@@ -37,12 +38,26 @@ const lcovReportPathToSourcePrefix = {
 };
 const lcovReportPaths = Object.keys(lcovReportPathToSourcePrefix);
 
-function getSourceLineCount(sourcePath, lineCountCache) {
+export function assertLcovReports(reportPaths = lcovReportPaths) {
+  for (const reportPath of reportPaths) {
+    const absolutePath = path.resolve(repositoryRoot, reportPath);
+    if (
+      !existsSync(absolutePath) ||
+      readFileSync(absolutePath, 'utf8').trim().length === 0
+    ) {
+      throw new Error(
+        `Rapport LCOV absent ou vide : ${reportPath}. Lancez pnpm coverage avant le scan.`,
+      );
+    }
+  }
+}
+
+function getSourceLineCount(sourcePath, lineCountCache, root) {
   if (lineCountCache.has(sourcePath)) {
     return lineCountCache.get(sourcePath);
   }
 
-  const absoluteSourcePath = path.join(repositoryRoot, sourcePath);
+  const absoluteSourcePath = path.join(root, sourcePath);
 
   if (!existsSync(absoluteSourcePath)) {
     lineCountCache.set(sourcePath, null);
@@ -118,7 +133,7 @@ export function resolveSonarEnvironment(
 export function createSonarScanCommand(platform = process.platform) {
   return {
     command: getPnpmCommand(platform),
-    args: ['dlx', sonarScanPackageName],
+    args: ['dlx', sonarScanPackageName, '-Dsonar.qualitygate.wait=true'],
   };
 }
 
@@ -179,7 +194,10 @@ function normalizeSourcePathForReport(sourcePath, sourcePrefix) {
     }
   }
 
-  if (normalizedSourcePath.startsWith(`${normalizedPrefix}/`)) {
+  if (
+    !normalizedPrefix ||
+    normalizedSourcePath.startsWith(`${normalizedPrefix}/`)
+  ) {
     return normalizedSourcePath;
   }
 
@@ -202,10 +220,10 @@ export function normalizeLcovContent(content, sourcePrefix) {
     return `SF:${normalizedSourcePath}`;
   });
 
-  return `${normalizedLines.join('\n')}\n`;
+  return `${normalizedLines.join('\n').replace(/\n+$/u, '')}\n`;
 }
 
-function shouldDropCoverageLine(line, currentSourcePath, lineCountCache) {
+function shouldDropCoverageLine(line, currentSourcePath, lineCountCache, root) {
   if (!currentSourcePath) {
     return false;
   }
@@ -218,7 +236,11 @@ function shouldDropCoverageLine(line, currentSourcePath, lineCountCache) {
   const payload = line.slice(separatorIndex + 1);
   const firstField = payload.split(',')[0];
   const parsedLine = Number.parseInt(firstField, 10);
-  const sourceLineCount = getSourceLineCount(currentSourcePath, lineCountCache);
+  const sourceLineCount = getSourceLineCount(
+    currentSourcePath,
+    lineCountCache,
+    root,
+  );
 
   if (!Number.isInteger(parsedLine) || !sourceLineCount) {
     return false;
@@ -227,7 +249,7 @@ function shouldDropCoverageLine(line, currentSourcePath, lineCountCache) {
   return parsedLine < 1 || parsedLine > sourceLineCount;
 }
 
-function sanitizeNormalizedLcovContent(content, lineCountCache) {
+function sanitizeNormalizedLcovContent(content, lineCountCache, root) {
   const state = {
     currentSourcePath: null,
     lines: [],
@@ -240,7 +262,14 @@ function sanitizeNormalizedLcovContent(content, lineCountCache) {
       continue;
     }
 
-    if (shouldDropCoverageLine(line, state.currentSourcePath, lineCountCache)) {
+    if (
+      shouldDropCoverageLine(
+        line,
+        state.currentSourcePath,
+        lineCountCache,
+        root,
+      )
+    ) {
       continue;
     }
 
@@ -250,11 +279,14 @@ function sanitizeNormalizedLcovContent(content, lineCountCache) {
   return state.lines.join('\n');
 }
 
-export function normalizeLcovReports(reportPaths = lcovReportPaths) {
+export function normalizeLcovReports(
+  reportPaths = lcovReportPaths,
+  root = repositoryRoot,
+) {
   const lineCountCache = new Map();
 
   for (const reportPath of reportPaths) {
-    const absoluteReportPath = path.join(repositoryRoot, reportPath);
+    const absoluteReportPath = path.join(root, reportPath);
 
     if (!existsSync(absoluteReportPath)) {
       continue;
@@ -262,7 +294,7 @@ export function normalizeLcovReports(reportPaths = lcovReportPaths) {
 
     const sourcePrefix = lcovReportPathToSourcePrefix[reportPath];
 
-    if (!sourcePrefix) {
+    if (sourcePrefix === undefined) {
       continue;
     }
 
@@ -270,6 +302,7 @@ export function normalizeLcovReports(reportPaths = lcovReportPaths) {
     const normalizedReportContent = sanitizeNormalizedLcovContent(
       normalizeLcovContent(reportContent, sourcePrefix),
       lineCountCache,
+      root,
     );
 
     if (normalizedReportContent !== reportContent) {
@@ -278,9 +311,11 @@ export function normalizeLcovReports(reportPaths = lcovReportPaths) {
   }
 }
 
-export function resetScannerReportDirectory() {
-  rmSync(scannerReportDirectory, { force: true, recursive: true });
-  mkdirSync(scannerReportDirectory, { recursive: true });
+export function resetScannerReportDirectory(
+  directory = scannerReportDirectory,
+) {
+  rmSync(directory, { force: true, recursive: true });
+  mkdirSync(directory, { recursive: true });
 }
 
 function isTruthyFlag(value) {
@@ -311,7 +346,7 @@ export function resolveStrictDiagnosticOptions(baseEnvironment = process.env) {
   };
 }
 
-function createDiagnosticLogger(strictDiagnosticOptions) {
+export function createDiagnosticLogger(strictDiagnosticOptions) {
   if (!strictDiagnosticOptions.enabled) {
     return {
       log: () => {},
@@ -329,7 +364,7 @@ function createDiagnosticLogger(strictDiagnosticOptions) {
   };
 }
 
-function isProcessAlive(pid) {
+export function isProcessAlive(pid) {
   if (!Number.isInteger(pid) || pid <= 0) {
     return false;
   }
@@ -337,7 +372,8 @@ function isProcessAlive(pid) {
   try {
     process.kill(pid, 0);
     return true;
-  } catch {
+  } catch (error) {
+    console.debug('[sonar] Processus du verrou indisponible.', error);
     return false;
   }
 }
@@ -434,21 +470,29 @@ function quoteWindowsArgument(argument) {
   return quotedArgument;
 }
 
-function spawnSonarCommand(command, environment) {
-  if (process.platform !== 'win32') {
-    return spawn(command.command, command.args, {
+export function spawnSonarCommand(
+  command,
+  environment,
+  {
+    platform = process.platform,
+    spawnImpl = spawn,
+    baseEnvironment = process.env,
+  } = {},
+) {
+  if (platform !== 'win32') {
+    return spawnImpl(command.command, command.args, {
       cwd: repositoryRoot,
       env: environment,
       stdio: 'inherit',
     });
   }
 
-  const comspec = process.env.ComSpec ?? 'cmd.exe';
+  const comspec = baseEnvironment.ComSpec ?? 'cmd.exe';
   const commandLine = [command.command, ...command.args]
     .map(quoteWindowsArgument)
     .join(' ');
 
-  return spawn(comspec, ['/d', '/s', '/c', commandLine], {
+  return spawnImpl(comspec, ['/d', '/s', '/c', `"${commandLine}"`], {
     cwd: repositoryRoot,
     env: environment,
     stdio: 'inherit',
@@ -456,7 +500,15 @@ function spawnSonarCommand(command, environment) {
   });
 }
 
-function abortScannerProcess(childProcess, diagnosticLogger) {
+export function abortScannerProcess(
+  childProcess,
+  diagnosticLogger,
+  {
+    platform = process.platform,
+    spawnSyncImpl = spawnSync,
+    resolveTaskkill = resolveTaskkillExecutablePath,
+  } = {},
+) {
   const childPid = childProcess.pid;
 
   if (!childPid) {
@@ -464,10 +516,10 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
     return;
   }
 
-  if (process.platform === 'win32') {
+  if (platform === 'win32') {
     try {
-      const taskkillExecutablePath = resolveTaskkillExecutablePath();
-      const taskkillResult = spawnSync(
+      const taskkillExecutablePath = resolveTaskkill();
+      const taskkillResult = spawnSyncImpl(
         taskkillExecutablePath,
         ['/PID', `${childPid}`, '/T', '/F'],
         {
@@ -479,6 +531,7 @@ function abortScannerProcess(childProcess, diagnosticLogger) {
         `pid=${childPid} status=${taskkillResult.status ?? 'null'}`,
       );
     } catch (error) {
+      console.error('[sonar] Arrêt Windows du scanner impossible.', error);
       const message = error instanceof Error ? error.message : String(error);
       diagnosticLogger.log('ABORT_TASKKILL_ERROR', message);
       const wasKilled = childProcess.kill('SIGKILL');
@@ -519,10 +572,11 @@ export function resolveTaskkillExecutablePath(baseEnvironment = process.env) {
   return taskkillExecutablePath;
 }
 
-function createScannerReportMonitor(
+export function createScannerReportMonitor(
   strictDiagnosticOptions,
   diagnosticLogger,
   childProcess,
+  { directory = scannerReportDirectory, abort = abortScannerProcess } = {},
 ) {
   if (!strictDiagnosticOptions.enabled) {
     return {
@@ -542,15 +596,12 @@ function createScannerReportMonitor(
       return;
     }
 
-    const scannerReportExists = existsSync(scannerReportDirectory);
+    const scannerReportExists = existsSync(directory);
 
     if (scannerReportExists) {
       if (!hasSeenScannerReportDirectory) {
         hasSeenScannerReportDirectory = true;
-        diagnosticLogger.log(
-          'SCANNER_REPORT_PRESENT',
-          `path=${scannerReportDirectory}`,
-        );
+        diagnosticLogger.log('SCANNER_REPORT_PRESENT', `path=${directory}`);
       }
 
       missingSinceTimestamp = null;
@@ -573,11 +624,8 @@ function createScannerReportMonitor(
     }
 
     hasAbortedForMissingReport = true;
-    diagnosticLogger.log(
-      'SCANNER_REPORT_MISSING',
-      `path=${scannerReportDirectory}`,
-    );
-    abortScannerProcess(childProcess, diagnosticLogger);
+    diagnosticLogger.log('SCANNER_REPORT_MISSING', `path=${directory}`);
+    abort(childProcess, diagnosticLogger);
   }, monitorIntervalMs);
 
   return {
@@ -588,9 +636,17 @@ function createScannerReportMonitor(
   };
 }
 
-function runSonarScan(command, environment, strictDiagnosticOptions) {
+export function runSonarScan(
+  command,
+  environment,
+  strictDiagnosticOptions,
+  {
+    spawnImpl = spawnSonarCommand,
+    monitorFactory = createScannerReportMonitor,
+  } = {},
+) {
   return new Promise((resolve) => {
-    const childProcess = spawnSonarCommand(command, environment);
+    const childProcess = spawnImpl(command, environment);
     const diagnosticLogger = createDiagnosticLogger(strictDiagnosticOptions);
     let isSettled = false;
 
@@ -603,7 +659,7 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
       `pid=${childProcess.pid ?? 'unknown'}`,
     );
 
-    const monitor = createScannerReportMonitor(
+    const monitor = monitorFactory(
       strictDiagnosticOptions,
       diagnosticLogger,
       childProcess,
@@ -648,9 +704,13 @@ function runSonarScan(command, environment, strictDiagnosticOptions) {
   });
 }
 
-export async function main() {
-  const environment = resolveSonarEnvironment();
-
+export async function main({
+  environment = resolveSonarEnvironment(),
+  lockPath = scannerLockPath,
+  reportPaths = lcovReportPaths,
+  reportDirectory = scannerReportDirectory,
+  scan = runSonarScan,
+} = {}) {
   if (!environment.SONAR_TOKEN) {
     console.error(
       'ERROR: SONAR_TOKEN manquant. Renseignez .env.local puis relancez.',
@@ -660,7 +720,7 @@ export async function main() {
 
   const strictDiagnosticOptions = resolveStrictDiagnosticOptions(environment);
 
-  const lock = acquireScanLock();
+  const lock = acquireScanLock(lockPath);
 
   if (!lock.acquired) {
     const pidLabel = lock.lockPid ?? 'inconnu';
@@ -671,13 +731,14 @@ export async function main() {
   }
 
   try {
-    resetScannerReportDirectory();
-    normalizeLcovReports();
+    assertLcovReports(reportPaths);
+    resetScannerReportDirectory(reportDirectory);
+    normalizeLcovReports(reportPaths);
 
     const command = createSonarScanCommand();
-    return runSonarScan(command, environment, strictDiagnosticOptions);
+    return await scan(command, environment, strictDiagnosticOptions);
   } finally {
-    releaseScanLock();
+    releaseScanLock(lockPath);
   }
 }
 

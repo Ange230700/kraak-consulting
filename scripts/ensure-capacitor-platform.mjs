@@ -18,12 +18,14 @@ export function parseCapacitorPlatform(argv) {
 
   if (typeof platform !== 'string' || platform.length === 0) {
     throw new Error(
-      'Plateforme Capacitor manquante. Usage: fournir `android` ou `ios`.'
+      'Plateforme Capacitor manquante. Usage: fournir `android` ou `ios`.',
     );
   }
 
   if (!supportedPlatforms.has(platform)) {
-    throw new Error('Plateforme Capacitor invalide. Valeurs attendues: android, ios.');
+    throw new Error(
+      'Plateforme Capacitor invalide. Valeurs attendues: android, ios.',
+    );
   }
 
   return platform;
@@ -66,9 +68,7 @@ export function ensureCapacitorPlatform(
   );
 
   if (commandResult.status !== 0) {
-    throw new Error(
-      `Impossible d'ajouter la plateforme ${resolvedPlatform}.`
-    );
+    throw new Error(`Impossible d'ajouter la plateforme ${resolvedPlatform}.`);
   }
 
   return {
@@ -85,7 +85,7 @@ export function ensureCapacitorPlatformFromCli(argv = process.argv.slice(2)) {
   console.log(
     result.created
       ? `[capacitor-platform] ${platform}: plateforme créée`
-      : `[capacitor-platform] ${platform}: plateforme déjà présente`
+      : `[capacitor-platform] ${platform}: plateforme déjà présente`,
   );
 
   return result;

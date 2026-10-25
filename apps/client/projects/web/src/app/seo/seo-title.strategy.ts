@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, InjectionToken, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
@@ -12,15 +12,24 @@ import {
 } from './site-seo';
 import { SeoService } from './seo.service';
 
+export const SEO_PAGE_LOOKUP = new InjectionToken('SEO_PAGE_LOOKUP', {
+  providedIn: 'root',
+  factory: () => ({
+    findLocalizedSeoPageByPath,
+    findSeoPageByPath,
+  }),
+});
+
 @Injectable()
 export class SeoTitleStrategy extends TitleStrategy {
   private readonly seoService = inject(SeoService);
+  private readonly pageLookup = inject(SEO_PAGE_LOOKUP);
 
   override updateTitle(snapshot: RouterStateSnapshot): void {
     const page =
       this.findSeoPage(snapshot.root) ??
-      findLocalizedSeoPageByPath('/fr/') ??
-      findSeoPageByPath('');
+      this.pageLookup.findLocalizedSeoPageByPath('/fr/') ??
+      this.pageLookup.findSeoPageByPath('');
 
     if (page) {
       this.seoService.applyPageSeo(page);

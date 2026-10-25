@@ -79,6 +79,69 @@ const resourcesClientMock = {
 };
 
 describe('AdminRessourcesPage', () => {
+  it('Given des valeurs métier inconnues, When aucune traduction n’existe, Then les libellés bruts restent disponibles', () => {
+    const page = TestBed.createComponent(AdminRessourcesPage).componentInstance;
+    vi.spyOn(TestBed.inject(KraakI18nService), 'translate').mockImplementation(
+      (key) => key,
+    );
+    expect(page['getPublicationStatusLabel']('inconnu')).toBe('inconnu');
+    expect(page['getResourceTypeLabel']('inconnu')).toBe('inconnu');
+    expect(page['getResourceThemeLabel']('inconnu')).toBe('inconnu');
+    expect(page['getResourceAudienceLabel']('inconnu')).toBe('inconnu');
+  });
+
+  it('Given une réponse sous forme de tableau, When les ressources sont chargées, Then le catalogue accepte ce format', async () => {
+    const page = TestBed.createComponent(AdminRessourcesPage).componentInstance;
+    page.resourcesClient = {
+      ...resourcesClientMock,
+      list: vi.fn().mockResolvedValue(mockRessources),
+    };
+    await page.loadRessources();
+    expect(page['ressources']()).toEqual(mockRessources);
+  });
+
+  it('Given une ressource sans URL ni description, When elle est modifiée, Then les champs vides sont renvoyés sous forme de valeurs nulles', async () => {
+    const page = TestBed.createComponent(AdminRessourcesPage).componentInstance;
+    const resource = { ...mockRessources[0], url: null, description: null };
+    const update = vi.fn().mockResolvedValue(resource);
+    page.resourcesClient = { ...resourcesClientMock, update };
+    page.openEditForm(resource);
+    expect(page.form.controls.url.value).toBe('');
+    expect(page.form.controls.description.value).toBe('');
+    await page.submitForm();
+    expect(update).toHaveBeenCalledWith(
+      resource.id,
+      expect.objectContaining({ url: null, description: null }),
+    );
+  });
+
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j, When le client réel charge les ressources, Then le jeton disponible et la langue sont transmis',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(mockRessources), { status: 200 }),
+        );
+      vi.spyOn(
+        TestBed.inject(WebAuthService),
+        'currentSession',
+      ).mockReturnValue(
+        session as ReturnType<WebAuthService['currentSession']>,
+      );
+      const page =
+        TestBed.createComponent(AdminRessourcesPage).componentInstance;
+      await page.loadRessources();
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      expect(page['ressources']()).toEqual(mockRessources);
+    },
+  );
   afterEach(() => {
     vi.restoreAllMocks();
   });

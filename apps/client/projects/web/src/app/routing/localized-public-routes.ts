@@ -114,7 +114,13 @@ export const localizedPublicPrerenderPaths = Object.freeze(
 );
 
 export const legacyPublicRedirects = Object.freeze(
-  LOCALIZED_PUBLIC_PAGES.flatMap((page) => {
+  buildLegacyPublicRedirects(LOCALIZED_PUBLIC_PAGES),
+);
+
+export function buildLegacyPublicRedirects(
+  pages: readonly LocalizedPublicPageDefinition[],
+): PublicRedirectRule[] {
+  return pages.flatMap((page) => {
     const destination = page.paths[SOURCE_LOCALE];
 
     return (page.legacyAliases ?? []).map((source) => ({
@@ -122,8 +128,8 @@ export const legacyPublicRedirects = Object.freeze(
       destination,
       renderPermanentRedirect: normalizeAbsolutePath(source) !== '/',
     }));
-  }),
-);
+  });
+}
 
 export const renderPublicRedirects = Object.freeze(
   legacyPublicRedirects.filter((redirect) => redirect.renderPermanentRedirect),
@@ -249,9 +255,10 @@ export function findLocalizedPublicRouteEntry(
 export function findLocalizedPublicRouteEntryByLegacyPath(
   path: string,
   localeCandidate: string | null | undefined,
+  pages: readonly LocalizedPublicPageDefinition[] = LOCALIZED_PUBLIC_PAGES,
 ): LocalizedPublicRouteEntry | undefined {
   const normalizedPath = normalizeAbsolutePath(path);
-  const page = LOCALIZED_PUBLIC_PAGES.find((candidate) =>
+  const page = pages.find((candidate) =>
     (candidate.legacyAliases ?? []).some(
       (alias) => normalizeAbsolutePath(alias) === normalizedPath,
     ),

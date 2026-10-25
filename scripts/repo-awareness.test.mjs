@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import {
-  chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -27,22 +28,12 @@ function resolveBashCommand() {
   }
 
   const candidates = [
-    'C:\\Program Files\\Git\\bin\\bash.exe',
     'C:\\Program Files\\Git\\usr\\bin\\bash.exe',
+    'C:\\Program Files\\Git\\bin\\bash.exe',
     'C:\\Program Files (x86)\\Git\\bin\\bash.exe',
   ];
 
   return candidates.find((candidate) => existsSync(candidate)) ?? 'bash';
-}
-
-function toBashPath(filePath) {
-  if (process.platform !== 'win32') {
-    return filePath;
-  }
-
-  return filePath
-    .replace(/^([A-Za-z]):/, (_, drive) => `/${drive.toLowerCase()}`)
-    .replace(/\\/g, '/');
 }
 
 function runCommand(command, args, options = {}) {
@@ -65,26 +56,20 @@ function runScript(args = [], options = {}) {
   return runCommand(bashCommand, [targetScript, ...args], options);
 }
 
-function writeExecutableScript(filePath, content) {
-  writeFileSync(filePath, content);
-  chmodSync(filePath, 0o755);
-}
-
 function createFixtureRepository() {
   const root = mkdtempSync(path.join(os.tmpdir(), 'kraak-repo-awareness-'));
   const scriptsDirectory = path.join(root, 'scripts');
   const docsDirectory = path.join(root, 'docs');
-  const binDirectory = path.join(root, 'bin');
+  const bashEnvPath = path.join(root, 'fixture-env.sh');
   const envSecretValue = 'super-secret-fixture-value';
   const fixtureScriptPath = path.join(scriptsDirectory, 'repo-awareness.sh');
 
   mkdirSync(scriptsDirectory, { recursive: true });
   mkdirSync(docsDirectory, { recursive: true });
-  mkdirSync(binDirectory, { recursive: true });
   cpSync(scriptPath, fixtureScriptPath);
-  writeExecutableScript(
-    path.join(binDirectory, 'git'),
-    `#!/usr/bin/env sh
+  writeFileSync(
+    bashEnvPath,
+    `git() {
 case "$1" in
   --version)
     printf 'git version fixture\\n'
@@ -114,7 +99,7 @@ case "$1" in
   log|diff|remote|submodule|stash|tag|rev-list)
     ;;
   show-ref)
-    exit 1
+    return 1
     ;;
   ls-files)
     case " $* " in
@@ -132,19 +117,13 @@ case "$1" in
     printf 'docs/provider.md:1:Legacy provider mention: Vercel.\\n'
     ;;
 esac
+}
+pnpm() { printf 'pnpm fixture %s\\n' "$*"; }
+corepack() { printf 'corepack fixture\\n'; }
+rg() { if [ "$1" = "--version" ]; then printf 'ripgrep fixture\\n'; fi; }
+gh() { if [ "$1" = "--version" ]; then printf 'gh fixture\\n'; fi; }
+export -f git pnpm corepack rg gh
 `,
-  );
-  writeExecutableScript(
-    path.join(binDirectory, 'pnpm'),
-    '#!/usr/bin/env sh\nprintf "pnpm fixture %s\\n" "$*"\n',
-  );
-  writeExecutableScript(
-    path.join(binDirectory, 'rg'),
-    '#!/usr/bin/env sh\nif [ "$1" = "--version" ]; then printf "ripgrep fixture\\n"; fi\n',
-  );
-  writeExecutableScript(
-    path.join(binDirectory, 'gh'),
-    '#!/usr/bin/env sh\nif [ "$1" = "--version" ]; then printf "gh fixture\\n"; fi\n',
   );
   writeFileSync(path.join(root, '.gitignore'), '.reports/\n');
   writeFileSync(path.join(root, 'README.md'), '# Fixture\n');
@@ -184,7 +163,7 @@ esac
   );
 
   return {
-    binDirectory,
+    bashEnvPath,
     envSecretValue,
     root,
     scriptPath: fixtureScriptPath,
@@ -215,14 +194,6 @@ function getSection(output, title) {
     : output.slice(start, nextSection);
 }
 
-function createFixturePath(binDirectory) {
-  return [
-    toBashPath(binDirectory),
-    toBashPath(path.dirname(bashCommand)),
-    process.env.PATH,
-  ].join(':');
-}
-
 test('Given the repository awareness script, When Bash checks syntax, Then the script is valid', () => {
   const result = runCommand(bashCommand, ['-n', scriptPath]);
 
@@ -247,12 +218,28 @@ test('Given default mode, When the report runs, Then generated output is ignored
       cwd: fixture.root,
       env: {
         KRAAK_REPO_AWARENESS_SECRET_TEST: secretValue,
-        PATH: createFixturePath(fixture.binDirectory),
+        BASH_ENV: fixture.bashEnvPath.replaceAll('\\', '/'),
+        PATH: [path.dirname(bashCommand), process.env.PATH].join(
+          path.delimiter,
+        ),
       },
       scriptPath: fixture.scriptPath,
+      timeout: 600_000,
     });
 
-    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const reportDirectory = path.join(fixture.root, '.reports');
+    const reportDiagnostics = existsSync(reportDirectory)
+      ? readdirSync(reportDirectory)
+          .map((file) =>
+            readFileSync(path.join(reportDirectory, file), 'utf8').slice(-4000),
+          )
+          .join('\n')
+      : '';
+    assert.equal(
+      result.status,
+      0,
+      `${result.error?.message ?? ''} signal=${result.signal}\n${result.stderr || result.stdout || reportDiagnostics}`,
+    );
     assert.match(result.stdout, /Mode:\s+full=0 checks=0 network=0/);
     assert.doesNotMatch(result.stdout, new RegExp(secretValue));
     assert.doesNotMatch(result.stdout, new RegExp(fixture.envSecretValue));

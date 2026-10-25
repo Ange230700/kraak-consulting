@@ -9,8 +9,51 @@ import {
   provideKraakI18n,
 } from '../../../../../../shared/i18n';
 import { UserFormStateService } from './user-form-state.service';
+import { WebAuthService } from '../../../core/auth/web-auth.service';
 
 describe('AdminUserCreateLayoutPage', () => {
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j et une invitation valide, When le client réel est utilisé, Then le jeton et la langue sont transmis sans altérer le formulaire envoyé',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response('{}', { status: 200 }));
+      const auth = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          session as ReturnType<WebAuthService['currentSession']>,
+        );
+      const navigate = vi
+        .spyOn(TestBed.inject(Router), 'navigate')
+        .mockResolvedValue(true);
+      const page = TestBed.createComponent(
+        AdminUserCreateLayoutPage,
+      ).componentInstance;
+      page.formState.patch({
+        firstName: 'Alice',
+        lastName: 'Martin',
+        email: 'alice@example.com',
+        role: 'participant',
+        sendInvitation: true,
+      });
+      await page.handleSubmit();
+      expect(fetchMock).toHaveBeenCalledOnce();
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe(
+        TestBed.inject(KraakI18nService).locale(),
+      );
+      expect(
+        JSON.parse(fetchMock.mock.calls[0][1]!.body as string),
+      ).toMatchObject({ firstName: 'Alice', email: 'alice@example.com' });
+      expect(navigate).toHaveBeenCalledWith(['/admin/utilisateurs/list']);
+      fetchMock.mockRestore();
+      auth.mockRestore();
+      navigate.mockRestore();
+    },
+  );
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     await TestBed.configureTestingModule({
