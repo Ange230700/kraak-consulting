@@ -14,7 +14,7 @@ test('Given un document illustré When les trois formats sont générés Then le
   try {
     const source = path.join(directory, 'source.md');
     const content =
-      '# Mission KRAAK\n\nDévelopper les compétences.\n\n![Illustration KRAAK](image.png)\n';
+      '---\n# Mission KRAAK\n\nDévelopper les compétences.\n\n---\n\n[Consulter les services](#services)\n\n## Services\n\nFormation.\n\n![Illustration KRAAK](image.png)\n';
     await writeFile(source, content);
     await sharp({
       create: { width: 20, height: 10, channels: 3, background: '#173e50' },
@@ -47,6 +47,8 @@ test('Given un document illustré When les trois formats sont générés Then le
         assert.equal(artifact.subarray(0, 5).toString(), '%PDF-');
         assert.ok(artifact.includes(Buffer.from('/StructTreeRoot')));
         assert.ok(artifact.includes(Buffer.from('/Subtype /Image')));
+        assert.ok(artifact.includes(Buffer.from('/Subtype /Link')));
+        assert.ok(artifact.includes(Buffer.from('/Dest ')));
       } else {
         const xml = artifact.toString('utf8');
         assert.equal(artifact.subarray(0, 2).toString(), 'PK');

@@ -71,9 +71,15 @@ générations.
 
 ## Rendu et limites
 
-Les métadonnées YAML en tête et les commentaires HTML ne sont pas exportés. Le
-HTML brut n'est pas rendu ; privilégier les constructions Markdown. Les liens
-restent cliquables dans le PDF ; le TXT et le PPTX conservent leur libellé.
+Les métadonnées YAML en tête et les commentaires HTML ne sont pas exportés.
+Le bloc de métadonnées reconnu est délimité par deux lignes `---` en tête du
+fichier et contient uniquement des paires plates `clé: valeur` non vides,
+des lignes vides ou des commentaires YAML. Les autres blocs sont conservés
+comme contenu Markdown, notamment les séparateurs ordinaires.
+Le HTML brut n'est pas rendu ; privilégier les constructions Markdown. Les liens
+restent cliquables dans le PDF, y compris les liens vers les titres du sommaire.
+Les identifiants de titres réutilisent la normalisation et le dédoublonnage du
+générateur de sommaires du dépôt. Le TXT et le PPTX conservent le libellé des liens.
 
 Le PPTX est une adaptation documentaire, pas une reproduction d'une maquette
 Marp : une diapositive de titre précède les sections, les textes longs sont

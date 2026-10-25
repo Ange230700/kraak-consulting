@@ -12,7 +12,9 @@ import { pathToFileURL } from 'node:url';
 import { Marked } from 'marked';
 import { decodeHTML } from 'entities';
 
-const formats = ['pdf', 'pptx', 'txt', 'all'];
+import { createHeadingSlug } from './generate-markdown-tocs.mjs';
+
+const formats = new Set(['pdf', 'pptx', 'txt', 'all']);
 const markdown = new Marked({
   gfm: true,
   renderer: { html: () => '' },
@@ -31,7 +33,7 @@ export function parseArguments(args) {
     }
     options[name] = value;
   }
-  if (!options.source || !formats.includes(options.format)) {
+  if (!options.source || !formats.has(options.format)) {
     throw new Error(
       'Usage : pnpm docs:export --source README.md --format pdf|pptx|txt|all [--output dossier]',
     );
@@ -61,16 +63,19 @@ function blockText(token) {
     case 'hr':
     case 'def':
       return '';
-    case 'code':
-      return `Code${token.lang ? ` (${token.lang})` : ''} :\n${token.text}`;
+    case 'code': {
+      const label = token.lang ? `Code (${token.lang})` : 'Code';
+      return `${label} :\n${token.text}`;
+    }
     case 'list':
       return token.items
         .map((item, index) => {
           const marker = token.ordered
             ? `${Number(token.start) + index}.`
             : '-';
-          const checked =
-            item.checked === undefined ? '' : item.checked ? '[x] ' : '[ ] ';
+          let checked = '';
+          if (item.checked !== undefined)
+            checked = item.checked ? '[x] ' : '[ ] ';
           return `${marker} ${checked}${item.tokens.map(blockText).filter(Boolean).join('\n')}`;
         })
         .join('\n');
@@ -94,22 +99,27 @@ function blockText(token) {
   }
 }
 
-export function createDocument(sourceText) {
-  const body = sourceText
-    .replace(/^\uFEFF/, '')
-    .replace(/\r\n/g, '\n')
-    .replace(/^---\n[\s\S]*?\n---(?:\n|$)/, '');
-  const tokens = markdown.lexer(body);
-  const titleToken = tokens.find((token) => token.type === 'heading');
-  const title = titleToken ? inlineText(titleToken.tokens) : 'Document KRAAK';
+function stripFrontmatter(sourceText) {
+  const body = sourceText.replace(/^\uFEFF/, '').replaceAll('\r\n', '\n');
+  const lines = body.split('\n');
+  if (lines[0] !== '---') return body;
+  const end = lines.indexOf('---', 1);
+  if (end === -1) return body;
+  const entries = lines
+    .slice(1, end)
+    .filter((line) => line.trim() && !line.trimStart().startsWith('#'));
+  if (
+    !entries.length ||
+    !entries.every((line) => /^[a-zA-Z_][\w-]*:[ \t]+\S.*$/.test(line))
+  ) {
+    return body;
+  }
+  return lines.slice(end + 1).join('\n');
+}
+
+function createSections(tokens, title) {
   const sections = [];
   let section;
-  let hasMermaid = false;
-  markdown.walkTokens(tokens, (token) => {
-    if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
-      hasMermaid = true;
-    }
-  });
   for (const token of tokens) {
     if (token.type === 'heading') {
       if (section) sections.push(section);
@@ -123,12 +133,31 @@ export function createDocument(sourceText) {
     }
   }
   if (section) sections.push(section);
+  return sections;
+}
+
+export function createDocument(sourceText) {
+  const tokens = markdown.lexer(stripFrontmatter(sourceText));
+  const titleToken = tokens.find((token) => token.type === 'heading');
+  const title = titleToken ? inlineText(titleToken.tokens) : 'Document KRAAK';
+  let hasMermaid = false;
+  // Ce visiteur est synchrone ; aucune promesse n'est créée par ses callbacks.
+  void markdown.walkTokens(tokens, (token) => {
+    if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
+      hasMermaid = true;
+    }
+  });
   const text = `${tokens.map(blockText).filter(Boolean).join('\n\n')}\n`;
   const images = [];
+  const usedSlugs = new Set();
   const renderer = new Marked({
     gfm: true,
     renderer: {
       html: () => '',
+      heading({ depth, text, tokens }) {
+        const id = createHeadingSlug(text, usedSlugs);
+        return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
+      },
       image({ href, text }) {
         const title = decodeHTML(text) || 'Illustration';
         images.push({ href, title });
@@ -141,40 +170,37 @@ export function createDocument(sourceText) {
     text,
     html: renderer.parser(tokens),
     images,
-    sections,
+    sections: createSections(tokens, title),
     hasMermaid,
     sourceSha256: checksum(sourceText),
   };
 }
 
-function wrapText(text, width) {
+function wrapParagraph(paragraph, width) {
   const lines = [];
-  for (const paragraph of text.split('\n')) {
-    if (!paragraph.trim()) {
-      lines.push('');
-      continue;
+  if (!paragraph.trim()) return [''];
+  let line = '';
+  for (const word of paragraph.trim().split(/\s+/)) {
+    if (line && line.length + word.length + 1 > width) {
+      lines.push(line);
+      line = '';
     }
-    let line = '';
-    for (const word of paragraph.trim().split(/\s+/)) {
-      if (line && line.length + word.length + 1 > width) {
-        lines.push(line);
-        line = '';
-      }
-      let remainder = word;
-      while (remainder.length > width) {
-        lines.push(remainder.slice(0, width));
-        remainder = remainder.slice(width);
-      }
-      line += `${line ? ' ' : ''}${remainder}`;
+    let remainder = word;
+    while (remainder.length > width) {
+      lines.push(remainder.slice(0, width));
+      remainder = remainder.slice(width);
     }
-    if (line) lines.push(line);
+    line += `${line ? ' ' : ''}${remainder}`;
   }
+  if (line) lines.push(line);
   return lines;
 }
 
 export function paginateSections(sections) {
   return sections.flatMap((section) => {
-    const lines = wrapText(section.text, 80);
+    const lines = section.text
+      .split('\n')
+      .flatMap((paragraph) => wrapParagraph(paragraph, 80));
     const pages = [];
     for (let index = 0; index < Math.max(lines.length, 1); index += 12) {
       pages.push({
@@ -348,7 +374,7 @@ export async function exportDocument(
   document,
   { format, destination, source },
 ) {
-  if (!formats.includes(format) || format === 'all') {
+  if (!formats.has(format) || format === 'all') {
     throw new Error(`Format non pris en charge : ${format}`);
   }
   if (format !== 'txt' && document.hasMermaid) {
@@ -410,8 +436,10 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
 ) {
-  main(process.argv.slice(2)).catch((error) => {
+  try {
+    await main(process.argv.slice(2));
+  } catch (error) {
     console.error('[docs:export] Échec de génération :', error);
     process.exitCode = 1;
-  });
+  }
 }

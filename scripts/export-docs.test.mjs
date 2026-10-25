@@ -163,3 +163,40 @@ test('Given des titres consécutifs When les sections sont préparées Then aucu
     ['Mission', 'Services', 'Formation'],
   );
 });
+
+test('Given des séparateurs Markdown en tête When le document est extrait Then le contenu entre séparateurs reste dans tous les rendus', () => {
+  const document = createDocument(
+    '---\n# Mission\n\nDévelopper les compétences.\n\n---\n\n## Services\n\nFormation.',
+  );
+  assert.equal(document.title, 'Mission');
+  assert.match(document.text, /Développer les compétences/);
+  assert.match(document.html, /Développer les compétences/);
+  assert.match(document.sections[0].text, /Développer les compétences/);
+});
+
+test('Given des métadonnées plates When le document est extrait Then seules les métadonnées reconnues sont retirées', () => {
+  const document = createDocument(
+    '\uFEFF---\r\n# Métadonnées\r\nstatus: active\r\nowner: platform\r\n\r\nsource_of_truth: true\r\n---\r\n# Mission\r\n\r\nFormation.',
+  );
+  assert.equal(document.title, 'Mission');
+  assert.doesNotMatch(
+    document.text,
+    /status:|owner:|source_of_truth:|Métadonnées/,
+  );
+  const mixed = createDocument(
+    '---\nstatus: active\n\nDu contenu ordinaire.\n---\n# Mission',
+  );
+  assert.match(mixed.text, /Du contenu ordinaire/);
+});
+
+test('Given un sommaire et des titres répétés When le HTML du PDF est généré Then ses ancres suivent la normalisation du sommaire', () => {
+  const document = createDocument(
+    '# Document\n\n[Aller aux services](#services-formation)\n\n## **Services** : formation\n\n### Équipe & mission\n\n## Services : formation\n\n## Services : formation-1\n\n## Services : formation\n',
+  );
+  assert.match(document.html, /href="#services-formation"/);
+  assert.match(document.html, /<h2 id="services-formation">/);
+  assert.match(document.html, /<h3 id="equipe-mission">/);
+  assert.match(document.html, /<h2 id="services-formation-1">/);
+  assert.match(document.html, /<h2 id="services-formation-1-1">/);
+  assert.match(document.html, /<h2 id="services-formation-2">/);
+});
