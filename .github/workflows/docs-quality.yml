@@ -10,6 +10,9 @@ on:
       - 'scripts/audit-docs.test.mjs'
       - 'scripts/generate-docs-index.mjs'
       - 'scripts/generate-docs-index.test.mjs'
+      - 'scripts/export-docs.mjs'
+      - 'scripts/export-docs.test.mjs'
+      - 'scripts/export-docs.integration.test.mjs'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - '.github/workflows/docs-quality.yml'
@@ -54,6 +57,15 @@ jobs:
             -- '*.md' '*.markdown' '*.mdown' \
             > .reports/docs-quality/changed-docs.txt
           cat .reports/docs-quality/changed-docs.txt
+
+      - name: Document export tests
+        run: pnpm test:docs:export
+
+      - name: Install PDF renderer
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: PDF, PowerPoint and transcript integration
+        run: pnpm test:docs:export:integration
 
       - name: Prettier on changed docs
         run: |
