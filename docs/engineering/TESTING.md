@@ -94,9 +94,14 @@ Les rapports LCOV et `coverage-summary.json` sont générés pour chaque surface
 et conservés comme artefacts Actions lorsqu'ils existent, même si un seuil
 échoue. Les tests des scripts sont découverts par les motifs
 `scripts/**/*.test.mjs` et `scripts/**/*.spec.mjs`, sous-répertoires inclus.
-Le runner limite l'exécution à quatre fichiers en parallèle pour éviter la
+Les runners Node et Vitest Angular limitent l'exécution à quatre fichiers en parallèle pour éviter la
 saturation des sous-processus natifs sur les machines partagées, sans réduire
 le nombre de tests ni les seuils de couverture.
+Les trois scénarios du générateur d'icônes exécutent réellement `sharp` dans un
+processus Node dédié, hors du canal de sérialisation V8 du runner, qui présente
+des erreurs intermittentes avec cette dépendance native sous Windows. Le runner
+vérifie le code de sortie et les trois résultats ; c8 collecte aussi la couverture
+de ce processus.
 Jest compile l'API avec les métadonnées TypeScript complètes
 (`isolatedModules: false`) : les branches mesurées correspondent au code exécuté
 et non aux gardes de types ajoutées par une transpilation isolée des décorateurs

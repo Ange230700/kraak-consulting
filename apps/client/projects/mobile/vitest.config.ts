@@ -31,6 +31,7 @@ export default defineConfig({
     ],
   },
   test: {
+    maxWorkers: 4,
     environment: 'jsdom',
     server: {
       deps: {
