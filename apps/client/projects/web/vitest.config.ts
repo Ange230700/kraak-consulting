@@ -6,6 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
+    maxWorkers: 4,
     setupFiles: [resolve(__dirname, 'vitest.setup.ts')],
     testTimeout: 15000,
     coverage: {
