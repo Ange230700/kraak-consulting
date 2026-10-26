@@ -242,6 +242,24 @@ test('Given du Mermaid brut When un export visuel est demandé Then la générat
   );
 });
 
+test('Given des blocs Mermaid imbriqués When le document est analysé sans visiteur asynchrone Then seuls les blocs exécutables sont signalés', () => {
+  for (const source of [
+    '> ```mermaid\n> graph TD; A-->B\n> ```',
+    '- Schéma\n\n  ```mermaid\n  graph TD; A-->B\n  ```',
+  ]) {
+    assert.equal(createDocument(source).hasMermaid, true);
+  }
+  for (const source of [
+    '',
+    '`mermaid`',
+    '```\nmermaid\n```',
+    '> Texte sans diagramme',
+    '- Texte sans diagramme',
+  ]) {
+    assert.equal(createDocument(source).hasMermaid, false);
+  }
+});
+
 test('Given une source Markdown When TXT est exporté Then le fichier et sa provenance sont vérifiables', async () => {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'kraak-export-'));
   try {

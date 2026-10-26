@@ -133,16 +133,26 @@ function createSections(tokens, title) {
   return sections;
 }
 
+function containsMermaidBlock(tokens) {
+  return tokens.some((token) => {
+    if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
+      return true;
+    }
+    if (token.tokens && containsMermaidBlock(token.tokens)) {
+      return true;
+    }
+    return (
+      token.type === 'list' &&
+      token.items.some((item) => containsMermaidBlock(item.tokens))
+    );
+  });
+}
+
 export function createDocument(sourceText) {
   const tokens = markdown.lexer(stripFrontmatter(sourceText));
   const titleToken = tokens.find((token) => token.type === 'heading');
   const title = titleToken ? inlineText(titleToken.tokens) : 'Document KRAAK';
-  let hasMermaid = false;
-  markdown.walkTokens(tokens, (token) => {
-    if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
-      hasMermaid = true;
-    }
-  });
+  const hasMermaid = containsMermaidBlock(tokens);
   const text = `${tokens.map(blockText).filter(Boolean).join('\n\n')}\n`;
   const images = [];
   const usedSlugs = new Set();
