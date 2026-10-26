@@ -166,6 +166,16 @@ test('Given a Windows-style LCOV report, When content is normalized, Then SF pat
   assert.match(normalizedContent, /SF:apps\/api\/src\/auth\/auth\.service\.ts/);
 });
 
+test('Given de nombreuses lignes finales vides, When le LCOV est normalisé, Then une seule fin de ligne est conservée en moins d’une seconde', () => {
+  const started = performance.now();
+  assert.equal(
+    normalizeLcovContent(`TN:\nend_of_record${'\r\n'.repeat(50_000)}`, ''),
+    'TN:\nend_of_record\n',
+  );
+  assert.ok(performance.now() - started < 1_000);
+  assert.equal(normalizeLcovContent('', ''), '\n');
+});
+
 test('Given an already prefixed SF path, When content is normalized, Then source path is not duplicated', () => {
   const rawContent = [
     'TN:',

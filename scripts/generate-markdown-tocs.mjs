@@ -11,6 +11,8 @@ import {
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { resolveGitExecutable } from './workspace-git-utils.mjs';
+
 const TOC_HEADING = 'Table des matières';
 const TOC_SLUGS = new Set(['table-des-matieres', 'table-of-contents', 'toc']);
 
@@ -24,7 +26,7 @@ function parseNulList(output) {
 
 function gitList(root, args) {
   return parseNulList(
-    execFileSync('git', args, {
+    execFileSync(resolveGitExecutable(), args, {
       cwd: root,
       stdio: ['ignore', 'pipe', 'pipe'],
     }),
@@ -53,22 +55,27 @@ function splitContent(content) {
   const eol = body.includes('\r\n') ? '\r\n' : '\n';
 
   return {
-    body: body.replace(/\r\n/g, '\n'),
+    body: body.replaceAll('\r\n', '\n'),
     eol,
     hasBom,
   };
 }
 
 function joinContent(lines, eol, hasBom) {
-  return `${hasBom ? '\uFEFF' : ''}${lines.join('\n').replace(/\n/g, eol)}`;
+  return `${hasBom ? '\uFEFF' : ''}${lines.join('\n').replaceAll('\n', eol)}`;
 }
 
-function stripHtmlTags(value) {
+function stripHtmlTags(value, preserveUnclosed = false) {
   let result = '';
   let insideTag = false;
+  let tagStart = 0;
 
-  for (const character of value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index];
     if (character === '<') {
+      if (!insideTag) {
+        tagStart = index;
+      }
       insideTag = true;
       continue;
     }
@@ -84,13 +91,47 @@ function stripHtmlTags(value) {
     result += character;
   }
 
-  return result;
+  return insideTag && preserveUnclosed
+    ? result + value.slice(tagStart)
+    : result;
+}
+
+function stripMarkdownLinks(value, marker) {
+  let result = '';
+  let cursor = 0;
+
+  while (cursor < value.length) {
+    const start = value.indexOf(marker, cursor);
+    const labelStart = start + marker.length;
+    const labelEnd = value.indexOf(']', labelStart);
+    if (start === -1 || labelEnd === -1) {
+      break;
+    }
+
+    const hasTarget = value[labelEnd + 1] === '(';
+    const targetEnd = hasTarget ? value.indexOf(')', labelEnd + 2) : -1;
+    if (hasTarget && targetEnd === -1) {
+      break;
+    }
+    if (
+      targetEnd <= labelEnd + 2 ||
+      (marker === '[' && labelEnd === labelStart)
+    ) {
+      result += value.slice(cursor, labelEnd + 1);
+      cursor = labelEnd + 1;
+      continue;
+    }
+
+    result += value.slice(cursor, start) + value.slice(labelStart, labelEnd);
+    cursor = targetEnd + 1;
+  }
+
+  return result + value.slice(cursor);
 }
 
 function stripMarkdown(value) {
-  return stripHtmlTags(value)
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+  const withoutImages = stripMarkdownLinks(stripHtmlTags(value), '![');
+  return stripMarkdownLinks(withoutImages, '[')
     .replace(/\\([\\`*{}\x5b\x5d()#+\-.!_>])/g, '$1')
     .replaceAll('**', '')
     .replaceAll('__', '')
@@ -103,10 +144,9 @@ function stripMarkdown(value) {
 
 function slug(text) {
   return (
-    text
+    stripHtmlTags(text, true)
       .trim()
       .toLowerCase()
-      .replace(/<[^>]+>/g, '')
       .replace(/[`*_~]/g, '')
       .normalize('NFD')
       .replace(/\p{Diacritic}/gu, '')
@@ -159,16 +199,23 @@ function fenceUpdate(line, fence) {
 }
 
 function headingFromLine(line) {
-  const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+  const heading = /^(#{1,6})\s+(.+)/.exec(line);
 
   if (!heading) {
     return undefined;
   }
 
+  const content = heading[2].trimEnd();
+  let end = content.length;
+  while (end > 1 && content[end - 1] === '#') {
+    end -= 1;
+  }
+  const rawText = content.slice(0, end).trim();
+
   return {
     level: heading[1].length,
-    rawText: heading[2].trim(),
-    text: stripMarkdown(heading[2]) || heading[2].trim(),
+    rawText,
+    text: stripMarkdown(rawText) || rawText,
   };
 }
 
@@ -210,7 +257,15 @@ function isTocHeading(line) {
 }
 
 function isTocListLine(line) {
-  return /^\s*[-*+]\s+.*\]\(#[^)]+\)\s*$/.test(line);
+  const entry = line.trim();
+  const anchorStart = entry.lastIndexOf('](#');
+  return (
+    /^[-*+]\s/.test(entry) &&
+    anchorStart !== -1 &&
+    entry.endsWith(')') &&
+    anchorStart + 3 < entry.length - 1 &&
+    !entry.slice(anchorStart + 3, -1).includes(')')
+  );
 }
 
 function removeExistingToc(lines) {
@@ -248,18 +303,25 @@ function removeExistingToc(lines) {
   return lines;
 }
 
+function findFrontmatterEnd(lines) {
+  if (lines[0] !== '---') {
+    return 0;
+  }
+  const end = lines.findIndex((line, index) => index > 0 && line === '---');
+  return end === -1 ? 0 : end + 1;
+}
+
+function skipBlankLines(lines, start) {
+  let index = start;
+  while (index < lines.length && lines[index].trim() === '') {
+    index += 1;
+  }
+  return index;
+}
+
 function findInsertionIndex(lines) {
   let fence = null;
-  let frontmatterEnd = 0;
-
-  if (lines[0] === '---') {
-    const end = lines.findIndex((line, index) => index > 0 && line === '---');
-
-    if (end !== -1) {
-      frontmatterEnd = end + 1;
-    }
-  }
-
+  const frontmatterEnd = findFrontmatterEnd(lines);
   for (let index = frontmatterEnd; index < lines.length; index += 1) {
     const line = lines[index];
     const nextFence = fenceUpdate(line, fence);
@@ -276,26 +338,12 @@ function findInsertionIndex(lines) {
     const heading = headingFromLine(line);
 
     if (heading?.level === 1) {
-      let insertionIndex = index + 1;
-
-      while (
-        insertionIndex < lines.length &&
-        lines[insertionIndex].trim() === ''
-      ) {
-        insertionIndex += 1;
-      }
+      const insertionIndex = skipBlankLines(lines, index + 1);
 
       if (
         /^<!-- Generated by .* -->$/.test(lines[insertionIndex]?.trim() ?? '')
       ) {
-        insertionIndex += 1;
-
-        while (
-          insertionIndex < lines.length &&
-          lines[insertionIndex].trim() === ''
-        ) {
-          insertionIndex += 1;
-        }
+        return skipBlankLines(lines, insertionIndex + 1);
       }
 
       return insertionIndex;

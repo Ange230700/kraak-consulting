@@ -24,50 +24,6 @@ const PARTNER_LOGO_VIEWBOX = '0 0 33 32';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './fading-partners.component.html',
-  styles: [
-    `
-      @keyframes infinite-scroll {
-        0% {
-          transform: translateX(0);
-        }
-        100% {
-          transform: translateX(-100%);
-        }
-      }
-
-      .animate-scroll {
-        animation: infinite-scroll var(--scroll-duration, 20s) linear infinite;
-      }
-
-      @media (max-width: 768px) {
-        .animate-scroll {
-          --scroll-duration: 10s;
-        }
-      }
-
-      @media (min-width: 1024px) {
-        .animate-scroll {
-          --scroll-duration: 30s;
-        }
-      }
-
-      .fade-gradient-left {
-        background: linear-gradient(
-          to right,
-          var(--fade-start-color, rgb(248, 248, 248)),
-          transparent
-        );
-      }
-
-      .fade-gradient-right {
-        background: linear-gradient(
-          to left,
-          var(--fade-start-color, rgb(248, 248, 248)),
-          transparent
-        );
-      }
-    `,
-  ],
 })
 export class FadingPartners {
   // On décrit les SVG comme donnees structurées pour éviter innerHTML
@@ -152,7 +108,6 @@ export class FadingPartners {
     },
   ];
 
-  // For infinite scroll effect, we need to duplicate the partners array
   readonly duplicatedPartners: readonly Partner[] = [
     ...this.partners,
     ...this.partners,

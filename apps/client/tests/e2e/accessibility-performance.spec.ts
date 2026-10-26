@@ -155,6 +155,56 @@ test('Given une préférence de mouvement réduit, When les contrôles de naviga
   );
   expect(durations.animation.every((duration) => duration <= 0.001)).toBe(true);
   expect(durations.iterations).toBe('1');
+
+  const reveals = page.locator('.motion-reveal-base');
+  await expect(reveals.first()).toBeAttached();
+  const revealDelays = await reveals.evaluateAll((elements) =>
+    elements.map((element) => getComputedStyle(element).transitionDelay),
+  );
+  expect(revealDelays.every((delay) => Number.parseFloat(delay) === 0)).toBe(
+    true,
+  );
+});
+
+test('Given un contrôle sans contour utilitaire, When il reçoit le focus clavier, Then son indicateur de focus reste visible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/fr/');
+  const control = page.locator('nav fieldset a').first();
+  await control.evaluate((element) => element.classList.add('outline-none'));
+  await control.focus();
+  await expect(control).toBeFocused();
+  expect(
+    await control.evaluate((element) => element.matches(':focus-visible')),
+  ).toBe(true);
+  const outline = await control.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      width: Number.parseFloat(style.outlineWidth),
+      style: style.outlineStyle,
+    };
+  });
+  expect(outline.width).toBeGreaterThanOrEqual(2);
+  expect(outline.style).toBe('solid');
+});
+
+test('Given un défilement décoratif, When la préférence de mouvement réduit change, Then le défilement est désactivé à sa source', async ({
+  page,
+}) => {
+  await page.goto('/fr/');
+  await page.evaluate(() => {
+    const element = document.createElement('div');
+    element.id = 'motion-marquee-fixture';
+    element.classList.add('animate-scroll');
+    document.body.append(element);
+  });
+  const marquee = page.locator('#motion-marquee-fixture');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(marquee).toHaveCSS('animation-name', 'kr-partner-scroll');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(marquee).toHaveCSS('animation-name', 'none');
+  await expect(marquee).toHaveCSS('transition-delay', '0s');
 });
 
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {

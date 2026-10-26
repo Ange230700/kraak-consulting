@@ -201,6 +201,47 @@ test('Given des caractères Markdown et des titres répétés, When le sommaire 
   assert.equal(renderMarkdownWithToc(output), output);
 });
 
+test('Given de longs titres malformés, When le sommaire est rendu, Then chaque analyse termine en moins d’une seconde', () => {
+  for (const marker of ['<', '[', '#', '[a](']) {
+    const input = `# Guide\n\n## ${marker.repeat(30_000)}\n`;
+    const started = performance.now();
+    const output = renderMarkdownWithToc(input);
+    assert.ok(
+      performance.now() - started < 1_000,
+      `Analyse trop lente pour le caractère ${marker}`,
+    );
+    assert.ok(output.includes('## Table des matières'));
+    assert.ok(output.endsWith(input.slice(input.indexOf('## '))));
+  }
+});
+
+test('Given des liens incomplets et des titres fermés, When le sommaire est rendu, Then les contenus littéraux et les ancres sont conservés', () => {
+  const output = renderMarkdownWithToc(
+    '# Guide\n\n## Texte ###   \n## [Lien](url) ![Image](image) []() ![](image)\n## <incomplet\n## [sans fin\n## [lien] sans cible\n## [cible](sans fin\n## [vide]()\n## ###\n',
+  );
+  assert.ok(output.includes('[Texte](#texte)'));
+  assert.ok(output.includes('[Lien Image []()](#lienurl-imageimage-image)'));
+  assert.ok(output.includes('[<incomplet](#incomplet)'));
+  assert.ok(output.includes('[[sans fin](#sans-fin)'));
+  assert.ok(output.includes('[[lien] sans cible](#lien-sans-cible)'));
+  assert.ok(output.includes('[[cible](sans fin](#ciblesans-fin)'));
+  assert.ok(output.includes('[[vide]()](#vide)'));
+  assert.ok(output.includes('[#](#section)'));
+  assert.equal(renderMarkdownWithToc(output), output);
+});
+
+test('Given une image dans un lien, When le titre est nettoyé, Then seul le libellé accessible apparaît dans le sommaire', () => {
+  const output = renderMarkdownWithToc(
+    '# Guide\n\n## [![Illustration](image.png)](page) et ![Sans cible]()\n',
+  );
+  assert.ok(
+    output.includes(
+      '[Illustration et ![Sans cible]()](#illustrationimagepngpage-et-sans-cible)',
+    ),
+  );
+  assert.equal(renderMarkdownWithToc(output), output);
+});
+
 test('Given des blocs de code imbriqués, When les titres sont extraits, Then seuls les titres hors blocs apparaissent', () => {
   const input =
     '# Visible\n\n````md\n## Caché\n```\n~~~\n## Toujours caché\n````\n\n~~~md\n## Autre caché\n~~~\n\n## Fin\n';
