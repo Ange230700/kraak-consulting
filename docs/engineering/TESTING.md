@@ -90,6 +90,11 @@ exécutable n'ajoutent pas artificiellement de lignes à la mesure. Les template
 CSS et migrations SQL ne relèvent pas de cette mesure JavaScript/TypeScript ;
 leurs validations dédiées restent nécessaires.
 
+La surface web inclut aussi `apps/client/projects/shared/**/*.ts` dans Angular
+et Vitest : la configuration runtime et les adaptateurs de traduction partagés
+sont soumis aux mêmes seuils. Le test CLI Sonar simule l’absence de
+`.env.local` dans son sous-processus pour ne jamais utiliser un token local.
+
 Les rapports LCOV et `coverage-summary.json` sont générés pour chaque surface,
 et conservés comme artefacts Actions lorsqu'ils existent, même si un seuil
 échoue. Les tests des scripts sont découverts par les motifs
@@ -106,8 +111,9 @@ Jest compile l'API avec les métadonnées TypeScript complètes
 (`isolatedModules: false`) : les branches mesurées correspondent au code exécuté
 et non aux gardes de types ajoutées par une transpilation isolée des décorateurs
 NestJS.
-L'alias TypeScript de l'API vers les contrats est relatif au `baseUrl` racine,
-et pointe sur les sources pour fonctionner aussi sans packages précompilés.
+Les alias TypeScript de l'API vers `@kraak/contracts` et `@kraak/domain` sont
+relatifs au `baseUrl` racine et pointent sur les sources pour fonctionner aussi
+sans packages précompilés.
 Les tests des outils Windows utilisent un environnement système de fixture.
 Le processus des scénarios d'icônes sélectionne explicitement le reporter TAP
 pour conserver le même contrat de résultat entre versions de Node.

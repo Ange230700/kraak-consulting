@@ -58,7 +58,7 @@ test('Given les applications et packages, When la couverture est calculée, Then
     ),
   ]) {
     const config = read(file);
-    assert.match(config, /include:.*src.*\*\*\/\*\.ts/);
+    assert.match(config, /include:\s*\[\s*[^\n]*src.*\*\*\/\*\.ts/);
     assert.match(config, /perFile: true/);
     for (const metric of metrics) {
       assert.match(config, new RegExp(`${metric}: 100`));
@@ -200,4 +200,17 @@ test('Given plusieurs options CLI, When le contrôle démarre, Then il refuse la
 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Une seule option/);
+});
+
+test('Given les sources partagées du client, When la couverture web est configurée, Then Angular et Vitest incluent ces sources', () => {
+  const angular = JSON.parse(read('apps/client/angular.json'));
+  assert.ok(
+    angular.projects.web.architect.test.options.coverageInclude.includes(
+      'projects/shared/**/*.ts',
+    ),
+  );
+  assert.match(
+    read('apps/client/projects/web/vitest.config.ts'),
+    /shared\/\*\*\/\*\.ts/,
+  );
 });

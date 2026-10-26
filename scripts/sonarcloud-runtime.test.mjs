@@ -13,7 +13,7 @@ import { syncBuiltinESMExports } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
   abortScannerProcess,
@@ -424,10 +424,25 @@ test('Given la préparation du scan, When des rapports ou un verrou manquent, Th
   );
   assert.equal(existsSync(lockPath), false);
   const script = fileURLToPath(new URL('sonarcloud-scan.mjs', import.meta.url));
-  const result = spawnSync(process.execPath, [script], {
-    env: { ...process.env, SONAR_TOKEN: '' },
-    encoding: 'utf8',
-  });
+  const preload = path.join(root, 'without-local-env.mjs');
+  writeFileSync(
+    preload,
+    `
+    import fs from 'node:fs';
+    import { syncBuiltinESMExports } from 'node:module';
+    const originalExists = fs.existsSync;
+    fs.existsSync = (file) => String(file).endsWith('.env.local') ? false : originalExists(file);
+    syncBuiltinESMExports();
+  `,
+  );
+  const result = spawnSync(
+    process.execPath,
+    ['--import', pathToFileURL(preload).href, script],
+    {
+      env: { ...process.env, SONAR_TOKEN: '' },
+      encoding: 'utf8',
+    },
+  );
   assert.equal(result.status, 1);
   assert.match(result.stderr, /SONAR_TOKEN manquant/);
   const imported = spawnSync(process.execPath, [
