@@ -282,14 +282,44 @@ describe('CurriculumService reusable entities', () => {
         ],
         lesson: [{ ...courseRow, id: 'lesson-1' }],
       };
+      const queries = Object.fromEntries(
+        Object.entries(rows).map(([table, data]) => [
+          table,
+          createListQuery(overrides[table] ?? { data, error: null }),
+        ]),
+      );
       return {
-        from: jest.fn((table: string) =>
-          createListQuery(
-            overrides[table] ?? { data: rows[table], error: null },
-          ),
-        ),
+        from: jest.fn((table: string) => queries[table]),
+        queries,
       };
     }
+
+    it('When un cours est placé plusieurs fois, Then sa lecture est unique et chaque placement conserve sa hiérarchie', async () => {
+      const client = curriculumClient({
+        program_course: {
+          data: [
+            programCourseRow,
+            { ...programCourseRow, id: 'program-course-2', sort_order: 1 },
+          ],
+          error: null,
+        },
+      });
+      mockSupabaseService.getClient.mockReturnValue(client);
+
+      const result = await service.getPublishedProgramCurriculum('program-1');
+
+      expect(client.queries['course']!.in).toHaveBeenCalledWith('id', [
+        'course-1',
+      ]);
+      expect(result.courses.map(({ placement }) => placement.id)).toEqual([
+        'program-course-1',
+        'program-course-2',
+      ]);
+      expect(result.courses[0]!.modules).toEqual(result.courses[1]!.modules);
+      expect(result.courses[0]!.modules[0]!.chapters[0]!.lessons).toHaveLength(
+        1,
+      );
+    });
 
     it('When certaines références ne sont plus publiées, Then seules les entités disponibles sont renvoyées', async () => {
       mockSupabaseService.getClient.mockReturnValue(curriculumClient());
