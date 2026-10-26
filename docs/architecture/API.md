@@ -41,6 +41,14 @@ Chaque module exposant une route doit garder :
 Tout payload d'entrée complexe ajoute `<name>.dto.ts` et
 `<name>.dto.spec.ts`.
 
+Dans le module `curriculum`, les cours, modules et leçons partagent leurs
+opérations de lecture, création, mise à jour et leur mapping SQL vers les DTO.
+Les messages d'erreur restent propres à chaque entité. L'agrégation participante
+ne charge que les contenus publiés, déduplique les identifiants interrogés et
+conserve chaque placement dans l'ordre reçu. Le chargement des chapitres et
+leçons est séparé de l'assemblage de la hiérarchie, sans requête descendante
+lorsqu'aucun parent publié n'est disponible.
+
 ## Internationalisation cible
 
 Les réponses localisées actuelles utilisent `src/i18n/api-message.ts` et les

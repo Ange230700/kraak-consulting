@@ -43,8 +43,6 @@ type CourseRow = {
   updated_at: string;
 };
 
-type LearningModuleRow = CourseRow;
-
 type ChapterRow = {
   id: string;
   learning_module_id: string;
@@ -56,8 +54,6 @@ type ChapterRow = {
   created_at: string;
   updated_at: string;
 };
-
-type LessonRow = CourseRow;
 
 type ProgramCourseRow = {
   id: string;
@@ -118,69 +114,28 @@ export class CurriculumService {
   // Courses
   // -------------------------------------------------------------------------
 
-  async listCourses(): Promise<CourseDto[]> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('course')
-      .select(courseSelectFields)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.coursesLoadFailed'),
-      });
-    }
-
-    return ((data as CourseRow[] | null) ?? []).map((row) =>
-      this.mapCourse(row),
+  listCourses(): Promise<CourseDto[]> {
+    return this.listReusableContent(
+      'course',
+      apiMessage('curriculum.coursesLoadFailed'),
     );
   }
 
-  async createCourse(payload: CreateCourseDto): Promise<CourseDto> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('course')
-      .insert({
-        slug: payload.slug,
-        title: payload.title,
-        summary: payload.summary,
-        description: payload.description,
-        status: payload.status,
-      })
-      .select(courseSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.courseCreateFailed'),
-      });
-    }
-
-    return this.mapCourse(data as CourseRow);
+  createCourse(payload: CreateCourseDto): Promise<CourseDto> {
+    return this.createReusableContent(
+      'course',
+      payload,
+      apiMessage('curriculum.courseCreateFailed'),
+    );
   }
 
-  async updateCourse(
-    courseId: string,
-    payload: UpdateCourseDto,
-  ): Promise<CourseDto> {
-    const { data, error } = await this.supabaseService
-      .getClient()
-      .from('course')
-      .update(this.mapReusableUpdate(payload))
-      .eq('id', courseId)
-      .select(courseSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException({
-        success: false,
-        message: apiMessage('curriculum.courseNotFound'),
-      });
-    }
-
-    return this.mapCourse(data as CourseRow);
+  updateCourse(courseId: string, payload: UpdateCourseDto): Promise<CourseDto> {
+    return this.updateReusableContent(
+      'course',
+      courseId,
+      payload,
+      apiMessage('curriculum.courseNotFound'),
+    );
   }
 
   async archiveCourse(courseId: string): Promise<void> {
@@ -195,71 +150,33 @@ export class CurriculumService {
   // Learning modules
   // -------------------------------------------------------------------------
 
-  async listLearningModules(): Promise<LearningModuleDto[]> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('learning_module')
-      .select(learningModuleSelectFields)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.modulesLoadFailed'),
-      });
-    }
-
-    return ((data as LearningModuleRow[] | null) ?? []).map((row) =>
-      this.mapLearningModule(row),
+  listLearningModules(): Promise<LearningModuleDto[]> {
+    return this.listReusableContent(
+      'learning_module',
+      apiMessage('curriculum.modulesLoadFailed'),
     );
   }
 
-  async createLearningModule(
+  createLearningModule(
     payload: CreateLearningModuleDto,
   ): Promise<LearningModuleDto> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('learning_module')
-      .insert({
-        slug: payload.slug,
-        title: payload.title,
-        summary: payload.summary,
-        description: payload.description,
-        status: payload.status,
-      })
-      .select(learningModuleSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.moduleCreateFailed'),
-      });
-    }
-
-    return this.mapLearningModule(data as LearningModuleRow);
+    return this.createReusableContent(
+      'learning_module',
+      payload,
+      apiMessage('curriculum.moduleCreateFailed'),
+    );
   }
 
-  async updateLearningModule(
+  updateLearningModule(
     learningModuleId: string,
     payload: UpdateLearningModuleDto,
   ): Promise<LearningModuleDto> {
-    const { data, error } = await this.supabaseService
-      .getClient()
-      .from('learning_module')
-      .update(this.mapReusableUpdate(payload))
-      .eq('id', learningModuleId)
-      .select(learningModuleSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException({
-        success: false,
-        message: apiMessage('curriculum.moduleNotFound'),
-      });
-    }
-
-    return this.mapLearningModule(data as LearningModuleRow);
+    return this.updateReusableContent(
+      'learning_module',
+      learningModuleId,
+      payload,
+      apiMessage('curriculum.moduleNotFound'),
+    );
   }
 
   async archiveLearningModule(learningModuleId: string): Promise<void> {
@@ -379,69 +296,28 @@ export class CurriculumService {
   // Lessons
   // -------------------------------------------------------------------------
 
-  async listLessons(): Promise<LessonDto[]> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('lesson')
-      .select(lessonSelectFields)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.lessonsLoadFailed'),
-      });
-    }
-
-    return ((data as LessonRow[] | null) ?? []).map((row) =>
-      this.mapLesson(row),
+  listLessons(): Promise<LessonDto[]> {
+    return this.listReusableContent(
+      'lesson',
+      apiMessage('curriculum.lessonsLoadFailed'),
     );
   }
 
-  async createLesson(payload: CreateLessonDto): Promise<LessonDto> {
-    const client = this.supabaseService.getClient();
-    const { data, error } = await client
-      .from('lesson')
-      .insert({
-        slug: payload.slug,
-        title: payload.title,
-        summary: payload.summary,
-        description: payload.description,
-        status: payload.status,
-      })
-      .select(lessonSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('curriculum.lessonCreateFailed'),
-      });
-    }
-
-    return this.mapLesson(data as LessonRow);
+  createLesson(payload: CreateLessonDto): Promise<LessonDto> {
+    return this.createReusableContent(
+      'lesson',
+      payload,
+      apiMessage('curriculum.lessonCreateFailed'),
+    );
   }
 
-  async updateLesson(
-    lessonId: string,
-    payload: UpdateLessonDto,
-  ): Promise<LessonDto> {
-    const { data, error } = await this.supabaseService
-      .getClient()
-      .from('lesson')
-      .update(this.mapReusableUpdate(payload))
-      .eq('id', lessonId)
-      .select(lessonSelectFields)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException({
-        success: false,
-        message: apiMessage('curriculum.lessonNotFound'),
-      });
-    }
-
-    return this.mapLesson(data as LessonRow);
+  updateLesson(lessonId: string, payload: UpdateLessonDto): Promise<LessonDto> {
+    return this.updateReusableContent(
+      'lesson',
+      lessonId,
+      payload,
+      apiMessage('curriculum.lessonNotFound'),
+    );
   }
 
   async archiveLesson(lessonId: string): Promise<void> {
@@ -745,7 +621,9 @@ export class CurriculumService {
       return { courses: [] };
     }
 
-    const courseIds = programCourses.map((placement) => placement.course_id);
+    const courseIds = [
+      ...new Set(programCourses.map((placement) => placement.course_id)),
+    ];
 
     const { data: courseData, error: courseError } = await client
       .from('course')
@@ -782,7 +660,7 @@ export class CurriculumService {
       ),
     ];
 
-    let learningModules: LearningModuleRow[] = [];
+    let learningModules: CourseRow[] = [];
 
     if (learningModuleIds.length > 0) {
       const { data, error } = await client
@@ -795,7 +673,7 @@ export class CurriculumService {
         this.throwCurriculumReadError();
       }
 
-      learningModules = (data as LearningModuleRow[] | null) ?? [];
+      learningModules = (data as CourseRow[] | null) ?? [];
     }
 
     const learningModuleById = new Map(
@@ -808,6 +686,113 @@ export class CurriculumService {
       (learningModule) => learningModule.id,
     );
 
+    const { chapters, chapterLessons, lessons } =
+      await this.readPublishedChapterContent(
+        client,
+        publishedLearningModuleIds,
+      );
+
+    const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
+    const chapterLessonsByChapter = this.groupBy(
+      chapterLessons,
+      (placement) => placement.chapter_id,
+    );
+    const chaptersByModule = this.groupBy(
+      chapters,
+      (chapter) => chapter.learning_module_id,
+    );
+    const courseModulesByCourse = this.groupBy(
+      courseModules,
+      (placement) => placement.course_id,
+    );
+
+    return {
+      courses: programCourses.flatMap((programCoursePlacement) => {
+        const course = courseById.get(programCoursePlacement.course_id);
+
+        if (!course) {
+          return [];
+        }
+
+        return [
+          {
+            placement: this.mapProgramCourse(programCoursePlacement),
+            course: this.mapReusableContent(course),
+            modules: (
+              courseModulesByCourse.get(programCoursePlacement.course_id) ?? []
+            ).flatMap((courseModulePlacement) => {
+              const learningModule = learningModuleById.get(
+                courseModulePlacement.learning_module_id,
+              );
+
+              if (!learningModule) {
+                return [];
+              }
+
+              return [
+                {
+                  placement: this.mapCourseModule(courseModulePlacement),
+                  learningModule: this.mapReusableContent(learningModule),
+                  chapters: (chaptersByModule.get(learningModule.id) ?? []).map(
+                    (chapter) => ({
+                      chapter: this.mapChapter(chapter),
+                      lessons: (
+                        chapterLessonsByChapter.get(chapter.id) ?? []
+                      ).flatMap((chapterLessonPlacement) => {
+                        const lesson = lessonById.get(
+                          chapterLessonPlacement.lesson_id,
+                        );
+
+                        if (!lesson) {
+                          return [];
+                        }
+
+                        return [
+                          {
+                            placement: this.mapChapterLesson(
+                              chapterLessonPlacement,
+                            ),
+                            lesson: this.mapReusableContent(lesson),
+                          },
+                        ];
+                      }),
+                    }),
+                  ),
+                },
+              ];
+            }),
+          },
+        ];
+      }),
+    };
+  }
+
+  // -------------------------------------------------------------------------
+  // Shared helpers
+  // -------------------------------------------------------------------------
+
+  private groupBy<T>(
+    rows: readonly T[],
+    keyOf: (row: T) => string,
+  ): Map<string, T[]> {
+    const groups = new Map<string, T[]>();
+    for (const row of rows) {
+      const key = keyOf(row);
+      const group = groups.get(key) ?? [];
+      group.push(row);
+      groups.set(key, group);
+    }
+    return groups;
+  }
+
+  private async readPublishedChapterContent(
+    client: ReturnType<SupabaseService['getClient']>,
+    publishedLearningModuleIds: string[],
+  ): Promise<{
+    chapters: ChapterRow[];
+    chapterLessons: ChapterLessonRow[];
+    lessons: CourseRow[];
+  }> {
     let chapters: ChapterRow[] = [];
 
     if (publishedLearningModuleIds.length > 0) {
@@ -845,7 +830,7 @@ export class CurriculumService {
     const lessonIds = [
       ...new Set(chapterLessons.map((placement) => placement.lesson_id)),
     ];
-    let lessons: LessonRow[] = [];
+    let lessons: CourseRow[] = [];
 
     if (lessonIds.length > 0) {
       const { data, error } = await client
@@ -858,104 +843,91 @@ export class CurriculumService {
         this.throwCurriculumReadError();
       }
 
-      lessons = (data as LessonRow[] | null) ?? [];
+      lessons = (data as CourseRow[] | null) ?? [];
     }
 
-    const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
-
-    const chapterLessonsByChapter = new Map<string, ChapterLessonRow[]>();
-    for (const placement of chapterLessons) {
-      const placements =
-        chapterLessonsByChapter.get(placement.chapter_id) ?? [];
-      placements.push(placement);
-      chapterLessonsByChapter.set(placement.chapter_id, placements);
-    }
-
-    const chaptersByModule = new Map<string, ChapterRow[]>();
-    for (const chapter of chapters) {
-      const moduleChapters =
-        chaptersByModule.get(chapter.learning_module_id) ?? [];
-      moduleChapters.push(chapter);
-      chaptersByModule.set(chapter.learning_module_id, moduleChapters);
-    }
-
-    const courseModulesByCourse = new Map<string, CourseModuleRow[]>();
-    for (const placement of courseModules) {
-      const placements = courseModulesByCourse.get(placement.course_id) ?? [];
-      placements.push(placement);
-      courseModulesByCourse.set(placement.course_id, placements);
-    }
-
-    return {
-      courses: programCourses.flatMap((programCoursePlacement) => {
-        const course = courseById.get(programCoursePlacement.course_id);
-
-        if (!course) {
-          return [];
-        }
-
-        return [
-          {
-            placement: this.mapProgramCourse(programCoursePlacement),
-            course: this.mapCourse(course),
-            modules: (
-              courseModulesByCourse.get(programCoursePlacement.course_id) ?? []
-            ).flatMap((courseModulePlacement) => {
-              const learningModule = learningModuleById.get(
-                courseModulePlacement.learning_module_id,
-              );
-
-              if (!learningModule) {
-                return [];
-              }
-
-              return [
-                {
-                  placement: this.mapCourseModule(courseModulePlacement),
-                  learningModule: this.mapLearningModule(learningModule),
-                  chapters: (chaptersByModule.get(learningModule.id) ?? []).map(
-                    (chapter) => ({
-                      chapter: this.mapChapter(chapter),
-                      lessons: (
-                        chapterLessonsByChapter.get(chapter.id) ?? []
-                      ).flatMap((chapterLessonPlacement) => {
-                        const lesson = lessonById.get(
-                          chapterLessonPlacement.lesson_id,
-                        );
-
-                        if (!lesson) {
-                          return [];
-                        }
-
-                        return [
-                          {
-                            placement: this.mapChapterLesson(
-                              chapterLessonPlacement,
-                            ),
-                            lesson: this.mapLesson(lesson),
-                          },
-                        ];
-                      }),
-                    }),
-                  ),
-                },
-              ];
-            }),
-          },
-        ];
-      }),
-    };
+    return { chapters, chapterLessons, lessons };
   }
-
-  // -------------------------------------------------------------------------
-  // Shared helpers
-  // -------------------------------------------------------------------------
 
   private throwCurriculumReadError(): never {
     throw new InternalServerErrorException({
       success: false,
       message: apiMessage('curriculum.programCurriculumLoadFailed'),
     });
+  }
+
+  private async listReusableContent(
+    table: 'course' | 'learning_module' | 'lesson',
+    failureMessage: ApiMessageValue,
+  ): Promise<CourseDto[]> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from(table)
+      .select(courseSelectFields)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: failureMessage,
+      });
+    }
+
+    return ((data as CourseRow[] | null) ?? []).map((row) =>
+      this.mapReusableContent(row),
+    );
+  }
+
+  private async createReusableContent(
+    table: 'course' | 'learning_module' | 'lesson',
+    payload: CreateCourseDto,
+    failureMessage: ApiMessageValue,
+  ): Promise<CourseDto> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from(table)
+      .insert({
+        slug: payload.slug,
+        title: payload.title,
+        summary: payload.summary,
+        description: payload.description,
+        status: payload.status,
+      })
+      .select(courseSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: failureMessage,
+      });
+    }
+
+    return this.mapReusableContent(data as CourseRow);
+  }
+
+  private async updateReusableContent(
+    table: 'course' | 'learning_module' | 'lesson',
+    id: string,
+    payload: UpdateCourseDto,
+    notFoundMessage: ApiMessageValue,
+  ): Promise<CourseDto> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from(table)
+      .update(this.mapReusableUpdate(payload))
+      .eq('id', id)
+      .select(courseSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: notFoundMessage,
+      });
+    }
+
+    return this.mapReusableContent(data as CourseRow);
   }
 
   private mapPlacementUpdate(
@@ -1087,20 +1059,7 @@ export class CurriculumService {
     };
   }
 
-  private mapCourse(row: CourseRow): CourseDto {
-    return {
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      summary: row.summary,
-      description: row.description,
-      status: row.status,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
-  }
-
-  private mapLearningModule(row: LearningModuleRow): LearningModuleDto {
+  private mapReusableContent(row: CourseRow): CourseDto {
     return {
       id: row.id,
       slug: row.slug,
@@ -1122,19 +1081,6 @@ export class CurriculumService {
       summary: row.summary,
       status: row.status,
       sortOrder: row.sort_order,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
-  }
-
-  private mapLesson(row: LessonRow): LessonDto {
-    return {
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      summary: row.summary,
-      description: row.description,
-      status: row.status,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
