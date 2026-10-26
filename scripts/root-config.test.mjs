@@ -12,7 +12,7 @@ const commitlint = require('../commitlint.config.js');
 const commitizen = require('../.czrc.cjs');
 const staged = require('../lint-staged.config.cjs');
 
-test('Given une API sans packages précompilés, When TypeScript résout les contrats, Then les sources du workspace sont utilisées', () => {
+test('Given une API sans packages précompilés, When TypeScript résout les packages partagés, Then les sources du workspace sont utilisées', () => {
   const apiRequire = createRequire(
     new URL('../apps/api/package.json', import.meta.url),
   );
@@ -27,18 +27,23 @@ test('Given une API sans packages précompilés, When TypeScript résout les con
     ts.sys,
     apiDirectory,
   );
-  const resolved = ts.resolveModuleName(
-    '@kraak/contracts',
-    path.join(apiDirectory, 'src', 'app.module.ts'),
-    parsed.options,
-    ts.sys,
-  ).resolvedModule;
-  assert.equal(
-    path.normalize(resolved?.resolvedFileName ?? ''),
-    fileURLToPath(
-      new URL('../packages/contracts/src/index.ts', import.meta.url),
-    ),
-  );
+  for (const workspacePackage of ['contracts', 'domain']) {
+    const resolved = ts.resolveModuleName(
+      `@kraak/${workspacePackage}`,
+      path.join(apiDirectory, 'src', 'app.module.ts'),
+      parsed.options,
+      ts.sys,
+    ).resolvedModule;
+    assert.equal(
+      path.normalize(resolved?.resolvedFileName ?? ''),
+      fileURLToPath(
+        new URL(
+          `../packages/${workspacePackage}/src/index.ts`,
+          import.meta.url,
+        ),
+      ),
+    );
+  }
 });
 
 test('Given les outils de commit, When leurs contrats sont chargés, Then les scopes et règles restent alignés', () => {

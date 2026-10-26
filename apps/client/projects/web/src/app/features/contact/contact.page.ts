@@ -25,6 +25,7 @@ import {
   CONTACT_PHONE_DISPLAY,
   CONTACT_PHONE_HREF,
   CONTACT_VISUAL_URL,
+  WHATSAPP_CONTACT_HREF,
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
@@ -174,9 +175,7 @@ export default class ContactPage implements OnInit, OnDestroy {
   }
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
-  protected readonly whatsappLink =
-    KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
-    '';
+  protected readonly whatsappLink = WHATSAPP_CONTACT_HREF;
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2)]),

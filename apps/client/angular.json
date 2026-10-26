@@ -150,7 +150,10 @@
             "tsConfig": "projects/web/tsconfig.spec.json",
             "runnerConfig": "projects/web/vitest.config.ts",
             "coverage": true,
-            "coverageInclude": ["projects/web/src/**/*.ts"],
+            "coverageInclude": [
+              "projects/web/src/**/*.ts",
+              "projects/shared/**/*.ts"
+            ],
             "coverageReporters": ["lcov", "text-summary", "json-summary"]
           }
         },

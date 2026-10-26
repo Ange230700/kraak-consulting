@@ -11,7 +11,10 @@ export default defineConfig({
     testTimeout: 15000,
     coverage: {
       provider: 'v8',
-      include: [resolve(__dirname, 'src/**/*.ts').replaceAll('\\', '/')],
+      include: [
+        resolve(__dirname, 'src/**/*.ts').replaceAll('\\', '/'),
+        resolve(__dirname, '../shared/**/*.ts').replaceAll('\\', '/'),
+      ],
       exclude: ['**/*.spec.ts', '**/*.d.ts'],
       reporter: ['text-summary', 'lcov', 'json-summary'],
       reportsDirectory: resolve(__dirname, '../../coverage/web'),
