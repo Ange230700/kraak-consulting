@@ -98,31 +98,15 @@ test.describe('Analytics — gating GA4', () => {
           .first();
         await expect(ctaLink).toBeVisible();
 
-        const ctaHref = await ctaLink.getAttribute('href');
         await ctaLink.click();
 
-        try {
-          await page.waitForURL('**/contact', {
-            timeout: 10000,
-            waitUntil: 'domcontentloaded',
-          });
-        } catch {
-          await page.goto(ctaHref ?? '/contact', {
-            waitUntil: 'domcontentloaded',
-          });
-        }
+        await page.waitForURL('**/contact', {
+          timeout: 10000,
+          waitUntil: 'domcontentloaded',
+        });
 
         await expect(page).toHaveTitle(/Contact/i);
         expect(capturedRequests).toEqual([]);
-      } catch (error) {
-        const isCrash =
-          error instanceof Error && error.message.includes('Page crashed');
-        if (isCrash) {
-          // WebKit can crash on certain navigations; no GA4 leak is possible.
-          expect(capturedRequests).toEqual([]);
-        } else {
-          throw error;
-        }
       } finally {
         page.off('request', captureRequest);
       }

@@ -138,8 +138,7 @@ export function createDocument(sourceText) {
   const titleToken = tokens.find((token) => token.type === 'heading');
   const title = titleToken ? inlineText(titleToken.tokens) : 'Document KRAAK';
   let hasMermaid = false;
-  // Ce visiteur est synchrone ; aucune promesse n'est créée par ses callbacks.
-  void markdown.walkTokens(tokens, (token) => {
+  markdown.walkTokens(tokens, (token) => {
     if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
       hasMermaid = true;
     }

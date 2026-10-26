@@ -102,37 +102,15 @@ export function validateCatalogs(contract, root) {
     errors.push(`Fallback locale is not supported: ${contract.fallbackLocale}`);
   }
 
-  const catalogEntries = new Map();
-
-  for (const locale of contract.supportedLocales) {
-    const filePath = path.join(catalogRoot, `${locale}.json`);
-
-    if (!existsAsFile(filePath)) {
-      continue;
-    }
-
-    const rawJson = readFileSync(filePath, 'utf8');
-    const duplicateKeys = findDuplicateJsonKeys(rawJson);
-
-    for (const key of duplicateKeys) {
-      errors.push(`Duplicate key in ${locale}.json: ${key}`);
-    }
-
-    try {
-      catalogEntries.set(locale, JSON.parse(rawJson));
-    } catch (error) {
-      errors.push(`Invalid JSON in ${locale}.json: ${error.message}`);
-    }
-  }
-
+  const catalogEntries = readCatalogEntries(
+    catalogRoot,
+    contract.supportedLocales,
+    errors,
+  );
   const sourceCatalog = catalogEntries.get(contract.sourceLocale);
   const sourceKeys = sourceCatalog ? flattenCatalog(sourceCatalog) : new Map();
 
-  for (const [key, value] of sourceKeys) {
-    if (isEmptyTranslationValue(value)) {
-      errors.push(`Empty translation value: ${contract.sourceLocale}:${key}`);
-    }
-  }
+  validateTranslationValues(sourceKeys, contract.sourceLocale, errors);
 
   for (const locale of contract.supportedLocales) {
     const catalog = catalogEntries.get(locale);
@@ -158,17 +136,48 @@ export function validateCatalogs(contract, root) {
       keys,
       errors,
     );
-
-    for (const [key, value] of keys) {
-      if (isEmptyTranslationValue(value)) {
-        errors.push(`Empty translation value: ${locale}:${key}`);
-      }
-    }
+    validateTranslationValues(keys, locale, errors);
   }
 
   validatePrototypeIcuProof(sourceKeys, contract.sourceLocale, errors);
 
   return { errors, keyCount: sourceKeys.size };
+}
+
+function readCatalogEntries(catalogRoot, locales, errors) {
+  const catalogEntries = new Map();
+
+  for (const locale of locales) {
+    const filePath = path.join(catalogRoot, `${locale}.json`);
+
+    if (!existsAsFile(filePath)) {
+      continue;
+    }
+
+    const rawJson = readFileSync(filePath, 'utf8');
+    const duplicateKeys = findDuplicateJsonKeys(rawJson);
+
+    for (const key of duplicateKeys) {
+      errors.push(`Duplicate key in ${locale}.json: ${key}`);
+    }
+
+    try {
+      catalogEntries.set(locale, JSON.parse(rawJson));
+    } catch (error) {
+      console.error('i18n.catalog.invalid-json', { locale, error });
+      errors.push(`Invalid JSON in ${locale}.json: ${error.message}`);
+    }
+  }
+
+  return catalogEntries;
+}
+
+function validateTranslationValues(keys, locale, errors) {
+  for (const [key, value] of keys) {
+    if (isEmptyTranslationValue(value)) {
+      errors.push(`Empty translation value: ${locale}:${key}`);
+    }
+  }
 }
 
 function existsAsFile(filePath) {

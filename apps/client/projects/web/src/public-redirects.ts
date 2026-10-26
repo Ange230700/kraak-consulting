@@ -13,7 +13,12 @@ export function registerPublicRedirectRoutes(app: express.Express): void {
 
     const destination = resolvePublicRedirectDestination(req.originalUrl);
 
-    if (!destination) {
+    if (
+      !destination ||
+      !destination.startsWith('/') ||
+      destination.startsWith('//') ||
+      destination.includes('\\')
+    ) {
       next();
       return;
     }
@@ -26,6 +31,13 @@ export function resolvePublicRedirectDestination(
   originalUrl: string,
 ): string | undefined {
   try {
+    if (
+      !originalUrl.startsWith('/') ||
+      originalUrl.startsWith('//') ||
+      originalUrl.includes('\\')
+    ) {
+      throw new Error('La redirection exige un chemin local non ambigu.');
+    }
     const url = new URL(originalUrl, LOCAL_URL_BASE);
     const redirect = findLegacyPublicRedirectBySourcePath(
       decodeURIComponent(url.pathname),

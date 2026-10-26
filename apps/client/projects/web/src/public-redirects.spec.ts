@@ -3,6 +3,26 @@ import { describe, expect, it, vi } from 'vitest';
 import { resolvePublicRedirectDestination } from './public-redirects';
 
 describe('Given public redirect resolution', () => {
+  it.each([
+    'https://example.invalid/contact',
+    '//example.invalid/contact',
+    '/\\example.invalid/contact',
+    'contact',
+  ])(
+    'Given une URL externe ou ambiguë %s, When une redirection est demandée, Then aucune destination n’est produite',
+    (url) => {
+      const warn = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined);
+      expect(resolvePublicRedirectDestination(url)).toBeUndefined();
+      expect(warn).toHaveBeenCalledWith(
+        'web.redirect.invalid-url',
+        expect.objectContaining({ error: expect.any(Error) }),
+      );
+      warn.mockRestore();
+    },
+  );
+
   it('Given un encodage invalide, When la redirection est résolue, Then aucune destination n’est produite et l’erreur est journalisée', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     expect(resolvePublicRedirectDestination('/%invalid')).toBeUndefined();

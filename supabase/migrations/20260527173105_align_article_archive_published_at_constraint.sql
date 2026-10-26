@@ -1,6 +1,10 @@
 alter table public.article
 drop constraint if exists article_published_at_consistency;
 
+update public.article
+set published_at = null
+where status = 'archived' and published_at is not null;
+
 alter table public.article
 add constraint article_published_at_consistency
 check (
