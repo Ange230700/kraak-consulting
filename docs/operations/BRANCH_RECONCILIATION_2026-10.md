@@ -142,3 +142,13 @@ pnpm test:e2e:all
 
 Les résultats effectivement obtenus et les éventuels blocages sont consignés
 dans la PR. Un contrôle non exécuté n'est jamais déclaré réussi.
+
+Si Sonar bloque la promotion, les annotations GitHub peuvent être limitées
+à 50 résultats et ne pas afficher toutes les anomalies de fiabilité ou de
+sécurité. Après un échec du scan, l'étape
+`Identifier les anomalies Sonar bloquantes` interroge le contexte exact de la
+PR ou de la branche avec le secret Sonar déjà configuré. Les logs ne contiennent
+que les identifiants, règles, sévérités, chemins et lignes, sans code source,
+messages d'anomalie ni token. Le diagnostic signale explicitement un résultat
+qui dépasserait sa limite de 500 anomalies ; il ne remplace ni n'assouplit
+la quality gate.

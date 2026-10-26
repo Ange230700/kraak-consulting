@@ -65,6 +65,7 @@ jobs:
           retention-days: 14
 
       - name: Scan SonarCloud
+        id: scan
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         # pnpm sonar impose -Dsonar.qualitygate.wait=true.
         run: pnpm sonar
@@ -73,3 +74,30 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
           # Requis pour la résolution du contexte PR et la décoration des pull requests
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Identifier les anomalies Sonar bloquantes
+        if: ${{ failure() && steps.scan.outcome == 'failure' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_PR: ${{ github.event.pull_request.number }}
+          SONAR_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          project_key="$(sed -n 's/^sonar.projectKey=//p' sonar-project.properties)"
+          context=(--data-urlencode "branch=${SONAR_BRANCH}")
+          if [[ -n "${SONAR_PR}" ]]; then
+            context=(--data-urlencode "pullRequest=${SONAR_PR}")
+          fi
+          curl --fail --silent --show-error --get \
+            --user "${SONAR_TOKEN}:" \
+            --data-urlencode "componentKeys=${project_key}" \
+            --data-urlencode "types=BUG,VULNERABILITY" \
+            --data-urlencode "resolved=false" \
+            --data-urlencode "ps=500" \
+            "${context[@]}" \
+            "${SONAR_HOST_URL}/api/issues/search" \
+            --output "${RUNNER_TEMP}/sonar-blockers.json"
+          jq '{paging, issues: [.issues[] | {key,type,severity,rule,component,line}]}' \
+            "${RUNNER_TEMP}/sonar-blockers.json"
+          jq --exit-status '.paging.total <= 500' "${RUNNER_TEMP}/sonar-blockers.json"
