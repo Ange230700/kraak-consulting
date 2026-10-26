@@ -94,6 +94,7 @@ document obsolète dans le même changement.
 | `engineering/UI_COMPONENT_MAPPING.md`                                  | active | true             | Correspondance de composants — Web (PrimeNG) ↔ Mobile (Ionic)                    |
 | `engineering/UI_FEEDBACK.md`                                           | active | true             | Règle d'usage PrimeNG Messages et Toasts (Web)                                   |
 | `operations/ANALYTICS_EVENTS.md`                                       | active | true             | Événements analytics publics                                                     |
+| `operations/BRANCH_RECONCILIATION_2026-10.md`                          | active | true             | Réconciliation ponctuelle de main et staging                                     |
 | `operations/CLI_TOOLS.md`                                              | active | true             | CLI_TOOLS — Outils en ligne de commande Render, Supabase et GitHub               |
 | `operations/CONTACT_OPERATIONS.md`                                     | active | true             | Opérations de contact public                                                     |
 | `operations/DEPLOYMENT.md`                                             | active | true             | Déploiement Render                                                               |
