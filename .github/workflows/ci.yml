@@ -40,6 +40,9 @@ jobs:
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Contrôle qualité complet, identique aux hooks locaux
         run: pnpm check
 
@@ -383,6 +386,9 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Exécuter les tests workspace
         run: pnpm test:workspace
