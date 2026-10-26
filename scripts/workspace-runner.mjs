@@ -80,7 +80,7 @@ export async function runWorkspaceWorkflow({
 
     const comspec = process.env.ComSpec ?? 'cmd.exe';
     const commandLine = [getPnpmCommand(process.platform), ...command.args]
-      .map(quoteWindowsArgument)
+      .map((argument) => quoteWindowsArgument(argument))
       .join(' ');
 
     return spawn(comspec, ['/d', '/s', '/c', commandLine], {

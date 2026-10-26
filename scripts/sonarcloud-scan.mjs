@@ -447,7 +447,7 @@ export function spawnSonarCommand(
 
   const comspec = baseEnvironment.ComSpec ?? 'cmd.exe';
   const commandLine = [command.command, ...command.args]
-    .map(quoteWindowsArgument)
+    .map((argument) => quoteWindowsArgument(argument))
     .join(' ');
 
   return spawnImpl(comspec, ['/d', '/s', '/c', `"${commandLine}"`], {
