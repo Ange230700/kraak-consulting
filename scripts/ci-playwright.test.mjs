@@ -7,6 +7,10 @@ const workflow = readFileSync(
   new URL('.github/workflows/ci.yml', root),
   'utf8',
 );
+const sonarWorkflow = readFileSync(
+  new URL('.github/workflows/sonarcloud.yml', root),
+  'utf8',
+);
 const clientPackage = JSON.parse(
   readFileSync(new URL('apps/client/package.json', root), 'utf8'),
 );
@@ -33,10 +37,6 @@ test('Given la CI E2E, When les navigateurs sont préparés, Then une image Play
 });
 
 test('Given les tests PDF workspace, When les jobs CI et Sonar exécutent ces tests, Then Chromium est installé avant leur lancement', () => {
-  const sonarWorkflow = readFileSync(
-    new URL('.github/workflows/sonarcloud.yml', root),
-    'utf8',
-  );
   for (const job of [
     workflow.slice(
       workflow.indexOf('  quality-gate:'),
@@ -99,4 +99,27 @@ test('Given une page SSR, When Angular démarre, Then les interactions effectué
     'utf8',
   );
   assert.match(source, /provideClientHydration\(withEventReplay\(\)\)/);
+});
+
+test('Given une quality gate Sonar en échec, When la CI publie son diagnostic, Then les anomalies bloquantes sont identifiées sans données sensibles', () => {
+  const diagnostic = sonarWorkflow.split(
+    '- name: Identifier les anomalies Sonar bloquantes',
+  )[1];
+  assert.ok(diagnostic);
+  assert.match(
+    diagnostic,
+    /if: \$\{\{ failure\(\) && steps\.scan\.outcome == 'failure' \}\}/,
+  );
+  assert.match(
+    diagnostic,
+    /SONAR_PR: \$\{\{ github.event.pull_request.number \}\}/,
+  );
+  assert.match(diagnostic, /types=BUG,VULNERABILITY/);
+  assert.match(diagnostic, /resolved=false/);
+  assert.match(diagnostic, /\.paging\.total <= 500/);
+  assert.match(diagnostic, /\{key,type,severity,rule,component,line\}/);
+  assert.doesNotMatch(
+    diagnostic,
+    /\{[^}]*\b(?:message|flows|textRange)\b[^}]*\}/,
+  );
 });
