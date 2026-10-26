@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-26
 source_of_truth: true
 ---
 
@@ -30,14 +30,17 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 - **Dépôt GitHub** : `Ange230700/kraak-consulting`
 - **Package/workspace racine** : `kraak-group`
 - **Organisation SonarCloud** : `ange230700`
-- **Project key** : `Ange230700_kraak-group`
-- **Project name** : `kraak-group`
+- **Project key** : `Ange230700_kraak-consulting`
+- **Project name** : `kraak-consulting`
+- **Branche principale Sonar** : `staging`
 - **Région** : EU
 - **Host URL** : `https://sonarcloud.io`
 
-Le nom du dépôt GitHub et les identifiants SonarCloud ne sont pas identiques :
-le dépôt actif est `kraak-consulting`, tandis que le package racine et le
-projet SonarCloud conservent `kraak-group` selon la configuration versionnée.
+Le package racine conserve le nom `kraak-group`, mais la CI et SonarLint
+ciblent le projet Sonar existant `kraak-consulting`. L'ancien ciblage
+`Ange230700_kraak-group` ne mettait pas à jour ce tableau public. Vérifier
+le SHA et la date de l'analyse avant de comparer les mesures globales.
+Suivi du rétablissement des mesures et de leur assainissement : #722.
 
 ## Fichiers de configuration
 
@@ -45,15 +48,15 @@ projet SonarCloud conservent `kraak-group` selon la configuration versionnée.
 | ---------------------------------- | ---------------------------------------------------- |
 | `sonar-project.properties`         | Périmètre, exclusions, chemins de couverture         |
 | `.vscode/settings.json`            | Liaison SonarLint -> SonarCloud (mode connecté)      |
-| `.github/workflows/sonarcloud.yml` | Job CI exécutant `sonarqube-scan-action`             |
+| `.github/workflows/sonarcloud.yml` | Contrôles, couverture et scan via `pnpm sonar`       |
 | `.vscode/extensions.json`          | Recommandation de l'extension SonarLint              |
 | `.gitignore`                       | Ignore `.scannerwork/` et la config locale SonarLint |
 
 ## Mise en service côté SonarCloud
 
 1. Se connecter à <https://sonarcloud.io> avec le compte GitHub `Ange230700`.
-2. Importer le dépôt `Ange230700/kraak-consulting` dans l'organisation
-   `ange230700`.
+2. Ouvrir le projet existant `Ange230700_kraak-consulting` dans l'organisation
+   `ange230700`, sans créer un second projet ni réinitialiser l'historique.
 3. Choisir le mode d'analyse **CI-based** (et non l'analyse automatique).
 4. Générer un **token utilisateur** (Account > Security) puis l'ajouter au
    dépôt GitHub :
@@ -73,13 +76,11 @@ projet SonarCloud conservent `kraak-group` selon la configuration versionnée.
 
 ## Couverture de code
 
-Les chemins LCOV attendus par SonarCloud sont déclarés dans
-`sonar-project.properties`. Pour qu'ils existent au moment du scan :
-
-- `apps/api` : `pnpm --filter @kraak/api test -- --coverage`
-- `apps/client` (web/mobile) : configurer le builder Vitest avec
-  `--coverage` quand un rapport est requis.
-- `packages/*` : `pnpm -r test -- --coverage` (Vitest).
+Les huit chemins LCOV attendus sont déclarés dans
+`sonar-project.properties`. `pnpm coverage` les génère à partir de c8
+(scripts et configuration racine), Jest (API) et Vitest (web, mobile et
+quatre packages). La CI exécute `pnpm check` avant le scan, avec les seuils
+de 100 % par fichier, et conserve les rapports en artefacts.
 
 La commande `pnpm sonar` normalise automatiquement les chemins `SF:` des
 fichiers `lcov.info` en chemins POSIX relatifs au dépôt (ex:
@@ -106,23 +107,25 @@ Mode diagnostic strict (optionnel) :
 - Le chemin du log peut être surchargé avec
   `SONAR_STRICT_DIAGNOSTIC_LOG=<chemin>`.
 
-L'exécution de la couverture **dans la CI** sera ajoutée dans une tâche
-ultérieure dédiée ; le job `sonarcloud.yml` actuel se contente du scan
-statique. L'absence de fichier LCOV n'échoue pas le scan : SonarCloud
-ignore simplement les chemins absents.
+`pnpm sonar` refuse un rapport manquant ou vide. Les mesures globales
+n'apparaissent qu'après une analyse CI de la branche principale Sonar
+`staging` : une analyse de PR ne remplace pas cette analyse de branche.
+Vérifier dans le log du scan le projet, les huit rapports importés et les
+éventuels chemins non résolus. Le type généré `db.types.ts` est hors périmètre.
 
 ### Politique d'exclusion pragmatique
 
 Objectif: stabiliser le signal qualité sans masquer la logique métier.
 
-- Les fichiers de **câblage framework** (Nest `*.module.ts`) sont exclus de la
-  couverture, car ils portent essentiellement la déclaration de dépendances et
-  n'apportent pas de comportement métier autonome.
-- Le fichier web `apps/client/projects/web/src/app/core/runtime/runtime-config.ts`
-  est exclu de la couverture, car il repose principalement sur l'état runtime
-  global (`globalThis`) injecté selon l'environnement d'exécution.
+- Les tests, templates HTML et types générés sont hors couverture.
+- Les modules Nest et la configuration runtime restent couverts, comme les
+  autres fichiers de production.
 - Les services, contrôleurs, DTO de validation, règles métier et parcours
   utilisateur restent dans le périmètre de couverture et doivent être testés.
+- Aucun fichier de production n'est exclu du calcul de duplication.
+- Les migrations PostgreSQL ne doivent pas être interprétées comme du PL/SQL
+  Oracle. Elles sont validées par les contrôles SQL et le rejeu du schéma,
+  et non par un analyseur d'un autre dialecte.
 
 ## Validation locale (optionnel)
 
@@ -161,9 +164,10 @@ if (Test-Path $loader) {
 }
 ```
 
-1. Redémarrer le terminal (ou VS Code) puis verifier:
-   - Git Bash: `echo "$SONAR_TOKEN"`
-   - PowerShell: `echo $env:SONAR_TOKEN`
+1. Redémarrer le terminal (ou VS Code) puis vérifier la présence du token
+   sans afficher sa valeur :
+   - Git Bash : `test -n "$SONAR_TOKEN" && echo "Token configuré"`
+   - PowerShell : `if ($env:SONAR_TOKEN) { "Token configuré" }`
 
 ## Points d'attention
 
