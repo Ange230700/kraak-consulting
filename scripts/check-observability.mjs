@@ -113,6 +113,10 @@ export async function runObservabilityChecks(input, options = {}) {
   return Promise.all(targets.map((target) => checkTarget(target, options)));
 }
 
+function formatLogValue(value) {
+  return JSON.stringify(String(value)).slice(1, -1);
+}
+
 export function formatSummary(results) {
   return results
     .map((result) => {
@@ -125,7 +129,7 @@ export function formatSummary(results) {
         );
       }
 
-      return `- ${details.join(' | ')}`;
+      return `- ${details.map(formatLogValue).join(' | ')}`;
     })
     .join('\n');
 }
@@ -147,7 +151,7 @@ if (
   try {
     await main();
   } catch (error) {
-    console.error(error.message);
+    console.error(formatLogValue(error.message));
     process.exitCode = 1;
   }
 }

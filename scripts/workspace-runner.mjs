@@ -37,6 +37,41 @@ function needsWindowsQuoting(argument) {
   return false;
 }
 
+function quoteWindowsArgument(argument) {
+  if (argument.length === 0) {
+    return '""';
+  }
+
+  if (!needsWindowsQuoting(argument)) {
+    return argument;
+  }
+
+  let quotedArgument = '"';
+  let backslashCount = 0;
+
+  for (const character of argument) {
+    if (character === '\\') {
+      backslashCount += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
+      quotedArgument += '"';
+    } else {
+      quotedArgument += '\\'.repeat(backslashCount);
+      quotedArgument += character;
+    }
+
+    backslashCount = 0;
+  }
+
+  quotedArgument += '\\'.repeat(backslashCount * 2);
+  quotedArgument += '"';
+
+  return quotedArgument;
+}
+
 export async function runWorkspaceWorkflow({
   process = nodeProcess,
   spawn = nodeSpawn,
@@ -73,43 +108,6 @@ export async function runWorkspaceWorkflow({
         child.kill(signal);
       }
     }
-  }
-
-  function quoteWindowsArgument(argument) {
-    if (argument.length === 0) {
-      return '""';
-    }
-
-    if (!needsWindowsQuoting(argument)) {
-      return argument;
-    }
-
-    let quotedArgument = '"';
-    let backslashCount = 0;
-
-    for (const element of argument) {
-      const character = element;
-
-      if (character === '\\') {
-        backslashCount += 1;
-        continue;
-      }
-
-      if (character === '"') {
-        quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
-        quotedArgument += '"';
-      } else {
-        quotedArgument += '\\'.repeat(backslashCount);
-        quotedArgument += character;
-      }
-
-      backslashCount = 0;
-    }
-
-    quotedArgument += '\\'.repeat(backslashCount * 2);
-    quotedArgument += '"';
-
-    return quotedArgument;
   }
 
   function spawnCommand(command) {
