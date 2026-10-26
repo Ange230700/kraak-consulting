@@ -23,9 +23,9 @@ test('Given des champs distants contenant des retours à la ligne, When le résu
     },
   ]);
   assert.equal(summary.split(/\r?\n/).length, 1);
-  assert.ok(summary.includes(String.raw`\r\nFAUSSE_LIGNE`));
-  assert.ok(summary.includes(String.raw`env=test\nAUTRE_LIGNE`));
-  assert.ok(summary.includes(String.raw`version=v1\rVERSION`));
+  assert.ok(summary.includes('https://api.test/  FAUSSE_LIGNE'));
+  assert.ok(summary.includes('env=test AUTRE_LIGNE'));
+  assert.ok(summary.includes('version=v1 VERSION'));
 });
 
 test('Given une erreur de santé contenant une nouvelle ligne, When la CLI échoue, Then le diagnostic reste sur une seule ligne', async (t) => {
@@ -68,7 +68,7 @@ test('Given une erreur de santé contenant une nouvelle ligne, When la CLI écho
   });
   assert.equal((await once(child, 'close'))[0], 1);
   assert.equal(stderr.trimEnd().split(/\r?\n/).length, 1);
-  assert.ok(stderr.includes(String.raw`test\nFAUSSE_LIGNE`));
+  assert.ok(stderr.includes('test FAUSSE_LIGNE'));
 });
 
 test('Given des URL manquantes, When les cibles sont préparées, Then la configuration invalide est refusée', () => {

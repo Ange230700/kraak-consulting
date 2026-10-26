@@ -234,10 +234,10 @@ Contraintes obligatoires :
 - préférer un scope court et stable (ex : `web.auth.sign-in.submit`)
 - garder les traces orientées diagnostic, pas verbeuses
 
-Les résumés et erreurs du script d'observabilité échappent les valeurs externes
-avec la sérialisation JSON avant journalisation. Les retours à la ligne contenus
-dans les URL ou réponses de santé restent visibles sous forme échappée et ne
-peuvent pas produire de fausses lignes de journal.
+Les résumés et erreurs du script d'observabilité remplacent explicitement les
+retours à la ligne externes par des espaces, puis sérialisent les autres
+caractères de contrôle en JSON avant journalisation. Les URL et réponses de santé
+ne peuvent pas produire de fausses lignes de journal.
 
 ---
 
@@ -374,6 +374,10 @@ pour un changement documentaire ou lorsque le diff ne peut pas être déterminé
 Le formatage global couvre aussi les scripts JavaScript et les workflows YAML.
 
 Les hooks définissent `GIT_EXECUTABLE` avec un chemin absolu vers `git` (ou utilisent une valeur déjà fournie par l'environnement) pour verrouiller le binaire appelé. En CI, `GIT_EXECUTABLE` est fixé globalement à `/usr/bin/git`.
+
+Le runner et le scanner Sonar partagent `quoteWindowsArgument` dans
+`scripts/workspace-commands.mjs` pour conserver le même échappement des espaces,
+guillemets et antislashs lors des lancements sous Windows.
 
 Pour accélérer les vérifications locales sur une branche de travail, utiliser d'abord les scripts ciblés suivants quand la portée est limitée :
 

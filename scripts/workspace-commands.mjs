@@ -2,6 +2,51 @@ export function getPnpmCommand(platform = process.platform) {
   return platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 }
 
+function needsWindowsQuoting(argument) {
+  for (const character of argument) {
+    if (character === ' ' || character === '\t' || character === '"') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function quoteWindowsArgument(argument) {
+  if (argument.length === 0) {
+    return '""';
+  }
+
+  if (!needsWindowsQuoting(argument)) {
+    return argument;
+  }
+
+  let quotedArgument = '"';
+  let backslashCount = 0;
+
+  for (const character of argument) {
+    if (character === '\\') {
+      backslashCount += 1;
+      continue;
+    }
+
+    if (character === '"') {
+      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
+      quotedArgument += '"';
+    } else {
+      quotedArgument += '\\'.repeat(backslashCount);
+      quotedArgument += character;
+    }
+
+    backslashCount = 0;
+  }
+
+  quotedArgument += '\\'.repeat(backslashCount * 2);
+  quotedArgument += '"';
+
+  return quotedArgument;
+}
+
 export function createWorkflows() {
   return {
     test: {
