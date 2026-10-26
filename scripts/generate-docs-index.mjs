@@ -536,18 +536,15 @@ export async function buildDocsIndexes(
   options = {},
 ) {
   const rawIndexes = buildRawDocsIndexes(rootDirectory, options);
-  const formattedIndexes = new Map();
-
-  for (const [relativeFile, content] of rawIndexes) {
-    formattedIndexes.set(
+  const formattedEntries = await Promise.all(
+    [...rawIndexes].map(async ([relativeFile, content]) => [
       relativeFile,
       await prettier.format(renderMarkdownWithToc(content), {
         parser: 'markdown',
       }),
-    );
-  }
-
-  return formattedIndexes;
+    ]),
+  );
+  return new Map(formattedEntries);
 }
 
 function writeIndexes(root, indexes) {

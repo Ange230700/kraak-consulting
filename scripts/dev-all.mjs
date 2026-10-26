@@ -8,6 +8,34 @@ const portInUsePattern = /Port \d+ is already in use/i;
 const addressInUsePattern = /EADDRINUSE|address already in use/i;
 const maxViteCacheLockLineLength = 16_384;
 
+function isViteCacheLockLine(line) {
+  if (typeof line !== 'string') {
+    return false;
+  }
+
+  // Borne le traitement des lignes de log démesurées.
+  if (line.length > maxViteCacheLockLineLength) {
+    return false;
+  }
+
+  const normalizedLine = line.toLowerCase().replaceAll('\\', '/');
+  const angularCacheMarker = '.angular/cache';
+
+  if (!normalizedLine.includes('eperm: operation not permitted, rename ')) {
+    return false;
+  }
+
+  const angularCacheIndex = normalizedLine.indexOf(angularCacheMarker);
+  if (angularCacheIndex < 0) {
+    return false;
+  }
+
+  return normalizedLine.includes(
+    '/vite/deps_temp_',
+    angularCacheIndex + angularCacheMarker.length,
+  );
+}
+
 export function createDevRunner({
   process = globalThis.process,
   net = nodeNet,
@@ -35,34 +63,6 @@ export function createDevRunner({
   const webPort = parsePortFromEnv('KRAAK_WEB_PORT', 4200);
   const mobilePort = parsePortFromEnv('KRAAK_MOBILE_PORT', 4300);
   const apiPort = parsePortFromEnv('API_PORT', 3000);
-
-  function isViteCacheLockLine(line) {
-    if (typeof line !== 'string') {
-      return false;
-    }
-
-    // Prevent oversized log lines from becoming an input-amplification vector.
-    if (line.length > maxViteCacheLockLineLength) {
-      return false;
-    }
-
-    const normalizedLine = line.toLowerCase().replaceAll('\\', '/');
-    const angularCacheMarker = '.angular/cache';
-
-    if (!normalizedLine.includes('eperm: operation not permitted, rename ')) {
-      return false;
-    }
-
-    const angularCacheIndex = normalizedLine.indexOf(angularCacheMarker);
-    if (angularCacheIndex < 0) {
-      return false;
-    }
-
-    return normalizedLine.includes(
-      '/vite/deps_temp_',
-      angularCacheIndex + angularCacheMarker.length,
-    );
-  }
 
   const services = [
     {
@@ -195,26 +195,31 @@ export function createDevRunner({
       throw error;
     }
 
-    for (const entry of versionEntries) {
-      if (!entry.isDirectory()) {
-        continue;
-      }
-
-      const projectCachePath = path.resolve(cacheRoot, entry.name, projectName);
-
-      if (!isPathInsideWorkspace(projectCachePath)) {
-        throw new Error(
-          `Refus de supprimer un cache hors workspace: ${projectCachePath}`,
+    const projectCachePaths = versionEntries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const projectCachePath = path.resolve(
+          cacheRoot,
+          entry.name,
+          projectName,
         );
-      }
-
-      await rm(projectCachePath, {
-        recursive: true,
-        force: true,
-        maxRetries: 3,
-        retryDelay: 150,
+        if (!isPathInsideWorkspace(projectCachePath)) {
+          throw new Error(
+            `Refus de supprimer un cache hors workspace: ${projectCachePath}`,
+          );
+        }
+        return projectCachePath;
       });
-    }
+    await Promise.all(
+      projectCachePaths.map((projectCachePath) =>
+        rm(projectCachePath, {
+          recursive: true,
+          force: true,
+          maxRetries: 3,
+          retryDelay: 150,
+        }),
+      ),
+    );
   }
 
   function shutdown(exitCode = 0) {

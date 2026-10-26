@@ -313,6 +313,14 @@ builds applicatifs, les E2E web/mobile et SonarCloud. Cette variante exige les
 navigateurs Playwright et `SONAR_TOKEN`. Les E2E restent également exécutés par
 leurs jobs CI dédiés.
 
+Les vérifications web/API d'observabilité, le formatage des index documentaires,
+les exports de formats distincts, les variantes d'icônes et le nettoyage de
+répertoires indépendants s'exécutent en parallèle. Les résultats et journaux
+d'export conservent leur ordre déclaré ; les erreurs restent bloquantes.
+Les dépendances restent séquentielles : le launcher rond attend son image source,
+et le démarrage local conserve l'ordre des services et la recherche progressive
+des ports disponibles.
+
 ### Si un hook échoue
 
 - **Formatage / lint pre-commit** : corriger les erreurs remontées par `lint-staged` puis recommiter

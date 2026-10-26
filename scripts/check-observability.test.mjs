@@ -5,7 +5,45 @@ import {
   checkTarget,
   createObservabilityTargets,
   normalizePublicUrl,
+  runObservabilityChecks,
 } from './check-observability.mjs';
+
+test('Given deux cibles indépendantes, When la page web attend sa réponse, Then la santé API est déjà interrogée et les résultats gardent leur ordre', async () => {
+  const started = [];
+  let releaseWeb;
+  const webResponse = new Promise((resolve) => {
+    releaseWeb = resolve;
+  });
+  const pending = runObservabilityChecks(
+    { webUrl: 'https://web.test', apiUrl: 'https://api.test' },
+    {
+      fetchImpl: (url) => {
+        started.push(url);
+        return url.endsWith('/health')
+          ? Promise.resolve(
+              Response.json({ status: 'ok', service: 'kraak-api' }),
+            )
+          : webResponse;
+      },
+    },
+  );
+  const startedBeforeRelease = [...started];
+  releaseWeb(
+    new Response('<html lang="fr"></html>', {
+      headers: { 'content-type': 'text/html' },
+    }),
+  );
+  const results = await pending;
+
+  assert.deepEqual(startedBeforeRelease, [
+    'https://web.test/',
+    'https://api.test/health',
+  ]);
+  assert.deepEqual(
+    results.map(({ name }) => name),
+    ['web-home', 'api-health'],
+  );
+});
 
 test('Given une URL publique valide, When on la normalise, Then le slash terminal est retire', () => {
   assert.equal(

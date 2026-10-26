@@ -110,13 +110,7 @@ export async function checkTarget(target, options = {}) {
 
 export async function runObservabilityChecks(input, options = {}) {
   const targets = createObservabilityTargets(input);
-  const results = [];
-
-  for (const target of targets) {
-    results.push(await checkTarget(target, options));
-  }
-
-  return results;
+  return Promise.all(targets.map((target) => checkTarget(target, options)));
 }
 
 export function formatSummary(results) {

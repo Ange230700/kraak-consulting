@@ -31,6 +31,7 @@ import type {
 import { SupabaseService } from '../supabase/supabase.service';
 
 type PublicationStatus = 'draft' | 'published' | 'archived';
+type ReusableContentTable = 'course' | 'learning_module' | 'lesson';
 
 type CourseRow = {
   id: string;
@@ -857,7 +858,7 @@ export class CurriculumService {
   }
 
   private async listReusableContent(
-    table: 'course' | 'learning_module' | 'lesson',
+    table: ReusableContentTable,
     failureMessage: ApiMessageValue,
   ): Promise<CourseDto[]> {
     const { data, error } = await this.supabaseService
@@ -879,7 +880,7 @@ export class CurriculumService {
   }
 
   private async createReusableContent(
-    table: 'course' | 'learning_module' | 'lesson',
+    table: ReusableContentTable,
     payload: CreateCourseDto,
     failureMessage: ApiMessageValue,
   ): Promise<CourseDto> {
@@ -907,7 +908,7 @@ export class CurriculumService {
   }
 
   private async updateReusableContent(
-    table: 'course' | 'learning_module' | 'lesson',
+    table: ReusableContentTable,
     id: string,
     payload: UpdateCourseDto,
     notFoundMessage: ApiMessageValue,
