@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { test } from 'node:test';
+import { promisify } from 'node:util';
 import sharp from 'sharp';
 
-import { createDocument, exportDocument } from './export-docs.mjs';
+const execute = promisify(execFile);
 
 test('Given un document illustré When les trois formats sont générés Then le PDF est balisé, le PPTX éditable et les empreintes exactes', async () => {
   const root = path.resolve('.artifacts');
@@ -14,17 +16,26 @@ test('Given un document illustré When les trois formats sont générés Then le
   try {
     const source = path.join(directory, 'source.md');
     const content =
-      '---\n# Mission KRAAK\n\nDévelopper les compétences.\n\n---\n\n[Consulter les services](#services)\n\n## Services\n\nFormation.\n\n![Illustration KRAAK](image.png)\n';
+      '---\n# Mission KRAAK\n\nDévelopper les compétences.\n\n---\n\n[Consulter les services](#services)\n\n## Services\n\nFormation.\n\n![Illustration KRAAK](image.png)\n' +
+      '\nParagraphe de formation.'.repeat(30);
     await writeFile(source, content);
     await sharp({
       create: { width: 20, height: 10, channels: 3, background: '#173e50' },
     })
       .png()
       .toFile(path.join(directory, 'image.png'));
-    const document = createDocument(content);
+    const { stdout } = await execute(process.execPath, [
+      'scripts/export-docs.mjs',
+      '--source',
+      source,
+      '--format',
+      'all',
+      '--output',
+      directory,
+    ]);
+    assert.equal(stdout.match(/\[docs:export\]/g)?.length, 3);
     for (const format of ['txt', 'pdf', 'pptx']) {
-      const destination = path.join(directory, `source.${format}`);
-      await exportDocument(document, { source, destination, format });
+      const destination = path.join(directory, 'source', `source.${format}`);
       const artifact = await readFile(destination);
       const metadata = JSON.parse(
         await readFile(`${destination}.json`, 'utf8'),
@@ -56,6 +67,7 @@ test('Given un document illustré When les trois formats sont générés Then le
         assert.match(xml, /Développer les compétences/);
         assert.match(xml, /ppt\/media\/.*\.png/);
         assert.match(xml, /ppt\/notesSlides\/notesSlide1\.xml/);
+        assert.match(xml, /\(suite\)/);
       }
     }
   } finally {

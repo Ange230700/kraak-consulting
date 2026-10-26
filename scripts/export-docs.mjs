@@ -15,10 +15,7 @@ import { decodeHTML } from 'entities';
 import { createHeadingSlug } from './generate-markdown-tocs.mjs';
 
 const formats = new Set(['pdf', 'pptx', 'txt', 'all']);
-const markdown = new Marked({
-  gfm: true,
-  renderer: { html: () => '' },
-});
+const markdown = new Marked({ gfm: true });
 
 export function parseArguments(args) {
   const options = {};
@@ -268,7 +265,8 @@ async function renderPdf(document, destination, images) {
         return `<figure><img src="${image.data}" alt="${escapeHtml(image.title)}"><figcaption>${escapeHtml(image.title)}</figcaption></figure>`;
       },
     );
-    await page.setContent(`<!doctype html><html lang="fr"><head>
+    await page.setContent(
+      `<!doctype html><html lang="fr"><head>
       <meta charset="utf-8">
       <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
       <title>${escapeHtml(document.title)}</title>
@@ -282,10 +280,9 @@ async function renderPdf(document, destination, images) {
         td, th { border: 1px solid #aab6bd; padding: 6px; overflow-wrap: anywhere; }
         tr { break-inside: avoid; } blockquote { border-left: 3px solid #aab6bd; padding-left: 12px; }
         figure { break-inside: avoid; margin: 12px 0; } img { max-width: 100%; max-height: 230mm; }
-      </style></head><body>${html}</body></html>`);
-    await page.locator('img').evaluateAll(async (images) => {
-      await Promise.all(images.map((image) => image.decode()));
-    });
+      </style></head><body>${html}</body></html>`,
+      { waitUntil: 'load' },
+    );
     await page.pdf({ path: destination, printBackground: true, tagged: true });
   } finally {
     await browser.close();
