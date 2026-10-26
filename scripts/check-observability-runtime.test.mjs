@@ -13,6 +13,64 @@ import {
   runObservabilityChecks,
 } from './check-observability.mjs';
 
+test('Given des champs distants contenant des retours à la ligne, When le résumé est formaté, Then aucune ligne de journal ne peut être injectée', () => {
+  const summary = formatSummary([
+    {
+      name: 'api-health',
+      status: 200,
+      url: 'https://api.test/\r\nFAUSSE_LIGNE',
+      payload: { environment: 'test\nAUTRE_LIGNE', version: 'v1\rVERSION' },
+    },
+  ]);
+  assert.equal(summary.split(/\r?\n/).length, 1);
+  assert.ok(summary.includes(String.raw`\r\nFAUSSE_LIGNE`));
+  assert.ok(summary.includes(String.raw`env=test\nAUTRE_LIGNE`));
+  assert.ok(summary.includes(String.raw`version=v1\rVERSION`));
+});
+
+test('Given une erreur de santé contenant une nouvelle ligne, When la CLI échoue, Then le diagnostic reste sur une seule ligne', async (t) => {
+  const server = createServer((request, response) => {
+    if (request.url === '/health') {
+      response.writeHead(200, { 'content-type': 'application/json' });
+      response.end(
+        JSON.stringify({
+          status: 'ok',
+          service: 'kraak-api',
+          environment: 'test\nFAUSSE_LIGNE',
+        }),
+      );
+    } else {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end('<html lang="fr"></html>');
+    }
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(async () => {
+    server.closeAllConnections();
+    await new Promise((resolve) => server.close(resolve));
+  });
+  const address = `http://127.0.0.1:${server.address().port}`;
+  const script = fileURLToPath(
+    new URL('check-observability.mjs', import.meta.url),
+  );
+  const child = spawn(process.execPath, [script], {
+    env: {
+      ...process.env,
+      KRAAK_OBSERVABILITY_WEB_URL: address,
+      KRAAK_OBSERVABILITY_API_URL: address,
+      KRAAK_OBSERVABILITY_ENVIRONMENT: 'test',
+    },
+  });
+  let stderr = '';
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk;
+  });
+  assert.equal((await once(child, 'close'))[0], 1);
+  assert.equal(stderr.trimEnd().split(/\r?\n/).length, 1);
+  assert.ok(stderr.includes(String.raw`test\nFAUSSE_LIGNE`));
+});
+
 test('Given des URL manquantes, When les cibles sont préparées, Then la configuration invalide est refusée', () => {
   for (const value of [undefined, '', '   '])
     assert.throws(() => normalizePublicUrl(value, 'TEST'), /TEST.*requise/);

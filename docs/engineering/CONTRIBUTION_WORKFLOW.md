@@ -234,6 +234,11 @@ Contraintes obligatoires :
 - préférer un scope court et stable (ex : `web.auth.sign-in.submit`)
 - garder les traces orientées diagnostic, pas verbeuses
 
+Les résumés et erreurs du script d'observabilité échappent les valeurs externes
+avec la sérialisation JSON avant journalisation. Les retours à la ligne contenus
+dans les URL ou réponses de santé restent visibles sous forme échappée et ne
+peuvent pas produire de fausses lignes de journal.
+
 ---
 
 ## Workflow Git complet
