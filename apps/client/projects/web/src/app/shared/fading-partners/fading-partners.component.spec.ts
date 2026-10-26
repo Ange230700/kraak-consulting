@@ -73,6 +73,7 @@ describe('FadingPartners', () => {
         '[class*="animate-scroll"]',
       );
       expect(scrollContainer).toBeTruthy();
+      expect(scrollContainer.hasAttribute('style')).toBe(false);
     });
 
     it('Given hardcoded SVG logos When the component renders Then each duplicated partner should keep an SVG node', () => {

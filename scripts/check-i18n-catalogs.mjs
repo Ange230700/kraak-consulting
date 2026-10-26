@@ -497,7 +497,7 @@ class JsonDuplicateKeyParser {
     if (escaped === 'u') {
       const sequence = this.source.slice(this.index + 1, this.index + 5);
       this.index += 5;
-      return String.fromCharCode(Number.parseInt(sequence, 16));
+      return String.fromCodePoint(Number.parseInt(sequence, 16));
     }
 
     this.index += 1;

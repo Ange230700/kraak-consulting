@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
+  RendererStyleFlags2,
   inject,
 } from '@angular/core';
 
@@ -26,7 +27,12 @@ export class RevealOnScrollDirective implements OnInit, OnDestroy {
     const revealDelayMs = this.resolveRevealDelayMs();
 
     this.renderer.addClass(element, 'motion-reveal-base');
-    this.renderer.setStyle(element, 'transition-delay', `${revealDelayMs}ms`);
+    this.renderer.setStyle(
+      element,
+      '--reveal-delay',
+      `${revealDelayMs}ms`,
+      RendererStyleFlags2.DashCase,
+    );
 
     if (
       globalThis.window === undefined ||

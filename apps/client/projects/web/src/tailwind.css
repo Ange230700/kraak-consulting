@@ -359,12 +359,14 @@
   }
 
   .motion-reveal-base {
-    opacity: var(--motion-opacity-from);
+    opacity: var(--motion-opacity-to);
 
     @media (prefers-reduced-motion: no-preference) {
+      opacity: var(--motion-opacity-from);
       transform: translateY(var(--motion-shift-md));
       transition-property: transform, opacity;
       transition-duration: var(--motion-duration-md);
+      transition-delay: var(--reveal-delay, 0ms);
       transition-timing-function: var(--motion-ease-enter);
     }
   }
@@ -433,21 +435,54 @@
   }
 }
 
-@utility kr-program-progress {
-  appearance: none;
-  border: 0;
+@keyframes kr-partner-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
 
-  &::-webkit-progress-bar {
+@utility animate-scroll {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: kr-partner-scroll 20s linear infinite;
+  }
+}
+
+@utility fade-gradient-left {
+  background: linear-gradient(
+    to right,
+    var(--fade-start-color, rgb(248, 248, 248)),
+    transparent
+  );
+}
+
+@utility fade-gradient-right {
+  background: linear-gradient(
+    to left,
+    var(--fade-start-color, rgb(248, 248, 248)),
+    transparent
+  );
+}
+
+@layer utilities {
+  .kr-program-progress {
+    appearance: none;
+    border: 0;
+  }
+
+  .kr-program-progress::-webkit-progress-bar {
     background: var(--color-slate-100);
     border-radius: inherit;
   }
 
-  &::-webkit-progress-value {
+  .kr-program-progress::-webkit-progress-value {
     background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
     border-radius: inherit;
   }
 
-  &::-moz-progress-bar {
+  .kr-program-progress::-moz-progress-bar {
     background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
     border-radius: inherit;
   }

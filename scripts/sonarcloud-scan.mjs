@@ -220,7 +220,10 @@ export function normalizeLcovContent(content, sourcePrefix) {
     return `SF:${normalizedSourcePath}`;
   });
 
-  return `${normalizedLines.join('\n').replace(/\n+$/u, '')}\n`;
+  while (normalizedLines.at(-1) === '') {
+    normalizedLines.pop();
+  }
+  return `${normalizedLines.join('\n')}\n`;
 }
 
 function shouldDropCoverageLine(line, currentSourcePath, lineCountCache, root) {

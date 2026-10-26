@@ -79,6 +79,15 @@ describe('RevealOnScrollDirective', () => {
     return { directive, element };
   }
 
+  it('Given un délai de révélation, When la directive démarre, Then le délai reste configurable sans surcharger directement la transition CSS', () => {
+    const { directive, element } = createDirective();
+    directive.revealDelayMs = 120;
+    directive.ngOnInit();
+    expect(element.style.getPropertyValue('--reveal-delay')).toBe('120ms');
+    expect(element.style.transitionDelay).toBe('');
+    directive.ngOnDestroy();
+  });
+
   it('Given un rendu sans navigateur, When la directive démarre, Then le contenu est immédiatement visible sans décalage mobile', () => {
     const { directive, element } = createDirective();
     directive.revealDelayMs = 80;
@@ -87,7 +96,7 @@ describe('RevealOnScrollDirective', () => {
     directive.ngOnInit();
     vi.unstubAllGlobals();
     expect(element.classList.contains('motion-reveal-visible')).toBe(true);
-    expect(element.style.transitionDelay).toBe('80ms');
+    expect(element.style.getPropertyValue('--reveal-delay')).toBe('80ms');
     directive.ngOnDestroy();
   });
 
@@ -132,7 +141,7 @@ describe('RevealOnScrollDirective', () => {
     directive.revealDelayMobileMs = 20;
     directive.ngOnInit();
     vi.unstubAllGlobals();
-    expect(element.style.transitionDelay).toBe('90ms');
+    expect(element.style.getPropertyValue('--reveal-delay')).toBe('90ms');
     directive.ngOnDestroy();
   });
 
@@ -172,7 +181,7 @@ describe('RevealOnScrollDirective', () => {
       ) as HTMLElement;
 
       expect(target.classList.contains('motion-reveal-base')).toBe(true);
-      expect(target.style.transitionDelay).toBe('40ms');
+      expect(target.style.getPropertyValue('--reveal-delay')).toBe('40ms');
       expect(observedElement).toBe(target);
     } finally {
       if (originalObserver) {
@@ -262,7 +271,7 @@ describe('RevealOnScrollDirective', () => {
         '#target-mobile',
       ) as HTMLElement;
 
-      expect(target.style.transitionDelay).toBe('30ms');
+      expect(target.style.getPropertyValue('--reveal-delay')).toBe('30ms');
     } finally {
       if (originalObserver) {
         (

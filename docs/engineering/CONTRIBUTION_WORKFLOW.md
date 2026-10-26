@@ -135,6 +135,14 @@ conformité des fichiers existants.
 
 - Tout nouveau composant/page UI doit inclure au moins une validation d'accessibilité (aria-label, navigation clavier, contraste).
 
+Les indicateurs de focus globaux restent hors des couches Tailwind pour ne pas
+être annulés par `outline-none`. Les animations décoratives et les délais de
+révélation ne sont activés qu'avec `prefers-reduced-motion: no-preference`.
+`RevealOnScrollDirective` transmet le délai par `--reveal-delay`, sans surcharger
+directement `transition-delay`. Les régressions Playwright vérifient le focus,
+les délais calculés et le changement de préférence de mouvement sur les trois
+moteurs.
+
 1. **Documentation à jour** :
 
 - Tout changement d'architecture ou de process doit être répercuté dans la doc Markdown dans le même commit que le code.
@@ -372,6 +380,11 @@ pnpm docs:index:write
 pnpm docs:toc:check
 pnpm docs:toc:write
 ```
+
+La génération des sommaires utilise le résolveur Git partagé, sans recherche
+implicite dans `PATH`. Les titres malformés sont analysés sans expressions
+régulières à retour arrière non borné ; les régressions couvrent les longs
+titres, les liens incomplets et la préservation des ancres et fins de ligne.
 
 Le workflow `.github/workflows/docs-quality.yml` exécute sur pull request :
 

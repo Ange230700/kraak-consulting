@@ -39,19 +39,6 @@
       transform 0.3s ease-out;
   }
 
-  /* Amélioration du focus visuel avec transitions */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  [pButton]:focus-visible {
-    outline: 2px solid var(--p-primary-400);
-    outline-offset: 2px;
-    transition:
-      outline-color 0.2s ease-out,
-      outline-offset 0.2s ease-out;
-  }
-
   /* Transitions pour les images */
   img {
     transition:
@@ -87,6 +74,18 @@
       opacity 0.3s ease-out,
       transform 0.3s ease-out;
   }
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[pButton]:focus-visible {
+  outline: 2px solid var(--p-primary-400);
+  outline-offset: 2px;
+  transition:
+    outline-color 0.2s ease-out,
+    outline-offset 0.2s ease-out;
 }
 
 /* ===== UTILITAIRES DE TRANSITION MANUEL ===== */
