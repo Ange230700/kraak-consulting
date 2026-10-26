@@ -44,6 +44,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Contrôle qualité complet et couverture à 100 % par fichier
         run: pnpm check
 

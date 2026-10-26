@@ -45,6 +45,10 @@ Chromium est nécessaire uniquement au PDF. Sur un hôte Linux sans dépendances
 système de navigateur, utiliser `pnpm exec playwright install --with-deps chromium`.
 TXT et PPTX fonctionnent sans navigateur, sans PowerPoint et sans LibreOffice.
 
+Les tests workspace incluent une génération PDF réelle. Les jobs CI qui exécutent
+`pnpm test:workspace` ou `pnpm check` installent donc Chromium et ses dépendances
+système avant les tests, comme le workflow de qualité documentaire.
+
 ## Commandes
 
 ```bash

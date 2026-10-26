@@ -23,9 +23,38 @@ test('Given la CI E2E, When les navigateurs sont préparés, Then une image Play
   assert.ok(
     workflow.includes(`mcr.microsoft.com/playwright:v${version}-noble`),
   );
-  assert.doesNotMatch(workflow, /playwright install/);
+  const e2eWorkflow = workflow.slice(
+    workflow.indexOf('  e2e-browsers:'),
+    workflow.indexOf('  e2e:'),
+  );
+  assert.doesNotMatch(e2eWorkflow, /playwright install/);
   assert.match(workflow, /PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'/);
   assert.match(workflow, /exec tsc --noEmit/);
+});
+
+test('Given les tests PDF workspace, When les jobs CI et Sonar exécutent ces tests, Then Chromium est installé avant leur lancement', () => {
+  const sonarWorkflow = readFileSync(
+    new URL('.github/workflows/sonarcloud.yml', root),
+    'utf8',
+  );
+  for (const job of [
+    workflow.slice(
+      workflow.indexOf('  quality-gate:'),
+      workflow.indexOf('  lint:'),
+    ),
+    workflow.slice(
+      workflow.indexOf('  workspace:'),
+      workflow.indexOf('  docker:'),
+    ),
+    sonarWorkflow,
+  ]) {
+    const installation = job.indexOf(
+      'pnpm exec playwright install --with-deps chromium',
+    );
+    const execution = job.search(/run: pnpm (?:check|test:workspace)/);
+    assert.ok(installation >= 0);
+    assert.ok(execution > installation);
+  }
 });
 
 test('Given le conteneur Playwright exécuté en root, When Firefox démarre, Then HOME appartient à l’utilisateur courant', () => {
