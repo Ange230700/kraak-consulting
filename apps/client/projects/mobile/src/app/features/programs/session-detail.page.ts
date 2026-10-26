@@ -100,7 +100,7 @@ export default class SessionDetailPage implements OnInit {
   ngOnInit(): void {
     const programId = readProgramId(this.route);
     if (programId) {
-      this.loadProgramDetail(programId);
+      void this.loadProgramDetail(programId);
     }
   }
 

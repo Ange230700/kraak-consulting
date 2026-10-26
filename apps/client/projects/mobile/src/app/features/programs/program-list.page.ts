@@ -32,7 +32,7 @@ export default class ProgramListPage implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.loadPrograms();
+    void this.loadPrograms();
   }
 
   protected async loadPrograms(): Promise<void> {

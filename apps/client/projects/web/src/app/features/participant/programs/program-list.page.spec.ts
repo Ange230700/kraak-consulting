@@ -12,6 +12,25 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant ProgramListPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    await TestBed.configureTestingModule({
+      imports: [ProgramListPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: {
+            currentSession: () => null,
+          },
+        },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it('Given tous les états d’inscription et de progression, When les libellés sont demandés, Then chaque état possède sa traduction', () => {
     const page = TestBed.createComponent(ProgramListPage).componentInstance;
     const i18n = TestBed.inject(KraakI18nService);
@@ -101,26 +120,6 @@ describe('Web Participant ProgramListPage', () => {
     },
   };
 
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    await TestBed.configureTestingModule({
-      imports: [ProgramListPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        {
-          provide: WebAuthService,
-          useValue: {
-            currentSession: () => null,
-          },
-        },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
-  });
-
   function configureClient(
     fixture: ReturnType<typeof TestBed.createComponent<ProgramListPage>>,
     result: Promise<ParticipantProgramListItemDto[]>,
@@ -153,8 +152,9 @@ describe('Web Participant ProgramListPage', () => {
     expect(text).toContain('3/8');
     expect(text).toContain('Cohorte pilote');
 
-    const progress = element.querySelector('[role="progressbar"]');
-    expect(progress?.getAttribute('aria-valuenow')).toBe('38');
+    const progress = element.querySelector<HTMLProgressElement>('progress');
+    expect(progress?.value).toBe(38);
+    expect(progress?.max).toBe(100);
     expect(
       element.querySelector('a[href="/participant/programmes/prog-1"]'),
     ).not.toBeNull();
@@ -221,7 +221,7 @@ describe('Web Participant ProgramListPage', () => {
     expect(text).toContain('Start');
     expect(text).toContain('Open programme');
 
-    const progress = element.querySelector('[role="progressbar"]');
+    const progress = element.querySelector<HTMLProgressElement>('progress');
     expect(progress?.getAttribute('aria-label')).toBe(
       'Progress for Programme test',
     );

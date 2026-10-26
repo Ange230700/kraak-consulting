@@ -15,21 +15,6 @@ const LOCAL_ENGLISH_SERVICES_URL = `${LOCAL_BASE_URL}/en/services`;
 const LOCAL_OG_IMAGE_URL = `${LOCAL_BASE_URL}/assets/site-visuals/photos/home-hero-workshop.jpg`;
 
 describe('SeoService', () => {
-  it('Given une ancienne locale Open Graph, When une nouvelle page est appliquée, Then les anciennes alternatives sont remplacées', () => {
-    TestBed.inject(Meta).addTag({
-      property: 'og:locale:alternate',
-      content: 'obsolete',
-    });
-    TestBed.inject(SeoService).applyPageSeo(
-      findLocalizedSeoPageByPath('/fr/contact')!,
-      LOCAL_BASE_URL,
-    );
-    expect(
-      document.head.querySelector(
-        'meta[property="og:locale:alternate"][content="obsolete"]',
-      ),
-    ).toBeNull();
-  });
   beforeEach(() => {
     document.head
       .querySelectorAll(
@@ -48,6 +33,21 @@ describe('SeoService', () => {
     TestBed.configureTestingModule({
       providers: [SeoService],
     });
+  });
+  it('Given une ancienne locale Open Graph, When une nouvelle page est appliquée, Then les anciennes alternatives sont remplacées', () => {
+    TestBed.inject(Meta).addTag({
+      property: 'og:locale:alternate',
+      content: 'obsolete',
+    });
+    TestBed.inject(SeoService).applyPageSeo(
+      findLocalizedSeoPageByPath('/fr/contact')!,
+      LOCAL_BASE_URL,
+    );
+    expect(
+      document.head.querySelector(
+        'meta[property="og:locale:alternate"][content="obsolete"]',
+      ),
+    ).toBeNull();
   });
 
   it('Given a localized French page, when applyPageSeo is called, then title canonical metadata and document language are updated', () => {

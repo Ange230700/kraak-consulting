@@ -141,7 +141,7 @@ describe('Navbar', () => {
     const navLinks = Array.from(
       host.querySelectorAll<HTMLAnchorElement>('a.kr-nav-link'),
     );
-    const languageGroup = host.querySelector<HTMLElement>('[role="group"]');
+    const languageGroup = host.querySelector<HTMLFieldSetElement>('fieldset');
     const frenchLink = languageGroup?.querySelector<HTMLAnchorElement>(
       'a[hreflang="fr-CI"]',
     );
@@ -183,7 +183,7 @@ describe('Navbar', () => {
     const navLinks = Array.from(
       host.querySelectorAll<HTMLAnchorElement>('a.kr-nav-link'),
     );
-    const languageGroup = host.querySelector<HTMLElement>('[role="group"]');
+    const languageGroup = host.querySelector<HTMLFieldSetElement>('fieldset');
     const frenchLink = languageGroup?.querySelector<HTMLAnchorElement>(
       'a[hreflang="fr-CI"]',
     );

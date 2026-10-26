@@ -19,7 +19,7 @@ function isSupportedLanguage(
 }
 
 function normalizeLocaleSeparators(candidate: string): string {
-  return candidate.trim().replace(/_/g, '-');
+  return candidate.trim().replaceAll('_', '-');
 }
 
 function readLanguage(candidate: string): string | undefined {

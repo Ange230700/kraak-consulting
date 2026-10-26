@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-26
 source_of_truth: true
 ---
 
@@ -43,6 +43,12 @@ Tout payload d'entrée complexe ajoute `<name>.dto.ts` et
 
 ## Internationalisation cible
 
+Les réponses localisées actuelles utilisent `src/i18n/api-message.ts` et les
+catalogues JSON `api-messages.fr-CI.json` et `api-messages.en-GB.json`. Les clés
+sont dérivées du catalogue français ; le typage et les tests imposent la même
+liste de clés en anglais. TypeScript copie les deux catalogues dans
+`dist/i18n/` lors du build, sans chargement réseau ni dépendance supplémentaire.
+
 L'API exposera progressivement des codes d'erreur machine-readable stables,
 associés aux statuts HTTP. Les clients web et mobile traduiront ces codes en
 messages visibles dans leur propre catalogue. Les messages de debug resteront
@@ -52,8 +58,8 @@ Les e-mails et notifications rendus côté serveur appartiendront à des templat
 localisés côté API. Leur locale cible viendra du choix explicite, du profil
 utilisateur ou du contexte de requête, puis retombera sur `fr-CI`.
 
-Cette PR ne modifie aucun contrôleur, aucune route, aucun DTO et aucune réponse
-API.
+Le stockage des messages dans ces catalogues ne modifie ni les routes, ni les
+DTO, ni le contenu des réponses API.
 
 ## Sources liées
 

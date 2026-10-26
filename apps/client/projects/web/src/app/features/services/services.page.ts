@@ -9,22 +9,17 @@ import {
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
-import {
-  initializeMarketingPageAnimations,
-  teardownMarketingPageAnimations,
-} from '../../core/animations/marketing-page-animations';
+import { initializeMarketingPageAnimations } from '../../core/animations/marketing-page-animations';
+import { LazyGsapLoader } from '../../core/animations/lazy-gsap-loader';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
-import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
 import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
-import {
-  KraakI18nService,
-  KraakTranslatePipe,
-} from '../../../../../shared/i18n';
+import { KraakI18nService } from '../../../../../shared/i18n/kraak-i18n.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
 const SERVICES_FAQ_TRANSLATIONS = [
   {
@@ -57,9 +52,7 @@ const SERVICES_FAQ_TRANSLATIONS = [
 })
 export default class ServicesPage implements OnInit, OnDestroy {
   private readonly i18n = inject(KraakI18nService);
-  private readonly injector = inject(Injector);
-  private gsapService: GsapAnimationsService | null = null;
-  private isDestroyed = false;
+  private readonly animations = new LazyGsapLoader(inject(Injector));
 
   protected readonly faqItems = computed<readonly FaqItem[]>(() => {
     this.i18n.locale();
@@ -75,14 +68,11 @@ export default class ServicesPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.isDestroyed = true;
-    if (this.gsapService) {
-      teardownMarketingPageAnimations(this.gsapService);
-    }
+    this.animations.destroy();
   }
 
   private async initializeAnimations(): Promise<void> {
-    const gsapService = await this.resolveGsapService();
+    const gsapService = await this.animations.resolve();
     if (!gsapService) {
       return;
     }
@@ -91,25 +81,5 @@ export default class ServicesPage implements OnInit, OnDestroy {
     gsapService.initializeReversibleScrollAnimations(
       '.services-method-step[data-motion="reversible"]',
     );
-  }
-
-  private async resolveGsapService(): Promise<GsapAnimationsService | null> {
-    if (globalThis.window === undefined) {
-      return null;
-    }
-
-    if (this.gsapService) {
-      return this.gsapService;
-    }
-
-    const { GsapAnimationsService } =
-      await import('../../core/animations/gsap-animations.service');
-
-    if (this.isDestroyed) {
-      return null;
-    }
-
-    this.gsapService = this.injector.get(GsapAnimationsService);
-    return this.gsapService;
   }
 }

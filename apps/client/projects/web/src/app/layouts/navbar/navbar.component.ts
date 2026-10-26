@@ -5,11 +5,8 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import type { SupportedLocale } from '@kraak/domain';
 
-import {
-  KraakI18nService,
-  KraakTranslatePipe,
-  type TranslationKey,
-} from '../../../../../shared/i18n';
+import { KraakI18nService } from '../../../../../shared/i18n/kraak-i18n.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
 import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
 import {
@@ -20,7 +17,7 @@ import { PublicConversionTrackingDirective } from '../../shared/analytics/public
 import { ParticipantNavCta } from '../../shared/participant-nav-cta/participant-nav-cta.component';
 
 interface NavLink {
-  labelKey: TranslationKey;
+  labelKey: string;
   pageId: LocalizedPublicPageId;
 }
 

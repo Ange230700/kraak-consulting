@@ -2,13 +2,36 @@ import { DocumentBuilder } from '@nestjs/swagger';
 
 describe('Given le démarrage de l’API', () => {
   const environment = { ...process.env };
+  const exitCode = process.exitCode;
 
   afterEach(() => {
     process.env = { ...environment };
+    process.exitCode = exitCode;
+    jest.restoreAllMocks();
     jest.resetModules();
     jest.dontMock('@nestjs/core');
     jest.dontMock('@nestjs/swagger');
     jest.dontMock('./app.module');
+  });
+
+  it('Given une erreur de démarrage, When le bootstrap échoue, Then l’erreur est journalisée et le processus signale un échec', async () => {
+    const error = new Error('Démarrage indisponible');
+    const log = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    jest.doMock('@nestjs/core', () => ({
+      NestFactory: { create: jest.fn().mockRejectedValue(error) },
+    }));
+    jest.doMock('./app.module', () => ({ AppModule: class AppModule {} }));
+
+    await import('./main');
+    await new Promise<void>((resolve) => setImmediate(resolve));
+
+    expect(log).toHaveBeenCalledWith(
+      "Échec du démarrage de l'API KRAAK.",
+      error,
+    );
+    expect(process.exitCode).toBe(1);
   });
 
   it.each([

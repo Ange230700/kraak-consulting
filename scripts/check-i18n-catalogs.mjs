@@ -35,11 +35,10 @@ export function readLocaleContract(root) {
     'localization.ts',
   );
   const source = readFileSync(domainLocalizationPath, 'utf8');
-  const supportedMatch = source.match(
-    /SUPPORTED_LOCALES\s*=\s*Object\.freeze\(\s*\[([^\]]+)\]/m,
-  );
-  const sourceMatch = source.match(
-    /SOURCE_LOCALE:\s*SupportedLocale\s*=\s*'([^']+)'/,
+  const supportedMatch =
+    /SUPPORTED_LOCALES\s*=\s*Object\.freeze\(\s*\[([^\]]+)\]/m.exec(source);
+  const sourceMatch = /SOURCE_LOCALE:\s*SupportedLocale\s*=\s*'([^']+)'/.exec(
+    source,
   );
 
   if (!supportedMatch || !sourceMatch) {

@@ -163,6 +163,28 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('AboutPage', () => {
+  beforeEach(async () => {
+    analyticsService = { trackEvent: vi.fn() };
+
+    await TestBed.configureTestingModule({
+      imports: [AboutPage],
+      providers: [
+        provideRouter([]),
+        provideKraakI18n(),
+        { provide: AnalyticsService, useValue: analyticsService },
+        {
+          provide: GsapAnimationsService,
+          useValue: gsapAnimationsServiceMock,
+        },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('Given une page active, When les animations sont résolues puis réutilisées, Then le service anime la page et est nettoyé à la destruction', async () => {
     const animate = vi.spyOn(gsapAnimationsServiceMock, 'animatePageIn');
     const kill = vi.spyOn(gsapAnimationsServiceMock, 'killAllAnimations');
@@ -190,32 +212,9 @@ describe('AboutPage', () => {
     vi.stubGlobal('window', undefined);
     await page['initializeAnimations']();
     vi.stubGlobal('window', window);
-    expect(page['gsapService']).toBeNull();
+    expect(page['animations'].service).toBeNull();
   });
   let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
-
-  beforeEach(async () => {
-    analyticsService = { trackEvent: vi.fn() };
-
-    await TestBed.configureTestingModule({
-      imports: [AboutPage],
-      providers: [
-        provideRouter([]),
-        provideKraakI18n(),
-        { provide: AnalyticsService, useValue: analyticsService },
-        {
-          provide: GsapAnimationsService,
-          useValue: gsapAnimationsServiceMock,
-        },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
 
   it('Given the About page route When the component initializes Then the page instance is created', () => {
     const fixture = TestBed.createComponent(AboutPage);

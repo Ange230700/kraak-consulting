@@ -10,6 +10,43 @@ import SessionDetailPage from './session-detail.page';
 const TEST_MEETING_LINK_URL = 'https://meet.example.com/session1';
 
 describe('Mobile SessionDetailPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
+    service = {
+      getProgramDetail: vi.fn(),
+      markSessionProgress: vi.fn(),
+    };
+
+    activatedRoute = {
+      snapshot: {
+        paramMap: {
+          get: vi.fn((key: string) => {
+            if (key === 'programId') {
+              return 'prog-1';
+            }
+            if (key === 'sessionId') {
+              return 'session-1';
+            }
+            return null;
+          }),
+        },
+      },
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [SessionDetailPage],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        provideRouter([]),
+        provideKraakI18n(),
+        { provide: MobileProgramsService, useValue: service },
+        { provide: ActivatedRoute, useValue: activatedRoute },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
   it('Given une date invalide, When sa présentation est demandée, Then la valeur originale est conservée', () => {
     const page = TestBed.createComponent(SessionDetailPage).componentInstance;
     expect(page['formatMediumDateTime']('date invalide')).toBe('date invalide');
@@ -81,44 +118,6 @@ describe('Mobile SessionDetailPage', () => {
     announcements: [],
     curriculum: { courses: [] },
   };
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-
-    service = {
-      getProgramDetail: vi.fn(),
-      markSessionProgress: vi.fn(),
-    };
-
-    activatedRoute = {
-      snapshot: {
-        paramMap: {
-          get: vi.fn((key: string) => {
-            if (key === 'programId') {
-              return 'prog-1';
-            }
-            if (key === 'sessionId') {
-              return 'session-1';
-            }
-            return null;
-          }),
-        },
-      },
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [SessionDetailPage],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        provideRouter([]),
-        provideKraakI18n(),
-        { provide: MobileProgramsService, useValue: service },
-        { provide: ActivatedRoute, useValue: activatedRoute },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-  });
 
   it('should create', () => {
     service.getProgramDetail.mockResolvedValue(mockProgramDetail);

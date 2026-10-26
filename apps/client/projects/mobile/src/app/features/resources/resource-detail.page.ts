@@ -45,7 +45,7 @@ export default class ResourceDetailPage implements OnInit {
           return;
         }
 
-        this.loadResource(resourceId);
+        void this.loadResource(resourceId);
       });
   }
 

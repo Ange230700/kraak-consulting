@@ -257,22 +257,15 @@
                 </span>
               </div>
 
-              <div
-                class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100"
-                role="progressbar"
+              <progress
+                class="kr-program-progress mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-slate-100"
                 [attr.aria-label]="
                   'web.participant.programList.card.progressAria'
                     | kraakTranslate: { title: program.program.title }
                 "
-                aria-valuemin="0"
-                aria-valuemax="100"
-                [attr.aria-valuenow]="program.progress.completionRate"
-              >
-                <div
-                  class="h-full rounded-full bg-[linear-gradient(90deg,#1673ae_0%,#4cc3d9_100%)]"
-                  [style.width.%]="program.progress.completionRate"
-                ></div>
-              </div>
+                max="100"
+                [value]="program.progress.completionRate"
+              ></progress>
 
               <p class="mt-2 text-xs leading-5 text-slate-500">
                 {{ program.progress.completedSessions }}/{{

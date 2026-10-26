@@ -8,6 +8,7 @@
     "isolatedModules": false,
     "types": ["jest", "node"],
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "../..",

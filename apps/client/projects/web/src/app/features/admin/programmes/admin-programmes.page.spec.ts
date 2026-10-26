@@ -63,6 +63,23 @@ const programsClientMock = {
 };
 
 describe('AdminProgrammesPage', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    await TestBed.configureTestingModule({
+      imports: [AdminProgrammesPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        MessageService,
+        { provide: WebAuthService, useValue: webAuthServiceMock },
+      ],
+    }).compileComponents();
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
   it('Given des valeurs métier inconnues, When aucune traduction n’existe, Then les libellés bruts restent disponibles', () => {
     const page = TestBed.createComponent(AdminProgrammesPage).componentInstance;
     vi.spyOn(TestBed.inject(KraakI18nService), 'translate').mockImplementation(
@@ -99,23 +116,6 @@ describe('AdminProgrammesPage', () => {
       expect(page['programmes']()).toEqual(mockProgrammes);
     },
   );
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    await TestBed.configureTestingModule({
-      imports: [AdminProgrammesPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        MessageService,
-        { provide: WebAuthService, useValue: webAuthServiceMock },
-      ],
-    }).compileComponents();
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-  });
 
   it('Given the admin programmes page When it is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(AdminProgrammesPage);

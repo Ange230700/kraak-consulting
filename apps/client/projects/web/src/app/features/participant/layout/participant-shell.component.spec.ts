@@ -12,6 +12,28 @@ import {
   provideKraakI18n,
 } from '../../../../../../shared/i18n';
 describe('ParticipantShell', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    clearSession.mockReset();
+
+    await TestBed.configureTestingModule({
+      imports: [ParticipantShell],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: {
+            currentProfile,
+            clearSession,
+          },
+        },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it('Given un profil absent et une route de support indisponible, When le shell calcule ses repères, Then les valeurs de repli restent utilisables', () => {
     const originalProfile = currentProfile();
     currentProfile.set(null as never);
@@ -40,29 +62,6 @@ describe('ParticipantShell', () => {
       updatedAt: '2026-08-27T00:00:00.000Z',
     },
     participant: null,
-  });
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    clearSession.mockReset();
-
-    await TestBed.configureTestingModule({
-      imports: [ParticipantShell],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        {
-          provide: WebAuthService,
-          useValue: {
-            currentProfile,
-            clearSession,
-          },
-        },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
 
   it('Given an authenticated participant, When the shell renders, Then identity and participant navigation are visible', () => {

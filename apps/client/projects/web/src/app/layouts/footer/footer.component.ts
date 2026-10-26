@@ -7,10 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import {
-  KraakTranslatePipe,
-  type TranslationKey,
-} from '../../../../../shared/i18n';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
@@ -20,7 +17,7 @@ import type { LocalizedPublicPageId } from '../../routing/localized-public-route
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 
 interface FooterLink {
-  labelKey: TranslationKey;
+  labelKey: string;
   pageId: LocalizedPublicPageId;
 }
 
@@ -72,7 +69,7 @@ export class Footer implements AfterViewInit, OnDestroy {
     },
   ];
 
-  protected readonly expertiseItems: readonly TranslationKey[] = [
+  protected readonly expertiseItems: readonly string[] = [
     'web.shell.footer.expertiseItems.professionalTraining',
     'web.shell.footer.expertiseItems.projectManagement',
     'web.shell.footer.expertiseItems.internationalMobility',

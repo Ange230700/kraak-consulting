@@ -58,8 +58,7 @@
           </li>
         }
       </ul>
-      <div
-        role="group"
+      <fieldset
         [attr.aria-label]="'web.nav.languageSwitcher.label' | kraakTranslate"
         class="border-brand-blue/15 flex items-center self-start rounded-full border p-1 lg:mr-3 lg:self-auto"
       >
@@ -103,7 +102,7 @@
             {{ 'web.nav.languageSwitcher.englishShort' | kraakTranslate }}
           </span>
         </a>
-      </div>
+      </fieldset>
       <kraak-participant-nav-cta
         class="flex self-start lg:self-auto"
         (activated)="closeMobileMenu()"

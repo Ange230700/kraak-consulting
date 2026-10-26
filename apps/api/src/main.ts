@@ -86,4 +86,7 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap();
+void bootstrap().catch((error: unknown) => {
+  console.error("Échec du démarrage de l'API KRAAK.", error);
+  process.exitCode = 1;
+});

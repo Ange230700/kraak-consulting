@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { ArticleDto } from '@kraak/contracts';
-import { SOURCE_LOCALE, type SupportedLocale } from '@kraak/domain';
+import { SOURCE_LOCALE } from '@kraak/domain';
 import { Observable, catchError, map, of } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -42,7 +42,7 @@ export class BlogPublicService {
   }
 
   listPublishedArticles(
-    locale: SupportedLocale | string | null = SOURCE_LOCALE,
+    locale: string | null = SOURCE_LOCALE,
   ): Observable<BlogArticle[]> {
     return this.http.get<ArticleDto[]>(this.endpoint).pipe(
       map((articles) => mapPublicArticlesToBlogArticles(articles, locale)),
@@ -58,7 +58,7 @@ export class BlogPublicService {
 
   getPublishedArticleBySlug(
     slug: string,
-    locale: SupportedLocale | string | null = SOURCE_LOCALE,
+    locale: string | null = SOURCE_LOCALE,
   ): Observable<BlogArticle | null> {
     const normalizedSlug = this.normalizeSlug(slug);
 
@@ -96,7 +96,8 @@ export class BlogPublicService {
   private decodeSlugSafely(slug: string): string {
     try {
       return decodeURIComponent(slug);
-    } catch {
+    } catch (error) {
+      console.warn('web.blog.invalid-slug-encoding', { error });
       return slug;
     }
   }

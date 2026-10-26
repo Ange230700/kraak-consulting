@@ -25,6 +25,28 @@ function createSingleRowQuery(result: { data: unknown; error: unknown }) {
 describe('AuthService', () => {
   let service: AuthService;
 
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    localeContext.locale.mockReturnValue('fr-CI');
+    mockProfile();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: SupabaseService,
+          useValue: supabaseService,
+        },
+        {
+          provide: ApiLocaleContext,
+          useValue: localeContext,
+        },
+      ],
+    }).compile();
+
+    service = module.get<AuthService>(AuthService);
+  });
+
   it('Given une erreur fournisseur sans détails, When la réinitialisation est demandée, Then une erreur utilisateur est renvoyée et diagnostiquée', async () => {
     const warning = jest
       .spyOn(console, 'warn')
@@ -99,28 +121,6 @@ describe('AuthService', () => {
       throw new Error(`Unexpected table ${tableName}`);
     });
   }
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    localeContext.locale.mockReturnValue('fr-CI');
-    mockProfile();
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        {
-          provide: SupabaseService,
-          useValue: supabaseService,
-        },
-        {
-          provide: ApiLocaleContext,
-          useValue: localeContext,
-        },
-      ],
-    }).compile();
-
-    service = module.get<AuthService>(AuthService);
-  });
 
   it('devrait être défini', () => {
     expect(service).toBeDefined();

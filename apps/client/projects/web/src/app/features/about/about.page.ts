@@ -2,8 +2,9 @@ import { Component, Injector, OnInit, OnDestroy, inject } from '@angular/core';
 
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
-import type { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { KraakTranslatePipe } from '../../../../../shared/i18n';
+import { LazyGsapLoader } from '../../core/animations/lazy-gsap-loader';
+import { initializeMarketingPageAnimations } from '../../core/animations/marketing-page-animations';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
 @Component({
   selector: 'kraak-about-page',
@@ -12,52 +13,24 @@ import { KraakTranslatePipe } from '../../../../../shared/i18n';
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
-  private readonly injector = inject(Injector);
-  private gsapService: GsapAnimationsService | null = null;
-  private isDestroyed = false;
+  private readonly animations = new LazyGsapLoader(inject(Injector));
 
   ngOnInit(): void {
     void this.initializeAnimations();
   }
 
   ngOnDestroy(): void {
-    this.isDestroyed = true;
-    this.gsapService?.killAllAnimations();
+    this.animations.destroy();
   }
 
   private async initializeAnimations(): Promise<void> {
-    const gsapService = await this.resolveGsapService();
+    const gsapService = await this.animations.resolve();
     if (!gsapService) {
       return;
     }
 
-    gsapService.animatePageIn();
-    gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
-    gsapService.initializeReversibleScrollAnimations(
-      'article[data-motion="reversible"]',
-    );
-    gsapService.initializeInteractiveCardAnimations('article');
-    gsapService.initializeButtonTransitions();
-    gsapService.initializeIconAnimations();
-  }
-
-  private async resolveGsapService(): Promise<GsapAnimationsService | null> {
-    if (globalThis.window === undefined) {
-      return null;
-    }
-
-    if (this.gsapService) {
-      return this.gsapService;
-    }
-
-    const { GsapAnimationsService } =
-      await import('../../core/animations/gsap-animations.service');
-
-    if (this.isDestroyed) {
-      return null;
-    }
-
-    this.gsapService = this.injector.get(GsapAnimationsService);
-    return this.gsapService;
+    initializeMarketingPageAnimations(gsapService, {
+      reversibleSelector: 'article[data-motion="reversible"]',
+    });
   }
 }

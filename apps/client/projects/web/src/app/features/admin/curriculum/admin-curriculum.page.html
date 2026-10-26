@@ -20,14 +20,14 @@
       </div>
 
       <div class="flex flex-wrap gap-3">
-        <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
         <a
           pButton
           routerLink="/admin/dashboard"
           icon="pi pi-arrow-left"
-          [label]="'web.admin.curriculum.header.backDashboard' | kraakTranslate"
           class="kr-button-ghost"
-        ></a>
+        >
+          {{ 'web.admin.curriculum.header.backDashboard' | kraakTranslate }}
+        </a>
         <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
         <button
           type="button"

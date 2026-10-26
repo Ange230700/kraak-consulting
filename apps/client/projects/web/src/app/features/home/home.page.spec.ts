@@ -39,6 +39,22 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('HomePage', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HomePage],
+      providers: [
+        provideRouter([{ path: '**', component: BlankRouteComponent }]),
+        provideKraakI18n(),
+        {
+          provide: GsapAnimationsService,
+          useValue: gsapAnimationsServiceMock,
+        },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it('Given une page active, When les animations sont résolues puis réutilisées, Then le service anime la page et est nettoyé à la destruction', async () => {
     const animate = vi.spyOn(gsapAnimationsServiceMock, 'animatePageIn');
     const kill = vi.spyOn(gsapAnimationsServiceMock, 'killAllAnimations');
@@ -57,7 +73,7 @@ describe('HomePage', () => {
     const pending = page['initializeAnimations']();
     page.ngOnDestroy();
     await pending;
-    expect(page['gsapService']).toBeNull();
+    expect(page['animations'].service).toBeNull();
   });
 
   it('Given un rendu serveur, When les animations sont demandées, Then aucun service navigateur n’est utilisé', async () => {
@@ -66,23 +82,7 @@ describe('HomePage', () => {
     vi.stubGlobal('window', undefined);
     await page['initializeAnimations']();
     vi.stubGlobal('window', window);
-    expect(page['gsapService']).toBeNull();
-  });
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HomePage],
-      providers: [
-        provideRouter([{ path: '**', component: BlankRouteComponent }]),
-        provideKraakI18n(),
-        {
-          provide: GsapAnimationsService,
-          useValue: gsapAnimationsServiceMock,
-        },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+    expect(page['animations'].service).toBeNull();
   });
 
   it('Given the home page component When it is created Then the instance exists', () => {

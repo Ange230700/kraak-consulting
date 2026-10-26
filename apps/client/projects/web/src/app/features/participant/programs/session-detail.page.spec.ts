@@ -12,6 +12,42 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant SessionDetailPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    activatedRoute = {
+      snapshot: {
+        paramMap: {
+          get: vi.fn((key: string) => {
+            if (key === 'programId') {
+              return 'prog-1';
+            }
+            if (key === 'sessionId') {
+              return 'session-1';
+            }
+            return null;
+          }),
+        },
+      },
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [SessionDetailPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: {
+            currentSession: () => null,
+          },
+        },
+        { provide: ActivatedRoute, useValue: activatedRoute },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it.each([null, {}, { accessToken: 'test-token' }])(
     'Given une session utilisateur %j, When le détail est rechargé, Then le client réel charge le programme avec sa langue',
     async (session) => {
@@ -142,43 +178,6 @@ describe('Web Participant SessionDetailPage', () => {
     announcements: [],
     curriculum: { courses: [] },
   };
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    activatedRoute = {
-      snapshot: {
-        paramMap: {
-          get: vi.fn((key: string) => {
-            if (key === 'programId') {
-              return 'prog-1';
-            }
-            if (key === 'sessionId') {
-              return 'session-1';
-            }
-            return null;
-          }),
-        },
-      },
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [SessionDetailPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        {
-          provide: WebAuthService,
-          useValue: {
-            currentSession: () => null,
-          },
-        },
-        { provide: ActivatedRoute, useValue: activatedRoute },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
-  });
 
   function configureClient(
     fixture: ReturnType<typeof TestBed.createComponent<SessionDetailPage>>,

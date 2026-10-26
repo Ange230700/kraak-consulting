@@ -12,6 +12,34 @@ import {
 } from '../../../../../../shared/i18n';
 
 describe('Web Participant ProgramDetailPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    activatedRoute = {
+      snapshot: {
+        paramMap: {
+          get: vi.fn((key: string) => (key === 'programId' ? 'prog-1' : null)),
+        },
+      },
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [ProgramDetailPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        {
+          provide: WebAuthService,
+          useValue: {
+            currentSession: () => null,
+          },
+        },
+        { provide: ActivatedRoute, useValue: activatedRoute },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it('Given tous les états du programme, When les libellés sont demandés, Then les traductions couvrent chaque état métier', () => {
     const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
     const i18n = TestBed.inject(KraakI18nService);
@@ -282,35 +310,6 @@ describe('Web Participant ProgramDetailPage', () => {
       ],
     },
   };
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    activatedRoute = {
-      snapshot: {
-        paramMap: {
-          get: vi.fn((key: string) => (key === 'programId' ? 'prog-1' : null)),
-        },
-      },
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [ProgramDetailPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        {
-          provide: WebAuthService,
-          useValue: {
-            currentSession: () => null,
-          },
-        },
-        { provide: ActivatedRoute, useValue: activatedRoute },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
-  });
 
   function configureClient(
     fixture: ReturnType<typeof TestBed.createComponent<ProgramDetailPage>>,
