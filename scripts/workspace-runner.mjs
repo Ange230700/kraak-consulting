@@ -4,7 +4,11 @@ import { spawn as nodeSpawn } from 'node:child_process';
 import nodeProcess from 'node:process';
 import { pathToFileURL } from 'node:url';
 
-import { createWorkflows, getPnpmCommand } from './workspace-commands.mjs';
+import {
+  createWorkflows,
+  getPnpmCommand,
+  quoteWindowsArgument,
+} from './workspace-commands.mjs';
 
 function prefixStream(stream, prefix, target) {
   let buffer = '';
@@ -25,51 +29,6 @@ function prefixStream(stream, prefix, target) {
       target.write(`${prefix}${buffer}\n`);
     }
   });
-}
-
-function needsWindowsQuoting(argument) {
-  for (const character of argument) {
-    if (character === ' ' || character === '\t' || character === '"') {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function quoteWindowsArgument(argument) {
-  if (argument.length === 0) {
-    return '""';
-  }
-
-  if (!needsWindowsQuoting(argument)) {
-    return argument;
-  }
-
-  let quotedArgument = '"';
-  let backslashCount = 0;
-
-  for (const character of argument) {
-    if (character === '\\') {
-      backslashCount += 1;
-      continue;
-    }
-
-    if (character === '"') {
-      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
-      quotedArgument += '"';
-    } else {
-      quotedArgument += '\\'.repeat(backslashCount);
-      quotedArgument += character;
-    }
-
-    backslashCount = 0;
-  }
-
-  quotedArgument += '\\'.repeat(backslashCount * 2);
-  quotedArgument += '"';
-
-  return quotedArgument;
 }
 
 export async function runWorkspaceWorkflow({

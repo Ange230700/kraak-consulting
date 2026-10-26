@@ -10,7 +10,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { getPnpmCommand } from './workspace-commands.mjs';
+import { getPnpmCommand, quoteWindowsArgument } from './workspace-commands.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '..');
@@ -426,51 +426,6 @@ export function acquireScanLock(
 
 export function releaseScanLock(lockPath = scannerLockPath) {
   rmSync(lockPath, { force: true });
-}
-
-function needsWindowsQuoting(argument) {
-  for (const character of argument) {
-    if (character === ' ' || character === '\t' || character === '"') {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function quoteWindowsArgument(argument) {
-  if (argument.length === 0) {
-    return '""';
-  }
-
-  if (!needsWindowsQuoting(argument)) {
-    return argument;
-  }
-
-  let quotedArgument = '"';
-  let backslashCount = 0;
-
-  for (const character of argument) {
-    if (character === '\\') {
-      backslashCount += 1;
-      continue;
-    }
-
-    if (character === '"') {
-      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
-      quotedArgument += '"';
-    } else {
-      quotedArgument += '\\'.repeat(backslashCount);
-      quotedArgument += character;
-    }
-
-    backslashCount = 0;
-  }
-
-  quotedArgument += '\\'.repeat(backslashCount * 2);
-  quotedArgument += '"';
-
-  return quotedArgument;
 }
 
 export function spawnSonarCommand(

@@ -114,7 +114,8 @@ export async function runObservabilityChecks(input, options = {}) {
 }
 
 function formatLogValue(value) {
-  return JSON.stringify(String(value)).slice(1, -1);
+  const singleLine = String(value).replaceAll(/[\r\n]/g, ' ');
+  return JSON.stringify(singleLine).slice(1, -1);
 }
 
 export function formatSummary(results) {
