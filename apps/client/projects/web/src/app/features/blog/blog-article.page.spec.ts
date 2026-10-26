@@ -35,6 +35,56 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('BlogArticlePage', () => {
+  afterEach(() => {
+    document.head.querySelector('#kraak-blog-article-jsonld')?.remove();
+  });
+
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
+    seoServiceMock.applyPageSeo.mockReset();
+    blogPublicServiceMock.listPublishedArticles.mockClear();
+    blogPublicServiceMock.getPublishedArticleBySlug.mockClear();
+    paramMapSubject = new BehaviorSubject(
+      convertToParamMap({
+        slug: 'clarifier-son-projet-avant-de-candidater',
+      }),
+    );
+
+    await TestBed.configureTestingModule({
+      imports: [BlogArticlePage],
+      providers: [
+        provideRouter([]),
+        provideKraakI18n(),
+        {
+          provide: SeoService,
+          useValue: seoServiceMock,
+        },
+        {
+          provide: GsapAnimationsService,
+          useValue: gsapAnimationsServiceMock,
+        },
+        {
+          provide: BlogPublicService,
+          useValue: blogPublicServiceMock,
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({
+                slug: 'clarifier-son-projet-avant-de-candidater',
+              }),
+            },
+            paramMap: paramMapSubject.asObservable(),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
   it('Given une route d’article anglaise sans date éditoriale, When les données structurées sont générées, Then la locale et la date de repli sont explicites', () => {
     TestBed.inject(ActivatedRoute).snapshot.data = { locale: 'en-GB' };
     vi.useFakeTimers();
@@ -91,57 +141,6 @@ describe('BlogArticlePage', () => {
     ),
   };
   let paramMapSubject: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
-
-  afterEach(() => {
-    document.head.querySelector('#kraak-blog-article-jsonld')?.remove();
-  });
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-
-    seoServiceMock.applyPageSeo.mockReset();
-    blogPublicServiceMock.listPublishedArticles.mockClear();
-    blogPublicServiceMock.getPublishedArticleBySlug.mockClear();
-    paramMapSubject = new BehaviorSubject(
-      convertToParamMap({
-        slug: 'clarifier-son-projet-avant-de-candidater',
-      }),
-    );
-
-    await TestBed.configureTestingModule({
-      imports: [BlogArticlePage],
-      providers: [
-        provideRouter([]),
-        provideKraakI18n(),
-        {
-          provide: SeoService,
-          useValue: seoServiceMock,
-        },
-        {
-          provide: GsapAnimationsService,
-          useValue: gsapAnimationsServiceMock,
-        },
-        {
-          provide: BlogPublicService,
-          useValue: blogPublicServiceMock,
-        },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: convertToParamMap({
-                slug: 'clarifier-son-projet-avant-de-candidater',
-              }),
-            },
-            paramMap: paramMapSubject.asObservable(),
-          },
-        },
-      ],
-    }).compileComponents();
-
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
-  });
 
   it('Given the article page component When it is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(BlogArticlePage);

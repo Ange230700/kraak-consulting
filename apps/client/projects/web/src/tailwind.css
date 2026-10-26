@@ -433,15 +433,23 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto;
-    transition-duration: 0ms !important;
-    transition-delay: 0ms !important;
-    animation-duration: 0ms !important;
-    animation-iteration-count: 1 !important;
+@utility kr-program-progress {
+  appearance: none;
+  border: 0;
+
+  &::-webkit-progress-bar {
+    background: var(--color-slate-100);
+    border-radius: inherit;
+  }
+
+  &::-webkit-progress-value {
+    background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
+    border-radius: inherit;
+  }
+
+  &::-moz-progress-bar {
+    background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
+    border-radius: inherit;
   }
 }
 

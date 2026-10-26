@@ -36,25 +36,6 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('ServicesPage', () => {
-  it('Given un rendu serveur, When la page demande ses animations, Then aucun service navigateur n’est résolu', async () => {
-    const page = TestBed.createComponent(ServicesPage).componentInstance;
-    const window = globalThis.window;
-    vi.stubGlobal('window', undefined);
-    await page['initializeAnimations']();
-    vi.stubGlobal('window', window);
-    expect(page['gsapService']).toBeNull();
-  });
-
-  it('Given un service déjà résolu, When les animations sont redemandées, Then la même instance est réutilisée', async () => {
-    const page = TestBed.createComponent(ServicesPage).componentInstance;
-    await page['initializeAnimations']();
-    const service = page['gsapService'];
-    await page['initializeAnimations']();
-    expect(page['gsapService']).toBe(service);
-    expect(service).not.toBeNull();
-  });
-  let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
-
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
 
@@ -81,6 +62,24 @@ describe('ServicesPage', () => {
     await TestBed.inject(ApplicationInitStatus).donePromise;
     await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
+  it('Given un rendu serveur, When la page demande ses animations, Then aucun service navigateur n’est résolu', async () => {
+    const page = TestBed.createComponent(ServicesPage).componentInstance;
+    const window = globalThis.window;
+    vi.stubGlobal('window', undefined);
+    await page['initializeAnimations']();
+    vi.stubGlobal('window', window);
+    expect(page['animations'].service).toBeNull();
+  });
+
+  it('Given un service déjà résolu, When les animations sont redemandées, Then la même instance est réutilisée', async () => {
+    const page = TestBed.createComponent(ServicesPage).componentInstance;
+    await page['initializeAnimations']();
+    const service = page['animations'].service;
+    await page['initializeAnimations']();
+    expect(page['animations'].service).toBe(service);
+    expect(service).not.toBeNull();
+  });
+  let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
 
   it('Given the services page When the component is created Then the instance exists', () => {
     const fixture = TestBed.createComponent(ServicesPage);

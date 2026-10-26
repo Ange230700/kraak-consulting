@@ -1,6 +1,22 @@
 import { apiMessage, translateApiMessage } from './api-message';
+import frenchMessages from './api-messages.fr-CI.json';
+import englishMessages from './api-messages.en-GB.json';
 
 describe('API message localization', () => {
+  it('Given les catalogues API séparés, When chaque clé est traduite, Then les deux langues conservent toutes leurs valeurs', () => {
+    const keys = Object.keys(frenchMessages) as Array<
+      keyof typeof frenchMessages
+    >;
+    expect(Object.keys(englishMessages).sort()).toEqual([...keys].sort());
+    for (const key of keys) {
+      expect(translateApiMessage('fr-CI', apiMessage(key))).toBe(
+        frenchMessages[key],
+      );
+      expect(translateApiMessage('en-GB', apiMessage(key))).toBe(
+        englishMessages[key],
+      );
+    }
+  });
   it('Given une langue inconnue et un paramètre manquant, When le message est traduit, Then le français et son emplacement sont conservés', () => {
     expect(
       translateApiMessage(

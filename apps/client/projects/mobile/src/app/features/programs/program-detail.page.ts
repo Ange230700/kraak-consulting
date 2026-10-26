@@ -48,7 +48,7 @@ export default class ProgramDetailPage implements OnInit {
   ngOnInit(): void {
     const programId = readProgramId(this.route);
     if (programId) {
-      this.loadProgramDetail(programId);
+      void this.loadProgramDetail(programId);
     }
   }
 

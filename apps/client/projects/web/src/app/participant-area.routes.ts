@@ -1,7 +1,12 @@
 // apps\client\projects\web\src\app\participant-area.routes.ts
 
 import { inject } from '@angular/core';
-import { type CanMatchFn, type ResolveFn, Routes } from '@angular/router';
+import {
+  type CanMatchFn,
+  type ResolveFn,
+  type Route,
+  Routes,
+} from '@angular/router';
 import { resolveSupportedLocale } from '@kraak/domain';
 
 import {
@@ -9,7 +14,7 @@ import {
   participantRoleChildGuard,
 } from './core/auth/auth.guard';
 import { isParticipantAreaEnabled } from './core/runtime/runtime-config';
-import { KraakI18nService } from '../../../shared/i18n';
+import { KraakI18nService } from '../../../shared/i18n/kraak-i18n.service';
 import { type SeoPageDefinition } from './seo/site-seo';
 
 export const participantAreaCanMatch: CanMatchFn = () =>
@@ -67,43 +72,45 @@ const participantSeo =
     };
   };
 
+function authenticationPage(
+  path: string,
+  titleKey: string,
+  descriptionKey: string,
+  loadComponent: NonNullable<Route['loadComponent']>,
+): Route {
+  return {
+    path,
+    title: translatedTitle(titleKey),
+    resolve: {
+      seo: participantSeo({
+        path,
+        titleKey,
+        descriptionKey,
+      }),
+    },
+    loadComponent,
+  };
+}
+
 export const participantAreaRoutes: Routes = [
-  {
-    path: 'connexion',
-    title: translatedTitle('web.auth.signIn.title'),
-    resolve: {
-      seo: participantSeo({
-        path: 'connexion',
-        titleKey: 'web.auth.signIn.title',
-        descriptionKey: 'web.auth.signIn.subtitle',
-      }),
-    },
-    loadComponent: () => import('./features/auth/sign-in.page'),
-  },
-  {
-    path: 'inscription',
-    title: translatedTitle('web.auth.signUp.title'),
-    resolve: {
-      seo: participantSeo({
-        path: 'inscription',
-        titleKey: 'web.auth.signUp.title',
-        descriptionKey: 'web.auth.signUp.subtitle',
-      }),
-    },
-    loadComponent: () => import('./features/auth/sign-up.page'),
-  },
-  {
-    path: 'mot-de-passe-oublie',
-    title: translatedTitle('web.auth.signIn.forgotPassword'),
-    resolve: {
-      seo: participantSeo({
-        path: 'mot-de-passe-oublie',
-        titleKey: 'web.auth.signIn.forgotPassword',
-        descriptionKey: 'web.auth.forgotPassword.subtitle',
-      }),
-    },
-    loadComponent: () => import('./features/auth/password-reset.page'),
-  },
+  authenticationPage(
+    'connexion',
+    'web.auth.signIn.title',
+    'web.auth.signIn.subtitle',
+    () => import('./features/auth/sign-in.page'),
+  ),
+  authenticationPage(
+    'inscription',
+    'web.auth.signUp.title',
+    'web.auth.signUp.subtitle',
+    () => import('./features/auth/sign-up.page'),
+  ),
+  authenticationPage(
+    'mot-de-passe-oublie',
+    'web.auth.signIn.forgotPassword',
+    'web.auth.forgotPassword.subtitle',
+    () => import('./features/auth/password-reset.page'),
+  ),
   {
     path: 'participant',
     data: {

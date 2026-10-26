@@ -280,8 +280,8 @@ export class MobilePushNotificationsService {
   }
 }
 
-export function provideMobilePushNotificationsInitialization(): () => Promise<void> {
-  return async () => {
+export function provideMobilePushNotificationsInitialization(): () => void {
+  return () => {
     const pushNotificationsService = inject(MobilePushNotificationsService);
 
     void pushNotificationsService.initialize().catch((error) => {

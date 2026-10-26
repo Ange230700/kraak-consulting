@@ -6,6 +6,20 @@ import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { CtaBanner } from './cta-banner.component';
 
 describe('CtaBanner', () => {
+  beforeEach(async () => {
+    analyticsService = {
+      trackEvent: vi.fn(),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [CtaBanner],
+      providers: [provideRouter([])],
+    })
+      .overrideProvider(AnalyticsService, {
+        useValue: analyticsService,
+      })
+      .compileComponents();
+  });
   it('Given une destination privée sans alias public, When le CTA est affiché, Then son URL originale est préservée', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('ctaLabel', 'Mon programme');
@@ -21,21 +35,6 @@ describe('CtaBanner', () => {
     );
   });
   let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
-
-  beforeEach(async () => {
-    analyticsService = {
-      trackEvent: vi.fn(),
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [CtaBanner],
-      providers: [provideRouter([])],
-    })
-      .overrideProvider(AnalyticsService, {
-        useValue: analyticsService,
-      })
-      .compileComponents();
-  });
 
   it('Given CTA inputs, when the component renders, then the CTA button uses the localized fallback URL', () => {
     const fixture = TestBed.createComponent(CtaBanner);

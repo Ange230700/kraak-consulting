@@ -1,3 +1,1 @@
-import { environment as localEnvironment } from './environment.local';
-
-export const environment = localEnvironment;
+export { environment } from './environment.local';

@@ -31,6 +31,14 @@ const baseUser: AppUserDto = {
 };
 
 describe('AdminUserListPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    await TestBed.configureTestingModule({
+      imports: [AdminUserListPage],
+      providers: [provideKraakI18n(), provideRouter([]), MessageService],
+    }).compileComponents();
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
   it('Given deux utilisateurs distincts, When le premier est modifié, Then le second reste inchangé dans la liste', async () => {
     const page = TestBed.createComponent(AdminUserListPage).componentInstance;
     const other = { ...baseUser, id: '2', firstName: 'Bob' };
@@ -69,14 +77,6 @@ describe('AdminUserListPage', () => {
       auth.mockRestore();
     },
   );
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    await TestBed.configureTestingModule({
-      imports: [AdminUserListPage],
-      providers: [provideKraakI18n(), provideRouter([]), MessageService],
-    }).compileComponents();
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-  });
 
   it('Given the page is created, When initialized, Then component instance exists', () => {
     const fixture = TestBed.createComponent(AdminUserListPage);

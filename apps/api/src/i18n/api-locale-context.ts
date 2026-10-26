@@ -18,16 +18,11 @@ interface LanguagePreference {
 export function resolveRequestLocale(
   header: AcceptLanguageHeader,
 ): SupportedLocale {
-  const headerValues =
-    header === undefined
-      ? []
-      : typeof header === 'string'
-        ? [header]
-        : [...header];
+  const headerValues = typeof header === 'string' ? [header] : (header ?? []);
 
   const preferences = headerValues
     .flatMap((value) => value.split(','))
-    .map(parseLanguagePreference)
+    .map((preference, order) => parseLanguagePreference(preference, order))
     .filter(
       (preference): preference is LanguagePreference =>
         preference !== undefined,

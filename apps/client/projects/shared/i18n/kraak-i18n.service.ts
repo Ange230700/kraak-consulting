@@ -33,12 +33,10 @@ import {
   resolveKraakTranslationCatalog,
 } from './kraak-i18n.catalogs';
 
-export type TranslationKey = string;
-
 const KRAAK_LOCALE_STORAGE_KEY = 'kraak:locale';
 
 function readStoredLocalePreference(): SupportedLocale | undefined {
-  if (typeof globalThis.window === 'undefined') {
+  if (globalThis.window === undefined) {
     return undefined;
   }
 
@@ -46,16 +44,14 @@ function readStoredLocalePreference(): SupportedLocale | undefined {
     return normalizeLocaleCandidate(
       globalThis.window.localStorage.getItem(KRAAK_LOCALE_STORAGE_KEY),
     );
-  } catch {
+  } catch (error) {
+    console.warn('client.i18n.preference-read-failed', { error });
     return undefined;
   }
 }
 
 function readBrowserLocalePreference(): SupportedLocale | undefined {
-  if (
-    typeof globalThis.window === 'undefined' ||
-    typeof globalThis.navigator === 'undefined'
-  ) {
+  if (globalThis.window === undefined || globalThis.navigator === undefined) {
     return undefined;
   }
 
@@ -84,22 +80,19 @@ function resolveInitialLocale(): SupportedLocale {
 }
 
 function persistLocalePreference(locale: SupportedLocale): void {
-  if (typeof globalThis.window === 'undefined') {
+  if (globalThis.window === undefined) {
     return;
   }
 
   try {
     globalThis.window.localStorage.setItem(KRAAK_LOCALE_STORAGE_KEY, locale);
-  } catch {
-    // Storage can be unavailable in SSR-like, privacy, or restricted contexts.
+  } catch (error) {
+    console.warn('client.i18n.preference-write-failed', { error });
   }
 }
 
 function synchronizeDocumentLocale(locale: SupportedLocale): void {
-  if (
-    typeof globalThis.document === 'undefined' ||
-    !globalThis.document.documentElement
-  ) {
+  if (!globalThis.document?.documentElement) {
     return;
   }
 
@@ -110,11 +103,8 @@ export interface KraakI18n {
   readonly locale: Signal<SupportedLocale>;
   readonly ready: Signal<boolean>;
 
-  setLocale(locale: SupportedLocale | string | null | undefined): Promise<void>;
-  translate(
-    key: TranslationKey,
-    params?: Readonly<Record<string, unknown>>,
-  ): string;
+  setLocale(locale: string | null | undefined): Promise<void>;
+  translate(key: string, params?: Readonly<Record<string, unknown>>): string;
 }
 
 export class KraakStaticTranslateLoader extends TranslateLoader {
@@ -203,9 +193,7 @@ export class KraakI18nService implements KraakI18n {
     this.initialized.set(true);
   }
 
-  async setLocale(
-    localeCandidate: SupportedLocale | string | null | undefined,
-  ): Promise<void> {
+  async setLocale(localeCandidate: string | null | undefined): Promise<void> {
     await this.selectLocale(resolveSupportedLocale(localeCandidate));
 
     const effectiveLocale = this.locale();
@@ -214,7 +202,7 @@ export class KraakI18nService implements KraakI18n {
   }
 
   translate(
-    key: TranslationKey,
+    key: string,
     params: Readonly<Record<string, unknown>> = {},
   ): string {
     return stringifyTranslation(
@@ -307,7 +295,7 @@ export class KraakI18nService implements KraakI18n {
   }
 }
 
-function stringifyTranslation(value: Translation, key: TranslationKey): string {
+function stringifyTranslation(value: Translation, key: string): string {
   if (typeof value === 'string') {
     return value;
   }
@@ -319,6 +307,6 @@ function stringifyTranslation(value: Translation, key: TranslationKey): string {
   return String(value);
 }
 
-function missingKeyValue(key: TranslationKey): string {
+function missingKeyValue(key: string): string {
   return `[missing:${key}]`;
 }

@@ -736,7 +736,7 @@ export class ProgramsService {
       id: string;
       cohort_id: string;
     }>(
-      async (from, to) =>
+      (from, to) =>
         adminClient
           .from('session')
           .select('id, cohort_id')
@@ -763,7 +763,7 @@ export class ProgramsService {
   ): Promise<string[]> {
     const adminClient = this.supabaseService.getClient();
     const rows = await this.readPagedSessionRows<{ id: string }>(
-      async (from, to) =>
+      (from, to) =>
         adminClient
           .from('session')
           .select('id')
@@ -781,7 +781,7 @@ export class ProgramsService {
     loadPage: (
       from: number,
       to: number,
-    ) => Promise<{ data: T[] | null; error: unknown }>,
+    ) => PromiseLike<{ data: T[] | null; error: unknown }>,
     errorMessage: ApiMessageValue,
   ): Promise<T[]> {
     const rows: T[] = [];

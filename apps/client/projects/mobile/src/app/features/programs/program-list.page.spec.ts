@@ -8,6 +8,23 @@ import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import ProgramListPage from './program-list.page';
 
 describe('Mobile ProgramListPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    service = {
+      listPrograms: vi.fn(),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [ProgramListPage],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        provideRouter([]),
+        provideKraakI18n(),
+        { provide: MobileProgramsService, useValue: service },
+      ],
+    }).compileComponents();
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
   it('Given une date invalide, When sa présentation est demandée, Then la valeur originale est conservée', () => {
     const page = TestBed.createComponent(ProgramListPage).componentInstance;
     expect(page['formatShortDate']('date invalide')).toBe('date invalide');
@@ -38,24 +55,6 @@ describe('Mobile ProgramListPage', () => {
       updatedAt: null,
     },
   };
-
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    service = {
-      listPrograms: vi.fn(),
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [ProgramListPage],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        provideRouter([]),
-        provideKraakI18n(),
-        { provide: MobileProgramsService, useValue: service },
-      ],
-    }).compileComponents();
-    await TestBed.inject(ApplicationInitStatus).donePromise;
-  });
 
   it('should create', () => {
     service.listPrograms.mockResolvedValue([]);

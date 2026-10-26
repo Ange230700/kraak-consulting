@@ -11,6 +11,18 @@ import {
 import { UserFormStateService } from '../user-form-state.service';
 
 describe('AccountStatusPage', () => {
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    await TestBed.configureTestingModule({
+      imports: [AccountStatusPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        MessageService,
+        UserFormStateService,
+      ],
+    }).compileComponents();
+  });
   it('Given les rôles participant et administrateur, When leurs libellés sont demandés, Then ils utilisent les traductions correspondantes', async () => {
     const page = TestBed.createComponent(AccountStatusPage).componentInstance;
     await TestBed.inject(ApplicationInitStatus).donePromise;
@@ -23,18 +35,6 @@ describe('AccountStatusPage', () => {
     expect(page['roleLabel']('admin')).toBe(
       i18n.translate('web.admin.users.create.businessInformation.roles.admin'),
     );
-  });
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    await TestBed.configureTestingModule({
-      imports: [AccountStatusPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        MessageService,
-        UserFormStateService,
-      ],
-    }).compileComponents();
   });
 
   it('Given the page is created, When initialized, Then component instance exists', () => {

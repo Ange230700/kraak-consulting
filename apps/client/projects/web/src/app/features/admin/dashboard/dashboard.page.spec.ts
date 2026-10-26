@@ -27,11 +27,6 @@ const gsapAnimationsServiceMock: Pick<
 };
 
 describe('DashboardPage', () => {
-  it('Given aucun article publié, When les indicateurs éditoriaux sont calculés, Then les compteurs sont nuls et la date reste explicitement indisponible', () => {
-    expect(buildContentSnapshots([]).map((snapshot) => snapshot.value)).toEqual(
-      ['0', '0', 'N/A'],
-    );
-  });
   beforeEach(async () => {
     globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     await TestBed.configureTestingModule({
@@ -48,6 +43,11 @@ describe('DashboardPage', () => {
 
     await TestBed.inject(ApplicationInitStatus).donePromise;
     await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
+  it('Given aucun article publié, When les indicateurs éditoriaux sont calculés, Then les compteurs sont nuls et la date reste explicitement indisponible', () => {
+    expect(buildContentSnapshots([]).map((snapshot) => snapshot.value)).toEqual(
+      ['0', '0', 'N/A'],
+    );
   });
 
   it('Given the admin dashboard component When it is created Then the instance exists', () => {

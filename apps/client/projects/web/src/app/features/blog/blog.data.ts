@@ -611,7 +611,7 @@ function buildSectionsFromContent(
 }
 
 export function getFallbackBlogArticles(
-  localeCandidate?: SupportedLocale | string | null,
+  localeCandidate?: string | null,
 ): readonly BlogArticle[] {
   const locale = resolveSupportedLocale(localeCandidate);
 
@@ -620,7 +620,7 @@ export function getFallbackBlogArticles(
 
 export function mapPublicArticleToBlogArticle(
   article: ArticleDto,
-  localeCandidate?: SupportedLocale | string | null,
+  localeCandidate?: string | null,
 ): BlogArticle {
   const locale = resolveSupportedLocale(localeCandidate);
   const fallbackArticles = BLOG_ARTICLES_BY_LOCALE[locale];
@@ -669,7 +669,7 @@ export function mapPublicArticleToBlogArticle(
 
 export function mapPublicArticlesToBlogArticles(
   articles: readonly ArticleDto[],
-  localeCandidate?: SupportedLocale | string | null,
+  localeCandidate?: string | null,
 ): BlogArticle[] {
   return articles
     .map((article) => mapPublicArticleToBlogArticle(article, localeCandidate))
@@ -683,7 +683,7 @@ export function mapPublicArticlesToBlogArticles(
 
 export function buildBlogArticleSeo(
   article: BlogArticle,
-  localeCandidate?: SupportedLocale | string | null,
+  localeCandidate?: string | null,
 ): SeoPageDefinition {
   const locale = resolveSupportedLocale(localeCandidate);
   const copy = BLOG_FALLBACK_COPY_BY_LOCALE[locale];
@@ -709,7 +709,7 @@ export function buildBlogArticleSeo(
 
 export function buildMissingBlogArticleSeo(
   slug: string,
-  localeCandidate?: SupportedLocale | string | null,
+  localeCandidate?: string | null,
 ): SeoPageDefinition {
   const locale = resolveSupportedLocale(localeCandidate);
   const copy = BLOG_FALLBACK_COPY_BY_LOCALE[locale];

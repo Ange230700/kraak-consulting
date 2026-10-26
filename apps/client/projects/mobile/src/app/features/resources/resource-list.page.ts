@@ -96,7 +96,7 @@ export default class ResourceListPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadResources();
+    void this.loadResources();
   }
 
   protected onSearchInput(event: Event): void {

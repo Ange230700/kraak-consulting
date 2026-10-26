@@ -26,54 +26,27 @@ describe('Given the web route locale resolver', () => {
     expect(locale).toBe('fr-CI');
     expect(setLocale).toHaveBeenCalledWith('fr-CI');
   });
-  it('Given a French public route, when the resolver runs, then fr-CI is activated before rendering', async () => {
-    const setLocale = vi.fn<(_: string) => Promise<void>>(() =>
-      Promise.resolve(),
-    );
+  it.each([
+    ['fr-CI', 'fr-CI'],
+    ['en-GB', 'en-GB'],
+    ['de-DE', 'fr-CI'],
+  ])(
+    'Given la locale de route %s, When le résolveur est exécuté, Then %s est activée avant le rendu',
+    async (candidate, expected) => {
+      const setLocale = vi.fn<(_: string) => Promise<void>>(() =>
+        Promise.resolve(),
+      );
 
-    TestBed.configureTestingModule({
-      providers: [{ provide: KraakI18nService, useValue: { setLocale } }],
-    });
+      TestBed.configureTestingModule({
+        providers: [{ provide: KraakI18nService, useValue: { setLocale } }],
+      });
 
-    const locale = await TestBed.runInInjectionContext(() =>
-      webRouteLocaleResolver(routeWithLocale('fr-CI'), emptyState),
-    );
+      const locale = await TestBed.runInInjectionContext(() =>
+        webRouteLocaleResolver(routeWithLocale(candidate), emptyState),
+      );
 
-    expect(locale).toBe('fr-CI');
-    expect(setLocale).toHaveBeenCalledWith('fr-CI');
-  });
-
-  it('Given an English public route, when the resolver runs, then en-GB is activated before rendering', async () => {
-    const setLocale = vi.fn<(_: string) => Promise<void>>(() =>
-      Promise.resolve(),
-    );
-
-    TestBed.configureTestingModule({
-      providers: [{ provide: KraakI18nService, useValue: { setLocale } }],
-    });
-
-    const locale = await TestBed.runInInjectionContext(() =>
-      webRouteLocaleResolver(routeWithLocale('en-GB'), emptyState),
-    );
-
-    expect(locale).toBe('en-GB');
-    expect(setLocale).toHaveBeenCalledWith('en-GB');
-  });
-
-  it('Given an unsupported route locale, when the resolver runs, then the source locale is used', async () => {
-    const setLocale = vi.fn<(_: string) => Promise<void>>(() =>
-      Promise.resolve(),
-    );
-
-    TestBed.configureTestingModule({
-      providers: [{ provide: KraakI18nService, useValue: { setLocale } }],
-    });
-
-    const locale = await TestBed.runInInjectionContext(() =>
-      webRouteLocaleResolver(routeWithLocale('de-DE'), emptyState),
-    );
-
-    expect(locale).toBe('fr-CI');
-    expect(setLocale).toHaveBeenCalledWith('fr-CI');
-  });
+      expect(locale).toBe(expected);
+      expect(setLocale).toHaveBeenCalledWith(expected);
+    },
+  );
 });

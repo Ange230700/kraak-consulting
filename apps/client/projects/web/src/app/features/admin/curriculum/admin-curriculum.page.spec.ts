@@ -84,6 +84,18 @@ describe('AdminCurriculumPage', () => {
     };
     return page;
   }
+  beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    await TestBed.configureTestingModule({
+      imports: [AdminCurriculumPage],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        { provide: WebAuthService, useValue: authMock },
+      ],
+    }).compileComponents();
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+  });
 
   it.each([null, {}, { accessToken: 'test-token' }])(
     'Given une session %j, When le client réel charge le catalogue, Then les requêtes reçoivent le jeton disponible et la langue',
@@ -304,18 +316,6 @@ describe('AdminCurriculumPage', () => {
     expect(page['getPublicationStatusLabel']('inconnu')).toBe('inconnu');
     expect(page['getProgramVisibilityLabel']('inconnue')).toBe('inconnue');
     translate.mockRestore();
-  });
-  beforeEach(async () => {
-    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
-    await TestBed.configureTestingModule({
-      imports: [AdminCurriculumPage],
-      providers: [
-        provideKraakI18n(),
-        provideRouter([]),
-        { provide: WebAuthService, useValue: authMock },
-      ],
-    }).compileComponents();
-    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('Given curriculum data, When the page loads, Then the first program and its courses are rendered', async () => {

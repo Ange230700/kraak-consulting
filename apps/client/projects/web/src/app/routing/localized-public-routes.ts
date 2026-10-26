@@ -215,7 +215,16 @@ export function buildLocalizedBlogArticlePath(
   slug: string,
   localeCandidate?: string | null,
 ): string {
-  const normalizedSlug = slug.trim().replace(/^\/+|\/+$/g, '');
+  const trimmedSlug = slug.trim();
+  let start = 0;
+  let end = trimmedSlug.length;
+  while (trimmedSlug[start] === '/') {
+    start += 1;
+  }
+  while (trimmedSlug[end - 1] === '/') {
+    end -= 1;
+  }
+  const normalizedSlug = trimmedSlug.slice(start, end);
 
   if (!normalizedSlug || normalizedSlug.includes('/')) {
     throw new Error(`Invalid Blog article slug "${slug}".`);

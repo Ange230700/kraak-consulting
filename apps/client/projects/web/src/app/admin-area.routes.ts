@@ -1,10 +1,22 @@
-import { KraakI18nService } from '../../../shared/i18n';
+import { KraakI18nService } from '../../../shared/i18n/kraak-i18n.service';
 import { inject } from '@angular/core';
-import { type CanMatchFn, Routes } from '@angular/router';
+import { type CanMatchFn, type Route, Routes } from '@angular/router';
 
 import { adminRoleChildGuard, adminRoleGuard } from './core/auth/auth.guard';
 
 export const adminAreaCanMatch: CanMatchFn = () => true;
+
+function adminPage(
+  path: string,
+  titleKey: string,
+  loadComponent: NonNullable<Route['loadComponent']>,
+): Route {
+  return {
+    path,
+    title: () => inject(KraakI18nService).translate(titleKey),
+    loadComponent,
+  };
+}
 
 export const adminAreaRoutes: Routes = [
   {
@@ -13,34 +25,26 @@ export const adminAreaRoutes: Routes = [
     canActivate: [adminRoleGuard],
     canActivateChild: [adminRoleChildGuard],
     children: [
-      {
-        path: 'dashboard',
-        title: () =>
-          inject(KraakI18nService).translate('web.admin.routes.dashboard'),
-        loadComponent: () =>
-          import('./features/admin/dashboard/dashboard.page'),
-      },
-      {
-        path: 'programmes',
-        title: () =>
-          inject(KraakI18nService).translate('web.admin.routes.programmes'),
-        loadComponent: () =>
-          import('./features/admin/programmes/admin-programmes.page'),
-      },
-      {
-        path: 'curriculum',
-        title: () =>
-          inject(KraakI18nService).translate('web.admin.routes.curriculum'),
-        loadComponent: () =>
-          import('./features/admin/curriculum/admin-curriculum.page'),
-      },
-      {
-        path: 'ressources',
-        title: () =>
-          inject(KraakI18nService).translate('web.admin.routes.ressources'),
-        loadComponent: () =>
-          import('./features/admin/ressources/admin-ressources.page'),
-      },
+      adminPage(
+        'dashboard',
+        'web.admin.routes.dashboard',
+        () => import('./features/admin/dashboard/dashboard.page'),
+      ),
+      adminPage(
+        'programmes',
+        'web.admin.routes.programmes',
+        () => import('./features/admin/programmes/admin-programmes.page'),
+      ),
+      adminPage(
+        'curriculum',
+        'web.admin.routes.curriculum',
+        () => import('./features/admin/curriculum/admin-curriculum.page'),
+      ),
+      adminPage(
+        'ressources',
+        'web.admin.routes.ressources',
+        () => import('./features/admin/ressources/admin-ressources.page'),
+      ),
       {
         path: 'utilisateurs',
         title: () =>

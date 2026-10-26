@@ -123,6 +123,40 @@ const analyzeWithRetry = async (
   throw new Error('Axe analyze retry loop exhausted unexpectedly.');
 };
 
+test('Given une préférence de mouvement réduit, When les contrôles de navigation sont affichés, Then les transitions restent réduites sans surcharger les styles', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/fr/');
+  await expect(
+    page.getByRole('group', { name: 'Choisir la langue' }),
+  ).toBeVisible();
+
+  const durations = await page
+    .locator('nav fieldset a')
+    .first()
+    .evaluate((element) => {
+      element.classList.add('transition-fast');
+      const style = getComputedStyle(element);
+      return {
+        transition: style.transitionDuration
+          .split(',')
+          .map((value) => Number.parseFloat(value)),
+        animation: style.animationDuration
+          .split(',')
+          .map((value) => Number.parseFloat(value)),
+        iterations: style.animationIterationCount,
+      };
+    });
+
+  expect(durations.transition.every((duration) => duration <= 0.001)).toBe(
+    true,
+  );
+  expect(durations.animation.every((duration) => duration <= 0.001)).toBe(true);
+  expect(durations.iterations).toBe('1');
+});
+
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,

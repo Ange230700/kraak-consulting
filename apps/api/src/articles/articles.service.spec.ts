@@ -69,6 +69,31 @@ function createFromTableRouter(
 describe('ArticlesService', () => {
   let service: ArticlesService;
 
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-1',
+        },
+      },
+      error: null,
+    });
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ArticlesService,
+        {
+          provide: SupabaseService,
+          useValue: supabaseService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<ArticlesService>(ArticlesService);
+  });
+
   it('Given un article administrable, When son détail est chargé, Then les relations et le contenu sont renvoyés', async () => {
     adminClient.from.mockImplementation(
       createFromTableRouter({
@@ -130,31 +155,6 @@ describe('ArticlesService', () => {
     createAuthClient: jest.fn(() => authClient),
     getClient: jest.fn(() => adminClient),
   };
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
-
-    authClient.auth.getUser.mockResolvedValue({
-      data: {
-        user: {
-          id: 'user-1',
-        },
-      },
-      error: null,
-    });
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ArticlesService,
-        {
-          provide: SupabaseService,
-          useValue: supabaseService,
-        },
-      ],
-    }).compile();
-
-    service = module.get<ArticlesService>(ArticlesService);
-  });
 
   it('Given un token admin valide, When listArticles est appelé, Then les articles mappés sont renvoyés', async () => {
     const appUserQuery = createSingleRowQuery({

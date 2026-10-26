@@ -82,6 +82,23 @@ function mockGsapEffects() {
 }
 
 describe('GsapAnimationsService', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [GsapAnimationsService],
+    });
+    service = TestBed.inject(GsapAnimationsService);
+    allowAnimations();
+    mockGsapMatchMedia();
+  });
+
+  afterEach(() => {
+    service?.killAllAnimations();
+    if (typeof document !== 'undefined') {
+      document.body.innerHTML = '';
+    }
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
   it('Given des figures et sections sur mobile, When leurs animations sont initialisées, Then les cibles utilisent les préréglages mobiles', () => {
     allowAnimationsOnMobile();
     mockGsapMatchMedia();
@@ -234,24 +251,6 @@ describe('GsapAnimationsService', () => {
     expect(debug).not.toHaveBeenCalled();
   });
   let service: GsapAnimationsService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [GsapAnimationsService],
-    });
-    service = TestBed.inject(GsapAnimationsService);
-    allowAnimations();
-    mockGsapMatchMedia();
-  });
-
-  afterEach(() => {
-    service?.killAllAnimations();
-    if (typeof document !== 'undefined') {
-      document.body.innerHTML = '';
-    }
-    vi.restoreAllMocks();
-    vi.unstubAllGlobals();
-  });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
