@@ -92,6 +92,15 @@ communes aux deux branches sont identiques. Cela ne prouve pas leur application
 ni la compatibilité des données en production : la validation distante reste
 une étape de release distincte.
 
+La revue de release #698 impose aussi la vérification d'une mise à niveau avec
+des données existantes : la migration de contrainte des articles remet la date
+des articles archivés à `NULL` avant de recréer la contrainte. Le scénario SQL
+`supabase/tests/article_archive_upgrade.sql`, exécuté en CI, reconstruit l'ancien
+état et vérifie que les articles publiés et les brouillons restent inchangés.
+Les tests analytics ne transforment plus un crash navigateur ou une navigation
+CTA échouée en succès : les erreurs remontent au runner Playwright.
+Les redirections SSR refusent les URL externes et les chemins ambigus.
+
 ## Séquence d'intégration
 
 1. Valider le candidat temporaire et ses deux ascendances.

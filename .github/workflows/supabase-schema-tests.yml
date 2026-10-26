@@ -56,5 +56,8 @@ jobs:
             psql -X -v ON_ERROR_STOP=1 --single-transaction --file "$migration"
           done
 
+      - name: Vérifier la migration des articles archivés existants
+        run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/article_archive_upgrade.sql
+
       - name: Vérifier les comportements participant, employé et formateur
         run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/staging_reconciliation.sql
