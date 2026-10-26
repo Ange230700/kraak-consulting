@@ -429,11 +429,16 @@ async function main(args) {
   const document = createDocument(await readFile(source, 'utf8'));
   const name = path.parse(source).name;
   const output = path.resolve(options.output ?? '.artifacts/docs', name);
-  for (const format of options.format === 'all'
-    ? ['txt', 'pdf', 'pptx']
-    : [options.format]) {
-    const destination = path.join(output, `${name}.${format}`);
-    await exportDocument(document, { format, source, destination });
+  const requestedFormats =
+    options.format === 'all' ? ['txt', 'pdf', 'pptx'] : [options.format];
+  const destinations = await Promise.all(
+    requestedFormats.map(async (format) => {
+      const destination = path.join(output, `${name}.${format}`);
+      await exportDocument(document, { format, source, destination });
+      return destination;
+    }),
+  );
+  for (const destination of destinations) {
     console.info(`[docs:export] ${destination}`);
   }
 }

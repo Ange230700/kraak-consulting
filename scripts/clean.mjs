@@ -32,22 +32,16 @@ export async function cleanWorkspace(workspacePath, directory, dryRun) {
   const targets = targetsByWorkspace.get(workspacePath);
 
   if (targets) {
-    const cleanedTargets = [];
-
-    for (const target of targets) {
-      const absoluteTarget = path.join(directory, target);
-
-      if (!dryRun) {
-        await rm(absoluteTarget, { force: true, recursive: true });
-      }
-
-      cleanedTargets.push(target);
+    if (!dryRun) {
+      await Promise.all(
+        targets.map((target) =>
+          rm(path.join(directory, target), { force: true, recursive: true }),
+        ),
+      );
     }
 
     const action = dryRun ? 'seraient nettoyés' : 'nettoyés';
-    console.log(
-      `[clean] ${workspacePath} : ${cleanedTargets.join(', ')} ${action}.`,
-    );
+    console.log(`[clean] ${workspacePath} : ${targets.join(', ')} ${action}.`);
     return 0;
   } else {
     console.error(

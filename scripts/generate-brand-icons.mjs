@@ -97,16 +97,18 @@ async function generateForProject(publicDir) {
     throw new Error(`Source manquante : ${symbolPath}`);
   }
 
-  for (const target of faviconPngSizes) {
-    const buffer = await sharp(symbolPath)
-      .resize(target.size, target.size, {
-        fit: 'contain',
-        background: { r: 0xff, g: 0xff, b: 0xff, alpha: 1 },
-      })
-      .png()
-      .toBuffer();
-    writeFileSync(path.join(publicDir, target.name), buffer);
-  }
+  await Promise.all(
+    faviconPngSizes.map(async (target) => {
+      const buffer = await sharp(symbolPath)
+        .resize(target.size, target.size, {
+          fit: 'contain',
+          background: { r: 0xff, g: 0xff, b: 0xff, alpha: 1 },
+        })
+        .png()
+        .toBuffer();
+      writeFileSync(path.join(publicDir, target.name), buffer);
+    }),
+  );
 
   const icoSizes = [16, 32, 48];
   const icoPngs = await Promise.all(
@@ -150,48 +152,50 @@ export async function generateAndroidLauncherIcons(root) {
     return;
   }
 
-  for (const entry of androidMipmaps) {
-    const targetDir = path.join(resRoot, entry.dir);
-    mkdirSync(targetDir, { recursive: true });
+  await Promise.all(
+    androidMipmaps.map(async (entry) => {
+      const targetDir = path.join(resRoot, entry.dir);
+      mkdirSync(targetDir, { recursive: true });
 
-    const launcher = await symbolOnBrand(symbolPath, entry.launcher);
-    writeFileSync(path.join(targetDir, 'ic_launcher.png'), launcher);
+      const launcher = await symbolOnBrand(symbolPath, entry.launcher);
+      writeFileSync(path.join(targetDir, 'ic_launcher.png'), launcher);
 
-    const round = await sharp(launcher)
-      .composite([
-        {
-          input: Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="${entry.launcher}" height="${entry.launcher}"><rect x="0" y="0" width="${entry.launcher}" height="${entry.launcher}" rx="${entry.launcher / 2}" ry="${entry.launcher / 2}" fill="#000"/></svg>`,
-          ),
-          blend: 'dest-in',
-        },
-      ])
-      .png()
-      .toBuffer();
-    writeFileSync(path.join(targetDir, 'ic_launcher_round.png'), round);
+      const round = await sharp(launcher)
+        .composite([
+          {
+            input: Buffer.from(
+              `<svg xmlns="http://www.w3.org/2000/svg" width="${entry.launcher}" height="${entry.launcher}"><rect x="0" y="0" width="${entry.launcher}" height="${entry.launcher}" rx="${entry.launcher / 2}" ry="${entry.launcher / 2}" fill="#000"/></svg>`,
+            ),
+            blend: 'dest-in',
+          },
+        ])
+        .png()
+        .toBuffer();
+      writeFileSync(path.join(targetDir, 'ic_launcher_round.png'), round);
 
-    const foregroundSize = Math.round(entry.foreground * 0.66);
-    const paddingBefore = Math.floor((entry.foreground - foregroundSize) / 2);
-    const paddingAfter = entry.foreground - foregroundSize - paddingBefore;
-    const foreground = await sharp(symbolPath)
-      .resize(foregroundSize, foregroundSize, {
-        fit: 'contain',
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .extend({
-        top: paddingBefore,
-        bottom: paddingAfter,
-        left: paddingBefore,
-        right: paddingAfter,
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .png()
-      .toBuffer();
-    writeFileSync(
-      path.join(targetDir, 'ic_launcher_foreground.png'),
-      foreground,
-    );
-  }
+      const foregroundSize = Math.round(entry.foreground * 0.66);
+      const paddingBefore = Math.floor((entry.foreground - foregroundSize) / 2);
+      const paddingAfter = entry.foreground - foregroundSize - paddingBefore;
+      const foreground = await sharp(symbolPath)
+        .resize(foregroundSize, foregroundSize, {
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .extend({
+          top: paddingBefore,
+          bottom: paddingAfter,
+          left: paddingBefore,
+          right: paddingAfter,
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .png()
+        .toBuffer();
+      writeFileSync(
+        path.join(targetDir, 'ic_launcher_foreground.png'),
+        foreground,
+      );
+    }),
+  );
 
   // Vérifie que le fond du launcher adaptatif utilise la couleur navy de marque.
   const backgroundXmlPath = path.join(
@@ -212,17 +216,19 @@ export async function generateAndroidLauncherIcons(root) {
 }
 
 export async function main(root) {
-  for (const project of ['web', 'mobile']) {
-    const publicDir = path.join(
-      root,
-      'apps',
-      'client',
-      'projects',
-      project,
-      'public',
-    );
-    await generateForProject(publicDir);
-  }
+  await Promise.all(
+    ['web', 'mobile'].map((project) => {
+      const publicDir = path.join(
+        root,
+        'apps',
+        'client',
+        'projects',
+        project,
+        'public',
+      );
+      return generateForProject(publicDir);
+    }),
+  );
   await generateAndroidLauncherIcons(root);
   console.log('Icônes de marque régénérées avec succès.');
 }

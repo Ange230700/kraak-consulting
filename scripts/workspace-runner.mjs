@@ -6,6 +6,37 @@ import { pathToFileURL } from 'node:url';
 
 import { createWorkflows, getPnpmCommand } from './workspace-commands.mjs';
 
+function prefixStream(stream, prefix, target) {
+  let buffer = '';
+
+  stream.on('data', (chunk) => {
+    buffer += chunk.toString();
+
+    const lines = buffer.split(/\r?\n/);
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      target.write(`${prefix}${line}\n`);
+    }
+  });
+
+  stream.on('end', () => {
+    if (buffer.length > 0) {
+      target.write(`${prefix}${buffer}\n`);
+    }
+  });
+}
+
+function needsWindowsQuoting(argument) {
+  for (const character of argument) {
+    if (character === ' ' || character === '\t' || character === '"') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export async function runWorkspaceWorkflow({
   process = nodeProcess,
   spawn = nodeSpawn,
@@ -42,39 +73,6 @@ export async function runWorkspaceWorkflow({
         child.kill(signal);
       }
     }
-  }
-
-  function prefixStream(stream, prefix, target) {
-    let buffer = '';
-
-    stream.on('data', (chunk) => {
-      buffer += chunk.toString();
-
-      const lines = buffer.split(/\r?\n/);
-      buffer = lines.pop();
-
-      for (const line of lines) {
-        target.write(`${prefix}${line}\n`);
-      }
-    });
-
-    stream.on('end', () => {
-      if (buffer.length > 0) {
-        target.write(`${prefix}${buffer}\n`);
-      }
-    });
-  }
-
-  function needsWindowsQuoting(argument) {
-    for (const element of argument) {
-      const character = element;
-
-      if (character === ' ' || character === '\t' || character === '"') {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   function quoteWindowsArgument(argument) {

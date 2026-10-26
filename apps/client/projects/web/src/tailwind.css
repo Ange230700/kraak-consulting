@@ -444,12 +444,6 @@
   }
 }
 
-@utility animate-scroll {
-  @media (prefers-reduced-motion: no-preference) {
-    animation: kr-partner-scroll 20s linear infinite;
-  }
-}
-
 @utility fade-gradient-left {
   background: linear-gradient(
     to right,
@@ -467,6 +461,12 @@
 }
 
 @layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-scroll {
+      animation: kr-partner-scroll 20s linear infinite;
+    }
+  }
+
   .kr-program-progress {
     appearance: none;
     border: 0;
