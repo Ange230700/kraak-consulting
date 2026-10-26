@@ -37,8 +37,13 @@ Les deux conflits restants sont résolus en conservant le workflow CI et le
 manifeste de staging : ils incluent déjà la vraie matrice Playwright, ses
 correctifs Firefox, les contrôles de couverture et les exports documentaires.
 Le nouveau test `scripts/ci-e2e.test.mjs` reste découvert par le glob de
-`test:workspace`. Les diagnostics Playwright et le nettoyage des timers Vitest
-du candidat initial sont conservés.
+`test:workspace`. Les configurations Playwright et le setup Vitest restent
+identiques à staging, dont les suites complètes passent déjà. Les ajouts de
+diagnostic et le contournement RAF du candidat initial ne sont plus nécessaires.
+Le candidat `b9573b5` les conservait encore : malgré les cinq suites E2E réussies,
+Sonar signalait une couverture nulle sur ce nouveau code de configuration.
+La résolution conserve donc les fichiers validés de staging plutôt que
+d'assouplir les seuils ou les exclusions de couverture.
 
 Les contrôles de qualité, revues et protections contre la suppression et le
 force-push restent requis. L'exception ne permet ni déploiement de production,
@@ -63,22 +68,24 @@ prises par domaine ; aucune stratégie globale `ours` ou `theirs` n'est utilisé
 | Observabilité               | Les modifications entrantes automatiques ne concernent que les guillemets YAML ; conserver le format courant.                                                                                                                      |
 | À propos                    | Ne pas réintroduire le test de faux profils d'équipe (`Savannah Nguyen`) dans la page actuelle.                                                                                                                                    |
 
-Le job requis `Tests E2E` de staging ne lançait qu'un `echo`. Il est remplacé
+Lors de la préparation initiale du 23 octobre, le job requis `Tests E2E` de
+staging ne lançait qu'un `echo`. Le candidat proposait de le remplacer
 par une matrice exécutant les cinq projets Playwright (trois navigateurs
 desktop et deux profils mobiles), avec un serveur local et les variables
 explicites attendues par les configurations. L'image officielle
 `mcr.microsoft.com/playwright:v1.59.1-noble`, alignée sur le lockfile, fournit
 les navigateurs et dépendances Linux préinstallés : aucun téléchargement APT
 n'est nécessaire au lancement. Un test vérifie cet alignement de version.
-Chaque projet dispose d'un budget global de 20 minutes, de logs de progression
-et d'un rapport HTML distinct. Le contrôle requis `Tests E2E` échoue si un
+Chaque projet dispose d'un budget global de 20 minutes et d'artefacts de
+résultats distincts. Le contrôle requis `Tests E2E` échoue si un
 projet échoue, est annulé ou n'est pas exécuté.
 Un test de régression échoue sur l'ancien job et passe sur le job réel.
 
-La validation web a également révélé une boucle GSAP encore active après la
+La validation web initiale avait également révélé une boucle GSAP active après la
 destruction du DOM de test (`requestAnimationFrame is not defined`). Le setup
-Vitest annule désormais ses timers restants en fin de suite ; les 762 tests
-web passent sans erreur non interceptée après cette correction.
+Vitest du candidat annulait ses timers restants en fin de suite ; les 762 tests
+web passaient alors sans erreur non interceptée. Le staging du 26 octobre
+valide désormais 903 tests web sans cette modification ; son setup est conservé.
 
 Les 15 migrations supplémentaires de staging sont conservées. Les migrations
 communes aux deux branches sont identiques. Cela ne prouve pas leur application

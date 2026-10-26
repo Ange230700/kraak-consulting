@@ -2,7 +2,7 @@
  * Vitest setup file to mock browser APIs required by GSAP and other libraries
  */
 
-import { afterAll, vi } from 'vitest';
+import { vi } from 'vitest';
 
 // Mock matchMedia for ScrollTrigger
 Object.defineProperty(globalThis, 'matchMedia', {
@@ -39,30 +39,9 @@ globalThis.IntersectionObserver = class IntersectionObserver implements Intersec
   }
 };
 
-// Les boucles GSAP doivent être arrêtées avant la destruction du DOM de test.
-const animationFrameTimers = new Map<number, ReturnType<typeof setTimeout>>();
+// Mock requestAnimationFrame for GSAP
+globalThis.requestAnimationFrame = (callback: FrameRequestCallback) =>
+  Number(setTimeout(() => callback(performance.now()), 0));
 
-globalThis.requestAnimationFrame = (callback: FrameRequestCallback) => {
-  const timer = setTimeout(() => {
-    animationFrameTimers.delete(Number(timer));
-    callback(performance.now());
-  }, 0);
-  const id = Number(timer);
-  animationFrameTimers.set(id, timer);
-  return id;
-};
-
-globalThis.cancelAnimationFrame = (id: number) => {
-  const timer = animationFrameTimers.get(id);
-  if (timer !== undefined) {
-    clearTimeout(timer);
-    animationFrameTimers.delete(id);
-  }
-};
-
-afterAll(() => {
-  for (const timer of animationFrameTimers.values()) {
-    clearTimeout(timer);
-  }
-  animationFrameTimers.clear();
-});
+// Mock cancelAnimationFrame
+globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);
