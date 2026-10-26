@@ -3,6 +3,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -22,6 +23,22 @@ import {
   resetScannerReportDirectory,
   resolveSonarEnvironment,
 } from './sonarcloud-scan.mjs';
+
+test('Given le tableau Sonar du dépôt, When la configuration CI est lue, Then les mesures ciblent le projet existant sans exclusion de duplication', () => {
+  const properties = readFileSync(
+    new URL('../sonar-project.properties', import.meta.url),
+    'utf8',
+  );
+  assert.match(properties, /^sonar\.projectKey=Ange230700_kraak-consulting$/m);
+  assert.doesNotMatch(properties, /^sonar\.cpd\.exclusions=/m);
+  const editorSettings = JSON.parse(
+    readFileSync(new URL('../.vscode/settings.json', import.meta.url), 'utf8'),
+  );
+  assert.equal(
+    editorSettings['sonarlint.connectedMode.project'].projectKey,
+    /^sonar\.projectKey=(.+)$/m.exec(properties)[1],
+  );
+});
 
 test('Given des rapports absents ou vides, When le scan est préparé, Then la publication sans couverture est refusée', () => {
   const directory = mkdtempSync(path.join(os.tmpdir(), 'kraak-lcov-'));

@@ -1,4 +1,4 @@
-# Analyse SonarQube Cloud — kraak-group
+# Analyse SonarQube Cloud — kraak-consulting
 # Déclenchée sur staging/main et leurs pull requests.
 # Nécessite les secrets : SONAR_TOKEN (token utilisateur SonarCloud).
 
