@@ -80,6 +80,7 @@ function authenticationPage(
 ): Route {
   return {
     path,
+    canMatch: [participantAreaCanMatch],
     title: translatedTitle(titleKey),
     resolve: {
       seo: participantSeo({
@@ -113,6 +114,7 @@ export const participantAreaRoutes: Routes = [
   ),
   {
     path: 'participant',
+    canMatch: [participantAreaCanMatch],
     data: {
       appShell: 'participant',
     },

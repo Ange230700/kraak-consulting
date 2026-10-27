@@ -7,7 +7,7 @@ import type {
   Route,
   RouterStateSnapshot,
 } from '@angular/router';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { KraakI18nService } from '../../../shared/i18n';
 import type { SeoPageDefinition } from './seo/site-seo';
@@ -19,6 +19,24 @@ import {
 } from './participant-area.routes';
 
 describe('participant-area.routes', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it.each([false, true])(
+    'Given le drapeau participant à %s, When chaque route privée est évaluée, Then son canMatch applique le drapeau runtime',
+    (enabled) => {
+      vi.stubGlobal('__KRAAK_RUNTIME_CONFIG__', {
+        enableParticipantArea: enabled,
+      });
+
+      for (const route of participantAreaRoutes) {
+        expect(route.canMatch).toEqual([participantAreaCanMatch]);
+        expect(participantAreaCanMatch(route, [])).toBe(enabled);
+      }
+    },
+  );
+
   it('Given les parcours d’authentification et participant, When leurs titres et composants sont résolus, Then chaque page conserve son titre traduit et son chargement différé', async () => {
     TestBed.configureTestingModule({
       providers: [

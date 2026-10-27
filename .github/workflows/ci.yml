@@ -315,6 +315,15 @@ jobs:
         timeout-minutes: 25
         run: pnpm --filter @kraak/client exec playwright test --config=${{ matrix.config }} --project=${{ matrix.project }} --global-timeout=1200000
 
+      - name: Vérifier les accès avec participant désactivé
+        if: ${{ matrix.project == 'chromium' }}
+        timeout-minutes: 5
+        env:
+          CLIENT_FEATURE_PARTICIPANT_AREA: 'false'
+          KRAAK_E2E_EXPECT_PARTICIPANT_AREA: 'false'
+          KRAAK_E2E_EXPECT_PARTICIPANT_CTA: 'false'
+        run: pnpm --filter @kraak/client exec playwright test participant-navigation-smoke.spec.ts --project=chromium --output=test-results/participant-disabled --global-timeout=240000
+
       - name: Sauvegarder les preuves Playwright
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

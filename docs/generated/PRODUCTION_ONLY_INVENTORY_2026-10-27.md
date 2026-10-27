@@ -79,26 +79,26 @@ n'est pas fusionnée.
 Les identifiants ci-dessous ne sont pas des secrets. Les valeurs de configuration,
 jetons, comptes, sessions et exports de données restent hors du dépôt.
 
-| Fournisseur | Ressource et identifiant                                                                   | Classement et décision                                                                                                         |
-| ----------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| Render      | `kraak-web-prod` — `srv-d8aj9e0jo6nc73ep1hm0`                                              | Production ; préserver                                                                                                         |
-| Render      | `kraak-api-prod` — `srv-d7r81hv7f7vs73cqcnmg`                                              | Production ; préserver                                                                                                         |
-| Render      | `kraak-web-staging` — `srv-d8aj943eo5us739nobeg`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                                       |
-| Render      | `kraak-api-staging` — `srv-d7putr0k1i2s738d4410`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                                       |
-| Render      | Blueprint `exs-d7r7j01kh4rs73em7mm0`                                                       | Partagé par les API ; ne pas supprimer globalement                                                                             |
-| Render      | Workspace `tea-cspqc2d6l47c73c4alu0`                                                       | Partagé ; préserver l'abonnement et les autres applications                                                                    |
-| Render      | `alex-career-api-staging` — `srv-d79cfm4hg0os7390npg0`                                     | Autre application ; hors périmètre                                                                                             |
-| Supabase    | `kraak-prod` — `pwuivkqnmjpxxpppmnvu`, `eu-west-1`                                         | Production ; préserver                                                                                                         |
-| Supabase    | `kraak` — `qgttdsnupelohowwkkwb`, `eu-west-3`                                              | Candidate staging ; contient des données uniques                                                                               |
-| Supabase    | Branche `12be592f-2804-42de-b54f-c7b87c2aff59`                                             | Branche par défaut du projet staging, liée à `staging` et à la PR #698 ; pas une preuve d'isolation                            |
-| Supabase    | Preview PR #735 — `e2ceb604-887d-4c48-aa1c-ca49c1934100`, référence `bougahdeywjzdjlkaaub` | Créée automatiquement par l'intégration existante à l'ouverture de la PR ; non persistante, inventaire et nettoyage à conclure |
-| Supabase    | Organisation `omoaplqfkowknstamhty`                                                        | Partagée ; ne pas supprimer                                                                                                    |
-| Supabase    | `alex-career-app-staging` — `arlwinwurrbssunnwkrc`                                         | Autre application ; hors périmètre                                                                                             |
-| Supabase    | Référence d'assets `fqjltiegiezfetthbags`                                                  | Propriété non établie ; préserver                                                                                              |
-| Vercel      | `kraak-consulting.vercel.app`                                                              | Ancien site public encore accessible ; dépendances à établir                                                                   |
-| GitHub      | Environnement `staging` — `16165118557`                                                    | Conserver jusqu'à la fin des vérifications                                                                                     |
-| GitHub      | `Production` — `13987506363`                                                               | Production ; conserver approbation, secrets et politiques                                                                      |
-| GitHub      | `Preview`, `copilot`, `main - kraak-api-prod`                                              | Usages non entièrement établis ; ne pas supprimer sur leur seul nom                                                            |
+| Fournisseur | Ressource et identifiant                                                                   | Classement et décision                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Render      | `kraak-web-prod` — `srv-d8aj9e0jo6nc73ep1hm0`                                              | Production ; préserver                                                                                   |
+| Render      | `kraak-api-prod` — `srv-d7r81hv7f7vs73cqcnmg`                                              | Production ; préserver                                                                                   |
+| Render      | `kraak-web-staging` — `srv-d8aj943eo5us739nobeg`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                 |
+| Render      | `kraak-api-staging` — `srv-d7putr0k1i2s738d4410`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                 |
+| Render      | Blueprint `exs-d7r7j01kh4rs73em7mm0`                                                       | Partagé par les API ; ne pas supprimer globalement                                                       |
+| Render      | Workspace `tea-cspqc2d6l47c73c4alu0`                                                       | Partagé ; préserver l'abonnement et les autres applications                                              |
+| Render      | `alex-career-api-staging` — `srv-d79cfm4hg0os7390npg0`                                     | Autre application ; hors périmètre                                                                       |
+| Supabase    | `kraak-prod` — `pwuivkqnmjpxxpppmnvu`, `eu-west-1`                                         | Production ; préserver                                                                                   |
+| Supabase    | `kraak` — `qgttdsnupelohowwkkwb`, `eu-west-3`                                              | Candidate staging ; contient des données uniques                                                         |
+| Supabase    | Métadonnée de branche `12be592f-2804-42de-b54f-c7b87c2aff59`                               | Ancienne branche par défaut ; retirée par désactivation du branching, projet racine et données préservés |
+| Supabase    | Preview PR #735 — `e2ceb604-887d-4c48-aa1c-ca49c1934100`, référence `bougahdeywjzdjlkaaub` | Preview vide créée automatiquement ; exportée puis supprimée, absence vérifiée ; parent préservé         |
+| Supabase    | Organisation `omoaplqfkowknstamhty`                                                        | Partagée ; ne pas supprimer                                                                              |
+| Supabase    | `alex-career-app-staging` — `arlwinwurrbssunnwkrc`                                         | Autre application ; hors périmètre                                                                       |
+| Supabase    | Référence d'assets `fqjltiegiezfetthbags`                                                  | Propriété non établie ; préserver                                                                        |
+| Vercel      | `kraak-consulting.vercel.app`                                                              | Ancien site public encore accessible ; dépendances à établir                                             |
+| GitHub      | Environnement `staging` — `16165118557`                                                    | Conserver jusqu'à la fin des vérifications                                                               |
+| GitHub      | `Production` — `13987506363`                                                               | Production ; conserver approbation, secrets et politiques                                                |
+| GitHub      | `Preview`, `copilot`, `main - kraak-api-prod`                                              | Usages non entièrement établis ; ne pas supprimer sur leur seul nom                                      |
 
 Les paramètres des quatre services Render ont été consultés : ils référencent
 explicitement `Ange230700/kraak-consulting`. Les deux services production suivent
@@ -115,24 +115,40 @@ L'inventaire des disques, bases, workers, cron, groupes d'environnement,
 domaines et ressources suspendues doit encore être conclu.
 
 La création automatique d'une preview Supabase n'a pas été demandée. La branche
-est rattachée au projet staging et à `chore/production-only`, pas au projet
-production. L'intégration doit être désactivée pour ce dépôt avant les prochains
-travaux pour éviter de recréer des ressources. Le dashboard Supabase demande
-une connexion ; la session CLI GitHub ne permet pas d'administrer les
-installations d'applications (HTTP 403). Aucun autre dépôt ne doit être déconnecté.
+était rattachée au projet staging et à `chore/production-only`, pas au projet
+production. Le dashboard demande une connexion et les installations GitHub
+ne sont pas administrables avec la session CLI actuelle (HTTP 403).
+Une autre voie documentée a permis de désactiver le branching du seul projet :
+`DELETE /v1/projects/{ref}/branches`, après retrait de la preview vide.
+La réponse HTTP 200 puis la liste vide des branches ont été vérifiées.
+Les deux projets racines restent `ACTIVE_HEALTHY` et leurs comptages Auth,
+Storage, tables publiques, politiques RLS et migrations sont inchangés.
+Aucun autre projet ni dépôt n'a été déconnecté.
 
 Un contrôle PostgreSQL en lecture seule de la preview a confirmé zéro ligne
 dans les 30 tables publiques, zéro utilisateur/identité/session Auth et aucun
 bucket/objet Storage. Son rattachement à la PR #735 et ses 25 migrations ont été
-archivés en privé. La connexion directe ne résout pas son DNS ; le pooler IPv4
-permet les lectures. Un essai `pg_dump` par le pooler transactionnel a expiré :
-ce fichier partiel n'est pas une sauvegarde validée. Le nettoyage de cette
-ressource temporaire créée par la tâche ne doit pas supprimer le projet parent.
+archivés en privé. Le contrôle final couvre 66 tables public/Auth/Storage/Vault,
+vides hors métadonnées de migration ; les 25 versions correspondent au dépôt.
+La connexion directe ne résout pas son DNS ; le pooler IPv4 session a permis
+un dump complet de 548 432 octets, table des matières lisible de 1 018 lignes.
+SHA-256 : `9E24E2BEBD4E46A00DF6F86EB5C06EDEE5C02A4B8D195CB830823786C2D3A05B`.
+La première tentative transactionnelle a expiré et reste marquée `.partial`.
+La restauration PostgreSQL 18 isolée a été tentée mais l'extension fournisseur
+`supabase_vault` est absente ; aucune restauration complète n'est revendiquée.
+Seule cette preview vide créée par la tâche a été supprimée : liste fournisseur
+sans son ID/réf et GET détail 404. Le serveur de test local a été arrêté.
 
-Les secrets sont inventoriés par **nom uniquement**. Il manque dans `Production`
-`RENDER_PROD_WEB_SERVICE_ID` et `SUPABASE_DB_URL_PRODUCTION_READONLY`.
+Les secrets sont inventoriés par **nom uniquement**. Le secret
+`RENDER_PROD_WEB_SERVICE_ID` a été configuré avec l'identifiant de service
+production vérifié et sa présence revérifiée par API. Il manque encore
+`SUPABASE_DB_URL_PRODUCTION_READONLY` dans `Production`.
 Le secret historique d'accès Render est présent côté GitHub, mais l'authentification
-CLI locale est expirée ; le dashboard est accessible en lecture.
+CLI locale est expirée ; le dashboard authentifié reste utilisable.
+Les deux services production ont l'auto-déploiement désactivé et les previews
+Render désactivées. Le Blueprint partagé suit `main` et son Auto Sync est passé
+de `Yes` à `No`, état revérifié après rechargement : une fusion ne doit pas
+modifier implicitement l'infrastructure ni déployer avant la recette.
 Ne pas réinitialiser de mot de passe ni copier les identifiants de staging.
 
 Les webhooks du dépôt étaient vides lors du contrôle API. La propriété des DNS,
@@ -240,15 +256,16 @@ Validation locale de la transition :
 - Smoke Playwright Chromium sur un serveur local isolé, port `4219` :
   trois scénarios réussis (navigation participant, présentation et redirection
   vers la connexion). Ce succès local ne remplace pas les contrôles production.
-- La même recette avec le participant désactivé échoue sur le profil local
-  puis sur le profil de build production : deux scénarios passent, mais l'accès
-  direct au dashboard affiche la connexion au lieu de la 404 attendue.
-  Le scénario reste présent, non désactivé. Ce résultat bloque la validation
-  complète du comportement production ; son origine reste à corriger.
+- La même recette a d'abord échoué avec le participant désactivé : accès direct
+  au dashboard affichant la connexion plutôt que la 404. Le guard existant
+  n'était pas attaché aux routes. Après test RED puis ajout du `canMatch` aux
+  routes d'authentification et au parent participant : 38 tests ciblés réussis,
+  smoke local activé 3/3, local désactivé 3/3 et production désactivé 3/3.
+  La CI Chromium exécute aussi ce dernier comportement désactivé.
 - `pnpm check` réussit après nettoyage du cache Angular et correction du `PATH`,
   avec format, lint, types et couverture stricte inchangés : 299 tests workspace,
   1 146 tests API, 924 tests web et 276 tests mobile, ainsi que les packages.
-  Cela ne transforme pas le smoke désactivé en réussite.
+  Ces checks ne remplacent pas une validation des parcours réellement déployés.
 - `pnpm build` réussit pour web, mobile et API ; le build web signale un
   avertissement de budget initial sans dépasser le seuil d'erreur.
 - `pnpm test:integration` réussit : 31 scénarios API. Les dépendances métier
@@ -256,7 +273,9 @@ Validation locale de la transition :
 
 ## Coûts et prochaine étape
 
-**Aucune économie réalisée n'est confirmée : aucune ressource n'a été supprimée.**
+**Aucune économie réalisée n'est confirmée.** La preview vide créée par la tâche
+a été supprimée et le branching désactivé, mais leur facturation reste à vérifier.
+Aucune ressource staging préexistante avec données n'a été supprimée.
 
 Facturation Render observée le 27 octobre :
 
