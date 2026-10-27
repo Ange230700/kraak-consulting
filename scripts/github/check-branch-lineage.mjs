@@ -69,46 +69,46 @@ function parseArguments(args) {
 
   if (refs.length > 2) {
     throw new Error(
-      'Usage : node scripts/github/check-branch-lineage.mjs [--require-main-ancestor] [<ref-staging> <ref-main>]',
+      'Usage : node scripts/github/check-branch-lineage.mjs [--require-main-ancestor] [<ref-head> <ref-main>]',
     );
   }
 
   return {
     requireMainAncestor,
-    stagingRef: refs[0] ?? 'origin/staging',
+    headRef: refs[0] ?? 'HEAD',
     mainRef: refs[1] ?? 'origin/main',
   };
 }
 
 function main() {
-  const { mainRef, requireMainAncestor, stagingRef } = parseArguments(
+  const { mainRef, requireMainAncestor, headRef } = parseArguments(
     process.argv.slice(2),
   );
-  const mergeBase = runGit(['merge-base', stagingRef, mainRef]);
-  const [stagingAhead, mainAhead] = runGit([
+  const mergeBase = runGit(['merge-base', headRef, mainRef]);
+  const [headAhead, mainAhead] = runGit([
     'rev-list',
     '--left-right',
     '--count',
-    `${stagingRef}...${mainRef}`,
+    `${headRef}...${mainRef}`,
   ])
     .split(/\s+/)
     .map(Number);
-  const mainIsAncestor = isAncestor(mainRef, stagingRef);
+  const mainIsAncestor = isAncestor(mainRef, headRef);
 
-  console.log(`[branch-lineage] staging : ${getCommitSummary(stagingRef)}`);
+  console.log(`[branch-lineage] head    : ${getCommitSummary(headRef)}`);
   console.log(`[branch-lineage] main    : ${getCommitSummary(mainRef)}`);
   console.log(`[branch-lineage] base commune : ${mergeBase}`);
   console.log(
-    `[branch-lineage] staging en avance de ${stagingAhead} commit(s) ; main en avance de ${mainAhead} commit(s).`,
+    `[branch-lineage] head en avance de ${headAhead} commit(s) ; main en avance de ${mainAhead} commit(s).`,
   );
 
   if (mainIsAncestor) {
-    console.log('[branch-lineage] main est un ancêtre de staging.');
+    console.log('[branch-lineage] main est un ancêtre de la branche courte.');
     return;
   }
 
   console.log(
-    '[branch-lineage] main n’est pas un ancêtre de staging ; une promotion automatique n’est pas sûre.',
+    '[branch-lineage] main n’est pas un ancêtre de la branche courte ; un rebase est requis.',
   );
 
   if (requireMainAncestor) {

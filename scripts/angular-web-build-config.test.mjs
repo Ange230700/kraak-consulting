@@ -61,15 +61,12 @@ test('Given la cible build web Angular, When ses options sont vérifiées, Then 
   assert.equal(webBuildOptions.security, undefined);
 });
 
-test('Given the deployed web builds, When CSP forbids inline event handlers, Then staging and production keep critical CSS inlining disabled', () => {
+test('Given le build web déployé, When CSP interdit les gestionnaires inline, Then la production désactive le CSS critique inline', () => {
   assert.equal(
     webBuildConfigurations.production?.optimization?.styles?.inlineCritical,
     false,
   );
-  assert.equal(
-    webBuildConfigurations.staging?.optimization?.styles?.inlineCritical,
-    false,
-  );
+  assert.equal(webBuildConfigurations.staging, undefined);
 });
 
 test('Given la configuration production du build web, When ses options sont vérifiées, Then elle reste compatible avec le builder Angular', () => {
@@ -84,7 +81,7 @@ test('Given la configuration production du build web, When ses options sont vér
   );
 });
 
-test('Given les serveurs web local et staging, When leurs options sont vérifiées, Then allowedHosts reste une option du dev-server', () => {
+test('Given les serveurs web locaux, When leurs options sont vérifiées, Then allowedHosts reste une option du dev-server', () => {
   assertSupportedOptions(
     webServeOptions,
     devServerOptionNames,
@@ -92,7 +89,7 @@ test('Given les serveurs web local et staging, When leurs options sont vérifié
   );
   assert.deepEqual(webServeOptions.allowedHosts, []);
 
-  for (const configurationName of ['local', 'staging']) {
+  for (const configurationName of ['local', 'development']) {
     const configuration = webServeConfigurations[configurationName];
 
     assertSupportedOptions(

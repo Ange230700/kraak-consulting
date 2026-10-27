@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const clientRoot = path.join(repoRoot, 'apps', 'client');
-const supportedEnvironments = new Set(['local', 'staging', 'production']);
+const supportedEnvironments = new Set(['local', 'production']);
 const outputPaths = [
   path.join(
     clientRoot,
@@ -87,12 +87,6 @@ function parseEnvironmentName(argv) {
   const environmentName =
     envFlagIndex === -1 ? 'local' : (argv[envFlagIndex + 1] ?? 'local');
 
-  if (!supportedEnvironments.has(environmentName)) {
-    throw new Error(
-      `Environnement invalide "${environmentName}". Valeurs attendues: local, staging, production.`,
-    );
-  }
-
   return environmentName;
 }
 
@@ -101,10 +95,7 @@ function resolveEnvFileNames(environmentName) {
     return ['.env', '.env.local'];
   }
 
-  const envFileEnvironment =
-    environmentName === 'production' ? 'prod' : environmentName;
-
-  return ['.env', `.env.${envFileEnvironment}`];
+  return ['.env', '.env.prod'];
 }
 
 function readRuntimeVariable(key, fileVariables, processEnv) {
@@ -180,6 +171,11 @@ export function loadClientRuntimeConfig(
   environmentName,
   { clientRootPath = clientRoot, processEnv = process.env } = {},
 ) {
+  if (!supportedEnvironments.has(environmentName)) {
+    throw new Error(
+      `Environnement invalide "${environmentName}". Valeurs attendues: local, production.`,
+    );
+  }
   const envFileNames = resolveEnvFileNames(environmentName);
   const envPaths = envFileNames.map((envFileName) =>
     path.join(clientRootPath, envFileName),

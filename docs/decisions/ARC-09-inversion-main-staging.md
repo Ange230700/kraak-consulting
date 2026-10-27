@@ -1,8 +1,8 @@
 ---
-status: active
+status: reference
 owner: platform
 last_reviewed: 2026-10-22
-source_of_truth: true
+source_of_truth: false
 ---
 
 # ARC-09 — Inversion `main` ↔ `staging` : staging devient la branche d'intégration
@@ -24,6 +24,9 @@ source_of_truth: true
     - [Migration](#migration)
   - [4 · Conditions de levée / révision](#4-conditions-de-levee-revision)
   - [5 · Références](#5-references)
+
+> Décision historique remplacée par [ARC-22](ARC-22-production-only-main.md).
+> Ne pas exécuter ce modèle pour de nouveaux travaux.
 
 | Champ           | Valeur                                                                                  |
 | --------------- | --------------------------------------------------------------------------------------- |

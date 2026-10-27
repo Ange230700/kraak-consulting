@@ -15,7 +15,7 @@ interface ClientDefaults {
   tiktokUrl: string;
 }
 
-type DefaultsProfile = 'local' | 'staging' | 'production';
+type DefaultsProfile = 'local' | 'production';
 
 const runtimeGlobals = globalThis as typeof globalThis & {
   process?: {
@@ -45,10 +45,6 @@ function resolveDefaultsProfile(): DefaultsProfile {
     return 'local';
   }
 
-  if (profile === 'staging' || profile === 'stage') {
-    return 'staging';
-  }
-
   // Fallback production pour éviter toute régression sur les builds publics.
   return 'production';
 }
@@ -72,10 +68,6 @@ const DEFAULTS_BY_PROFILE: Record<DefaultsProfile, ClientDefaults> = {
   local: {
     ...BASE_DEFAULTS,
     siteUrl: 'http://localhost:4200',
-  },
-  staging: {
-    ...BASE_DEFAULTS,
-    siteUrl: 'https://kraak-web-staging.onrender.com',
   },
   production: {
     ...BASE_DEFAULTS,

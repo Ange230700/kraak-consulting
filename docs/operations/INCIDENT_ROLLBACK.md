@@ -1,8 +1,8 @@
 ---
-status: active
+status: reference
 owner: platform
 last_reviewed: 2026-07-24
-source_of_truth: true
+source_of_truth: false
 ---
 
 # Incident, rollback et checklist de lancement
@@ -64,8 +64,12 @@ source_of_truth: true
   - [6. Historique et Mises à Jour](#6-historique-et-mises-a-jour)
   - [Ressources Externes](#ressources-externes)
 
-> Origine historique : DEP-06, 2026-04-30. Ce fichier est désormais le runbook
-> actif pour incident, rollback et checklist de lancement.
+> Playbook historique du pilote staging, non applicable à une nouvelle release.
+> Utiliser [RELEASE_PROD](RELEASE_PROD.md) pour le rollback production et
+> [OBSERVABILITY](OBSERVABILITY.md) pour les alertes. Ne pas exécuter les
+> commandes staging ci-dessous pour intervenir sur la production.
+
+Origine historique : DEP-06, 2026-04-30.
 
 ## Objectif
 

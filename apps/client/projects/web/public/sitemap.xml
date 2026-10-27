@@ -53,13 +53,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kraak-web-prod.onrender.com/fr/blog</loc>
-    <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/blog" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/blog" />
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://kraak-web-prod.onrender.com/fr/contact</loc>
     <xhtml:link rel="alternate" hreflang="fr-CI" href="https://kraak-web-prod.onrender.com/fr/contact" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://kraak-web-prod.onrender.com/fr/contact" />

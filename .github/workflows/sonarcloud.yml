@@ -1,14 +1,14 @@
 # Analyse SonarQube Cloud — kraak-consulting
-# Déclenchée sur staging/main et leurs pull requests.
+# Déclenchée sur main et ses pull requests.
 # Nécessite les secrets : SONAR_TOKEN (token utilisateur SonarCloud).
 
 name: SonarCloud
 
 on:
   push:
-    branches: [staging, main]
+    branches: [main]
   pull_request:
-    branches: [staging, main]
+    branches: [main]
 
 concurrency:
   group: sonarcloud-${{ github.ref }}

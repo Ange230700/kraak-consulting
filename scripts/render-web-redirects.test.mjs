@@ -22,10 +22,10 @@ const routeModel = JSON.parse(
   ),
 );
 
-test('Given Render static services, When redirect routes are inspected, Then every supported legacy public redirect is declared twice', () => {
+test('Given le service web de production, When les redirections sont inspectées, Then chaque ancienne route est déclarée une seule fois', () => {
   for (const rule of buildExpectedRenderRedirects(routeModel)) {
-    assert.equal(countLine(`        source: ${rule.source}`), 2);
-    assert.ok(countLine(`        destination: ${rule.destination}`) >= 2);
+    assert.equal(countLine(`        source: ${rule.source}`), 1);
+    assert.ok(countLine(`        destination: ${rule.destination}`) >= 1);
   }
 });
 
@@ -34,8 +34,7 @@ test('Given the Render root limitation, When redirect routes are inspected, Then
 });
 
 test('Given Render static redirects, When route types are inspected, Then only redirect actions are added for the web static services', () => {
-  const expectedRedirectCount =
-    buildExpectedRenderRedirects(routeModel).length * 2;
+  const expectedRedirectCount = buildExpectedRenderRedirects(routeModel).length;
 
   assert.equal(countLine('      - type: redirect'), expectedRedirectCount);
 });

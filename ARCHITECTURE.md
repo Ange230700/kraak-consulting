@@ -37,13 +37,13 @@ KRAAK est un monorepo `pnpm` composé de :
 
 ## Stack active
 
-| Surface              | Choix actif                                           | Source détaillée                                                     |
-| -------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
-| Web                  | Angular, PrimeNG, PrimeIcons, Tailwind CSS, prerender | [`docs/architecture/WEB.md`](docs/architecture/WEB.md)               |
-| Mobile               | Ionic Angular, Capacitor, Android-first               | [`docs/architecture/MOBILE.md`](docs/architecture/MOBILE.md)         |
-| API                  | NestJS, Swagger/OpenAPI à `/api-docs`                 | [`docs/architecture/API.md`](docs/architecture/API.md)               |
-| Données/Auth/Storage | Supabase                                              | [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md) |
-| Déploiement          | Render web + API, Supabase par environnement          | [`docs/architecture/DEPLOYMENT.md`](docs/architecture/DEPLOYMENT.md) |
+| Surface              | Choix actif                                                               | Source détaillée                                                     |
+| -------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Web                  | Angular, PrimeNG, PrimeIcons, Tailwind CSS, prerender                     | [`docs/architecture/WEB.md`](docs/architecture/WEB.md)               |
+| Mobile               | Ionic Angular, Capacitor, Android-first                                   | [`docs/architecture/MOBILE.md`](docs/architecture/MOBILE.md)         |
+| API                  | NestJS, Swagger/OpenAPI à `/api-docs`                                     | [`docs/architecture/API.md`](docs/architecture/API.md)               |
+| Données/Auth/Storage | Supabase                                                                  | [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md) |
+| Déploiement          | Render web + API, Supabase de production ; services locaux pour les tests | [`docs/architecture/DEPLOYMENT.md`](docs/architecture/DEPLOYMENT.md) |
 
 ## Internationalisation
 
@@ -95,9 +95,8 @@ localiser implicitement les routes privées, admin ou mobiles.
   prerender.
 - [`ARC-04`](docs/decisions/ARC-04-modeles-donnees-mvp.md) : modèles de données
   MVP.
-- [`ARC-07`](docs/decisions/ARC-07-prod-release-tag-based.md) et
-  [`ARC-09`](docs/decisions/ARC-09-inversion-main-staging.md) : release et
-  branches.
+- [`ARC-22`](docs/decisions/ARC-22-production-only-main.md) : production unique,
+  branche `main` et décommissionnement conditionné aux preuves de préservation.
 - [`ARC-14`](docs/decisions/ARC-14-freeze-surface-vitrine-publique.md) et
   [`ARC-15`](docs/decisions/ARC-15-positionnement-page-ressources-vitrine.md) :
   surface vitrine publique.

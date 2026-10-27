@@ -1,20 +1,11 @@
 #!/usr/bin/env node
 /**
- * Met à jour les règles de protection des branches `main` et `staging`
- * conformément à ARC-09 (inversion des rôles main ↔ staging).
- *
- * Modèle :
- *   - `staging` : branche d'intégration longue. Toutes les branches courtes
- *     en partent et y reviennent par PR. CI complète requise.
- *   - `main`    : branche de release. Avance uniquement par PR depuis
- *     `staging`. Sert de point d'ancrage des tags SemVer (ARC-07). Aucun
- *     déploiement git-triggered côté web production : la release est pilotée
- *     par workflow de tag et déploiement Render explicite.
+ * Protège `main`, seule branche permanente, sans exception administrateur.
+ * Les branches courtes reviennent par PR avec tous les contrôles requis.
  *
  * Usage :
  *   node scripts/github/update-branch-protection.mjs            # apply
  *   node scripts/github/update-branch-protection.mjs --dry-run  # show only
- *   node scripts/github/update-branch-protection.mjs --staging-only # staging only
  *
  * Pré-requis : `gh auth status` OK avec scopes `repo` + `admin:repo_hook`.
  */
@@ -26,7 +17,9 @@ import process from 'node:process';
 
 const REPO = 'Ange230700/kraak-consulting';
 const DRY_RUN = process.argv.includes('--dry-run');
-const STAGING_ONLY = process.argv.includes('--staging-only');
+if (process.argv.slice(2).some((arg) => arg !== '--dry-run')) {
+  throw new Error('Seule l’option --dry-run est acceptée.');
+}
 
 /**
  * Résout le chemin absolu du binaire `gh` en parcourant PATH une seule fois.
@@ -54,10 +47,11 @@ function resolveGhBinary() {
 
 const GH_BIN = resolveGhBinary();
 
-const COMMON_CHECKS_STAGING = [
+const COMMON_CHECKS_MAIN = [
   'Quality gate',
   'SonarCloud Analysis',
   'SonarCloud Code Analysis',
+  'Branch Lineage',
   'Format & Lint',
   'Migration Lineage Tests',
   'Audit dépendances',
@@ -70,45 +64,30 @@ const COMMON_CHECKS_STAGING = [
   'Android Debug APK',
 ];
 
-const COMMON_CHECKS_MAIN = [
-  'Quality gate',
-  'SonarCloud Analysis',
-  'SonarCloud Code Analysis',
-  'Branch Lineage',
-  'Tests unitaires',
-  'Tests E2E',
-  'Android Debug APK',
-];
-
-function buildProtectionPayload({
-  contexts,
-  enforceAdmins,
-  requirePullRequest,
-  strictStatusChecks,
-  requireConversationResolution,
-}) {
+function buildProtectionPayload(contexts) {
   return {
     required_status_checks: {
-      strict: strictStatusChecks,
-      contexts,
+      strict: true,
+      checks: contexts.map((context) => ({
+        context,
+        app_id: context === 'SonarCloud Code Analysis' ? 12526 : 15368,
+      })),
     },
-    enforce_admins: enforceAdmins,
+    enforce_admins: true,
     // Un compteur à zéro exige une PR sans imposer d'approbation, conformément
     // au modèle de mainteneur solo.
-    required_pull_request_reviews: requirePullRequest
-      ? {
-          dismiss_stale_reviews: false,
-          require_code_owner_reviews: false,
-          required_approving_review_count: 0,
-          require_last_push_approval: false,
-        }
-      : null,
+    required_pull_request_reviews: {
+      dismiss_stale_reviews: true,
+      require_code_owner_reviews: true,
+      required_approving_review_count: 0,
+      require_last_push_approval: false,
+    },
     restrictions: null,
     required_linear_history: true,
     allow_force_pushes: false,
     allow_deletions: false,
     block_creations: false,
-    required_conversation_resolution: requireConversationResolution,
+    required_conversation_resolution: true,
     lock_branch: false,
     allow_fork_syncing: false,
   };
@@ -143,28 +122,7 @@ function applyProtection(branch, payload) {
 }
 
 function main() {
-  applyProtection(
-    'staging',
-    buildProtectionPayload({
-      contexts: COMMON_CHECKS_STAGING,
-      enforceAdmins: true,
-      requirePullRequest: true,
-      strictStatusChecks: true,
-      requireConversationResolution: true,
-    }),
-  );
-  if (!STAGING_ONLY) {
-    applyProtection(
-      'main',
-      buildProtectionPayload({
-        contexts: COMMON_CHECKS_MAIN,
-        enforceAdmins: false,
-        requirePullRequest: false,
-        strictStatusChecks: false,
-        requireConversationResolution: false,
-      }),
-    );
-  }
+  applyProtection('main', buildProtectionPayload(COMMON_CHECKS_MAIN));
   console.log('\nDone.');
 }
 

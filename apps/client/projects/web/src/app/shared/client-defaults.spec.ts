@@ -59,7 +59,7 @@ describe('CLIENT_DEFAULTS', () => {
     expect(CLIENT_DEFAULTS.siteName).toBe('KRAAK');
   });
 
-  it('Given a staging runtime profile fallback, when the module loads, then staging defaults are selected', async () => {
+  it('Given un ancien profil retiré, When le module est chargé, Then aucune URL staging n’est sélectionnée', async () => {
     setProfileEnv({
       KRAAK_DEFAULTS_PROFILE: ' ',
       CLIENT_RUNTIME_ENV: 'stage',
@@ -67,9 +67,7 @@ describe('CLIENT_DEFAULTS', () => {
 
     const { CLIENT_DEFAULTS } = await loadClientDefaults();
 
-    expect(CLIENT_DEFAULTS.siteUrl).toBe(
-      'https://kraak-web-staging.onrender.com',
-    );
+    expect(CLIENT_DEFAULTS.siteUrl).toBe('https://kraak-web-prod.onrender.com');
   });
 
   it('Given no defaults profile, when the module loads, then production defaults are selected', async () => {

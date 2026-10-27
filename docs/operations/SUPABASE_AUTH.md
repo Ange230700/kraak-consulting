@@ -14,7 +14,7 @@ source_of_truth: true
   - [Variables côté API](#variables-cote-api)
   - [Configuration hébergée à répliquer](#configuration-hebergee-a-repliquer)
   - [Validation minimale](#validation-minimale)
-  - [Politique de rate-limit email (staging)](#politique-de-rate-limit-email-staging)
+  - [Politique de rate-limit email](#politique-de-rate-limit-email)
 
 Ce runbook décrit la configuration Auth minimale attendue pour le MVP KRAAK.
 
@@ -51,7 +51,7 @@ La clé publishable est recommandée pour les flux `sign-in`, `sign-up`,
 
 ## Configuration hébergée à répliquer
 
-Pour un projet Supabase staging ou production, répliquer au minimum dans le Dashboard :
+Pour le projet Supabase de production, vérifier dans le Dashboard :
 
 1. Provider `Email` activé
 2. Signups email autorisés
@@ -59,12 +59,16 @@ Pour un projet Supabase staging ou production, répliquer au minimum dans le Das
 4. `Site URL` alignée avec la surface web principale
 5. Redirect URLs alignées avec web, mobile et deep links KRAAK
 
-URLs minimales à autoriser :
+Autoriser uniquement les callbacks du site de production effectivement validé
+et des applications mobiles autorisées. Les URL Render ci-dessous sont la cible
+de configuration, pas une preuve de disponibilité. Ne pas recopier des
+redirections de staging ou de localhost en production :
 
 - `https://kraak-web-prod.onrender.com/auth/callback`
 - `https://kraak-web-prod.onrender.com/auth/reset`
-- `https://kraak-web-staging.onrender.com/auth/callback`
-- `https://kraak-web-staging.onrender.com/auth/reset`
+
+Le développement utilise Supabase local et les redirections suivantes :
+
 - `http://localhost:4200/auth/callback`
 - `http://localhost:4200/auth/reset`
 - `http://localhost:4300/auth/callback`
@@ -88,48 +92,22 @@ et `resource` utilisent maintenant une policy permissive unique par action
 `multiple_permissive_policies` du linter Supabase tout en conservant les droits
 admin, formateur, utilisateur et lecture publique attendus.
 
-## Politique de rate-limit email (staging)
+## Politique de rate-limit email
 
-Objectif staging : éviter les blocages du flux mot de passe oublié pendant les
-tests, tout en gardant une protection anti-abus minimale.
+Les essais de confirmation et récupération utilisent la messagerie locale.
+Ne pas envoyer de messages non sollicités ni augmenter les quotas de production
+pour faire passer des tests.
 
-Politique cible :
+La configuration locale historique prévoit :
 
 - `auth.email.max_frequency = "30s"` (cooldown par utilisateur)
 - `auth.rate_limit.email_sent = 30` (quota global par heure)
 
 Important : sur un projet Supabase hébergé avec le provider email natif,
 le quota global d'emails reste plafonné à 2/h. Pour appliquer un quota plus
-élevé en staging, il faut configurer un SMTP personnalisé.
+élevé en production, une configuration SMTP approuvée et testée est nécessaire.
 
-Application sur staging (Dashboard) :
-
-1. Ouvrir `Authentication > SMTP Settings` et activer un SMTP personnalisé.
-2. Ouvrir `Authentication > Rate Limits`.
-3. Définir le cooldown email utilisateur à `30s`.
-4. Définir `Emails sent` à `30` par heure.
-5. Sauvegarder puis attendre la propagation (quelques secondes).
-
-Application sur staging (Management API) :
-
-1. Récupérer un token personnel Supabase (Dashboard account tokens).
-2. Exécuter un `PATCH /v1/projects/{project_ref}/config/auth` avec
-   `rate_limit_email_sent: 30` et `smtp_max_frequency: 30`.
-
-Exemple :
-
-```bash
-curl -X PATCH "https://api.supabase.com/v1/projects/${PROJECT_REF}/config/auth" \
-  -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "rate_limit_email_sent": 30,
-    "smtp_max_frequency": 30
-  }'
-```
-
-Vérification recommandée :
-
-1. Faire deux demandes de réinitialisation à plus de 30s d'intervalle.
-2. Vérifier que l'API KRAAK ne remonte plus de `429 over_email_send_rate_limit`
-   dans ce volume nominal de test.
+Vérifier les callbacks, le domaine d'envoi, les quotas anti-abus et la réception
+avec un compte de test autorisé avant d'activer le parcours réel.
+L'état Auth de production et ses blocages sont documentés dans le
+[registre de transition](PRODUCTION_ONLY_TRANSITION.md).

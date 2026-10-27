@@ -1,8 +1,8 @@
 ---
-status: active
+status: reference
 owner: platform
 last_reviewed: 2026-10-23
-source_of_truth: true
+source_of_truth: false
 ---
 
 # Validation staging et préparation release
@@ -32,14 +32,9 @@ source_of_truth: true
   - [10 · Anti-patterns interdits](#10-anti-patterns-interdits)
   - [11 · Tableau de synthèse](#11-tableau-de-synthese)
 
-> Malgré son nom historique, ce document ne décrit plus une promotion depuis
-> `main` vers `staging`.
->
-> `staging` est la branche d'intégration longue. Elle reçoit les PR de travail
-> et déclenche la validation staging.
->
-> `main` est la branche de release. Elle avance uniquement par PR de release
-> depuis `staging`.
+> Procédure historique remplacée par [RELEASE_PROD](RELEASE_PROD.md) et
+> [ARC-22](../decisions/ARC-22-production-only-main.md). Ne pas recréer de
+> staging ; son retrait reste soumis au [registre de transition](PRODUCTION_ONLY_TRANSITION.md).
 
 Voir aussi :
 

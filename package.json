@@ -19,20 +19,15 @@
     "build": "pnpm build:web && pnpm build:mobile && pnpm build:api",
     "test": "node ./scripts/workspace-runner.mjs test",
     "dev:web": "pnpm --filter @kraak/client run dev:web",
-    "dev:web:staging": "pnpm --filter @kraak/client run dev:web:staging",
     "build:web": "pnpm --filter @kraak/client build",
     "build:web:local": "pnpm --filter @kraak/client run build:web:local",
-    "build:web:staging": "pnpm --filter @kraak/client run build:web:staging",
     "dev:mobile": "pnpm --filter @kraak/client run dev:mobile --port 4300",
-    "dev:mobile:staging": "pnpm --filter @kraak/client run dev:mobile:staging --port 4300",
     "build:mobile": "pnpm --filter @kraak/client build:mobile",
     "build:mobile:local": "pnpm --filter @kraak/client run build:mobile:local",
-    "build:mobile:staging": "pnpm --filter @kraak/client run build:mobile:staging",
     "cap:sync": "pnpm --filter @kraak/client cap:sync",
     "build:debug:android": "pnpm --filter @kraak/client build:debug:android",
     "build:debug:ios": "pnpm --filter @kraak/client build:debug:ios",
     "dev:api": "pnpm --filter @kraak/api dev",
-    "dev:api:staging": "pnpm --filter @kraak/api run start:staging",
     "splinter:local": "pnpm exec supabase db advisors --local --type all --level warn --fail-on warn",
     "splinter:linked": "pnpm exec supabase db advisors --linked --type all --level error --fail-on error",
     "splinter:linked:warnings": "pnpm exec supabase db advisors --linked --type all --level warn --fail-on warn",
@@ -59,7 +54,6 @@
     "test:api": "pnpm --filter @kraak/api test",
     "test:api:journey": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json",
     "test:api:journey:strict": "pnpm exec newman run apps/api/test/collections/api-user-journey.collection.json --reporters cli,json --reporter-json-export test-results/postman/api-user-journey.report.json --env-var strictAuth=true",
-    "test:api:journey:strict:staging": "node ./scripts/run-staging-journey.mjs",
     "test:libs": "pnpm -r --filter @kraak/contracts --filter @kraak/domain --filter @kraak/api-client --filter @kraak/tokens test",
     "test:api:unit": "pnpm --filter @kraak/api test:unit",
     "test:integration": "pnpm --filter @kraak/api test:integration",
@@ -100,8 +94,8 @@
     "changesets:publish": "changeset publish"
   },
   "validate-branch-name": {
-    "pattern": "^(main|staging|(feat|fix|chore|docs|test|refactor|ci|style|perf|revert|build|copilot)/.+)$",
-    "errorMsg": "Le nom de branche doit suivre le format <type>/<sujet> (ex: feat/login-page, fix/header-layout) ou être 'main' ou 'staging'"
+    "pattern": "^(main|(feat|fix|chore|docs|test|refactor|ci|style|perf|revert|build|copilot)/.+)$",
+    "errorMsg": "Le nom de branche doit suivre le format <type>/<sujet> (ex: feat/login-page, fix/header-layout) ou être 'main'"
   },
   "config": {
     "commitizen": {

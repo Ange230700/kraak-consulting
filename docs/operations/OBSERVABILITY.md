@@ -35,8 +35,8 @@ ajouter d'infrastructure externe supplémentaire :
 
 ## Dépendances
 
-- DEP-02: satisfaite
-  - le site public est déjà déployée via Render
+- DEP-02 : disponibilité à revérifier
+  - le site Render renvoyait HTTP 404 lors du contrôle du 27 octobre 2026
   - URL publique documentée: `https://kraak-web-prod.onrender.com`
 - DEP-03: satisfaite
   - l'API est déjà déployée via Render
@@ -66,7 +66,7 @@ Cette tâche ne couvre pas:
 {
   "status": "ok",
   "service": "kraak-api",
-  "environment": "staging",
+  "environment": "production",
   "timestamp": "2026-04-30T09:45:00.000Z",
   "version": "pilot-2026-04-30",
   "uptimeSeconds": 321
@@ -77,7 +77,7 @@ Usage:
 
 - `status` et `service` servent au check automatisé
 - `environment` vient de `APP_ENV` et évite les confusions
-  local/staging/production même quand `NODE_ENV=production`
+  local/production même quand `NODE_ENV=production`
 - `version` permet de corréler un incident à une release
 - `uptimeSeconds` aide à distinguer un redémarrage récent d'une dégradation longue
 
@@ -87,19 +87,14 @@ Fichier: `.github/workflows/observability.yml`
 
 Comportement:
 
-1. toutes les 15 minutes, le workflow exécute deux checks (staging puis production)
-2. pour chaque environnement, le workflow vérifie la home web, `GET /health` et
+1. toutes les 15 minutes, le workflow contrôle uniquement la production
+2. le workflow vérifie la home web, `GET /health` et
    la valeur `environment` du payload API
 3. en cas d'échec, il ouvre (ou met à jour) une issue dédiée à l'environnement
 4. quand les checks repassent au vert, le workflow commente puis ferme l'issue dédiée
 
 Valeurs versionnées actuellement dans le workflow:
 
-- staging
-  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-staging.onrender.com`
-  - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com`
-  - `KRAAK_OBSERVABILITY_ENVIRONMENT=staging`
-  - issue: `[ALERT][DEP-05][staging] Observability check failure`
 - production
   - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com`
   - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com`
@@ -114,15 +109,6 @@ Commande locale ou CI:
 KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
 KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com \
 KRAAK_OBSERVABILITY_ENVIRONMENT=production \
-pnpm check:observability
-```
-
-Commande pour la cible staging:
-
-```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-staging.onrender.com \
-KRAAK_OBSERVABILITY_API_URL=https://kraak-api-staging.onrender.com \
-KRAAK_OBSERVABILITY_ENVIRONMENT=staging \
 pnpm check:observability
 ```
 
@@ -141,7 +127,7 @@ Sortie attendue:
 - [x] Workflow GitHub planifié ajouté
 - [x] Alerte GitHub minimale ouverte/fermée automatiquement
 - [x] Variables et runbook mis a jour
-- [x] Preuves de validation ajoutées
+- [ ] Disponibilité web production rétablie et revérifiée après la transition
 
 ## Artefacts de preuve
 
@@ -158,6 +144,5 @@ Sortie attendue:
 
 ## Runbooks liés
 
-- [`INCIDENT_ROLLBACK.md`](INCIDENT_ROLLBACK.md)
-- [`STAGING_VALIDATION.md`](STAGING_VALIDATION.md)
+- [`PRODUCTION_ONLY_TRANSITION.md`](PRODUCTION_ONLY_TRANSITION.md)
 - [`RELEASE_PROD.md`](RELEASE_PROD.md)

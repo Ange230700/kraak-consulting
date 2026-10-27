@@ -40,7 +40,7 @@ Ce document explique comment contribuer au dépôt KRAAK Group.
 
 ## Branches
 
-`main` et `staging` sont les seules branches permanentes. Toute modification passe par une branche courte.
+`main` est la seule branche permanente. Toute modification passe par une branche courte.
 
 ### Nommage
 
@@ -67,8 +67,8 @@ Types autorisés :
 **Exemples :**
 
 ```bash
-git switch staging
-git pull --rebase origin staging
+git switch main
+git pull --ff-only origin main
 git switch -c feat/contact-form
 git switch -c fix/api-cors-error
 git switch -c docs/update-readme
@@ -257,8 +257,8 @@ de Project clairement pris en charge.
 
 ### Stratégie de fusion : rebase uniquement
 
-Ne jamais créer de merge commits. Toujours rebaser la branche courte sur `staging`
-avant de fusionner en fast-forward.
+Ne jamais créer de merge commits. Toujours rebaser la branche courte sur `main`
+avant de fusionner la PR par rebase, avec tous les contrôles requis.
 
 La configuration locale du dépôt impose :
 
@@ -274,26 +274,27 @@ Ces réglages sont déjà appliqués dans le `.git/config` du dépôt. Si vous c
 
 ```mermaid
 flowchart LR
-    staging["staging à jour"]
+    main["main à jour"]
     branch["Branche courte<br/>type/sujet"]
     work["Petit incrément<br/>tests ciblés"]
     commit["Commit<br/>Conventional Commits"]
-    pr["PR vers staging"]
+    pr["PR vers main"]
     checks["Checks requis"]
     ff["Rebase + fusion<br/>fast-forward"]
-    done["staging poussé<br/>issue + Project terminé"]
+    done["main à jour<br/>issue + Project terminé"]
     cleanup["Branche supprimée"]
 
-    releasePr["PR release<br/>staging -> main"]
     tag["Tag SemVer<br/>sur main"]
     prod["Workflow release-prod<br/>approbation production"]
 
-    staging --> branch --> work --> commit --> pr --> checks --> ff --> done --> cleanup
-    done --> releasePr --> tag --> prod
+    main --> branch --> work --> commit --> pr --> checks --> ff --> done --> cleanup
+    done --> tag --> prod
 ```
 
-`main` n'est pas une branche de développement. Elle avance uniquement par PR de
-release depuis `staging`, puis par tag SemVer validé.
+`main` reçoit les PR de travail validées. Les tags SemVer accessibles depuis
+`main` restent les seuls déclencheurs de déploiement. La CI et les répétitions
+de schéma utilisent des services locaux éphémères, sans environnement distant
+permanent de test.
 
 ---
 
@@ -339,15 +340,15 @@ des ports disponibles.
 
 ## Pull Requests
 
-- Ouvrir la PR vers `staging`
+- Ouvrir la PR vers `main`
 - Remplir le template de PR (description, tests, captures d'écran si UI)
 - Attendre la review avant de fusionner
 - Fusionner exclusivement en **rebase and merge** (pas de merge commit, pas de squash)
 - Après fusion, supprimer la branche locale et distante :
 
 ```bash
-git switch staging
-git pull --rebase origin staging
+git switch main
+git pull --ff-only origin main
 git branch -d feat/ma-feature
 git push origin --delete feat/ma-feature
 ```
@@ -430,10 +431,10 @@ publie `.reports/docs-audit/` comme artefact GitHub Actions.
 
 Une release suit un flux séparé :
 
-1. Valider `staging`.
-2. Ouvrir une PR `staging → main`.
+1. Valider la branche courte et ses contrôles CI.
+2. Fusionner sa PR vers `main` par rebase.
 3. Merger la PR de release après validation.
 4. Créer un tag SemVer sur `main`.
 5. Laisser le workflow de production gérer l'approbation et le déploiement.
 
-Aucun tag de production ne doit être posé sur `staging`.
+Aucun tag de production ne doit être posé sur une branche non fusionnée.

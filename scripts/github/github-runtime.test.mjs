@@ -10,7 +10,7 @@ function invoke(script, setup, args = []) {
   });
 }
 
-test('Given les règles de protection, When gh est simulé sur chaque OS, Then les payloads de staging et release sont transmis sans requête réseau', () => {
+test('Given les règles de protection, When gh est simulé sur chaque OS, Then seul le payload main est transmis sans requête réseau', () => {
   for (const [platform, extension] of [
     ['win32', '.exe'],
     ['win32', '.cmd'],
@@ -26,10 +26,13 @@ test('Given les règles de protection, When gh est simulé sur chaque OS, Then l
       .split('\n')
       .filter((line) => line.startsWith('REQUEST:'))
       .map((line) => JSON.parse(line.slice(8)));
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 1);
     assert.equal(requests[0].enforce_admins, true);
-    assert.equal(requests[1].required_pull_request_reviews, null);
-    assert.equal(requests[1].required_status_checks.strict, false);
+    assert.equal(
+      requests[0].required_pull_request_reviews.require_code_owner_reviews,
+      true,
+    );
+    assert.equal(requests[0].required_status_checks.strict, true);
     assert.equal(requests[0].required_linear_history, true);
   }
   const dry = invoke(
@@ -39,6 +42,13 @@ test('Given les règles de protection, When gh est simulé sur chaque OS, Then l
   );
   assert.equal(dry.status, 0, dry.stderr);
   assert.match(dry.stdout, /=== main ===/);
+  const obsolete = invoke(
+    'update-branch-protection.mjs',
+    'process.env.GH_BIN=process.execPath',
+    ['--staging-only'],
+  );
+  assert.equal(obsolete.status, 1);
+  assert.match(obsolete.stderr, /Seule l’option --dry-run/);
 });
 
 test('Given gh introuvable ou en échec, When les protections sont appliquées, Then le script échoue sans succès apparent', () => {
@@ -69,7 +79,7 @@ test('Given la lignée de release, When les options et références divergent, T
   const informative = invoke('check-branch-lineage.mjs', success);
   assert.equal(informative.status, 0, informative.stderr);
   assert.match(informative.stdout, /n’est pas un ancêtre/);
-  const oneRef = invoke('check-branch-lineage.mjs', success, ['staging']);
+  const oneRef = invoke('check-branch-lineage.mjs', success, ['feat/example']);
   assert.equal(oneRef.status, 0, oneRef.stderr);
   for (const args of [['--unknown'], ['a', 'b', 'c']]) {
     const result = invoke('check-branch-lineage.mjs', success, args);

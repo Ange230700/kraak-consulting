@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-27
 source_of_truth: true
 ---
 
@@ -10,84 +10,41 @@ source_of_truth: true
 ## Table des matières
 
 - [Déploiement Render](#deploiement-render)
-  - [1 · Cadrage technique](#1-cadrage-technique)
-  - [2 · Variables d'environnement Render (web)](#2-variables-denvironnement-render-web)
-  - [3 · Stratégie de transition recommandée](#3-strategie-de-transition-recommandee)
-  - [4 · Checklist de validation staging (obligatoire)](#4-checklist-de-validation-staging-obligatoire)
-  - [5 · Rollback rapide](#5-rollback-rapide)
-  - [6 · Notes opérationnelles](#6-notes-operationnelles)
+  - [Configuration](#configuration)
+  - [Avant et après déploiement](#avant-et-apres-deploiement)
+  - [Retrait des anciennes ressources](#retrait-des-anciennes-ressources)
 
-Ce runbook décrit le déploiement courant du web Angular prerender et de l'API
-NestJS sur Render. L'ancienne bascule vers Render est conservée dans
-[`../archive/deployment-transition/`](../archive/deployment-transition/).
+## Configuration
 
-## 1 · Cadrage technique
+Le [Blueprint](../../render.yaml) ne déclare que `kraak-web-prod` et
+`kraak-api-prod`, sur `main`, sans déploiement automatique. Le workflow
+[Release Prod](../../.github/workflows/release-prod.yml) déploie un commit
+épinglé par un tag SemVer déjà accessible depuis `main`.
 
-- Le front web est un build statique prerender généré dans
-  `apps/client/dist/web/browser`, puis copié vers `public` pour publication
-  Render (`staticPublishPath: public`).
-- La generation de config runtime est exécutée pendant le build via `build:web:staging` et `build:web`.
-- Les services Render cibles sont définis dans `render.yaml` :
-  - `kraak-web-staging` (autoDeploy sur `staging`)
-  - `kraak-web-prod` (branch `main`, autoDeploy désactivé)
-- L'API reste sur Render (`kraak-api-staging`, `kraak-api-prod`).
+- Web : build `pnpm build:web`, publication de
+  `apps/client/dist/web/browser` dans `public`.
+- API : image Docker construite avec `apps/api/Dockerfile`.
+- Variables et secrets : [ENVIRONMENTS](ENVIRONMENTS.md).
+- Validation de PR : services locaux et CI, sans infrastructure distante de test.
 
-## 2 · Variables d'environnement Render (web)
+## Avant et après déploiement
 
-Configurer ces variables sur les services static site Render :
+1. Vérifier les contrôles requis de la PR et l’identité du commit.
+2. Comparer les migrations avec la base cible, sans réparation automatique de
+   l’historique ni rejeu aveugle.
+3. Vérifier les identifiants Render, la branche `main` et les références Supabase
+   de production à partir de l’état du fournisseur.
+4. Suivre [RELEASE_PROD](RELEASE_PROD.md) et son approbation de production.
+5. Vérifier `/health`, la version attendue, les pages localisées, le runtime
+   client, CORS et les parcours autorisés avec des comptes de test.
 
-- `CLIENT_API_BASE_URL`
-  - staging : `https://kraak-api-staging.onrender.com`
-  - prod : `https://kraak-api-prod.onrender.com`
-- `CLIENT_FEATURE_PARTICIPANT_AREA`
-  - staging : `true`
-  - prod : `false`
-- `CLIENT_SITE_URL`
-  - staging : URL publique Render staging (ou domaine staging custom)
-  - prod : URL domaine public final
+Un HTTP 200 sur `/health` ne prouve ni le fonctionnement du web, ni Auth, ni
+l’envoi d’e-mails. Ne pas envoyer de message de test à des destinataires réels
+sans autorisation spécifique.
 
-Important : `CLIENT_SITE_URL` est nécessaire pour éviter les canonicals/URLs SEO pointant encore vers Render.
+## Retrait des anciennes ressources
 
-Le sous-domaine Render doit rester activé pour `kraak-web-prod` jusqu'à ce que
-`https://kraak-web-prod.onrender.com` retourne HTTP 200. Le site legacy externe
-reste le fallback public tant que ce critère et `GET
-https://kraak-api-prod.onrender.com/health` ne sont pas verts.
-
-## 3 · Stratégie de transition recommandée
-
-1. Provisionner `kraak-web-staging` sur Render avec autoDeploy actif.
-2. Verifier le site staging Render avec smoke tests (routes publiques + contact + SEO).
-3. Garder l'environnement web historique actif en parallèle pendant la phase de validation.
-4. Mettre a jour DNS staging vers Render uniquement apres validation complete.
-5. Provisionner `kraak-web-prod` sur Render (autoDeploy: false).
-6. Executer un dry-run de build/déploiement prod sur Render.
-7. Basculer le domaine prod vers Render en fenêtre de changement.
-8. Garder l'environnement web historique en fallback public tant que
-   `kraak-web-prod.onrender.com` ou `kraak-api-prod.onrender.com/health` ne
-   retournent pas HTTP 200.
-
-## 4 · Checklist de validation staging (obligatoire)
-
-- [ ] Home `200`, contenu visible, aucune erreur console bloquante.
-- [ ] Routes vitrine : `/a-propos`, `/services`, `/programmes`, `/contact`.
-- [ ] Route ressources : `/ressources`.
-- [ ] Formulaire contact : erreur de validation attendue et soumission valide.
-- [ ] Balises SEO : canonical et Open Graph resolvent le domaine Render staging.
-- [ ] `robots.txt` et `sitemap.xml` accessibles et cohérents.
-- [ ] Appels API vers `kraak-api-staging` (pas de CORS bloquant).
-
-## 5 · Rollback rapide
-
-Si incident apres bascule DNS :
-
-1. Repointer le domaine vers l'environnement web historique.
-2. Conserver Render actif pour diagnostic.
-3. Corriger la configuration (souvent `CLIENT_SITE_URL`, headers, CORS API) puis retester.
-4. Rebasculer DNS uniquement apres validation smoke complete.
-
-## 6 · Notes opérationnelles
-
-- Les outils Render API peuvent exiger une workspace active avant creation de service.
-- Si la creation via API retourne `no workspace set`, sélectionner d'abord la workspace Render cible puis relancer la creation des services.
-- Ne pas désactiver l'environnement web historique avant validation complète des
-  services Render production web et API.
+Voir le [registre de transition](PRODUCTION_ONLY_TRANSITION.md). La suppression
+du Blueprint ne supprime pas les ressources déjà créées. Conserver les
+ressources dont la sauvegarde, la propriété ou l’indépendance vis-à-vis de la
+production n’est pas établie.

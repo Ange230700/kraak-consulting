@@ -32,7 +32,7 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 - **Organisation SonarCloud** : `ange230700`
 - **Project key** : `Ange230700_kraak-consulting`
 - **Project name** : `kraak-consulting`
-- **Branche principale Sonar** : `staging`
+- **Branche principale Sonar** : `main`
 - **Région** : EU
 - **Host URL** : `https://sonarcloud.io`
 
@@ -108,14 +108,14 @@ Mode diagnostic strict (optionnel) :
 
 `pnpm sonar` refuse un rapport manquant ou vide. Les mesures globales
 n'apparaissent qu'après une analyse CI de la branche principale Sonar
-`staging` : une analyse de PR ne remplace pas cette analyse de branche.
+`main` : une analyse de PR ne remplace pas cette analyse de branche.
 Vérifier dans le log du scan le projet, les huit rapports importés et les
 éventuels chemins non résolus. Le type généré `db.types.ts` est hors périmètre.
 
 Pour constater une dette globale nulle, sélectionner le workflow SonarCloud
-déclenché par un **push** sur `staging`, et non le scan de PR (y compris celui
+déclenché par un **push** sur `main`, et non le scan de PR (y compris celui
 de la PR de release). Lire `api/project_analyses/search` avec
-`project=Ange230700_kraak-consulting&branch=staging&ps=1` et vérifier que
+`project=Ange230700_kraak-consulting&branch=main&ps=1` et vérifier que
 `revision` correspond au SHA intégré. Lire ensuite les anomalies ouvertes,
 `duplicated_lines_density` et `coverage` dans ce même contexte de branche.
 Les mesures d'une PR et son arbre limité aux fichiers modifiés ne constituent

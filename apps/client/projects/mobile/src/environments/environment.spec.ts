@@ -10,11 +10,8 @@ describe('Configuration mobile', () => {
   it('Given une configuration déployée, When chaque environnement est chargé, Then les services runtime sont conservés', async () => {
     const { environment: production } =
       await import('./environment.production');
-    const { environment: staging } = await import('./environment.staging');
     expect(production.production).toBe(true);
-    expect(staging.production).toBe(true);
-    expect(staging.environmentName).toBe('staging');
-    expect(production.apiBaseUrl).toEqual(staging.apiBaseUrl);
+    expect(production.environmentName).toBe('production');
     expect((await import('./environment')).environment.production).toBe(false);
   });
 

@@ -2,13 +2,16 @@ name: Supabase Schema Tests
 
 on:
   push:
-    branches: [staging, main]
+    branches: [main]
     paths:
       - 'supabase/migrations/**'
       - 'supabase/tests/**'
       - '.github/workflows/supabase-schema-tests.yml'
   pull_request:
-    branches: [staging, main]
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
     paths:
       - 'supabase/migrations/**'
       - 'supabase/tests/**'
@@ -60,4 +63,4 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/article_archive_upgrade.sql
 
       - name: Vérifier les comportements participant, employé et formateur
-        run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/staging_reconciliation.sql
+        run: psql -X -v ON_ERROR_STOP=1 --file supabase/tests/authorization_reconciliation.sql

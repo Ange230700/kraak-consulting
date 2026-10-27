@@ -87,13 +87,7 @@ function resolveBaseRef(options = {}) {
     return upstream;
   }
 
-  const candidates = [
-    'origin/staging',
-    'origin/main',
-    'staging',
-    'main',
-    'HEAD~1',
-  ];
+  const candidates = ['origin/main', 'main', 'HEAD~1'];
 
   for (const candidate of candidates) {
     if (refExists(candidate, options)) {

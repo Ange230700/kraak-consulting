@@ -16,13 +16,9 @@ const extractServiceBlock = (name) => {
   return match ?? '';
 };
 
-test('Given render.yaml, When reading staging web service, Then branch and autoDeploy match expected values', () => {
-  const stagingBlock = extractServiceBlock('kraak-web-staging');
-
-  assert.ok(stagingBlock.length > 0);
-  assert.match(stagingBlock, /branch:\s*staging/);
-  assert.match(stagingBlock, /autoDeploy:\s*true/);
-  assert.match(stagingBlock, /staticPublishPath:\s*public/);
+test('Given une production unique, When le Blueprint est lu, Then aucun service staging ne peut être recréé', () => {
+  assert.equal(extractServiceBlock('kraak-web-staging'), '');
+  assert.equal(extractServiceBlock('kraak-api-staging'), '');
 });
 
 test('Given render.yaml, When reading production web service, Then branch and autoDeploy match expected values', () => {

@@ -275,13 +275,8 @@ penser aussi à aligner `CORS_ALLOWED_ORIGINS` côté API locale.
 
 Si vous avez besoin de lancer une seule app, les commandes `pnpm dev:web`, `pnpm dev:mobile` et `pnpm dev:api` restent disponibles.
 
-Pour la recette / préproduction, les scripts dédiés sont :
-
-```bash
-pnpm dev:api:staging
-pnpm dev:web:staging
-pnpm dev:mobile:staging
-```
+La recette utilise ces mêmes profils locaux et une base éphémère. Aucun profil
+hébergé permanent n'est nécessaire ; les PR ciblent `main`.
 
 > Si le port `3000` est déjà occupé, `pnpm dev` ne relance pas l'API sur un autre port, car le front local continue d'attendre l'API sur `http://localhost:3000`.
 
