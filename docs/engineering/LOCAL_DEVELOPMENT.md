@@ -13,6 +13,7 @@ source_of_truth: true
   - [Prérequis](#prerequis)
     - [Configurer les variables d'environnement](#configurer-les-variables-denvironnement)
     - [Profil DB local prêt à l'emploi (Supabase + Docker Compose)](#profil-db-local-pret-a-lemploi-supabase-docker-compose)
+    - [Renommage du projet Supabase local](#renommage-du-projet-supabase-local)
   - [Lancer le site web (Angular SSR)](#lancer-le-site-web-angular-ssr)
     - [Structure du code web](#structure-du-code-web)
   - [Lancer l'API (NestJS)](#lancer-lapi-nestjs)
@@ -136,6 +137,37 @@ Option automatisée (recommandée) :
 Ces scripts lancent `supabase start`, récupèrent les clés via
 `supabase status -o env`, exportent les variables nécessaires puis exécutent
 `docker compose -f compose.local.yml up --build`.
+
+### Renommage du projet Supabase local
+
+La valeur `project_id` de `supabase/config.toml` identifie les conteneurs et
+volumes locaux. Après son changement, Supabase CLI démarre un nouveau projet :
+les données de l'ancien projet ne sont pas reprises automatiquement. Si vous
+devez les conserver, effectuez ces étapes avant de mettre à jour le dépôt, depuis
+l'ancien checkout :
+
+1. Sauvegarder les données locales dans un fichier hors du dépôt :
+
+```bash
+supabase db dump --local --data-only -f ../kraak-group-local-data.sql
+```
+
+2. Arrêter l'ancien projet avant de démarrer le nouveau, pour éviter les conflits
+   de ports :
+
+```bash
+supabase stop
+```
+
+3. Après la mise à jour du dépôt, démarrer le nouveau projet :
+
+```bash
+supabase start
+```
+
+4. Si nécessaire, restaurer le dump dans la base du nouveau projet avec l'outil
+   PostgreSQL de votre choix. Vérifier les données restaurées avant de supprimer
+   l'ancien volume ou le fichier de sauvegarde.
 
 ---
 
