@@ -5,6 +5,11 @@ import test from 'node:test';
 const read = (file) =>
   readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 
+test('Given la branche permanente main, When Changesets lit sa configuration, Then main est la branche de base', () => {
+  const config = JSON.parse(read('.changeset/config.json'));
+  assert.equal(config.baseBranch, 'main');
+});
+
 test('Given une production unique, When le Blueprint Render est lu, Then seuls les services main de production sont déclarés', () => {
   const config = read('render.yaml');
   assert.deepEqual(
@@ -14,6 +19,23 @@ test('Given une production unique, When le Blueprint Render est lu, Then seuls l
   assert.doesNotMatch(config, /staging/i);
   assert.equal([...config.matchAll(/^ {4}branch: main$/gm)].length, 2);
   assert.equal([...config.matchAll(/^ {4}autoDeploy: false$/gm)].length, 2);
+});
+
+test('Given les services staging retirés, When le diagnostic est inspecté, Then seuls les services production sont vérifiés', () => {
+  const diagnostic = read('scripts/repo-awareness.sh');
+  assert.doesNotMatch(
+    diagnostic,
+    /branches\/staging\/protection|kraak-web-staging\.onrender\.com|kraak-api-staging\.onrender\.com/,
+  );
+  assert.match(diagnostic, /kraak-web-prod\.onrender\.com/);
+  assert.match(diagnostic, /kraak-api-prod\.onrender\.com/);
+});
+
+test('Given la suppression du projet Supabase staging, When les redirections locales sont lues, Then seules les URL locales et production sont configurées', () => {
+  const config = read('supabase/config.toml');
+  assert.doesNotMatch(config, /kraak-web-staging\.onrender\.com/);
+  assert.match(config, /kraak-web-prod\.onrender\.com/);
+  assert.match(config, /http:\/\/localhost:4200\/auth\/callback/);
 });
 
 test('Given des PR et une régression nocturne, When les workflows actifs sont inspectés, Then aucun accès staging ni test mutant en production n’est requis', () => {

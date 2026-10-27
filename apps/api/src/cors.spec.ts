@@ -22,7 +22,7 @@ describe('buildCorsOptions', () => {
   describe('Given an exact allow-list via CORS_ALLOWED_ORIGINS', () => {
     const env = {
       CORS_ALLOWED_ORIGINS:
-        'https://kraak-web-staging.onrender.com, https://kraak-web-prod.onrender.com',
+        'https://preview.example.com, https://kraak-web-prod.onrender.com',
     };
 
     it('When the request has no Origin header Then it is allowed', async () => {
@@ -33,11 +33,11 @@ describe('buildCorsOptions', () => {
       expect(result.allow).toBe(true);
     });
 
-    it('When the Origin is the Render staging web app Then it is allowed', async () => {
+    it('When the Origin is in the preview allow-list Then it is allowed', async () => {
       const options = buildCorsOptions(env);
       const result = await callOrigin(
         options.origin as OriginFn,
-        'https://kraak-web-staging.onrender.com',
+        'https://preview.example.com',
       );
 
       expect(result.err).toBeNull();

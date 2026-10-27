@@ -72,9 +72,15 @@ Secrets de production :
   `SUPABASE_PROD_DB_PASSWORD`.
 - `SUPABASE_DB_URL_PRODUCTION_READONLY` pour le garde de lignée en lecture seule.
 
-`SONAR_TOKEN` reste un secret de dépôt. Ne jamais afficher une valeur de secret,
-ni la copier dans une variable GitHub non secrète.
+`SONAR_TOKEN` et `SUPABASE_ACCESS_TOKEN` restent des secrets de dépôt.
+Ne jamais afficher leur valeur, ni la copier dans une variable GitHub non secrète.
+La variable de dépôt non secrète inutilisée `SONAR_TOKEN` a été retirée ; le
+secret utilisé par le workflow SonarCloud est conservé.
 
-La présence des noms ne prouve pas la validité des valeurs. Le
-[registre de transition](PRODUCTION_ONLY_TRANSITION.md) suit les manques
-constatés et le retrait différé des secrets obsolètes.
+L’environnement GitHub `staging`, ses secrets `KRAAK_JOURNEY_EMAIL`,
+`KRAAK_JOURNEY_PASSWORD` et `SUPABASE_DB_URL_STAGING`, ainsi que le secret de
+dépôt `SUPABASE_STAGING_PROJECT_REF`, ont été supprimés. Les déploiements
+historiques restent consultables ; aucun workflow actif ne cible ces ressources.
+La présence des noms restants ne prouve pas la validité des valeurs.
+Le [registre de transition](PRODUCTION_ONLY_TRANSITION.md) conserve les preuves
+et limites de vérification des fournisseurs.

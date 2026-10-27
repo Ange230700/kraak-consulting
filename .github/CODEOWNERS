@@ -11,11 +11,8 @@
 /docs/planning/ @Ange230700
 /.github/ @Ange230700
 
-## Separation staging/prod
+## Validation de production
 
-### Ange230700 pilote le staging; kraakconsulting valide les zones prod sensibles
-
-/docs/operations/STAGING_VALIDATION.md @Ange230700
 /docs/operations/RELEASE_PROD.md @kraakconsulting
 /.github/workflows/release-prod.yml @kraakconsulting
 /render.yaml @Ange230700 @kraakconsulting

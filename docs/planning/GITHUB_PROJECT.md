@@ -476,8 +476,8 @@ Les étapes suivantes ont été réalisées le 10-11 avril 2026 :
 - `Status` : `Todo -> In Progress -> Done`
 - mapping CSV / backlog : `backlog -> Todo`
 - issue : `Open -> Closed`
-- board : aligner le même jour que le merge vers `staging` ; pour une tâche de
-  production, finaliser après la PR de release et le tag SemVer
+- board : aligner le même jour que le merge vers `main` ; finaliser après les
+  validations et la release de production lorsqu'elle est requise
 
 ---
 

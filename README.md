@@ -157,6 +157,8 @@ Pour les détails, voir [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Surface vitrine publique
 
+Site public : <https://kraak-web-prod.onrender.com>.
+
 La surface vitrine publique actuellement gelée et considérée comme complète
 pour le MVP est :
 
