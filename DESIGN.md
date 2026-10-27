@@ -51,14 +51,14 @@ Les couleurs ci-dessous sont définies dans
 [`packages/tokens/src/tokens.css`](packages/tokens/src/tokens.css) ; ce fichier
 de tokens est la référence pour leurs valeurs dans le code.
 
-| Rôle                           | Jeton             | Valeur                  | Usage                                            |
-| ------------------------------ | ----------------- | ----------------------- | ------------------------------------------------ |
-| Structure et action principale | `--kr-brand-navy` | `#122b4a`               | Navigation, titres structurants et CTA principal |
-| Liens et accent secondaire     | `--kr-brand-blue` | `#1673ae`               | Liens et éléments d’interface mis en avant       |
-| Accent léger                   | `--kr-brand-cyan` | `#4cc3d9`               | Détails et états actifs, avec contraste vérifié  |
-| Accent de valeur               | `--kr-brand-gold` | `#f0c433`               | Mise en évidence ponctuelle                      |
-| Fond de page                   | `--kr-brand-page` | `#f3f3f3`               | Fonds clairs et sections alternées               |
-| Texte et surfaces              | `--kr-neutral-*`  | Échelle dans les tokens | Texte, bordures et surfaces neutres              |
+| Rôle                       | Jeton             | Valeur                  | Usage                                           |
+| -------------------------- | ----------------- | ----------------------- | ----------------------------------------------- |
+| Structure et identité      | `--kr-brand-navy` | `#122b4a`               | Navigation, titres structurants et marque       |
+| Liens et accent secondaire | `--kr-brand-blue` | `#1673ae`               | Liens et éléments d’interface mis en avant      |
+| Accent léger               | `--kr-brand-cyan` | `#4cc3d9`               | Détails et états actifs, avec contraste vérifié |
+| Accent de valeur           | `--kr-brand-gold` | `#f0c433`               | Mise en évidence ponctuelle                     |
+| Fond de page               | `--kr-brand-page` | `#f3f3f3`               | Fonds clairs et sections alternées              |
+| Texte et surfaces          | `--kr-neutral-*`  | Échelle dans les tokens | Texte, bordures et surfaces neutres             |
 
 Privilégier les fonds clairs et limiter les accents concurrents. Le bleu marine
 structure l’interface ; le cyan et l’or restent secondaires. Ne pas utiliser
@@ -76,7 +76,13 @@ prime sur une taille décorative.
 - Garder des lignes de texte et des sections faciles à lire, avec des
   espacements réguliers et généreux.
 - Utiliser des boutons clairement différenciés : une action principale par zone
-  importante, puis des actions secondaires moins saillantes.
+  importante, puis des actions secondaires moins saillantes. Les boutons
+  principaux utilisent le traitement bleu-cyan défini dans les styles globaux
+  web.
+- Prévoir des états visibles au survol, au focus clavier et à l’activation,
+  ainsi qu’au chargement ou à l’erreur lorsque ces états s’appliquent. Les
+  destinations des liens et les éléments de navigation actifs restent
+  compréhensibles sans dépendre uniquement de la couleur.
 - Réserver les cartes aux contenus réellement distincts — services, programmes
   ou preuves — et conserver une structure simple et répétable.
 - Structurer les pages par une introduction claire, un contenu principal
@@ -89,6 +95,11 @@ collaboration, le mentorat, l’autonomie et l’ouverture internationale. Favor
 les scènes crédibles plutôt que les visuels de banque d’images artificiels.
 Utiliser les illustrations avec retenue et ne pas altérer les ressources de
 marque.
+
+Les animations restent courtes et discrètes : elles soutiennent la compréhension
+ou le retour d’interaction sans retarder l’accès au contenu. Respecter
+`prefers-reduced-motion` et garantir que l’interface reste utilisable lorsque
+les animations sont réduites.
 
 ## Accessibilité et adaptation
 
@@ -125,5 +136,7 @@ s’applique.
   et portée produit.
 - [`packages/tokens/src/tokens.css`](packages/tokens/src/tokens.css) — valeurs
   canoniques des jetons partagés.
+- [`apps/client/projects/web/src/tailwind.css`](apps/client/projects/web/src/tailwind.css) —
+  styles globaux, boutons et préférences de mouvement du web.
 - [`docs/reference/STYLE_GUIDE.md`](docs/reference/STYLE_GUIDE.md) — support de
   référence non autoritaire.
