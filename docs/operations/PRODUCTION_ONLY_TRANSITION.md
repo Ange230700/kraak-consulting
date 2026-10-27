@@ -47,11 +47,9 @@ les étapes suivantes ne sont pas toutes vérifiées :
 ## Blocages actuels
 
 - Site Render production indisponible sur les chemins contrôlés.
-- Smoke avec participant désactivé non validé.
 - Données uniques staging à conserver ou transférer selon décision métier.
 - Sauvegarde DB cohérente et restauration complète non démontrées.
 - Configuration Auth, secrets de release, DNS et certaines intégrations incomplets.
-- Branching automatique de l'intégration Supabase à désactiver pour ce dépôt.
 
 Aucun de ces points ne doit être masqué par un HTTP 200 sur `/health`, un check
 de preview vert ou la suppression d'une branche Git. Aucune économie réalisée
@@ -68,4 +66,12 @@ et conserver les preuves de reprise et de facturation.
 
 L'ancien job nocturne distant staging est désactivé. Les contrôles production
 restent actifs ; la CI locale et éphémère remplace la recette hébergée permanente.
+Les routes participant appliquent désormais le guard runtime existant :
+les smokes activé et désactivé passent, y compris le profil production désactivé.
+La CI Chromium conserve également une recette explicite avec le flag désactivé.
+Le branching Supabase du projet historique est désactivé par l'API documentée ;
+les deux projets racines et leurs comptages ont été vérifiés inchangés.
+Le Blueprint Render suit `main`, mais sa synchronisation automatique est en pause
+et les services production gardent l'auto-déploiement désactivé :
+fusionner la configuration ne doit pas provoquer une release implicite.
 Ne pas activer un environnement payant de remplacement ni recréer staging.
