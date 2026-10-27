@@ -21,7 +21,7 @@ d'origine change dans le même passage.
 | Chemin      | Statut      | Source                                               |
 | ----------- | ----------- | ---------------------------------------------------- |
 | `primeng/`  | `generated` | Documentation PrimeNG importée pour référence locale |
-| `planning/` | `generated` | Snapshots reproductibles du GitHub Project #6        |
+| `planning/` | `generated` | Snapshots reproductibles du GitHub Project #8        |
 | `evidence/` | `generated` | Sorties de checks, audits et validations             |
 
 Les sorties brutes volumineuses des audits de dépendances sont publiées comme

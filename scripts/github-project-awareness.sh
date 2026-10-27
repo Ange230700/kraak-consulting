@@ -17,14 +17,14 @@
 # Typical KRAAK usage:
 #   bash scripts/github-project-awareness.sh
 #   bash scripts/github-project-awareness.sh --deep
-#   bash scripts/github-project-awareness.sh --project 6 --owner @me --deep
+#   bash scripts/github-project-awareness.sh --project 8 --owner @me --deep
 #   bash scripts/github-project-awareness.sh --output .reports/project-audit
 #
-# The default project is KRAAK Project #6 owned by the authenticated user.
+# The default project is KRAAK Project #8 owned by the authenticated user.
 
 set -uo pipefail
 
-PROJECT_NUMBER="${KRAAK_PROJECT_NUMBER:-6}"
+PROJECT_NUMBER="${KRAAK_PROJECT_NUMBER:-8}"
 PROJECT_OWNER="${KRAAK_PROJECT_OWNER:-@me}"
 REPOSITORY="${KRAAK_REPOSITORY:-}"
 OUTPUT_DIR=""
@@ -48,7 +48,7 @@ Usage:
   github-project-awareness.sh [options]
 
 Options:
-  --project NUMBER       Project number. Default: 6
+  --project NUMBER       Project number. Default: 8
   --owner LOGIN          Project owner login or @me. Default: @me
   --repo OWNER/REPO      Repository to compare with the project. Auto-detected.
   --output DIR           Output directory. Default: .reports/github-project-<time>
@@ -69,7 +69,7 @@ Options:
 Examples:
   bash scripts/github-project-awareness.sh
   bash scripts/github-project-awareness.sh --deep
-  bash scripts/github-project-awareness.sh --project 6 --owner @me --deep
+  bash scripts/github-project-awareness.sh --project 8 --owner @me --deep
   bash scripts/github-project-awareness.sh --export-current docs/generated/planning/github_project_planning_current.csv
   bash scripts/github-project-awareness.sh --check-current
 EOF
