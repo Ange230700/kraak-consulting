@@ -152,20 +152,20 @@ l'ancien checkout :
 supabase db dump --local --data-only -f ../kraak-group-local-data.sql
 ```
 
-2. Arrêter l'ancien projet avant de démarrer le nouveau, pour éviter les conflits
+1. Arrêter l'ancien projet avant de démarrer le nouveau, pour éviter les conflits
    de ports :
 
 ```bash
 supabase stop
 ```
 
-3. Après la mise à jour du dépôt, démarrer le nouveau projet :
+1. Après la mise à jour du dépôt, démarrer le nouveau projet :
 
 ```bash
 supabase start
 ```
 
-4. Si nécessaire, restaurer le dump dans la base du nouveau projet avec l'outil
+1. Si nécessaire, restaurer le dump dans la base du nouveau projet avec l'outil
    PostgreSQL de votre choix. Vérifier les données restaurées avant de supprimer
    l'ancien volume ou le fichier de sauvegarde.
 
