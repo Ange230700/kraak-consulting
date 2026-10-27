@@ -313,6 +313,18 @@ function createBlogSection(
   };
 }
 
+function createSingleParagraphSections(
+  content: readonly string[],
+): readonly BlogSection[] {
+  const sections: BlogSection[] = [];
+
+  for (let index = 0; index < content.length; index += 2) {
+    sections.push(createBlogSection(content[index], [content[index + 1]]));
+  }
+
+  return sections;
+}
+
 const englishBlogTranslations: readonly BlogArticleTranslation[] = [
   [
     'blog-1',
@@ -365,17 +377,14 @@ const englishBlogTranslations: readonly BlogArticleTranslation[] = [
     '20 May 2026',
     'Three simple criteria for choosing a training format that fits your objective, level and schedule.',
     'The right training format is not a catalogue. It is a calibrated response to a specific situation.',
-    [
-      createBlogSection('1. Check the actual need', [
-        'Before choosing a format, clarify the problem to solve. Is it a lack of method, a need for practice or a need to develop your professional posture?',
-      ]),
-      createBlogSection('2. Choose the right level of intensity', [
-        'An intensive workshop can unblock a specific issue. A longer programme can help establish lasting habits.',
-      ]),
-      createBlogSection('3. Decide how progress will be measured', [
-        'If you cannot observe a difference after the chosen format, the objective or the format probably needs to be adjusted.',
-      ]),
-    ],
+    createSingleParagraphSections([
+      '1. Check the actual need',
+      'Before choosing a format, clarify the problem to solve. Is it a lack of method, a need for practice or a need to develop your professional posture?',
+      '2. Choose the right level of intensity',
+      'An intensive workshop can unblock a specific issue. A longer programme can help establish lasting habits.',
+      '3. Decide how progress will be measured',
+      'If you cannot observe a difference after the chosen format, the objective or the format probably needs to be adjusted.',
+    ]),
     [
       'The need always comes before the format.',
       'The level of intensity should match the urgency.',
@@ -394,17 +403,14 @@ const englishBlogTranslations: readonly BlogArticleTranslation[] = [
     '24 May 2026',
     'A short method for keeping your intention, supporting documents and timeline consistent.',
     'The strongest application is not necessarily the longest. It is the one that remains consistent from beginning to end.',
-    [
-      createBlogSection('1. Build a clear thread', [
-        'Before completing a form, describe the project you are presenting in one sentence. Use that sentence as a reference point for every supporting document.',
-      ]),
-      createBlogSection('2. Organise the evidence in the right order', [
-        'A clear application aligns its evidence with the logic of the project: identity, education, experience, resources and timeline.',
-      ]),
-      createBlogSection('3. Keep a safety margin', [
-        'Deadlines, translations and additional administrative requests require margin. Avoid working right up against the deadline.',
-      ]),
-    ],
+    createSingleParagraphSections([
+      '1. Build a clear thread',
+      'Before completing a form, describe the project you are presenting in one sentence. Use that sentence as a reference point for every supporting document.',
+      '2. Organise the evidence in the right order',
+      'A clear application aligns its evidence with the logic of the project: identity, education, experience, resources and timeline.',
+      '3. Keep a safety margin',
+      'Deadlines, translations and additional administrative requests require margin. Avoid working right up against the deadline.',
+    ]),
     [
       'A clear project makes supporting documents easier to organise.',
       'The order of the evidence matters as much as its presence.',
