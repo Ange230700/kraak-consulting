@@ -1,4 +1,4 @@
-# Workflow de regression nocturne — kraak-group monorepo
+# Workflow de regression nocturne — kraak-consulting monorepo
 # Déclenché chaque nuit et à la demande.
 # Exécute la collection Newman en mode strict contre l'API staging pour garder un signal de régression sans alourdir la CI principale.
 

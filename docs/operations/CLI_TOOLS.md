@@ -389,9 +389,8 @@ Une seule fois après clone :
 gh repo set-default Ange230700/kraak-consulting
 ```
 
-Si le `git remote` pointe encore vers l'ancienne URL `kraak-group.git`
-(observable via le warning « This repository moved » au push), le mettre à
-jour :
+Si le `git remote` ne pointe pas vers le dépôt actuel (observable via le
+warning « This repository moved » au push), le mettre à jour :
 
 ```bash
 git remote set-url origin https://github.com/Ange230700/kraak-consulting.git

@@ -1,4 +1,4 @@
-# Pipeline CI — kraak-group monorepo
+# Pipeline CI — kraak-consulting monorepo
 # Déclenché sur push et pull request vers staging et main.
 # Couvre : format, lint, build, tests unitaires et integration.
 

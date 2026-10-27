@@ -23,12 +23,12 @@ source_of_truth: true
   - [Points d'attention](#points-dattention)
 
 Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) et
-**SonarLint** (analyse côté éditeur) pour le monorepo `kraak-group`.
+**SonarLint** (analyse côté éditeur) pour le monorepo `kraak-consulting`.
 
 ## Métadonnées du projet
 
 - **Dépôt GitHub** : `Ange230700/kraak-consulting`
-- **Package/workspace racine** : `kraak-group`
+- **Package/workspace racine** : `kraak-consulting`
 - **Organisation SonarCloud** : `ange230700`
 - **Project key** : `Ange230700_kraak-consulting`
 - **Project name** : `kraak-consulting`
@@ -36,9 +36,8 @@ Ce runbook décrit la configuration de **SonarQube Cloud** (analyse côté CI) e
 - **Région** : EU
 - **Host URL** : `https://sonarcloud.io`
 
-Le package racine conserve le nom `kraak-group`, mais la CI et SonarLint
-ciblent le projet Sonar existant `kraak-consulting`. L'ancien ciblage
-`Ange230700_kraak-group` ne mettait pas à jour ce tableau public. Vérifier
+La CI et SonarLint ciblent le projet Sonar existant `kraak-consulting`. Un ancien
+ciblage ne mettait pas à jour ce tableau public. Vérifier
 le SHA et la date de l'analyse avant de comparer les mesures globales.
 Suivi du rétablissement des mesures et de leur assainissement : #722.
 

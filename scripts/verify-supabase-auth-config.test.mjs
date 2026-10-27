@@ -41,7 +41,7 @@ test("Given l'auth Supabase versionnée, When on lit la config locale, Then le p
   const confirmationTemplate = readTextFile(confirmationTemplatePath);
   const recoveryTemplate = readTextFile(recoveryTemplatePath);
 
-  assert.match(config, /^project_id = "kraak-group"$/m);
+  assert.match(config, /^project_id = "kraak-consulting"$/m);
   assert.match(config, /^\[auth\]$/m);
   assert.match(config, /^site_url = "http:\/\/localhost:4200"$/m);
   assert.match(config, /http:\/\/localhost:4200\/auth\/callback/);
