@@ -103,9 +103,10 @@ test('Given Sonar, When la couverture est publiée, Then aucun fichier métier n
   const exclusions = config
     .split('sonar.coverage.exclusions=')[1]
     .split('\n\n')[0];
+  const nonPowerShellExclusions = exclusions.replace('scripts/**/*.ps1', '');
   assert.doesNotMatch(
-    exclusions,
-    /apps\/api\/src\/|apps\/client\/projects\/|scripts\/\*\*\/\*\.mjs/,
+    nonPowerShellExclusions,
+    /apps\/api\/src\/|apps\/client\/projects\/|scripts\/\*\*/,
   );
   assert.ok(exclusions.includes('scripts/**/*.ps1'));
   assert.match(
