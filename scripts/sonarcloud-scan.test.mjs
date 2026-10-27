@@ -46,6 +46,12 @@ test('Given le tableau Sonar du dépôt, When la configuration CI est lue, Then 
 
 test('Given les fichiers de configuration et les scripts PowerShell, When le périmètre Sonar est lu, Then ils sont exclus des mesures de couverture applicative', () => {
   const properties = readSonarProjectProperties();
+  const coverageExclusions = properties
+    .split('sonar.coverage.exclusions=')[1]
+    .split('\n\n')[0];
+  const analysisExclusions = properties
+    .split('sonar.exclusions=')[1]
+    .split('\n\n')[0];
   const expectedExclusions = [
     '**/playwright.config.ts',
     '**/playwright.mobile.config.ts',
@@ -59,8 +65,12 @@ test('Given les fichiers de configuration et les scripts PowerShell, When le pé
 
   for (const exclusion of expectedExclusions) {
     assert.ok(
-      properties.includes(exclusion),
+      coverageExclusions.includes(exclusion),
       `Coverage exclusions should include ${exclusion}`,
+    );
+    assert.ok(
+      !analysisExclusions.includes(exclusion),
+      `Sonar analysis exclusions should not include ${exclusion}`,
     );
   }
 });
