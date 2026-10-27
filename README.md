@@ -115,7 +115,7 @@ Services exposés :
 ## Structure du monorepo
 
 ```text
-kraak-group/
+kraak-consulting/
 ├── apps/
 │   ├── api/           # Backend NestJS (port 3000)
 │   └── client/        # Workspace Angular
@@ -292,7 +292,7 @@ changement.
 - Les branches courtes (`feat/*`, `fix/*`, `docs/*`, etc.) partent de `staging` et reviennent vers `staging` par PR.
 - La production part de `main` uniquement après PR de release `staging → main` et tag SemVer.
 
-> Note de nommage : le dépôt GitHub s'appelle `kraak-consulting`, tandis que le package racine conserve le nom npm/workspace `kraak-group`.
+> Le dépôt GitHub et le package npm/workspace racine utilisent le nom `kraak-consulting`.
 
 | Surface           | Cible active                                                                                                                  |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
