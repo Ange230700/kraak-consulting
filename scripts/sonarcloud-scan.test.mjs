@@ -24,11 +24,15 @@ import {
   resolveSonarEnvironment,
 } from './sonarcloud-scan.mjs';
 
-test('Given le tableau Sonar du dépôt, When la configuration CI est lue, Then les mesures ciblent le projet existant sans exclusion de duplication', () => {
-  const properties = readFileSync(
+function readSonarProjectProperties() {
+  return readFileSync(
     new URL('../sonar-project.properties', import.meta.url),
     'utf8',
   );
+}
+
+test('Given le tableau Sonar du dépôt, When la configuration CI est lue, Then les mesures ciblent le projet existant sans exclusion de duplication', () => {
+  const properties = readSonarProjectProperties();
   assert.match(properties, /^sonar\.projectKey=Ange230700_kraak-consulting$/m);
   assert.doesNotMatch(properties, /^sonar\.cpd\.exclusions=/m);
   const editorSettings = JSON.parse(
@@ -38,6 +42,27 @@ test('Given le tableau Sonar du dépôt, When la configuration CI est lue, Then 
     editorSettings['sonarlint.connectedMode.project'].projectKey,
     /^sonar\.projectKey=(.+)$/m.exec(properties)[1],
   );
+});
+
+test('Given les fichiers de configuration et les scripts PowerShell, When le périmètre Sonar est lu, Then ils sont exclus des mesures de couverture applicative', () => {
+  const properties = readSonarProjectProperties();
+  const expectedExclusions = [
+    '**/playwright.config.ts',
+    '**/playwright.mobile.config.ts',
+    '**/vitest.config.ts',
+    '**/vitest.setup.ts',
+    'apps/api/jest.config.ts',
+    'apps/client/capacitor.config.ts',
+    'apps/client/eslint.config.js',
+    'scripts/**/*.ps1',
+  ];
+
+  for (const exclusion of expectedExclusions) {
+    assert.ok(
+      properties.includes(exclusion),
+      `Coverage exclusions should include ${exclusion}`,
+    );
+  }
 });
 
 test('Given des rapports absents ou vides, When le scan est préparé, Then la publication sans couverture est refusée', () => {

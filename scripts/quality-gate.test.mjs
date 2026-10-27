@@ -97,13 +97,17 @@ test('Given le contrôle partagé, When il est lancé localement ou en CI, Then 
   assert.match(sonar, /-Dsonar\.qualitygate\.wait=true/);
 });
 
-test('Given Sonar, When la couverture est publiée, Then aucun fichier métier ni script ne masque une lacune', () => {
+test('Given Sonar, When la couverture est publiée, Then aucun fichier métier ni script applicatif ne masque une lacune', () => {
   const config = read('sonar-project.properties');
   assert.match(config, /coverage\/lcov.info/);
+  const exclusions = config
+    .split('sonar.coverage.exclusions=')[1]
+    .split('\n\n')[0];
   assert.doesNotMatch(
-    config.split('sonar.coverage.exclusions=')[1].split('\n\n')[0],
-    /apps\/api\/src\/|apps\/client\/projects\/|scripts\/\*\*/,
+    exclusions,
+    /apps\/api\/src\/|apps\/client\/projects\/|scripts\/\*\*\/\*\.mjs/,
   );
+  assert.ok(exclusions.includes('scripts/**/*.ps1'));
   assert.match(
     read('scripts/sonarcloud-scan.mjs'),
     /-Dsonar\.qualitygate\.wait=true/,
