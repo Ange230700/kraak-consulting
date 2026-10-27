@@ -34,7 +34,7 @@ source_of_truth: true
     - [8.2 Authentification](#82-authentification)
     - [8.3 Configuration locale du dépôt](#83-configuration-locale-du-depot)
     - [8.4 Commandes utiles](#84-commandes-utiles)
-    - [8.5 Convention de cible des PR (ARC-09)](#85-convention-de-cible-des-pr-arc-09)
+    - [8.5 Convention de cible des PR (ARC-22)](#85-convention-de-cible-des-pr-arc-22)
 
 > Référence opérationnelle pour installer, authentifier et utiliser les CLI
 > Render, Supabase et GitHub (`gh`) sur un poste de développement
@@ -54,11 +54,11 @@ Voir aussi : [`STAGING_VALIDATION`](STAGING_VALIDATION.md),
 
 ## 1 · Versions cibles
 
-| CLI        | Version minimale | Rôle                                                                                     |
-| ---------- | ---------------- | ---------------------------------------------------------------------------------------- |
-| `render`   | 2.16.x           | Inspection services Render (`kraak-api-staging`, `kraak-api-prod`)                       |
-| `supabase` | 2.90.x           | Migrations SQL, génération de types, gestion des projets `kraak-staging` et `kraak-prod` |
-| `gh`       | 2.88.x           | Issues, PR, GitHub Projects, branch protection, `gh api` arbitraire                      |
+| CLI        | Version minimale | Rôle                                                                |
+| ---------- | ---------------- | ------------------------------------------------------------------- |
+| `render`   | 2.16.x           | Inspection des services Render de production                        |
+| `supabase` | 2.90.x           | Migrations SQL, types, développement local et projet de production  |
+| `gh`       | 2.88.x           | Issues, PR, GitHub Projects, branch protection, `gh api` arbitraire |
 
 Mettre à jour régulièrement (Supabase notifie spontanément les nouvelles
 versions au lancement).
@@ -253,24 +253,22 @@ distante absente du dépôt bloque le contrôle et sa version est affichée.
 Les sorties brutes d'échec du CLI ne sont pas affichées pour protéger les
 identifiants de connexion.
 
-La CI des PR vers `staging` **et** `main` exécute uniquement les tests du contrôle
+La CI des PR vers `main` exécute uniquement les tests du contrôle
 (`Migration Lineage Tests`), sans secret ni accès distant. Ce succès ne certifie
 pas la lignée de la base. Le workflow `Supabase Migrations Guard` compare la
-production avant `db push`, uniquement sur un push de confiance vers `main`,
+production en lecture seule, uniquement sur un push de confiance vers `main`,
 protégée par le ruleset. Il utilise le secret
 `SUPABASE_DB_URL_PRODUCTION_READONLY` dans l'environnement GitHub `production`,
 distinct du compte d'application des migrations. L'absence de ce secret bloque
-le déploiement ; elle ne doit pas être masquée par un succès.
+le contrôle et la release ; elle ne doit pas être masquée par un succès.
 Le binaire installé par `supabase/setup-cli` est copié dans un répertoire privé
 du runner et exécuté par son chemin absolu.
 
-La promotion vers `main` nécessite d'abord la réconciliation de son historique
-avec `staging` et la configuration du compte de lecture seule. Ne pas changer la
-branche par défaut ni recibler une PR pour contourner cette étape. Le workflow
-historique d'application sur `staging` reste inchangé ; son retrait relève de la
-transition d'infrastructure, pas de ce contrôle. Une vérification distante avant
-fusion reste à organiser dans un contexte de confiance : aucun code de PR ne
-doit recevoir les identifiants de production, y compris via `pull_request_target`.
+Les écritures de schéma sont réservées à la release approuvée par tag.
+La configuration cible et les blocages de retrait des anciennes ressources sont
+suivis dans [PRODUCTION_ONLY_TRANSITION](PRODUCTION_ONLY_TRANSITION.md).
+Aucun code de PR ne doit recevoir les identifiants de production, y compris
+via `pull_request_target`.
 
 Pour SonarCloud, conserver les images binaires hors du périmètre source dans
 `sonar-project.properties` : les avertissements UTF-8 sur PNG, JPEG, AVIF ou ICO
@@ -282,7 +280,7 @@ active ; aucune suppression n'est nécessaire pour ce contrôle.
 `supabase db advisors` est le point d'entrée CLI pour les contrôles Splinter.
 
 - Le mode `--local` nécessite la stack locale Supabase démarrée.
-- Le mode `--linked` s'exécute contre le projet Supabase lié (staging ou prod selon le `project-ref` actif).
+- Le mode `--linked` s'exécute contre le projet Supabase explicitement vérifié.
 - Le script racine `pnpm splinter:linked` est bloquant sur les erreurs seulement ; `pnpm splinter:linked:warnings` sert à relire les advisories de niveau warning.
 
 Scripts racine prêts à l'emploi:
@@ -299,7 +297,6 @@ pnpm splinter:performance:linked
 ```bash
 pnpm test:api:journey                  # collection Newman CI-ready (strictAuth=false)
 pnpm test:api:journey:strict           # contrat nominal strict en local (strictAuth=true)
-pnpm test:api:journey:strict:staging   # contrat strict contre l'API staging
 ```
 
 La collection source est versionnée sous
@@ -309,7 +306,7 @@ verrouillé par `pnpm-lock.yaml`.
 Utilisation recommandée:
 
 - La CI principale et les vérifications rapides utilisent `pnpm test:api:journey`.
-- Le workflow nocturne `Nightly Regression` utilise `pnpm test:api:journey:strict:staging`.
+- Les workflows nocturnes CI et SQL utilisent des services locaux éphémères.
 - `pnpm test:api:journey:strict` sert à reproduire localement le contrat nominal strict avant d'ouvrir ou de corriger un ticket de régression.
 
 ---
@@ -405,27 +402,25 @@ gh issue create --title "..." --body "..." --label "..."
 gh issue close <num> --comment "..."
 
 # Pull requests
-gh pr create --base staging --head feat/x --title "..." --body-file pr_body.txt
+gh pr create --base main --head feat/x --title "..." --body-file pr_body.txt
 gh pr view <num> --json state,mergeable,mergeStateStatus,statusCheckRollup
 gh pr merge <num> --rebase --delete-branch
 gh pr checks <num>
 
 # Branch protection (lecture)
 gh api repos/Ange230700/kraak-consulting/branches/main/protection
-gh api repos/Ange230700/kraak-consulting/branches/staging/protection
 
-# Branch protection (écriture — TOUJOURS via le script ARC-09)
+# Branch protection (écriture — vérifier le dry-run avant application)
 node scripts/github/update-branch-protection.mjs --dry-run
 node scripts/github/update-branch-protection.mjs
-node scripts/github/update-branch-protection.mjs --staging-only
 
 # GitHub Projects (cycle de vie obligatoire AGENTS.md)
 gh project item-list <project-number> --owner Ange230700
 gh project item-edit --id <item-id> --field-id <field-id> --single-select-option-id <opt-id>
 ```
 
-### 8.5 Convention de cible des PR (ARC-09)
+### 8.5 Convention de cible des PR (ARC-22)
 
-- Branches courtes (`feat/*`, `fix/*`, `chore/*`, …) → PR vers **`staging`**.
-- Release prod → PR `staging → main`, puis tag SemVer sur `main` (ARC-07).
+- Branches courtes (`feat/*`, `fix/*`, `chore/*`, …) → PR vers **`main`**.
+- Release : tag SemVer accessible depuis `main`, après validation de la PR.
 - Aucune PR ne doit cibler `main` directement, sauf release.

@@ -285,28 +285,25 @@ function readGuardWorkflow() {
   );
 }
 
-test('Given production deployment, When applying migrations, Then a read-only lineage check runs first in trusted push context', () => {
+test('Given main, When le garde de migrations est lancé, Then seul un contrôle de lignée en lecture seule est autorisé', () => {
   const workflow = readGuardWorkflow();
   const checkIndex = workflow.indexOf(
     '      - name: Check production migration lineage',
   );
   assert.ok(checkIndex > 0);
-  assert.ok(
-    checkIndex <
-      workflow.indexOf('      - name: Apply migrations to mapped database'),
-  );
   const step = workflow.slice(checkIndex).split('\n      - name:')[0];
-  assert.match(step, /if: github.ref == 'refs\/heads\/main'/);
+  assert.match(workflow, /if: github.ref == 'refs\/heads\/main'/);
   assert.match(step, /secrets.SUPABASE_DB_URL_PRODUCTION_READONLY/);
   assert.match(step, /SUPABASE_EXECUTABLE:/);
   assert.match(step, /exit 1/);
   assert.doesNotMatch(workflow, /pull_request_target:|pull_request:/);
+  assert.doesNotMatch(workflow, /db push|db reset|migration repair/);
 });
 
-test('Given une URL de base contenant des caractères shell, When les migrations sont appliquées, Then elle transite uniquement par variable d environnement', () => {
+test('Given une URL de base contenant des caractères shell, When la lignée est vérifiée, Then elle transite uniquement par variable d’environnement', () => {
   const workflow = readGuardWorkflow();
   const applyIndex = workflow.indexOf(
-    '      - name: Apply migrations to mapped database',
+    '      - name: Check production migration lineage',
   );
   assert.ok(applyIndex > 0);
   const step = workflow.slice(applyIndex).split('\n      - name:')[0];
@@ -314,50 +311,17 @@ test('Given une URL de base contenant des caractères shell, When les migrations
   assert.doesNotMatch(script, /\$\{\{/);
   assert.match(
     step,
-    /STAGING_DB_URL: \$\{\{ secrets.SUPABASE_DB_URL_STAGING \}\}/,
+    /SUPABASE_DB_URL: \$\{\{ secrets.SUPABASE_DB_URL_PRODUCTION_READONLY \}\}/,
   );
-  const migrationCommands = script
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith('supabase db push --db-url'));
-  assert.deepEqual(migrationCommands, [
-    'supabase db push --db-url "${DB_URL}"',
-  ]);
+  assert.match(script, /node scripts\/check-supabase-migration-lineage.mjs/);
   assert.doesNotMatch(workflow, /db_url=/);
 });
 
-test('Given staging migration configuration, When applying migrations, Then the environment secret is validated and not exposed as a step output', () => {
+test('Given un seul environnement distant, When le garde est inspecté, Then aucun secret staging ni accès en écriture n’est utilisé', () => {
   const workflow = readGuardWorkflow();
-  const validationIndex = workflow.indexOf(
-    '      - name: Validate environment-scoped secrets',
-  );
-  const applyIndex = workflow.indexOf(
-    '      - name: Apply migrations to mapped database',
-  );
-  assert.ok(validationIndex > 0);
-  assert.ok(applyIndex > validationIndex);
-  const validation = workflow.slice(validationIndex, applyIndex);
-
-  assert.match(
+  assert.match(workflow, /environment: production/);
+  assert.doesNotMatch(
     workflow,
-    /environment: \$\{\{ needs\.guard\.outputs\.target_environment \}\}/,
+    /STAGING|SUPABASE_DB_URL_PRODUCTION \}|GITHUB_OUTPUT|db_url=/,
   );
-  assert.match(validation, /SUPABASE_DB_URL_STAGING/);
-  assert.match(
-    validation,
-    /::error::Secret manquant : SUPABASE_DB_URL_STAGING dans l'environnement GitHub 'staging'/,
-  );
-  assert.match(
-    validation,
-    /::error::SUPABASE_DB_URL_PRODUCTION ne doit pas être défini dans l'environnement GitHub 'staging'/,
-  );
-  assert.match(
-    validation,
-    /::error::Secret manquant : SUPABASE_DB_URL_PRODUCTION dans l'environnement GitHub 'production'/,
-  );
-  assert.match(
-    validation,
-    /::error::SUPABASE_DB_URL_STAGING ne doit pas être défini dans l'environnement GitHub 'production'/,
-  );
-  assert.doesNotMatch(validation, /GITHUB_OUTPUT|db_url=/);
 });

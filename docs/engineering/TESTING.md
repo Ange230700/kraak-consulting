@@ -120,7 +120,7 @@ pour conserver le même contrat de résultat entre versions de Node.
 
 Les tests Angular web et mobile utilisent explicitement la configuration de
 build `test`, sans `fileReplacements`. Ils exécutent ainsi les véritables modules
-`environment.ts`, local, staging et production au lieu de remplacer le module
+`environment.ts`, local et production au lieu de remplacer le module
 par défaut pendant la compilation. Le module par défaut conserve la configuration
 locale ; les configurations des builds déployés restent inchangées.
 Les scénarios de démarrage SSR disposent d'un délai de 60 secondes pour charger

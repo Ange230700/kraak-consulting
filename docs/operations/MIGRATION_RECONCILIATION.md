@@ -63,7 +63,7 @@ psql -X -v ON_ERROR_STOP=1 --single-transaction \
 for migration in supabase/migrations/*.sql; do
   psql -X -v ON_ERROR_STOP=1 --single-transaction --file "$migration" || exit 1
 done
-psql -X -v ON_ERROR_STOP=1 --file supabase/tests/staging_reconciliation.sql
+psql -X -v ON_ERROR_STOP=1 --file supabase/tests/authorization_reconciliation.sql
 ```
 
 Les variables `PGHOST`, `PGPORT`, `PGUSER`, `PGDATABASE` et `PGPASSWORD` doivent

@@ -137,11 +137,11 @@ test('Given upstream is unavailable, When resolving the base ref, Then the first
         return gitResult(1);
       }
 
-      return args.includes('staging^{commit}') ? gitResult(0) : gitResult(1);
+      return args.includes('main^{commit}') ? gitResult(0) : gitResult(1);
     },
   });
 
-  assert.equal(selected, 'staging');
+  assert.equal(selected, 'main');
 });
 
 test('Given diff output contains blanks, When changed files are read, Then only normalized paths are returned', () => {

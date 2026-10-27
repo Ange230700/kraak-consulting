@@ -4,136 +4,18 @@
 # Documentation : https://docs.render.com/blueprint-spec
 #
 # Services déclarés :
-#   - kraak-web-staging : front web statique Angular prerender.
-#                         Auto-deploy sur push de `staging`.
 #   - kraak-web-prod    : front web statique Angular prerender.
 #                         Auto-deploy désactivé ; usage production contrôlé.
-#   - kraak-api-staging : API NestJS Docker.
-#                         Auto-deploy sur push de `staging`.
 #   - kraak-api-prod    : API NestJS Docker.
 #                         Auto-deploy désactivé ; déclenchement production
 #                         contrôlé par workflow de release/tag.
 #
 # Modèle Git actif :
-#   - `staging` reçoit les PR de travail et sert à la validation.
-#   - `main` reçoit uniquement les PR de release depuis `staging`.
-#   - aucune synchronisation inverse vers `staging` n'est active.
+#   - `main` est la seule branche permanente et reçoit les PR validées.
+#   - les tags SemVer issus de `main` pilotent les déploiements contrôlés.
+#   - développement et validation utilisent des services locaux éphémères.
 
 services:
-  - type: web
-    name: kraak-web-staging
-    runtime: static
-    plan: free
-    branch: staging
-    autoDeploy: true
-    staticPublishPath: public
-    renderSubdomainPolicy: enabled
-    routes:
-      - type: redirect
-        source: /a-propos
-        destination: /fr/a-propos
-      - type: redirect
-        source: /a-propos/
-        destination: /fr/a-propos
-      - type: redirect
-        source: /services
-        destination: /fr/services
-      - type: redirect
-        source: /services/
-        destination: /fr/services
-      - type: redirect
-        source: /faq
-        destination: /fr/faq
-      - type: redirect
-        source: /faq/
-        destination: /fr/faq
-      - type: redirect
-        source: /programmes
-        destination: /fr/programmes
-      - type: redirect
-        source: /programmes/
-        destination: /fr/programmes
-      - type: redirect
-        source: /ressources
-        destination: /fr/ressources
-      - type: redirect
-        source: /ressources/
-        destination: /fr/ressources
-      - type: redirect
-        source: /contact
-        destination: /fr/contact
-      - type: redirect
-        source: /contact/
-        destination: /fr/contact
-      - type: redirect
-        source: /mentions-legales
-        destination: /fr/mentions-legales
-      - type: redirect
-        source: /mentions-legales/
-        destination: /fr/mentions-legales
-      - type: redirect
-        source: /politique-de-confidentialite
-        destination: /fr/politique-de-confidentialite
-      - type: redirect
-        source: /politique-de-confidentialite/
-        destination: /fr/politique-de-confidentialite
-      - type: redirect
-        source: /401
-        destination: /fr/401
-      - type: redirect
-        source: /401/
-        destination: /fr/401
-      - type: redirect
-        source: /403
-        destination: /fr/403
-      - type: redirect
-        source: /403/
-        destination: /fr/403
-      - type: redirect
-        source: /404
-        destination: /fr/404
-      - type: redirect
-        source: /404/
-        destination: /fr/404
-      - type: redirect
-        source: /500
-        destination: /fr/500
-      - type: redirect
-        source: /500/
-        destination: /fr/500
-      - type: redirect
-        source: /about
-        destination: /fr/a-propos
-      - type: redirect
-        source: /about/
-        destination: /fr/a-propos
-      - type: redirect
-        source: /programs
-        destination: /fr/programmes
-      - type: redirect
-        source: /programs/
-        destination: /fr/programmes
-      - type: redirect
-        source: /resources
-        destination: /fr/ressources
-      - type: redirect
-        source: /resources/
-        destination: /fr/ressources
-      - type: redirect
-        source: /blog
-        destination: /fr/blog
-      - type: redirect
-        source: /blog/
-        destination: /fr/blog
-    buildCommand: pnpm -r --filter "./packages/**" build && pnpm --filter @kraak/client run build:web:staging && rm -rf public && mkdir -p public && cp -R apps/client/dist/web/browser/. public/
-    envVars:
-      - key: CLIENT_API_BASE_URL
-        value: https://kraak-api-staging.onrender.com
-      - key: CLIENT_FEATURE_PARTICIPANT_AREA
-        value: 'true'
-      - key: CLIENT_SITE_URL
-        sync: false
-
   - type: web
     name: kraak-web-prod
     runtime: static
@@ -246,41 +128,6 @@ services:
       - key: CLIENT_FEATURE_PARTICIPANT_AREA
         value: 'false'
       - key: CLIENT_SITE_URL
-        sync: false
-
-  - type: web
-    name: kraak-api-staging
-    runtime: docker
-    dockerfilePath: apps/api/Dockerfile
-    dockerContext: .
-    plan: free
-    healthCheckPath: /health
-    autoDeploy: true
-    branch: staging
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: APP_ENV
-        value: staging
-      - key: PORT
-        value: '3000'
-      - key: APP_VERSION
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SECRET_KEY
-        sync: false
-      - key: SUPABASE_PUBLISHABLE_KEY
-        sync: false
-      - key: RESEND_API_KEY
-        sync: false
-      - key: CONTACT_FROM_EMAIL
-        sync: false
-      - key: CONTACT_TO_EMAIL
-        sync: false
-      - key: CORS_ALLOWED_ORIGINS
-        sync: false
-      - key: CORS_ALLOWED_ORIGIN_PATTERNS
         sync: false
 
   - type: web

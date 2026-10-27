@@ -1,4 +1,4 @@
-name: Release Branch Lineage
+name: Pull Request Branch Lineage
 
 on:
   pull_request:
@@ -19,20 +19,18 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Vérifier la branche source de release
+      - name: Vérifier la branche cible
         env:
-          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
-          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
           BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
-          CURRENT_REPOSITORY: ${{ github.repository }}
         run: |
-          if [[ "$BASE_BRANCH" != "main" || "$HEAD_BRANCH" != "staging" || "$HEAD_REPOSITORY" != "$CURRENT_REPOSITORY" ]]; then
-            echo "::error::Seule une PR staging vers main depuis le dépôt courant peut promouvoir une release."
+          if [[ "$BASE_BRANCH" != "main" ]]; then
+            echo "::error::Les PR doivent cibler main."
             exit 1
           fi
 
-      - name: Vérifier la lignée main vers staging
+      - name: Vérifier que la branche courte contient main
         run: |
-          git fetch origin main staging --no-tags
-          node scripts/github/check-branch-lineage.mjs --require-main-ancestor origin/staging origin/main
+          git fetch origin main --no-tags
+          node scripts/github/check-branch-lineage.mjs --require-main-ancestor HEAD origin/main

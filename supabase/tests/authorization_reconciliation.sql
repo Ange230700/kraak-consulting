@@ -1,4 +1,4 @@
--- Given un clone vide du schéma staging, When la réconciliation est appliquée,
+-- Given un clone vide du schéma, When la réconciliation est appliquée,
 -- Then les objets manquants existent et les autorisations restent isolées.
 -- À exécuter uniquement sur la base locale de répétition avec ON_ERROR_STOP.
 BEGIN;

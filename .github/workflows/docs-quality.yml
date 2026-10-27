@@ -2,7 +2,7 @@ name: Docs Quality
 
 on:
   pull_request:
-    branches: [staging, main]
+    branches: [main]
     paths:
       - '*.md'
       - 'docs/**'

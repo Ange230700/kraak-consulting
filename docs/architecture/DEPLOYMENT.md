@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-24
+last_reviewed: 2026-10-27
 source_of_truth: true
 ---
 
@@ -10,67 +10,38 @@ source_of_truth: true
 ## Table des matières
 
 - [Architecture de déploiement](#architecture-de-deploiement)
-  - [Topologie courante](#topologie-courante)
-  - [Branches et déclencheurs](#branches-et-declencheurs)
-  - [Internationalisation cible du web statique](#internationalisation-cible-du-web-statique)
-  - [Sources liées](#sources-liees)
+  - [Topologie cible](#topologie-cible)
+  - [Transition et sécurité](#transition-et-securite)
+  - [Sources](#sources)
 
-KRAAK utilise Render pour le web et l'API, avec Supabase par environnement.
+## Topologie cible
 
-## Topologie courante
+- Une seule branche permanente : `main`, protégée et alimentée par PR.
+- Web Angular prerender : Render `kraak-web-prod`.
+- API NestJS : Render `kraak-api-prod`.
+- Données, Auth et Storage : Supabase de production.
+- Développement : Angular, NestJS et Supabase locaux.
+- Validation : CI, navigateurs Playwright et PostgreSQL éphémères.
 
-```mermaid
-flowchart LR
-    local["Local"]
-    staging["Staging"]
-    production["Production"]
+Aucun service payant de remplacement ni environnement distant permanent de test
+n’est introduit. Le Blueprint ne déclare que les deux services de production,
+sur `main`, avec `autoDeploy: false`. Les tags SemVer accessibles depuis `main`
+restent nécessaires aux déploiements contrôlés.
 
-    local --> localWeb["Angular web/mobile"]
-    local --> localApi["NestJS API"]
-    localApi --> localDb["Supabase local"]
+Le build web publie les arbres localisés `/fr/` et `/en/`, leurs assets, le
+sitemap, les directives robots et les redirections historiques dans `public`.
 
-    staging --> stagingWeb["Render web staging"]
-    staging --> stagingApi["Render API staging"]
-    stagingApi --> stagingDb["Supabase staging"]
+## Transition et sécurité
 
-    production --> prodWeb["Render web production"]
-    production --> prodApi["Render API production"]
-    prodApi --> prodDb["Supabase production"]
-```
+La topologie cible ne prouve pas la suppression des anciennes ressources.
+L’[état vérifié de la transition](../operations/PRODUCTION_ONLY_TRANSITION.md)
+distingue la configuration du dépôt des déploiements et suppressions réellement
+constatés. Ne jamais supprimer une base contenant des données uniques sur la
+seule foi d’une modification du Blueprint.
 
-| Surface           | Staging             | Production          |
-| ----------------- | ------------------- | ------------------- |
-| Web               | `kraak-web-staging` | `kraak-web-prod`    |
-| API               | `kraak-api-staging` | `kraak-api-prod`    |
-| Base/Auth/Storage | Supabase staging    | Supabase production |
+## Sources
 
-## Branches et déclencheurs
-
-- `staging` est la branche d'intégration et déclenche la validation staging.
-- `main` est la branche de release.
-- La production est déclenchée par tag SemVer sur `main`.
-- Les secrets et variables d'environnement restent hors dépôt.
-
-## Internationalisation cible du web statique
-
-Le modèle cible d'internationalisation gardera un service Render static par
-environnement. Le build web pourra plus tard publier un seul dossier `public`
-contenant des sous-arbres localisés, par exemple `public/fr/` et `public/en/`,
-ainsi que les assets partagés, `sitemap.xml`, `robots.txt` et `404.html`.
-
-La configuration Render restera la source de vérité opérationnelle au moment où
-ce modèle sera implémenté. Cette PR ne modifie ni `render.yaml`, ni les commandes
-de build, ni les variables d'environnement.
-
-## Sources liées
-
-- [`../operations/DEPLOYMENT.md`](../operations/DEPLOYMENT.md) pour la procédure
-  Render courante.
-- [`../operations/STAGING_VALIDATION.md`](../operations/STAGING_VALIDATION.md)
-  pour la validation staging.
-- [`../operations/RELEASE_PROD.md`](../operations/RELEASE_PROD.md) pour la
-  release production.
-- [`../operations/ENVIRONMENTS.md`](../operations/ENVIRONMENTS.md) pour les
-  variables d'environnement.
-- [`../decisions/ARC-19-i18n-localization-strategy.md`](../decisions/ARC-19-i18n-localization-strategy.md)
-  pour le modèle cible d'internationalisation.
+- [Décision production unique](../decisions/ARC-22-production-only-main.md).
+- [Variables d’environnement](../operations/ENVIRONMENTS.md).
+- [Déploiement](../operations/DEPLOYMENT.md).
+- [Release et rollback](../operations/RELEASE_PROD.md).

@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-07-23
+last_reviewed: 2026-10-27
 source_of_truth: true
 ---
 
@@ -297,8 +297,8 @@ utilitaires) et **PrimeNG** (classes de composants) pour tout le style visuel.
 
 Workflow Git par défaut dans ce dépôt :
 
-- Traiter `staging` comme la seule branche permanente.
-- Garder `staging` dans un état livrable.
+- Traiter `main` comme la seule branche permanente et la branche par défaut.
+- Garder `main` dans un état livrable.
 - Utiliser uniquement des branches courtes (`feat/*`, `fix/*`, `chore/*`,
   `docs/*`, `test/*`, `refactor/*`, `ci/*`, `style/*`, `perf/*`, `revert/*`,
   `build/*`).
@@ -307,20 +307,20 @@ Workflow Git par défaut dans ce dépôt :
 - Travailler sur une seule tâche à la fois.
 - Garder une portée de branche correspondant à une tâche et fusionner vite.
 - **Stratégie de fusion : rebase uniquement.** Ne jamais créer de merge commits.
-  Toujours rebaser la branche courte sur `staging` avant de fusionner en
+  Toujours rebaser la branche courte sur `main` avant de fusionner en
   fast-forward. La configuration locale du dépôt impose `pull.rebase = true`
   et `merge.ff = only`.
 
 Avant toute modification de code ou de documentation active :
 
-1. vérifier que la branche courante part de `staging` ;
-2. refuser toute synchronisation inverse vers `staging` ;
-3. ouvrir les PR de travail vers `staging` ;
-4. ne mentionner `main` que pour une PR de release ou un tag SemVer.
+1. vérifier que la branche courante part de `main` ;
+2. ne pas recréer de branche ni d’infrastructure staging permanente ;
+3. ouvrir les PR de travail vers `main` ;
+4. réserver les déploiements aux tags SemVer accessibles depuis `main`.
 
 Flux d’exécution d’une tâche :
 
-1. Récupérer le dernier `staging`.
+1. Récupérer le dernier `main`.
 2. Identifier l’item GitHub Project correspondant à la tâche et vérifier d’abord
    que la tâche existe bien dans la liste liée au Project.
 3. Si la tâche est absente du Project, créer un nouvel item de Project seulement
@@ -333,9 +333,9 @@ Flux d’exécution d’une tâche :
    gardant l’issue ouverte.
 7. Implémenter le plus petit incrément valide.
 8. Exécuter la validation pertinente.
-9. Rebaser la branche sur `staging` (`git rebase staging`) puis fusionner en
-   fast-forward (`git merge --ff-only <branche>`) dans `staging`.
-10. Pousser `staging`.
+9. Rebaser la branche sur `main` (`git rebase origin/main`) puis fusionner la PR
+   validée par rebase, sans contourner les contrôles requis.
+10. Synchroniser le `main` local par avance rapide après la fusion distante.
 11. Une fois la fusion / le push réussis, fermer l’issue liée, déplacer l’item du
     Project en `Done`, définir `Statut` sur `Termine` et `Status` sur `Done`,
     tout en gardant les champs d’état alignés.
@@ -360,14 +360,14 @@ Comportement obligatoire pour les assistants :
   propre n’est trouvée, arrêter immédiatement et signaler le problème à
   l’utilisateur plutôt que de contourner les contrôles.
 - Règle de récupération des changements en suspens : si des fichiers modifiés ou
-  non suivis se trouvent sur `staging` (ou pire sur `main`) sans pouvoir y être
+  non suivis se trouvent sur `main` sans pouvoir y être
   commités directement (protection de branche ou politique de PR), ne jamais
   forcer ni contourner les contrôles. Appliquer systématiquement la séquence
   suivante :
   1. `git stash -u` pour mettre les changements de côté, y compris les fichiers non suivis.
-  2. Créer une branche courte appropriée **depuis `staging`** (`git switch staging && git switch -c <type>/<sujet>`).
+  2. Créer une branche courte appropriée **depuis `main`** (`git switch main && git switch -c <type>/<sujet>`).
   3. `git stash pop` pour restaurer les changements sur cette branche.
-  4. Suivre le protocole normal : commit, push, PR vers `staging`, merge, nettoyage de branche.
+  4. Suivre le protocole normal : commit, push, PR vers `main`, merge, nettoyage de branche.
 
 ### Jalons Git / GitHub À Respecter
 
@@ -395,7 +395,7 @@ Quand l’accès aux GitHub Projects est disponible :
 - garder l’item du projet aligné avec l’état réel du travail
 - déplacer l’item en `In Progress` quand le codage commence
 - déplacer l’item en `Done` seulement après validation et merge / push vers
-  `staging` (et après release `staging → main → tag` quand la tâche concerne la prod)
+  `main` (et après release par tag quand la tâche concerne la production)
 - si le travail est partiel ou bloqué, le laisser en `In Progress` et indiquer
   pourquoi
 - ne pas réécrire en masse des éléments de backlog non liés sauf demande
@@ -407,7 +407,7 @@ Cycle de vie obligatoire par tâche :
 2. Convertir l’item brouillon en issue GitHub ouverte quand l’implémentation
    commence.
 3. Garder l’issue ouverte tant que le travail est en cours.
-4. Fermer l’issue seulement après validation et merge / push vers `staging`.
+4. Fermer l’issue seulement après validation et fusion vers `main`.
 5. Mettre à jour le champ personnalisé `Statut` avec cette progression exacte :
    `A faire` -> `En cours` -> `Termine`.
 6. Garder le champ natif `Status` aligné en parallèle :

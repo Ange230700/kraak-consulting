@@ -49,8 +49,8 @@ function createRepository() {
   );
   runGit(repositoryPath, ['init', '-b', 'main']);
   commitFile(repositoryPath, 'README.md', 'base\n', 'base');
-  runGit(repositoryPath, ['switch', '-c', 'staging']);
-  commitFile(repositoryPath, 'staging.txt', 'staging\n', 'staging change');
+  runGit(repositoryPath, ['switch', '-c', 'feat/example']);
+  commitFile(repositoryPath, 'feature.txt', 'feature\n', 'feature change');
 
   return repositoryPath;
 }
@@ -73,17 +73,17 @@ function runLineageCheck(repositoryPath, ...args) {
   });
 }
 
-test('Given main is an ancestor of staging, When release lineage is required, Then the check passes', () => {
+test('Given main est un ancêtre de la branche courte, When la lignée est requise, Then le contrôle réussit', () => {
   withRepository((repositoryPath) => {
     const result = runLineageCheck(
       repositoryPath,
       '--require-main-ancestor',
-      'staging',
+      'feat/example',
       'main',
     );
 
     assert.equal(result.status, 0, result.stderr || result.stdout);
-    assert.match(result.stdout, /main est un ancêtre de staging/);
+    assert.match(result.stdout, /main est un ancêtre de la branche courte/);
   });
 });
 
@@ -105,7 +105,7 @@ test('Given Git hook repository variables, When child environment is prepared, T
   assert.equal(sourceEnvironment.GIT_DIR, 'C:\\repo\\.git');
 });
 
-test('Given main and staging have diverged, When release lineage is required, Then promotion is blocked with both commit counts', () => {
+test('Given main et la branche courte divergent, When la lignée est requise, Then un rebase est exigé avec les deux écarts', () => {
   withRepository((repositoryPath) => {
     runGit(repositoryPath, ['switch', 'main']);
     commitFile(repositoryPath, 'main.txt', 'main\n', 'main change');
@@ -113,18 +113,18 @@ test('Given main and staging have diverged, When release lineage is required, Th
     const result = runLineageCheck(
       repositoryPath,
       '--require-main-ancestor',
-      'staging',
+      'feat/example',
       'main',
     );
 
     assert.equal(result.status, 1);
-    assert.match(result.stdout, /staging en avance de 1 commit\(s\)/);
+    assert.match(result.stdout, /head en avance de 1 commit\(s\)/);
     assert.match(result.stdout, /main en avance de 1 commit\(s\)/);
-    assert.match(result.stdout, /promotion automatique n’est pas sûre/i);
+    assert.match(result.stdout, /un rebase est requis/i);
   });
 });
 
-test('Given a pull request targets main, When the release workflow runs, Then it requires staging lineage validation', () => {
+test('Given une PR vers main, When le workflow est lancé, Then la branche courte doit contenir main', () => {
   const workflow = readFileSync(
     path.join(repoRoot, '.github', 'workflows', 'release-lineage.yml'),
     'utf8',
@@ -135,10 +135,7 @@ test('Given a pull request targets main, When the release workflow runs, Then it
   );
 
   assert.match(workflow, /pull_request:\s+branches: \[main\]/);
-  assert.match(workflow, /HEAD_BRANCH.*staging/);
-  assert.match(
-    workflow,
-    /--require-main-ancestor origin\/staging origin\/main/,
-  );
+  assert.match(workflow, /ref: \$\{\{ github.event.pull_request.head.sha \}\}/);
+  assert.match(workflow, /--require-main-ancestor HEAD origin\/main/);
   assert.match(protectionScript, /'Branch Lineage'/);
 });

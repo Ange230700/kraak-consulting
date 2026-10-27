@@ -10,7 +10,6 @@
     "start": "nest start",
     "start:dev": "pnpm run start:local",
     "start:local": "cross-env NODE_ENV=local nest start --watch",
-    "start:staging": "cross-env NODE_ENV=staging nest start --watch",
     "start:prod": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",

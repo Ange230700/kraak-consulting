@@ -60,63 +60,61 @@ document obsolète dans le même changement.
 
 ## Catalogue des documents actifs
 
-| Chemin                                                                 | Statut | Source de vérité | Titre                                                                            |
-| ---------------------------------------------------------------------- | ------ | ---------------- | -------------------------------------------------------------------------------- |
-| `architecture/API.md`                                                  | active | true             | Architecture API                                                                 |
-| `architecture/DATA_MODEL.md`                                           | active | true             | Modèle de données MVP                                                            |
-| `architecture/DEPLOYMENT.md`                                           | active | true             | Architecture de déploiement                                                      |
-| `architecture/MOBILE.md`                                               | active | true             | Architecture mobile                                                              |
-| `architecture/OVERVIEW.md`                                             | active | true             | Vue d'ensemble de la stack technique                                             |
-| `architecture/WEB.md`                                                  | active | true             | Architecture web                                                                 |
-| `decisions/ARC-01-architecture-cible-mvp.md`                           | active | true             | ARC-01 — Architecture cible MVP                                                  |
-| `decisions/ARC-02-conventions-repo.md`                                 | active | true             | ARC-02 — Conventions dépôt et workflow Git                                       |
-| `decisions/ARC-03-seo-prerender-strategy.md`                           | active | true             | ARC-03 — Stratégie de rendu web (SEO / prerender)                                |
-| `decisions/ARC-04-modeles-donnees-mvp.md`                              | active | true             | ARC-04 — Modèles de données MVP                                                  |
-| `decisions/ARC-05-criteres-anti-scope-creep.md`                        | active | true             | ARC-05 — Critères anti-scope-creep et cadrage ADR                                |
-| `decisions/ARC-06-gating-firebase-mobile-push.md`                      | active | true             | ARC-06 — Gating natif des notifications push mobile sur Firebase                 |
-| `decisions/ARC-07-prod-release-tag-based.md`                           | active | true             | ARC-07 — Stratégie de release production basée sur les tags                      |
-| `decisions/ARC-09-inversion-main-staging.md`                           | active | true             | ARC-09 — Inversion `main` ↔ `staging` : staging devient la branche d'intégration |
-| `decisions/ARC-10-feature-flag-participant-area.md`                    | active | true             | ARC-10 — Feature flag espace participant                                         |
-| `decisions/ARC-12-automatic-environment-detection-preview-sections.md` | active | true             | ARC-12 - Retrait des sections de prévisualisation du bundle de production        |
-| `decisions/ARC-13-non-vitrine-gating-complete.md`                      | active | true             | ARC-13 - Gating des routes non vitrines côté web                                 |
-| `decisions/ARC-14-freeze-surface-vitrine-publique.md`                  | active | true             | ARC-14 - Gel de la surface vitrine publique                                      |
-| `decisions/ARC-15-positionnement-page-ressources-vitrine.md`           | active | true             | ARC-15 - Positionnement de la page `/ressources` dans la vitrine                 |
-| `decisions/ARC-16-render-only-web-hosting.md`                          | active | true             | ARC-16 — Render uniquement pour l'hébergement web                                |
-| `decisions/ARC-18-consolidation-partielle-blog-public.md`              | active | true             | ARC-18 - Consolidation partielle du blog public                                  |
-| `decisions/ARC-19-i18n-localization-strategy.md`                       | active | true             | ARC-19 - Stratégie d'internationalisation français / anglais                     |
-| `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                        |
-| `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                              |
-| `engineering/CONTRIBUTION_WORKFLOW.md`                                 | active | true             | Guide de contribution                                                            |
-| `engineering/DOCUMENT_EXPORTS.md`                                      | active | true             | Exports documentaires                                                            |
-| `engineering/LOCAL_DEVELOPMENT.md`                                     | active | true             | Guide du mode développement                                                      |
-| `engineering/SHARED_PACKAGES.md`                                       | active | true             | Guideline de publication des packages partagés                                   |
-| `engineering/TESTING.md`                                               | active | true             | Tests et couverture MVP                                                          |
-| `engineering/UI_COMPONENT_MAPPING.md`                                  | active | true             | Correspondance de composants — Web (PrimeNG) ↔ Mobile (Ionic)                    |
-| `engineering/UI_FEEDBACK.md`                                           | active | true             | Règle d'usage PrimeNG Messages et Toasts (Web)                                   |
-| `operations/ANALYTICS_EVENTS.md`                                       | active | true             | Événements analytics publics                                                     |
-| `operations/BRANCH_RECONCILIATION_2026-10.md`                          | active | true             | Réconciliation ponctuelle de main et staging                                     |
-| `operations/CLI_TOOLS.md`                                              | active | true             | CLI_TOOLS — Outils en ligne de commande Render, Supabase et GitHub               |
-| `operations/CONTACT_OPERATIONS.md`                                     | active | true             | Opérations de contact public                                                     |
-| `operations/DEPLOYMENT.md`                                             | active | true             | Déploiement Render                                                               |
-| `operations/ENVIRONMENTS.md`                                           | active | true             | Variables d'environnement                                                        |
-| `operations/INCIDENT_ROLLBACK.md`                                      | active | true             | Incident, rollback et checklist de lancement                                     |
-| `operations/MIGRATION_RECONCILIATION.md`                               | active | true             | Réconciliation des migrations                                                    |
-| `operations/MOBILE_BUILD.md`                                           | active | true             | Guide de build mobile (Capacitor Android / iOS)                                  |
-| `operations/NIGHTLY_REGRESSION.md`                                     | active | true             | Nightly Regression                                                               |
-| `operations/OBSERVABILITY.md`                                          | active | true             | Observabilité et alerting minimum                                                |
-| `operations/RELEASE_PROD.md`                                           | active | true             | RELEASE_PROD — Procédure de release production                                   |
-| `operations/SONARCLOUD_SETUP.md`                                       | active | true             | Runbook — Configuration SonarQube Cloud & SonarLint                              |
-| `operations/STAGING_VALIDATION.md`                                     | active | true             | Validation staging et préparation release                                        |
-| `operations/SUPABASE_AUTH.md`                                          | active | true             | Configuration Supabase Auth                                                      |
-| `planning/GITHUB_PROJECT.md`                                           | active | true             | Pilotage GitHub Project                                                          |
-| `product/ANNOUNCEMENTS.md`                                             | active | true             | Format des annonces et règles de publication MVP (ANN-01)                        |
-| `product/MOBILE_MVP.md`                                                | active | true             | MVP Mobile                                                                       |
-| `product/MVP_SCOPE.md`                                                 | active | true             | Périmètre MVP — Site web KRAAK                                                   |
-| `product/PARTICIPANT_AREA.md`                                          | active | true             | Espace participant                                                               |
-| `product/RESOURCES.md`                                                 | active | true             | Taxonomie des ressources (RES-01)                                                |
-| `product/USER_JOURNEYS.md`                                             | active | true             | Parcours Utilisateur De L'Application                                            |
-| `generated/planning/README.md`                                         | active | true             | Snapshots de planification générés                                               |
-| `generated/README.md`                                                  | active | true             | Artefacts générés                                                                |
+| Chemin                                                                 | Statut | Source de vérité | Titre                                                                     |
+| ---------------------------------------------------------------------- | ------ | ---------------- | ------------------------------------------------------------------------- |
+| `architecture/API.md`                                                  | active | true             | Architecture API                                                          |
+| `architecture/DATA_MODEL.md`                                           | active | true             | Modèle de données MVP                                                     |
+| `architecture/DEPLOYMENT.md`                                           | active | true             | Architecture de déploiement                                               |
+| `architecture/MOBILE.md`                                               | active | true             | Architecture mobile                                                       |
+| `architecture/OVERVIEW.md`                                             | active | true             | Vue d'ensemble de la stack technique                                      |
+| `architecture/WEB.md`                                                  | active | true             | Architecture web                                                          |
+| `decisions/ARC-01-architecture-cible-mvp.md`                           | active | true             | ARC-01 — Architecture cible MVP                                           |
+| `decisions/ARC-02-conventions-repo.md`                                 | active | true             | ARC-02 — Conventions dépôt et workflow Git                                |
+| `decisions/ARC-03-seo-prerender-strategy.md`                           | active | true             | ARC-03 — Stratégie de rendu web (SEO / prerender)                         |
+| `decisions/ARC-04-modeles-donnees-mvp.md`                              | active | true             | ARC-04 — Modèles de données MVP                                           |
+| `decisions/ARC-05-criteres-anti-scope-creep.md`                        | active | true             | ARC-05 — Critères anti-scope-creep et cadrage ADR                         |
+| `decisions/ARC-06-gating-firebase-mobile-push.md`                      | active | true             | ARC-06 — Gating natif des notifications push mobile sur Firebase          |
+| `decisions/ARC-07-prod-release-tag-based.md`                           | active | true             | ARC-07 — Stratégie de release production basée sur les tags               |
+| `decisions/ARC-10-feature-flag-participant-area.md`                    | active | true             | ARC-10 — Feature flag espace participant                                  |
+| `decisions/ARC-12-automatic-environment-detection-preview-sections.md` | active | true             | ARC-12 - Retrait des sections de prévisualisation du bundle de production |
+| `decisions/ARC-13-non-vitrine-gating-complete.md`                      | active | true             | ARC-13 - Gating des routes non vitrines côté web                          |
+| `decisions/ARC-14-freeze-surface-vitrine-publique.md`                  | active | true             | ARC-14 - Gel de la surface vitrine publique                               |
+| `decisions/ARC-15-positionnement-page-ressources-vitrine.md`           | active | true             | ARC-15 - Positionnement de la page `/ressources` dans la vitrine          |
+| `decisions/ARC-16-render-only-web-hosting.md`                          | active | true             | ARC-16 — Render uniquement pour l'hébergement web                         |
+| `decisions/ARC-18-consolidation-partielle-blog-public.md`              | active | true             | ARC-18 - Consolidation partielle du blog public                           |
+| `decisions/ARC-19-i18n-localization-strategy.md`                       | active | true             | ARC-19 - Stratégie d'internationalisation français / anglais              |
+| `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                 |
+| `decisions/ARC-22-production-only-main.md`                             | active | true             | ARC-22 — Production unique et branche main                                |
+| `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                       |
+| `engineering/CONTRIBUTION_WORKFLOW.md`                                 | active | true             | Guide de contribution                                                     |
+| `engineering/DOCUMENT_EXPORTS.md`                                      | active | true             | Exports documentaires                                                     |
+| `engineering/LOCAL_DEVELOPMENT.md`                                     | active | true             | Guide du mode développement                                               |
+| `engineering/SHARED_PACKAGES.md`                                       | active | true             | Guideline de publication des packages partagés                            |
+| `engineering/TESTING.md`                                               | active | true             | Tests et couverture MVP                                                   |
+| `engineering/UI_COMPONENT_MAPPING.md`                                  | active | true             | Correspondance de composants — Web (PrimeNG) ↔ Mobile (Ionic)             |
+| `engineering/UI_FEEDBACK.md`                                           | active | true             | Règle d'usage PrimeNG Messages et Toasts (Web)                            |
+| `operations/ANALYTICS_EVENTS.md`                                       | active | true             | Événements analytics publics                                              |
+| `operations/CLI_TOOLS.md`                                              | active | true             | CLI_TOOLS — Outils en ligne de commande Render, Supabase et GitHub        |
+| `operations/CONTACT_OPERATIONS.md`                                     | active | true             | Opérations de contact public                                              |
+| `operations/DEPLOYMENT.md`                                             | active | true             | Déploiement Render                                                        |
+| `operations/ENVIRONMENTS.md`                                           | active | true             | Variables d’environnement                                                 |
+| `operations/MIGRATION_RECONCILIATION.md`                               | active | true             | Réconciliation des migrations                                             |
+| `operations/MOBILE_BUILD.md`                                           | active | true             | Guide de build mobile (Capacitor Android / iOS)                           |
+| `operations/NIGHTLY_REGRESSION.md`                                     | active | true             | Régression nocturne sans environnement permanent                          |
+| `operations/OBSERVABILITY.md`                                          | active | true             | Observabilité et alerting minimum                                         |
+| `operations/PRODUCTION_ONLY_TRANSITION.md`                             | active | true             | Transition vers une production unique                                     |
+| `operations/RELEASE_PROD.md`                                           | active | true             | Release production                                                        |
+| `operations/SONARCLOUD_SETUP.md`                                       | active | true             | Runbook — Configuration SonarQube Cloud & SonarLint                       |
+| `operations/SUPABASE_AUTH.md`                                          | active | true             | Configuration Supabase Auth                                               |
+| `planning/GITHUB_PROJECT.md`                                           | active | true             | Pilotage GitHub Project                                                   |
+| `product/ANNOUNCEMENTS.md`                                             | active | true             | Format des annonces et règles de publication MVP (ANN-01)                 |
+| `product/MOBILE_MVP.md`                                                | active | true             | MVP Mobile                                                                |
+| `product/MVP_SCOPE.md`                                                 | active | true             | Périmètre MVP — Site web KRAAK                                            |
+| `product/PARTICIPANT_AREA.md`                                          | active | true             | Espace participant                                                        |
+| `product/RESOURCES.md`                                                 | active | true             | Taxonomie des ressources (RES-01)                                         |
+| `product/USER_JOURNEYS.md`                                             | active | true             | Parcours Utilisateur De L'Application                                     |
+| `generated/planning/README.md`                                         | active | true             | Snapshots de planification générés                                        |
+| `generated/README.md`                                                  | active | true             | Artefacts générés                                                         |
 
 ## Commandes
 

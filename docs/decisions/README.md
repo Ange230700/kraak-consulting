@@ -49,3 +49,4 @@ KRAAK. L'index ci-dessous est dérivé des fichiers `ARC-XX-*.md`.
 | `ARC-18` | [Consolidation partielle du blog public](ARC-18-consolidation-partielle-blog-public.md)                                        | Acceptée                                      | 2026-07-26 |
 | `ARC-19` | [Stratégie d'internationalisation français / anglais](ARC-19-i18n-localization-strategy.md)                                    | Acceptée                                      | 2026-07-27 |
 | `ARC-20` | [Bibliothèque runtime i18n client](ARC-20-runtime-i18n-library.md)                                                             | Acceptée                                      | 2026-07-27 |
+| `ARC-22` | [Production unique et branche main](ARC-22-production-only-main.md)                                                            | -                                             | -          |

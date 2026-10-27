@@ -6,6 +6,13 @@ import path from 'node:path';
 import test from 'node:test';
 import { loadClientRuntimeConfig } from './generate-client-runtime-config.mjs';
 
+test('Given un environnement retiré, When le runtime est demandé, Then une erreur explicite empêche de charger staging', () => {
+  assert.throws(
+    () => loadClientRuntimeConfig('staging'),
+    /Environnement invalide/,
+  );
+});
+
 test('Given des lignes env incomplètes, When le runtime est chargé, Then commentaires et clés invalides sont ignorés', (t) => {
   const root = mkdtempSync(path.join(os.tmpdir(), 'kraak-runtime-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -25,7 +32,7 @@ test('Given la CLI runtime, When les options et fichiers varient, Then les sorti
   for (const [args, api] of [
     [[], ''],
     [['--env'], 'https://api.test'],
-    [['--env', 'staging'], ''],
+    [['--env', 'production'], ''],
   ]) {
     const code = `import fs from 'node:fs';import {syncBuiltinESMExports} from 'node:module';import {fileURLToPath} from 'node:url';let count=0;fs.existsSync=()=>false;fs.mkdirSync=()=>{};fs.writeFileSync=()=>{count++};syncBuiltinESMExports();process.env.CLIENT_API_BASE_URL=${JSON.stringify(api)};process.argv=['node',fileURLToPath(${JSON.stringify(url)}),...${JSON.stringify(args)}];await import(${JSON.stringify(url)});if(count!==2)throw new Error('Deux sorties attendues');`;
     const result = spawnSync(

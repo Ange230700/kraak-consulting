@@ -93,26 +93,25 @@ test('le runtime client peut lire les variables locales depuis apps/client/.env 
   }
 });
 
-test('le runtime client peut lire les variables staging depuis process.env quand aucun fichier .env n est disponible', () => {
+test('Given une production sans fichier env, When le runtime est chargé, Then les variables injectées sont utilisées', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
 
   try {
-    const runtimeConfig = loadClientRuntimeConfig('staging', {
+    const runtimeConfig = loadClientRuntimeConfig('production', {
       clientRootPath: tempRoot,
       processEnv: {
-        CLIENT_API_BASE_URL: 'https://kraak-api-staging.onrender.com/',
-        SUPABASE_URL: 'https://qgttdsnupelohowwkkwb.supabase.co',
-        SUPABASE_PUBLISHABLE_KEY:
-          'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
+        CLIENT_API_BASE_URL: 'https://api.example.test/',
+        SUPABASE_URL: 'https://data.example.test',
+        SUPABASE_PUBLISHABLE_KEY: 'public-test-key',
       },
     });
 
     assert.deepEqual(runtimeConfig, {
-      apiBaseUrl: 'https://kraak-api-staging.onrender.com/',
-      supabaseUrl: 'https://qgttdsnupelohowwkkwb.supabase.co',
-      supabasePublishableKey: 'sb_publishable_5CKjUPh9rFkuUlwHyLIYpQ_c_plqe57',
+      apiBaseUrl: 'https://api.example.test/',
+      supabaseUrl: 'https://data.example.test',
+      supabasePublishableKey: 'public-test-key',
       enableParticipantArea: true,
     });
   } finally {
@@ -176,7 +175,7 @@ test('le runtime client priorise les variables du fichier .env sur celles de pro
   );
 
   try {
-    const envFilePath = path.join(tempRoot, '.env.staging');
+    const envFilePath = path.join(tempRoot, '.env.prod');
     writeFileSync(
       envFilePath,
       [
@@ -187,7 +186,7 @@ test('le runtime client priorise les variables du fichier .env sur celles de pro
       ].join('\n'),
     );
 
-    const runtimeConfig = loadClientRuntimeConfig('staging', {
+    const runtimeConfig = loadClientRuntimeConfig('production', {
       clientRootPath: tempRoot,
       processEnv: {
         CLIENT_API_BASE_URL: 'https://from-process.example',
@@ -246,19 +245,19 @@ test('le runtime client expose enableParticipantArea quand CLIENT_FEATURE_PARTIC
   );
 
   try {
-    const envFilePath = path.join(tempRoot, '.env.staging');
+    const envFilePath = path.join(tempRoot, '.env.prod');
     writeFileSync(
       envFilePath,
       [
-        'CLIENT_API_BASE_URL=https://api.staging.example',
-        'SUPABASE_URL=https://staging.supabase.co',
-        'SUPABASE_PUBLISHABLE_KEY=staging-key',
+        'CLIENT_API_BASE_URL=https://api.example.test',
+        'SUPABASE_URL=https://data.example.test',
+        'SUPABASE_PUBLISHABLE_KEY=public-test-key',
         'CLIENT_FEATURE_PARTICIPANT_AREA=true',
         '',
       ].join('\n'),
     );
 
-    const runtimeConfig = loadClientRuntimeConfig('staging', {
+    const runtimeConfig = loadClientRuntimeConfig('production', {
       clientRootPath: tempRoot,
       processEnv: {},
     });

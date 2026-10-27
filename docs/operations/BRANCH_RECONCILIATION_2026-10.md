@@ -1,8 +1,8 @@
 ---
-status: active
+status: reference
 owner: platform
 last_reviewed: 2026-10-26
-source_of_truth: true
+source_of_truth: false
 ---
 
 # Réconciliation ponctuelle de main et staging
@@ -14,6 +14,10 @@ source_of_truth: true
   - [Arbitrages de contenu](#arbitrages-de-contenu)
   - [Séquence d'intégration](#sequence-dintegration)
   - [Vérification reproductible](#verification-reproductible)
+
+> Compte rendu historique. Le modèle courant est défini par
+> [ARC-22](../decisions/ARC-22-production-only-main.md) ; l'état vérifié et les
+> barrières de retrait figurent dans [le registre](PRODUCTION_ONLY_TRANSITION.md).
 
 ## Décision et périmètre
 

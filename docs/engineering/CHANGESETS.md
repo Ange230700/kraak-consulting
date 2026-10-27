@@ -17,7 +17,7 @@ source_of_truth: true
   - [3 · Quand créer un changeset](#3-quand-creer-un-changeset)
   - [4 · Créer un changeset](#4-creer-un-changeset)
   - [5 · PR de travail](#5-pr-de-travail)
-  - [6 · Validation sur staging](#6-validation-sur-staging)
+  - [6 · Validation avant fusion](#6-validation-avant-fusion)
   - [7 · Release](#7-release)
   - [8 · Version PR](#8-version-pr)
   - [9 · Troubleshooting](#9-troubleshooting)
@@ -32,28 +32,26 @@ source_of_truth: true
 
 Changesets sert à documenter les changements versionnés avant une release.
 
-Dans ce dépôt, le workflow actif est aligné sur ARC-09 :
+Dans ce dépôt, le workflow actif est aligné sur ARC-22 :
 
-- les branches courtes partent de `staging` ;
-- les PR de travail ciblent `staging` ;
-- `main` ne reçoit que des PR de release depuis `staging` ;
+- les branches courtes partent de `main` ;
+- les PR de travail ciblent `main` ;
+- `main` est la seule branche permanente ;
 - les tags SemVer sont posés sur `main` ;
-- aucun flux `main` vers `staging` n'est utilisé.
+- aucun environnement de préproduction permanent n'est requis.
 
 ## 2 · Flux global
 
 ```mermaid
 flowchart LR
-    branch["Branche courte<br/>depuis staging"]
+    branch["Branche courte<br/>depuis main"]
     changeset["Changeset<br/>si nécessaire"]
-    prStaging["PR vers staging"]
-    staging["staging<br/>validation"]
-    releasePr["PR release<br/>staging → main"]
+    pr["PR validée"]
     main["main"]
     tag["Tag SemVer"]
     publish["Release / publication"]
 
-    branch --> changeset --> prStaging --> staging --> releasePr --> main --> tag --> publish
+    branch --> changeset --> pr --> main --> tag --> publish
 ```
 
 ## 3 · Quand créer un changeset
@@ -77,11 +75,11 @@ Ne pas créer de changeset pour :
 
 ## 4 · Créer un changeset
 
-Depuis une branche courte créée depuis `staging`:
+Depuis une branche courte créée depuis `main` :
 
 ```bash
-git switch staging
-git pull --rebase origin staging
+git switch main
+git pull --ff-only origin main
 git switch -c feat/description-courte
 pnpm changeset
 ```
@@ -97,11 +95,11 @@ git commit -m "docs(changeset): document feature release impact"
 
 ## 5 · PR de travail
 
-La PR de travail cible `staging`.
+La PR de travail cible `main`.
 
 ```bash
 git push -u origin HEAD
-gh pr create --base staging --head "$(git branch --show-current)"
+gh pr create --base main --head "$(git branch --show-current)"
 ```
 
 Avant de demander review ou merge :
@@ -120,34 +118,25 @@ pnpm test:unit
 pnpm build
 ```
 
-## 6 · Validation sur staging
+## 6 · Validation avant fusion
 
-Après merge dans `staging`:
+Avant fusion dans `main` :
 
 1. vérifier les checks GitHub ;
-2. vérifier le déploiement staging ;
+2. exécuter les tests et parcours locaux ou éphémères ;
 3. vérifier les logs ;
 4. tester les parcours concernés ;
 5. confirmer que le changeset correspond bien au changement livré.
 
-Si une anomalie est détectée, créer une branche courte depuis `staging` et ouvrir une nouvelle PR vers `staging`.
+Si une anomalie est détectée, corriger la PR et réexécuter les contrôles.
 
 ## 7 · Release
 
-Quand `staging` est validée :
-
-```bash
-gh pr create \
-  --base main \
-  --head staging \
-  --title "release: promote staging to main"
-```
-
-Après merge de la PR de release :
+Après fusion de la PR validée et approbation de la release :
 
 ```bash
 git switch main
-git pull --rebase origin main
+git pull --ff-only origin main
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
@@ -158,9 +147,9 @@ Le tag SemVer déclenche le workflow de production prévu par le runbook [`RELEA
 
 Si un workflow Changesets crée une PR de version, cette PR doit respecter le modèle actif :
 
-- base: `staging` si elle prépare l'intégration;
-- base: `main` uniquement si elle fait partie d'une release contrôlée;
-- aucun mécanisme automatique ne doit synchroniser `main` vers `staging`.
+- base : `main` ;
+- contrôles identiques aux autres PR ;
+- aucun mécanisme ne doit recréer une branche ou infrastructure staging.
 
 Le mainteneur doit vérifier :
 
@@ -186,11 +175,11 @@ Si le changement ne nécessite pas de changeset, documenter la raison dans la PR
 
 ### La PR de version est incorrecte
 
-Corriger sur une branche courte depuis `staging`, puis ouvrir une PR vers `staging`.
+Corriger sur une branche courte depuis `main`, puis ouvrir une PR vers `main`.
 
 ```bash
-git switch staging
-git pull --rebase origin staging
+git switch main
+git pull --ff-only origin main
 git switch -c fix/version-notes
 ```
 
@@ -205,24 +194,24 @@ Vérifier :
 
 ### Un changeset a été mergé sans release
 
-C'est acceptable tant que la release n'est pas prête. Le changeset reste dans l'historique de `staging` et sera pris en compte lors de la prochaine release.
+C'est acceptable tant que la release n'est pas prête. Le changeset reste dans l'historique de `main` et sera pris en compte lors de la prochaine release.
 
 ## 10 · Anti-patterns
 
 Ne pas :
 
 - créer un changeset directement sur `main` pour une fonctionnalité non validée ;
-- ouvrir une PR de fonctionnalité vers `main` ;
-- poser un tag SemVer sur `staging` ;
-- synchroniser `main` vers `staging` ;
+- fusionner une PR sans ses contrôles requis ;
+- poser un tag SemVer hors de `main` ;
+- recréer une branche permanente staging ;
 - supprimer un changeset sans justification ;
 - mélanger plusieurs changements indépendants dans un seul changeset vague.
 
 ## 11 · Checklist PR
 
-- [ ] Branche courte créée depuis `staging`
+- [ ] Branche courte créée depuis `main`
 - [ ] Changeset créé si nécessaire
-- [ ] PR ciblant `staging`
+- [ ] PR ciblant `main`
 - [ ] Format et tests exécutés
 - [ ] Changelog cohérent si généré
 - [ ] Pas de tag créé avant merge de release sur `main`

@@ -167,12 +167,10 @@ Sous-jacent : `pnpm build:mobile`, creation de la plateforme iOS si besoin, puis
 
 Les commandes `build:debug:*` s'appuient sur `pnpm build:mobile`, donc sur la configuration standard du workspace.
 
-Si vous devez preparer explicitement un build mobile avec les variables `local` ou `staging`, utilisez d'abord :
+Pour préparer le build mobile de développement, utilisez :
 
 ```bash
 pnpm build:mobile:local
-# ou
-pnpm build:mobile:staging
 ```
 
 Puis synchronisez les assets vers le projet natif :

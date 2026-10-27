@@ -78,19 +78,6 @@
               ],
               "outputHashing": "all"
             },
-            "staging": {
-              "optimization": {
-                "styles": {
-                  "inlineCritical": false
-                }
-              },
-              "fileReplacements": [
-                {
-                  "replace": "projects/web/src/environments/environment.ts",
-                  "with": "projects/web/src/environments/environment.staging.ts"
-                }
-              ]
-            },
             "local": {
               "fileReplacements": [
                 {
@@ -130,9 +117,6 @@
           "configurations": {
             "production": {
               "buildTarget": "web:build:production"
-            },
-            "staging": {
-              "buildTarget": "web:build:staging"
             },
             "local": {
               "buildTarget": "web:build:local"
@@ -249,14 +233,6 @@
               ],
               "outputHashing": "all"
             },
-            "staging": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/mobile/src/environments/environment.ts",
-                  "with": "projects/mobile/src/environments/environment.staging.ts"
-                }
-              ]
-            },
             "local": {
               "fileReplacements": [
                 {
@@ -298,9 +274,6 @@
           "configurations": {
             "production": {
               "buildTarget": "mobile:build:production"
-            },
-            "staging": {
-              "buildTarget": "mobile:build:staging"
             },
             "local": {
               "buildTarget": "mobile:build:local"
