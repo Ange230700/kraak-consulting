@@ -56,14 +56,14 @@ La palette est définie par les jetons partagés. Le bleu marine ancre les
 et les actions ; le doré reste un accent ponctuel. Les surfaces claires et les
 neutres maintiennent une bonne respiration.
 
-| Rôle | Jeton de référence | Usage |
-| --- | --- | --- |
-| Structure et identité | `--kr-brand-navy` | Titres, navigation et éléments de marque |
-| Accent bleu | `--kr-brand-blue` | Liens et éléments d’action |
-| Accent cyan | `--kr-brand-cyan` | Mise en évidence et détails d’interface |
-| Accent doré | `--kr-brand-gold` | Repères ponctuels, jamais comme couleur dominante |
-| Surface de page | `--kr-brand-page` | Fond général et alternance avec les surfaces blanches |
-| Texte et neutres | `--kr-neutral-*` | Texte, bordures et niveaux de surface |
+| Rôle                  | Jeton de référence | Usage                                                 |
+| --------------------- | ------------------ | ----------------------------------------------------- |
+| Structure et identité | `--kr-brand-navy`  | Titres, navigation et éléments de marque              |
+| Accent bleu           | `--kr-brand-blue`  | Liens et éléments d’action                            |
+| Accent cyan           | `--kr-brand-cyan`  | Mise en évidence et détails d’interface               |
+| Accent doré           | `--kr-brand-gold`  | Repères ponctuels, jamais comme couleur dominante     |
+| Surface de page       | `--kr-brand-page`  | Fond général et alternance avec les surfaces blanches |
+| Texte et neutres      | `--kr-neutral-*`   | Texte, bordures et niveaux de surface                 |
 
 Utiliser le logo fourni sans le déformer, le recolorer ni lui ajouter d’effet.
 Conserver autour de lui un espace suffisant pour qu’il reste identifiable.
