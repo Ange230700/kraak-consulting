@@ -54,6 +54,17 @@ Utiliser ce fichier avec :
 
 ## Stade Actuel Du Projet
 
+Le dépôt dispose d'un monorepo actif avec un site Angular, une application
+mobile Ionic, une API NestJS et des packages partagés. L'architecture de
+référence est décrite dans `ARCHITECTURE.md` ; l'ordre de travail et l'état des
+tâches sont ceux du GitHub Project #6, documenté dans
+`docs/planning/GITHUB_PROJECT.md`.
+
+Ces documents de pilotage ne remplacent pas l'inspection du code : vérifier
+l'implémentation et les tests concernés avant de conclure qu'une fonctionnalité
+est absente ou terminée. Ne pas déduire l'avancement courant d'un état daté dans
+ce fichier.
+
 ## Règles Transverses de Qualité et de Maintenabilité (Obligatoires)
 
 Les règles suivantes sont obligatoires pour tout le code, la documentation et les workflows du dépôt KRAAK :
@@ -103,20 +114,6 @@ Les règles suivantes sont obligatoires pour tout le code, la documentation et l
 1. **Documentation à jour** :
 
 - Tout changement d'architecture ou de process doit être répercuté dans la doc Markdown dans le même commit que le code.
-
-État actuel (10 avril 2026) :
-
-- Le dépôt a déjà son **socle monorepo en place** avec `apps/client` pour le
-  workspace Angular et `apps/api` pour l’API NestJS.
-- Les répertoires fonctionnels web/mobile/API existent déjà en grande partie,
-  mais beaucoup de flux métier restent encore à implémenter ou à brancher.
-- Le contexte de marque, les orientations de contenu, et les artefacts de travail
-  ou de proposition utiles restent classés dans `docs/reference/`.
-- Le code de production final du site et des parcours participants n’est pas
-  encore considéré comme mature ni complètement stabilisé.
-
-Les assistants ne doivent pas supposer l’existence d’une base de code déjà
-solide ou complète. Il faut d’abord poser des fondations propres.
 
 ---
 
@@ -187,8 +184,8 @@ comme défaut :
 
 ### Structure Obligatoire Des Composants Et Pages (Client)
 
-Chaque composant ou page Angular (web **et** mobile) doit comporter
-**exactement trois fichiers** au minimum :
+Chaque composant ou page Angular (web **et** mobile) doit comporter au moins
+**trois fichiers** :
 
 | Fichier                                           | Rôle                              |
 | ------------------------------------------------- | --------------------------------- |
@@ -301,7 +298,8 @@ Workflow Git par défaut dans ce dépôt :
 - Garder `main` dans un état livrable.
 - Utiliser uniquement des branches courtes (`feat/*`, `fix/*`, `chore/*`,
   `docs/*`, `test/*`, `refactor/*`, `ci/*`, `style/*`, `perf/*`, `revert/*`,
-  `build/*`).
+  `build/*`). Lorsqu'un environnement crée ou renomme automatiquement la
+  branche de session, la conserver plutôt que d'en créer une autre.
 - Ne pas utiliser de branche `develop` longue durée, de branches d’environnement,
   ni de branches permanentes par application.
 - Travailler sur une seule tâche à la fois.
@@ -314,31 +312,36 @@ Workflow Git par défaut dans ce dépôt :
 Avant toute modification de code ou de documentation active :
 
 1. vérifier que la branche courante part de `main` ;
-2. ne pas recréer de branche ni d’infrastructure staging permanente ;
-3. ouvrir les PR de travail vers `main` ;
+2. si l'environnement fournit déjà une branche de travail isolée, travailler
+   sur cette branche sans en créer ni en renommer une autre ; sinon, créer une
+   branche courte depuis `main` ;
+3. ne pas créer d'infrastructure staging permanente ;
 4. réserver les déploiements aux tags SemVer accessibles depuis `main`.
 
 Flux d’exécution d’une tâche :
 
-1. Récupérer le dernier `main`.
+1. Récupérer ou vérifier le dernier `main` avant de commencer, sans écraser les
+   changements présents dans l'environnement de travail.
 2. Identifier l’item GitHub Project correspondant à la tâche et vérifier d’abord
    que la tâche existe bien dans la liste liée au Project.
 3. Si la tâche est absente du Project, créer un nouvel item de Project seulement
    si le travail est vraiment important ou si cela est explicitement demandé.
 4. Créer l’issue / l’élément de suivi approprié quand nécessaire.
-5. Créer une branche courte pour une seule tâche.
+5. Utiliser la branche isolée déjà fournie par l'environnement ou, si aucune
+   n'est fournie, créer une branche courte pour une seule tâche.
 6. Quand l’implémentation commence, convertir l’item brouillon du Project en
    issue GitHub ouverte si nécessaire, puis déplacer l’item en `In Progress`,
-   définir `Statut` sur `En cours` et `Status` sur `In Progress`, tout en
-   gardant l’issue ouverte.
+   définir `Status` sur `In Progress` et, si le champ existe, `Statut` sur
+   `En cours`, tout en gardant l’issue ouverte.
 7. Implémenter le plus petit incrément valide.
 8. Exécuter la validation pertinente.
-9. Rebaser la branche sur `main` (`git rebase origin/main`) puis fusionner la PR
-   validée par rebase, sans contourner les contrôles requis.
+9. Ouvrir une PR vers `main`, puis rebaser la branche sur `main`
+   (`git rebase origin/main`) et fusionner la PR validée par rebase, sans
+   contourner les contrôles requis.
 10. Synchroniser le `main` local par avance rapide après la fusion distante.
 11. Une fois la fusion / le push réussis, fermer l’issue liée, déplacer l’item du
-    Project en `Done`, définir `Statut` sur `Termine` et `Status` sur `Done`,
-    tout en gardant les champs d’état alignés.
+    Project en `Done`, définir `Status` sur `Done` et, si le champ existe,
+    `Statut` sur `Termine`.
 12. Supprimer la branche temporaire (locale et distante si applicable).
 
 Comportement obligatoire pour les assistants :
@@ -408,10 +411,11 @@ Cycle de vie obligatoire par tâche :
    commence.
 3. Garder l’issue ouverte tant que le travail est en cours.
 4. Fermer l’issue seulement après validation et fusion vers `main`.
-5. Mettre à jour le champ personnalisé `Statut` avec cette progression exacte :
-   `A faire` -> `En cours` -> `Termine`.
-6. Garder le champ natif `Status` aligné en parallèle :
+5. Faire progresser le champ natif `Status` selon les options du board :
    `Todo` -> `In Progress` -> `Done`.
+6. Si le board actif possède aussi un champ personnalisé `Statut`, le garder
+   aligné (`A faire` -> `En cours` -> `Termine`) ; ne pas supposer que ce champ
+   existe.
 
 Ce cycle de vie fait partie de la séquence Git obligatoire ci-dessus et doit être
 exécuté dans le même passage que le branchement, la validation, la fusion, le
