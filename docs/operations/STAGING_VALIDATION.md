@@ -32,9 +32,10 @@ source_of_truth: false
   - [10 · Anti-patterns interdits](#10-anti-patterns-interdits)
   - [11 · Tableau de synthèse](#11-tableau-de-synthese)
 
-> Procédure historique remplacée par [RELEASE_PROD](RELEASE_PROD.md) et
-> [ARC-22](../decisions/ARC-22-production-only-main.md). Ne pas recréer de
-> staging ; son retrait reste soumis au [registre de transition](PRODUCTION_ONLY_TRANSITION.md).
+> Archive historique d'un environnement retiré. Ne pas exécuter les commandes
+> ci-dessous ni recréer les services. Le dernier commit Git staging est conservé
+> sous le tag `archive/staging-2026-10-27`. Consulter le [registre de transition](PRODUCTION_ONLY_TRANSITION.md)
+> pour l'état réel et le runbook [RELEASE_PROD](RELEASE_PROD.md) pour le processus actif.
 
 Voir aussi :
 

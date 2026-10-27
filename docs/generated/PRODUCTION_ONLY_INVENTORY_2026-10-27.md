@@ -10,14 +10,70 @@ source_of_truth: false
 ## Table des matières
 
 - [Inventaire de transition production-only — 27 octobre 2026](#inventaire-de-transition-production-only-27-octobre-2026)
-  - [État et conditions de retrait](#etat-et-conditions-de-retrait)
+  - [État initial et conditions de retrait](#etat-initial-et-conditions-de-retrait)
+  - [Complément de clôture](#complement-de-cloture)
   - [Git, GitHub et SonarCloud](#git-github-et-sonarcloud)
-  - [Inventaire des ressources](#inventaire-des-ressources)
+  - [Inventaire initial des ressources](#inventaire-initial-des-ressources)
   - [Données et récupération](#donnees-et-recuperation)
-  - [Production et contrôles observés](#production-et-controles-observes)
-  - [Coûts et prochaine étape](#couts-et-prochaine-etape)
+  - [Production et contrôles initiaux](#production-et-controles-initiaux)
+  - [Coûts et prochaine étape initiale](#couts-et-prochaine-etape-initiale)
 
-## État et conditions de retrait
+## Complément de clôture
+
+Vérifications effectuées le 27 octobre 2026 après les observations initiales
+ci-dessous. Ce complément remplace uniquement les statuts de ressources et de
+production ; les constats plus anciens sont conservés comme historique daté.
+
+- GitHub confirme `main` comme défaut. La PR #735 est fusionnée au commit
+  `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`, avec les protections requises.
+  Le tag `archive/staging-2026-10-27` pointe vers le commit staging final
+  `551704b4073647d7c63363c9fd9eaf4c24c1a975`. La protection classique était
+  déjà absente avant la suppression de la branche distante ; l'environnement
+  `staging` est supprimé.
+- Les secrets GitHub propres à staging (`KRAAK_JOURNEY_EMAIL`,
+  `KRAAK_JOURNEY_PASSWORD`, `SUPABASE_DB_URL_STAGING` et
+  `SUPABASE_STAGING_PROJECT_REF`) sont supprimés. Les secrets SonarCloud et
+  Supabase partagés ne sont pas retirés. Les déploiements historiques restent
+  conservés.
+- L'inventaire Render en lecture seule (run GitHub
+  [40555390264](https://github.com/Ange230700/kraak-consulting/actions/runs/40555390264))
+  ne trouve que `kraak-web-prod` (`srv-d8aj9e0jo6nc73ep1hm0`) et
+  `kraak-api-prod` (`srv-d7r81hv7f7vs73cqcnmg`) pour ce dépôt. Ils suivent
+  `main`, restent actifs avec l'auto-déploiement désactivé et leur déploiement
+  courant correspond à `dc64c354…`. Les ressources Postgres, Key Value, disques
+  et groupes d'environnement de l'espace sont absentes. Les hôtes staging
+  répondent HTTP 404. Le Blueprint versionné ne déclare que les services
+  production ; son auto-sync reste suspendu.
+- L'API Management Supabase renvoie HTTP 404 pour le projet staging supprimé et
+  `ACTIVE_HEALTHY` pour `kraak-prod` (`pwuivkqnmjpxxpppmnvu`, `eu-west-1`).
+  L'organisation et les autres projets partagés restent hors périmètre.
+- Le contrôle de lignée des migrations de production en lecture seule réussit
+  sur le commit `dc64c354` ([run 40555666291](https://github.com/Ange230700/kraak-consulting/actions/runs/40555666291)).
+- Le propriétaire confirme le test du formulaire de contact et l'envoi d'email.
+  Aucun email additionnel ni changement de données réelles n'a été effectué.
+- Les copies de sauvegarde locale et OneDrive comportent 13 fichiers chacune ;
+  les empreintes des fichiers et des six objets Storage concordent. Les bases
+  isolées `kraak_restore` et `kraak_restore_permissions` contiennent chacune
+  15 utilisateurs Auth, 25 migrations applicatives, un bucket, six objets
+  Storage et zéro secret Vault. Le propriétaire confirme la restauration des
+  rôles et permissions après ajout du rôle technique manquant. Le dump
+  PostgreSQL a l'empreinte SHA-256
+  `A1CECC828CA5EB216928CA0B27288060CA8D68D0E6C7BF420705FAE013A2057A`.
+  Les comptes fictifs et contenus restent en sauvegarde ; aucun transfert
+  n'a eu lieu vers la production.
+- La variable GitHub non secrète inutilisée `SONAR_TOKEN` a été supprimée ; le
+  secret SonarCloud requis par le workflow est conservé. Les identifiants
+  `VERCEL_*` de l'environnement Production restent en place, faute de preuve
+  qu'ils soient exclusivement staging ou sans propriétaire.
+- Supabase affichait 683 heures Micro staging avant la suppression. La facture
+  finale et les économies nettes ne sont pas vérifiées ; aucun frais partagé
+  n'est déclaré supprimé. Les deux services Render staging étaient à 0,00 $
+  selon le relevé précédent.
+
+## État initial et conditions de retrait
+
+Les éléments de cette section et des suivantes décrivent l'inventaire d'ouverture.
+Le complément de clôture ci-dessus apporte les mises à jour vérifiées.
 
 Suivi : [issue #733](https://github.com/Ange230700/kraak-consulting/issues/733).
 Décision : [ARC-22](../decisions/ARC-22-production-only-main.md).
@@ -25,7 +81,7 @@ Procédure active : [registre de transition](../operations/PRODUCTION_ONLY_TRANS
 Ce document est un relevé de preuves daté, pas une recommandation de réutiliser
 un hébergeur historique.
 
-**Le retrait des ressources est bloqué.** La branche par défaut GitHub est
+**Constat initial : le retrait des ressources était bloqué.** La branche par défaut GitHub était
 désormais `main`, mais cela ne démontre ni une livraison en production ni
 l'absence de dépendances aux anciennes ressources. Aucun service, projet de
 données, environnement GitHub ou branche `staging` n'a été supprimé.
@@ -74,7 +130,10 @@ conserve la validation des PR, les tests locaux et les releases approuvées.
 Les modifications locales ne constituent pas une livraison tant que la PR
 n'est pas fusionnée.
 
-## Inventaire des ressources
+## Inventaire initial des ressources
+
+Les statuts et décisions du tableau ci-dessous correspondent à l'inventaire
+avant les suppressions décrites dans le complément de clôture.
 
 Les identifiants ci-dessous ne sont pas des secrets. Les valeurs de configuration,
 jetons, comptes, sessions et exports de données restent hors du dépôt.
@@ -213,7 +272,7 @@ Pour Supabase, restaurer d'abord dans un environnement isolé, recréer et valid
 schéma/RLS, puis effectuer un transfert ciblé approuvé des données et objets.
 Ne pas importer les historiques ou écraser la production pour les faire coïncider.
 
-## Production et contrôles observés
+## Production et contrôles initiaux
 
 - API Render production : `/health` répond HTTP 200, environnement `production`,
   version `v1.1.6`. Le dashboard indique le dernier déploiement
@@ -271,7 +330,7 @@ Validation locale de la transition :
 - `pnpm test:integration` réussit : 31 scénarios API. Les dépendances métier
   sont simulées ; ce n'est pas une validation des données/RLS de production.
 
-## Coûts et prochaine étape
+## Coûts et prochaine étape initiale
 
 **Aucune économie réalisée n'est confirmée.** La preview vide créée par la tâche
 a été supprimée et le branching désactivé, mais leur facturation reste à vérifier.

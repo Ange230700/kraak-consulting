@@ -35,15 +35,31 @@ OUTPUT_FILE=""
 OUTPUT_FILE_WAS_SET=0
 
 usage() {
-  awk '
-    NR == 1 { next }
-    /^#/ {
-      sub(/^# ?/, "")
-      print
-      next
-    }
-    { exit }
-  ' "$0"
+  printf '%s\n' \
+    'KRAAK repository awareness report' \
+    '' \
+    'Read-only audit of the KRAAK monorepo before editing or adding code.' \
+    'Compatible with Git Bash/MINGW64, Linux, and macOS.' \
+    '' \
+    'Usage:' \
+    '  bash scripts/repo-awareness.sh' \
+    '  bash scripts/repo-awareness.sh --full' \
+    '  bash scripts/repo-awareness.sh --checks' \
+    '  bash scripts/repo-awareness.sh --network' \
+    '  bash scripts/repo-awareness.sh --full --checks --network' \
+    '  bash scripts/repo-awareness.sh --output .reports/repo-awareness.txt' \
+    '' \
+    'Flags:' \
+    '  --full       Broader listings, ignored files, dependencies, and searches.' \
+    '  --checks     Run non-mutating format, test, typecheck, and build commands.' \
+    '  --network    Query GitHub and deployed Render services.' \
+    '  --output     Save the report while also printing it.' \
+    '  --no-color   Disable terminal colors.' \
+    '  -h, --help   Show help.' \
+    '' \
+    'Security:' \
+    '  Environment-variable values are never printed. Only names from tracked' \
+    '  example files are shown.'
   return 0
 }
 
@@ -314,21 +330,13 @@ run git ls-files --modified
 run git ls-files --deleted
 run git ls-files --others --exclude-standard
 
-if tracked_ref_exists staging; then
-  STAGING_REF="$(resolve_ref staging)"
-  subsection "Current HEAD compared with $STAGING_REF"
-  run git log --oneline "$STAGING_REF..HEAD"
-  run git log --oneline "HEAD..$STAGING_REF"
-  run git diff --stat "$STAGING_REF...HEAD"
-  run git diff --name-status "$STAGING_REF...HEAD"
-fi
-
-if tracked_ref_exists main && tracked_ref_exists staging; then
+if tracked_ref_exists main; then
   MAIN_REF="$(resolve_ref main)"
-  STAGING_REF="$(resolve_ref staging)"
-  subsection "$STAGING_REF compared with $MAIN_REF"
-  run git log --oneline "$MAIN_REF..$STAGING_REF"
-  run git diff --stat "$MAIN_REF...$STAGING_REF"
+  subsection "Current HEAD compared with $MAIN_REF"
+  run git log --oneline "$MAIN_REF..HEAD"
+  run git log --oneline "HEAD..$MAIN_REF"
+  run git diff --stat "$MAIN_REF...HEAD"
+  run git diff --name-status "$MAIN_REF...HEAD"
 fi
 
 section "4. Repository tree and tracked files"
@@ -627,7 +635,6 @@ if ((RUN_NETWORK)); then
     run gh issue list --limit 50
     run gh workflow list
     run gh run list --limit 15
-    run gh api "repos/{owner}/{repo}/branches/staging/protection"
     run gh api "repos/{owner}/{repo}/branches/main/protection"
   else
     warn "--network requested, but gh is unavailable."
@@ -639,9 +646,7 @@ fi
 section "16. Deployed Render service checks"
 if ((RUN_NETWORK)); then
   if have curl; then
-    run curl -sS -I --max-time 20 https://kraak-web-staging.onrender.com
     run curl -sS -I --max-time 20 https://kraak-web-prod.onrender.com
-    run curl -sS -i --max-time 30 https://kraak-api-staging.onrender.com/health
     run curl -sS -i --max-time 30 https://kraak-api-prod.onrender.com/health
   else
     warn "--network requested, but curl is unavailable."

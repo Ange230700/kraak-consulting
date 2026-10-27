@@ -106,9 +106,9 @@ test('Given git command fails, When reading git output, Then an empty string is 
 });
 
 test('Given a git ref resolves, When checking its existence, Then true is returned', () => {
-  const exists = refExists('origin/staging', {
+  const exists = refExists('origin/main', {
     gitRunner: (args) =>
-      args.includes('origin/staging^{commit}') ? gitResult(0) : gitResult(1),
+      args.includes('origin/main^{commit}') ? gitResult(0) : gitResult(1),
   });
 
   assert.equal(exists, true);
@@ -118,16 +118,16 @@ test('Given an upstream ref exists, When resolving the base ref, Then upstream i
   const selected = resolveBaseRef({
     gitRunner: (args) => {
       if (args.includes('@{upstream}')) {
-        return gitResult(0, 'origin/staging\n');
+        return gitResult(0, 'origin/main\n');
       }
 
-      return args.includes('origin/staging^{commit}')
+      return args.includes('origin/main^{commit}')
         ? gitResult(0)
         : gitResult(1);
     },
   });
 
-  assert.equal(selected, 'origin/staging');
+  assert.equal(selected, 'origin/main');
 });
 
 test('Given upstream is unavailable, When resolving the base ref, Then the first existing fallback is selected', () => {
@@ -145,9 +145,9 @@ test('Given upstream is unavailable, When resolving the base ref, Then the first
 });
 
 test('Given diff output contains blanks, When changed files are read, Then only normalized paths are returned', () => {
-  const files = getChangedFiles('origin/staging', {
+  const files = getChangedFiles('origin/main', {
     gitRunner: (args) =>
-      args.includes('origin/staging...HEAD')
+      args.includes('origin/main...HEAD')
         ? gitResult(
             0,
             ' apps/api/src/app.service.ts\r\n\nscripts/audit-docs.sh\n ',
@@ -164,7 +164,7 @@ test('Given diff output contains blanks, When changed files are read, Then only 
 test('Given git diff fails, When changed files are read, Then an empty list is returned and the caller warning is emitted', () => {
   let warning = '';
 
-  const files = getChangedFiles('origin/staging', {
+  const files = getChangedFiles('origin/main', {
     gitRunner: () => gitResult(1),
     warningMessage: '[test] Fallback',
     writeWarning: (message) => {

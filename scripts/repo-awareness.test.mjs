@@ -83,14 +83,14 @@ case "$1" in
     ;;
   branch)
     if [ "$2" = "--show-current" ]; then
-      printf 'staging\\n'
+      printf 'main\\n'
     elif [ "$2" = "-vv" ]; then
-      printf '* staging abc123 test fixture\\n'
+      printf '* main abc123 test fixture\\n'
     fi
     ;;
   status)
     if [ "$2" = "--short" ]; then
-      printf '## staging\\n'
+      printf '## main\\n'
     fi
     ;;
   worktree)
@@ -141,7 +141,7 @@ export -f git pnpm corepack rg gh
   );
 
   assert.equal(
-    runCommand('git', ['init', '-b', 'staging'], { cwd: root }).status,
+    runCommand('git', ['init', '-b', 'main'], { cwd: root }).status,
     0,
   );
   assert.equal(runCommand('git', ['add', '.'], { cwd: root }).status, 0);
