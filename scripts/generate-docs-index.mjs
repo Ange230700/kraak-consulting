@@ -263,7 +263,7 @@ documentaire.
 | Produit | [\`product/\`](product/) | Périmètre MVP et parcours |
 | Engineering | [\`engineering/\`](engineering/) | Contribution, tests et développement |
 | Operations | [\`operations/\`](operations/) | Environnements, release et incident |
-| Planning | [\`planning/GITHUB_PROJECT.md\`](planning/GITHUB_PROJECT.md) | Pilotage GitHub Project #6 |
+| Planning | [\`planning/GITHUB_PROJECT.md\`](planning/GITHUB_PROJECT.md) | Pilotage GitHub Project #8 |
 | Référence | [\`reference/\`](reference/) | Matériel d'appui non autoritaire |
 | Généré | [\`generated/README.md\`](generated/README.md) | Artefacts produits par automatisation |
 | Archive | [\`archive/README.md\`](archive/README.md) | Historique uniquement |

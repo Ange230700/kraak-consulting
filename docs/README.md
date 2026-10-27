@@ -34,7 +34,7 @@ documentaire.
 | Produit             | [`product/`](product/)                                     | Périmètre MVP et parcours             |
 | Engineering         | [`engineering/`](engineering/)                             | Contribution, tests et développement  |
 | Operations          | [`operations/`](operations/)                               | Environnements, release et incident   |
-| Planning            | [`planning/GITHUB_PROJECT.md`](planning/GITHUB_PROJECT.md) | Pilotage GitHub Project #6            |
+| Planning            | [`planning/GITHUB_PROJECT.md`](planning/GITHUB_PROJECT.md) | Pilotage GitHub Project #8            |
 | Référence           | [`reference/`](reference/)                                 | Matériel d'appui non autoritaire      |
 | Généré              | [`generated/README.md`](generated/README.md)               | Artefacts produits par automatisation |
 | Archive             | [`archive/README.md`](archive/README.md)                   | Historique uniquement                 |
@@ -84,6 +84,7 @@ document obsolète dans le même changement.
 | `decisions/ARC-18-consolidation-partielle-blog-public.md`              | active | true             | ARC-18 - Consolidation partielle du blog public                           |
 | `decisions/ARC-19-i18n-localization-strategy.md`                       | active | true             | ARC-19 - Stratégie d'internationalisation français / anglais              |
 | `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                 |
+| `decisions/ARC-21-reactivation-blog-public-localise.md`                | active | true             | ARC-21 - Réactivation du blog public localisé                             |
 | `decisions/ARC-22-production-only-main.md`                             | active | true             | ARC-22 — Production unique et branche main                                |
 | `engineering/ARTIFACT_ENGINE_AUDIT.md`                                 | active | true             | Audit du moteur documentaire                                              |
 | `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                       |
@@ -107,7 +108,6 @@ document obsolète dans le même changement.
 | `operations/RELEASE_PROD.md`                                           | active | true             | Release production                                                        |
 | `operations/SONARCLOUD_SETUP.md`                                       | active | true             | Runbook — Configuration SonarQube Cloud & SonarLint                       |
 | `operations/SUPABASE_AUTH.md`                                          | active | true             | Configuration Supabase Auth                                               |
-| `planning/GITHUB_PROJECT.md`                                           | active | true             | Pilotage GitHub Project                                                   |
 | `product/ANNOUNCEMENTS.md`                                             | active | true             | Format des annonces et règles de publication MVP (ANN-01)                 |
 | `product/MOBILE_MVP.md`                                                | active | true             | MVP Mobile                                                                |
 | `product/MVP_SCOPE.md`                                                 | active | true             | Périmètre MVP — Site web KRAAK                                            |

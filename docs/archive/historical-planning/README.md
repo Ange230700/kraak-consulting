@@ -18,7 +18,7 @@ archived_on: 2026-07-23
 
 Ce dossier conserve les anciens artefacts de planification : backlog initial,
 exports CSV, inventaires et notes de setup historiques. Le pilotage courant se
-fait désormais depuis GitHub Project #6 et les documents actifs de
+fait désormais depuis GitHub Project #8 et les documents actifs de
 planification.
 
 ## Date d'archivage

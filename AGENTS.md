@@ -57,7 +57,7 @@ Utiliser ce fichier avec :
 Le dépôt dispose d'un monorepo actif avec un site Angular, une application
 mobile Ionic, une API NestJS et des packages partagés. L'architecture de
 référence est décrite dans `ARCHITECTURE.md` ; l'ordre de travail et l'état des
-tâches sont ceux du GitHub Project #6, documenté dans
+tâches sont ceux du GitHub Project #8, documenté dans
 `docs/planning/GITHUB_PROJECT.md`.
 
 Ces documents de pilotage ne remplacent pas l'inspection du code : vérifier
