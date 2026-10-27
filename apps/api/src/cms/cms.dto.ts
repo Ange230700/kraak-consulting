@@ -16,6 +16,37 @@ import {
 import type { ValidationResult } from '../shared/validation-result.type';
 
 const publicationStatuses = new Set(['draft', 'published', 'archived']);
+type CmsPublicationFields = Pick<CreateStatisticDto, 'sortOrder' | 'status'>;
+
+function finalizeCmsCreate<T>(
+  data: T,
+  sortOrder: number | null,
+  status: string | null,
+  errors: ApiMessageValue[],
+): ValidationResult<T & CmsPublicationFields> {
+  if (sortOrder === null) {
+    errors.push(
+      apiMessage('validation.nonNegativeIntegerField', { field: 'sortOrder' }),
+    );
+  }
+
+  if (!status) {
+    errors.push(apiMessage('validation.invalidField', { field: 'status' }));
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return {
+    valid: true,
+    data: {
+      ...data,
+      sortOrder: sortOrder as number,
+      status: status as CmsPublicationFields['status'],
+    },
+  };
+}
 
 function readNullableString(value: unknown): string | null {
   if (value === null) {
@@ -201,32 +232,7 @@ export function validateCreateStatisticPayload(
     errors.push(apiMessage('validation.requiredField', { field: 'value' }));
   }
 
-  if (sortOrder === null) {
-    errors.push(
-      apiMessage('validation.nonNegativeIntegerField', { field: 'sortOrder' }),
-    );
-  }
-
-  if (!status) {
-    errors.push(apiMessage('validation.invalidField', { field: 'status' }));
-  }
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  const normalizedSortOrder = sortOrder as number;
-
-  return {
-    valid: true,
-    data: {
-      label,
-      value,
-      suffix,
-      sortOrder: normalizedSortOrder,
-      status: status as CreateStatisticDto['status'],
-    },
-  };
+  return finalizeCmsCreate({ label, value, suffix }, sortOrder, status, errors);
 }
 
 export function validateUpdateStatisticPayload(
@@ -287,33 +293,16 @@ export function validateCreatePartnerPayload(
     errors.push(apiMessage('validation.invalidField', { field: 'websiteUrl' }));
   }
 
-  if (sortOrder === null) {
-    errors.push(
-      apiMessage('validation.nonNegativeIntegerField', { field: 'sortOrder' }),
-    );
-  }
-
-  if (!status) {
-    errors.push(apiMessage('validation.invalidField', { field: 'status' }));
-  }
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  const normalizedSortOrder = sortOrder as number;
-  const normalizedLogoUrl = logoUrlResult.value as string;
-
-  return {
-    valid: true,
-    data: {
+  return finalizeCmsCreate(
+    {
       name,
-      logoUrl: normalizedLogoUrl,
+      logoUrl: logoUrlResult.value as string,
       websiteUrl: websiteUrlResult.value,
-      sortOrder: normalizedSortOrder,
-      status: status as CreatePartnerDto['status'],
     },
-  };
+    sortOrder,
+    status,
+    errors,
+  );
 }
 
 export function validateUpdatePartnerPayload(
@@ -378,34 +367,18 @@ export function validateCreateTestimonialPayload(
     errors.push(apiMessage('validation.invalidField', { field: 'avatarUrl' }));
   }
 
-  if (sortOrder === null) {
-    errors.push(
-      apiMessage('validation.nonNegativeIntegerField', { field: 'sortOrder' }),
-    );
-  }
-
-  if (!status) {
-    errors.push(apiMessage('validation.invalidField', { field: 'status' }));
-  }
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  const normalizedSortOrder = sortOrder as number;
-
-  return {
-    valid: true,
-    data: {
+  return finalizeCmsCreate(
+    {
       quote,
       authorName,
       authorRole,
       company,
       avatarUrl: avatarUrlResult.value,
-      sortOrder: normalizedSortOrder,
-      status: status as CreateTestimonialDto['status'],
     },
-  };
+    sortOrder,
+    status,
+    errors,
+  );
 }
 
 export function validateUpdateTestimonialPayload(
@@ -474,34 +447,18 @@ export function validateCreateTeamMemberPayload(
     );
   }
 
-  if (sortOrder === null) {
-    errors.push(
-      apiMessage('validation.nonNegativeIntegerField', { field: 'sortOrder' }),
-    );
-  }
-
-  if (!status) {
-    errors.push(apiMessage('validation.invalidField', { field: 'status' }));
-  }
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  const normalizedSortOrder = sortOrder as number;
-
-  return {
-    valid: true,
-    data: {
+  return finalizeCmsCreate(
+    {
       fullName,
       role,
       bio,
       avatarUrl: avatarUrlResult.value,
       linkedinUrl: linkedinUrlResult.value,
-      sortOrder: normalizedSortOrder,
-      status: status as CreateTeamMemberDto['status'],
     },
-  };
+    sortOrder,
+    status,
+    errors,
+  );
 }
 
 export function validateUpdateTeamMemberPayload(

@@ -12,6 +12,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { resolveGitExecutable } from './workspace-git-utils.mjs';
+import { parseDocumentationMode } from './documentation-cli.mjs';
 
 const TOC_HEADING = 'Table des matières';
 const TOC_SLUGS = new Set(['table-des-matieres', 'table-of-contents', 'toc']);
@@ -442,29 +443,6 @@ Options:
 `;
 }
 
-function parseArgs(args) {
-  const check = args.includes('--check');
-  const write = args.includes('--write');
-  const help = args.includes('--help') || args.includes('-h');
-  const unknown = args.filter(
-    (arg) => !['--check', '--write', '--help', '-h'].includes(arg),
-  );
-
-  if (help) {
-    return { mode: 'help' };
-  }
-
-  if (unknown.length > 0) {
-    return { error: `Unknown option: ${unknown.join(', ')}` };
-  }
-
-  if (check === write) {
-    return { error: 'Choose exactly one mode: --check or --write.' };
-  }
-
-  return { mode: check ? 'check' : 'write' };
-}
-
 export function writeMarkdownTocUpdates(updates) {
   for (const update of updates) {
     mkdirSync(path.dirname(update.absoluteFile), { recursive: true });
@@ -474,7 +452,7 @@ export function writeMarkdownTocUpdates(updates) {
 }
 
 export function runCli(args = process.argv.slice(2), root = process.cwd()) {
-  const parsed = parseArgs(args);
+  const parsed = parseDocumentationMode(args);
 
   if (parsed.mode === 'help') {
     console.log(usage());

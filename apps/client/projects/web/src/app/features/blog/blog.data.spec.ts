@@ -13,6 +13,37 @@ import {
 } from './blog.data';
 
 describe('blog.data', () => {
+  it('Given les traductions éditoriales, When les articles anglais sont assemblés, Then les auteurs, les sections et les métadonnées de référence sont conservés', () => {
+    for (const [index, article] of englishBlogArticles.entries()) {
+      const reference = blogArticles[index];
+      expect(article.author.name).toBe(reference.author.name);
+      expect(article.author.avatar).toBe(reference.author.avatar);
+      expect(article.author.role).not.toBe(reference.author.role);
+      expect(article.author.bio).not.toBe(reference.author.bio);
+      expect(article.categoryIds).toBe(reference.categoryIds);
+      expect(article.tagIds).toBe(reference.tagIds);
+      expect(article.coverImagePath).toBe(reference.coverImagePath);
+      expect(article.sections).toHaveLength(3);
+      expect(article.takeawayPoints).toHaveLength(3);
+    }
+    expect(englishBlogArticles[0].sections[0].bullets).toEqual([
+      'What role or assignment are you targeting?',
+      'How soon do you want to move forward?',
+      'What constraints do you need to respect?',
+    ]);
+    expect(englishBlogArticles[1].sections[0]).toEqual({
+      heading: '1. Check the actual need',
+      paragraphs: [
+        'Before choosing a format, clarify the problem to solve. Is it a lack of method, a need for practice or a need to develop your professional posture?',
+      ],
+    });
+    expect(englishBlogArticles[2].sections[2]).toEqual({
+      heading: '3. Keep a safety margin',
+      paragraphs: [
+        'Deadlines, translations and additional administrative requests require margin. Avoid working right up against the deadline.',
+      ],
+    });
+  });
   it('Given une référence éditoriale française absente, When son contenu de repli est exigé, Then la génération signale explicitement l’article manquant', () => {
     expect(() => requireFrenchFallbackArticle('article-absent')).toThrow(
       'Missing French fallback Blog article "article-absent".',

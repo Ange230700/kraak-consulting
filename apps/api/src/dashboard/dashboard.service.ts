@@ -15,10 +15,7 @@ import type {
   SessionStatusValue,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
-
-type ParticipantRow = {
-  id: string;
-};
+import { resolveParticipantId } from '../shared/supabase-record.utils';
 
 type EnrollmentProgramRow = {
   id: string;
@@ -101,7 +98,11 @@ export class DashboardService {
       });
     }
 
-    const participantId = await this.resolveParticipantId(data.user.id);
+    const participantId = await resolveParticipantId(
+      this.supabaseService,
+      data.user.id,
+      apiMessage('dashboard.currentParticipantLoadFailed'),
+    );
 
     if (!participantId) {
       return this.buildEmptyAggregate();
@@ -132,24 +133,6 @@ export class DashboardService {
       upcomingSessions,
       recentAnnouncements,
     };
-  }
-
-  private async resolveParticipantId(userId: string): Promise<string | null> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('participant')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('dashboard.currentParticipantLoadFailed'),
-      });
-    }
-
-    return (data as ParticipantRow | null)?.id ?? null;
   }
 
   private async readPrograms(

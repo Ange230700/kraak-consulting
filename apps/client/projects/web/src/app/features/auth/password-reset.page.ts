@@ -6,15 +6,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { environment } from '../../../environments/environment';
-import {
-  WebAuthService,
-  resolveAuthErrorMessage,
-} from '../../core/auth/web-auth.service';
+import { WebAuthService } from '../../core/auth/web-auth.service';
+import { runAuthSubmission } from './auth-submission.utils';
 import {
   normalizeRequiredText,
   normalizeTextControl,
@@ -65,37 +62,28 @@ export default class PasswordResetPage {
       return;
     }
 
-    this.submitting.set(true);
-    this.successMessage.set(null);
-    this.errorMessage.set(null);
-
-    try {
-      const { email } = this.form.getRawValue();
-      const response = await this.authService.requestPasswordReset({
-        email: normalizeRequiredText(email),
-        redirectTo: resolveWebRedirectUrl('/auth/reset', environment.siteUrl),
-      });
-
-      this.successMessage.set(response.message);
-      this.messageService.add({
-        key: 'app-feedback',
-        severity: 'success',
-        summary: this.i18n.translate('web.auth.forgotPassword.toastTitle'),
-        detail: response.message,
-        life: 6000,
-      });
-    } catch (error) {
-      logDebugError('web.auth.password-reset.submit', error, {
-        route: '/mot-de-passe-oublie',
-      });
-      this.errorMessage.set(
-        resolveAuthErrorMessage(
-          error,
+    await runAuthSubmission(
+      {
+        submitting: this.submitting,
+        successMessage: this.successMessage,
+        errorMessage: this.errorMessage,
+        messageService: this.messageService,
+        successTitle: () =>
+          this.i18n.translate('web.auth.forgotPassword.toastTitle'),
+        fallbackError: () =>
           this.i18n.translate('web.auth.forgotPassword.genericError'),
-        ),
-      );
-    } finally {
-      this.submitting.set(false);
-    }
+        debugContext: 'web.auth.password-reset.submit',
+        route: '/mot-de-passe-oublie',
+      },
+      async () => {
+        const { email } = this.form.getRawValue();
+        const response = await this.authService.requestPasswordReset({
+          email: normalizeRequiredText(email),
+          redirectTo: resolveWebRedirectUrl('/auth/reset', environment.siteUrl),
+        });
+
+        return response.message;
+      },
+    );
   }
 }

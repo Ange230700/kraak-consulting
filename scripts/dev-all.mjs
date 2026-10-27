@@ -95,6 +95,7 @@ export function createDevRunner({
 
   const reset = '\x1b[0m';
   const children = new Set();
+  const reservedPorts = new Set();
   let shuttingDown = false;
   const dryRun = process.argv.includes('--dry-run');
 
@@ -140,13 +141,18 @@ export function createDevRunner({
   }
 
   async function findAvailablePort(preferredPort) {
-    let port = preferredPort;
-
-    while (!(await isPortFree(port))) {
-      port += 1;
+    if (preferredPort > 65535) {
+      throw new Error('Aucun port TCP disponible.');
     }
 
-    return port;
+    if (
+      reservedPorts.has(preferredPort) ||
+      !(await isPortFree(preferredPort))
+    ) {
+      return findAvailablePort(preferredPort + 1);
+    }
+
+    return preferredPort;
   }
 
   function isPathInsideWorkspace(targetPath) {
@@ -250,7 +256,11 @@ export function createDevRunner({
     const allowPortFallback = service.allowPortFallback ?? true;
     const cacheRecoveryAttempts = service.cacheRecoveryAttempts ?? 0;
 
-    if (!(await isPortFree(service.preferredPort)) && !allowPortFallback) {
+    if (
+      !allowPortFallback &&
+      (reservedPorts.has(service.preferredPort) ||
+        !(await isPortFree(service.preferredPort)))
+    ) {
       process.stdout.write(
         `${service.color}[${service.name}]${reset} port ${service.preferredPort} déjà occupé, démarrage ignoré. Le front local continue d'attendre l'API sur ce port.\n`,
       );
@@ -309,6 +319,7 @@ export function createDevRunner({
       shell: false,
     });
 
+    reservedPorts.add(port);
     children.add(child);
     let retryOnNextPort = false;
     let portBusyOnStart = false;
@@ -351,6 +362,7 @@ export function createDevRunner({
     });
 
     child.on('exit', (code) => {
+      reservedPorts.delete(port);
       children.delete(child);
 
       if (shuttingDown) {
@@ -405,9 +417,11 @@ export function createDevRunner({
     process.on('SIGINT', () => shutdown(0));
     process.on('SIGTERM', () => shutdown(0));
     try {
-      for (const service of services) {
-        await startService(service);
-      }
+      // Chaque démarrage réserve son port avant de lancer le suivant.
+      await services.reduce(
+        (startup, service) => startup.then(() => startService(service)),
+        Promise.resolve(),
+      );
     } catch (error) {
       console.error(error);
       shutdown(1);

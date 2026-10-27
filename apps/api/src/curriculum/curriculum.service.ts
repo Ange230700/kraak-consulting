@@ -29,6 +29,8 @@ import type {
   UpdateProgramCourseDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
+import { archivePublishedRecord } from '../shared/supabase-record.utils';
+import { mapPublicationUpdate } from '../shared/publication-mapper.utils';
 
 type PublicationStatus = 'draft' | 'published' | 'archived';
 type ReusableContentTable = 'course' | 'learning_module' | 'lesson';
@@ -982,25 +984,7 @@ export class CurriculumService {
   private mapReusableUpdate(
     payload: UpdateCourseDto | UpdateLearningModuleDto | UpdateLessonDto,
   ): Record<string, unknown> {
-    const updatePayload: Record<string, unknown> = {};
-
-    if (payload.slug !== undefined) {
-      updatePayload['slug'] = payload.slug;
-    }
-    if (payload.title !== undefined) {
-      updatePayload['title'] = payload.title;
-    }
-    if (payload.summary !== undefined) {
-      updatePayload['summary'] = payload.summary;
-    }
-    if (payload.description !== undefined) {
-      updatePayload['description'] = payload.description;
-    }
-    if (payload.status !== undefined) {
-      updatePayload['status'] = payload.status;
-    }
-
-    return updatePayload;
+    return mapPublicationUpdate(payload);
   }
 
   private async archiveReusable(
@@ -1008,20 +992,12 @@ export class CurriculumService {
     id: string,
     notFoundMessage: ApiMessageValue,
   ): Promise<void> {
-    const { data, error } = await this.supabaseService
-      .getClient()
-      .from(table)
-      .update({ status: 'archived' })
-      .eq('id', id)
-      .select('id')
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException({
-        success: false,
-        message: notFoundMessage,
-      });
-    }
+    await archivePublishedRecord(
+      this.supabaseService,
+      table,
+      id,
+      notFoundMessage,
+    );
   }
 
   private mapProgramCourse(row: ProgramCourseRow): ProgramCourseDto {

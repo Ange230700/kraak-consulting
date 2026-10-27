@@ -16,8 +16,8 @@ import type {
   UpdateProgramCourseDto,
 } from '@kraak/contracts';
 import {
-  isObjectPayload,
   readTrimmedString,
+  validateAssignedPayload,
 } from '../shared/dto-validation.utils';
 import type { ValidationResult } from '../shared/validation-result.type';
 
@@ -237,26 +237,7 @@ function finalizeCreate<T>(
     data: Record<string, unknown>,
   ) => void,
 ): ValidationResult<T> {
-  if (!isObjectPayload(body)) {
-    return {
-      valid: false,
-      errors: [apiMessage('validation.invalidBody')],
-    };
-  }
-
-  const errors: ApiMessageValue[] = [];
-  const data: Record<string, unknown> = {};
-
-  assign(body, errors, data);
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  return {
-    valid: true,
-    data: data as T,
-  };
+  return validateAssignedPayload(body, assign, 'create');
 }
 
 function finalizeUpdate<T>(
@@ -267,33 +248,7 @@ function finalizeUpdate<T>(
     data: Record<string, unknown>,
   ) => void,
 ): ValidationResult<T> {
-  if (!isObjectPayload(body)) {
-    return {
-      valid: false,
-      errors: [apiMessage('validation.invalidBody')],
-    };
-  }
-
-  const errors: ApiMessageValue[] = [];
-  const data: Record<string, unknown> = {};
-
-  assign(body, errors, data);
-
-  if (Object.keys(data).length === 0 && errors.length === 0) {
-    return {
-      valid: false,
-      errors: [apiMessage('validation.updateRequiresField')],
-    };
-  }
-
-  if (errors.length > 0) {
-    return { valid: false, errors };
-  }
-
-  return {
-    valid: true,
-    data: data as T,
-  };
+  return validateAssignedPayload(body, assign, 'update');
 }
 
 function assignReusableCreate(

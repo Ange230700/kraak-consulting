@@ -253,151 +253,192 @@ export function requireFrenchFallbackArticle(id: string): BlogArticle {
   return article;
 }
 
-export const englishBlogArticles: readonly BlogArticle[] = [
-  {
-    ...requireFrenchFallbackArticle('blog-1'),
-    title: 'Clarify your project before applying',
-    excerpt:
-      'Before sending out applications, you need to know what you are looking for, what you bring and what you can prove.',
-    content:
-      '<p>A clear project helps you choose the right format, prepare useful evidence and avoid scattered efforts.</p>',
-    author: {
-      ...requireFrenchFallbackArticle('blog-1').author,
-      role: 'KRAAK Adviser',
-      bio: 'She helps young professionals turn a vague intention into a clear and actionable path.',
-    },
-    categoryLabel: 'Employability',
-    tagLabels: ['Guidance', 'Applications', 'Leadership'],
-    publishedLabel: '12 May 2026',
-    summary:
-      'A simple framework to clarify your goal, select your evidence and move towards a stronger application.',
-    intro:
-      'The first mistake is not necessarily applying badly. It is often applying without first defining the target role, the available evidence and the type of support that would actually help.',
-    sections: [
-      {
-        heading: '1. Start with the expected outcome',
-        paragraphs: [
+type BlogSectionTranslation = readonly [
+  heading: string,
+  paragraphs: readonly string[],
+  bullets?: readonly string[],
+];
+
+type BlogArticleTranslation = readonly [
+  id: string,
+  title: string,
+  excerpt: string,
+  content: string,
+  authorRole: string,
+  authorBio: string,
+  categoryLabel: string,
+  tagLabels: readonly string[],
+  publishedLabel: string,
+  summary: string,
+  intro: string,
+  sections: readonly BlogSectionTranslation[],
+  takeawayPoints: readonly string[],
+];
+
+function localizeBlogArticle([
+  id,
+  title,
+  excerpt,
+  content,
+  authorRole,
+  authorBio,
+  categoryLabel,
+  tagLabels,
+  publishedLabel,
+  summary,
+  intro,
+  sections,
+  takeawayPoints,
+]: BlogArticleTranslation): BlogArticle {
+  const article = requireFrenchFallbackArticle(id);
+  return {
+    ...article,
+    title,
+    excerpt,
+    content,
+    author: { ...article.author, role: authorRole, bio: authorBio },
+    categoryLabel,
+    tagLabels,
+    publishedLabel,
+    summary,
+    intro,
+    sections: sections.map(([heading, paragraphs, bullets]) => ({
+      heading,
+      paragraphs,
+      ...(bullets ? { bullets } : {}),
+    })),
+    takeawayPoints,
+  };
+}
+
+const englishBlogTranslations: readonly BlogArticleTranslation[] = [
+  [
+    'blog-1',
+    'Clarify your project before applying',
+    'Before sending out applications, you need to know what you are looking for, what you bring and what you can prove.',
+    '<p>A clear project helps you choose the right format, prepare useful evidence and avoid scattered efforts.</p>',
+    'KRAAK Adviser',
+    'She helps young professionals turn a vague intention into a clear and actionable path.',
+    'Employability',
+    ['Guidance', 'Applications', 'Leadership'],
+    '12 May 2026',
+    'A simple framework to clarify your goal, select your evidence and move towards a stronger application.',
+    'The first mistake is not necessarily applying badly. It is often applying without first defining the target role, the available evidence and the type of support that would actually help.',
+    [
+      [
+        '1. Start with the expected outcome',
+        [
           'Define the role, context and timeframe. A useful application responds to a specific objective and a realistic horizon.',
           'Once the objective is stable, it becomes easier to choose the experiences, training and examples worth highlighting.',
         ],
-        bullets: [
+        [
           'What role or assignment are you targeting?',
           'How soon do you want to move forward?',
           'What constraints do you need to respect?',
         ],
-      },
-      {
-        heading: '2. Separate evidence from intentions',
-        paragraphs: [
+      ],
+      [
+        '2. Separate evidence from intentions',
+        [
           'A clear profile should distinguish what you want to do from what you can already demonstrate.',
           'This distinction helps you structure a CV, portfolio or interview with greater precision.',
         ],
-      },
-      {
-        heading: '3. Choose a useful next step',
-        paragraphs: [
+      ],
+      [
+        '3. Choose a useful next step',
+        [
           'The right next step is not always another application. It may be a guidance session, a CV update or a targeted programme.',
         ],
-      },
+      ],
     ],
-    takeawayPoints: [
+    [
       'A clear objective simplifies every other decision.',
       'Evidence should be selected before it is polished.',
       'The next step should remain actionable and time-bound.',
     ],
-  },
-  {
-    ...requireFrenchFallbackArticle('blog-2'),
-    title: 'Choose a useful training format',
-    excerpt:
-      'Training is useful only when it responds to a specific situation, a clear constraint and measurable progress.',
-    content:
-      '<p>The best format is not necessarily the longest. It is the one that helps you move forward methodically.</p>',
-    author: {
-      ...requireFrenchFallbackArticle('blog-2').author,
-      role: 'Programme Manager',
-      bio: 'He designs short, structured formats that help participants progress without getting lost in theory.',
-    },
-    categoryLabel: 'Training',
-    tagLabels: ['Training', 'Skills', 'Progress'],
-    publishedLabel: '20 May 2026',
-    summary:
-      'Three simple criteria for choosing a training format that fits your objective, level and schedule.',
-    intro:
-      'The right training format is not a catalogue. It is a calibrated response to a specific situation.',
-    sections: [
-      {
-        heading: '1. Check the actual need',
-        paragraphs: [
+  ],
+  [
+    'blog-2',
+    'Choose a useful training format',
+    'Training is useful only when it responds to a specific situation, a clear constraint and measurable progress.',
+    '<p>The best format is not necessarily the longest. It is the one that helps you move forward methodically.</p>',
+    'Programme Manager',
+    'He designs short, structured formats that help participants progress without getting lost in theory.',
+    'Training',
+    ['Training', 'Skills', 'Progress'],
+    '20 May 2026',
+    'Three simple criteria for choosing a training format that fits your objective, level and schedule.',
+    'The right training format is not a catalogue. It is a calibrated response to a specific situation.',
+    [
+      [
+        '1. Check the actual need',
+        [
           'Before choosing a format, clarify the problem to solve. Is it a lack of method, a need for practice or a need to develop your professional posture?',
         ],
-      },
-      {
-        heading: '2. Choose the right level of intensity',
-        paragraphs: [
+      ],
+      [
+        '2. Choose the right level of intensity',
+        [
           'An intensive workshop can unblock a specific issue. A longer programme can help establish lasting habits.',
         ],
-      },
-      {
-        heading: '3. Decide how progress will be measured',
-        paragraphs: [
+      ],
+      [
+        '3. Decide how progress will be measured',
+        [
           'If you cannot observe a difference after the chosen format, the objective or the format probably needs to be adjusted.',
         ],
-      },
+      ],
     ],
-    takeawayPoints: [
+    [
       'The need always comes before the format.',
       'The level of intensity should match the urgency.',
       'Progress should be observable.',
     ],
-  },
-  {
-    ...requireFrenchFallbackArticle('blog-3'),
-    title:
-      'Prepare an immigration application without losing sight of the big picture',
-    excerpt:
-      'An application becomes weaker when its documents stop telling the same story. The priority is to maintain overall consistency.',
-    content:
-      '<p>The quality of an application does not depend on documents alone. It also depends on consistency between the narrative, the evidence and the timeline.</p>',
-    author: {
-      ...requireFrenchFallbackArticle('blog-3').author,
-      role: 'Mobility Adviser',
-      bio: 'She supports international profiles in the structured preparation of study and work mobility projects.',
-    },
-    categoryLabel: 'Immigration',
-    tagLabels: ['Immigration', 'Application', 'Preparation'],
-    publishedLabel: '24 May 2026',
-    summary:
-      'A short method for keeping your intention, supporting documents and timeline consistent.',
-    intro:
-      'The strongest application is not necessarily the longest. It is the one that remains consistent from beginning to end.',
-    sections: [
-      {
-        heading: '1. Build a clear thread',
-        paragraphs: [
+  ],
+  [
+    'blog-3',
+    'Prepare an immigration application without losing sight of the big picture',
+    'An application becomes weaker when its documents stop telling the same story. The priority is to maintain overall consistency.',
+    '<p>The quality of an application does not depend on documents alone. It also depends on consistency between the narrative, the evidence and the timeline.</p>',
+    'Mobility Adviser',
+    'She supports international profiles in the structured preparation of study and work mobility projects.',
+    'Immigration',
+    ['Immigration', 'Application', 'Preparation'],
+    '24 May 2026',
+    'A short method for keeping your intention, supporting documents and timeline consistent.',
+    'The strongest application is not necessarily the longest. It is the one that remains consistent from beginning to end.',
+    [
+      [
+        '1. Build a clear thread',
+        [
           'Before completing a form, describe the project you are presenting in one sentence. Use that sentence as a reference point for every supporting document.',
         ],
-      },
-      {
-        heading: '2. Organise the evidence in the right order',
-        paragraphs: [
+      ],
+      [
+        '2. Organise the evidence in the right order',
+        [
           'A clear application aligns its evidence with the logic of the project: identity, education, experience, resources and timeline.',
         ],
-      },
-      {
-        heading: '3. Keep a safety margin',
-        paragraphs: [
+      ],
+      [
+        '3. Keep a safety margin',
+        [
           'Deadlines, translations and additional administrative requests require margin. Avoid working right up against the deadline.',
         ],
-      },
+      ],
     ],
-    takeawayPoints: [
+    [
       'A clear project makes supporting documents easier to organise.',
       'The order of the evidence matters as much as its presence.',
       'A safety margin reduces avoidable errors.',
     ],
-  },
+  ],
 ];
+
+export const englishBlogArticles: readonly BlogArticle[] =
+  englishBlogTranslations.map((translation) =>
+    localizeBlogArticle(translation),
+  );
 
 const BLOG_ARTICLES_BY_LOCALE = {
   'fr-CI': blogArticles,

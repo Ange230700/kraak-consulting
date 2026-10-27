@@ -33,6 +33,8 @@ import type {
   UpdateProgramDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
+import { archivePublishedRecord } from '../shared/supabase-record.utils';
+import { mapPublicationUpdate } from '../shared/publication-mapper.utils';
 import { CurriculumService } from '../curriculum/curriculum.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
 import {
@@ -342,27 +344,7 @@ export class ProgramsService {
     programId: string,
     payload: UpdateProgramDto,
   ): Promise<ProgramDto> {
-    const updatePayload: Record<string, unknown> = {};
-
-    if (payload.slug !== undefined) {
-      updatePayload['slug'] = payload.slug;
-    }
-
-    if (payload.title !== undefined) {
-      updatePayload['title'] = payload.title;
-    }
-
-    if (payload.summary !== undefined) {
-      updatePayload['summary'] = payload.summary;
-    }
-
-    if (payload.description !== undefined) {
-      updatePayload['description'] = payload.description;
-    }
-
-    if (payload.status !== undefined) {
-      updatePayload['status'] = payload.status;
-    }
+    const updatePayload = mapPublicationUpdate(payload);
 
     if (payload.visibility !== undefined) {
       updatePayload['visibility'] = payload.visibility;
@@ -387,20 +369,12 @@ export class ProgramsService {
   }
 
   async deleteProgram(programId: string): Promise<void> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('program')
-      .update({ status: 'archived' })
-      .eq('id', programId)
-      .select('id')
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundException({
-        success: false,
-        message: apiMessage('programs.notFound'),
-      });
-    }
+    await archivePublishedRecord(
+      this.supabaseService,
+      'program',
+      programId,
+      apiMessage('programs.notFound'),
+    );
   }
 
   async listProgramFeatures(programId: string): Promise<ProgramFeatureDto[]> {

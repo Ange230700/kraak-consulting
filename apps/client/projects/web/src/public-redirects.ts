@@ -13,12 +13,7 @@ export function registerPublicRedirectRoutes(app: express.Express): void {
 
     const destination = resolvePublicRedirectDestination(req.originalUrl);
 
-    if (
-      !destination ||
-      !destination.startsWith('/') ||
-      destination.startsWith('//') ||
-      destination.includes('\\')
-    ) {
+    if (!destination) {
       next();
       return;
     }
@@ -47,7 +42,13 @@ export function resolvePublicRedirectDestination(
       return undefined;
     }
 
-    return `${redirect.destination}${url.search}`;
+    const query = [...url.searchParams].map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    );
+    return query.length > 0
+      ? `${redirect.destination}?${query.join('&')}`
+      : redirect.destination;
   } catch (error) {
     console.warn('web.redirect.invalid-url', { url: originalUrl, error });
     return undefined;

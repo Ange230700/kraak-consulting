@@ -119,12 +119,7 @@ export class ArticlesService {
       });
     }
 
-    const rows = (data as ArticleRow[] | null) ?? [];
-    const relations = await this.readArticleRelations(
-      rows.map((row) => row.id),
-    );
-
-    return rows.map((row) => this.mapArticleRow(row, relations));
+    return this.mapArticleRows((data as ArticleRow[] | null) ?? []);
   }
 
   async getPublicArticleBySlug(slug: string): Promise<ArticleDto> {
@@ -182,12 +177,7 @@ export class ArticlesService {
       });
     }
 
-    const rows = (data as ArticleRow[] | null) ?? [];
-    const relations = await this.readArticleRelations(
-      rows.map((row) => row.id),
-    );
-
-    return rows.map((row) => this.mapArticleRow(row, relations));
+    return this.mapArticleRows((data as ArticleRow[] | null) ?? []);
   }
 
   async getArticleById(
@@ -867,6 +857,13 @@ export class ArticlesService {
         });
       }
     }
+  }
+
+  private async mapArticleRows(rows: ArticleRow[]): Promise<ArticleDto[]> {
+    const relations = await this.readArticleRelations(
+      rows.map((row) => row.id),
+    );
+    return rows.map((row) => this.mapArticleRow(row, relations));
   }
 
   private async readArticleRelations(articleIds: string[]): Promise<{

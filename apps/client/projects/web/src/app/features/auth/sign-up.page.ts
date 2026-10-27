@@ -8,15 +8,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { environment } from '../../../environments/environment';
-import {
-  WebAuthService,
-  resolveAuthErrorMessage,
-} from '../../core/auth/web-auth.service';
+import { WebAuthService } from '../../core/auth/web-auth.service';
+import { runAuthSubmission } from './auth-submission.utils';
 import {
   normalizeRequiredText,
   normalizeTextControl,
@@ -85,46 +82,37 @@ export default class SignUpPage {
       return;
     }
 
-    this.submitting.set(true);
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
-
-    try {
-      const { firstName, lastName, email, password } = this.form.getRawValue();
-
-      const response = await this.authService.signUp({
-        firstName: normalizeRequiredText(firstName),
-        lastName: normalizeRequiredText(lastName),
-        email: normalizeRequiredText(email),
-        password,
-        redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
-      });
-
-      if (response.session && response.profile) {
-        await this.router.navigateByUrl('/participant/dashboard');
-        return;
-      }
-
-      this.successMessage.set(response.message);
-      this.messageService.add({
-        key: 'app-feedback',
-        severity: 'success',
-        summary: this.i18n.translate('web.auth.signUp.toastTitle'),
-        detail: response.message,
-        life: 6000,
-      });
-    } catch (error) {
-      logDebugError('web.auth.sign-up.submit', error, {
-        route: '/inscription',
-      });
-      this.errorMessage.set(
-        resolveAuthErrorMessage(
-          error,
+    await runAuthSubmission(
+      {
+        submitting: this.submitting,
+        successMessage: this.successMessage,
+        errorMessage: this.errorMessage,
+        messageService: this.messageService,
+        successTitle: () => this.i18n.translate('web.auth.signUp.toastTitle'),
+        fallbackError: () =>
           this.i18n.translate('web.auth.signUp.genericError'),
-        ),
-      );
-    } finally {
-      this.submitting.set(false);
-    }
+        debugContext: 'web.auth.sign-up.submit',
+        route: '/inscription',
+      },
+      async () => {
+        const { firstName, lastName, email, password } =
+          this.form.getRawValue();
+
+        const response = await this.authService.signUp({
+          firstName: normalizeRequiredText(firstName),
+          lastName: normalizeRequiredText(lastName),
+          email: normalizeRequiredText(email),
+          password,
+          redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
+        });
+
+        if (response.session && response.profile) {
+          await this.router.navigateByUrl('/participant/dashboard');
+          return;
+        }
+
+        return response.message;
+      },
+    );
   }
 }

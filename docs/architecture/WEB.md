@@ -92,6 +92,13 @@ Sur Render static, les redirects HTTP permanents non racine sont déclarés dans
 une page statique générée en fin de prerender, car Render ne permet pas les
 redirects ciblant directement `/` dans les règles de réécriture.
 
+En SSR, `public-redirects.ts` choisit le chemin cible dans la configuration
+des anciennes routes publiques. Les clés et valeurs des paramètres de requête
+sont réencodées séparément avant leur ajout à ce chemin fixe ; leur ordre et
+leurs répétitions sont conservés, sans permettre à une valeur de devenir une
+destination externe. Les routes déjà localisées et les routes privées ne sont
+pas redirigées par ce middleware.
+
 ## Sources liées
 
 - [`ARC-03`](../decisions/ARC-03-seo-prerender-strategy.md) pour la stratégie de

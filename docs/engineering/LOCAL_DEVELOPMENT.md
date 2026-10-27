@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-10-25
+last_reviewed: 2026-10-26
 source_of_truth: true
 ---
 
@@ -261,6 +261,10 @@ pnpm dev
 
 Le script `pnpm dev` sonde les ports web et mobile avant démarrage pour éviter
 une première tentative en échec quand `4200` ou `4300` sont déjà utilisés.
+Les services démarrent dans l'ordre web, mobile, API. Chaque processus réserve
+son port jusqu'à sa sortie : deux ports personnalisés identiques ne peuvent
+donc pas être attribués avant que les serveurs commencent à écouter. La recherche
+s'arrête explicitement si aucun port TCP ne reste disponible jusqu'à `65535`.
 
 Pour les outils qui doivent cibler explicitement le serveur web local
 (notamment Playwright), la variable `KRAAK_WEB_PORT` permet d'aligner l'URL de
