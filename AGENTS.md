@@ -298,8 +298,11 @@ Workflow Git par défaut dans ce dépôt :
 - Garder `main` dans un état livrable.
 - Utiliser uniquement des branches courtes (`feat/*`, `fix/*`, `chore/*`,
   `docs/*`, `test/*`, `refactor/*`, `ci/*`, `style/*`, `perf/*`, `revert/*`,
-  `build/*`). Lorsqu'un environnement crée ou renomme automatiquement la
-  branche de session, la conserver plutôt que d'en créer une autre.
+  `build/*`, `copilot/*`). Vérifier que le nom de branche fourni par
+  l'environnement respecte aussi le motif de validation du dépôt
+  (`package.json`). S'il ne le respecte pas, utiliser la fonction de renommage
+  de branche de l'environnement quand elle existe, ou créer une branche courte
+  autorisée ; ne pas contourner le hook de validation.
 - Ne pas utiliser de branche `develop` longue durée, de branches d’environnement,
   ni de branches permanentes par application.
 - Travailler sur une seule tâche à la fois.
@@ -312,9 +315,10 @@ Workflow Git par défaut dans ce dépôt :
 Avant toute modification de code ou de documentation active :
 
 1. vérifier que la branche courante part de `main` ;
-2. si l'environnement fournit déjà une branche de travail isolée, travailler
-   sur cette branche sans en créer ni en renommer une autre ; sinon, créer une
-   branche courte depuis `main` ;
+2. si l'environnement fournit déjà une branche de travail isolée, vérifier
+   qu'elle respecte les préfixes autorisés et le motif de validation du dépôt ;
+   la conserver si elle est valide, sinon utiliser la fonction de renommage de
+   l'environnement quand elle existe ou créer une branche courte depuis `main` ;
 3. ne pas créer d'infrastructure staging permanente ;
 4. réserver les déploiements aux tags SemVer accessibles depuis `main`.
 
@@ -327,17 +331,19 @@ Flux d’exécution d’une tâche :
 3. Si la tâche est absente du Project, créer un nouvel item de Project seulement
    si le travail est vraiment important ou si cela est explicitement demandé.
 4. Créer l’issue / l’élément de suivi approprié quand nécessaire.
-5. Utiliser la branche isolée déjà fournie par l'environnement ou, si aucune
-   n'est fournie, créer une branche courte pour une seule tâche.
+5. Utiliser la branche isolée valide déjà fournie par l'environnement ou, si
+   aucune n'est fournie, créer une branche courte autorisée pour une seule tâche.
 6. Quand l’implémentation commence, convertir l’item brouillon du Project en
    issue GitHub ouverte si nécessaire, puis déplacer l’item en `In Progress`,
    définir `Status` sur `In Progress` et, si le champ existe, `Statut` sur
    `En cours`, tout en gardant l’issue ouverte.
 7. Implémenter le plus petit incrément valide.
 8. Exécuter la validation pertinente.
-9. Ouvrir une PR vers `main`, puis rebaser la branche sur `main`
-   (`git rebase origin/main`) et fusionner la PR validée par rebase, sans
-   contourner les contrôles requis.
+9. Publier la branche et ouvrir une PR vers `main`. Rebaser ensuite la branche
+   sur `main` (`git rebase origin/main`), republier toute réécriture de commits
+   sur la même branche distante, puis attendre la réussite des contrôles sur le
+   dernier commit avant de fusionner la PR. Ne pas contourner les contrôles
+   requis.
 10. Synchroniser le `main` local par avance rapide après la fusion distante.
 11. Une fois la fusion / le push réussis, fermer l’issue liée, déplacer l’item du
     Project en `Done`, définir `Status` sur `Done` et, si le champ existe,
