@@ -10,6 +10,83 @@ import {
 } from './cms.dto';
 
 describe('cms.dto validators', () => {
+  it.each([
+    [' ', null],
+    [' personnes ', 'personnes'],
+  ])(
+    'Given le suffixe %p, When la statistique est normalisée, Then le suffixe devient %p',
+    (suffix, expected) => {
+      expect(
+        validateCreateStatisticPayload({
+          label: 'Participants',
+          value: '250',
+          suffix,
+          sortOrder: 0,
+          status: 'published',
+        }),
+      ).toMatchObject({ valid: true, data: { suffix: expected } });
+    },
+  );
+
+  it('Given une valeur de statistique vide, When la mise à jour est validée, Then le message de champ requis est conservé', () => {
+    expect(validateUpdateStatisticPayload({ value: ' ' })).toEqual({
+      valid: false,
+      errors: [{ key: 'validation.requiredField', params: { field: 'value' } }],
+    });
+  });
+
+  it('Given un partenaire avec une nouvelle URL, When la mise à jour est validée, Then l’URL normalisée est acceptée', () => {
+    expect(
+      validateUpdatePartnerPayload({
+        websiteUrl: ' https://example.com ',
+      }),
+    ).toEqual({
+      valid: true,
+      data: { websiteUrl: 'https://example.com' },
+    });
+  });
+
+  it.each([
+    {
+      validate: validateCreateStatisticPayload,
+      body: { label: '', value: '', sortOrder: -1, status: 'invalid' },
+      fields: ['label', 'value'],
+    },
+    {
+      validate: validateCreateTestimonialPayload,
+      body: {
+        quote: '',
+        authorName: '',
+        avatarUrl: 'invalid-url',
+        sortOrder: -1,
+        status: 'invalid',
+      },
+      fields: ['quote', 'authorName'],
+    },
+  ])(
+    'Given un contenu incomplet ($fields), When sa création est validée, Then les erreurs métier précèdent les erreurs de publication',
+    ({ validate, body, fields }) => {
+      const errors = fields.map((field) => ({
+        key: 'validation.requiredField',
+        params: { field },
+      }));
+      if ('avatarUrl' in body) {
+        errors.push({
+          key: 'validation.invalidField',
+          params: { field: 'avatarUrl' },
+        });
+      }
+      errors.push(
+        {
+          key: 'validation.nonNegativeIntegerField',
+          params: { field: 'sortOrder' },
+        },
+        { key: 'validation.invalidField', params: { field: 'status' } },
+      );
+      expect(validate(body)).toEqual({ valid: false, errors });
+    },
+  );
+
   it('validates create statistic payload', () => {
     const result = validateCreateStatisticPayload({
       label: 'Participants accompagnés',

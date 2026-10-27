@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -25,6 +25,7 @@ import { Message } from 'primeng/message';
 import { environment } from '../../../../environments/environment';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
+import { AdminEditorState } from '../admin-editor-state';
 
 import {
   KraakI18nService,
@@ -66,7 +67,10 @@ interface AdminResourcesClient {
   ],
   templateUrl: './admin-ressources.page.html',
 })
-export default class AdminRessourcesPage implements OnInit {
+export default class AdminRessourcesPage
+  extends AdminEditorState
+  implements OnInit
+{
   private readonly authService = inject(WebAuthService);
   private readonly messageService = inject(MessageService);
   private readonly i18n = inject(KraakI18nService);
@@ -77,14 +81,6 @@ export default class AdminRessourcesPage implements OnInit {
   }).resources;
 
   protected readonly ressources = signal<ResourceDto[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly errorMessage = signal<string | null>(null);
-  protected readonly successMessage = signal<string | null>(null);
-  protected readonly showForm = signal(false);
-  protected readonly editingId = signal<string | null>(null);
-  protected readonly submitting = signal(false);
-
-  protected readonly isEditing = computed(() => this.editingId() !== null);
 
   protected getPublicationStatusLabel(status: string): string {
     const key = `web.admin.ressources.statuses.${status}`;

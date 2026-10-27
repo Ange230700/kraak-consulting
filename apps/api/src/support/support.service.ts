@@ -18,6 +18,7 @@ import type {
 } from '@kraak/contracts';
 import { Resend } from 'resend';
 import { SupabaseService } from '../supabase/supabase.service';
+import { resolveParticipantId } from '../shared/supabase-record.utils';
 import {
   type ContactTriagePlan,
   resolveContactTriagePlan,
@@ -42,10 +43,6 @@ type SupportRequestRow = {
   is_read: boolean;
   created_at: string;
   updated_at: string;
-};
-
-type ParticipantRow = {
-  id: string;
 };
 
 type SupportRequestWithReadDto = SupportRequestDto & { isRead: boolean };
@@ -322,21 +319,11 @@ export class SupportService {
   }
 
   private async resolveParticipantId(userId: string): Promise<string | null> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('participant')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: apiMessage('support.participantResolveFailed'),
-      });
-    }
-
-    return (data as ParticipantRow | null)?.id ?? null;
+    return resolveParticipantId(
+      this.supabaseService,
+      userId,
+      apiMessage('support.participantResolveFailed'),
+    );
   }
 
   private mapSupportRequest(row: SupportRequestRow): SupportRequestWithReadDto {

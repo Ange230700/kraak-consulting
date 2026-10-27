@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -16,17 +16,17 @@ import { Message } from 'primeng/message';
 import { environment } from '../../../../environments/environment';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
+import { AdminEditorState } from '../admin-editor-state';
+import {
+  createPublicationControls,
+  type PublicationFormModel,
+} from '../publication-form.utils';
 
 import {
   KraakI18nService,
   KraakTranslatePipe,
 } from '../../../../../../shared/i18n';
-interface ProgramFormModel {
-  slug: FormControl<string>;
-  title: FormControl<string>;
-  summary: FormControl<string>;
-  description: FormControl<string>;
-  status: FormControl<string>;
+interface ProgramFormModel extends PublicationFormModel {
   visibility: FormControl<string>;
 }
 
@@ -43,7 +43,10 @@ interface ProgramFormModel {
   ],
   templateUrl: './admin-programmes.page.html',
 })
-export default class AdminProgrammesPage implements OnInit {
+export default class AdminProgrammesPage
+  extends AdminEditorState
+  implements OnInit
+{
   private readonly authService = inject(WebAuthService);
   private readonly i18n = inject(KraakI18nService);
 
@@ -57,14 +60,6 @@ export default class AdminProgrammesPage implements OnInit {
   }).programs;
 
   protected readonly programmes = signal<ProgramDto[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly errorMessage = signal<string | null>(null);
-  protected readonly successMessage = signal<string | null>(null);
-  protected readonly showForm = signal(false);
-  protected readonly editingId = signal<string | null>(null);
-  protected readonly submitting = signal(false);
-
-  protected readonly isEditing = computed(() => this.editingId() !== null);
 
   protected getPublicationStatusLabel(status: string): string {
     const key = `web.admin.programmes.statuses.${status}`;
@@ -96,26 +91,7 @@ export default class AdminProgrammesPage implements OnInit {
   readonly programVisibilities = Object.values(ProgramVisibility);
 
   readonly form = new FormGroup<ProgramFormModel>({
-    slug: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)],
-    }),
-    title: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    summary: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    description: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    status: new FormControl('draft', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
+    ...createPublicationControls(),
     visibility: new FormControl('private', {
       nonNullable: true,
       validators: [Validators.required],

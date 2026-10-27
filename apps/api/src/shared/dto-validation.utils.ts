@@ -1,4 +1,37 @@
 import { apiMessage, type ApiMessageValue } from '../i18n/api-message';
+import type { ValidationResult } from './validation-result.type';
+
+export function validateAssignedPayload<T>(
+  body: unknown,
+  assign: (
+    body: Record<string, unknown>,
+    errors: ApiMessageValue[],
+    data: Record<string, unknown>,
+  ) => void,
+  mode: 'create' | 'update',
+): ValidationResult<T> {
+  if (!isObjectPayload(body)) {
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
+  }
+
+  const errors: ApiMessageValue[] = [];
+  const data: Record<string, unknown> = {};
+  assign(body, errors, data);
+
+  if (
+    mode === 'update' &&
+    Object.keys(data).length === 0 &&
+    errors.length === 0
+  ) {
+    errors.push(apiMessage('validation.updateRequiresField'));
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+
+  return { valid: true, data: data as T };
+}
 
 export function readTrimmedString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';

@@ -224,6 +224,38 @@ test('Given un port occupé, When le service cherche un port libre, Then le port
   assert.match(api.output[0], /démarrage ignoré/);
 });
 
+test('Given le dernier port TCP occupé, When aucun port ne reste disponible, Then la recherche échoue explicitement', async () => {
+  const context = setup();
+  context.failures.add(65535);
+  await assert.rejects(
+    context.runner.findAvailablePort(65535),
+    /Aucun port TCP disponible/,
+  );
+  assert.deepEqual(
+    context.probes.map(({ port }) => port),
+    [65535],
+  );
+});
+
+test('Given deux services configurés sur le même port, When ils démarrent, Then les réservations évitent une collision avant leur écoute', async () => {
+  const context = setup();
+  await context.runner.startService(service);
+  await context.runner.startService(service);
+  assert.deepEqual(
+    context.spawns.map(([, args]) => args.at(-1)),
+    ['4200', '4201'],
+  );
+  await context.runner.startService({
+    ...service,
+    allowPortFallback: false,
+    portArg: false,
+  });
+  assert.equal(context.spawns.length, 2);
+  context.children[0].emit('exit', 0);
+  await context.runner.startService(service);
+  assert.equal(context.spawns[2][1].at(-1), '4200');
+});
+
 test('Given un service sans argument port, When il démarre, Then son environnement reçoit PORT', async () => {
   const context = setup();
   await context.runner.startService({

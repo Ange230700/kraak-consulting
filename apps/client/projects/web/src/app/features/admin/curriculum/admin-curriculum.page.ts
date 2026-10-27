@@ -20,19 +20,15 @@ import { Message } from 'primeng/message';
 import { environment } from '../../../../environments/environment';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
+import {
+  createPublicationControls,
+  type PublicationFormModel,
+} from '../publication-form.utils';
 
 import {
   KraakI18nService,
   KraakTranslatePipe,
 } from '../../../../../../shared/i18n';
-interface CourseFormModel {
-  slug: FormControl<string>;
-  title: FormControl<string>;
-  summary: FormControl<string>;
-  description: FormControl<string>;
-  status: FormControl<string>;
-}
-
 interface PlacementFormModel {
   courseId: FormControl<string>;
   sortOrder: FormControl<number>;
@@ -137,28 +133,9 @@ export default class AdminCurriculumPage implements OnInit {
 
   readonly publicationStatuses = Object.values(PublicationStatus);
 
-  readonly courseForm = new FormGroup<CourseFormModel>({
-    slug: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)],
-    }),
-    title: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    summary: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    description: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    status: new FormControl('draft', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-  });
+  readonly courseForm = new FormGroup<PublicationFormModel>(
+    createPublicationControls(),
+  );
 
   readonly placementForm = new FormGroup<PlacementFormModel>({
     courseId: new FormControl('', {
