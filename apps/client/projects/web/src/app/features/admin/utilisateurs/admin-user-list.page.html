@@ -1,0 +1,415 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 sm:px-6 lg:px-8"
+>
+  <div
+    class="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <p
+        class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        {{ 'web.admin.users.list.header.eyebrow' | kraakTranslate }}
+      </p>
+      <h1 class="text-brand-navy text-2xl font-bold">
+        {{ 'web.admin.users.list.header.title' | kraakTranslate }}
+      </h1>
+      <p class="mt-1 text-sm text-neutral-600">
+        {{ 'web.admin.users.list.header.description' | kraakTranslate }}
+      </p>
+    </div>
+    <a
+      routerLink="/admin/utilisateurs/create/basic-information"
+      pButton
+      class="kr-button-primary"
+      type="button"
+    >
+      <i class="pi pi-user-plus mr-2"></i>
+      {{ 'web.admin.users.list.header.newUser' | kraakTranslate }}
+    </a>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-12">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    @if (successMessage()) {
+      <p-message
+        severity="success"
+        [text]="successMessage()!"
+        styleClass="mb-6 w-full"
+      ></p-message>
+    }
+
+    @if (errorMessage()) {
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        styleClass="mb-6 w-full"
+      ></p-message>
+    }
+
+    <!-- Barre de recherche -->
+    <div
+      class="bg-brand-white rounded-card shadow-card mb-6 flex items-center gap-3 p-4"
+    >
+      <i class="pi pi-search text-neutral-400"></i>
+      <input
+        type="text"
+        [placeholder]="
+          'web.admin.users.list.search.placeholder' | kraakTranslate
+        "
+        class="text-brand-navy flex-1 text-sm placeholder-neutral-400 outline-none"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        [attr.aria-label]="'web.admin.users.list.search.aria' | kraakTranslate"
+      />
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    @if (loading()) {
+      <div
+        class="bg-brand-white rounded-card shadow-card flex justify-center p-12"
+      >
+        <i
+          class="pi pi-spin pi-spinner text-brand-blue text-3xl"
+          [attr.aria-label]="
+            'web.admin.users.list.loading.aria' | kraakTranslate
+          "
+        ></i>
+      </div>
+    } @else if (filteredUsers().length === 0) {
+      <div class="bg-brand-white rounded-card shadow-card p-12 text-center">
+        <i class="pi pi-users mb-4 block text-5xl text-neutral-300"></i>
+        <p class="text-sm text-neutral-600">
+          @if (searchQuery()) {
+            {{ 'web.admin.users.list.empty.filtered' | kraakTranslate }}
+          } @else {
+            {{ 'web.admin.users.list.empty.none' | kraakTranslate }}
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="bg-brand-white rounded-card shadow-card overflow-hidden">
+        <table
+          class="w-full text-sm"
+          [attr.aria-label]="'web.admin.users.list.table.aria' | kraakTranslate"
+        >
+          <thead class="border-b border-neutral-200 bg-neutral-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase"
+              >
+                {{ 'web.admin.users.list.table.columns.name' | kraakTranslate }}
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase sm:table-cell"
+              >
+                {{
+                  'web.admin.users.list.table.columns.email' | kraakTranslate
+                }}
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase md:table-cell"
+              >
+                {{ 'web.admin.users.list.table.columns.role' | kraakTranslate }}
+              </th>
+              <th
+                class="hidden px-6 py-3 text-left text-xs font-semibold tracking-wider text-neutral-500 uppercase lg:table-cell"
+              >
+                {{
+                  'web.admin.users.list.table.columns.status' | kraakTranslate
+                }}
+              </th>
+              <th
+                class="px-6 py-3 text-right text-xs font-semibold tracking-wider text-neutral-500 uppercase"
+              >
+                {{
+                  'web.admin.users.list.table.columns.actions' | kraakTranslate
+                }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-100">
+            @for (user of filteredUsers(); track user.id) {
+              <tr class="transition-colors hover:bg-neutral-50">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="bg-brand-blue/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                    >
+                      <span class="text-brand-blue text-xs font-bold">
+                        {{ user.firstName[0] }}{{ user.lastName[0] }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="text-brand-navy font-medium">
+                        {{ user.firstName }} {{ user.lastName }}
+                      </p>
+                      <p class="text-xs text-neutral-500 sm:hidden">
+                        {{ user.email }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="hidden px-6 py-4 text-neutral-600 sm:table-cell">
+                  {{ user.email }}
+                </td>
+                <td class="hidden px-6 py-4 md:table-cell">
+                  <span
+                    class="bg-brand-blue/10 text-brand-blue inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  >
+                    {{ getRoleLabel(user.role) }}
+                  </span>
+                </td>
+                <td class="hidden px-6 py-4 lg:table-cell">
+                  @if (user.isActive) {
+                    <span
+                      class="inline-flex items-center gap-1 text-xs font-medium text-green-700"
+                    >
+                      <i class="pi pi-check-circle"></i>
+                      {{
+                        'web.admin.users.list.status.active' | kraakTranslate
+                      }}
+                    </span>
+                  } @else {
+                    <span
+                      class="inline-flex items-center gap-1 text-xs font-medium text-neutral-400"
+                    >
+                      <i class="pi pi-ban"></i>
+                      {{
+                        'web.admin.users.list.status.inactive' | kraakTranslate
+                      }}
+                    </span>
+                  }
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      pButton
+                      class="kr-button-ghost px-3! py-1.5! text-xs"
+                      type="button"
+                      (click)="openEdit(user)"
+                      [attr.aria-label]="getEditAriaLabel(user)"
+                    >
+                      <i class="pi pi-pencil mr-1"></i>
+                      {{ 'web.admin.users.list.actions.edit' | kraakTranslate }}
+                    </button>
+                    <button
+                      pButton
+                      class="kr-button-ghost border-red-200 px-3! py-1.5! text-xs text-red-600 hover:bg-red-50"
+                      type="button"
+                      (click)="requestDelete(user)"
+                      [attr.aria-label]="getDeleteAriaLabel(user)"
+                    >
+                      <i class="pi pi-trash mr-1"></i>
+                      {{
+                        'web.admin.users.list.actions.delete' | kraakTranslate
+                      }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Modal de modification -->
+@if (editingUser()) {
+  <dialog
+    open
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    aria-modal="true"
+    [attr.aria-label]="getEditAriaLabel(editingUser()!)"
+  >
+    <div class="bg-brand-white rounded-card shadow-card w-full max-w-lg p-8">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-brand-navy text-xl font-bold">
+          {{ 'web.admin.users.list.editDialog.title' | kraakTranslate }}
+        </h2>
+        <button
+          type="button"
+          class="text-neutral-400 hover:text-neutral-600"
+          (click)="closeEdit()"
+          [attr.aria-label]="
+            'web.admin.users.list.editDialog.closeAria' | kraakTranslate
+          "
+        >
+          <i class="pi pi-times text-xl"></i>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-xs font-medium text-neutral-600"
+              for="edit-firstName"
+              >{{
+                'web.admin.users.list.editDialog.fields.firstName'
+                  | kraakTranslate
+              }}</label
+            >
+            <input
+              id="edit-firstName"
+              type="text"
+              class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+              [value]="editForm()['firstName'] ?? ''"
+              (input)="updateEditField('firstName', $any($event.target).value)"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-xs font-medium text-neutral-600"
+              for="edit-lastName"
+              >{{
+                'web.admin.users.list.editDialog.fields.lastName'
+                  | kraakTranslate
+              }}</label
+            >
+            <input
+              id="edit-lastName"
+              type="text"
+              class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+              [value]="editForm()['lastName'] ?? ''"
+              (input)="updateEditField('lastName', $any($event.target).value)"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-xs font-medium text-neutral-600"
+            for="edit-email"
+            >{{
+              'web.admin.users.list.editDialog.fields.email' | kraakTranslate
+            }}</label
+          >
+          <input
+            id="edit-email"
+            type="email"
+            class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+            [value]="editForm()['email'] ?? ''"
+            (input)="updateEditField('email', $any($event.target).value)"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-neutral-600" for="edit-role">{{
+            'web.admin.users.list.editDialog.fields.role' | kraakTranslate
+          }}</label>
+          <select
+            id="edit-role"
+            class="text-brand-navy focus:border-brand-blue rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+            [value]="editForm()['role'] ?? ''"
+            (change)="updateEditField('role', $any($event.target).value)"
+          >
+            @for (role of availableRoles; track role) {
+              <option [value]="role">{{ getRoleLabel(role) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input
+            id="edit-isActive"
+            type="checkbox"
+            class="accent-brand-blue h-4 w-4"
+            [checked]="editForm()['isActive'] ?? true"
+            (change)="updateEditField('isActive', $any($event.target).checked)"
+          />
+          <label class="text-sm text-neutral-700" for="edit-isActive">{{
+            'web.admin.users.list.editDialog.fields.active' | kraakTranslate
+          }}</label>
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="mt-4 text-sm text-red-600">{{ errorMessage() }}</p>
+      }
+
+      <div class="mt-8 flex justify-end gap-3">
+        <button
+          pButton
+          class="kr-button-ghost"
+          type="button"
+          (click)="closeEdit()"
+          [disabled]="submitting()"
+        >
+          {{ 'web.admin.users.list.actions.cancel' | kraakTranslate }}
+        </button>
+        <button
+          pButton
+          class="kr-button-primary"
+          type="button"
+          (click)="saveEdit()"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>
+          }
+          {{ 'web.admin.users.list.actions.save' | kraakTranslate }}
+        </button>
+      </div>
+    </div>
+  </dialog>
+}
+
+<!-- Modal de confirmation de suppression -->
+@if (userToDelete()) {
+  <dialog
+    open
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    aria-modal="true"
+    [attr.aria-label]="
+      'web.admin.users.list.deleteDialog.aria' | kraakTranslate
+    "
+  >
+    <div class="bg-brand-white rounded-card shadow-card w-full max-w-md p-8">
+      <div class="flex flex-col items-center gap-4 text-center">
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full bg-red-50"
+        >
+          <i class="pi pi-trash text-2xl text-red-600"></i>
+        </div>
+        <h2 class="text-brand-navy text-xl font-bold">
+          {{ 'web.admin.users.list.deleteDialog.title' | kraakTranslate }}
+        </h2>
+        <p class="text-sm text-neutral-600">
+          {{ 'web.admin.users.list.deleteDialog.prefix' | kraakTranslate }}
+          <strong
+            >{{ userToDelete()!.firstName }}
+            {{ userToDelete()!.lastName }}</strong
+          >
+          {{ 'web.admin.users.list.deleteDialog.suffix' | kraakTranslate }}
+        </p>
+      </div>
+
+      <div class="mt-8 flex justify-center gap-3">
+        <button
+          pButton
+          class="kr-button-ghost"
+          type="button"
+          (click)="cancelDelete()"
+          [disabled]="submitting()"
+        >
+          {{ 'web.admin.users.list.actions.cancel' | kraakTranslate }}
+        </button>
+        <button
+          pButton
+          class="kr-button-primary border-red-600! bg-red-600! hover:bg-red-700!"
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>
+          }
+          {{ 'web.admin.users.list.actions.delete' | kraakTranslate }}
+        </button>
+      </div>
+    </div>
+  </dialog>
+}

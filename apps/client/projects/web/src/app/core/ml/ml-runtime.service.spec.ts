@@ -1,9 +1,12 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 
-import { MlRuntimeService } from './ml-runtime.service';
+import {
+  MlRuntimeService,
+  isMissingTfjsDependencyError,
+} from './ml-runtime.service';
 import { TFJS_CONFIG, type TfjsConfig } from './tfjs-config';
 
 interface TfjsRuntimeModule {
@@ -20,8 +23,13 @@ function asSpyTarget(service: MlRuntimeService): MlRuntimeServiceSpyTarget {
   return service as unknown as MlRuntimeServiceSpyTarget;
 }
 describe('MlRuntimeService', () => {
+  beforeEach(() => {
+    MlRuntimeService.resetForTests();
+  });
+
   afterEach(() => {
     MlRuntimeService.resetForTests();
+    vi.doUnmock('@tensorflow/tfjs');
     vi.restoreAllMocks();
   });
 
@@ -112,6 +120,22 @@ describe('MlRuntimeService', () => {
     expect(ready).toHaveBeenCalledTimes(1);
   });
 
+  it('skips optional tfjs hooks when module does not expose backend or readiness helpers', async () => {
+    TestBed.configureTestingModule({ providers: [MlRuntimeService] });
+    const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
+
+    const loadSpy = vi.spyOn(spyTarget, 'loadTfjsModule').mockResolvedValue({});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // no-op in tests
+    });
+
+    await expect(spyTarget.initializeRuntime()).resolves.toBeUndefined();
+
+    expect(loadSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
   it('skips tfjs setup when module cannot be loaded', async () => {
     TestBed.configureTestingModule({ providers: [MlRuntimeService] });
     const service = TestBed.inject(MlRuntimeService);
@@ -143,5 +167,54 @@ describe('MlRuntimeService', () => {
     await expect(spyTarget.initializeRuntime()).resolves.toBeUndefined();
 
     expect(warnSpy).toHaveBeenCalled();
+  });
+
+  it('loads tfjs module when dependency is available', async () => {
+    vi.doMock('@tensorflow/tfjs', () => ({
+      setBackend: vi.fn(),
+      ready: vi.fn(),
+    }));
+
+    TestBed.configureTestingModule({ providers: [MlRuntimeService] });
+    const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
+
+    const loadedModule = await spyTarget.loadTfjsModule();
+
+    expect(loadedModule).not.toBeNull();
+    expect(typeof loadedModule?.setBackend).toBe('function');
+    expect(typeof loadedModule?.ready).toBe('function');
+  });
+
+  it('rethrows non resolution errors while loading tfjs', async () => {
+    vi.doMock('@tensorflow/tfjs', () => {
+      throw new Error('boom from tfjs factory');
+    });
+
+    TestBed.configureTestingModule({ providers: [MlRuntimeService] });
+    const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
+
+    await expect(spyTarget.loadTfjsModule()).rejects.toThrow(
+      'There was an error when mocking a module',
+    );
+  });
+
+  it('rethrows non Error values while loading tfjs', async () => {
+    vi.doMock('@tensorflow/tfjs', () => {
+      throw new Error('boom-string');
+    });
+
+    TestBed.configureTestingModule({ providers: [MlRuntimeService] });
+    const service = TestBed.inject(MlRuntimeService);
+    const spyTarget = asSpyTarget(service);
+
+    await expect(spyTarget.loadTfjsModule()).rejects.toThrow(
+      'There was an error when mocking a module',
+    );
+  });
+
+  it('returns false for non Error values in tfjs missing-dependency detector', () => {
+    expect(isMissingTfjsDependencyError('boom-string')).toBe(false);
   });
 });

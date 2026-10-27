@@ -1,4 +1,8 @@
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import type { AnnouncementDto } from '@kraak/contracts';
 import * as domainUtils from '@kraak/domain';
 import { AnnouncementsService } from './announcements.service';
@@ -72,6 +76,9 @@ describe('AnnouncementsService', () => {
   ) => {
     const base = Promise.resolve(terminalResult) as Promise<TResult> & {
       from?: ReturnType<typeof jest.fn>;
+      insert?: ReturnType<typeof jest.fn>;
+      update?: ReturnType<typeof jest.fn>;
+      delete?: ReturnType<typeof jest.fn>;
       select?: ReturnType<typeof jest.fn>;
       eq?: ReturnType<typeof jest.fn>;
       in?: ReturnType<typeof jest.fn>;
@@ -80,6 +87,9 @@ describe('AnnouncementsService', () => {
       single?: ReturnType<typeof jest.fn>;
     };
 
+    base.insert = jest.fn().mockReturnValue(base);
+    base.update = jest.fn().mockReturnValue(base);
+    base.delete = jest.fn().mockReturnValue(base);
     base.select = jest.fn().mockReturnValue(base);
     base.eq = jest.fn().mockReturnValue(base);
 
@@ -107,6 +117,59 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements', () => {
+    it('Given no access token, When public announcements are listed, Then mapped results are returned', async () => {
+      const announcementsQuery = createAsyncQuery(
+        {
+          data: [
+            {
+              id: mockAnnouncement.id,
+              title: mockAnnouncement.title,
+              body: mockAnnouncement.body,
+              priority: mockAnnouncement.priority,
+              audience_type: mockAnnouncement.audienceType,
+              program_id: mockAnnouncement.programId,
+              cohort_id: mockAnnouncement.cohortId,
+              status: mockAnnouncement.status,
+              published_at: mockAnnouncement.publishedAt,
+              created_by_user_id: mockAnnouncement.createdByUserId,
+              created_at: mockAnnouncement.createdAt,
+              updated_at: mockAnnouncement.updatedAt,
+            },
+            {
+              id: mockProgramAnnouncement.id,
+              title: mockProgramAnnouncement.title,
+              body: mockProgramAnnouncement.body,
+              priority: mockProgramAnnouncement.priority,
+              audience_type: mockProgramAnnouncement.audienceType,
+              program_id: mockProgramAnnouncement.programId,
+              cohort_id: mockProgramAnnouncement.cohortId,
+              status: mockProgramAnnouncement.status,
+              published_at: mockProgramAnnouncement.publishedAt,
+              created_by_user_id: mockProgramAnnouncement.createdByUserId,
+              created_at: mockProgramAnnouncement.createdAt,
+              updated_at: mockProgramAnnouncement.updatedAt,
+            },
+          ],
+          error: null,
+        },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      const result = await service.listAnnouncements(undefined, 1, 20);
+
+      expect(result.total).toBe(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0]).toEqual(
+        expect.objectContaining({ id: mockAnnouncement.id }),
+      );
+    });
+
     it('Given: valid access token and enrolled participant, When: listAnnouncements called, Then: return filtered announcements', async () => {
       const accessToken = 'valid-token';
       const participantId = 'participant-001';
@@ -631,6 +694,34 @@ describe('AnnouncementsService', () => {
 
       await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
         'Failed to list announcements',
+      );
+    });
+
+    it('Given: une erreur announcements sans message, When: listAnnouncements appelé, Then: unknown error est utilisé dans le message', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-001' } },
+        error: null,
+      });
+
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: { code: 'PGRST999' } },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          participant: participantQuery,
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(service.listAnnouncements('valid-token')).rejects.toThrow(
+        'Failed to list announcements: unknown error',
       );
     });
 
@@ -2046,6 +2137,44 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements — cas limites', () => {
+    it('Given: une erreur DB sur les annonces publiques sans token, When: listAnnouncements appelé, Then: une liste vide est renvoyée', async () => {
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: { message: 'public-db-error' } },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(service.listAnnouncements()).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
+    });
+
+    it('Given: des annonces publiques null sans erreur, When: listAnnouncements est appelé sans token, Then: une pagination vide est renvoyée', async () => {
+      const announcementsQuery = createAsyncQuery(
+        { data: null, error: null },
+        { withOrder: true },
+      );
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: announcementsQuery,
+        }),
+      );
+
+      await expect(
+        service.listAnnouncements(undefined, 3, 10),
+      ).resolves.toEqual({
+        data: [],
+        total: 0,
+      });
+    });
+
     it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur est levée', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: null },
@@ -2086,7 +2215,7 @@ describe('AnnouncementsService', () => {
         service.listAnnouncements('bad-token'),
       ).rejects.toMatchObject({
         response: {
-          message: 'La session est invalide ou expirée.',
+          message: { key: 'auth.sessionInvalidOrExpired' },
         },
       });
     });
@@ -2111,6 +2240,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
+          return undefined;
         }),
       });
 
@@ -2145,6 +2275,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2179,6 +2310,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2219,6 +2351,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2268,6 +2401,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2318,6 +2452,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2364,6 +2499,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
+          return undefined;
         }),
       });
 
@@ -2386,6 +2522,7 @@ describe('AnnouncementsService', () => {
       mockSupabaseService.getClient.mockReturnValue({
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
+          return undefined;
         }),
       });
 
@@ -2433,6 +2570,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
@@ -2485,6 +2623,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2539,6 +2678,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2594,6 +2734,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2648,6 +2789,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2703,6 +2845,7 @@ describe('AnnouncementsService', () => {
           if (table === 'participant') return participantQuery;
           if (table === 'announcement') return announcementsQuery;
           if (table === 'enrollment') return enrollmentsQuery;
+          return undefined;
         }),
       });
 
@@ -2743,6 +2886,7 @@ describe('AnnouncementsService', () => {
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
+          return undefined;
         }),
       });
 
@@ -2790,12 +2934,336 @@ describe('AnnouncementsService', () => {
           if (table === 'announcement') return announcementQuery;
           if (table === 'participant') return participantQuery;
           if (table === 'enrollment') return enrollmentQuery;
+          return undefined;
         }),
       });
 
       await expect(
         service.getAnnouncementById('ann-prog-no-data', 'valid-token'),
       ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
+
+  describe('admin CRUD', () => {
+    it('Given un payload de création valide, When createAnnouncement est appelé, Then l’annonce est insérée et mappée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-010',
+          title: 'Nouvelle annonce',
+          body: 'Contenu',
+          priority: 'critical',
+          audience_type: 'program',
+          program_id: 'program-1',
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-1',
+          created_at: '2026-05-26T12:00:00.000Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.createAnnouncement(
+          {
+            title: 'Nouvelle annonce',
+            body: 'Contenu',
+            priority: 'critical',
+            audienceType: 'program',
+            programId: 'program-1',
+            status: 'published',
+            publishedAt: '2026-05-26T12:00:00.000Z',
+          },
+          'user-1',
+        ),
+      ).resolves.toMatchObject({
+        id: 'ann-010',
+        audienceType: 'program',
+      });
+
+      expect(mutationQuery.insert).toHaveBeenCalledWith({
+        title: 'Nouvelle annonce',
+        body: 'Contenu',
+        priority: 'critical',
+        audience_type: 'program',
+        program_id: 'program-1',
+        cohort_id: null,
+        status: 'published',
+        published_at: '2026-05-26T12:00:00.000Z',
+        created_by_user_id: 'user-1',
+      });
+    });
+
+    it('Given un payload de mise à jour valide, When updateAnnouncement est appelé, Then l’annonce est mise à jour', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Important Update',
+          body: 'Contenu modifié',
+          priority: 'high',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'archived',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-001', {
+          body: 'Contenu modifié',
+          status: 'archived',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        }),
+      ).resolves.toMatchObject({
+        id: 'ann-001',
+        status: 'archived',
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith({
+        body: 'Contenu modifié',
+        status: 'archived',
+        published_at: '2026-05-26T12:00:00.000Z',
+      });
+    });
+
+    it('Given un payload de mise à jour complet, When updateAnnouncement est appelé, Then tous les champs sont mappés vers Supabase', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Titre mis à jour',
+          body: 'Corps mis à jour',
+          priority: 'critical',
+          audience_type: 'cohort',
+          program_id: 'program-1',
+          cohort_id: 'cohort-1',
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-001', {
+          title: 'Titre mis à jour',
+          body: 'Corps mis à jour',
+          priority: 'critical',
+          audienceType: 'cohort',
+          programId: 'program-1',
+          cohortId: 'cohort-1',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        }),
+      ).resolves.toMatchObject({
+        id: 'ann-001',
+        priority: 'critical',
+        audienceType: 'cohort',
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith({
+        title: 'Titre mis à jour',
+        body: 'Corps mis à jour',
+        priority: 'critical',
+        audience_type: 'cohort',
+        program_id: 'program-1',
+        cohort_id: 'cohort-1',
+        published_at: '2026-05-26T12:00:00.000Z',
+      });
+    });
+
+    it('Given une annonce introuvable sans erreur technique, When updateAnnouncement est appelé, Then une NotFoundException est levée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.updateAnnouncement('ann-missing', {
+          title: 'Titre',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('Given un statut draft avec publishedAt fourni, When createAnnouncement est appelé, Then published_at est forcé à null', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-011',
+          title: 'Brouillon',
+          body: 'Contenu',
+          priority: 'normal',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'draft',
+          published_at: null,
+          created_by_user_id: 'user-1',
+          created_at: '2026-05-26T12:00:00.000Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await service.createAnnouncement(
+        {
+          title: 'Brouillon',
+          body: 'Contenu',
+          audienceType: 'all_participants',
+          status: 'draft',
+          publishedAt: '2026-05-26T12:00:00.000Z',
+        },
+        'user-1',
+      );
+
+      expect(mutationQuery.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'draft',
+          published_at: null,
+        }),
+      );
+    });
+
+    it('Given un statut non draft avec publishedAt null, When updateAnnouncement est appelé, Then published_at est forcé à une date', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: {
+          id: 'ann-001',
+          title: 'Important Update',
+          body: 'Contenu modifié',
+          priority: 'high',
+          audience_type: 'all_participants',
+          program_id: null,
+          cohort_id: null,
+          status: 'published',
+          published_at: '2026-05-26T12:00:00.000Z',
+          created_by_user_id: 'user-001',
+          created_at: '2026-04-19T10:00:00Z',
+          updated_at: '2026-05-26T12:00:00.000Z',
+        },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await service.updateAnnouncement('ann-001', {
+        status: 'published',
+        publishedAt: null,
+      });
+
+      expect(mutationQuery.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'published',
+          published_at: expect.any(String),
+        }),
+      );
+    });
+
+    it('Given une annonce existante, When deleteAnnouncement est appelé, Then la suppression est effectuée', async () => {
+      const deleteQuery = createAsyncQuery({
+        data: { id: 'ann-001' },
+        error: null,
+      });
+      deleteQuery.delete = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.select = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.eq = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.single = jest.fn().mockResolvedValue({
+        data: { id: 'ann-001' },
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn(() => deleteQuery),
+      });
+
+      await expect(
+        service.deleteAnnouncement('ann-001'),
+      ).resolves.toBeUndefined();
+      expect(deleteQuery.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given une annonce absente sans erreur technique, When deleteAnnouncement est appelé, Then une NotFoundException est levée', async () => {
+      const deleteQuery = createAsyncQuery({
+        data: null,
+        error: null,
+      });
+      deleteQuery.delete = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.select = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.eq = jest.fn().mockReturnValue(deleteQuery);
+      deleteQuery.single = jest.fn().mockResolvedValue({
+        data: null,
+        error: null,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue({
+        from: jest.fn(() => deleteQuery),
+      });
+
+      await expect(
+        service.deleteAnnouncement('ann-missing'),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('Given une insertion en erreur, When createAnnouncement est appelé, Then une InternalServerErrorException est levée', async () => {
+      const mutationQuery = createAsyncQuery({
+        data: null,
+        error: { message: 'db-error' },
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(
+        createClientMock({
+          announcement: mutationQuery,
+        }),
+      );
+
+      await expect(
+        service.createAnnouncement(
+          {
+            title: 'Annonce',
+            body: 'Contenu',
+            audienceType: 'all_participants',
+          },
+          'user-1',
+        ),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
     });
   });
 });

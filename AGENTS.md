@@ -1,4 +1,41 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
+<!-- AGENTS.md -->
+
 # AGENTS.md
+
+## Table des matières
+
+- [AGENTS.md](#agentsmd)
+  - [Objectif](#objectif)
+  - [Stade Actuel Du Projet](#stade-actuel-du-projet)
+  - [Règles Transverses de Qualité et de Maintenabilité (Obligatoires)](#regles-transverses-de-qualite-et-de-maintenabilite-obligatoires)
+  - [Garde-Fous Du Périmètre Produit](#garde-fous-du-perimetre-produit)
+    - [MVP (à construire maintenant)](#mvp-a-construire-maintenant)
+    - [Hors MVP (V1.1+)](#hors-mvp-v11)
+  - [Architecture Active](#architecture-active)
+    - [Structure Obligatoire Des Composants Et Pages (Client)](#structure-obligatoire-des-composants-et-pages-client)
+    - [Structure Obligatoire Minimale Des Modules API (NestJS)](#structure-obligatoire-minimale-des-modules-api-nestjs)
+    - [Règle De Style Des Composants (Obligatoire)](#regle-de-style-des-composants-obligatoire)
+  - [Règles D’Organisation Du Dépôt](#regles-dorganisation-du-depot)
+  - [Règles De Workflow Git](#regles-de-workflow-git)
+    - [Jalons Git / GitHub À Respecter](#jalons-git-github-a-respecter)
+  - [Gestion Des GitHub Projects](#gestion-des-github-projects)
+  - [Règle TDD (Obligatoire)](#regle-tdd-obligatoire)
+  - [Règle BDD + E2E](#regle-bdd-e2e)
+  - [Politique De Langue (Obligatoire)](#politique-de-langue-obligatoire)
+  - [Règle De Documentation API (Obligatoire)](#regle-de-documentation-api-obligatoire)
+  - [Modèle De Travail Pour Les Agents](#modele-de-travail-pour-les-agents)
+    - [Non-négociables](#non-negociables)
+  - [Attentes De Validation](#attentes-de-validation)
+  - [Attentes De Documentation](#attentes-de-documentation)
+    - [Règle De Rendu Mermaid (Obligatoire)](#regle-de-rendu-mermaid-obligatoire)
+  - [Définition De Terminé](#definition-de-termine)
 
 ## Objectif
 
@@ -12,7 +49,7 @@ KRAAK, et livrable.
 Utiliser ce fichier avec :
 
 - `ARCHITECTURE.md` pour les limites techniques
-- `docs/specs/BACKLOG.md` pour le backlog et l’ordre de priorité
+- `docs/planning/GITHUB_PROJECT.md` pour le backlog et l’ordre de priorité
 - `README.md` pour les conventions de structure du dépôt
 
 ## Stade Actuel Du Projet
@@ -74,7 +111,7 @@ Les règles suivantes sont obligatoires pour tout le code, la documentation et l
 - Les répertoires fonctionnels web/mobile/API existent déjà en grande partie,
   mais beaucoup de flux métier restent encore à implémenter ou à brancher.
 - Le contexte de marque, les orientations de contenu, et les artefacts de travail
-  ou de proposition restent centralisés dans `docs/context/`.
+  ou de proposition utiles restent classés dans `docs/reference/`.
 - Le code de production final du site et des parcours participants n’est pas
   encore considéré comme mature ni complètement stabilisé.
 
@@ -133,7 +170,7 @@ Pile actuellement retenue dans ce dépôt :
   fil des fonctionnalités MVP
 - Analytics : `Google Analytics` et outils légers seulement si le besoin réel du
   MVP le justifie
-- Déploiement : `Vercel` pour le front, `Render` pour l’API
+- Déploiement : `Render` pour le front, `Render` pour l’API
 - SEO technique : prerender / SSR Angular, metadata, Open Graph, sitemap,
   robots
 
@@ -225,12 +262,17 @@ utilitaires) et **PrimeNG** (classes de composants) pour tout le style visuel.
 - Garder les documents de pilotage des assistants à la racine du dépôt :
   - `AGENTS.md`
   - `ARCHITECTURE.md`
-  - `docs/specs/BACKLOG.md`
+  - `docs/planning/GITHUB_PROJECT.md`
   - `README.md`
-- Traiter `docs/context/` comme un espace de référence source.
-- Mettre les nouvelles spécifications techniques dans `docs/specs/`.
+- Traiter `docs/reference/` comme un espace de support non autoritaire.
+- Mettre les nouvelles synthèses d'architecture dans `docs/architecture/`.
+- Mettre les nouvelles spécifications produit dans `docs/product/`.
+- Mettre les nouvelles règles d'ingénierie dans `docs/engineering/`.
 - Mettre les décisions d’architecture / produit dans `docs/decisions/`.
-- Mettre les playbooks opérationnels dans `docs/runbooks/`.
+- Mettre les playbooks opérationnels dans `docs/operations/`.
+- Mettre les documents de pilotage dans `docs/planning/`.
+- Mettre les preuves et snapshots générés dans `docs/generated/`.
+- Mettre les états passés dans `docs/archive/`.
 - Placer le frontend Angular dans `apps/client/`, avec :
   - `apps/client/projects/web/` pour le site vitrine
   - `apps/client/projects/mobile/` pour l’application mobile
@@ -255,8 +297,8 @@ utilitaires) et **PrimeNG** (classes de composants) pour tout le style visuel.
 
 Workflow Git par défaut dans ce dépôt :
 
-- Traiter `main` comme la seule branche permanente.
-- Garder `main` dans un état livrable.
+- Traiter `staging` comme la seule branche permanente.
+- Garder `staging` dans un état livrable.
 - Utiliser uniquement des branches courtes (`feat/*`, `fix/*`, `chore/*`,
   `docs/*`, `test/*`, `refactor/*`, `ci/*`, `style/*`, `perf/*`, `revert/*`,
   `build/*`).
@@ -265,13 +307,20 @@ Workflow Git par défaut dans ce dépôt :
 - Travailler sur une seule tâche à la fois.
 - Garder une portée de branche correspondant à une tâche et fusionner vite.
 - **Stratégie de fusion : rebase uniquement.** Ne jamais créer de merge commits.
-  Toujours rebaser la branche courte sur `main` avant de fusionner en
+  Toujours rebaser la branche courte sur `staging` avant de fusionner en
   fast-forward. La configuration locale du dépôt impose `pull.rebase = true`
   et `merge.ff = only`.
 
+Avant toute modification de code ou de documentation active :
+
+1. vérifier que la branche courante part de `staging` ;
+2. refuser toute synchronisation inverse vers `staging` ;
+3. ouvrir les PR de travail vers `staging` ;
+4. ne mentionner `main` que pour une PR de release ou un tag SemVer.
+
 Flux d’exécution d’une tâche :
 
-1. Récupérer le dernier `main`.
+1. Récupérer le dernier `staging`.
 2. Identifier l’item GitHub Project correspondant à la tâche et vérifier d’abord
    que la tâche existe bien dans la liste liée au Project.
 3. Si la tâche est absente du Project, créer un nouvel item de Project seulement
@@ -284,9 +333,9 @@ Flux d’exécution d’une tâche :
    gardant l’issue ouverte.
 7. Implémenter le plus petit incrément valide.
 8. Exécuter la validation pertinente.
-9. Rebaser la branche sur `main` (`git rebase main`) puis fusionner en
-   fast-forward (`git merge --ff-only <branche>`) dans `main`.
-10. Pousser `main`.
+9. Rebaser la branche sur `staging` (`git rebase staging`) puis fusionner en
+   fast-forward (`git merge --ff-only <branche>`) dans `staging`.
+10. Pousser `staging`.
 11. Une fois la fusion / le push réussis, fermer l’issue liée, déplacer l’item du
     Project en `Done`, définir `Statut` sur `Termine` et `Status` sur `Done`,
     tout en gardant les champs d’état alignés.
@@ -316,7 +365,7 @@ Comportement obligatoire pour les assistants :
   forcer ni contourner les contrôles. Appliquer systématiquement la séquence
   suivante :
   1. `git stash -u` pour mettre les changements de côté, y compris les fichiers non suivis.
-  2. Créer une branche courte appropriée **depuis `staging`** (`git checkout staging && git checkout -b <type>/<sujet>`).
+  2. Créer une branche courte appropriée **depuis `staging`** (`git switch staging && git switch -c <type>/<sujet>`).
   3. `git stash pop` pour restaurer les changements sur cette branche.
   4. Suivre le protocole normal : commit, push, PR vers `staging`, merge, nettoyage de branche.
 
@@ -339,7 +388,7 @@ Métadonnées du dépôt pour les assistants :
 
 - Propriétaire GitHub : `Ange230700`
 - GitHub Project lié (principal) : vérifier le board actif documenté dans
-  `docs/runbooks/GITHUB_PROJECT_BOARD.md` avant toute automatisation
+  `docs/planning/GITHUB_PROJECT.md` avant toute automatisation
 
 Quand l’accès aux GitHub Projects est disponible :
 
@@ -501,7 +550,7 @@ toute tâche touchant l'API.
 
 ## Modèle De Travail Pour Les Agents
 
-1. Prendre exactement une tâche dans `docs/specs/BACKLOG.md` ou dans l’item
+1. Prendre exactement une tâche dans `docs/planning/GITHUB_PROJECT.md` ou dans l’item
    GitHub Project explicitement lié au travail.
 2. Confirmer que la tâche reste compatible avec le MVP (sauf si l’utilisateur
    demande explicitement du V1.1+).
@@ -591,10 +640,10 @@ La documentation doit rester concise, pratique, et orientée implémentation.
 
 ### Règle De Rendu Mermaid (Obligatoire)
 
-Pour tout deck Marp dans `docs/context/*.marp.md` qui contient des blocs Mermaid :
+Pour tout deck Marp dans `docs/reference/*.marp.md` qui contient des blocs Mermaid :
 
 1. Rendre les diagrammes Mermaid en assets image (`.svg` préféré, `.png`
-   autorisé) dans `docs/context/mermaid-artefacts/`.
+   autorisé) dans `docs/reference/diagrams/`.
 2. Remplacer les blocs de code Mermaid par des références d’images Markdown avant
    de générer les exports finaux.
 3. Générer les `.pdf` et `.pptx` uniquement à partir du fichier Marp basé sur les

@@ -3,19 +3,32 @@ import * as schemasModule from './schemas';
 import {
   ContactFormSchema,
   ContactSubmissionResultSchema,
+  ArticleSchema,
   AuthProfileSchema,
   AuthSessionBundleSchema,
   AuthSessionContextSchema,
   AuthSessionTokensSchema,
+  AuthorSchema,
+  CategorySchema,
   PasswordResetRequestSchema,
   PasswordResetResponseSchema,
   RefreshSessionRequestSchema,
   SignInRequestSchema,
   SignUpRequestSchema,
   SignUpResponseSchema,
+  CreateArticleSchema,
+  CreateAuthorSchema,
+  CreateCategorySchema,
   CreateAppUserSchema,
   CreateParticipantSchema,
   CreateProgramSchema,
+  CreateCourseSchema,
+  CreateLearningModuleSchema,
+  CreateChapterSchema,
+  CreateLessonSchema,
+  CreateProgramCourseSchema,
+  CreateCourseModuleSchema,
+  CreateChapterLessonSchema,
   CreateCohortSchema,
   CreateSessionSchema,
   CreateResourceSchema,
@@ -23,18 +36,38 @@ import {
   CreateEnrollmentSchema,
   CreateNotificationSchema,
   CreateSupportRequestSchema,
+  CreateTagSchema,
+  TagSchema,
   UpdateAppUserSchema,
+  UpdateArticleSchema,
+  UpdateAuthorSchema,
+  UpdateCategorySchema,
   UpdateParticipantSchema,
   UpdateProgramSchema,
+  UpdateCourseSchema,
+  UpdateLearningModuleSchema,
+  UpdateChapterSchema,
+  UpdateLessonSchema,
+  UpdateProgramCourseSchema,
+  UpdateCourseModuleSchema,
+  UpdateChapterLessonSchema,
   UpdateCohortSchema,
   UpdateSessionSchema,
   UpdateResourceSchema,
   UpdateAnnouncementSchema,
   UpdateEnrollmentSchema,
+  UpdateTagSchema,
   UpdateSupportRequestSchema,
   AppUserSchema,
   ParticipantSchema,
   ProgramSchema,
+  CourseSchema,
+  LearningModuleSchema,
+  ChapterSchema,
+  LessonSchema,
+  ProgramCourseSchema,
+  CourseModuleSchema,
+  ChapterLessonSchema,
   CohortSchema,
   SessionSchema,
   ResourceSchema,
@@ -195,6 +228,26 @@ describe('SignUpRequestSchema', () => {
         .success,
     ).toBe(false);
   });
+
+  it('should normalize an omitted redirect target to null', () => {
+    const result = SignUpRequestSchema.safeParse({
+      email: valid.email,
+      password: valid.password,
+      firstName: valid.firstName,
+      lastName: valid.lastName,
+      phone: valid.phone,
+      preferredContactChannel: valid.preferredContactChannel,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error(
+        'Expected SignUpRequestSchema to accept omitted redirectTo.',
+      );
+    }
+
+    expect(result.data.redirectTo).toBeNull();
+  });
 });
 
 describe('RefreshSessionRequestSchema', () => {
@@ -338,6 +391,204 @@ describe('AuthSessionContextSchema', () => {
           },
           participant: null,
         },
+      }).success,
+    ).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+describe('CreateAuthorSchema', () => {
+  const valid = {
+    email: 'editorialiste@kraak-consulting.com',
+    displayName: 'Nadia Kouam',
+    bio: 'Consultante en apprentissage et orientation professionnelle.',
+    avatarUrl: 'https://cdn.kraak.test/authors/nadia-kouam.jpg',
+  };
+
+  it('Given a valid author payload When parsed Then the schema accepts it', () => {
+    expect(CreateAuthorSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given a malformed author email When parsed Then the schema rejects it', () => {
+    expect(
+      CreateAuthorSchema.safeParse({ ...valid, email: 'email-invalide' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('Given update author payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateAuthorSchema.safeParse({ displayName: 'Nadia K.' }).success,
+    ).toBe(true);
+  });
+});
+
+describe('CreateCategorySchema', () => {
+  const valid = {
+    slug: 'actualites-formation',
+    label: 'Actualités Formation',
+    description: 'Contenus éditoriaux liés aux programmes et ateliers.',
+  };
+
+  it('Given a valid category payload When parsed Then the schema accepts it', () => {
+    expect(CreateCategorySchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an empty category label When parsed Then the schema rejects it', () => {
+    expect(
+      CreateCategorySchema.safeParse({ ...valid, label: ' ' }).success,
+    ).toBe(false);
+  });
+
+  it('Given update category payload with one field When parsed Then partial updates are accepted', () => {
+    expect(UpdateCategorySchema.safeParse({ label: 'Insights' }).success).toBe(
+      true,
+    );
+  });
+});
+
+describe('CreateTagSchema', () => {
+  const valid = {
+    slug: 'leadership',
+    label: 'Leadership',
+  };
+
+  it('Given a valid tag payload When parsed Then the schema accepts it', () => {
+    expect(CreateTagSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an empty tag slug When parsed Then the schema rejects it', () => {
+    expect(CreateTagSchema.safeParse({ ...valid, slug: ' ' }).success).toBe(
+      false,
+    );
+  });
+
+  it('Given update tag payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateTagSchema.safeParse({ label: 'Leadership inclusif' }).success,
+    ).toBe(true);
+  });
+});
+
+describe('CreateArticleSchema', () => {
+  const valid = {
+    slug: 'comment-reussir-son-dossier-dimmigration',
+    title: "Comment réussir son dossier d'immigration",
+    excerpt:
+      'Un cadre simple pour préparer les justificatifs, prioriser les étapes et réduire les risques de rejet.',
+    content:
+      '<p>Commencez par cartographier vos échéances puis vérifiez chaque pièce justificative.</p>',
+    status: 'draft',
+    coverImageUrl: 'https://cdn.kraak.test/articles/dossier-immigration.jpg',
+    seoTitle: "Réussir son dossier d'immigration | KRAAK",
+    seoDescription:
+      "Méthode pratique pour structurer un dossier d'immigration et sécuriser vos démarches.",
+    publishedAt: null,
+    authorId: 'author-1',
+    categoryIds: ['category-1'],
+    tagIds: ['tag-1', 'tag-2'],
+  };
+
+  it('Given a valid article payload When parsed Then the schema accepts it', () => {
+    expect(CreateArticleSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('Given an article without categories and tags When parsed Then the schema rejects it', () => {
+    expect(
+      CreateArticleSchema.safeParse({
+        ...valid,
+        categoryIds: [],
+        tagIds: [],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('Given update article payload with one field When parsed Then partial updates are accepted', () => {
+    expect(
+      UpdateArticleSchema.safeParse({ title: 'Nouveau titre' }).success,
+    ).toBe(true);
+  });
+
+  it('Given article payload without optional coverImageUrl When parsed Then the schema normalizes it to null', () => {
+    const result = CreateArticleSchema.safeParse({
+      slug: valid.slug,
+      title: valid.title,
+      excerpt: valid.excerpt,
+      content: valid.content,
+      status: valid.status,
+      seoTitle: valid.seoTitle,
+      seoDescription: valid.seoDescription,
+      publishedAt: valid.publishedAt,
+      authorId: valid.authorId,
+      categoryIds: valid.categoryIds,
+      tagIds: valid.tagIds,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error(
+        'Expected CreateArticleSchema to accept omitted coverImageUrl.',
+      );
+    }
+
+    expect(result.data.coverImageUrl).toBeNull();
+  });
+});
+
+describe('Editorial base schemas', () => {
+  it('Given full author/category/tag/article payloads When parsed Then entity schemas accept them', () => {
+    expect(
+      AuthorSchema.safeParse({
+        id: 'author-1',
+        email: 'editorialiste@kraak-consulting.com',
+        displayName: 'Nadia Kouam',
+        bio: null,
+        avatarUrl: null,
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CategorySchema.safeParse({
+        id: 'category-1',
+        slug: 'actualites-formation',
+        label: 'Actualités Formation',
+        description: null,
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      TagSchema.safeParse({
+        id: 'tag-1',
+        slug: 'leadership',
+        label: 'Leadership',
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      ArticleSchema.safeParse({
+        id: 'article-1',
+        slug: 'comment-reussir-son-dossier-dimmigration',
+        title: "Comment réussir son dossier d'immigration",
+        excerpt: 'Résumé article',
+        content: '<p>Contenu</p>',
+        status: 'published',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: '2026-05-24T09:00:00.000Z',
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+        createdAt: '2026-05-24T09:00:00.000Z',
+        updatedAt: '2026-05-24T09:00:00.000Z',
       }).success,
     ).toBe(true);
   });
@@ -535,6 +786,196 @@ describe('ProgramSchema', () => {
         updatedAt: '2025-01-01T00:00:00Z',
       }).success,
     ).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Curriculum
+// ---------------------------------------------------------------------------
+describe('Curriculum core schemas', () => {
+  const timestamps = {
+    createdAt: '2026-08-28T00:00:00Z',
+    updatedAt: '2026-08-28T00:00:00Z',
+  };
+
+  it('should accept reusable curriculum entities', () => {
+    expect(
+      CourseSchema.safeParse({
+        id: 'course-1',
+        slug: 'leadership-foundations',
+        title: 'Leadership Foundations',
+        summary: 'Course summary',
+        description: 'Course description',
+        status: 'published',
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      LearningModuleSchema.safeParse({
+        id: 'module-1',
+        slug: 'self-leadership',
+        title: 'Self Leadership',
+        summary: 'Module summary',
+        description: 'Module description',
+        status: 'published',
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      ChapterSchema.safeParse({
+        id: 'chapter-1',
+        learningModuleId: 'module-1',
+        slug: 'introduction',
+        title: 'Introduction',
+        summary: 'Chapter summary',
+        status: 'published',
+        sortOrder: 0,
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      LessonSchema.safeParse({
+        id: 'lesson-1',
+        slug: 'leading-yourself',
+        title: 'Leading Yourself',
+        summary: 'Lesson summary',
+        description: 'Lesson description',
+        status: 'published',
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should accept curriculum create payloads', () => {
+    expect(
+      CreateLearningModuleSchema.safeParse({
+        slug: 'self-leadership',
+        title: 'Self Leadership',
+        summary: 'Module summary',
+        description: 'Module description',
+        status: 'draft',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CreateLessonSchema.safeParse({
+        slug: 'leading-yourself',
+        title: 'Leading Yourself',
+        summary: 'Lesson summary',
+        description: 'Lesson description',
+        status: 'draft',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CreateCourseModuleSchema.safeParse({
+        courseId: 'course-1',
+        learningModuleId: 'module-1',
+        sortOrder: 0,
+        isRequired: true,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CreateChapterLessonSchema.safeParse({
+        chapterId: 'chapter-1',
+        lessonId: 'lesson-1',
+        sortOrder: 0,
+        isRequired: true,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should accept curriculum placements', () => {
+    expect(
+      ProgramCourseSchema.safeParse({
+        id: 'program-course-1',
+        programId: 'program-1',
+        courseId: 'course-1',
+        sortOrder: 0,
+        isRequired: true,
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      CourseModuleSchema.safeParse({
+        id: 'course-module-1',
+        courseId: 'course-1',
+        learningModuleId: 'module-1',
+        sortOrder: 0,
+        isRequired: true,
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      ChapterLessonSchema.safeParse({
+        id: 'chapter-lesson-1',
+        chapterId: 'chapter-1',
+        lessonId: 'lesson-1',
+        sortOrder: 0,
+        isRequired: true,
+        ...timestamps,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should reject invalid curriculum status and negative ordering', () => {
+    expect(
+      CreateCourseSchema.safeParse({
+        slug: 'course',
+        title: 'Course',
+        summary: 'Summary',
+        description: 'Description',
+        status: 'deleted',
+      }).success,
+    ).toBe(false);
+
+    expect(
+      CreateChapterSchema.safeParse({
+        learningModuleId: 'module-1',
+        slug: 'chapter',
+        title: 'Chapter',
+        summary: 'Summary',
+        status: 'draft',
+        sortOrder: -1,
+      }).success,
+    ).toBe(false);
+
+    expect(
+      CreateProgramCourseSchema.safeParse({
+        programId: 'program-1',
+        courseId: 'course-1',
+        sortOrder: -1,
+        isRequired: true,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should accept partial curriculum updates', () => {
+    expect(UpdateCourseSchema.safeParse({ title: 'Updated' }).success).toBe(
+      true,
+    );
+    expect(
+      UpdateLearningModuleSchema.safeParse({ status: 'archived' }).success,
+    ).toBe(true);
+    expect(UpdateChapterSchema.safeParse({ sortOrder: 2 }).success).toBe(true);
+    expect(
+      UpdateLessonSchema.safeParse({ description: 'Updated' }).success,
+    ).toBe(true);
+    expect(
+      UpdateProgramCourseSchema.safeParse({ isRequired: false }).success,
+    ).toBe(true);
+    expect(UpdateCourseModuleSchema.safeParse({ sortOrder: 1 }).success).toBe(
+      true,
+    );
+    expect(UpdateChapterLessonSchema.safeParse({ sortOrder: 3 }).success).toBe(
+      true,
+    );
   });
 });
 

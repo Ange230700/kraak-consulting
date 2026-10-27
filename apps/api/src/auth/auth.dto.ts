@@ -5,20 +5,16 @@ import type {
   SignUpRequestDto,
 } from '@kraak/contracts';
 import {
+  apiMessage,
+  type ApiMessageDescriptor,
+  type ApiMessageValue,
+} from '../i18n/api-message';
+import {
   isObjectPayload,
   readTrimmedString,
   validateEmail,
 } from '../shared/dto-validation.utils';
-
-type ValidationSuccess<T> = {
-  valid: true;
-  data: T;
-};
-
-type ValidationFailure = {
-  valid: false;
-  errors: string[];
-};
+import type { ValidationResult } from '../shared/validation-result.type';
 
 type AccessTokenSuccess = {
   valid: true;
@@ -27,10 +23,8 @@ type AccessTokenSuccess = {
 
 type AccessTokenFailure = {
   valid: false;
-  error: string;
+  error: ApiMessageDescriptor;
 };
-
-type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
 
 function readOptionalString(value: unknown, maxLength?: number): string | null {
   const normalized = readTrimmedString(value);
@@ -53,33 +47,38 @@ function isValidRedirectTarget(value: string): boolean {
   }
 }
 
-function validatePassword(password: string, errors: string[]): void {
+function validatePassword(password: string, errors: ApiMessageValue[]): void {
   if (password.length < 8) {
-    errors.push('Le mot de passe doit contenir au moins 8 caractères.');
+    errors.push(apiMessage('auth.passwordTooShort'));
   } else if (password.length > 128) {
-    errors.push('Le mot de passe ne peut pas dépasser 128 caractères.');
+    errors.push(apiMessage('auth.passwordTooLong'));
   }
 }
 
 function validateRequiredText(
   value: string,
-  label: string,
-  errors: string[],
+  field: 'firstName' | 'lastName',
+  errors: ApiMessageValue[],
   maxLength = 80,
 ): void {
+  const requiredKey =
+    field === 'firstName' ? 'auth.firstNameRequired' : 'auth.lastNameRequired';
+  const tooLongKey =
+    field === 'firstName' ? 'auth.firstNameTooLong' : 'auth.lastNameTooLong';
+
   if (!value) {
-    errors.push(`Le ${label} est requis.`);
+    errors.push(apiMessage(requiredKey));
   } else if (value.length > maxLength) {
-    errors.push(`Le ${label} ne peut pas dépasser ${maxLength} caractères.`);
+    errors.push(apiMessage(tooLongKey, { maxLength }));
   }
 }
 
 function validateRedirectTarget(
   redirectTo: string | null,
-  errors: string[],
+  errors: ApiMessageValue[],
 ): void {
   if (redirectTo && !isValidRedirectTarget(redirectTo)) {
-    errors.push('Le lien de redirection est invalide.');
+    errors.push(apiMessage('auth.redirectInvalid'));
   }
 }
 
@@ -87,12 +86,12 @@ export function validateSignInPayload(
   body: unknown,
 ): ValidationResult<SignInRequestDto> {
   if (!isObjectPayload(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const email = readTrimmedString(body['email']);
   const password = typeof body['password'] === 'string' ? body['password'] : '';
-  const errors: string[] = [];
+  const errors: ApiMessageValue[] = [];
 
   validateEmail(email, errors);
   validatePassword(password, errors);
@@ -114,7 +113,7 @@ export function validateSignUpPayload(
   body: unknown,
 ): ValidationResult<SignUpRequestDto> {
   if (!isObjectPayload(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const email = readTrimmedString(body['email']);
@@ -127,12 +126,12 @@ export function validateSignUpPayload(
     40,
   );
   const redirectTo = readOptionalString(body['redirectTo']);
-  const errors: string[] = [];
+  const errors: ApiMessageValue[] = [];
 
   validateEmail(email, errors);
   validatePassword(password, errors);
-  validateRequiredText(firstName, 'prénom', errors);
-  validateRequiredText(lastName, 'nom', errors);
+  validateRequiredText(firstName, 'firstName', errors);
+  validateRequiredText(lastName, 'lastName', errors);
   validateRedirectTarget(redirectTo, errors);
 
   if (errors.length > 0) {
@@ -157,7 +156,7 @@ export function validateRefreshSessionPayload(
   body: unknown,
 ): ValidationResult<RefreshSessionRequestDto> {
   if (!isObjectPayload(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const refreshToken = readTrimmedString(body['refreshToken']);
@@ -165,7 +164,7 @@ export function validateRefreshSessionPayload(
   if (!refreshToken) {
     return {
       valid: false,
-      errors: ['Le refresh token est requis.'],
+      errors: [apiMessage('auth.refreshTokenRequired')],
     };
   }
 
@@ -181,12 +180,12 @@ export function validatePasswordResetPayload(
   body: unknown,
 ): ValidationResult<PasswordResetRequestDto> {
   if (!isObjectPayload(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const email = readTrimmedString(body['email']);
   const redirectTo = readOptionalString(body['redirectTo']);
-  const errors: string[] = [];
+  const errors: ApiMessageValue[] = [];
 
   validateEmail(email, errors);
   validateRedirectTarget(redirectTo, errors);
@@ -212,7 +211,7 @@ export function extractAccessToken(
   if (!header) {
     return {
       valid: false,
-      error: "Le header d'autorisation Bearer est requis.",
+      error: apiMessage('auth.bearerRequired'),
     };
   }
 
@@ -226,7 +225,7 @@ export function extractAccessToken(
   ) {
     return {
       valid: false,
-      error: "Le header d'autorisation Bearer est requis.",
+      error: apiMessage('auth.bearerRequired'),
     };
   }
 

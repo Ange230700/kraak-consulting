@@ -7,10 +7,15 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ApiLocaleContext } from '../i18n/api-locale-context';
 import { SupabaseService } from '../supabase/supabase.service';
 import { SupportService } from './support.service';
 
 const sendMock = jest.fn();
+
+const localeContext = {
+  locale: jest.fn(() => 'fr-CI'),
+};
 
 jest.mock('resend', () => ({
   Resend: jest.fn().mockImplementation(() => ({
@@ -85,6 +90,8 @@ describe('SupportService', () => {
     configService.get.mockReset();
     authGetUserMock.mockReset();
     fromMock.mockReset();
+    localeContext.locale.mockReset();
+    localeContext.locale.mockReturnValue('fr-CI');
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -97,11 +104,54 @@ describe('SupportService', () => {
           provide: SupabaseService,
           useValue: supabaseService,
         },
+        {
+          provide: ApiLocaleContext,
+          useValue: localeContext,
+        },
       ],
     }).compile();
 
     service = module.get<SupportService>(SupportService);
   });
+
+  async function expectSupportRequestsAreUnfilteredForRole(
+    role: 'admin' | 'employee' | 'trainer',
+  ): Promise<void> {
+    const userId = `${role}-1`;
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: userId } },
+      error: null,
+    });
+
+    let eqCalled = false;
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: userId, role },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return createQueryChain(
+          { data: [], error: null },
+          {
+            onEq: () => {
+              eqCalled = true;
+            },
+          },
+        );
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const results = await service.listSupportRequests('access-token');
+    expect(eqCalled).toBe(false);
+    expect(results).toEqual([]);
+  }
 
   it('devrait être défini', () => {
     expect(service).toBeDefined();
@@ -382,41 +432,13 @@ describe('SupportService', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('Given un admin authentifié, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id', async () => {
-    configService.get.mockReturnValue(undefined);
-    authGetUserMock.mockResolvedValue({
-      data: { user: { id: 'admin-1' } },
-      error: null,
-    });
-
-    let eqCalled = false;
-
-    fromMock.mockImplementation((table: string) => {
-      if (table === 'app_user') {
-        return createQueryChain({
-          data: { id: 'admin-1', role: 'admin' },
-          error: null,
-        });
-      }
-
-      if (table === 'support_request') {
-        return createQueryChain(
-          { data: [], error: null },
-          {
-            onEq: () => {
-              eqCalled = true;
-            },
-          },
-        );
-      }
-
-      throw new Error(`Unexpected table: ${table}`);
-    });
-
-    const results = await service.listSupportRequests('access-token');
-    expect(eqCalled).toBe(false);
-    expect(results).toEqual([]);
-  });
+  it.each([['admin' as const], ['employee' as const], ['trainer' as const]])(
+    'Given un rôle %s authentifié, When listSupportRequests est appelé, Then toutes les demandes sont renvoyées sans filtre user_id',
+    async (role) => {
+      expect.hasAssertions();
+      await expectSupportRequestsAreUnfilteredForRole(role);
+    },
+  );
 
   it('Given la requête support_request renvoie data null sans erreur, When listSupportRequests est appelé, Then la liste renvoyée est vide', async () => {
     configService.get.mockReturnValue(undefined);
@@ -676,9 +698,7 @@ describe('SupportService', () => {
     ).rejects.toMatchObject({
       response: {
         success: false,
-        errors: [
-          "Le formulaire est temporairement indisponible. Veuillez utiliser l'e-mail direct ou WhatsApp indiqué sur la page contact.",
-        ],
+        errors: [{ key: 'support.contactNotificationFailed' }],
       },
     });
 
@@ -1047,5 +1067,320 @@ describe('SupportService', () => {
         'access-token',
       ),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un admin et une demande existante, When markSupportRequestAsRead est appelé, Then la demande est marquée lue et renvoyée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    const updatedRow = {
+      id: 'req-1',
+      user_id: 'user-1',
+      participant_id: null,
+      subject: 'Problème connexion',
+      message: 'Je ne peux pas me connecter.',
+      status: 'open',
+      category: 'technical',
+      assigned_to_user_id: null,
+      is_read: true,
+      created_at: '2026-01-01T00:00:00.000Z',
+      updated_at: '2026-01-01T00:00:00.000Z',
+    };
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: updatedRow, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.markSupportRequestAsRead(
+      'req-1',
+      'access-token',
+    );
+    expect(result.isRead).toBe(true);
+    expect(result.id).toBe('req-1');
+  });
+
+  it('Given une demande introuvable, When markSupportRequestAsRead est appelé, Then une NotFoundException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest
+                  .fn()
+                  .mockResolvedValue({ data: null, error: null }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.markSupportRequestAsRead('req-inexistant', 'access-token'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur de mise à jour lors du marquage lu, When markSupportRequestAsRead est appelé, Then une InternalServerErrorException est levée', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'admin-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'admin-1', role: 'admin' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          update: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              select: jest.fn(() => ({
+                maybeSingle: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'update read failed' },
+                }),
+              })),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(
+      service.markSupportRequestAsRead('req-1', 'access-token'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un participant, When markSupportRequestAsRead est appelé avec sa propre demande, Then la demande est marquée lue', async () => {
+    configService.get.mockReturnValue(undefined);
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    let capturedEqCalls: Array<{ column: string; value: unknown }> = [];
+    const updatedSupportRequest = {
+      id: 'req-1',
+      user_id: 'user-1',
+      participant_id: null,
+      subject: 's',
+      message: 'm',
+      status: 'open',
+      category: 'other',
+      assigned_to_user_id: null,
+      is_read: true,
+      created_at: '2026-01-01T00:00:00.000Z',
+      updated_at: '2026-01-01T00:00:00.000Z',
+    };
+
+    const supportReadQuery = createQueryChain(
+      {
+        data: updatedSupportRequest,
+        error: null,
+      },
+      {
+        onEq: (column: string, value: unknown) => {
+          capturedEqCalls = [...capturedEqCalls, { column, value }];
+        },
+      },
+    );
+
+    const updateSecondFilter = {
+      select: jest.fn(() => ({
+        maybeSingle: jest
+          .fn()
+          .mockResolvedValue({ data: updatedSupportRequest, error: null }),
+      })),
+    };
+
+    const updateFirstFilter = {
+      eq: jest.fn((column: string, value: unknown) => {
+        capturedEqCalls.push({ column, value });
+        return {
+          eq: jest.fn((innerColumn: string, innerValue: unknown) => {
+            capturedEqCalls.push({ column: innerColumn, value: innerValue });
+            return updateSecondFilter;
+          }),
+        };
+      }),
+    };
+
+    const supportUpdateQuery = {
+      update: jest.fn(() => updateFirstFilter),
+    };
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        const supportRequestRoute = {
+          ...supportReadQuery,
+          update: supportUpdateQuery.update,
+        };
+        return supportRequestRoute;
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.markSupportRequestAsRead(
+      'req-1',
+      'access-token',
+    );
+    expect(result.isRead).toBe(true);
+    const userIdFilter = capturedEqCalls.find((c) => c.column === 'user_id');
+    expect(userIdFilter).toBeDefined();
+    expect(userIdFilter?.value).toBe('user-1');
+  });
+
+  it('Given en-GB and successful email delivery, When submitContact is called, Then the public acknowledgement is English', async () => {
+    localeContext.locale.mockReturnValue('en-GB');
+
+    configService.get.mockImplementation((key: string) => {
+      if (key === 'RESEND_API_KEY') return 're_test_key';
+      if (key === 'CONTACT_TO_EMAIL') return 'contact@kraak.org';
+      if (key === 'CONTACT_FROM_EMAIL') return 'noreply@kraak.org';
+      return undefined;
+    });
+
+    sendMock.mockResolvedValue({
+      data: { id: 'email_123' },
+      error: null,
+    });
+
+    const result = await service.submitContact({
+      name: 'Alice Dupont',
+      email: 'alice@exemple.com',
+      subject: 'Renseignements',
+      message: 'Bonjour, je voudrais en savoir plus sur vos programmes.',
+      category: 'training',
+    });
+
+    expect(result.message).toBe(
+      'Your message has been received. We will respond as soon as possible.',
+    );
+  });
+
+  it('Given en-GB and an authenticated tracked request without email delivery, When submitContact is called, Then the fallback acknowledgement is English', async () => {
+    localeContext.locale.mockReturnValue('en-GB');
+    configService.get.mockReturnValue(undefined);
+
+    authGetUserMock.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'app_user') {
+        return createQueryChain({
+          data: { id: 'user-1', role: 'participant' },
+          error: null,
+        });
+      }
+
+      if (table === 'participant') {
+        return createQueryChain({
+          data: { id: 'participant-1' },
+          error: null,
+        });
+      }
+
+      if (table === 'support_request') {
+        return {
+          insert: jest.fn(() => ({
+            select: jest.fn(() => ({
+              maybeSingle: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'req-1',
+                  user_id: 'user-1',
+                  participant_id: 'participant-1',
+                  subject: 'Sujet test',
+                  message: 'Message test détaillé',
+                  status: 'open',
+                  category: 'technical',
+                  assigned_to_user_id: null,
+                  created_at: '2026-04-29T10:00:00.000Z',
+                  updated_at: '2026-04-29T10:00:00.000Z',
+                },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    const result = await service.submitContact(
+      {
+        name: 'Alice Dupont',
+        email: 'alice@exemple.com',
+        subject: 'Sujet test',
+        message: 'Message test détaillé',
+        category: 'technical',
+      },
+      'access-token',
+    );
+
+    expect(result).toMatchObject({
+      success: true,
+      message:
+        'Your request has been recorded. Email notification is temporarily unavailable, but internal tracking remains open.',
+      requestId: 'req-1',
+      requestStatus: 'open',
+    });
   });
 });

@@ -1,4 +1,32 @@
-# KRAAK Group
+---
+status: active
+owner: platform
+last_reviewed: 2026-10-25
+source_of_truth: true
+---
+
+<!-- README.md -->
+
+# KRAAK Consulting
+
+## Table des matières
+
+- [KRAAK Consulting](#kraak-consulting)
+  - [Quickstart (5 minutes)](#quickstart-5-minutes)
+    - [Prérequis](#prerequis)
+    - [Cloner et installer](#cloner-et-installer)
+    - [Configurer les variables d'environnement](#configurer-les-variables-denvironnement)
+    - [Lancer en mode développement](#lancer-en-mode-developpement)
+    - [Lancer avec Docker Compose (local uniquement)](#lancer-avec-docker-compose-local-uniquement)
+  - [Structure du monorepo](#structure-du-monorepo)
+  - [Stack technique (résumé)](#stack-technique-resume)
+  - [Surface vitrine publique](#surface-vitrine-publique)
+  - [Statut de phase](#statut-de-phase)
+  - [Scripts disponibles](#scripts-disponibles)
+  - [Contribuer](#contribuer)
+  - [Documentation complémentaire](#documentation-complementaire)
+    - [Validation API](#validation-api)
+  - [État courant du dépôt](#etat-courant-du-depot)
 
 Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
@@ -10,17 +38,17 @@ Monorepo du MVP KRAAK — site web, application mobile et API backend.
 
 | Outil       | Version minimale | Installation                                                  |
 | ----------- | ---------------- | ------------------------------------------------------------- |
-| **Node.js** | 24.14+           | [nodejs.org](https://nodejs.org/)                             |
-| **pnpm**    | 10.0+            | `corepack enable && corepack prepare pnpm@10.23.0 --activate` |
+| **Node.js** | 22.12+           | [nodejs.org](https://nodejs.org/)                             |
+| **pnpm**    | 10.23.0          | `corepack enable && corepack prepare pnpm@10.23.0 --activate` |
 | **Git**     | 2.x              | [git-scm.com](https://git-scm.com/)                           |
 
-> **Astuce** : `corepack` est inclus avec Node 24. Pas besoin d'installer `pnpm` séparément.
+> **Astuce** : `corepack` est inclus avec Node 22+. Pas besoin d'installer `pnpm` séparément.
 
 ### Cloner et installer
 
 ```bash
-git clone https://github.com/Ange230700/kraak-group.git
-cd kraak-group
+git clone https://github.com/Ange230700/kraak-consulting.git
+cd kraak-consulting
 pnpm install
 ```
 
@@ -35,11 +63,13 @@ cp apps/client/.env.example apps/client/.env
 ```
 
 Remplir les valeurs manquantes — voir
-[`docs/runbooks/ENVIRONMENT_VARIABLES.md`](docs/runbooks/ENVIRONMENT_VARIABLES.md).
+[`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md).
 
 Le provider email/password local et les templates email du MVP sont versionnés
 dans [`supabase/config.toml`](supabase/config.toml) et documentés dans
-[`docs/runbooks/SUPABASE_AUTH_SETUP.md`](docs/runbooks/SUPABASE_AUTH_SETUP.md).
+[`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md).
+Les variables locales, staging et production sont suivies dans
+[`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md).
 
 ### Lancer en mode développement
 
@@ -59,12 +89,33 @@ pnpm dev:mobile
 
 > `pnpm dev` choisit automatiquement le prochain port libre pour le web et le mobile si `4200` ou `4300` sont déjà occupés. L'API reste attendue sur `3000`.
 
+### Lancer avec Docker Compose (local uniquement)
+
+Le fichier [`compose.local.yml`](compose.local.yml) sert uniquement au workflow de développement local.
+Il ne doit pas être utilisé comme couche d'orchestration en production.
+Pour un profil DB local prêt à l'emploi avec Supabase CLI, voir
+[`docs/engineering/LOCAL_DEVELOPMENT.md`](docs/engineering/LOCAL_DEVELOPMENT.md) (section
+"Profil DB local prêt à l'emploi (Supabase + Docker Compose)").
+
+```bash
+# Démarrer API + front statique local
+docker compose -f compose.local.yml up --build
+
+# Arrêter et nettoyer les conteneurs
+docker compose -f compose.local.yml down
+```
+
+Services exposés :
+
+- Front (statique) : `http://localhost:4200`
+- API (NestJS) : `http://localhost:3000`
+
 ---
 
 ## Structure du monorepo
 
 ```text
-kraak-group/
+kraak-consulting/
 ├── apps/
 │   ├── api/           # Backend NestJS (port 3000)
 │   └── client/        # Workspace Angular
@@ -72,9 +123,15 @@ kraak-group/
 │           ├── web/   # Site web (PrimeNG + Tailwind)
 │           └── mobile/# App mobile (Ionic + Capacitor)
 ├── docs/
-│   ├── context/       # Briefs produit, guides de style, brouillons
-│   ├── runbooks/      # Guides opérationnels (env, GitHub Project…)
-│   └── specs/         # Spécifications produit et backlog
+│   ├── architecture/  # Architecture courante
+│   ├── decisions/     # ADRs
+│   ├── product/       # Périmètre et parcours produit
+│   ├── engineering/   # Développement, tests, contribution
+│   ├── operations/    # Environnements, release, incident
+│   ├── planning/      # Pilotage GitHub Project
+│   ├── reference/     # Supports utiles non autoritaires
+│   ├── generated/     # Artefacts générés
+│   └── archive/       # Historique uniquement
 ├── scripts/           # Scripts utilitaires
 ├── AGENTS.md          # Règles pour les assistants IA
 ├── ARCHITECTURE.md    # Décisions d'architecture validées
@@ -91,7 +148,7 @@ kraak-group/
 | Frontend mobile        | Ionic Angular 8 + Capacitor 7            |
 | Backend                | NestJS 11                                |
 | Base de données / Auth | Supabase (PostgreSQL, Auth, Storage)     |
-| Déploiement web        | Vercel                                   |
+| Déploiement web        | Render                                   |
 | Déploiement API        | Render (Docker)                          |
 
 Pour les détails, voir [`ARCHITECTURE.md`](ARCHITECTURE.md).
@@ -129,43 +186,62 @@ publique de contenu. Voir
 
 ## Statut de phase
 
-- Statut actuel: **vitrine publique close** (scope gele).
+- Statut actuel: **vitrine publique close** (scope gelé).
 - Prochaine phase: implementation et durcissement des **routes protegees**.
-- Regle de gouvernance: aucune nouvelle route publique sans decision ARC
+- Règle de gouvernance: aucune nouvelle route publique sans decision ARC
   explicite.
 
 ---
 
 ## Scripts disponibles
 
-| Commande                    | Description                                               |
-| --------------------------- | --------------------------------------------------------- |
-| `pnpm dev`                  | Lancer web, mobile et API avec ports auto pour web/mobile |
-| `pnpm clean`                | Nettoyer les artefacts générés dans tout le monorepo      |
-| `pnpm build`                | Builder tous les projets buildables                       |
-| `pnpm test`                 | Lancer tous les tests disponibles                         |
-| `pnpm test:workspace`       | Vérifier le workflow du runner de test racine             |
-| `pnpm dev:web`              | Lancer le site web en dev (port 4200 par défaut)          |
-| `pnpm dev:web:staging`      | Lancer le site web avec la configuration staging          |
-| `pnpm dev:api`              | Lancer l'API en dev (port 3000)                           |
-| `pnpm dev:api:staging`      | Lancer l'API avec la configuration staging                |
-| `pnpm dev:mobile`           | Lancer l'app mobile en dev (port 4300)                    |
-| `pnpm dev:mobile:staging`   | Lancer l'app mobile avec la configuration staging         |
-| `pnpm build:web`            | Builder le site web                                       |
-| `pnpm build:web:local`      | Builder le site web avec l'environnement local            |
-| `pnpm build:web:staging`    | Builder le site web avec l'environnement staging          |
-| `pnpm build:api`            | Builder l'API                                             |
-| `pnpm build:mobile`         | Builder l'app mobile                                      |
-| `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local           |
-| `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging         |
-| `pnpm test:api`             | Tests unitaires API                                       |
-| `pnpm typecheck`            | Vérifier le typage web, mobile et API                     |
-| `pnpm test:unit`            | Tests unitaires client                                    |
-| `pnpm test:e2e`             | Tests E2E (Playwright)                                    |
-| `pnpm lint`                 | Linter tous les projets                                   |
-| `pnpm format`               | Formater le code (Prettier)                               |
-| `pnpm format:check`         | Vérifier le formatage                                     |
-| `pnpm commit`               | Ouvrir le prompt interactif Commitizen                    |
+Pour dériver un document Markdown en PDF, PPTX éditable ou TXT de préparation
+audio : `pnpm docs:export --source README.md --format all`. Les prérequis, les
+sorties locales et les limites sont décrits dans le
+[guide des exports documentaires](docs/engineering/DOCUMENT_EXPORTS.md).
+
+| Commande                    | Description                                                    |
+| --------------------------- | -------------------------------------------------------------- |
+| `pnpm dev`                  | Lancer web, mobile et API avec ports auto pour web/mobile      |
+| `pnpm clean`                | Nettoyer les artefacts générés dans tout le monorepo           |
+| `pnpm build`                | Builder tous les projets buildables                            |
+| `pnpm test`                 | Lancer tous les tests disponibles                              |
+| `pnpm check`                | Contrôle qualité local/CI, couverture à 100 % par fichier      |
+| `pnpm check:full`           | Contrôle qualité, builds, E2E et SonarCloud bloquant           |
+| `pnpm coverage`             | Mesurer et contrôler la couverture de toutes les surfaces      |
+| `pnpm test:workspace`       | Vérifier le workflow du runner de test racine                  |
+| `pnpm dev:web`              | Lancer le site web en dev (port 4200 par défaut)               |
+| `pnpm dev:web:staging`      | Lancer le site web avec la configuration staging               |
+| `pnpm dev:api`              | Lancer l'API en dev (port 3000)                                |
+| `pnpm dev:api:staging`      | Lancer l'API avec la configuration staging                     |
+| `pnpm dev:mobile`           | Lancer l'app mobile en dev (port 4300)                         |
+| `pnpm dev:mobile:staging`   | Lancer l'app mobile avec la configuration staging              |
+| `pnpm build:web`            | Builder le site web                                            |
+| `pnpm build:web:local`      | Builder le site web avec l'environnement local                 |
+| `pnpm build:web:staging`    | Builder le site web avec l'environnement staging               |
+| `pnpm build:api`            | Builder l'API                                                  |
+| `pnpm build:mobile`         | Builder l'app mobile                                           |
+| `pnpm build:mobile:local`   | Builder l'app mobile avec l'environnement local                |
+| `pnpm build:mobile:staging` | Builder l'app mobile avec l'environnement staging              |
+| `pnpm test:api`             | Tests unitaires API                                            |
+| `pnpm test:api:unit`        | Tests unitaires API hors intégration                           |
+| `pnpm test:integration`     | Tests d'intégration API                                        |
+| `pnpm splinter:local`       | Lancer Splinter (Supabase Advisors) sur la DB locale           |
+| `pnpm splinter:linked`      | Lancer Splinter (Supabase Advisors) sur le projet lié          |
+| `pnpm splinter:sec`         | Lancer les checks sécurité Splinter sur le projet lié          |
+| `pnpm splinter:perf`        | Lancer les checks performance Splinter sur le projet lié       |
+| `pnpm sonar`                | Lancer l'analyse SonarCloud locale avec `.env.local`           |
+| `pnpm typecheck`            | Vérifier le typage des packages, du web, du mobile et de l'API |
+| `pnpm test:unit`            | Tests unitaires client                                         |
+| `pnpm test:e2e`             | Tests E2E (Playwright)                                         |
+| `pnpm lint`                 | Linter le code, l'outillage racine et le Markdown              |
+| `pnpm lint:root`            | Linter les scripts et configurations racine                    |
+| `pnpm lint:markdown`        | Linter tous les fichiers Markdown                              |
+| `pnpm format`               | Formater le code (Prettier)                                    |
+| `pnpm format:check`         | Vérifier le formatage                                          |
+| `pnpm docs:toc:check`       | Vérifier les tables des matières Markdown                      |
+| `pnpm docs:toc:write`       | Ajouter ou régénérer les tables des matières Markdown          |
+| `pnpm commit`               | Ouvrir le prompt interactif Commitizen                         |
 
 ---
 
@@ -175,10 +251,10 @@ Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) pour le workflow complet (branches, co
 
 **Résumé rapide :**
 
-1. Créer une branche depuis `main` : `git checkout -b feat/ma-feature`
+1. Créer une branche depuis `staging` : `git switch -c feat/ma-feature`
 2. Implémenter + tester
 3. Commiter avec un message [Conventional Commits](https://www.conventionalcommits.org/) via `pnpm commit` ou en respectant le format `feat(web): ajouter le formulaire de contact`
-4. Pousser et ouvrir une PR
+4. Pousser et ouvrir une PR vers `staging`
 
 Règle documentaire : toute évolution du codebase qui rend la documentation
 inexacte doit inclure la mise à jour des fichiers `.md` concernés dans le même
@@ -190,18 +266,38 @@ changement.
 
 ### Validation API
 
-- [`docs/runbooks/CLI_TOOLS.md`](docs/runbooks/CLI_TOOLS.md) — commandes de validation API et de régression
-- [`docs/runbooks/NIGHTLY_REGRESSION.md`](docs/runbooks/NIGHTLY_REGRESSION.md) — workflow nocturne de régression stricte
+- [`docs/README.md`](docs/README.md) — carte documentaire et règle de précédence
+- [`docs/operations/CLI_TOOLS.md`](docs/operations/CLI_TOOLS.md) — commandes de validation API et de régression
+- [`docs/operations/NIGHTLY_REGRESSION.md`](docs/operations/NIGHTLY_REGRESSION.md) — workflow nocturne de régression stricte
 
-| Document                                                                                             | Contenu                                            |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                                 | Workflow Git, conventions de commits, hooks, PR    |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md)                                                                 | Décisions d'architecture validées                  |
-| [`AGENTS.md`](AGENTS.md)                                                                             | Règles de fonctionnement pour les assistants IA    |
-| [`docs/runbooks/ENVIRONMENT_VARIABLES.md`](docs/runbooks/ENVIRONMENT_VARIABLES.md)                   | Variables d'environnement                          |
-| [`docs/runbooks/SUPABASE_AUTH_SETUP.md`](docs/runbooks/SUPABASE_AUTH_SETUP.md)                       | Configuration Auth Supabase du MVP                 |
-| [`docs/runbooks/DEV_MODE.md`](docs/runbooks/DEV_MODE.md)                                             | Guide détaillé du mode développement               |
-| [`docs/runbooks/TECH_OVERVIEW.md`](docs/runbooks/TECH_OVERVIEW.md)                                   | Vue d'ensemble de la stack pour débutants          |
-| [`docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md`](docs/runbooks/OFFICIAL_DOCUMENTATION_SOURCES.md) | Sources officielles des documentations de la stack |
-| [`docs/runbooks/GITHUB_PROJECT_BOARD.md`](docs/runbooks/GITHUB_PROJECT_BOARD.md)                     | Pilotage du board GitHub Project                   |
-| [`docs/specs/erd_mvp.md`](docs/specs/erd_mvp.md)                                                     | ERD complet commenté du modèle de données MVP      |
+| Document                                                                                 | Contenu                                            |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [`docs/engineering/CONTRIBUTION_WORKFLOW.md`](docs/engineering/CONTRIBUTION_WORKFLOW.md) | Workflow Git, conventions de commits, hooks, PR    |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)                                                     | Décisions d'architecture validées                  |
+| [`AGENTS.md`](AGENTS.md)                                                                 | Règles de fonctionnement pour les assistants IA    |
+| [`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md)                     | Variables d'environnement                          |
+| [`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md)                   | Configuration Auth Supabase du MVP                 |
+| [`docs/engineering/LOCAL_DEVELOPMENT.md`](docs/engineering/LOCAL_DEVELOPMENT.md)         | Guide détaillé du mode développement               |
+| [`docs/architecture/OVERVIEW.md`](docs/architecture/OVERVIEW.md)                         | Vue d'ensemble de la stack pour débutants          |
+| [`docs/reference/OFFICIAL_SOURCES.md`](docs/reference/OFFICIAL_SOURCES.md)               | Sources officielles des documentations de la stack |
+| [`docs/planning/GITHUB_PROJECT.md`](docs/planning/GITHUB_PROJECT.md)                     | Pilotage du board GitHub Project                   |
+| [`docs/architecture/DATA_MODEL.md`](docs/architecture/DATA_MODEL.md)                     | Modèle de données MVP courant                      |
+
+## État courant du dépôt
+
+- Dépôt GitHub : `Ange230700/kraak-consulting`
+- Branche par défaut : `staging`
+- Branche d'intégration : `staging`
+- Branche de release : `main`
+- Les branches courtes (`feat/*`, `fix/*`, `docs/*`, etc.) partent de `staging` et reviennent vers `staging` par PR.
+- La production part de `main` uniquement après PR de release `staging → main` et tag SemVer.
+
+> Le dépôt GitHub et le package npm/workspace racine utilisent le nom `kraak-consulting`.
+
+| Surface           | Cible active                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Web staging       | Render static site `kraak-web-staging`                                                                                        |
+| API staging       | Render Docker service `kraak-api-staging`                                                                                     |
+| Web production    | Release contrôlée ; vérifier [`docs/operations/RELEASE_PROD.md`](docs/operations/RELEASE_PROD.md) pour la cible active Render |
+| API production    | Render Docker service `kraak-api-prod`                                                                                        |
+| Base/Auth/Storage | Supabase par environnement                                                                                                    |

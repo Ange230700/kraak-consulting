@@ -1,7 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileAuthService } from './mobile-auth.service';
 import PasswordResetPage from './password-reset.page';
 
@@ -11,11 +12,13 @@ describe('Mobile PasswordResetPage', () => {
   };
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     authService.requestPasswordReset.mockReset();
     authService.requestPasswordReset.mockResolvedValue({
       success: true,
       message:
-        'Si cette adresse existe, un email de r\u00E9initialisation vient d\u2019\u00EAtre envoy\u00E9.',
+        'Si cette adresse existe, un email de réinitialisation vient d\u2019être envoyé.',
     });
 
     await TestBed.configureTestingModule({
@@ -23,9 +26,12 @@ describe('Mobile PasswordResetPage', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         provideRouter([]),
+        provideKraakI18n(),
         { provide: MobileAuthService, useValue: authService },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('should create', () => {
@@ -39,8 +45,17 @@ describe('Mobile PasswordResetPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('form')).toBeTruthy();
-    expect(element.textContent).toContain('R\u00E9initialiser');
-    expect(element.textContent).toContain('Retour \u00E0 la connexion');
+    expect(element.textContent).toContain('Réinitialiser');
+    expect(element.textContent).toContain('Retour à la connexion');
+  });
+
+  it('Given a reset submission in progress, when the page renders, then the loading button label is shown', () => {
+    const fixture = TestBed.createComponent(PasswordResetPage);
+    fixture.componentInstance.submitting.set(true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Envoi en cours...');
   });
 
   it('Given a valid email, when the form is submitted, then the auth service is called and the acknowledgement is shown', async () => {
@@ -56,7 +71,7 @@ describe('Mobile PasswordResetPage', () => {
       redirectTo: 'kraak://auth/reset',
     });
     expect(fixture.componentInstance.successMessage()).toContain(
-      'email de r\u00E9initialisation',
+      'email de réinitialisation',
     );
   });
 
@@ -95,6 +110,24 @@ describe('Mobile PasswordResetPage', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.textContent).toContain('email de r\u00E9initialisation');
+    expect(element.textContent).toContain('email de réinitialisation');
+  });
+
+  it('Given English is selected, when password reset renders, then the recovery chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(PasswordResetPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('Security');
+    expect(text).toContain('Reset your password');
+    expect(text).toContain('Email address');
+    expect(text).toContain('Back to sign in');
   });
 });

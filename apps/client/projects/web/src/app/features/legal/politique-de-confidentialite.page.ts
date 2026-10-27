@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { KraakTranslatePipe } from '../../../../../shared/i18n';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
 import {
   CONTACT_EMAIL,
@@ -11,7 +12,7 @@ import { PublicConversionTrackingDirective } from '../../shared/analytics/public
 @Component({
   selector: 'kraak-politique-de-confidentialite-page',
   standalone: true,
-  imports: [CtaBanner, PublicConversionTrackingDirective],
+  imports: [CtaBanner, PublicConversionTrackingDirective, KraakTranslatePipe],
   templateUrl: './politique-de-confidentialite.page.html',
 })
 export default class PolitiqueDeConfidentialitePage {

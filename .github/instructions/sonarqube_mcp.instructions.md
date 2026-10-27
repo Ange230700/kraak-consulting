@@ -6,6 +6,19 @@ These are some guidelines when using the SonarQube MCP server.
 
 # Important Tool Guidelines
 
+## Table des matières
+
+- [Important Tool Guidelines](#important-tool-guidelines)
+  - [Basic usage](#basic-usage)
+  - [Project Keys](#project-keys)
+  - [Code Language Detection](#code-language-detection)
+  - [Branch and Pull Request Context](#branch-and-pull-request-context)
+  - [Code Issues and Violations](#code-issues-and-violations)
+- [Common Troubleshooting](#common-troubleshooting)
+  - [Authentication Issues](#authentication-issues)
+  - [Project Not Found](#project-not-found)
+  - [Code Analysis Issues](#code-analysis-issues)
+
 ## Basic usage
 
 - **IMPORTANT**: At the start of a task, disable automatic analysis with toggle_automatic_analysis if the tool exists.

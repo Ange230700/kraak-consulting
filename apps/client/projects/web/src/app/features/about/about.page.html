@@ -1,98 +1,148 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
-  [ngStyle]="heroBackgroundStyle"
->
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
   <div
-    aria-hidden="true"
-    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
-  ></div>
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-36 -right-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-24 h-96 w-96 rounded-full blur-3xl"
+    ></span>
 
-  <div class="relative z-10 mx-auto max-w-4xl px-4 lg:px-6">
-    <h1 class="text-brand-white text-4xl leading-tight font-bold lg:text-5xl">
-      Une structure engag&eacute;e pour le capital humain et les trajectoires
-      durables.
-    </h1>
-    <p class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg">
-      KRAAK Consulting renforce les capacit&eacute;s des jeunes, accompagne les
-      organisations et construit des passerelles utiles entre potentiel,
-      opportunit&eacute;s et impact durable en C&ocirc;te d'Ivoire et &agrave;
-      l'international.
-    </p>
-  </div>
-</section>
+    <div
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(24rem,1.08fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
+    >
+      <div class="min-w-0">
+        <span
+          class="inline-flex h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          {{ 'web.about.hero.eyebrow' | kraakTranslate }}
+        </span>
 
-<section class="bg-brand-white py-10">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="grid gap-6 md:grid-cols-2">
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.about.hero.titlePrefix' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.about.hero.titleEmphasis' | kraakTranslate
+          }}</span>
+          {{ 'web.about.hero.titleSuffix' | kraakTranslate }}
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.about.hero.description' | kraakTranslate }}
+        </p>
+      </div>
+
       <figure
-        class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[34rem]"
       >
         <img
-          src="/assets/site-visuals/photos/about-community-impact.avif"
-          alt="Intervention collective devant un groupe dans un cadre d'impact communautaire"
-          loading="lazy"
-          class="h-56 w-full object-cover"
+          src="/assets/site-visuals/photos/about-hero-community-dialogue.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
         />
-      </figure>
-      <figure
-        class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
-      >
-        <img
-          src="/assets/site-visuals/photos/about-team-workshop.avif"
-          alt="Groupe réuni dans une salle de travail pour un atelier collectif"
-          loading="lazy"
-          class="h-56 w-full object-cover"
-        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.02)_35%,rgba(18,43,74,0.40)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/20 px-4 py-3 shadow-[0_2px_5px_rgba(255,255,255,0.04)_inset] backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.14em] text-white/82 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
       </figure>
     </div>
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
+<section class="bg-brand-white py-16" kraakRevealOnScroll [revealDelayMs]="40">
   <div class="mx-auto max-w-6xl px-4 lg:px-6">
     <div class="grid gap-8 md:grid-cols-3">
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article class="rounded-card bg-neutral-50 p-6" kraakRevealOnScroll>
         <i
           class="pi pi-graduation-cap text-brand-navy-soft text-3xl"
           aria-hidden="true"
         ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          D&eacute;veloppement des comp&eacute;tences
+        <h2 class="mt-4 text-xl font-semibold">
+          {{ 'web.about.focusAreas.skillsDevelopment.title' | kraakTranslate }}
         </h2>
         <p class="mt-3 text-neutral-700">
-          Des formations utiles pour gagner en clart&eacute;, en confiance et en
-          comp&eacute;titivit&eacute; professionnelle.
+          {{
+            'web.about.focusAreas.skillsDevelopment.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="60"
+        [revealDelayMobileMs]="25"
+      >
         <i
           class="pi pi-sitemap text-brand-navy-soft text-3xl"
           aria-hidden="true"
         ></i>
-        <h2 class="mt-4 text-xl font-bold">Structuration des projets</h2>
+        <h2 class="mt-4 text-xl font-semibold">
+          {{ 'web.about.focusAreas.projectStructuring.title' | kraakTranslate }}
+        </h2>
         <p class="mt-3 text-neutral-700">
-          Une m&eacute;thode pour transformer les intentions en initiatives
-          lisibles, suivies et capables de produire des r&eacute;sultats.
+          {{
+            'web.about.focusAreas.projectStructuring.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-6">
+      <article
+        class="rounded-card bg-neutral-50 p-6"
+        kraakRevealOnScroll
+        [revealDelayMs]="120"
+        [revealDelayMobileMs]="50"
+      >
         <i
           class="pi pi-globe text-brand-navy-soft text-3xl"
           aria-hidden="true"
         ></i>
-        <h2 class="mt-4 text-xl font-bold">
-          Acc&egrave;s aux opportunit&eacute;s internationales
+        <h2 class="mt-4 text-xl font-semibold">
+          {{
+            'web.about.focusAreas.internationalOpportunities.title'
+              | kraakTranslate
+          }}
         </h2>
         <p class="mt-3 text-neutral-700">
-          Un accompagnement fiable pour aborder les &eacute;tudes, le travail et
-          la mobilit&eacute; avec une strat&eacute;gie coh&eacute;rente.
+          {{
+            'web.about.focusAreas.internationalOpportunities.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="relative overflow-hidden bg-neutral-50 py-16">
+<section
+  class="relative overflow-hidden bg-neutral-50 py-16"
+  kraakRevealOnScroll
+  [revealDelayMs]="60"
+>
   <div
     class="from-secondary/10 absolute inset-x-0 top-0 h-24 bg-linear-to-b to-transparent"
   ></div>
@@ -101,20 +151,20 @@
       <p
         class="text-brand-navy-soft text-sm font-semibold tracking-[0.2em] uppercase"
       >
-        Notre cap
+        {{ 'web.about.direction.eyebrow' | kraakTranslate }}
       </p>
-      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Une mission claire, une vision utile.
+      <h2 class="mt-3 text-3xl font-semibold lg:text-4xl">
+        {{ 'web.about.direction.title' | kraakTranslate }}
       </h2>
       <p class="mt-4 text-lg text-neutral-700">
-        Ces rep&egrave;res donnent une direction lisible &agrave; nos
-        accompagnements et &agrave; nos partenariats.
+        {{ 'web.about.direction.description' | kraakTranslate }}
       </p>
     </div>
 
     <div class="mt-12 grid gap-6 lg:grid-cols-2">
       <article
-        class="relative overflow-hidden rounded-4xl border border-white bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
+        data-motion="reversible"
+        class="gsap-reversible-on-scroll relative overflow-hidden rounded-4xl border border-white bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
       >
         <div
           class="bg-primary/10 absolute -top-8 -right-8 h-32 w-32 rounded-full blur-2xl"
@@ -124,19 +174,13 @@
             class="bg-primary/10 text-primary inline-flex items-center gap-3 rounded-full px-4 py-2 text-sm font-semibold"
           >
             <i class="pi pi-compass" aria-hidden="true"></i>
-            Mission
+            {{ 'web.about.direction.mission.label' | kraakTranslate }}
           </div>
-          <h3 class="text-brand-navy mt-5 text-2xl font-bold lg:text-3xl">
-            R&eacute;v&eacute;ler, former et accompagner les jeunes dans leur
-            transformation.
+          <h3 class="text-brand-navy mt-5 text-2xl font-semibold lg:text-3xl">
+            {{ 'web.about.direction.mission.title' | kraakTranslate }}
           </h3>
           <p class="mt-4 text-lg text-neutral-700">
-            KRAAK Consulting a pour mission de r&eacute;v&eacute;ler le
-            potentiel des jeunes, de d&eacute;velopper des comp&eacute;tences
-            techniques et interpersonnelles solides, de faciliter leur
-            int&eacute;gration dans des environnements exigeants et de soutenir
-            la cr&eacute;ation de valeur durable pour eux-m&ecirc;mes, leurs
-            communaut&eacute;s et les g&eacute;n&eacute;rations futures.
+            {{ 'web.about.direction.mission.description' | kraakTranslate }}
           </p>
 
           <div class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -144,7 +188,9 @@
               <p
                 class="text-brand-navy-soft text-xs font-semibold tracking-[0.18em] uppercase"
               >
-                Ce que nous activons
+                {{
+                  'web.about.direction.mission.activationLabel' | kraakTranslate
+                }}
               </p>
               <ul class="mt-3 space-y-2 text-sm text-neutral-700">
                 <li class="flex gap-3">
@@ -152,14 +198,20 @@
                     class="pi pi-check text-primary mt-0.5"
                     aria-hidden="true"
                   ></i>
-                  <span>D&eacute;couverte et affirmation du potentiel</span>
+                  <span>{{
+                    'web.about.direction.mission.activationItems.potential'
+                      | kraakTranslate
+                  }}</span>
                 </li>
                 <li class="flex gap-3">
                   <i
                     class="pi pi-check text-primary mt-0.5"
                     aria-hidden="true"
                   ></i>
-                  <span>Comp&eacute;tences solides et utiles</span>
+                  <span>{{
+                    'web.about.direction.mission.activationItems.skills'
+                      | kraakTranslate
+                  }}</span>
                 </li>
               </ul>
             </div>
@@ -168,11 +220,15 @@
               <p
                 class="text-brand-navy-soft text-xs font-semibold tracking-[0.18em] uppercase"
               >
-                R&eacute;sultat attendu
+                {{
+                  'web.about.direction.mission.outcomeLabel' | kraakTranslate
+                }}
               </p>
               <p class="mt-3 text-sm text-neutral-700">
-                Des trajectoires plus lisibles, plus confiantes et plus durables
-                pour les jeunes que nous accompagnons.
+                {{
+                  'web.about.direction.mission.outcomeDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
           </div>
@@ -180,7 +236,8 @@
       </article>
 
       <article
-        class="border-secondary/10 bg-brand-navy relative overflow-hidden rounded-4xl border p-8 text-white shadow-[0_20px_60px_rgba(15,23,42,0.12)]"
+        data-motion="reversible"
+        class="gsap-reversible-on-scroll border-secondary/10 bg-brand-navy relative overflow-hidden rounded-4xl border p-8 text-white shadow-[0_20px_60px_rgba(15,23,42,0.12)]"
       >
         <div
           class="bg-secondary/20 absolute top-6 -left-10 h-36 w-36 rounded-full blur-3xl"
@@ -190,20 +247,13 @@
             class="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90"
           >
             <i class="pi pi-eye" aria-hidden="true"></i>
-            Vision
+            {{ 'web.about.direction.vision.label' | kraakTranslate }}
           </div>
-          <h3 class="mt-5 text-2xl font-bold text-white lg:text-3xl">
-            Un acteur de r&eacute;f&eacute;rence pour les jeunes professionnels
-            africains.
+          <h3 class="mt-5 text-2xl font-semibold text-white lg:text-3xl">
+            {{ 'web.about.direction.vision.title' | kraakTranslate }}
           </h3>
           <p class="mt-4 text-lg text-white/80">
-            KRAAK Consulting se projette comme un acteur de
-            r&eacute;f&eacute;rence dans la formation et l'accompagnement des
-            jeunes professionnels africains, capable de faire &eacute;merger une
-            g&eacute;n&eacute;ration consciente de sa valeur, pr&ecirc;te
-            &agrave; exercer un leadership utile et &agrave; contribuer &agrave;
-            une soci&eacute;t&eacute; plus juste, plus inclusive et plus ouverte
-            aux opportunit&eacute;s.
+            {{ 'web.about.direction.vision.description' | kraakTranslate }}
           </p>
 
           <div
@@ -213,11 +263,15 @@
               <p
                 class="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase"
               >
-                Ambition
+                {{
+                  'web.about.direction.vision.ambitionLabel' | kraakTranslate
+                }}
               </p>
               <p class="mt-3 text-sm text-white/80">
-                Former des leaders conscients de leur valeur et utiles &agrave;
-                leur environnement.
+                {{
+                  'web.about.direction.vision.ambitionDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
 
@@ -225,11 +279,13 @@
               <p
                 class="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase"
               >
-                Impact
+                {{ 'web.about.direction.vision.impactLabel' | kraakTranslate }}
               </p>
               <p class="mt-3 text-sm text-white/80">
-                Contribuer &agrave; une soci&eacute;t&eacute; plus inclusive et
-                porteuse d'opportunit&eacute;s durables.
+                {{
+                  'web.about.direction.vision.impactDescription'
+                    | kraakTranslate
+                }}
               </p>
             </div>
           </div>
@@ -239,144 +295,197 @@
   </div>
 </section>
 
-<section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <div class="mx-auto max-w-3xl text-center">
-      <p
-        class="text-brand-navy-soft text-sm font-semibold tracking-[0.2em] uppercase"
+<section
+  class="kr-perf-section bg-brand-white px-4 py-16 sm:px-6 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="80"
+>
+  <div
+    class="mx-auto max-w-6xl rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <div class="max-w-3xl">
+      <h2
+        class="text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
       >
-        L'&eacute;quipe KRAAK
-      </p>
-      <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
-        Une &eacute;quipe de jeunes professionnels au service du capital humain.
+        {{ 'web.about.values.title' | kraakTranslate }}
       </h2>
-      <p class="mt-4 text-lg text-neutral-700">
-        KRAAK ne pr&eacute;sente pas ici une galerie g&eacute;n&eacute;rique :
-        nous rassemblons des jeunes professionnels qui mettent leurs expertises,
-        leurs exp&eacute;riences internationales et leur engagement citoyen au
-        service de la jeunesse ivoirienne et des organisations qui veulent mieux
-        accompagner les trajectoires.
-      </p>
     </div>
 
-    <div class="mt-10 grid gap-6 md:grid-cols-2">
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Engagement citoyen
+    <div class="mt-12 grid gap-x-10 gap-y-10 lg:grid-cols-2">
+      <article
+        kraakRevealOnScroll
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{ 'web.about.values.items.humanism.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3">
-          Notre organisation est port&eacute;e par une volont&eacute; simple :
-          contribuer durablement au d&eacute;veloppement du capital humain
-          ivoirien et &agrave; l'insertion socioprofessionnelle des jeunes.
-        </p>
-      </article>
-
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Exp&eacute;rience internationale
-        </p>
-        <p class="text-brand-navy mt-3">
-          Les interventions de l'&eacute;quipe s'appuient sur des missions
-          men&eacute;es au Canada, aux &Eacute;tats-Unis, en Espagne, en France,
-          en Colombie, &agrave; Cuba, au Ghana, au Cameroun, au Togo et en
-          C&ocirc;te d'Ivoire.
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{ 'web.about.values.items.humanism.description' | kraakTranslate }}
         </p>
       </article>
 
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Ancrage local
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="50"
+        [revealDelayMobileMs]="20"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{
+            'web.about.values.items.personalResponsibility.title'
+              | kraakTranslate
+          }}
         </p>
-        <p class="text-brand-navy mt-3">
-          Nous partons des r&eacute;alit&eacute;s ivoiriennes : besoins
-          d'employabilit&eacute;, acc&egrave;s &agrave; l'information,
-          orientation, structuration de projets et liens utiles avec les
-          organisations.
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{
+            'web.about.values.items.personalResponsibility.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
 
-      <article class="rounded-card bg-neutral-50 p-6">
-        <p class="text-primary text-sm font-semibold uppercase">
-          Posture de partenariat
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="100"
+        [revealDelayMobileMs]="40"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{
+            'web.about.values.items.servantLeadership.title' | kraakTranslate
+          }}
         </p>
-        <p class="text-brand-navy mt-3">
-          KRAAK se tient &agrave; la disposition des institutions,
-          &eacute;coles, entreprises, associations et structures
-          socio&eacute;ducatives qui cherchent un partenariat structurant et
-          &agrave; fort impact.
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{
+            'web.about.values.items.servantLeadership.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
-    </div>
-  </div>
-</section>
 
-<section class="bg-brand-white py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">Nos valeurs</h2>
-    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">Humanisme</p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous d&eacute;fendons le respect de chaque individu, la dignit&eacute;
-          humaine et l'inclusion, sans discrimination.
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="150"
+        [revealDelayMobileMs]="60"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{ 'web.about.values.items.solidarity.title' | kraakTranslate }}
+        </p>
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{ 'web.about.values.items.solidarity.description' | kraakTranslate }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
-          Responsabilit&eacute; personnelle
+
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="200"
+        [revealDelayMobileMs]="80"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{ 'web.about.values.items.resilience.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous encourageons chacun &agrave; prendre en main son
-          d&eacute;veloppement, ses choix et son avenir.
-        </p>
-      </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
-          Leadership par le service
-        </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous formons des leaders qui s'&eacute;l&egrave;vent,
-          &eacute;l&egrave;vent les autres et cr&eacute;ent un impact positif.
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{ 'web.about.values.items.resilience.description' | kraakTranslate }}
         </p>
       </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
-          Solidarit&eacute; et esprit collectif
+
+      <article
+        kraakRevealOnScroll
+        [revealDelayMs]="250"
+        [revealDelayMobileMs]="100"
+        class="group before:bg-brand-cyan relative border-t border-slate-200 pt-6 before:absolute before:top-[-1px] before:left-0 before:h-px before:w-12 before:transition-[width] before:duration-300 motion-safe:hover:before:w-24"
+      >
+        <p class="text-brand-navy text-xl leading-7 font-semibold">
+          {{ 'web.about.values.items.globalConnection.title' | kraakTranslate }}
         </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous croyons &agrave; la force du collectif, de la collaboration et de
-          l'entraide.
-        </p>
-      </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
-          R&eacute;silience et courage
-        </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous pr&eacute;parons les jeunes et les organisations &agrave;
-          affronter les d&eacute;fis, d&eacute;passer les barri&egrave;res et
-          progresser.
-        </p>
-      </article>
-      <article class="rounded-card bg-neutral-50 p-5">
-        <p class="text-primary text-center text-lg font-bold">
-          Ouverture et connexion globale
-        </p>
-        <p class="text-brand-navy mt-3 text-sm">
-          Nous favorisons les &eacute;changes interculturels, l'apprentissage
-          continu et les comp&eacute;tences transf&eacute;rables.
+        <p
+          class="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7"
+        >
+          {{
+            'web.about.values.items.globalConnection.description'
+              | kraakTranslate
+          }}
         </p>
       </article>
     </div>
   </div>
 </section>
 
-<kraak-about-preview-sections />
+<section
+  class="bg-brand-white relative overflow-hidden py-16"
+  kraakRevealOnScroll
+  [revealDelayMs]="100"
+>
+  <div class="mx-auto max-w-5xl px-4 lg:px-6">
+    <article
+      class="relative flex flex-col items-center gap-8 rounded-[3rem] border border-neutral-200 bg-neutral-50 p-8 md:flex-row md:items-stretch md:gap-10 md:p-12"
+      [attr.aria-label]="'web.about.quote.ariaLabel' | kraakTranslate"
+      kraakRevealOnScroll
+      [revealDelayMs]="80"
+      [revealDelayMobileMs]="30"
+    >
+      <div class="w-full md:max-w-[36%] md:flex-1">
+        <img
+          src="/assets/site-visuals/photos/about-ceo-mr-aka.png"
+          [alt]="'web.about.quote.portraitAlt' | kraakTranslate"
+          class="h-56 w-full rounded-3xl object-cover object-[52%_18%] sm:h-64 md:h-full md:min-h-[280px] md:object-[50%_30%] lg:object-[50%_26%]"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <div class="w-full md:flex-[1.2]">
+        <div
+          class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm"
+        >
+          <img
+            src="/kraak-symbol.png"
+            [alt]="'web.about.quote.symbolAlt' | kraakTranslate"
+            width="30"
+            height="30"
+            loading="lazy"
+            decoding="async"
+            class="h-7 w-7"
+          />
+        </div>
+
+        <blockquote
+          class="mt-5 max-w-[40ch] text-lg leading-relaxed text-neutral-700 italic sm:text-xl"
+        >
+          {{ 'web.about.quote.text' | kraakTranslate }}
+        </blockquote>
+
+        <div class="mt-6 border-t border-neutral-200 pt-4">
+          <p class="text-brand-navy text-base font-bold tracking-tight">
+            {{ 'web.about.quote.author' | kraakTranslate }}
+          </p>
+          <p
+            class="text-brand-navy-soft mt-1 text-xs font-semibold tracking-[0.12em] uppercase"
+          >
+            {{ 'web.about.quote.role' | kraakTranslate }}
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
 
 <kraak-cta-banner
-  heading="Vous partagez cette ambition ?"
-  body="D&eacute;couvrons ensemble comment KRAAK peut contribuer &agrave; votre trajectoire ou &agrave; votre organisation."
-  ctaLabel="Nous contacter"
+  [heading]="'web.about.closing.title' | kraakTranslate"
+  [body]="'web.about.closing.description' | kraakTranslate"
+  [ctaLabel]="'web.about.closing.cta' | kraakTranslate"
   ctaLink="/contact"
   ctaContext="about_main_cta"
 />

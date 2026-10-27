@@ -11,6 +11,7 @@ import {
 } from '../auth/mobile-auth.service';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 
+import { KraakI18nService } from '../../../../../shared/i18n';
 @Component({
   selector: 'kraak-announcement-list-page',
   standalone: true,
@@ -21,7 +22,9 @@ export default class AnnouncementListPage implements OnInit {
   private readonly authService = inject(MobileAuthService);
   private latestLoadRequestId = 0;
 
+  private readonly i18n = inject(KraakI18nService);
   private readonly announcementsClient = createApiClient({
+    getLocale: () => this.i18n.locale(),
     baseUrl: environment.apiBaseUrl,
     getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
   }).announcements;

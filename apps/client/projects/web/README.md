@@ -1,4 +1,20 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # KRAAK — Site web (`projects/web`)
+
+## Table des matières
+
+- [KRAAK — Site web (projects/web)](#kraak-site-web-projectsweb)
+  - [Stack](#stack)
+  - [Icônes](#icones)
+    - [Exemples de mapping courants](#exemples-de-mapping-courants)
+  - [Lancer le projet](#lancer-le-projet)
+  - [Build de production](#build-de-production)
 
 Projet Angular standalone constituant le site vitrine de KRAAK.
 

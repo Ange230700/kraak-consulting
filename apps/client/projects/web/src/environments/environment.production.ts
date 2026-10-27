@@ -1,22 +1,22 @@
-const defaultSiteUrl = 'https://kraak-consulting.vercel.app';
+import { resolveRuntimeClientConfig } from '../../../shared/runtime-client-config';
+
 const runtimeGlobals = globalThis as typeof globalThis & {
   process?: {
     env?: Record<string, string | undefined>;
   };
 };
-const runtimeSiteUrl = runtimeGlobals.process?.env?.['PUBLIC_SITE_URL']
-  ? runtimeGlobals.process.env['PUBLIC_SITE_URL']
-  : defaultSiteUrl;
+
+const runtimeClientConfig = resolveRuntimeClientConfig();
 const runtimeGa4Id =
   runtimeGlobals.process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 
 export const environment = {
   production: true,
-  enableParticipantArea: false,
-  siteUrl: runtimeSiteUrl,
-  apiBaseUrl: 'https://kraak-api-prod.onrender.com',
-  supabaseUrl: 'https://pwuivkqnmjpxxpppmnvu.supabase.co',
-  supabasePublishableKey: 'sb_publishable_GucCTbOp6G0qJYbblIXPAQ_HztMaJ-r',
+  enableParticipantArea: true,
+  siteUrl: runtimeClientConfig.siteUrl,
+  apiBaseUrl: runtimeClientConfig.apiBaseUrl,
+  supabaseUrl: runtimeClientConfig.supabaseUrl,
+  supabasePublishableKey: runtimeClientConfig.supabasePublishableKey,
   ga4Id: runtimeGa4Id,
   tfjsBackend: 'wasm' as const,
 };

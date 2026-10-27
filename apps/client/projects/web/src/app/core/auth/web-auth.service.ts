@@ -1,17 +1,17 @@
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import {
-  computed,
-  Injectable,
-  inject,
-  PLATFORM_ID,
-  signal,
-} from '@angular/core';
-import { createApiClient } from '@kraak/api-client';
+  clearAuthBundle,
+  createApiClient,
+  createAuthSessionActions,
+  createAuthSessionState,
+  persistAuthBundle,
+  readStoredAuthBundle,
+  storeAuthBundle,
+} from '@kraak/api-client';
 import type {
-  AuthProfileDto,
   AuthSessionBundleDto,
   AuthSessionContextDto,
-  AuthSessionTokensDto,
   PasswordResetRequestDto,
   PasswordResetResponseDto,
   SignInRequestDto,
@@ -22,7 +22,30 @@ import type {
 import { environment } from '../../../environments/environment';
 import { resolveApiBaseUrl } from '../runtime/runtime-config';
 
+import { KraakI18nService } from '../../../../../shared/i18n';
 export const WEB_AUTH_STORAGE_KEY = 'kraak.web.session';
+
+export interface PasswordRecoveryCompletionRequest {
+  accessToken: string;
+  newPassword: string;
+}
+
+export interface PasswordRecoveryCompletionResponse {
+  success: boolean;
+  message: string;
+}
+
+interface SupabaseVerifyRecoveryResponse {
+  access_token?: string;
+  refresh_token?: string;
+  token_type?: string;
+}
+
+interface SupabasePasswordUpdateErrorResponse {
+  msg?: string;
+  error_description?: string;
+  message?: string;
+}
 
 export { ApiError } from '@kraak/api-client';
 
@@ -32,138 +55,162 @@ export { ApiError } from '@kraak/api-client';
 export class WebAuthService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly restoredBundle = this.readStoredBundle();
+  private readonly authState = createAuthSessionState(this.restoredBundle);
+  private readonly i18n = inject(KraakI18nService);
   private readonly client = createApiClient({
+    getLocale: () => this.i18n.locale(),
     baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
     getAuthToken: () => this.currentSession()?.accessToken ?? null,
   });
-  private readonly sessionState = signal<AuthSessionTokensDto | null>(
-    this.restoredBundle?.session ?? null,
-  );
-  private readonly profileState = signal<AuthProfileDto | null>(
-    this.restoredBundle?.profile ?? null,
-  );
+  private readonly sessionState = this.authState.sessionState;
+  private readonly profileState = this.authState.profileState;
 
-  readonly currentSession = this.sessionState.asReadonly();
-  readonly currentProfile = this.profileState.asReadonly();
-  readonly currentRole = computed<UserRoleValue | null>(
-    () => this.currentProfile()?.appUser.role ?? null,
-  );
-  readonly isAuthenticated = computed(
-    () => this.currentSession() !== null && this.currentProfile() !== null,
-  );
-  readonly isParticipant = computed(() => this.currentRole() === 'participant');
-  readonly isAdmin = computed(() => this.currentRole() === 'admin');
+  readonly currentSession = this.authState.currentSession;
+  readonly currentProfile = this.authState.currentProfile;
+  readonly currentRole = this.authState.currentRole;
+  readonly isAuthenticated = this.authState.isAuthenticated;
+  readonly isParticipant = this.authState.isParticipant;
+  readonly isAdmin = this.authState.isAdmin;
 
-  hasRole(...roles: UserRoleValue[]): boolean {
-    const role = this.currentRole();
-    return role !== null && roles.includes(role);
-  }
+  private readonly authActions = this.createAuthActions();
 
-  async signIn(body: SignInRequestDto): Promise<AuthSessionBundleDto> {
-    const bundle = await this.client.auth.signIn(body);
-    this.storeBundle(bundle);
-    return bundle;
-  }
+  readonly hasRole = (...roles: UserRoleValue[]): boolean =>
+    this.authActions.hasRole(...roles);
 
-  async signUp(body: SignUpRequestDto): Promise<SignUpResponseDto> {
-    const response = await this.client.auth.signUp(body);
+  readonly signIn = (body: SignInRequestDto): Promise<AuthSessionBundleDto> =>
+    this.authActions.signIn(body);
 
-    if (response.session && response.profile) {
-      this.storeBundle({
-        session: response.session,
-        profile: response.profile,
-      });
-    }
+  readonly signUp = (body: SignUpRequestDto): Promise<SignUpResponseDto> =>
+    this.authActions.signUp(body);
 
-    return response;
-  }
+  readonly refreshSession = (): Promise<AuthSessionBundleDto | null> =>
+    this.authActions.refreshSession();
 
-  async refreshSession(): Promise<AuthSessionBundleDto | null> {
-    const session = this.currentSession();
+  readonly requestPasswordReset = (
+    body: PasswordResetRequestDto,
+  ): Promise<PasswordResetResponseDto> =>
+    this.authActions.requestPasswordReset(body);
 
-    if (!session) {
+  async resolveRecoveryAccessTokenFromUrl(url?: URL): Promise<string | null> {
+    const currentUrl = this.resolveUrl(url);
+
+    if (!currentUrl) {
       return null;
     }
 
-    const bundle = await this.client.auth.refreshSession({
-      refreshToken: session.refreshToken,
-    });
+    const hashParams = new URLSearchParams(currentUrl.hash.replace(/^#/, ''));
+    const queryParams = currentUrl.searchParams;
 
-    this.storeBundle(bundle);
-    return bundle;
+    const directToken = this.readDirectRecoveryToken(hashParams, queryParams);
+
+    if (directToken) {
+      return directToken;
+    }
+
+    const tokenHash =
+      queryParams.get('token_hash') ?? hashParams.get('token_hash');
+    const tokenType = queryParams.get('type') ?? hashParams.get('type');
+
+    if (!tokenHash || (tokenType && tokenType !== 'recovery')) {
+      return null;
+    }
+
+    return this.exchangeRecoveryTokenHash(tokenHash);
   }
 
-  async requestPasswordReset(
-    body: PasswordResetRequestDto,
-  ): Promise<PasswordResetResponseDto> {
-    return this.client.auth.requestPasswordReset(body);
+  async completePasswordRecovery(
+    body: PasswordRecoveryCompletionRequest,
+  ): Promise<PasswordRecoveryCompletionResponse> {
+    const accessToken = body.accessToken.trim();
+    const newPassword = body.newPassword;
+
+    if (!accessToken) {
+      throw new Error(
+        this.i18n.translate('web.auth.resetPassword.tokenRequired'),
+      );
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      throw new Error(
+        this.i18n.translate('web.auth.resetPassword.passwordLength'),
+      );
+    }
+
+    const { supabaseUrl, supabasePublishableKey } = environment;
+
+    if (!supabaseUrl) {
+      throw new Error(
+        this.i18n.translate('web.auth.resetPassword.configurationMissing'),
+      );
+    }
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    if (supabasePublishableKey) {
+      headers['apikey'] = supabasePublishableKey;
+    }
+
+    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ password: newPassword }),
+    });
+
+    if (!response.ok) {
+      throw new Error(await this.resolveSupabaseResponseError(response));
+    }
+
+    return {
+      success: true,
+      message: this.i18n.translate('web.auth.resetPassword.success'),
+    };
   }
 
   async getSession(): Promise<AuthSessionContextDto | null> {
-    if (!this.currentSession()) {
-      return null;
-    }
-
-    const context = await this.client.auth.getSession();
-    this.profileState.set(context.profile);
-    this.persistBundle();
-
-    return context;
+    return this.authActions.getSession();
   }
 
   clearSession(): void {
-    this.sessionState.set(null);
-    this.profileState.set(null);
-    this.getStorage()?.removeItem(WEB_AUTH_STORAGE_KEY);
+    clearAuthBundle(this.sessionState.set, this.profileState.set, () =>
+      this.getStorage()?.removeItem(WEB_AUTH_STORAGE_KEY),
+    );
   }
 
   private storeBundle(bundle: AuthSessionBundleDto): void {
-    this.sessionState.set(bundle.session);
-    this.profileState.set(bundle.profile);
-    this.persistBundle();
+    storeAuthBundle(
+      bundle,
+      this.sessionState.set,
+      this.profileState.set,
+      this.persistBundle.bind(this),
+    );
   }
 
   private persistBundle(): void {
     const storage = this.getStorage();
-    const session = this.currentSession();
-    const profile = this.currentProfile();
-
-    if (!session || !profile) {
-      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-      return;
-    }
-
-    storage?.setItem(
-      WEB_AUTH_STORAGE_KEY,
-      JSON.stringify({ session, profile }),
+    persistAuthBundle(
+      this.currentSession,
+      this.currentProfile,
+      (serializedBundle) =>
+        storage?.setItem(WEB_AUTH_STORAGE_KEY, serializedBundle),
+      () => storage?.removeItem(WEB_AUTH_STORAGE_KEY),
     );
   }
 
   private readStoredBundle(): AuthSessionBundleDto | null {
     const storage = this.getStorage();
-    const rawValue = storage?.getItem(WEB_AUTH_STORAGE_KEY) ?? null;
-
-    if (!rawValue) {
-      return null;
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue) as AuthSessionBundleDto;
-
-      if (
-        !parsedValue.session?.accessToken ||
-        !parsedValue.session?.refreshToken ||
-        !parsedValue.profile?.appUser?.id
-      ) {
-        storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-        return null;
-      }
-
-      return parsedValue;
-    } catch {
-      storage?.removeItem(WEB_AUTH_STORAGE_KEY);
-      return null;
-    }
+    return readStoredAuthBundle(
+      storage?.getItem(WEB_AUTH_STORAGE_KEY) ?? null,
+      () => storage?.removeItem(WEB_AUTH_STORAGE_KEY),
+      (error) => {
+        console.warn(
+          '[WebAuthService] Impossible de parser la session locale, suppression du cache.',
+          error,
+        );
+      },
+    );
   }
 
   private getStorage(): Storage | null {
@@ -173,8 +220,119 @@ export class WebAuthService {
 
     try {
       return localStorage;
-    } catch {
+    } catch (error) {
+      console.warn(
+        '[WebAuthService] localStorage inaccessible dans ce contexte navigateur.',
+        error,
+      );
       return null;
+    }
+  }
+
+  private resolveUrl(url?: URL): URL | null {
+    if (url) {
+      return url;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    try {
+      const browserWindow = globalThis.window;
+      return new URL(browserWindow.location.href);
+    } catch (error) {
+      console.warn(
+        '[WebAuthService] URL de la page introuvable pour la récupération du mot de passe.',
+        error,
+      );
+      return null;
+    }
+  }
+
+  private createAuthActions() {
+    return createAuthSessionActions({
+      currentRole: this.currentRole,
+      currentSession: this.currentSession,
+      authClient: this.client.auth,
+      storeBundle: this.storeBundle.bind(this),
+      setProfile: this.profileState.set,
+      persistBundle: this.persistBundle.bind(this),
+    });
+  }
+
+  private readDirectRecoveryToken(
+    hashParams: URLSearchParams,
+    queryParams: URLSearchParams,
+  ): string | null {
+    const hashToken = hashParams.get('access_token');
+    const queryToken = queryParams.get('access_token');
+    const hashType = hashParams.get('type');
+    const queryType = queryParams.get('type');
+
+    if (hashToken && (!hashType || hashType === 'recovery')) {
+      return hashToken;
+    }
+
+    if (queryToken && (!queryType || queryType === 'recovery')) {
+      return queryToken;
+    }
+
+    return null;
+  }
+
+  private async exchangeRecoveryTokenHash(
+    tokenHash: string,
+  ): Promise<string | null> {
+    const { supabaseUrl, supabasePublishableKey } = environment;
+
+    if (!supabaseUrl) {
+      return null;
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (supabasePublishableKey) {
+      headers['apikey'] = supabasePublishableKey;
+    }
+
+    const response = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        type: 'recovery',
+        token_hash: tokenHash,
+      }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = (await response.json()) as SupabaseVerifyRecoveryResponse;
+    return data.access_token?.trim() || null;
+  }
+
+  private async resolveSupabaseResponseError(
+    response: Response,
+  ): Promise<string> {
+    try {
+      const data =
+        (await response.json()) as SupabasePasswordUpdateErrorResponse;
+      return (
+        data.error_description ||
+        data.msg ||
+        data.message ||
+        this.i18n.translate('web.auth.resetPassword.updateFallback')
+      );
+    } catch (error) {
+      console.warn(
+        '[WebAuthService] Réponse erreur Supabase non JSON lors de la mise à jour du mot de passe.',
+        error,
+      );
+      return this.i18n.translate('web.auth.resetPassword.updateFallback');
     }
   }
 }

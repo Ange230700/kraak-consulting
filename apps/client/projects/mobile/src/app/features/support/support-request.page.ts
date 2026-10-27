@@ -9,6 +9,10 @@ import { Router } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import type { SupportCategoryValue } from '@kraak/contracts';
 import { ApiError, logDebugError } from '@kraak/api-client';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileSupportService } from './mobile-support.service';
 
@@ -23,12 +27,18 @@ interface SupportRequestFormModel {
 @Component({
   selector: 'kraak-support-request-page',
   standalone: true,
-  imports: [PageShellComponent, ReactiveFormsModule, IonButton],
+  imports: [
+    PageShellComponent,
+    ReactiveFormsModule,
+    IonButton,
+    KraakTranslatePipe,
+  ],
   templateUrl: './support-request.page.html',
 })
 export default class SupportRequestPage {
   private readonly supportService = inject(MobileSupportService);
   private readonly router = inject(Router);
+  private readonly i18n = inject(KraakI18nService);
 
   readonly form = new FormGroup<SupportRequestFormModel>({
     name: new FormControl('', {
@@ -69,11 +79,14 @@ export default class SupportRequestPage {
   readonly errorMessage = signal<string | null>(null);
 
   readonly categoryOptions: { value: SupportCategoryValue; label: string }[] = [
-    { value: 'technical', label: 'Probl\u00E8me technique' },
-    { value: 'program', label: 'Question sur un programme' },
-    { value: 'session', label: 'Question sur une session' },
-    { value: 'billing', label: 'Facturation' },
-    { value: 'other', label: 'Autre' },
+    {
+      value: 'technical',
+      label: 'mobile.support.request.categories.technical',
+    },
+    { value: 'program', label: 'mobile.support.request.categories.program' },
+    { value: 'session', label: 'mobile.support.request.categories.session' },
+    { value: 'billing', label: 'mobile.support.request.categories.billing' },
+    { value: 'other', label: 'mobile.support.request.categories.other' },
   ];
 
   async submit(): Promise<void> {
@@ -97,7 +110,13 @@ export default class SupportRequestPage {
       logDebugError('mobile.support.submit', error, {
         route: '/tabs/support/request',
       });
-      this.errorMessage.set(resolveSupportErrorMessage(error));
+      this.errorMessage.set(
+        resolveSupportErrorMessage(
+          error,
+          this.i18n.translate('mobile.support.request.feedback.invalidForm'),
+          this.i18n.translate('mobile.support.request.feedback.submitFailure'),
+        ),
+      );
     } finally {
       this.submitting.set(false);
     }
@@ -120,7 +139,11 @@ function normalizeTextControls(
   message.setValue(message.getRawValue().trim());
 }
 
-function resolveSupportErrorMessage(error: unknown): string {
+function resolveSupportErrorMessage(
+  error: unknown,
+  invalidFormMessage: string,
+  fallbackMessage: string,
+): string {
   if (error instanceof ApiError) {
     const body = error.body as
       | {
@@ -140,7 +163,7 @@ function resolveSupportErrorMessage(error: unknown): string {
     }
 
     if (error.status === 400) {
-      return 'Les informations saisies sont invalides. Veuillez v\u00E9rifier le formulaire.';
+      return invalidFormMessage;
     }
   }
 
@@ -154,7 +177,7 @@ function resolveSupportErrorMessage(error: unknown): string {
     return error.message.trim();
   }
 
-  return 'Une erreur est survenue. Veuillez r\u00E9essayer ult\u00E9rieurement.';
+  return fallbackMessage;
 }
 
 function readSupportErrorBody(

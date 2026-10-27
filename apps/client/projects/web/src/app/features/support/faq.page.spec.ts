@@ -1,14 +1,22 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import FaqPage from './faq.page';
 
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
+
 describe('FaqPage', () => {
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     await TestBed.configureTestingModule({
       imports: [FaqPage],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideKraakI18n()],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
 
   it('Given the support FAQ page When the component is created Then it should instantiate', () => {
@@ -22,7 +30,7 @@ describe('FaqPage', () => {
     fixture.detectChanges();
 
     const heading = fixture.nativeElement.querySelector('h1');
-    expect(heading?.textContent).toContain('Les r\u00e9ponses utiles');
+    expect(heading?.textContent).toContain('Les réponses utiles');
   });
 
   it('Given the support FAQ page When it renders Then it should expose the KRAAK FAQ questions', () => {
@@ -31,19 +39,19 @@ describe('FaqPage', () => {
 
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Les r\u00e9ponses utiles');
+    expect(content).toContain('Les réponses utiles');
     expect(content).toContain(
       'Comment choisir le bon accompagnement chez KRAAK ?',
     );
-    expect(content).toContain('Vous ne trouvez pas votre r\u00e9ponse ?');
+    expect(content).toContain('Vous ne trouvez pas votre réponse ?');
 
     const contactLinks = fixture.nativeElement.querySelectorAll(
-      'a[routerLink="/contact"]',
+      'a[href="/fr/contact"]',
     );
     expect(contactLinks.length).toBeGreaterThan(0);
 
     const serviceLinks = fixture.nativeElement.querySelectorAll(
-      'a[routerLink="/services"]',
+      'a[href="/fr/services"]',
     );
     expect(serviceLinks.length).toBeGreaterThan(0);
   });
@@ -70,6 +78,26 @@ describe('FaqPage', () => {
           answer: expect.stringContaining('décisions finales relèvent'),
         }),
       ]),
+    );
+  });
+  it('Given the English locale When the support FAQ page renders Then its page copy, questions and accordion defaults are localized', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(FaqPage);
+    fixture.detectChanges();
+
+    const content = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(content).toContain(
+      'Useful answers to help you move forward with greater clarity.',
+    );
+    expect(content).toContain(
+      'How do I choose the right KRAAK support option?',
+    );
+    expect(content).toContain('Frequently asked questions');
+    expect(content).toContain("Can't find the answer you need?");
+    expect(content).not.toContain(
+      'Comment choisir le bon accompagnement chez KRAAK ?',
     );
   });
 });

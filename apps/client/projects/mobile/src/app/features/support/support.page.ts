@@ -1,22 +1,26 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import type {
   SupportRequestDto,
   SupportRequestStatusValue,
 } from '@kraak/contracts';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileSupportService } from './mobile-support.service';
 
 @Component({
   selector: 'kraak-support-page',
   standalone: true,
-  imports: [PageShellComponent, IonButton, RouterLink, DatePipe],
+  imports: [PageShellComponent, IonButton, RouterLink, KraakTranslatePipe],
   templateUrl: './support.page.html',
 })
 export default class SupportPage implements OnInit {
   private readonly supportService = inject(MobileSupportService);
+  private readonly i18n = inject(KraakI18nService);
 
   readonly loading = signal(true);
   readonly requests = signal<SupportRequestDto[]>([]);
@@ -27,14 +31,14 @@ export default class SupportPage implements OnInit {
   }
 
   getStatusLabel(status: SupportRequestStatusValue): string {
-    const labels: Record<SupportRequestStatusValue, string> = {
-      open: 'Ouverte',
-      in_progress: 'En cours',
-      resolved: 'R\u00E9solue',
-      closed: 'Cl\u00F4tur\u00E9e',
-    };
+    return this.i18n.translate(`mobile.support.overview.statuses.${status}`);
+  }
 
-    return labels[status];
+  formatDateTime(value: string): string {
+    return new Intl.DateTimeFormat(this.i18n.locale(), {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date(value));
   }
 
   private async loadRequests(): Promise<void> {
@@ -46,7 +50,7 @@ export default class SupportPage implements OnInit {
       this.requests.set(data);
     } catch {
       this.errorMessage.set(
-        'Impossible de charger le suivi de vos demandes pour le moment.',
+        this.i18n.translate('mobile.support.overview.feedback.loadFailure'),
       );
     } finally {
       this.loading.set(false);

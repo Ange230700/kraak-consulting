@@ -6,12 +6,12 @@
       <p
         class="text-brand-cyan text-center text-xs font-semibold tracking-[0.2em] uppercase"
       >
-        Aperçu indicatif
+        {{ 'web.shared.impactStats.eyebrow' | kraakTranslate }}
       </p>
       <h2
         class="text-brand-white mt-3 text-center text-3xl font-bold lg:text-4xl"
       >
-        Chiffres d’impact en prévisualisation
+        {{ 'web.shared.impactStats.heading' | kraakTranslate }}
       </h2>
 
       <div class="mt-8 grid gap-8 md:grid-cols-3">
@@ -25,7 +25,7 @@
             <p
               class="text-brand-page max-w-xs text-base leading-relaxed lg:text-lg"
             >
-              {{ item.label }}
+              {{ item.label | kraakTranslate }}
             </p>
           </article>
         }

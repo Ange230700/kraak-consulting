@@ -1,9 +1,12 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
 import type { ParticipantProgramDetailDto, SessionDto } from '@kraak/contracts';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { MobileProgramsService } from './mobile-programs.service';
 import {
@@ -14,12 +17,19 @@ import {
 @Component({
   selector: 'kraak-session-detail-page',
   standalone: true,
-  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink, DatePipe],
+  imports: [
+    PageShellComponent,
+    IonButton,
+    IonSpinner,
+    RouterLink,
+    KraakTranslatePipe,
+  ],
   templateUrl: './session-detail.page.html',
 })
 export default class SessionDetailPage implements OnInit {
   private readonly programsService = inject(MobileProgramsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly i18n = inject(KraakI18nService);
 
   protected readonly programDetail = signal<ParticipantProgramDetailDto | null>(
     null,
@@ -57,10 +67,40 @@ export default class SessionDetailPage implements OnInit {
     return detail.progress.completedSessionIds.includes(currentSession.id);
   });
 
+  protected readonly pageTitle = computed(() => {
+    this.i18n.locale();
+
+    return (
+      this.session()?.title ??
+      this.i18n.translate('mobile.programs.session.page.defaultTitle')
+    );
+  });
+
+  protected getSessionStatusLabel(status: string): string {
+    return this.i18n.translate(`mobile.programs.session.statuses.${status}`);
+  }
+
+  protected getLocationTypeLabel(type: string): string {
+    return this.i18n.translate(`mobile.programs.session.locationTypes.${type}`);
+  }
+
+  protected formatMediumDateTime(value: string): string {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return new Intl.DateTimeFormat(this.i18n.locale(), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(date);
+  }
+
   ngOnInit(): void {
     const programId = readProgramId(this.route);
     if (programId) {
-      this.loadProgramDetail(programId);
+      void this.loadProgramDetail(programId);
     }
   }
 
@@ -71,7 +111,9 @@ export default class SessionDetailPage implements OnInit {
       loading: this.loading,
       errorMessage: this.errorMessage,
       programDetail: this.programDetail,
-      fallbackMessage: 'Erreur lors du chargement de la session.',
+      fallbackMessage: this.i18n.translate(
+        'mobile.programs.session.feedback.loadFailure',
+      ),
     });
   }
 
@@ -116,7 +158,9 @@ export default class SessionDetailPage implements OnInit {
       this.markErrorMessage.set(
         error instanceof Error
           ? error.message
-          : 'Impossible de mettre \u00E0 jour votre progression.',
+          : this.i18n.translate(
+              'mobile.programs.session.feedback.progressUpdateFailure',
+            ),
       );
     } finally {
       this.markingProgress.set(false);

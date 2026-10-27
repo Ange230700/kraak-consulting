@@ -1,5 +1,7 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import type { ResourceDto } from '@kraak/contracts';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
@@ -27,17 +29,22 @@ describe('MobileResourcesService', () => {
     updatedAt: new Date().toISOString(),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     authService = {
       currentSession: vi.fn(() => ({ accessToken: 'test-token' })),
     };
 
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     TestBed.configureTestingModule({
       providers: [
+        provideKraakI18n(),
         MobileResourcesService,
         { provide: MobileAuthService, useValue: authService },
       ],
     });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
     service = TestBed.inject(MobileResourcesService);
   });
@@ -97,6 +104,45 @@ describe('MobileResourcesService', () => {
     );
   });
 
+  it('Given no filters and no auth session, when listResources is called, then it should call base endpoint without Authorization header', async () => {
+    authService.currentSession = vi.fn(() => null);
+    const mockFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          data: [mockResource],
+          total: 1,
+        }),
+        { status: 200 },
+      ),
+    );
+
+    await service.listResources();
+
+    const lastCall = mockFetch.mock.calls.at(-1);
+    expect(lastCall).toBeDefined();
+
+    expect(lastCall?.[0]).toEqual(expect.stringContaining('/resources'));
+    expect(lastCall?.[0]).not.toEqual(expect.stringContaining('/resources?'));
+    expect(lastCall?.[1]).toEqual(
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
+        }),
+      }),
+    );
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/resources'),
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
+        }),
+      }),
+    );
+  });
+
   it('Given an API error payload, when listResources fails, then it should throw backend message', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify({ message: 'Erreur test backend' }), {
@@ -107,6 +153,39 @@ describe('MobileResourcesService', () => {
     await expect(service.listResources()).rejects.toThrow(
       'Erreur test backend',
     );
+  });
+
+  it('Given an API error payload with blank message, when listResources fails, then it should throw generic status fallback', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ message: '   ' }), {
+        status: 503,
+      }),
+    );
+
+    await expect(service.listResources()).rejects.toThrow('Erreur API (503)');
+  });
+
+  it('Given a non-JSON API error payload, when listResources fails, then it should throw generic status fallback', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response('Erreur serveur brute', {
+        status: 502,
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      }),
+    );
+
+    await expect(service.listResources()).rejects.toThrow('Erreur API (502)');
+  });
+
+  it('Given a JSON API error payload without message, when listResources fails, then it should throw generic status fallback', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({}), {
+        status: 500,
+      }),
+    );
+
+    await expect(service.listResources()).rejects.toThrow('Erreur API (500)');
   });
 
   it('Given a valid id, when trackResourceConsultation is called, then it should post to consultation endpoint', async () => {

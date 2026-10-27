@@ -1,27 +1,15 @@
-import { expect, test, Page } from '@playwright/test';
+// apps\client\tests\e2e\smoke.spec.ts
+
+import { expect, test } from '@playwright/test';
+
+import { revealNavigation } from './navigation';
 
 const expectParticipantCta =
   process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] ??
-  (process.env['KRAAK_E2E_REUSE_SERVER'] === 'true' ? 'false' : 'true');
+  process.env['CLIENT_FEATURE_PARTICIPANT_AREA'] ??
+  'true';
 const participantCtaExpected = expectParticipantCta === 'true';
 const expectedParticipantCtaCount = participantCtaExpected ? 1 : 0;
-
-async function revealNavigation(page: Page) {
-  const mobileMenuButton = page.getByRole('button', {
-    name: 'Menu de navigation',
-  });
-
-  await expect(page.getByRole('banner')).toBeVisible();
-
-  const mobileMenuVisible = await mobileMenuButton
-    .waitFor({ state: 'visible', timeout: 2_000 })
-    .then(() => true)
-    .catch(() => false);
-
-  if (mobileMenuVisible) {
-    await mobileMenuButton.click();
-  }
-}
 
 // Smoke E2E — shell web KRAAK
 // Given/When/Then : vérification des éléments visibles après chargement
@@ -29,6 +17,7 @@ async function revealNavigation(page: Page) {
 test.describe(`Page d'accueil — smoke tests`, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page).toHaveURL(/\/fr\/?$/);
   });
 
   test(`Given la page d'accueil, When elle se charge, Then le titre du document contient "KRAAK"`, async ({
@@ -42,9 +31,10 @@ test.describe(`Page d'accueil — smoke tests`, () => {
   test(`Given la page d'accueil, When elle se charge, Then la marque KRAAK est visible dans la navigation`, async ({
     page,
   }) => {
-    await expect(page.getByRole('banner')).toContainText('KRAAK');
+    const banner = page.getByRole('banner');
+    await expect(banner).toContainText('KRAAK');
     await expect(
-      page.getByRole('img', { name: 'Logo KRAAK Consulting' }),
+      banner.getByRole('img', { name: 'Symbole KRAAK' }),
     ).toBeVisible();
   });
 
@@ -77,14 +67,14 @@ test.describe(`Page d'accueil — smoke tests`, () => {
     page,
   }) => {
     await expect(page.getByRole('contentinfo')).toContainText(
-      `KRAAK Consulting — Expertise internationale au service de votre croissance.`,
+      `L'excellence opérationnelle au service du développement humain.`,
     );
   });
 
   test(`Given la navigation publique, When le visiteur ouvre la page à propos, Then le titre et le contenu principal sont visibles`, async ({
     page,
   }) => {
-    await page.goto('/a-propos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/fr/a-propos', { waitUntil: 'domcontentloaded' });
 
     await expect(page).toHaveTitle(/À propos|A propos/i);
     await expect(page.locator('h1').first()).toContainText(/capital humain/i);

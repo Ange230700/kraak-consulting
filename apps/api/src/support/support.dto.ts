@@ -1,3 +1,4 @@
+import { apiMessage, type ApiMessageValue } from '../i18n/api-message';
 import type {
   ContactFormDto,
   SupportRequestStatusValue,
@@ -7,36 +8,14 @@ import {
   readTrimmedString,
   validateEmail,
 } from '../shared/dto-validation.utils';
+import type { ValidationResult } from '../shared/validation-result.type';
 
 type ContactCategory = ContactFormDto['category'];
 
-type ContactFormValidationSuccess = {
-  valid: true;
-  data: ContactFormDto;
-};
-
-type ContactFormValidationFailure = {
-  valid: false;
-  errors: string[];
-};
-
-export type ContactFormValidationResult =
-  | ContactFormValidationSuccess
-  | ContactFormValidationFailure;
-
-type SupportStatusUpdateValidationSuccess = {
-  valid: true;
-  data: UpdateSupportRequestStatusDto;
-};
-
-type SupportStatusUpdateValidationFailure = {
-  valid: false;
-  errors: string[];
-};
+export type ContactFormValidationResult = ValidationResult<ContactFormDto>;
 
 export type SupportStatusUpdateValidationResult =
-  | SupportStatusUpdateValidationSuccess
-  | SupportStatusUpdateValidationFailure;
+  ValidationResult<UpdateSupportRequestStatusDto>;
 
 const supportCategories: Set<ContactCategory> = new Set([
   'technical',
@@ -68,39 +47,42 @@ function isSupportRequestStatus(
   return supportRequestStatuses.has(value as SupportRequestStatusValue);
 }
 
-function validateName(name: string, errors: string[]): void {
+function validateName(name: string, errors: ApiMessageValue[]): void {
   if (!name) {
-    errors.push('Le nom est requis.');
+    errors.push(apiMessage('support.nameRequired'));
   } else if (name.length < 2) {
-    errors.push('Le nom doit contenir au moins 2 caractères.');
+    errors.push(apiMessage('support.nameTooShort'));
   } else if (name.length > 80) {
-    errors.push('Le nom ne peut pas dépasser 80 caractères.');
+    errors.push(apiMessage('support.nameTooLong'));
   }
 }
 
-function validateSubject(subject: string, errors: string[]): void {
+function validateSubject(subject: string, errors: ApiMessageValue[]): void {
   if (!subject) {
-    errors.push("L'objet est requis.");
+    errors.push(apiMessage('support.subjectRequired'));
   } else if (subject.length < 3) {
-    errors.push("L'objet doit contenir au moins 3 caractères.");
+    errors.push(apiMessage('support.subjectTooShort'));
   } else if (subject.length > 120) {
-    errors.push("L'objet ne peut pas dépasser 120 caractères.");
+    errors.push(apiMessage('support.subjectTooLong'));
   }
 }
 
-function validateMessage(message: string, errors: string[]): void {
+function validateMessage(message: string, errors: ApiMessageValue[]): void {
   if (!message) {
-    errors.push('Le message est requis.');
+    errors.push(apiMessage('support.messageRequired'));
   } else if (message.length < 10) {
-    errors.push('Le message doit contenir au moins 10 caractères.');
+    errors.push(apiMessage('support.messageTooShort'));
   } else if (message.length > 2000) {
-    errors.push('Le message ne peut pas dépasser 2000 caractères.');
+    errors.push(apiMessage('support.messageTooLong'));
   }
 }
 
-function validateCategory(rawCategory: string, errors: string[]): void {
+function validateCategory(
+  rawCategory: string,
+  errors: ApiMessageValue[],
+): void {
   if (rawCategory && !isSupportCategory(rawCategory)) {
-    errors.push('La catégorie de support est invalide.');
+    errors.push(apiMessage('support.categoryInvalid'));
   }
 }
 
@@ -108,7 +90,7 @@ export function validateContactForm(
   body: unknown,
 ): ContactFormValidationResult {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const dto = body as Record<string, unknown>;
@@ -117,7 +99,7 @@ export function validateContactForm(
   const subject = readTrimmedString(dto['subject']);
   const message = readTrimmedString(dto['message']);
   const rawCategory = readTrimmedString(dto['category']);
-  const errors: string[] = [];
+  const errors: ApiMessageValue[] = [];
 
   validateName(name, errors);
   validateEmail(email, errors);
@@ -146,7 +128,7 @@ export function validateSupportStatusUpdatePayload(
   body: unknown,
 ): SupportStatusUpdateValidationResult {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return { valid: false, errors: ['Corps de requête invalide.'] };
+    return { valid: false, errors: [apiMessage('validation.invalidBody')] };
   }
 
   const status = readTrimmedString((body as Record<string, unknown>)['status']);
@@ -154,7 +136,7 @@ export function validateSupportStatusUpdatePayload(
   if (!status || !isSupportRequestStatus(status)) {
     return {
       valid: false,
-      errors: ['Le statut de la demande de support est invalide.'],
+      errors: [apiMessage('support.statusInvalid')],
     };
   }
 

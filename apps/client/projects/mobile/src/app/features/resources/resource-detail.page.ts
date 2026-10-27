@@ -2,8 +2,12 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
-import type { ResourceDto } from '@kraak/contracts';
+import type { ResourceDto, ResourceTypeValue } from '@kraak/contracts';
 import { map } from 'rxjs';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
@@ -11,12 +15,13 @@ import { MobileResourcesService } from './mobile-resources.service';
 @Component({
   selector: 'kraak-resource-detail-page',
   standalone: true,
-  imports: [PageShellComponent, IonButton, IonSpinner],
+  imports: [PageShellComponent, IonButton, IonSpinner, KraakTranslatePipe],
   templateUrl: './resource-detail.page.html',
 })
 export default class ResourceDetailPage implements OnInit {
   private readonly resourcesService = inject(MobileResourcesService);
   private readonly route = inject(ActivatedRoute);
+  private readonly i18n = inject(KraakI18nService);
 
   protected readonly resource = signal<ResourceDto | null>(null);
   protected readonly loading = signal(true);
@@ -33,19 +38,27 @@ export default class ResourceDetailPage implements OnInit {
 
         if (!resourceId) {
           this.loading.set(false);
-          this.errorMessage.set('Identifiant de ressource manquant.');
+          this.errorMessage.set(
+            this.i18n.translate('mobile.resources.detail.feedback.missingId'),
+          );
           this.resource.set(null);
           return;
         }
 
-        this.loadResource(resourceId);
+        void this.loadResource(resourceId);
       });
+  }
+
+  protected getResourceTypeLabel(type: ResourceTypeValue): string {
+    return this.i18n.translate(`mobile.resources.detail.types.${type}`);
   }
 
   protected async reloadResource(): Promise<void> {
     const resourceId = this.resourceId();
     if (!resourceId) {
-      this.errorMessage.set('Identifiant de ressource manquant.');
+      this.errorMessage.set(
+        this.i18n.translate('mobile.resources.detail.feedback.missingId'),
+      );
       return;
     }
 
@@ -66,7 +79,7 @@ export default class ResourceDetailPage implements OnInit {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          'Erreur lors du chargement du d\u00E9tail de la ressource.',
+          this.i18n.translate('mobile.resources.detail.feedback.loadFailure'),
         ),
       );
       this.resource.set(null);

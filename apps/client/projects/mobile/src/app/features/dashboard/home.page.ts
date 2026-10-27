@@ -23,6 +23,10 @@ import {
 } from '../auth/mobile-auth.service';
 import { FeatureCardComponent } from '../../shared/ui/feature-card/feature-card.component';
 
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 interface HomeHighlight {
   readonly tag: string;
   readonly title: string;
@@ -42,12 +46,15 @@ interface HomeHighlight {
     IonSpinner,
     RouterLink,
     FeatureCardComponent,
+    KraakTranslatePipe,
   ],
   templateUrl: './home.page.html',
 })
 export default class HomePage implements OnInit {
   private readonly authService = inject(MobileAuthService);
+  private readonly i18n = inject(KraakI18nService);
   private readonly dashboardClient = createApiClient({
+    getLocale: () => this.i18n.locale(),
     baseUrl: environment.apiBaseUrl,
     getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
   }).dashboard;
@@ -61,24 +68,21 @@ export default class HomePage implements OnInit {
 
   protected readonly highlights: HomeHighlight[] = [
     {
-      tag: 'Programmes',
-      title: 'Avancez avec un cadre clair.',
-      description:
-        'Retrouvez vos parcours actifs, leurs prochaines \u00E9tapes et les d\u00E9tails utiles.',
+      tag: 'mobile.dashboard.highlights.programs.tag',
+      title: 'mobile.dashboard.highlights.programs.title',
+      description: 'mobile.dashboard.highlights.programs.description',
       tone: 'primary',
     },
     {
-      tag: 'Annonces',
-      title: 'Restez align\u00E9 avec les mises \u00E0 jour importantes.',
-      description:
-        'Gardez un \u0153il sur les informations cl\u00E9s \u00E0 relayer rapidement.',
+      tag: 'mobile.dashboard.highlights.announcements.tag',
+      title: 'mobile.dashboard.highlights.announcements.title',
+      description: 'mobile.dashboard.highlights.announcements.description',
       tone: 'accent',
     },
     {
-      tag: 'Support',
-      title: "Demandez de l'aide sans quitter votre parcours.",
-      description:
-        "Acc\u00E9dez aux bons points de contact quand vous avez besoin d'un relais.",
+      tag: 'mobile.dashboard.highlights.support.tag',
+      title: 'mobile.dashboard.highlights.support.title',
+      description: 'mobile.dashboard.highlights.support.description',
       tone: 'primary',
     },
   ];

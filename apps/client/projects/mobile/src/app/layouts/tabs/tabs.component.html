@@ -9,7 +9,7 @@
         class="kraak-tab-button"
       >
         <ion-icon [name]="tab.icon"></ion-icon>
-        <ion-label>{{ tab.label }}</ion-label>
+        <ion-label>{{ tab.label | kraakTranslate }}</ion-label>
       </ion-tab-button>
     }
   </ion-tab-bar>

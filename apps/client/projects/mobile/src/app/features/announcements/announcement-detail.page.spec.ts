@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import type { AnnouncementDto } from '@kraak/contracts';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { provideKraakI18n } from '../../../../../shared/i18n';
+import { MobileAuthService } from '../auth/mobile-auth.service';
 import AnnouncementDetailPage from './announcement-detail.page';
 
 function configureAnnouncementsClient(
@@ -19,13 +21,23 @@ function configureAnnouncementsClient(
 }
 
 describe('Mobile AnnouncementDetailPage', () => {
+  const mobileAuthServiceMock = {
+    currentSession: vi.fn(),
+  };
+
   beforeEach(async () => {
     vi.restoreAllMocks();
+    mobileAuthServiceMock.currentSession.mockReset();
+    mobileAuthServiceMock.currentSession.mockReturnValue({
+      accessToken: 'token-mobile-detail',
+    });
 
     await TestBed.configureTestingModule({
       imports: [AnnouncementDetailPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
+        provideKraakI18n(),
+        { provide: MobileAuthService, useValue: mobileAuthServiceMock },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -36,6 +48,77 @@ describe('Mobile AnnouncementDetailPage', () => {
         },
       ],
     }).compileComponents();
+  });
+
+  it('Given a valid mobile session, when announcement detail loads through the real API client, then Authorization header uses the current session token', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () =>
+        Promise.resolve({
+          id: 'ann-001',
+          title: 'Titre test',
+          body: 'Corps test',
+          priority: 'normal',
+          audienceType: 'all_participants',
+          programId: null,
+          cohortId: null,
+          status: 'published',
+          publishedAt: '2026-04-29T10:00:00.000Z',
+          createdByUserId: 'user-1',
+          createdAt: '2026-04-29T09:30:00.000Z',
+          updatedAt: '2026-04-29T09:45:00.000Z',
+        } satisfies AnnouncementDto),
+      text: () => Promise.resolve('{}'),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    await fixture.componentInstance['reloadAnnouncement']();
+
+    expect(fetchMock).toHaveBeenCalled();
+    const [, init] = fetchMock.mock.calls[0] as [
+      string,
+      { headers: Record<string, string> },
+    ];
+    expect(init.headers['Authorization']).toBe('Bearer token-mobile-detail');
+  });
+
+  it('Given no mobile session, when announcement detail loads through the real API client, then Authorization header is omitted', async () => {
+    mobileAuthServiceMock.currentSession.mockReturnValue(null);
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () =>
+        Promise.resolve({
+          id: 'ann-001',
+          title: 'Titre test',
+          body: 'Corps test',
+          priority: 'normal',
+          audienceType: 'all_participants',
+          programId: null,
+          cohortId: null,
+          status: 'published',
+          publishedAt: '2026-04-29T10:00:00.000Z',
+          createdByUserId: 'user-1',
+          createdAt: '2026-04-29T09:30:00.000Z',
+          updatedAt: '2026-04-29T09:45:00.000Z',
+        } satisfies AnnouncementDto),
+      text: () => Promise.resolve('{}'),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    await fixture.componentInstance['reloadAnnouncement']();
+
+    expect(fetchMock).toHaveBeenCalled();
+    const [, init] = fetchMock.mock.calls[0] as [
+      string,
+      { headers: Record<string, string> },
+    ];
+    expect(init.headers['Authorization']).toBeUndefined();
   });
 
   it('should create', () => {
@@ -131,38 +214,23 @@ describe('Mobile AnnouncementDetailPage', () => {
     expect(getByIdMock).toHaveBeenCalledTimes(2);
   });
 
-  it('Given a component instance, when getPriorityLabel is called with high, then it returns Élevée', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
+  it.each([
+    ['high' as const, 'Elev\u00E9e'],
+    ['normal' as const, 'Normale'],
+    ['low' as const, 'Faible'],
+  ])(
+    'Given a component instance, when getPriorityLabel is called with %s, then it returns %s',
+    (priority, expectedLabel) => {
+      const fixture = TestBed.createComponent(AnnouncementDetailPage);
+      configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
+      fixture.detectChanges();
 
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('high')).toBe('Elev\u00E9e');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with normal, then it returns Normale', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('normal')).toBe('Normale');
-  });
-
-  it('Given a component instance, when getPriorityLabel is called with low, then it returns Faible', () => {
-    const fixture = TestBed.createComponent(AnnouncementDetailPage);
-    configureAnnouncementsClient(fixture, Promise.resolve({ id: 'ann-001' }));
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance as unknown as {
-      getPriorityLabel: (p: AnnouncementDto['priority']) => string;
-    };
-    expect(component.getPriorityLabel('low')).toBe('Faible');
-  });
+      const component = fixture.componentInstance as unknown as {
+        getPriorityLabel: (p: AnnouncementDto['priority']) => string;
+      };
+      expect(component.getPriorityLabel(priority)).toBe(expectedLabel);
+    },
+  );
 
   it('Given an announcement with empty title, when page renders, then pageTitle falls back to default', async () => {
     const fixture = TestBed.createComponent(AnnouncementDetailPage);
@@ -197,6 +265,35 @@ describe('Mobile AnnouncementDetailPage', () => {
         : component.pageTitle;
     expect(title).toBe("D\u00E9tail de l'annonce");
   });
+
+  it('Given an announcement without publishedAt, when detail renders, then publish date badge is not displayed', async () => {
+    const fixture = TestBed.createComponent(AnnouncementDetailPage);
+    configureAnnouncementsClient(
+      fixture,
+      Promise.resolve({
+        id: 'ann-no-date',
+        title: 'Annonce sans publication',
+        body: 'Corps sans date publiée.',
+        priority: 'low',
+        audienceType: 'all_participants',
+        programId: null,
+        cohortId: null,
+        status: 'draft',
+        publishedAt: null,
+        createdByUserId: 'user-1',
+        createdAt: '2026-04-29T09:30:00.000Z',
+        updatedAt: '2026-04-29T09:45:00.000Z',
+      } satisfies AnnouncementDto),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Annonce sans publication');
+    expect(element.textContent).not.toContain('Publié le');
+  });
 });
 
 describe('Mobile AnnouncementDetailPage — no announcementId', () => {
@@ -207,6 +304,7 @@ describe('Mobile AnnouncementDetailPage — no announcementId', () => {
       imports: [AnnouncementDetailPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
+        provideKraakI18n(),
         {
           provide: ActivatedRoute,
           useValue: {

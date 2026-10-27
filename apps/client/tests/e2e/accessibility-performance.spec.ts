@@ -106,6 +106,7 @@ const analyzeWithRetry = async (
     try {
       return await new AxeBuilder({ page }).analyze();
     } catch (error) {
+      console.warn('Analyse Axe interrompue pendant une navigation.', error);
       if (!isTransientNavigationError(error) || attempt === maxAttempts) {
         throw error;
       }
@@ -122,10 +123,94 @@ const analyzeWithRetry = async (
   throw new Error('Axe analyze retry loop exhausted unexpectedly.');
 };
 
+test('Given une préférence de mouvement réduit, When les contrôles de navigation sont affichés, Then les transitions restent réduites sans surcharger les styles', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/fr/');
+  await expect(
+    page.getByRole('group', { name: 'Choisir la langue' }),
+  ).toBeVisible();
+
+  const durations = await page
+    .locator('nav fieldset a')
+    .first()
+    .evaluate((element) => {
+      element.classList.add('transition-fast');
+      const style = getComputedStyle(element);
+      return {
+        transition: style.transitionDuration
+          .split(',')
+          .map((value) => Number.parseFloat(value)),
+        animation: style.animationDuration
+          .split(',')
+          .map((value) => Number.parseFloat(value)),
+        iterations: style.animationIterationCount,
+      };
+    });
+
+  expect(durations.transition.every((duration) => duration <= 0.001)).toBe(
+    true,
+  );
+  expect(durations.animation.every((duration) => duration <= 0.001)).toBe(true);
+  expect(durations.iterations).toBe('1');
+
+  const reveals = page.locator('.motion-reveal-base');
+  await expect(reveals.first()).toBeAttached();
+  const revealDelays = await reveals.evaluateAll((elements) =>
+    elements.map((element) => getComputedStyle(element).transitionDelay),
+  );
+  expect(revealDelays.every((delay) => Number.parseFloat(delay) === 0)).toBe(
+    true,
+  );
+});
+
+test('Given un contrôle sans contour utilitaire, When il reçoit le focus clavier, Then son indicateur de focus reste visible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/fr/');
+  const control = page.locator('nav fieldset a').first();
+  await control.evaluate((element) => element.classList.add('outline-none'));
+  await control.focus();
+  await expect(control).toBeFocused();
+  expect(
+    await control.evaluate((element) => element.matches(':focus-visible')),
+  ).toBe(true);
+  const outline = await control.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      width: Number.parseFloat(style.outlineWidth),
+      style: style.outlineStyle,
+    };
+  });
+  expect(outline.width).toBeGreaterThanOrEqual(2);
+  expect(outline.style).toBe('solid');
+});
+
+test('Given un défilement décoratif, When la préférence de mouvement réduit change, Then le défilement est désactivé à sa source', async ({
+  page,
+}) => {
+  await page.goto('/fr/');
+  await page.evaluate(() => {
+    const element = document.createElement('div');
+    element.id = 'motion-marquee-fixture';
+    element.classList.add('animate-scroll');
+    document.body.append(element);
+  });
+  const marquee = page.locator('#motion-marquee-fixture');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(marquee).toHaveCSS('animation-name', 'kr-partner-scroll');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(marquee).toHaveCSS('animation-name', 'none');
+  await expect(marquee).toHaveCSS('transition-delay', '0s');
+});
+
 test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
   test('Given les pages MVP clés, When les checks sont exécutés, Then un rapport a11y/performance est produit', async ({
     page,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(180000);
     const results: RouteReport[] = [];
 
@@ -144,7 +229,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
         { timeout: 30000 },
       );
 
-      // Stabilise visual state before axe scan to avoid animation-driven contrast false positives.
+      // Stabilise les animations avant la mesure du contraste.
       await page.addStyleTag({
         content:
           '*,:before,:after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}.kr-perf-section,section,figure.reveal-on-scroll,h1,h2,main{opacity:1 !important;transform:none !important;filter:none !important;}',
@@ -188,7 +273,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       // WebKit peut parfois retourner domContentLoadedEventEnd a 0; on valide alors via le meilleur jalon dispo.
       expect(Math.max(perf.domContentLoadedMs, perf.loadMs)).toBeGreaterThan(0);
       expect(perf.loadMs).toBeGreaterThan(0);
-      expect(blockingViolations).toHaveLength(0);
+      expect.soft(blockingViolations, routeCheck.route).toHaveLength(0);
 
       results.push({
         route: routeCheck.route,
@@ -199,7 +284,7 @@ test.describe.serial('Checks pré-pilot accessibilité/performance', () => {
       });
     }
 
-    const outputDirectory = resolve(process.cwd(), 'test-results', 'qat-06');
+    const outputDirectory = testInfo.outputPath('qat-06');
     mkdirSync(outputDirectory, { recursive: true });
 
     const outputFile = resolve(

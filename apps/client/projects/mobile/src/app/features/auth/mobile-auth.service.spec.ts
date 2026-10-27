@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import {
   MobileAuthService,
   MOBILE_AUTH_STORAGE_KEY,
@@ -50,7 +51,7 @@ describe('MobileAuthService', () => {
       }),
     } satisfies Partial<Response>);
 
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
     const service = TestBed.inject(MobileAuthService);
 
     await service.signIn({
@@ -105,7 +106,7 @@ describe('MobileAuthService', () => {
       }),
     } satisfies Partial<Response>);
 
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
     const service = TestBed.inject(MobileAuthService);
 
     await service.signIn({
@@ -152,7 +153,7 @@ describe('MobileAuthService', () => {
         }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       const result = await service.signUp({
@@ -177,7 +178,7 @@ describe('MobileAuthService', () => {
         }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       await service.signUp({
@@ -193,7 +194,7 @@ describe('MobileAuthService', () => {
 
   describe('Given refreshSession', () => {
     it('when currentSession is null, then refreshSession returns null without calling the API', async () => {
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       const result = await service.refreshSession();
@@ -261,7 +262,7 @@ describe('MobileAuthService', () => {
         }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       await service.signIn({ email: 'alice@example.com', password: 'pass' });
@@ -281,7 +282,7 @@ describe('MobileAuthService', () => {
         json: async () => ({ success: true, message: 'Email envoyé.' }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       const result = await service.requestPasswordReset({
@@ -293,7 +294,7 @@ describe('MobileAuthService', () => {
 
   describe('Given getSession', () => {
     it('when currentSession is null, then getSession returns null without calling the API', async () => {
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       const result = await service.getSession();
@@ -360,7 +361,7 @@ describe('MobileAuthService', () => {
         }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       await service.signIn({ email: 'alice@example.com', password: 'pass' });
@@ -400,7 +401,7 @@ describe('MobileAuthService', () => {
         }),
       } satisfies Partial<Response>);
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       await service.signIn({ email: 'alice@example.com', password: 'pass' });
@@ -409,6 +410,48 @@ describe('MobileAuthService', () => {
       service.clearSession();
 
       expect(service.isAuthenticated()).toBe(false);
+      expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).toBeNull();
+    });
+
+    it('when persistBundle runs with an incomplete in-memory state, then the stored mobile session is removed', async () => {
+      fetchMock.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          session: {
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-28T12:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'alice@example.com',
+              role: 'participant',
+              firstName: 'Alice',
+              lastName: 'Dupont',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-28T12:00:00.000Z',
+              updatedAt: '2026-04-28T12:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
+      const service = TestBed.inject(MobileAuthService);
+
+      await service.signIn({ email: 'alice@example.com', password: 'pass' });
+      expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).not.toBeNull();
+
+      service['profileState'].set(null);
+      service['persistBundle']();
+
       expect(localStorage.getItem(MOBILE_AUTH_STORAGE_KEY)).toBeNull();
     });
   });
@@ -423,7 +466,7 @@ describe('MobileAuthService', () => {
         }),
       );
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       expect(service.isAuthenticated()).toBe(false);
@@ -439,7 +482,7 @@ describe('MobileAuthService', () => {
         }),
       );
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       expect(service.isAuthenticated()).toBe(false);
@@ -463,7 +506,7 @@ describe('MobileAuthService', () => {
         }),
       );
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       expect(service.isAuthenticated()).toBe(false);
@@ -473,7 +516,7 @@ describe('MobileAuthService', () => {
     it('when the stored value is corrupted JSON, then the bundle is cleared and isAuthenticated is false', () => {
       localStorage.setItem(MOBILE_AUTH_STORAGE_KEY, 'not-valid-json');
 
-      TestBed.configureTestingModule({});
+      TestBed.configureTestingModule({ providers: [provideKraakI18n()] });
       const service = TestBed.inject(MobileAuthService);
 
       expect(service.isAuthenticated()).toBe(false);

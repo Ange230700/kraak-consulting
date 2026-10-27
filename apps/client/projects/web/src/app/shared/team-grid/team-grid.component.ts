@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed } from '@angular/core';
+import { KraakTranslatePipe } from '../../../../../shared/i18n';
 import { buildAvatarCircleUrl } from '../brand/brand-constants';
 
 export interface TeamMember {
@@ -12,7 +13,7 @@ export interface TeamMember {
 @Component({
   selector: 'kraak-team-grid',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, KraakTranslatePipe],
   templateUrl: './team-grid.component.html',
 })
 export class TeamGrid {
@@ -23,73 +24,73 @@ export class TeamGrid {
     {
       id: 1,
       name: 'Savannah Nguyen',
-      role: 'Développeuse logiciel',
+      role: 'web.shared.teamGrid.roles.softwareDeveloper',
       image: buildAvatarCircleUrl('avatar-f-1.png'),
     },
     {
       id: 2,
       name: 'Jenny Wilson',
-      role: 'Développeuse logiciel',
+      role: 'web.shared.teamGrid.roles.softwareDeveloper',
       image: buildAvatarCircleUrl('avatar-f-2.png'),
     },
     {
       id: 3,
       name: 'Albert Flores',
-      role: 'Testeur logiciel',
+      role: 'web.shared.teamGrid.roles.softwareTester',
       image: buildAvatarCircleUrl('avatar-m-1.png'),
     },
     {
       id: 4,
       name: 'Ralph Edwards',
-      role: "Chef d'équipe",
+      role: 'web.shared.teamGrid.roles.teamLead',
       image: buildAvatarCircleUrl('avatar-m-2.png'),
     },
     {
       id: 5,
       name: 'Eleanor Pena',
-      role: 'Spécialiste marketing',
+      role: 'web.shared.teamGrid.roles.marketingSpecialist',
       image: buildAvatarCircleUrl('avatar-f-3.png'),
     },
     {
       id: 6,
       name: 'Annette Black',
-      role: 'Designer UI/UX',
+      role: 'web.shared.teamGrid.roles.uiUxDesigner',
       image: buildAvatarCircleUrl('avatar-f-4.png'),
     },
     {
       id: 7,
       name: 'Arlene McCoy',
-      role: 'Développeuse logiciel',
+      role: 'web.shared.teamGrid.roles.softwareDeveloper',
       image: buildAvatarCircleUrl('avatar-f-5.png'),
     },
     {
       id: 8,
       name: 'James Wilson',
-      role: 'Product manager',
+      role: 'web.shared.teamGrid.roles.productManager',
       image: buildAvatarCircleUrl('avatar-m-3.png'),
     },
     {
       id: 9,
       name: 'Darlene Robertson',
-      role: 'Testeuse logiciel',
+      role: 'web.shared.teamGrid.roles.softwareTester',
       image: buildAvatarCircleUrl('avatar-f-6.png'),
     },
     {
       id: 10,
       name: 'Kristin Watson',
-      role: 'Développeuse logiciel',
+      role: 'web.shared.teamGrid.roles.softwareDeveloper',
       image: buildAvatarCircleUrl('avatar-f-7.png'),
     },
     {
       id: 11,
       name: 'Floyd Miles',
-      role: 'Testeur logiciel',
+      role: 'web.shared.teamGrid.roles.softwareTester',
       image: buildAvatarCircleUrl('avatar-m-4.png'),
     },
     {
       id: 12,
       name: 'Jane Olivia',
-      role: 'Designer UI/UX',
+      role: 'web.shared.teamGrid.roles.uiUxDesigner',
       image: buildAvatarCircleUrl('avatar-f-8.png'),
     },
   ];

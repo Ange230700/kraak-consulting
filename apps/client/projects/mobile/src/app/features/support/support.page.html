@@ -1,13 +1,13 @@
 <kraak-page-shell
-  eyebrow="Aide"
-  title="Support"
-  description="Retrouvez les points de contact utiles quand vous avez besoin d'aide."
+  [eyebrow]="'mobile.support.overview.header.eyebrow' | kraakTranslate"
+  [title]="'mobile.support.overview.header.title' | kraakTranslate"
+  [description]="'mobile.support.overview.header.description' | kraakTranslate"
 >
   <section
     class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
   >
     <p class="text-sm leading-6 text-neutral-700">
-      Besoin d'aide ? Contactez notre &eacute;quipe.
+      {{ 'mobile.support.overview.intro.help' | kraakTranslate }}
     </p>
 
     <ion-button
@@ -15,18 +15,20 @@
       expand="block"
       class="kraak-primary-button mt-4"
     >
-      D&eacute;marrer une demande
+      {{ 'mobile.support.overview.actions.newRequest' | kraakTranslate }}
     </ion-button>
   </section>
 
   <section
     class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
   >
-    <p class="text-sm font-semibold text-neutral-900">Suivi de vos demandes</p>
+    <p class="text-sm font-semibold text-neutral-900">
+      {{ 'mobile.support.overview.tracking.title' | kraakTranslate }}
+    </p>
 
     @if (loading()) {
       <p class="text-sm leading-6 text-neutral-700">
-        Chargement des statuts en cours...
+        {{ 'mobile.support.overview.tracking.loading' | kraakTranslate }}
       </p>
     } @else if (errorMessage()) {
       <p
@@ -36,7 +38,7 @@
       </p>
     } @else if (requests().length === 0) {
       <p class="text-sm leading-6 text-neutral-700">
-        Aucune demande de support enregistr&eacute;e pour le moment.
+        {{ 'mobile.support.overview.tracking.empty' | kraakTranslate }}
       </p>
     } @else {
       <ul class="flex flex-col gap-3">
@@ -46,11 +48,14 @@
               {{ request.subject }}
             </p>
             <p class="text-xs text-neutral-600">
-              Statut: {{ getStatusLabel(request.status) }}
+              {{ 'mobile.support.overview.tracking.status' | kraakTranslate }}:
+              {{ getStatusLabel(request.status) }}
             </p>
             <p class="text-xs text-neutral-500">
-              Mis &agrave; jour le
-              {{ request.updatedAt | date: 'dd/MM/yyyy HH:mm' }}
+              {{
+                'mobile.support.overview.tracking.updatedAt' | kraakTranslate
+              }}
+              {{ formatDateTime(request.updatedAt) }}
             </p>
           </li>
         }

@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta.prod.component.ts
+
 import { Component, output } from '@angular/core';
 
 @Component({

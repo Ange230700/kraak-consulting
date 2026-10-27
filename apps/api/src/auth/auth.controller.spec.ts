@@ -183,12 +183,37 @@ describe('AuthController', () => {
     expect((thrownError as BadRequestException).getResponse()).toEqual({
       success: false,
       errors: [
-        "L'adresse e-mail est invalide.",
-        'Le mot de passe doit contenir au moins 8 caractères.',
-        'Le prénom est requis.',
-        'Le nom est requis.',
-        'Le lien de redirection est invalide.',
+        { key: 'validation.invalidEmail' },
+        { key: 'auth.passwordTooShort' },
+        { key: 'auth.firstNameRequired' },
+        { key: 'auth.lastNameRequired' },
+        { key: 'auth.redirectInvalid' },
       ],
+    });
+  });
+
+  // Given un payload signup valide
+  // When POST /auth/sign-up est appelé
+  // Then le service reçoit le payload normalisé
+  it('Given un payload signup valide, When signUp est appelé, Then le service reçoit le payload normalisé', async () => {
+    await controller.signUp({
+      email: '  alice@example.com  ',
+      password: 'motdepasse-securise',
+      firstName: '  Alice  ',
+      lastName: '  Dupont  ',
+      phone: '  +2250700000000  ',
+      preferredContactChannel: '  email  ',
+      redirectTo: 'https://kraak.example/auth/callback',
+    });
+
+    expect(authService.signUp).toHaveBeenCalledWith({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      phone: '+2250700000000',
+      preferredContactChannel: 'email',
+      redirectTo: 'https://kraak.example/auth/callback',
     });
   });
 
@@ -216,7 +241,7 @@ describe('AuthController', () => {
     expect(thrownError).toBeInstanceOf(UnauthorizedException);
     expect((thrownError as UnauthorizedException).getResponse()).toEqual({
       success: false,
-      message: "Le header d'autorisation Bearer est requis.",
+      message: { key: 'auth.bearerRequired' },
     });
   });
 

@@ -1,10 +1,18 @@
 # Tâche contenu
 
+## Table des matières
+
+- [Tâche contenu](#tache-contenu)
+  - [Objectif](#objectif)
+  - [Zone impactée](#zone-impactee)
+  - [Contenu propose](#contenu-propose)
+  - [Criteres d'acceptation](#criteres-dacceptation)
+
 ---
 
 name: 'Tâche contenu'
 about: Ajouter ou ajuster du contenu produit
-labels: ['content', 'type: chore', 'status: ready']
+labels: ['documentation', 'type: chore']
 
 ---
 

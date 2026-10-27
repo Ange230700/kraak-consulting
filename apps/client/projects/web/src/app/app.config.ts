@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\app.config.ts
+
 import {
   ApplicationConfig,
   ErrorHandler,
@@ -5,8 +7,15 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter, TitleStrategy } from '@angular/router';
-import { provideClientHydration } from '@angular/platform-browser';
+import {
+  provideRouter,
+  TitleStrategy,
+  withViewTransitions,
+} from '@angular/router';
+import {
+  provideClientHydration,
+  withEventReplay,
+} from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
@@ -22,6 +31,10 @@ import { MlRuntimeService } from './core/ml/ml-runtime.service';
 import { TFJS_CONFIG } from './core/ml/tfjs-config';
 import { environment } from '../environments/environment';
 import { SeoTitleStrategy } from './seo/seo-title.strategy';
+import {
+  provideKraakI18n,
+  provideKraakPrimeNgI18nBridge,
+} from '../../../shared/i18n';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,8 +43,8 @@ export const appConfig: ApplicationConfig = {
       provide: ErrorHandler,
       useClass: KraakErrorHandler,
     },
-    provideRouter(routes),
-    provideClientHydration(),
+    provideRouter(routes, withViewTransitions()),
+    provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
     providePrimeNG({
       theme: {
@@ -45,6 +58,8 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    provideKraakI18n(),
+    provideKraakPrimeNgI18nBridge(),
     MessageService,
     {
       provide: TitleStrategy,

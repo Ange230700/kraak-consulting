@@ -84,7 +84,7 @@ export class MlRuntimeService {
   }
 }
 
-function isMissingTfjsDependencyError(error: unknown): boolean {
+export function isMissingTfjsDependencyError(error: unknown): boolean {
   if (!(error instanceof Error)) {
     return false;
   }

@@ -1,3 +1,13 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
+
+overrides:
+  typescript: ~5.9.2
+
+onlyBuiltDependencies:
+  - esbuild
+  - lmdb
+  - playwright
+  - rollup
+  - sharp

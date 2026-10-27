@@ -1,42 +1,14 @@
 // scripts\workspace-runner.mjs
 
-import { spawn } from 'node:child_process';
-import process from 'node:process';
+import { spawn as nodeSpawn } from 'node:child_process';
+import nodeProcess from 'node:process';
+import { pathToFileURL } from 'node:url';
 
-import { createWorkflows, getPnpmCommand } from './workspace-commands.mjs';
-
-const workflows = createWorkflows();
-const workflowName = process.argv[2];
-const workflow = workflows[workflowName];
-
-if (!workflow) {
-  const availableWorkflows = Object.keys(workflows).join(', ');
-  console.error(
-    `Unknown workflow "${workflowName}". Available workflows: ${availableWorkflows}`,
-  );
-  process.exit(1);
-}
-
-const runningChildren = new Set();
-let shutdownRequested = false;
-
-process.on('SIGINT', () => {
-  shutdownRequested = true;
-  stopRunningChildren('SIGINT');
-});
-
-process.on('SIGTERM', () => {
-  shutdownRequested = true;
-  stopRunningChildren('SIGTERM');
-});
-
-function stopRunningChildren(signal) {
-  for (const child of runningChildren) {
-    if (!child.killed) {
-      child.kill(signal);
-    }
-  }
-}
+import {
+  createWorkflows,
+  getPnpmCommand,
+  quoteWindowsArgument,
+} from './workspace-commands.mjs';
 
 function prefixStream(stream, prefix, target) {
   let buffer = '';
@@ -45,7 +17,7 @@ function prefixStream(stream, prefix, target) {
     buffer += chunk.toString();
 
     const lines = buffer.split(/\r?\n/);
-    buffer = lines.pop() ?? '';
+    buffer = lines.pop();
 
     for (const line of lines) {
       target.write(`${prefix}${line}\n`);
@@ -59,138 +31,135 @@ function prefixStream(stream, prefix, target) {
   });
 }
 
-function needsWindowsQuoting(argument) {
-  for (const element of argument) {
-    const character = element;
+export async function runWorkspaceWorkflow({
+  process = nodeProcess,
+  spawn = nodeSpawn,
+  console = globalThis.console,
+  workflows = createWorkflows(),
+} = {}) {
+  const workflowName = process.argv[2];
+  const workflow = workflows[workflowName];
 
-    if (character === ' ' || character === '\t' || character === '"') {
-      return true;
+  if (!workflow) {
+    const availableWorkflows = Object.keys(workflows).join(', ');
+    console.error(
+      `Unknown workflow "${workflowName}". Available workflows: ${availableWorkflows}`,
+    );
+    return process.exit(1);
+  }
+
+  const runningChildren = new Set();
+  let shutdownRequested = false;
+
+  process.on('SIGINT', () => {
+    shutdownRequested = true;
+    stopRunningChildren('SIGINT');
+  });
+
+  process.on('SIGTERM', () => {
+    shutdownRequested = true;
+    stopRunningChildren('SIGTERM');
+  });
+
+  function stopRunningChildren(signal) {
+    for (const child of runningChildren) {
+      if (!child.killed) {
+        child.kill(signal);
+      }
     }
   }
 
-  return false;
-}
-
-function quoteWindowsArgument(argument) {
-  if (argument.length === 0) {
-    return '""';
-  }
-
-  if (!needsWindowsQuoting(argument)) {
-    return argument;
-  }
-
-  let quotedArgument = '"';
-  let backslashCount = 0;
-
-  for (const element of argument) {
-    const character = element;
-
-    if (character === '\\') {
-      backslashCount += 1;
-      continue;
+  function spawnCommand(command) {
+    if (process.platform !== 'win32') {
+      return spawn(getPnpmCommand(process.platform), command.args, {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: ['inherit', 'pipe', 'pipe'],
+      });
     }
 
-    if (character === '"') {
-      quotedArgument += '\\'.repeat(backslashCount * 2 + 1);
-      quotedArgument += '"';
-    } else {
-      quotedArgument += '\\'.repeat(backslashCount);
-      quotedArgument += character;
-    }
+    const comspec = process.env.ComSpec ?? 'cmd.exe';
+    const commandLine = [getPnpmCommand(process.platform), ...command.args]
+      .map((argument) => quoteWindowsArgument(argument))
+      .join(' ');
 
-    backslashCount = 0;
-  }
-
-  quotedArgument += '\\'.repeat(backslashCount * 2);
-  quotedArgument += '"';
-
-  return quotedArgument;
-}
-
-function spawnCommand(command) {
-  if (process.platform !== 'win32') {
-    return spawn(getPnpmCommand(), command.args, {
+    return spawn(comspec, ['/d', '/s', '/c', commandLine], {
       cwd: process.cwd(),
       env: process.env,
       stdio: ['inherit', 'pipe', 'pipe'],
+      windowsVerbatimArguments: true,
     });
   }
 
-  const comspec = process.env.ComSpec ?? 'cmd.exe';
-  const commandLine = [getPnpmCommand(), ...command.args]
-    .map(quoteWindowsArgument)
-    .join(' ');
+  function startCommand(command) {
+    const child = spawnCommand(command);
 
-  return spawn(comspec, ['/d', '/s', '/c', commandLine], {
-    cwd: process.cwd(),
-    env: process.env,
-    stdio: ['inherit', 'pipe', 'pipe'],
-    windowsVerbatimArguments: true,
-  });
-}
+    runningChildren.add(child);
+    prefixStream(child.stdout, `[${command.name}] `, process.stdout);
+    prefixStream(child.stderr, `[${command.name}] `, process.stderr);
 
-function startCommand(command) {
-  const child = spawnCommand(command);
-
-  runningChildren.add(child);
-  prefixStream(child.stdout, `[${command.name}] `, process.stdout);
-  prefixStream(child.stderr, `[${command.name}] `, process.stderr);
-
-  return new Promise((resolve) => {
-    child.once('error', (error) => {
-      resolve({ code: 1, command: command.name, error });
-    });
-
-    child.once('close', (code, signal) => {
-      resolve({
-        code: code ?? (signal ? 1 : 0),
-        command: command.name,
-        signal,
+    return new Promise((resolve) => {
+      child.once('error', (error) => {
+        resolve({ code: 1, command: command.name, error });
       });
+
+      child.once('close', (code, signal) => {
+        resolve({
+          code: code ?? (signal ? 1 : 0),
+          command: command.name,
+          signal,
+        });
+      });
+    }).finally(() => {
+      runningChildren.delete(child);
     });
-  }).finally(() => {
-    runningChildren.delete(child);
-  });
-}
+  }
 
-async function runParallelPhase(phase) {
-  const results = await Promise.all(
-    phase.commands.map((command) => startCommand(command)),
-  );
+  async function runParallelPhase(phase) {
+    const results = await Promise.all(
+      phase.commands.map((command) => startCommand(command)),
+    );
 
-  return results.find((result) => result.code !== 0)?.code ?? 0;
-}
+    return results.find((result) => result.code !== 0)?.code ?? 0;
+  }
 
-async function runSequentialPhase(phase) {
-  for (const command of phase.commands) {
-    const result = await startCommand(command);
+  async function runSequentialPhase(phase) {
+    for (const command of phase.commands) {
+      const result = await startCommand(command);
 
-    if (result.code !== 0) {
-      return result.code;
+      if (result.code !== 0) {
+        return result.code;
+      }
+    }
+
+    return 0;
+  }
+
+  async function main() {
+    console.log(`[runner] ${workflow.description}`);
+
+    for (const phase of workflow.phases) {
+      if (shutdownRequested) {
+        return process.exit(1);
+      }
+
+      console.log(`[runner] Starting ${phase.name} phase.`);
+      const exitCode = phase.parallel
+        ? await runParallelPhase(phase)
+        : await runSequentialPhase(phase);
+
+      if (exitCode !== 0) {
+        return process.exit(exitCode);
+      }
     }
   }
 
-  return 0;
+  await main();
 }
 
-async function main() {
-  console.log(`[runner] ${workflow.description}`);
-
-  for (const phase of workflow.phases) {
-    if (shutdownRequested) {
-      process.exit(1);
-    }
-
-    console.log(`[runner] Starting ${phase.name} phase.`);
-    const exitCode = phase.parallel
-      ? await runParallelPhase(phase)
-      : await runSequentialPhase(phase);
-
-    if (exitCode !== 0) {
-      process.exit(exitCode);
-    }
-  }
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  await runWorkspaceWorkflow();
 }
-
-await main();

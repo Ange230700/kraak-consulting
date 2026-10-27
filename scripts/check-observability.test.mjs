@@ -5,25 +5,67 @@ import {
   checkTarget,
   createObservabilityTargets,
   normalizePublicUrl,
+  runObservabilityChecks,
 } from './check-observability.mjs';
+
+test('Given deux cibles indépendantes, When la page web attend sa réponse, Then la santé API est déjà interrogée et les résultats gardent leur ordre', async () => {
+  const started = [];
+  let releaseWeb;
+  const webResponse = new Promise((resolve) => {
+    releaseWeb = resolve;
+  });
+  const pending = runObservabilityChecks(
+    { webUrl: 'https://web.test', apiUrl: 'https://api.test' },
+    {
+      fetchImpl: (url) => {
+        started.push(url);
+        return url.endsWith('/health')
+          ? Promise.resolve(
+              Response.json({ status: 'ok', service: 'kraak-api' }),
+            )
+          : webResponse;
+      },
+    },
+  );
+  const startedBeforeRelease = [...started];
+  releaseWeb(
+    new Response('<html lang="fr"></html>', {
+      headers: { 'content-type': 'text/html' },
+    }),
+  );
+  const results = await pending;
+
+  assert.deepEqual(startedBeforeRelease, [
+    'https://web.test/',
+    'https://api.test/health',
+  ]);
+  assert.deepEqual(
+    results.map(({ name }) => name),
+    ['web-home', 'api-health'],
+  );
+});
 
 test('Given une URL publique valide, When on la normalise, Then le slash terminal est retire', () => {
   assert.equal(
-    normalizePublicUrl('https://kraak-consulting.vercel.app/', 'KRAAK_OBSERVABILITY_WEB_URL'),
-    'https://kraak-consulting.vercel.app',
+    normalizePublicUrl(
+      'https://kraak-web-prod.onrender.com/',
+      'KRAAK_OBSERVABILITY_WEB_URL',
+    ),
+    'https://kraak-web-prod.onrender.com',
   );
 });
 
 test('Given les URLs web et API, When on construit les checks, Then la home web et /health sont surveilles', () => {
   assert.deepEqual(
     createObservabilityTargets({
-      webUrl: 'https://kraak-consulting.vercel.app/',
+      webUrl: 'https://kraak-web-prod.onrender.com/',
       apiUrl: 'https://kraak-api-staging.onrender.com/',
+      environment: 'production',
     }),
     [
       {
         name: 'web-home',
-        url: 'https://kraak-consulting.vercel.app/',
+        url: 'https://kraak-web-prod.onrender.com/',
         expectedStatus: 200,
         expectedContentType: 'text/html',
       },
@@ -32,6 +74,7 @@ test('Given les URLs web et API, When on construit les checks, Then la home web 
         url: 'https://kraak-api-staging.onrender.com/health',
         expectedStatus: 200,
         expectedContentType: 'application/json',
+        expectedEnvironment: 'production',
       },
     ],
   );
@@ -44,6 +87,7 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
       url: 'https://kraak-api-staging.onrender.com/health',
       expectedStatus: 200,
       expectedContentType: 'application/json',
+      expectedEnvironment: 'production',
     },
     {
       fetchImpl: async () =>
@@ -70,13 +114,45 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
   assert.equal(result.payload.service, 'kraak-api');
 });
 
+test('Given un endpoint API staging identifié en production, When le check passe, Then une erreur explicite est levee', async () => {
+  await assert.rejects(
+    () =>
+      checkTarget(
+        {
+          name: 'api-health',
+          url: 'https://kraak-api-staging.onrender.com/health',
+          expectedStatus: 200,
+          expectedContentType: 'application/json',
+          expectedEnvironment: 'staging',
+        },
+        {
+          fetchImpl: async () =>
+            new Response(
+              JSON.stringify({
+                status: 'ok',
+                service: 'kraak-api',
+                environment: 'production',
+              }),
+              {
+                status: 200,
+                headers: {
+                  'content-type': 'application/json; charset=utf-8',
+                },
+              },
+            ),
+        },
+      ),
+    /environnement/,
+  );
+});
+
 test('Given un endpoint web qui repond en JSON, When le check s execute, Then une erreur explicite est levee', async () => {
   await assert.rejects(
     () =>
       checkTarget(
         {
           name: 'web-home',
-          url: 'https://kraak-consulting.vercel.app/',
+          url: 'https://kraak-web-prod.onrender.com/',
           expectedStatus: 200,
           expectedContentType: 'text/html',
         },

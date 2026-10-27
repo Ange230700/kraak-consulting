@@ -6,8 +6,6 @@ import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { CtaBanner } from './cta-banner.component';
 
 describe('CtaBanner', () => {
-  let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
-
   beforeEach(async () => {
     analyticsService = {
       trackEvent: vi.fn(),
@@ -22,8 +20,23 @@ describe('CtaBanner', () => {
       })
       .compileComponents();
   });
+  it('Given une destination privée sans alias public, When le CTA est affiché, Then son URL originale est préservée', () => {
+    const fixture = TestBed.createComponent(CtaBanner);
+    fixture.componentRef.setInput('ctaLabel', 'Mon programme');
+    fixture.componentRef.setInput('ctaLink', '/participant/programmes');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe(
+      '/participant/programmes',
+    );
+    fixture.componentInstance.onCtaClick();
+    expect(analyticsService.trackEvent).toHaveBeenCalledWith(
+      'conversion_cta_click',
+      expect.objectContaining({ cta_link: '/participant/programmes' }),
+    );
+  });
+  let analyticsService: Pick<AnalyticsService, 'trackEvent'>;
 
-  it('should render a PrimeNG card surface and CTA button', () => {
+  it('Given CTA inputs, when the component renders, then the CTA button uses the localized fallback URL', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('heading', 'Parlons de votre projet');
     fixture.componentRef.setInput(
@@ -36,11 +49,14 @@ describe('CtaBanner', () => {
 
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('.p-card')).toBeTruthy();
+    expect(element.querySelector('.bg-linear-to-r')).toBeTruthy();
     expect(element.querySelector('.p-button')).toBeTruthy();
+    expect(element.querySelector('a')?.getAttribute('href')).toBe(
+      '/fr/contact',
+    );
   });
 
-  it('should track a conversion event when the CTA click handler is triggered', () => {
+  it('Given a CTA link, when the click handler is triggered, then the conversion event keeps a language-neutral name and localized URL', () => {
     const fixture = TestBed.createComponent(CtaBanner);
     fixture.componentRef.setInput('heading', 'Parlons de votre projet');
     fixture.componentRef.setInput('ctaLabel', 'Nous contacter');
@@ -55,7 +71,7 @@ describe('CtaBanner', () => {
       {
         cta_context: 'home_hero',
         cta_label: 'Nous contacter',
-        cta_link: '/contact',
+        cta_link: '/fr/contact',
       },
     );
   });
@@ -91,7 +107,7 @@ describe('CtaBanner', () => {
       {
         cta_context: 'unknown',
         cta_label: 'Nous contacter',
-        cta_link: '/contact',
+        cta_link: '/fr/contact',
       },
     );
   });

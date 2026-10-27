@@ -1,3 +1,4 @@
+import type { ApiMessageValue } from '../i18n/api-message';
 import {
   extractAccessToken,
   validatePasswordResetPayload,
@@ -38,9 +39,11 @@ it('Given un email invalide, When la validation signIn est appliquée, Then une 
     password: 'motdepasse-ok',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    "L'adresse e-mail est invalide.",
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({
+    key: 'validation.invalidEmail',
+  });
 });
 
 it('Given un mot de passe trop court, When la validation signIn est appliquée, Then une erreur mot de passe est renvoyée', () => {
@@ -49,9 +52,9 @@ it('Given un mot de passe trop court, When la validation signIn est appliquée, 
     password: 'court',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le mot de passe doit contenir au moins 8 caractères.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.passwordTooShort' });
 });
 
 it('Given un mot de passe trop long (>128), When la validation signIn est appliquée, Then une erreur mot de passe est renvoyée', () => {
@@ -60,9 +63,9 @@ it('Given un mot de passe trop long (>128), When la validation signIn est appliq
     password: 'a'.repeat(129),
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le mot de passe ne peut pas dépasser 128 caractères.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.passwordTooLong' });
 });
 
 describe('validateSignUpPayload', () => {
@@ -81,11 +84,11 @@ describe('validateSignUpPayload', () => {
     ).toEqual({
       valid: false,
       errors: [
-        "L'adresse e-mail est invalide.",
-        'Le mot de passe doit contenir au moins 8 caractères.',
-        'Le prénom est requis.',
-        'Le nom est requis.',
-        'Le lien de redirection est invalide.',
+        { key: 'validation.invalidEmail' },
+        { key: 'auth.passwordTooShort' },
+        { key: 'auth.firstNameRequired' },
+        { key: 'auth.lastNameRequired' },
+        { key: 'auth.redirectInvalid' },
       ],
     });
   });
@@ -140,7 +143,7 @@ describe('extractAccessToken', () => {
   it('Given un header invalide, When le token est extrait, Then une erreur explicite est renvoyée', () => {
     expect(extractAccessToken('Token access-token')).toEqual({
       valid: false,
-      error: "Le header d'autorisation Bearer est requis.",
+      error: { key: 'auth.bearerRequired' },
     });
   });
 });
@@ -183,9 +186,9 @@ it('Given un mot de passe trop long dans signup (>128), When la validation est a
     lastName: 'Dupont',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le mot de passe ne peut pas dépasser 128 caractères.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.passwordTooLong' });
 });
 
 it('Given un prénom trop long (>80) dans signup, When la validation est appliquée, Then une erreur est renvoyée', () => {
@@ -197,8 +200,11 @@ it('Given un prénom trop long (>80) dans signup, When la validation est appliqu
   });
   expect(result.valid).toBe(false);
   expect(
-    (result as { valid: false; errors: string[] }).errors.some((e) =>
-      e.includes('prénom'),
+    (result as { valid: false; errors: ApiMessageValue[] }).errors.some(
+      (e) =>
+        typeof e === 'object' &&
+        e !== null &&
+        e.key === 'auth.firstNameTooLong',
     ),
   ).toBe(true);
 });
@@ -227,9 +233,9 @@ it('Given une URL de redirection invalide dans signup, When la validation est ap
     redirectTo: 'pas-un-lien',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le lien de redirection est invalide.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.redirectInvalid' });
 });
 
 // --- validateRefreshSessionPayload additional tests ---
@@ -242,9 +248,9 @@ it('Given un payload refresh non-objet, When la validation est appliquée, Then 
 it('Given un refreshToken manquant, When la validation est appliquée, Then une erreur est renvoyée', () => {
   const result = validateRefreshSessionPayload({ refreshToken: '' });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le refresh token est requis.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.refreshTokenRequired' });
 });
 
 it('Given un refreshToken absent (clé manquante), When la validation est appliquée, Then une erreur est renvoyée', () => {
@@ -262,9 +268,11 @@ it('Given un payload reset non-objet, When la validation est appliquée, Then un
 it('Given un email invalide dans reset, When la validation est appliquée, Then une erreur est renvoyée', () => {
   const result = validatePasswordResetPayload({ email: 'pas-un-email' });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    "L'adresse e-mail est invalide.",
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({
+    key: 'validation.invalidEmail',
+  });
 });
 
 it('Given une demande de reset sans redirectTo, When la validation est appliquée, Then le payload est valide', () => {
@@ -286,9 +294,9 @@ it('Given une URL de redirection invalide dans reset, When la validation est app
     redirectTo: 'pas-un-lien',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le lien de redirection est invalide.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.redirectInvalid' });
 });
 
 // --- extractAccessToken additional tests ---
@@ -296,35 +304,35 @@ it('Given une URL de redirection invalide dans reset, When la validation est app
 it('Given undefined, When le token est extrait, Then une erreur explicite est renvoyée', () => {
   expect(extractAccessToken(undefined)).toEqual({
     valid: false,
-    error: "Le header d'autorisation Bearer est requis.",
+    error: { key: 'auth.bearerRequired' },
   });
 });
 
 it('Given une chaîne vide, When le token est extrait, Then une erreur explicite est renvoyée', () => {
   expect(extractAccessToken('')).toEqual({
     valid: false,
-    error: "Le header d'autorisation Bearer est requis.",
+    error: { key: 'auth.bearerRequired' },
   });
 });
 
 it('Given "Bearer token extra" (parties multiples), When le token est extrait, Then une erreur explicite est renvoyée', () => {
   expect(extractAccessToken('Bearer access-token extra-part')).toEqual({
     valid: false,
-    error: "Le header d'autorisation Bearer est requis.",
+    error: { key: 'auth.bearerRequired' },
   });
 });
 
 it('Given "Bearer" sans token, When le token est extrait, Then une erreur explicite est renvoyée', () => {
   expect(extractAccessToken('Bearer')).toEqual({
     valid: false,
-    error: "Le header d'autorisation Bearer est requis.",
+    error: { key: 'auth.bearerRequired' },
   });
 });
 
 it('Given "Bearer   " (token uniquement whitespace), When le token est extrait, Then une erreur explicite est renvoyée', () => {
   expect(extractAccessToken('Bearer   ')).toEqual({
     valid: false,
-    error: "Le header d'autorisation Bearer est requis.",
+    error: { key: 'auth.bearerRequired' },
   });
 });
 
@@ -336,9 +344,9 @@ it('Given un password non-string (number) dans signIn, When la validation est ap
     password: 12345678,
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le mot de passe doit contenir au moins 8 caractères.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.passwordTooShort' });
 });
 
 it('Given un password non-string (number) dans signUp, When la validation est appliquée, Then password vaut chaîne vide et une erreur longueur est renvoyée', () => {
@@ -349,7 +357,7 @@ it('Given un password non-string (number) dans signUp, When la validation est ap
     lastName: 'Dupont',
   });
   expect(result.valid).toBe(false);
-  expect((result as { valid: false; errors: string[] }).errors).toContain(
-    'Le mot de passe doit contenir au moins 8 caractères.',
-  );
+  expect(
+    (result as { valid: false; errors: ApiMessageValue[] }).errors,
+  ).toContainEqual({ key: 'auth.passwordTooShort' });
 });

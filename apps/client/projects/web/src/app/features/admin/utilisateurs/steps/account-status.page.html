@@ -1,0 +1,126 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    {{ 'web.admin.users.create.accountStatus.step' | kraakTranslate }}
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    {{ 'web.admin.users.create.accountStatus.title' | kraakTranslate }}
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    {{ 'web.admin.users.create.accountStatus.description' | kraakTranslate }}
+  </p>
+
+  @if (errorMessage) {
+    <p-message
+      severity="error"
+      [text]="errorMessage"
+      styleClass="mb-6 w-full"
+    ></p-message>
+  }
+
+  <div class="flex flex-col gap-5">
+    <div
+      class="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-5"
+    >
+      <label class="flex cursor-pointer items-start gap-4">
+        <input
+          type="checkbox"
+          class="accent-brand-blue mt-0.5 h-5 w-5 shrink-0"
+          [(ngModel)]="isActive"
+          (ngModelChange)="sync()"
+          id="isActive"
+        />
+        <div>
+          <span class="text-brand-navy block text-sm font-medium">{{
+            'web.admin.users.create.accountStatus.active.label' | kraakTranslate
+          }}</span>
+          <span class="text-xs text-neutral-500">
+            {{
+              'web.admin.users.create.accountStatus.active.help'
+                | kraakTranslate
+            }}
+          </span>
+        </div>
+      </label>
+
+      <label class="flex cursor-pointer items-start gap-4">
+        <input
+          type="checkbox"
+          class="accent-brand-blue mt-0.5 h-5 w-5 shrink-0"
+          [(ngModel)]="sendInvitation"
+          (ngModelChange)="sync()"
+          id="sendInvitation"
+        />
+        <div>
+          <span class="text-brand-navy block text-sm font-medium">{{
+            'web.admin.users.create.accountStatus.invitation.label'
+              | kraakTranslate
+          }}</span>
+          <span class="text-xs text-neutral-500">
+            {{
+              'web.admin.users.create.accountStatus.invitation.help'
+                | kraakTranslate
+            }}
+          </span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Récapitulatif -->
+    <div class="bg-brand-blue/5 border-brand-blue/20 rounded-xl border p-5">
+      <p
+        class="text-brand-blue mb-3 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        {{
+          'web.admin.users.create.accountStatus.summary.eyebrow'
+            | kraakTranslate
+        }}
+      </p>
+      <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">
+            {{
+              'web.admin.users.create.accountStatus.summary.fullName'
+                | kraakTranslate
+            }}
+          </dt>
+          <dd class="text-brand-navy font-medium">
+            {{ formState.state().firstName }} {{ formState.state().lastName }}
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">
+            {{
+              'web.admin.users.create.accountStatus.summary.email'
+                | kraakTranslate
+            }}
+          </dt>
+          <dd class="text-brand-navy font-medium">
+            {{ formState.state().email }}
+          </dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-neutral-500">
+            {{
+              'web.admin.users.create.accountStatus.summary.role'
+                | kraakTranslate
+            }}
+          </dt>
+          <dd class="text-brand-navy font-medium capitalize">
+            {{ roleLabel(formState.state().role) }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      {{
+        'web.admin.users.create.accountStatus.actions.previous' | kraakTranslate
+      }}
+    </button>
+  </div>
+</div>

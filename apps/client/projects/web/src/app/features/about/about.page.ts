@@ -1,36 +1,36 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { NgStyle } from '@angular/common';
+import { Component, Injector, OnInit, OnDestroy, inject } from '@angular/core';
 
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { AboutPreviewSections } from '../../shared/about-preview-sections/about-preview-sections.component';
-
-const ABOUT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/about-hero-community-dialogue.avif',
-);
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
+import { LazyGsapLoader } from '../../core/animations/lazy-gsap-loader';
+import { initializeMarketingPageAnimations } from '../../core/animations/marketing-page-animations';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
 @Component({
   selector: 'kraak-about-page',
   standalone: true,
-  imports: [NgStyle, CtaBanner, AboutPreviewSections],
+  imports: [CtaBanner, RevealOnScrollDirective, KraakTranslatePipe],
   templateUrl: './about.page.html',
 })
 export default class AboutPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = ABOUT_HERO_BACKGROUND_STYLE;
-
-  private readonly gsapService = inject(GsapAnimationsService);
+  private readonly animations = new LazyGsapLoader(inject(Injector));
 
   ngOnInit(): void {
-    this.gsapService.animatePageIn();
-    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
-    this.gsapService.initializeInteractiveCardAnimations('article');
-    this.gsapService.initializeButtonTransitions();
-    this.gsapService.initializeSectionAnimations();
-    this.gsapService.initializeIconAnimations();
+    void this.initializeAnimations();
   }
 
   ngOnDestroy(): void {
-    this.gsapService.killAllAnimations();
+    this.animations.destroy();
+  }
+
+  private async initializeAnimations(): Promise<void> {
+    const gsapService = await this.animations.resolve();
+    if (!gsapService) {
+      return;
+    }
+
+    initializeMarketingPageAnimations(gsapService, {
+      reversibleSelector: 'article[data-motion="reversible"]',
+    });
   }
 }

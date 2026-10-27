@@ -1,4 +1,35 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-05 — Critères anti-scope-creep et cadrage ADR
+
+## Table des matières
+
+- [ARC-05 — Critères anti-scope-creep et cadrage ADR](#arc-05-criteres-anti-scope-creep-et-cadrage-adr)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Périmètre MVP — Ce qui est inclus](#21-perimetre-mvp-ce-qui-est-inclus)
+    - [2.2 Périmètre MVP — Ce qui est explicitement exclu (V1.1+)](#22-perimetre-mvp-ce-qui-est-explicitement-exclu-v11)
+    - [2.3 Critères de filtrage anti-scope-creep](#23-criteres-de-filtrage-anti-scope-creep)
+    - [2.4 Processus ADR](#24-processus-adr)
+      - [Quand créer un ADR](#quand-creer-un-adr)
+      - [Format obligatoire](#format-obligatoire)
+      - [Convention de nommage](#convention-de-nommage)
+      - [Index](#index)
+  - [3 · Justification](#3-justification)
+    - [3.1 Pourquoi des critères formels](#31-pourquoi-des-criteres-formels)
+    - [3.2 Pourquoi des ADR formels](#32-pourquoi-des-adr-formels)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Arborescence](#41-arborescence)
+    - [4.2 Intégration dans le workflow](#42-integration-dans-le-workflow)
+    - [4.3 Checklist de validation avant merge](#43-checklist-de-validation-avant-merge)
+  - [5 · Alternatives considérées](#5-alternatives-considerees)
+  - [6 · Limites et évolutions](#6-limites-et-evolutions)
+  - [7 · Références](#7-references)
 
 | Champ          | Valeur         |
 | -------------- | -------------- |
@@ -194,7 +225,7 @@ Pour chaque PR, vérifier :
 ## 7 · Références
 
 - [AGENTS.md](../../AGENTS.md) — garde-fous du périmètre produit
-- [docs/specs/BACKLOG.md](../specs/BACKLOG.md) — backlog MVP
+- [docs/planning/GITHUB_PROJECT.md](../planning/GITHUB_PROJECT.md) — backlog MVP
 - [ARC-01 — Architecture cible MVP](./ARC-01-architecture-cible-mvp.md)
 - [ARC-02 — Conventions dépôt et workflow Git](./ARC-02-conventions-repo.md)
 - [ARC-03 — Stratégie SEO et prerendering](./ARC-03-seo-prerender-strategy.md)

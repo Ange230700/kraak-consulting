@@ -20,24 +20,28 @@ Object.defineProperty(globalThis, 'matchMedia', {
 });
 
 // Mock IntersectionObserver
-globalThis.IntersectionObserver = class IntersectionObserver {
+globalThis.IntersectionObserver = class IntersectionObserver implements IntersectionObserver {
+  readonly root: Element | null = null;
+  readonly rootMargin = '0px';
+  readonly thresholds: readonly number[] = [];
+
   disconnect() {
     /* No-op: In tests, we don't need to perform cleanup since the mock isn't tracking real visibility changes */
   }
   observe() {
     /* No-op: In tests, we don't need to track element visibility; components handle mock responses directly */
   }
-  takeRecords() {
+  takeRecords(): IntersectionObserverEntry[] {
     return [];
   }
   unobserve() {
     /* No-op: In tests, there are no real observers to remove; components handle mock responses directly */
   }
-} as any;
+};
 
 // Mock requestAnimationFrame for GSAP
 globalThis.requestAnimationFrame = (callback: FrameRequestCallback) =>
-  setTimeout(callback, 0) as any;
+  Number(setTimeout(() => callback(performance.now()), 0));
 
 // Mock cancelAnimationFrame
 globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);

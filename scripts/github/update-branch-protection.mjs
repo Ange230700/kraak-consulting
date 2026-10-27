@@ -8,23 +8,25 @@
  *     en partent et y reviennent par PR. CI complète requise.
  *   - `main`    : branche de release. Avance uniquement par PR depuis
  *     `staging`. Sert de point d'ancrage des tags SemVer (ARC-07). Aucun
- *     déploiement git-triggered (Vercel Production désactivé), donc le
- *     status check `Vercel – kraak-consulting` ne doit PAS être requis.
+ *     déploiement git-triggered côté web production : la release est pilotée
+ *     par workflow de tag et déploiement Render explicite.
  *
  * Usage :
  *   node scripts/github/update-branch-protection.mjs            # apply
  *   node scripts/github/update-branch-protection.mjs --dry-run  # show only
+ *   node scripts/github/update-branch-protection.mjs --staging-only # staging only
  *
  * Pré-requis : `gh auth status` OK avec scopes `repo` + `admin:repo_hook`.
  */
 
-import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { delimiter, join } from "node:path";
-import process from "node:process";
+import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { delimiter, join } from 'node:path';
+import process from 'node:process';
 
-const REPO = "Ange230700/kraak-consulting";
-const DRY_RUN = process.argv.includes("--dry-run");
+const REPO = 'Ange230700/kraak-consulting';
+const DRY_RUN = process.argv.includes('--dry-run');
+const STAGING_ONLY = process.argv.includes('--staging-only');
 
 /**
  * Résout le chemin absolu du binaire `gh` en parcourant PATH une seule fois.
@@ -35,8 +37,8 @@ function resolveGhBinary() {
   if (process.env.GH_BIN && existsSync(process.env.GH_BIN)) {
     return process.env.GH_BIN;
   }
-  const exts = process.platform === "win32" ? [".exe", ".cmd", ""] : [""];
-  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
+  const exts = process.platform === 'win32' ? ['.exe', '.cmd', ''] : [''];
+  const dirs = (process.env.PATH ?? '').split(delimiter).filter(Boolean);
   for (const dir of dirs) {
     for (const ext of exts) {
       const candidate = join(dir, `gh${ext}`);
@@ -46,53 +48,67 @@ function resolveGhBinary() {
     }
   }
   throw new Error(
-    "Binaire `gh` introuvable dans PATH. Installer GitHub CLI ou définir GH_BIN.",
+    'Binaire `gh` introuvable dans PATH. Installer GitHub CLI ou définir GH_BIN.',
   );
 }
 
 const GH_BIN = resolveGhBinary();
 
 const COMMON_CHECKS_STAGING = [
-  "SonarCloud Analysis",
-  "SonarCloud Code Analysis",
-  "Tests unitaires",
-  "Tests E2E",
-  "Android Debug APK",
-  // Note : "Vercel – kraak-consulting" n'est pas requis car le `ignoreCommand`
-  // de vercel.json skippe les builds hors `staging` ; le check n'est donc
-  // jamais publié sur les PR head SHAs et bloquerait tout merge. Le déploiement
-  // staging réel a lieu après merge sur la branche `staging` (cf. ARC-11).
+  'Quality gate',
+  'SonarCloud Analysis',
+  'SonarCloud Code Analysis',
+  'Format & Lint',
+  'Migration Lineage Tests',
+  'Audit dépendances',
+  'Build',
+  'Tests unitaires',
+  'Tests integration',
+  'Tests E2E',
+  'Workspace Checks',
+  'Docker Build',
+  'Android Debug APK',
 ];
 
 const COMMON_CHECKS_MAIN = [
-  "SonarCloud Analysis",
-  "SonarCloud Code Analysis",
-  "Tests unitaires",
-  "Tests E2E",
-  "Android Debug APK",
+  'Quality gate',
+  'SonarCloud Analysis',
+  'SonarCloud Code Analysis',
+  'Branch Lineage',
+  'Tests unitaires',
+  'Tests E2E',
+  'Android Debug APK',
 ];
 
-function buildProtectionPayload({ contexts, enforceAdmins }) {
+function buildProtectionPayload({
+  contexts,
+  enforceAdmins,
+  requirePullRequest,
+  strictStatusChecks,
+  requireConversationResolution,
+}) {
   return {
     required_status_checks: {
-      // `strict: false` évite d'imposer un rebase systématique avant chaque
-      // merge dans un workflow solo dev MVP ; les status checks CI restent
-      // obligatoires.
-      strict: false,
+      strict: strictStatusChecks,
       contexts,
     },
     enforce_admins: enforceAdmins,
-    // `null` désactive complètement l'exigence de review (sinon
-    // mergeStateStatus reste BLOCKED même avec required_approving_review_count=0).
-    required_pull_request_reviews: null,
+    // Un compteur à zéro exige une PR sans imposer d'approbation, conformément
+    // au modèle de mainteneur solo.
+    required_pull_request_reviews: requirePullRequest
+      ? {
+          dismiss_stale_reviews: false,
+          require_code_owner_reviews: false,
+          required_approving_review_count: 0,
+          require_last_push_approval: false,
+        }
+      : null,
     restrictions: null,
     required_linear_history: true,
     allow_force_pushes: false,
     allow_deletions: false,
     block_creations: false,
-    // Threads de PR non résolus : peu pertinent en solo dev, génère de la
-    // friction sans bénéfice concret.
-    required_conversation_resolution: false,
+    required_conversation_resolution: requireConversationResolution,
     lock_branch: false,
     allow_fork_syncing: false,
   };
@@ -103,12 +119,12 @@ function runGh(args, stdin) {
   // éviter toute découverte dynamique au runtime (cf. javascript:S4036).
   const res = spawnSync(GH_BIN, args, {
     input: stdin,
-    encoding: "utf8",
+    encoding: 'utf8',
     shell: false,
   });
   if (res.status !== 0) {
-    process.stderr.write(res.stderr || "");
-    throw new Error(`gh ${args.join(" ")} exited with ${res.status}`);
+    process.stderr.write(res.stderr || '');
+    throw new Error(`gh ${args.join(' ')} exited with ${res.status}`);
   }
   return res.stdout;
 }
@@ -119,29 +135,37 @@ function applyProtection(branch, payload) {
   console.log(`\n=== ${branch} ===`);
   console.log(json);
   if (DRY_RUN) {
-    console.log("(dry-run, not applied)");
+    console.log('(dry-run, not applied)');
     return;
   }
-  const out = runGh(["api", "--method", "PUT", path, "--input", "-"], json);
-  console.log("OK", out.length, "octets de réponse");
+  const out = runGh(['api', '--method', 'PUT', path, '--input', '-'], json);
+  console.log('OK', out.length, 'octets de réponse');
 }
 
 function main() {
   applyProtection(
-    "staging",
+    'staging',
     buildProtectionPayload({
       contexts: COMMON_CHECKS_STAGING,
-      enforceAdmins: false,
+      enforceAdmins: true,
+      requirePullRequest: true,
+      strictStatusChecks: true,
+      requireConversationResolution: true,
     }),
   );
-  applyProtection(
-    "main",
-    buildProtectionPayload({
-      contexts: COMMON_CHECKS_MAIN,
-      enforceAdmins: false,
-    }),
-  );
-  console.log("\nDone.");
+  if (!STAGING_ONLY) {
+    applyProtection(
+      'main',
+      buildProtectionPayload({
+        contexts: COMMON_CHECKS_MAIN,
+        enforceAdmins: false,
+        requirePullRequest: false,
+        strictStatusChecks: false,
+        requireConversationResolution: false,
+      }),
+    );
+  }
+  console.log('\nDone.');
 }
 
 main();

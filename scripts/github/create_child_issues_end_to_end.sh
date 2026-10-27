@@ -7,7 +7,7 @@ set -euo pipefail
 # Prérequis:
 #   gh auth login
 
-REPO="Ange230700/kraak-group"
+REPO="Ange230700/kraak-consulting"
 
 log() {
   printf '%s\n' "$*"

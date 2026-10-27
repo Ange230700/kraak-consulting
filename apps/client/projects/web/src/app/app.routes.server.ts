@@ -1,22 +1,34 @@
+// apps/client/projects/web/src/app/app.routes.server.ts
+
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
-import { seoPages } from './seo/site-seo';
+import { localizedPublicPrerenderPaths } from './routing/localized-public-routes';
 
-const supportPrerenderPaths = ['401', '403', '404', '500'];
-const publicPrerenderPaths = [
-  ...seoPages.map((page) => page.path),
-  ...supportPrerenderPaths,
+const clientOnlyPaths = [
+  'connexion',
+  'inscription',
+  'mot-de-passe-oublie',
+  'auth/reset',
+  'participant',
+  'participant/**',
 ];
 
-const publicPrerenderRoutes: ServerRoute[] = publicPrerenderPaths.map(
+const publicPrerenderRoutes: ServerRoute[] = localizedPublicPrerenderPaths.map(
   (path) => ({
     path,
-    renderMode: RenderMode.Prerender as const,
+    renderMode: RenderMode.Prerender,
   }),
 );
 
+const clientOnlyRoutes: ServerRoute[] = clientOnlyPaths.map((path) => ({
+  path,
+  renderMode: RenderMode.Client,
+}));
+
 export const serverRoutes: ServerRoute[] = [
   ...publicPrerenderRoutes,
+  ...clientOnlyRoutes,
+
   {
     path: '**',
     renderMode: RenderMode.Server,

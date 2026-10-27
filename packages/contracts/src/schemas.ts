@@ -188,6 +188,123 @@ export const AuthSessionContextSchema = z
   .strict();
 
 // ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+const NullableTrimmedStringSchema = z
+  .union([z.string().trim().min(1), z.null()])
+  .transform((value) => value ?? null);
+
+const EditorialIdSchema = z.string().trim().min(1);
+const EditorialLabelSchema = z.string().trim().min(1).max(120);
+const EditorialSlugSchema = z.string().trim().min(1).max(160);
+const EditorialDateTimeSchema = z.string().trim().datetime({ offset: true });
+
+const NullableOptionalUrlSchema = z
+  .union([z.string().trim().url(), z.null()])
+  .optional()
+  .transform((value) => value ?? null);
+
+const NullableOptionalDateTimeSchema = z
+  .union([z.string().trim().datetime({ offset: true }), z.null()])
+  .optional()
+  .transform((value) => value ?? null);
+
+export const AuthorSchema = z
+  .object({
+    id: EditorialIdSchema,
+    email: z.string().trim().email(),
+    displayName: z.string().trim().min(1).max(120),
+    bio: NullableTrimmedStringSchema,
+    avatarUrl: z.union([z.string().trim().url(), z.null()]),
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateAuthorSchema = AuthorSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateAuthorSchema = CreateAuthorSchema.partial();
+
+export const CategorySchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: EditorialSlugSchema,
+    label: EditorialLabelSchema,
+    description: NullableTrimmedStringSchema,
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateCategorySchema = CategorySchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateCategorySchema = CreateCategorySchema.partial();
+
+export const TagSchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: EditorialSlugSchema,
+    label: EditorialLabelSchema,
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+export const CreateTagSchema = TagSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateTagSchema = CreateTagSchema.partial();
+
+export const ArticleSchema = z
+  .object({
+    id: EditorialIdSchema,
+    slug: z.string().trim().min(1).max(180),
+    title: z.string().trim().min(3).max(180),
+    excerpt: z.string().trim().min(10).max(500),
+    content: z.string().trim().min(1),
+    status: z.enum(['draft', 'published', 'archived']),
+    coverImageUrl: z.union([z.string().trim().url(), z.null()]),
+    seoTitle: z.union([z.string().trim().min(1).max(180), z.null()]),
+    seoDescription: z.union([z.string().trim().min(1).max(320), z.null()]),
+    publishedAt: z.union([
+      z.string().trim().datetime({ offset: true }),
+      z.null(),
+    ]),
+    authorId: EditorialIdSchema,
+    categoryIds: z.array(EditorialIdSchema).min(1),
+    tagIds: z.array(EditorialIdSchema).min(1),
+    createdAt: EditorialDateTimeSchema,
+    updatedAt: EditorialDateTimeSchema,
+  })
+  .strict();
+
+const _ArticleCreateBase = ArticleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const CreateArticleSchema = _ArticleCreateBase.extend({
+  coverImageUrl: NullableOptionalUrlSchema,
+  seoTitle: NullableTrimmedStringSchema,
+  seoDescription: NullableTrimmedStringSchema,
+  publishedAt: NullableOptionalDateTimeSchema,
+});
+
+export const UpdateArticleSchema = CreateArticleSchema.partial();
+
+// ---------------------------------------------------------------------------
 // Program
 // ---------------------------------------------------------------------------
 export const ProgramSchema = z.object({
@@ -209,6 +326,140 @@ export const CreateProgramSchema = ProgramSchema.omit({
 });
 
 export const UpdateProgramSchema = CreateProgramSchema.partial();
+
+// ---------------------------------------------------------------------------
+// Curriculum
+// ---------------------------------------------------------------------------
+export const CourseSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  description: z.string(),
+  status: z.enum(['draft', 'published', 'archived']),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateCourseSchema = CourseSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateCourseSchema = CreateCourseSchema.partial();
+
+export const LearningModuleSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  description: z.string(),
+  status: z.enum(['draft', 'published', 'archived']),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateLearningModuleSchema = LearningModuleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateLearningModuleSchema = CreateLearningModuleSchema.partial();
+
+export const ChapterSchema = z.object({
+  id: z.string(),
+  learningModuleId: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  status: z.enum(['draft', 'published', 'archived']),
+  sortOrder: z.number().int().min(0),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateChapterSchema = ChapterSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateChapterSchema = CreateChapterSchema.partial();
+
+export const LessonSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  description: z.string(),
+  status: z.enum(['draft', 'published', 'archived']),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateLessonSchema = LessonSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateLessonSchema = CreateLessonSchema.partial();
+
+export const ProgramCourseSchema = z.object({
+  id: z.string(),
+  programId: z.string(),
+  courseId: z.string(),
+  sortOrder: z.number().int().min(0),
+  isRequired: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateProgramCourseSchema = ProgramCourseSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateProgramCourseSchema = CreateProgramCourseSchema.partial();
+
+export const CourseModuleSchema = z.object({
+  id: z.string(),
+  courseId: z.string(),
+  learningModuleId: z.string(),
+  sortOrder: z.number().int().min(0),
+  isRequired: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateCourseModuleSchema = CourseModuleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateCourseModuleSchema = CreateCourseModuleSchema.partial();
+
+export const ChapterLessonSchema = z.object({
+  id: z.string(),
+  chapterId: z.string(),
+  lessonId: z.string(),
+  sortOrder: z.number().int().min(0),
+  isRequired: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateChapterLessonSchema = ChapterLessonSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateChapterLessonSchema = CreateChapterLessonSchema.partial();
 
 // ---------------------------------------------------------------------------
 // Cohort

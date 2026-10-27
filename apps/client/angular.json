@@ -39,9 +39,6 @@
             "scripts": [],
             "server": "projects/web/src/main.server.ts",
             "outputMode": "server",
-            "security": {
-              "allowedHosts": []
-            },
             "ssr": {
               "entry": "projects/web/src/server.ts"
             }
@@ -65,20 +62,12 @@
                 {
                   "replace": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.component.ts",
                   "with": "projects/web/src/app/shared/about-preview-sections/about-preview-sections.prod.component.ts"
-                },
-                {
-                  "replace": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.component.ts",
-                  "with": "projects/web/src/app/shared/participant-nav-cta/participant-nav-cta.prod.component.ts"
-                },
-                {
-                  "replace": "projects/web/src/app/participant-area.routes.ts",
-                  "with": "projects/web/src/app/participant-area.prod.routes.ts"
                 }
               ],
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "700kB",
+                  "maximumWarning": "750kB",
                   "maximumError": "1MB"
                 },
                 {
@@ -123,12 +112,21 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "fileReplacements": [],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": []
+          },
           "configurations": {
             "production": {
               "buildTarget": "web:build:production"
@@ -148,10 +146,15 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "web:build:test",
             "tsConfig": "projects/web/tsconfig.spec.json",
             "runnerConfig": "projects/web/vitest.config.ts",
             "coverage": true,
-            "coverageReporters": ["lcov", "text"]
+            "coverageInclude": [
+              "projects/web/src/**/*.ts",
+              "projects/shared/**/*.ts"
+            ],
+            "coverageReporters": ["lcov", "text-summary", "json-summary"]
           }
         },
         "lint": {
@@ -160,6 +163,8 @@
             "lintFilePatterns": [
               "projects/web/src/**/*.ts",
               "projects/web/src/**/*.html",
+              "projects/shared/**/*.ts",
+              "projects/shared/**/*.html",
               "tests/e2e/**/*.ts"
             ]
           }
@@ -233,7 +238,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "600kB",
+                  "maximumWarning": "800kB",
                   "maximumError": "1MB"
                 },
                 {
@@ -273,6 +278,12 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "fileReplacements": [],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -305,17 +316,21 @@
           "options": {
             "lintFilePatterns": [
               "projects/mobile/src/**/*.ts",
-              "projects/mobile/src/**/*.html"
+              "projects/mobile/src/**/*.html",
+              "projects/shared/**/*.ts",
+              "projects/shared/**/*.html"
             ]
           }
         },
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "mobile:build:test",
             "tsConfig": "projects/mobile/tsconfig.spec.json",
             "runnerConfig": "projects/mobile/vitest.config.ts",
             "coverage": true,
-            "coverageReporters": ["lcov", "text"]
+            "coverageInclude": ["projects/mobile/src/**/*.ts"],
+            "coverageReporters": ["lcov", "text-summary", "json-summary"]
           }
         }
       }

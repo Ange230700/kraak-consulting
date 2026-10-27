@@ -142,6 +142,188 @@ export type Database = {
         };
         Relationships: [];
       };
+      article: {
+        Row: {
+          author_id: string;
+          content: string;
+          cover_image_url: string | null;
+          created_at: string;
+          excerpt: string;
+          id: string;
+          published_at: string | null;
+          seo_description: string | null;
+          seo_title: string | null;
+          slug: string;
+          status: Database['public']['Enums']['publication_status'];
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          author_id: string;
+          content: string;
+          cover_image_url?: string | null;
+          created_at?: string;
+          excerpt: string;
+          id?: string;
+          published_at?: string | null;
+          seo_description?: string | null;
+          seo_title?: string | null;
+          slug: string;
+          status?: Database['public']['Enums']['publication_status'];
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          author_id?: string;
+          content?: string;
+          cover_image_url?: string | null;
+          created_at?: string;
+          excerpt?: string;
+          id?: string;
+          published_at?: string | null;
+          seo_description?: string | null;
+          seo_title?: string | null;
+          slug?: string;
+          status?: Database['public']['Enums']['publication_status'];
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'article_author_id_fkey';
+            columns: ['author_id'];
+            isOneToOne: false;
+            referencedRelation: 'author';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      article_category: {
+        Row: {
+          article_id: string;
+          category_id: string;
+          created_at: string;
+        };
+        Insert: {
+          article_id: string;
+          category_id: string;
+          created_at?: string;
+        };
+        Update: {
+          article_id?: string;
+          category_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'article_category_article_id_fkey';
+            columns: ['article_id'];
+            isOneToOne: false;
+            referencedRelation: 'article';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_category_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'category';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      article_tag: {
+        Row: {
+          article_id: string;
+          created_at: string;
+          tag_id: string;
+        };
+        Insert: {
+          article_id: string;
+          created_at?: string;
+          tag_id: string;
+        };
+        Update: {
+          article_id?: string;
+          created_at?: string;
+          tag_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'article_tag_article_id_fkey';
+            columns: ['article_id'];
+            isOneToOne: false;
+            referencedRelation: 'article';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_tag_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tag';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      author: {
+        Row: {
+          avatar_url: string | null;
+          bio: string | null;
+          created_at: string;
+          display_name: string;
+          email: string;
+          id: string;
+          updated_at: string;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          bio?: string | null;
+          created_at?: string;
+          display_name: string;
+          email: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          avatar_url?: string | null;
+          bio?: string | null;
+          created_at?: string;
+          display_name?: string;
+          email?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      category: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          label: string;
+          slug: string;
+          status: Database['public']['Enums']['publication_status'];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          label: string;
+          slug: string;
+          status?: Database['public']['Enums']['publication_status'];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          label?: string;
+          slug?: string;
+          status?: Database['public']['Enums']['publication_status'];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       cohort: {
         Row: {
           capacity: number | null;
@@ -560,6 +742,33 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      tag: {
+        Row: {
+          created_at: string;
+          id: string;
+          label: string;
+          slug: string;
+          status: Database['public']['Enums']['publication_status'];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          label: string;
+          slug: string;
+          status?: Database['public']['Enums']['publication_status'];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          label?: string;
+          slug?: string;
+          status?: Database['public']['Enums']['publication_status'];
+          updated_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {

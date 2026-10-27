@@ -1,3 +1,5 @@
+// apps\client\projects\mobile\src\app\features\onboarding\welcome.page.spec.ts
+
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';

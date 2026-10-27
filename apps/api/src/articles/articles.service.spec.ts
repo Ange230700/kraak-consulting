@@ -1,0 +1,3116 @@
+import {
+  BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { SupabaseService } from '../supabase/supabase.service';
+import { ArticlesService } from './articles.service';
+
+function createSingleRowQuery(result: { data: unknown; error: unknown }) {
+  return {
+    insert: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    neq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue(result),
+    maybeSingle: jest.fn().mockResolvedValue(result),
+  };
+}
+
+function createListQuery(result: { data: unknown; error: unknown }) {
+  return {
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    neq: jest.fn().mockReturnThis(),
+    in: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockResolvedValue(result),
+    single: jest.fn().mockResolvedValue(result),
+  };
+}
+
+function createUpdateQuery(result: { data: unknown; error: unknown }) {
+  return {
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    neq: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    maybeSingle: jest.fn().mockResolvedValue(result),
+    single: jest.fn().mockResolvedValue(result),
+  };
+}
+
+function createFromTableRouter(
+  baseTables: Record<string, unknown>,
+  sequentialTables: Record<string, unknown[]> = {},
+) {
+  const sequentialCallCount = new Map<string, number>();
+
+  return (tableName: string) => {
+    const sequence = sequentialTables[tableName];
+    if (sequence) {
+      const callIndex = sequentialCallCount.get(tableName) ?? 0;
+      sequentialCallCount.set(tableName, callIndex + 1);
+      return sequence[callIndex] ?? sequence.at(-1);
+    }
+
+    const table = baseTables[tableName];
+    if (table !== undefined) {
+      return table;
+    }
+
+    throw new Error(`Unexpected table ${tableName}`);
+  };
+}
+
+describe('ArticlesService', () => {
+  let service: ArticlesService;
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-1',
+        },
+      },
+      error: null,
+    });
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ArticlesService,
+        {
+          provide: SupabaseService,
+          useValue: supabaseService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<ArticlesService>(ArticlesService);
+  });
+
+  it('Given un article administrable, When son détail est chargé, Then les relations et le contenu sont renvoyés', async () => {
+    adminClient.from.mockImplementation(
+      createFromTableRouter({
+        app_user: createSingleRowQuery({
+          data: { id: 'user-1', role: 'admin' },
+          error: null,
+        }),
+        article: createSingleRowQuery({
+          data: {
+            id: 'article-1',
+            slug: 'article',
+            title: 'Article',
+            excerpt: 'Résumé',
+            content: '<p>Contenu</p>',
+            status: 'draft',
+            cover_image_url: null,
+            seo_title: null,
+            seo_description: null,
+            published_at: null,
+            author_id: 'user-1',
+            created_at: '2026-01-01',
+            updated_at: '2026-01-01',
+          },
+          error: null,
+        }),
+        article_category: createListQuery({ data: [], error: null }),
+        article_tag: createListQuery({ data: [], error: null }),
+      }),
+    );
+    await expect(
+      service.getArticleById('access-token', 'article-1'),
+    ).resolves.toMatchObject({
+      id: 'article-1',
+      content: '<p>Contenu</p>',
+      categoryIds: [],
+      tagIds: [],
+    });
+  });
+
+  const authClient = {
+    auth: {
+      getUser: jest.fn(),
+    },
+  };
+
+  const adminClient = {
+    from: jest.fn(),
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn().mockResolvedValue({ error: null }),
+        getPublicUrl: jest.fn((path: string) => ({
+          data: { publicUrl: `https://cdn.kraak.test/${path}` },
+        })),
+      })),
+    },
+  };
+
+  const supabaseService = {
+    createAuthClient: jest.fn(() => authClient),
+    getClient: jest.fn(() => adminClient),
+  };
+
+  it('Given un token admin valide, When listArticles est appelé, Then les articles mappés sont renvoyés', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-1',
+          slug: 'article-1',
+          title: 'Article 1',
+          excerpt: 'Résumé article 1',
+          content: '<p>Contenu 1</p>',
+          status: 'draft',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: null,
+          author_id: 'author-1',
+          created_at: '2026-05-24T10:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    const articleCategoryQuery = createListQuery({
+      data: [{ article_id: 'article-1', category_id: 'category-1' }],
+      error: null,
+    });
+
+    const articleTagQuery = createListQuery({
+      data: [{ article_id: 'article-1', tag_id: 'tag-1' }],
+      error: null,
+    });
+
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-1' }],
+      error: null,
+    });
+
+    const tagQuery = createListQuery({
+      data: [{ id: 'tag-1' }],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).resolves.toEqual([
+      {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Résumé article 1',
+        content: '<p>Contenu 1</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+        createdAt: '2026-05-24T10:00:00.000Z',
+        updatedAt: '2026-05-24T10:00:00.000Z',
+      },
+    ]);
+
+    expect(articleQuery.neq).toHaveBeenCalledWith('status', 'archived');
+  });
+
+  it('Given un token invalide, When listArticles est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValueOnce({
+      data: { user: null },
+      error: { message: 'invalid token' },
+    });
+
+    await expect(service.listArticles('invalid-token')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un utilisateur non admin, When listArticles est appelé, Then une ForbiddenException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'participant' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+  });
+
+  it('Given une erreur de lecture article, When listArticles est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const articleQuery = createListQuery({
+      data: null,
+      error: { message: 'db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given un profil admin introuvable, When listArticles est appelé, Then une ForbiddenException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+  });
+
+  it('Given un profil admin en erreur de lecture, When listArticles est appelé, Then une ForbiddenException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+  });
+
+  it('Given une catégorie archivée, When createArticle est appelé, Then une BadRequestException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const categoryQuery = createListQuery({
+      data: [],
+      error: null,
+    });
+
+    const tagQuery = createListQuery({
+      data: [{ id: 'tag-1' }],
+      error: null,
+    });
+
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-1',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Résumé article 1',
+        content: '<p>Contenu article 1</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-archived'],
+        tagIds: ['tag-1'],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(articleInsertQuery.single).not.toHaveBeenCalled();
+  });
+
+  it('Given une erreur de persistance article, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-1' }],
+      error: null,
+    });
+
+    const tagQuery = createListQuery({
+      data: [{ id: 'tag-1' }],
+      error: null,
+    });
+
+    const articleInsertQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'insert error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Résumé article 1',
+        content: '<p>Contenu article 1</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un article introuvable côté Supabase, When updateArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: {
+        code: 'PGRST116',
+        message: 'JSON object requested, multiple (or no) rows returned',
+      },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-missing', {
+        title: 'Titre mis à jour',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur Supabase non liée à l absence de ligne, When updateArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: '42501', message: 'permission denied' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        title: 'Titre mis à jour',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un article existant, When deleteArticle est appelé, Then il est archivé sans suppression physique', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleSoftDeleteQuery = createUpdateQuery({
+      data: { id: 'article-1', status: 'archived' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleSoftDeleteQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteArticle('access-token', 'article-1'),
+    ).resolves.toBeUndefined();
+    expect(articleSoftDeleteQuery.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'archived',
+        published_at: null,
+      }),
+    );
+  });
+
+  it('Given un article absent, When deleteArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleMissingQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleMissingQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteArticle('access-token', 'article-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un article déjà archivé, When deleteArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const archivedArticleQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return archivedArticleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteArticle('access-token', 'article-archived'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+
+    expect(archivedArticleQuery.neq).toHaveBeenCalledWith('status', 'archived');
+  });
+
+  it('Given une erreur de lecture article, When deleteArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleReadQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'db read error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleReadQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteArticle('access-token', 'article-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur d archivage article, When deleteArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const existingArticleQuery = createSingleRowQuery({
+      data: { id: 'article-1' },
+      error: null,
+    });
+
+    const archiveQuery = {
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: { message: 'archive error' } }),
+    };
+
+    let articleCallCount = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        articleCallCount += 1;
+        return articleCallCount === 1 ? existingArticleQuery : archiveQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteArticle('access-token', 'article-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given des articles publies, When listPublicArticles est appelé, Then seuls les articles publies sont retournes', async () => {
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-public-1',
+          slug: 'article-public-1',
+          title: 'Article public',
+          excerpt: 'Resume public',
+          content: '<p>Contenu public</p>',
+          status: 'published',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: '2026-05-24T10:00:00.000Z',
+          author_id: 'author-1',
+          created_at: '2026-05-24T09:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: [], error: null });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toHaveLength(1);
+    expect(articleQuery.eq).toHaveBeenCalledWith('status', 'published');
+  });
+
+  it('Given une erreur de lecture publique, When listPublicArticles est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const articleQuery = createListQuery({
+      data: null,
+      error: { message: 'db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given un article public existant, When getPublicArticleBySlug est appelé, Then le detail public est renvoyé', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: {
+        id: 'article-public-1',
+        slug: 'article-public-1',
+        title: 'Article public',
+        excerpt: 'Resume public',
+        content: '<p>Contenu public</p>',
+        status: 'published',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: '2026-05-24T10:00:00.000Z',
+        author_id: 'author-1',
+        created_at: '2026-05-24T09:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({
+      data: [{ article_id: 'article-public-1', category_id: 'category-1' }],
+      error: null,
+    });
+    const articleTagQuery = createListQuery({
+      data: [{ article_id: 'article-public-1', tag_id: 'tag-1' }],
+      error: null,
+    });
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-1' }],
+      error: null,
+    });
+    const tagQuery = createListQuery({
+      data: [{ id: 'tag-1' }],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).resolves.toMatchObject({
+      id: 'article-public-1',
+      categoryIds: ['category-1'],
+      tagIds: ['tag-1'],
+    });
+  });
+
+  it('Given une erreur Supabase non not found, When getPublicArticleBySlug est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: { code: '08006', message: 'connection error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un article public absent avec code not found, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'no rows' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un article public absent sans erreur technique, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un article admin existant, When publishArticle est appelé, Then son statut passe a published', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume article 1',
+        content: '<p>Contenu 1</p>',
+        status: 'published',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: '2026-05-24T10:00:00.000Z',
+        author_id: 'author-1',
+        created_at: '2026-05-24T09:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: [], error: null });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return publishQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-1'),
+    ).resolves.toMatchObject({ status: 'published' });
+  });
+
+  it('Given une erreur Supabase non not found lors de publishArticle, When publishArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: null,
+      error: { code: '42501', message: 'permission denied' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return publishQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un article introuvable lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'no rows' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return publishQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un article sans erreur technique mais sans donnee lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return publishQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un update sans erreur technique mais sans donnee, When updateArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-missing', {
+        title: 'Titre mis a jour',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une catégorie inexistante lors de updateCategory, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'no rows' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'missing-category', {
+        slug: 'categorie',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une catégorie sans donnee retournée, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'category-1', {
+        slug: 'categorie',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur technique lors de updateCategory, When updateCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: '42501', message: 'permission denied' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'category-1', {
+        slug: 'categorie',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une catégorie valide, When updateCategory est appelé, Then la catégorie mise à jour est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'category-1',
+        slug: 'categorie',
+        label: 'Categorie',
+        description: 'Description',
+        status: 'draft',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'category-1', {
+        slug: 'categorie',
+        label: 'Categorie',
+        description: 'Description',
+      }),
+    ).resolves.toMatchObject({ id: 'category-1', slug: 'categorie' });
+  });
+
+  it('Given une erreur de lecture lors de deleteCategory, When deleteCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingCategoryQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'read error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return existingCategoryQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteCategory('access-token', 'category-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une catégorie existante mais un échec d archivage, When deleteCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingCategoryQuery = createSingleRowQuery({
+      data: { id: 'category-1' },
+      error: null,
+    });
+    const archiveCategoryQuery = {
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      neq: jest.fn().mockResolvedValue({ error: { message: 'archive error' } }),
+    };
+
+    let categoryCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        categoryCalls += 1;
+        return categoryCalls === 1
+          ? existingCategoryQuery
+          : archiveCategoryQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteCategory('access-token', 'category-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une catégorie existante, When deleteCategory est appelé, Then la catégorie est archivée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingCategoryQuery = createSingleRowQuery({
+      data: { id: 'category-1' },
+      error: null,
+    });
+    const archiveCategoryQuery = {
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      neq: jest.fn().mockResolvedValue({ error: null }),
+    };
+
+    let categoryCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        categoryCalls += 1;
+        return categoryCalls === 1
+          ? existingCategoryQuery
+          : archiveCategoryQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteCategory('access-token', 'category-1'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('Given une catégorie absente, When deleteCategory est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingCategoryQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return existingCategoryQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteCategory('access-token', 'missing-category'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un tag inexistant lors de updateTag, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'no rows' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'missing-tag', {
+        slug: 'tag-slug',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un tag sans donnee retournée, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'tag-1', {
+        slug: 'tag-slug',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur technique lors de updateTag, When updateTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: '42501', message: 'permission denied' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'tag-1', {
+        slug: 'tag-slug',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un tag valide, When updateTag est appelé, Then le tag mis a jour est renvoyé', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'tag-1',
+        slug: 'tag-slug',
+        label: 'Tag',
+        status: 'draft',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'tag-1', {
+        slug: 'tag-slug',
+        label: 'Tag',
+      }),
+    ).resolves.toMatchObject({ id: 'tag-1', slug: 'tag-slug' });
+  });
+
+  it('Given un tag absent, When deleteTag est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingTagQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return existingTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteTag('access-token', 'missing-tag'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur de lecture lors de deleteTag, When deleteTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingTagQuery = createSingleRowQuery({
+      data: null,
+      error: { message: 'read error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return existingTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteTag('access-token', 'tag-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un tag existant mais un échec d\u0027archivage, When deleteTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingTagQuery = createSingleRowQuery({
+      data: { id: 'tag-1' },
+      error: null,
+    });
+    const archiveTagQuery = {
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      neq: jest.fn().mockResolvedValue({ error: { message: 'archive error' } }),
+    };
+
+    let tagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        tagCalls += 1;
+        return tagCalls === 1 ? existingTagQuery : archiveTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteTag('access-token', 'tag-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un tag existant, When deleteTag est appelé, Then le tag est archivé', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const existingTagQuery = createSingleRowQuery({
+      data: { id: 'tag-1' },
+      error: null,
+    });
+    const archiveTagQuery = {
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      neq: jest.fn().mockResolvedValue({ error: null }),
+    };
+
+    let tagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        tagCalls += 1;
+        return tagCalls === 1 ? existingTagQuery : archiveTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.deleteTag('access-token', 'tag-1'),
+    ).resolves.toBeUndefined();
+  });
+
+  it('Given une liste de categories valide, When listCategories est appelé, Then les categories sont mappées', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryListQuery = createListQuery({
+      data: [
+        {
+          id: 'category-1',
+          slug: 'category',
+          label: 'Categorie',
+          description: 'Description',
+          status: 'draft',
+          created_at: '2026-05-29T00:00:00.000Z',
+          updated_at: '2026-05-29T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryListQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listCategories('access-token')).resolves.toMatchObject(
+      [{ id: 'category-1', slug: 'category' }],
+    );
+  });
+
+  it('Given une erreur de lecture des categories, When listCategories est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryListQuery = createListQuery({
+      data: null,
+      error: { message: 'db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryListQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listCategories('access-token')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given une creation categorie valide, When createCategory est appelé, Then la categorie est créée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryCreateQuery = createSingleRowQuery({
+      data: {
+        id: 'category-1',
+        slug: 'category',
+        label: 'Categorie',
+        description: 'Description',
+        status: 'draft',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryCreateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createCategory('access-token', {
+        slug: 'category',
+        label: 'Categorie',
+        description: 'Description',
+      }),
+    ).resolves.toMatchObject({ id: 'category-1', slug: 'category' });
+  });
+
+  it('Given une creation categorie invalide, When createCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryCreateQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryCreateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createCategory('access-token', {
+        slug: 'category',
+        label: 'Categorie',
+        description: null,
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une liste de tags valide, When listTags est appelé, Then les tags sont mappes', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagListQuery = createListQuery({
+      data: [
+        {
+          id: 'tag-1',
+          slug: 'tag',
+          label: 'Tag',
+          status: 'draft',
+          created_at: '2026-05-29T00:00:00.000Z',
+          updated_at: '2026-05-29T00:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagListQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listTags('access-token')).resolves.toMatchObject([
+      { id: 'tag-1', slug: 'tag' },
+    ]);
+  });
+
+  it('Given une erreur de lecture des tags, When listTags est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagListQuery = createListQuery({
+      data: null,
+      error: { message: 'db error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagListQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listTags('access-token')).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given une creation tag valide, When createTag est appelé, Then le tag est créé', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagCreateQuery = createSingleRowQuery({
+      data: {
+        id: 'tag-1',
+        slug: 'tag',
+        label: 'Tag',
+        status: 'draft',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagCreateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createTag('access-token', {
+        slug: 'tag',
+        label: 'Tag',
+      }),
+    ).resolves.toMatchObject({ id: 'tag-1', slug: 'tag' });
+  });
+
+  it('Given une creation tag invalide, When createTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagCreateQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'tag') {
+        return tagCreateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createTag('access-token', {
+        slug: 'tag',
+        label: 'Tag',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given un fichier non image, When uploadCoverImage est appelé, Then une BadRequestException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.uploadCoverImage('access-token', {
+        originalname: 'cover.pdf',
+        mimetype: 'application/pdf',
+        size: 1024,
+        buffer: Buffer.from('not-image'),
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given une image trop lourde, When uploadCoverImage est appelé, Then une BadRequestException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.uploadCoverImage('access-token', {
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 6 * 1024 * 1024,
+        buffer: Buffer.from('oversized-image'),
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given une image valide mais un échec de stockage, When uploadCoverImage est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    adminClient.storage.from.mockReturnValueOnce({
+      upload: jest
+        .fn()
+        .mockResolvedValue({ error: { message: 'upload failed' } }),
+      getPublicUrl: jest.fn(),
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.uploadCoverImage('access-token', {
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 1024,
+        buffer: Buffer.from('image'),
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une creation valide sans categories ni tags, When createArticle est appelé, Then l\u0027article est créé avec des relations vides', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-created',
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Résumé',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleCategoryReadQuery = createListQuery({ data: [], error: null });
+    const articleTagReadQuery = createListQuery({ data: [], error: null });
+
+    let articleCategoryCalls = 0;
+    let articleTagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+      if (tableName === 'article_category') {
+        articleCategoryCalls += 1;
+        return articleCategoryCalls === 1
+          ? articleCategoryDeleteQuery
+          : articleCategoryReadQuery;
+      }
+      if (tableName === 'article_tag') {
+        articleTagCalls += 1;
+        return articleTagCalls === 1
+          ? articleTagDeleteQuery
+          : articleTagReadQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: [],
+        tagIds: [],
+      }),
+    ).resolves.toMatchObject({
+      id: 'article-created',
+      categoryIds: [],
+      tagIds: [],
+    });
+  });
+
+  it('Given un fichier image valide, When uploadCoverImage est appelé, Then une URL publique est retournée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.uploadCoverImage('access-token', {
+        originalname: 'cover.jpg',
+        mimetype: 'image/jpeg',
+        size: 1024,
+        buffer: Buffer.from('image'),
+      }),
+    ).resolves.toMatchObject({ path: expect.stringContaining('articles/') });
+  });
+
+  it('Given un payload update complet, When updateArticle est appelé, Then tous les champs modifiables sont mappes vers Supabase', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1-updated',
+        title: 'Article 1 updated',
+        excerpt: 'Resume updated',
+        content: '<p>Contenu updated</p>',
+        status: 'published',
+        cover_image_url: 'https://cdn.kraak.test/cover.jpg',
+        seo_title: 'SEO title',
+        seo_description: 'SEO description',
+        published_at: '2026-05-30T10:00:00.000Z',
+        author_id: 'author-2',
+        created_at: '2026-05-24T10:00:00.000Z',
+        updated_at: '2026-05-30T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: [], error: null });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        slug: 'article-1-updated',
+        title: 'Article 1 updated',
+        excerpt: 'Resume updated',
+        content: '<p>Contenu updated</p>',
+        status: 'published',
+        coverImageUrl: 'https://cdn.kraak.test/cover.jpg',
+        seoTitle: 'SEO title',
+        seoDescription: 'SEO description',
+        publishedAt: '2026-05-30T10:00:00.000Z',
+        authorId: 'author-2',
+      }),
+    ).resolves.toMatchObject({ id: 'article-1', slug: 'article-1-updated' });
+
+    expect(articleUpdateQuery.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slug: 'article-1-updated',
+        title: 'Article 1 updated',
+        excerpt: 'Resume updated',
+        content: '<p>Contenu updated</p>',
+        status: 'published',
+        cover_image_url: 'https://cdn.kraak.test/cover.jpg',
+        seo_title: 'SEO title',
+        seo_description: 'SEO description',
+        published_at: '2026-05-30T10:00:00.000Z',
+        author_id: 'author-2',
+      }),
+    );
+  });
+
+  it('Given une erreur de suppression des categories relationnelles, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-created',
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest
+        .fn()
+        .mockResolvedValue({ error: { message: 'delete category error' } }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryDeleteQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: [],
+        tagIds: [],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur insertion categories relationnelles, When createArticle est appelé avec categories, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-created',
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-1' }],
+      error: null,
+    });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleCategoryInsertQuery = {
+      insert: jest
+        .fn()
+        .mockResolvedValue({ error: { message: 'insert category error' } }),
+    };
+
+    let articleCategoryCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'article_category') {
+        articleCategoryCalls += 1;
+        if (articleCategoryCalls === 1) {
+          return articleCategoryDeleteQuery;
+        }
+
+        return articleCategoryInsertQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: [],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given des relations article en erreur de lecture, When listPublicArticles est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-public-1',
+          slug: 'article-public-1',
+          title: 'Article public',
+          excerpt: 'Resume public',
+          content: '<p>Contenu public</p>',
+          status: 'published',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: '2026-05-24T10:00:00.000Z',
+          author_id: 'author-1',
+          created_at: '2026-05-24T09:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({
+      data: null,
+      error: { message: 'relation error' },
+    });
+    const articleTagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
+  });
+
+  it('Given des relations vers taxonomies inactives, When listPublicArticles est appelé, Then les ids inactifs sont ignorés', async () => {
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-public-1',
+          slug: 'article-public-1',
+          title: 'Article public',
+          excerpt: 'Resume public',
+          content: '<p>Contenu public</p>',
+          status: 'published',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: '2026-05-24T10:00:00.000Z',
+          author_id: 'author-1',
+          created_at: '2026-05-24T09:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({
+      data: [
+        { article_id: 'article-public-1', category_id: 'category-inactive' },
+      ],
+      error: null,
+    });
+    const articleTagQuery = createListQuery({
+      data: [{ article_id: 'article-public-1', tag_id: 'tag-inactive' }],
+      error: null,
+    });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryQuery;
+      }
+      if (tableName === 'article_tag') {
+        return articleTagQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toEqual([
+      expect.objectContaining({
+        id: 'article-public-1',
+        categoryIds: [],
+        tagIds: [],
+      }),
+    ]);
+  });
+
+  it('Given une liste publique vide, When listPublicArticles est appelé, Then une liste vide est renvoyée', async () => {
+    const articleQuery = createListQuery({ data: [], error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toEqual([]);
+  });
+
+  it('Given une erreur insertion tags relationnels, When createArticle est appelé avec tags, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-created',
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Résumé',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+    const tagQuery = createListQuery({ data: [{ id: 'tag-1' }], error: null });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagInsertQuery = {
+      insert: jest
+        .fn()
+        .mockResolvedValue({ error: { message: 'insert tag error' } }),
+    };
+
+    let articleTagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+      if (tableName === 'tag') {
+        return tagQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryDeleteQuery;
+      }
+      if (tableName === 'article_tag') {
+        articleTagCalls += 1;
+        return articleTagCalls === 1
+          ? articleTagDeleteQuery
+          : articleTagInsertQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: [],
+        tagIds: ['tag-1'],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur de validation taxonomy, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryQuery = createListQuery({
+      data: null,
+      error: { message: 'taxonomy read error' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'category') {
+        return categoryQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: [],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une liste publique avec data null sans erreur, When listPublicArticles est appelé, Then une liste vide est renvoyée', async () => {
+    const articleQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toEqual([]);
+  });
+
+  it('Given une liste admin avec data null sans erreur, When listArticles est appelé, Then une liste vide est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listArticles('access-token')).resolves.toEqual([]);
+  });
+
+  it('Given un article admin absent sans erreur technique, When getArticleById est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: null,
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getArticleById('access-token', 'article-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur not found PGRST116, When getPublicArticleBySlug est appelé, Then une NotFoundException est renvoyée', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'No rows found' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') {
+        return articleQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur not found PGRST116 lors de publishArticle, When publishArticle est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'No rows found' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleUpdateQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-missing'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given un payload update avec tagIds uniquement, When updateArticle est appelé, Then categoryIds reprend les relations courantes', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-24T10:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryReadQuery = createListQuery({
+      data: [{ article_id: 'article-1', category_id: 'category-current' }],
+      error: null,
+    });
+    const articleTagReadQuery = createListQuery({
+      data: [{ article_id: 'article-1', tag_id: 'tag-current' }],
+      error: null,
+    });
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-current' }],
+      error: null,
+    });
+    const tagQuery = createListQuery({
+      data: [{ id: 'tag-new' }],
+      error: null,
+    });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleCategoryInsertQuery = {
+      insert: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagInsertQuery = {
+      insert: jest.fn().mockResolvedValue({ error: null }),
+    };
+
+    adminClient.from.mockImplementation(
+      createFromTableRouter(
+        {
+          app_user: appUserQuery,
+          article: articleUpdateQuery,
+          category: categoryQuery,
+          tag: tagQuery,
+        },
+        {
+          article_category: [
+            articleCategoryReadQuery,
+            articleCategoryDeleteQuery,
+            articleCategoryInsertQuery,
+            articleCategoryReadQuery,
+          ],
+          article_tag: [
+            articleTagReadQuery,
+            articleTagDeleteQuery,
+            articleTagInsertQuery,
+            articleTagReadQuery,
+          ],
+        },
+      ),
+    );
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        tagIds: ['tag-new'],
+      }),
+    ).resolves.toMatchObject({ id: 'article-1' });
+
+    expect(articleCategoryInsertQuery.insert).toHaveBeenCalledWith([
+      { article_id: 'article-1', category_id: 'category-current' },
+    ]);
+  });
+
+  it('Given un payload update avec categoryIds uniquement et tags courants absents, When updateArticle est appelé, Then nextTagIds bascule vers un tableau vide', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-24T10:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryReadQuery = createListQuery({
+      data: [{ article_id: 'article-1', category_id: 'category-current' }],
+      error: null,
+    });
+    const articleTagReadQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const categoryQuery = createListQuery({
+      data: [{ id: 'category-new' }],
+      error: null,
+    });
+    const tagQuery = createListQuery({ data: [], error: null });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleCategoryInsertQuery = {
+      insert: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+
+    adminClient.from.mockImplementation(
+      createFromTableRouter(
+        {
+          app_user: appUserQuery,
+          article: articleUpdateQuery,
+          category: categoryQuery,
+          tag: tagQuery,
+        },
+        {
+          article_category: [
+            articleCategoryReadQuery,
+            articleCategoryDeleteQuery,
+            articleCategoryInsertQuery,
+            articleCategoryReadQuery,
+          ],
+          article_tag: [
+            articleTagReadQuery,
+            articleTagDeleteQuery,
+            articleTagReadQuery,
+          ],
+        },
+      ),
+    );
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        categoryIds: ['category-new'],
+      }),
+    ).resolves.toMatchObject({ id: 'article-1' });
+
+    expect(articleTagDeleteQuery.eq).toHaveBeenCalledWith(
+      'article_id',
+      'article-1',
+    );
+    expect(articleCategoryInsertQuery.insert).toHaveBeenCalledWith([
+      { article_id: 'article-1', category_id: 'category-new' },
+    ]);
+  });
+
+  it('Given une erreur de suppression des tags relationnels, When createArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleInsertQuery = createSingleRowQuery({
+      data: {
+        id: 'article-created',
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-29T00:00:00.000Z',
+        updated_at: '2026-05-29T00:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest
+        .fn()
+        .mockResolvedValue({ error: { message: 'delete tag error' } }),
+    };
+
+    let articleTagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return appUserQuery;
+      }
+      if (tableName === 'article') {
+        return articleInsertQuery;
+      }
+      if (tableName === 'article_category') {
+        return articleCategoryDeleteQuery;
+      }
+      if (tableName === 'article_tag') {
+        articleTagCalls += 1;
+        return articleTagCalls === 1
+          ? articleTagDeleteQuery
+          : createListQuery({ data: [], error: null });
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-created',
+        title: 'Article créé',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: [],
+        tagIds: [],
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given des relations nulles sans erreur, When listPublicArticles est appelé, Then la lecture retourne des relations vides', async () => {
+    const articleQuery = createListQuery({
+      data: [
+        {
+          id: 'article-public-1',
+          slug: 'article-public-1',
+          title: 'Article public',
+          excerpt: 'Resume public',
+          content: '<p>Contenu public</p>',
+          status: 'published',
+          cover_image_url: null,
+          seo_title: null,
+          seo_description: null,
+          published_at: '2026-05-24T10:00:00.000Z',
+          author_id: 'author-1',
+          created_at: '2026-05-24T09:00:00.000Z',
+          updated_at: '2026-05-24T10:00:00.000Z',
+        },
+      ],
+      error: null,
+    });
+    const articleCategoryQuery = createListQuery({ data: null, error: null });
+    const articleTagQuery = createListQuery({ data: null, error: null });
+    const categoryQuery = createListQuery({ data: null, error: null });
+    const tagQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') return articleQuery;
+      if (tableName === 'article_category') return articleCategoryQuery;
+      if (tableName === 'article_tag') return articleTagQuery;
+      if (tableName === 'category') return categoryQuery;
+      if (tableName === 'tag') return tagQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listPublicArticles()).resolves.toEqual([
+      expect.objectContaining({
+        id: 'article-public-1',
+        categoryIds: [],
+        tagIds: [],
+      }),
+    ]);
+  });
+
+  it('Given une erreur not found PGRST116 sur updateCategory, When updateCategory est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'No rows found' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'category') return categoryUpdateQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'category-missing', {
+        slug: 'category',
+        label: 'Category',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur not found PGRST116 sur updateTag, When updateTag est appelé, Then une NotFoundException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 'PGRST116', message: 'No rows found' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'tag') return tagUpdateQuery;
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'tag-missing', {
+        slug: 'tag',
+        label: 'Tag',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('Given une erreur avec code non string sur getPublicArticleBySlug, When getPublicArticleBySlug est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const articleQuery = createSingleRowQuery({
+      data: null,
+      error: { code: 404, message: 'non string code' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'article') return articleQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.getPublicArticleBySlug('article-public-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur avec code non string sur publishArticle, When publishArticle est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const publishQuery = createUpdateQuery({
+      data: null,
+      error: { code: 404, message: 'non string code' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'article') return publishQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.publishArticle('access-token', 'article-1'),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur avec code non string sur updateCategory, When updateCategory est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 404, message: 'non string code' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'category') return categoryUpdateQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateCategory('access-token', 'category-1', {
+        slug: 'category',
+        label: 'Category',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une erreur avec code non string sur updateTag, When updateTag est appelé, Then une InternalServerErrorException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagUpdateQuery = createUpdateQuery({
+      data: null,
+      error: { code: 404, message: 'non string code' },
+    });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'tag') return tagUpdateQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateTag('access-token', 'tag-1', {
+        slug: 'tag',
+        label: 'Tag',
+      }),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
+  it('Given une lecture categories avec data null sans erreur, When listCategories est appelé, Then une liste vide est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'category') return categoryQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listCategories('access-token')).resolves.toEqual([]);
+  });
+
+  it('Given une lecture tags avec data null sans erreur, When listTags est appelé, Then une liste vide est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const tagQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'tag') return tagQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.listTags('access-token')).resolves.toEqual([]);
+  });
+
+  it('Given un update avec tagIds vide et relations courantes absentes, When updateArticle est appelé, Then categoryIds et tagIds basculent vers des tableaux vides', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const articleUpdateQuery = createUpdateQuery({
+      data: {
+        id: 'article-1',
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume',
+        content: '<p>Contenu</p>',
+        status: 'draft',
+        cover_image_url: null,
+        seo_title: null,
+        seo_description: null,
+        published_at: null,
+        author_id: 'author-1',
+        created_at: '2026-05-24T10:00:00.000Z',
+        updated_at: '2026-05-24T10:00:00.000Z',
+      },
+      error: null,
+    });
+    const articleCategoryReadBeforeSyncQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const articleCategoryReadAfterSyncQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const articleTagReadBeforeSyncQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const articleTagReadAfterSyncQuery = createListQuery({
+      data: null,
+      error: null,
+    });
+    const categoryQuery = createListQuery({ data: [], error: null });
+    const tagQuery = createListQuery({ data: [], error: null });
+    const articleCategoryDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+    const articleTagDeleteQuery = {
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    };
+
+    let articleCategoryCalls = 0;
+    let articleTagCalls = 0;
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'article') return articleUpdateQuery;
+      if (tableName === 'category') return categoryQuery;
+      if (tableName === 'tag') return tagQuery;
+      if (tableName === 'article_category') {
+        articleCategoryCalls += 1;
+        if (articleCategoryCalls === 1)
+          return articleCategoryReadBeforeSyncQuery;
+        if (articleCategoryCalls === 2) return articleCategoryDeleteQuery;
+        return articleCategoryReadAfterSyncQuery;
+      }
+      if (tableName === 'article_tag') {
+        articleTagCalls += 1;
+        if (articleTagCalls === 1) return articleTagReadBeforeSyncQuery;
+        if (articleTagCalls === 2) return articleTagDeleteQuery;
+        return articleTagReadAfterSyncQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.updateArticle('access-token', 'article-1', {
+        tagIds: [],
+      }),
+    ).resolves.toMatchObject({ id: 'article-1' });
+
+    expect(articleCategoryDeleteQuery.eq).toHaveBeenCalledWith(
+      'article_id',
+      'article-1',
+    );
+    expect(articleTagDeleteQuery.eq).toHaveBeenCalledWith(
+      'article_id',
+      'article-1',
+    );
+  });
+
+  it('Given des validations taxonomy avec data null sans erreur, When createArticle est appelé, Then une BadRequestException est renvoyée', async () => {
+    const appUserQuery = createSingleRowQuery({
+      data: { id: 'user-1', role: 'admin' },
+      error: null,
+    });
+    const categoryQuery = createListQuery({ data: null, error: null });
+    const tagQuery = createListQuery({ data: null, error: null });
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') return appUserQuery;
+      if (tableName === 'category') return categoryQuery;
+      if (tableName === 'tag') return tagQuery;
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(
+      service.createArticle('access-token', {
+        slug: 'article-1',
+        title: 'Article 1',
+        excerpt: 'Resume article 1',
+        content: '<p>Contenu article 1</p>',
+        status: 'draft',
+        coverImageUrl: null,
+        seoTitle: null,
+        seoDescription: null,
+        publishedAt: null,
+        authorId: 'author-1',
+        categoryIds: ['category-1'],
+        tagIds: ['tag-1'],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+});

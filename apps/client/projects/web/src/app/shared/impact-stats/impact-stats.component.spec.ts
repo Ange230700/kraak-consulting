@@ -1,6 +1,9 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ImpactStats } from './impact-stats.component';
+
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 
 describe('ImpactStats', () => {
   let component: ImpactStats;
@@ -8,25 +11,29 @@ describe('ImpactStats', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideKraakI18n()],
       imports: [ImpactStats],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
 
     fixture = TestBed.createComponent(ImpactStats);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('Given the component is created When Angular instantiates it Then the instance should exist', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should expose three preview stats', () => {
+  it('Given the preview impact catalog When the component is initialized Then it should expose three stats', () => {
     const stats = (component as unknown as { stats: unknown[] }).stats;
-    expect(stats.length).toBe(3);
+    expect(stats).toHaveLength(3);
   });
 
-  it('should render stat cards', () => {
+  it('Given the impact stats section When the component renders Then it should display one card per stat', () => {
     const cards = fixture.nativeElement.querySelectorAll('article');
-    expect(cards.length).toBe(3);
+    expect(cards).toHaveLength(3);
   });
 });

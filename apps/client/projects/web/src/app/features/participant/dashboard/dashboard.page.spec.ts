@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiError } from '@kraak/api-client';
@@ -6,12 +7,19 @@ import { MessageService } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DashboardPage from './dashboard.page';
-import { WebAuthService } from '../../../core/auth/web-auth.service';
+import {
+  WEB_AUTH_STORAGE_KEY,
+  WebAuthService,
+} from '../../../core/auth/web-auth.service';
 import {
   participantRoleGuard,
   participantRoleChildGuard,
 } from '../../../core/auth/auth.guard';
 
+import {
+  KraakI18nService,
+  provideKraakI18n,
+} from '../../../../../../shared/i18n';
 const TEST_MEETING_LINK_URL = 'https://meet.example/session-1';
 
 function configureDashboardClient(
@@ -61,7 +69,7 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       enrollmentId: 'enr-1',
       programId: 'program-1',
       slug: 'integration',
-      title: "Parcours d'int\u00E9gration",
+      title: "Parcours d'intégration",
       summary: 'Suivi individuel et collectif',
       enrollmentStatus: 'active',
       cohortId: 'cohort-1',
@@ -84,14 +92,14 @@ const POPULATED_AGGREGATE: DashboardAggregateDto = {
       cohortName: 'Cohorte printemps',
       programId: 'program-1',
       programSlug: 'integration',
-      programTitle: "Parcours d'int\u00E9gration",
+      programTitle: "Parcours d'intégration",
     },
   ],
   recentAnnouncements: [
     {
       id: 'announcement-1',
       title: 'Rappel documents',
-      body: 'Pensez \u00E0 v\u00E9rifier vos pi\u00E8ces justificatives.',
+      body: 'Pensez à vérifier vos pièces justificatives.',
       audienceType: 'all_participants',
       programId: null,
       cohortId: null,
@@ -109,11 +117,50 @@ async function flush(
 }
 
 describe('Web Participant Dashboard Page', () => {
+  it.each([null, {}, { accessToken: 'test-token' }])(
+    'Given une session %j et un tableau non chargé, When le client réel récupère les données, Then les listes initiales et les en-têtes restent cohérents',
+    async (session) => {
+      const fetchMock = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          new Response(JSON.stringify(EMPTY_AGGREGATE), { status: 200 }),
+        );
+      const auth = vi
+        .spyOn(TestBed.inject(WebAuthService), 'currentSession')
+        .mockReturnValue(
+          session as ReturnType<WebAuthService['currentSession']>,
+        );
+      const page = TestBed.createComponent(DashboardPage).componentInstance;
+      expect(page.programs()).toEqual([]);
+      expect(page.upcomingSessions()).toEqual([]);
+      expect(page.recentAnnouncements()).toEqual([]);
+      await page['loadDashboard']();
+      expect(page['dashboardState']()).toEqual(EMPTY_AGGREGATE);
+      const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+      expect(headers.get('Authorization')).toBe(
+        session && 'accessToken' in session ? 'Bearer test-token' : null,
+      );
+      expect(headers.get('Accept-Language')).toBe('fr-CI');
+      fetchMock.mockRestore();
+      auth.mockRestore();
+    },
+  );
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+    globalThis.localStorage?.removeItem(WEB_AUTH_STORAGE_KEY);
+
     await TestBed.configureTestingModule({
       imports: [DashboardPage],
-      providers: [WebAuthService, provideRouter([]), MessageService],
+      providers: [
+        provideKraakI18n(),
+        WebAuthService,
+        provideRouter([]),
+        MessageService,
+      ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
 
   describe('Component Creation', () => {
@@ -147,13 +194,13 @@ describe('Web Participant Dashboard Page', () => {
       );
 
       expect(text).toContain('Mon dashboard');
-      expect(text).toContain('Synth\u00E8se utile');
-      expect(text).toContain("Parcours d'int\u00E9gration");
+      expect(text).toContain('Synthèse utile');
+      expect(text).toContain("Parcours d'intégration");
       expect(text).toContain('Atelier CV');
       expect(text).toContain('Rappel documents');
       expect(text).toContain('Cohorte printemps');
       expect(linkHrefs).toEqual(
-        expect.arrayContaining(['/programmes', '/contact']),
+        expect.arrayContaining(['/participant/programmes', '/contact']),
       );
     });
 
@@ -167,10 +214,8 @@ describe('Web Participant Dashboard Page', () => {
       expect(text).toContain('Synth\u00E8se utile');
       expect(text).toContain('Programmes actifs');
       expect(text).toContain('Sessions \u00E0 venir');
-      expect(text).toContain('Annonces r\u00E9centes');
-      expect(text).toContain(
-        '3 \u00E9l\u00E9ments cl\u00E9s disponibles aujourd\u2019hui.',
-      );
+      expect(text).toContain('Annonces récentes');
+      expect(text).toContain('3 éléments clés disponibles aujourd’hui.');
       expect(text).toContain('Prochaine session');
       expect(text).toContain('Atelier CV - ');
     });
@@ -183,7 +228,7 @@ describe('Web Participant Dashboard Page', () => {
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
       expect(text).toContain('Prochaine session');
-      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
+      expect(text).toContain('Aucune session planifiée pour le moment.');
     });
 
     it('Given an empty dashboard aggregate, When the page loads, Then it renders the global empty state', async () => {
@@ -297,8 +342,75 @@ describe('Web Participant Dashboard Page', () => {
       await flush(fixture);
 
       expect(fixture.componentInstance.totalSummaryLabel()).toBe(
-        '1 \u00E9l\u00E9ment cl\u00E9 disponible aujourd\u2019hui.',
+        '1 élément clé disponible aujourd’hui.',
       );
+    });
+
+    it('Given a stored authenticated session, When the real dashboard client loads data, Then the bearer token is forwarded to the API request', async () => {
+      globalThis.localStorage?.setItem(
+        WEB_AUTH_STORAGE_KEY,
+        JSON.stringify({
+          session: {
+            accessToken: 'participant-access-token',
+            refreshToken: 'participant-refresh-token',
+            expiresIn: 3600,
+            expiresAt: '2026-04-29T11:00:00.000Z',
+            tokenType: 'bearer',
+          },
+          profile: {
+            appUser: {
+              id: 'user-1',
+              email: 'participant@example.com',
+              role: 'participant',
+              firstName: 'Awa',
+              lastName: 'Konaté',
+              phone: null,
+              preferredContactChannel: null,
+              isActive: true,
+              createdAt: '2026-04-29T11:00:00.000Z',
+              updatedAt: '2026-04-29T11:00:00.000Z',
+            },
+            participant: null,
+          },
+        }),
+      );
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => POPULATED_AGGREGATE,
+      } satisfies Partial<Response>);
+      vi.stubGlobal('fetch', fetchMock);
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [DashboardPage],
+        providers: [
+          provideKraakI18n(),
+          WebAuthService,
+          provideRouter([]),
+          MessageService,
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(DashboardPage);
+      await flush(fixture);
+
+      await vi.waitFor(() => {
+        expect(fetchMock).toHaveBeenCalled();
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/dashboard'),
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer participant-access-token',
+          }),
+        }),
+      );
+
+      vi.unstubAllGlobals();
     });
 
     it('Given a session with an invalid startsAt date, When the page loads, Then nextSessionSummary falls back to raw date string', async () => {
@@ -329,7 +441,7 @@ describe('Web Participant Dashboard Page', () => {
 
       const programs = fixture.componentInstance.programs();
       expect(programs).toHaveLength(1);
-      expect(programs[0].title).toBe("Parcours d'int\u00E9gration");
+      expect(programs[0].title).toBe("Parcours d'intégration");
     });
 
     it('Given a program without summary or cohortName, When the page loads, Then those optional fields are not rendered', async () => {
@@ -354,8 +466,26 @@ describe('Web Participant Dashboard Page', () => {
       await flush(fixture);
 
       const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-      expect(text).toContain('Aucune session planifi\u00E9e pour le moment.');
+      expect(text).toContain('Aucune session planifiée pour le moment.');
     });
+  });
+
+  it('Given English locale, when the dashboard renders, then dashboard chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(DashboardPage);
+    configureDashboardClient(fixture, Promise.resolve(EMPTY_AGGREGATE));
+
+    await flush(fixture);
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('Participant home');
+    expect(text).toContain('Useful summary');
+    expect(text).toContain('Your personalised overview');
+    expect(text).toContain('Quick access');
   });
 
   describe('Route Protection', () => {

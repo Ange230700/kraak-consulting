@@ -1,4 +1,30 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-02 — Conventions dépôt et workflow Git
+
+## Table des matières
+
+- [ARC-02 — Conventions dépôt et workflow Git](#arc-02-conventions-depot-et-workflow-git)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Nommage des branches](#21-nommage-des-branches)
+    - [2.2 Format des commits](#22-format-des-commits)
+    - [2.3 Hooks Git (Husky)](#23-hooks-git-husky)
+    - [2.4 Workflow Git](#24-workflow-git)
+    - [2.5 Politique de langue](#25-politique-de-langue)
+  - [3 · Justification](#3-justification)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Fichiers de configuration](#41-fichiers-de-configuration)
+    - [4.2 Scripts pnpm](#42-scripts-pnpm)
+    - [4.3 Protection de branche GitHub](#43-protection-de-branche-github)
+  - [5 · Alternatives considérées](#5-alternatives-considerees)
+  - [6 · Limites et évolutions](#6-limites-et-evolutions)
+  - [7 · Références](#7-references)
 
 | Champ          | Valeur       |
 | -------------- | ------------ |
@@ -104,12 +130,18 @@ branche GitHub pour garantir un historique propre et bisectable.
 
 ### 4.1 Fichiers de configuration
 
-- `commitlint.config.js` — règles Conventional Commits + scopes autorisés
+- `commit-scopes.cjs` — source canonique des scopes de commit autorisés
+- `.czrc.cjs` — configuration du prompt Commitizen
+- `commitlint.config.js` — règles Conventional Commits basées sur les scopes
+  canoniques
 - `.husky/commit-msg` — hook commitlint
-- `.husky/pre-commit` — hook Prettier
+- `.husky/pre-commit` — hook lint-staged
 - `.husky/pre-push` — hook validate-branch-name + typecheck + tests
 - `.validate-branch-namerc.json` — pattern de validation des noms de branche
 - `.prettierrc` / `.prettierignore` — configuration Prettier
+- `eslint.config.mjs` — lint des scripts et configurations racine
+- `.markdownlint-cli2.jsonc` — règles et périmètre du lint Markdown
+- `lint-staged.config.cjs` — lint et formatage ciblés avant commit
 
 ### 4.2 Scripts pnpm
 

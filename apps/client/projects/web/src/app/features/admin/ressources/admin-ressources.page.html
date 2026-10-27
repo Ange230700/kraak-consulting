@@ -1,0 +1,409 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 md:px-8 lg:px-12"
+>
+  <div class="mx-auto max-w-6xl">
+    <div
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <p
+          class="text-brand-blue text-xs font-semibold tracking-[0.3em] uppercase"
+        >
+          {{ 'web.admin.ressources.header.eyebrow' | kraakTranslate }}
+        </p>
+        <h1 class="mt-2 text-3xl font-bold lg:text-4xl">
+          {{ 'web.admin.ressources.header.title' | kraakTranslate }}
+        </h1>
+        <p class="mt-2 text-neutral-600">
+          {{ 'web.admin.ressources.header.description' | kraakTranslate }}
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <a
+          pButton
+          routerLink="/admin/dashboard"
+          icon="pi pi-arrow-left"
+          [label]="'web.admin.ressources.header.backDashboard' | kraakTranslate"
+          class="kr-button-ghost"
+          [attr.aria-label]="
+            'web.admin.ressources.header.backDashboardAria' | kraakTranslate
+          "
+        ></a>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          [label]="'web.admin.ressources.header.new' | kraakTranslate"
+          class="kr-button-primary"
+          (click)="openCreateForm()"
+          [attr.aria-label]="
+            'web.admin.ressources.header.newAria' | kraakTranslate
+          "
+        ></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-12">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    @if (successMessage()) {
+      <p-message
+        severity="success"
+        [text]="successMessage()!"
+        class="mb-6 block"
+      ></p-message>
+    }
+
+    @if (errorMessage()) {
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        class="mb-6 block"
+      ></p-message>
+    }
+
+    @if (showForm()) {
+      <section class="rounded-card bg-brand-white mb-8 p-8 shadow-sm">
+        <h2 class="mb-6 text-2xl font-bold">
+          {{
+            (isEditing()
+              ? 'web.admin.ressources.form.title.edit'
+              : 'web.admin.ressources.form.title.create'
+            ) | kraakTranslate
+          }}
+        </h2>
+
+        <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="flex flex-col gap-1 md:col-span-2">
+              <label
+                for="res-title"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.title.label'
+                    | kraakTranslate
+                }}
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="res-title"
+                type="text"
+                formControlName="title"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                [placeholder]="
+                  'web.admin.ressources.form.fields.title.placeholder'
+                    | kraakTranslate
+                "
+                aria-required="true"
+              />
+              @if (form.controls.title.invalid && form.controls.title.touched) {
+                <p class="text-sm text-red-600">
+                  {{
+                    'web.admin.ressources.form.fields.title.validation'
+                      | kraakTranslate
+                  }}
+                </p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1 md:col-span-2">
+              <label
+                for="res-description"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.description.label'
+                    | kraakTranslate
+                }}
+              </label>
+              <textarea
+                id="res-description"
+                formControlName="description"
+                rows="3"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                [placeholder]="
+                  'web.admin.ressources.form.fields.description.placeholder'
+                    | kraakTranslate
+                "
+              ></textarea>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="res-type"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.type.label' | kraakTranslate
+                }}
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="res-type"
+                formControlName="resourceType"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (t of resourceTypes; track t) {
+                  <option [value]="t">
+                    {{ getResourceTypeLabel(t) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="res-theme"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.theme.label'
+                    | kraakTranslate
+                }}
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="res-theme"
+                formControlName="resourceTheme"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (th of resourceThemes; track th) {
+                  <option [value]="th">
+                    {{ getResourceThemeLabel(th) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="res-audience"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.audience.label'
+                    | kraakTranslate
+                }}
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="res-audience"
+                formControlName="resourceAudience"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (a of resourceAudiences; track a) {
+                  <option [value]="a">
+                    {{ getResourceAudienceLabel(a) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                for="res-status"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.status.label'
+                    | kraakTranslate
+                }}
+                <span class="text-red-500" aria-hidden="true">*</span>
+              </label>
+              <select
+                id="res-status"
+                formControlName="status"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                aria-required="true"
+              >
+                @for (s of publicationStatuses; track s) {
+                  <option [value]="s">
+                    {{ getPublicationStatusLabel(s) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1 md:col-span-2">
+              <label
+                for="res-url"
+                class="text-sm font-semibold text-neutral-700"
+              >
+                {{
+                  'web.admin.ressources.form.fields.url.label' | kraakTranslate
+                }}
+              </label>
+              <input
+                id="res-url"
+                type="url"
+                formControlName="url"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none"
+                [placeholder]="
+                  'web.admin.ressources.form.fields.url.placeholder'
+                    | kraakTranslate
+                "
+              />
+            </div>
+          </div>
+
+          <div class="mt-8 flex gap-3">
+            <button
+              type="submit"
+              pButton
+              icon="pi pi-check"
+              [label]="
+                (isEditing()
+                  ? 'web.admin.ressources.form.actions.saveChanges'
+                  : 'web.admin.ressources.form.actions.create'
+                ) | kraakTranslate
+              "
+              class="kr-button-primary"
+              [disabled]="submitting()"
+              [attr.aria-label]="
+                (isEditing()
+                  ? 'web.admin.ressources.form.actions.saveChanges'
+                  : 'web.admin.ressources.form.actions.create'
+                ) | kraakTranslate
+              "
+            ></button>
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              [label]="
+                'web.admin.ressources.form.actions.cancel' | kraakTranslate
+              "
+              class="kr-button-ghost"
+              (click)="cancelForm()"
+              [attr.aria-label]="
+                'web.admin.ressources.form.actions.cancelAria' | kraakTranslate
+              "
+            ></button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="rounded-card bg-brand-white p-8 text-center shadow-sm">
+        <p class="text-neutral-600">
+          {{ 'web.admin.ressources.loading.message' | kraakTranslate }}
+        </p>
+      </div>
+    } @else if (ressources().length === 0) {
+      <div class="rounded-card bg-brand-white p-8 text-center shadow-sm">
+        <p class="mb-4 text-neutral-600">
+          {{ 'web.admin.ressources.empty.message' | kraakTranslate }}
+        </p>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          [label]="'web.admin.ressources.empty.createFirst' | kraakTranslate"
+          class="kr-button-primary"
+          (click)="openCreateForm()"
+          [attr.aria-label]="
+            'web.admin.ressources.empty.createFirstAria' | kraakTranslate
+          "
+        ></button>
+      </div>
+    } @else {
+      <div class="rounded-card bg-brand-white overflow-x-auto shadow-sm">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-neutral-200 text-left">
+              <th class="px-4 py-3 font-semibold text-neutral-700">
+                {{
+                  'web.admin.ressources.table.columns.title' | kraakTranslate
+                }}
+              </th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">
+                {{ 'web.admin.ressources.table.columns.type' | kraakTranslate }}
+              </th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">
+                {{
+                  'web.admin.ressources.table.columns.theme' | kraakTranslate
+                }}
+              </th>
+              <th class="px-4 py-3 font-semibold text-neutral-700">
+                {{
+                  'web.admin.ressources.table.columns.status' | kraakTranslate
+                }}
+              </th>
+              <th class="px-4 py-3 text-right font-semibold text-neutral-700">
+                {{
+                  'web.admin.ressources.table.columns.actions' | kraakTranslate
+                }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ressource of ressources(); track ressource.id) {
+              <tr
+                class="border-b border-neutral-100 transition-colors hover:bg-neutral-50"
+              >
+                <td class="px-4 py-3 font-medium">{{ ressource.title }}</td>
+                <td class="px-4 py-3 text-neutral-600">
+                  {{ getResourceTypeLabel(ressource.resourceType) }}
+                </td>
+                <td class="px-4 py-3 text-neutral-600">
+                  {{ getResourceThemeLabel(ressource.resourceTheme) }}
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                    [class.bg-green-100]="ressource.status === 'published'"
+                    [class.text-green-800]="ressource.status === 'published'"
+                    [class.bg-yellow-100]="ressource.status === 'draft'"
+                    [class.text-yellow-800]="ressource.status === 'draft'"
+                    [class.bg-neutral-100]="
+                      ressource.status !== 'published' &&
+                      ressource.status !== 'draft'
+                    "
+                    [class.text-neutral-600]="
+                      ressource.status !== 'published' &&
+                      ressource.status !== 'draft'
+                    "
+                  >
+                    {{ getPublicationStatusLabel(ressource.status) }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-pencil"
+                      [label]="
+                        'web.admin.ressources.actions.edit' | kraakTranslate
+                      "
+                      class="kr-button-ghost text-xs"
+                      (click)="openEditForm(ressource)"
+                      [attr.aria-label]="getEditAriaLabel(ressource)"
+                    ></button>
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-trash"
+                      [label]="
+                        'web.admin.ressources.actions.delete' | kraakTranslate
+                      "
+                      class="text-xs text-red-600"
+                      (click)="deleteRessource(ressource)"
+                      [attr.aria-label]="getDeleteAriaLabel(ressource)"
+                    ></button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

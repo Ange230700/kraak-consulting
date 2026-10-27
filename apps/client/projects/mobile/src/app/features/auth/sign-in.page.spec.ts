@@ -1,7 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileAuthService } from './mobile-auth.service';
 import SignInPage from './sign-in.page';
 
@@ -14,6 +15,8 @@ describe('Mobile SignInPage', () => {
   let navigateByUrlSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     authService.signIn.mockReset();
     authService.signIn.mockResolvedValue(undefined);
 
@@ -22,9 +25,12 @@ describe('Mobile SignInPage', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         provideRouter([]),
+        provideKraakI18n(),
         { provide: MobileAuthService, useValue: authService },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
     router = TestBed.inject(Router);
     navigateByUrlSpy = vi
@@ -46,6 +52,15 @@ describe('Mobile SignInPage', () => {
     expect(element.textContent).toContain('Se connecter');
     expect(element.textContent).toContain('Cr\u00E9er un compte');
     expect(element.textContent).toContain('Mot de passe oubli\u00E9');
+  });
+
+  it('Given a sign-in submission in progress, when the page renders, then the loading button label is shown', () => {
+    const fixture = TestBed.createComponent(SignInPage);
+    fixture.componentInstance.submitting.set(true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Connexion en cours...');
   });
 
   it('Given valid credentials, when the form is submitted, then the auth service is called and the app navigates to the shell', async () => {
@@ -76,7 +91,7 @@ describe('Mobile SignInPage', () => {
       'Saisissez une adresse email valide.',
     );
     expect(element.textContent).toContain(
-      'Votre mot de passe doit contenir au moins 8 caract\u00E8res.',
+      'Votre mot de passe doit contenir au moins 8 caractères.',
     );
   });
 
@@ -93,5 +108,25 @@ describe('Mobile SignInPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Identifiants incorrects');
+  });
+
+  it('Given English is selected, when sign-in renders, then the authentication chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(SignInPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('Access');
+    expect(text).toContain('Sign in');
+    expect(text).toContain('Email address');
+    expect(text).toContain('Password');
+    expect(text).toContain('Create an account');
+    expect(text).toContain('Forgot password');
   });
 });

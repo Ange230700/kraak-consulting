@@ -1,4 +1,31 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-03 — Stratégie de rendu web (SEO / prerender)
+
+## Table des matières
+
+- [ARC-03 — Stratégie de rendu web (SEO / prerender)](#arc-03-strategie-de-rendu-web-seo-prerender)
+  - [Contexte](#contexte)
+  - [Décision](#decision)
+  - [Justification](#justification)
+  - [Implémentation en place](#implementation-en-place)
+    - [Configuration des routes serveur](#configuration-des-routes-serveur)
+    - [Configuration serveur Angular](#configuration-serveur-angular)
+    - [Hydratation client](#hydratation-client)
+    - [Serveur Express SSR](#serveur-express-ssr)
+    - [Build et déploiement](#build-et-deploiement)
+  - [Alternatives considérées](#alternatives-considerees)
+    - [1. SPA pure (pas de rendu serveur)](#1-spa-pure-pas-de-rendu-serveur)
+    - [2. SSR dynamique (RenderMode.Server) sur toutes les routes](#2-ssr-dynamique-rendermodeserver-sur-toutes-les-routes)
+    - [3. Solution de prerender externe (Prerender.io, Rendertron)](#3-solution-de-prerender-externe-prerenderio-rendertron)
+    - [4. Framework SSR alternatif (Next.js, Nuxt, Astro)](#4-framework-ssr-alternatif-nextjs-nuxt-astro)
+  - [Limites et évolutions prévues](#limites-et-evolutions-prevues)
+  - [Références](#references)
 
 | Champ      | Valeur                                                      |
 | ---------- | ----------------------------------------------------------- |
@@ -64,7 +91,7 @@ chargement initial.
 | Critère                   | Prerender (retenu)                      | SSR dynamique (écarté)                    |
 | ------------------------- | --------------------------------------- | ----------------------------------------- |
 | Temps de réponse (TTFB)   | ~0 ms (fichier statique CDN)            | 50-200 ms (rendu Node.js par requête)     |
-| Coût d'hébergement        | Nul (fichiers statiques sur Vercel CDN) | Runtime Node.js en permanence             |
+| Coût d'hébergement        | Nul (fichiers statiques sur Render CDN) | Runtime Node.js en permanence             |
 | Scalabilité               | Infinie (CDN edge)                      | Limitée par le nombre d'instances Node    |
 | Complexité opérationnelle | Aucune infra serveur côté rendu         | Gestion serveur, cold starts, monitoring  |
 | Fraîcheur du contenu      | Rebuilt à chaque déploiement            | Temps réel                                |
@@ -150,9 +177,9 @@ Le serveur Express utilise `AngularNodeAppEngine` pour :
 - **Artefacts SEO statiques** : `robots.txt` et `sitemap.xml` sont générés
   avant le build web à partir de la configuration SEO partagée des routes
   marketing, puis copiés dans `projects/web/public/` pour rester compatibles
-  avec le déploiement Vercel purement statique.
-- **`vercel.json`** : `outputDirectory: "apps/client/dist/web/browser"` —
-  Vercel sert directement les fichiers HTML statiques pré-rendus depuis son
+  avec le déploiement Render purement statique.
+- **`render.yaml`** : `outputDirectory: "apps/client/dist/web/browser"` —
+  Render sert directement les fichiers HTML statiques pré-rendus depuis son
   CDN edge mondial.
 - **CI** : Le pipeline GitHub Actions exécute `pnpm --filter @kraak/client
 run build` qui déclenche le prerender de toutes les routes.
@@ -208,6 +235,6 @@ framework n'est pas envisagé.
 
 - [Angular SSR Guide](https://angular.dev/guide/ssr)
 - [Angular Prerendering Guide](https://angular.dev/guide/prerendering)
-- [Vercel Static Site Deployment](https://vercel.com/docs/frameworks)
+- [Render Static Site Deployment](https://render.com/docs/frameworks)
 - `ARCHITECTURE.md` — section _SEO Et Web Marketing_
-- `docs/specs/BACKLOG.md` — `ARC-03`, `WEB-03`
+- `docs/planning/GITHUB_PROJECT.md` — `ARC-03`, `WEB-03`

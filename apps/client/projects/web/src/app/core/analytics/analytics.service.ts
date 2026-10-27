@@ -3,6 +3,8 @@ import { InjectionToken, Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
+import { resolveLocaleFromPublicPath } from '../../routing/localized-public-routes';
+
 /**
  * Identifiant de mesure GA4 (`G-XXXXXXX`) injecté à la racine de l'application.
  * Quand la valeur est vide, l'analytics est complètement désactivée.
@@ -44,7 +46,7 @@ export class AnalyticsService {
       return;
     }
 
-    this.injectLoader();
+    this.injectLoader(this.measurementId!);
     this.bootstrapGtag();
     this.trackRouterPageViews();
   }
@@ -62,7 +64,7 @@ export class AnalyticsService {
     target.gtag?.('event', name, params);
   }
 
-  private injectLoader(): void {
+  private injectLoader(measurementId: string): void {
     const existing = this.document.head.querySelector(
       `script[${LOADER_ATTRIBUTE}="${LOADER_ATTRIBUTE_VALUE}"]`,
     );
@@ -73,7 +75,7 @@ export class AnalyticsService {
     const script = this.document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
-      this.measurementId ?? '',
+      measurementId,
     )}`;
     script.setAttribute(LOADER_ATTRIBUTE, LOADER_ATTRIBUTE_VALUE);
     this.document.head.appendChild(script);
@@ -99,8 +101,17 @@ export class AnalyticsService {
       )
       .subscribe((event) => {
         const target = this.getGtagWindow();
-        target.gtag?.('event', 'page_view', {
+        const locale = resolveLocaleFromPublicPath(event.urlAfterRedirects);
+        const pageViewParams: Record<string, unknown> = {
           page_path: event.urlAfterRedirects,
+        };
+
+        if (locale) {
+          pageViewParams['locale'] = locale;
+        }
+
+        target.gtag?.('event', 'page_view', {
+          ...pageViewParams,
         });
       });
   }

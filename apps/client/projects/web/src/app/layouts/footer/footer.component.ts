@@ -1,42 +1,157 @@
-import { Component } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 import {
   KRAAK_SOCIAL_LINKS,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import type { LocalizedPublicPageId } from '../../routing/localized-public-routes';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 
 interface FooterLink {
+  labelKey: string;
+  pageId: LocalizedPublicPageId;
+}
+
+interface FooterOfficeItem {
+  icon: string;
   label: string;
-  path: string;
+  href?: string;
 }
 
 @Component({
   selector: 'kraak-footer',
   standalone: true,
-  imports: [RouterLink, PublicConversionTrackingDirective],
+  imports: [
+    RouterLink,
+    PublicConversionTrackingDirective,
+    LocalizedPublicPathPipe,
+    KraakTranslatePipe,
+  ],
   templateUrl: './footer.component.html',
 })
-export class Footer {
+export class Footer implements AfterViewInit, OnDestroy {
+  @ViewChild('footerRoot')
+  private readonly footerRoot?: ElementRef<HTMLElement>;
+
+  private hasActivatedAnimations = false;
+
   protected readonly currentYear = new Date().getFullYear();
 
-  protected readonly navigationLinks: FooterLink[] = [
-    { label: '\u00C0 propos', path: '/a-propos' },
-    { label: 'Actualit\u00E9s', path: '/ressources' },
-    { label: 'Services', path: '/services' },
-    { label: 'FAQ', path: '/faq' },
-    { label: 'Programmes', path: '/programmes' },
-    { label: 'Contact', path: '/contact' },
+  protected readonly navigationLinks: readonly FooterLink[] = [
+    {
+      labelKey: 'web.shell.footer.navigationLinks.home',
+      pageId: 'home',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.services',
+      pageId: 'services',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.programs',
+      pageId: 'programs',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.about',
+      pageId: 'about',
+    },
+    {
+      labelKey: 'web.shell.footer.navigationLinks.contact',
+      pageId: 'contact',
+    },
+  ];
+
+  protected readonly expertiseItems: readonly string[] = [
+    'web.shell.footer.expertiseItems.professionalTraining',
+    'web.shell.footer.expertiseItems.projectManagement',
+    'web.shell.footer.expertiseItems.internationalMobility',
+  ];
+
+  protected readonly officeItems: readonly FooterOfficeItem[] = [
+    {
+      icon: 'pi-envelope',
+      label: 'kraakconsulting@gmail.com',
+      href: 'mailto:kraakconsulting@gmail.com',
+    },
+    {
+      icon: 'pi-map-marker',
+      label: "Abidjan, C\u00f4te d'Ivoire",
+    },
+    {
+      icon: 'pi-phone',
+      label: '+225 05 02 74 18 18',
+      href: 'tel:+2250502741818',
+    },
   ];
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
 
-  protected readonly policyLinks: FooterLink[] = [
-    { label: 'Mentions l\u00E9gales', path: '/mentions-legales' },
+  protected readonly policyLinks: readonly FooterLink[] = [
     {
-      label: 'Politique de confidentialit\u00E9',
-      path: '/politique-de-confidentialite',
+      labelKey: 'web.shell.footer.policyLinks.legalNotice',
+      pageId: 'legalNotice',
+    },
+    { labelKey: 'web.shell.footer.policyLinks.faq', pageId: 'faq' },
+    {
+      labelKey: 'web.shell.footer.policyLinks.privacyPolicy',
+      pageId: 'privacyPolicy',
     },
   ];
+
+  ngAfterViewInit(): void {
+    if (globalThis.window === undefined || this.footerRoot === undefined) {
+      return;
+    }
+
+    globalThis.window.addEventListener('scroll', this.handleScroll, {
+      passive: true,
+    });
+    this.handleScroll();
+  }
+
+  private readonly handleScroll = (): void => {
+    if (
+      globalThis.window === undefined ||
+      this.footerRoot === undefined ||
+      this.hasActivatedAnimations
+    ) {
+      return;
+    }
+
+    const footerBounds = this.footerRoot.nativeElement.getBoundingClientRect();
+    const viewportTrigger = globalThis.window.innerHeight * 0.92;
+
+    if (footerBounds.top <= viewportTrigger) {
+      this.activateFooterAnimations();
+      this.hasActivatedAnimations = true;
+      globalThis.window.removeEventListener('scroll', this.handleScroll);
+    }
+  };
+
+  private activateFooterAnimations(): void {
+    if (this.footerRoot === undefined) {
+      return;
+    }
+
+    const rootElement = this.footerRoot.nativeElement;
+    const fadeRightElement = rootElement.querySelector('.kr-footer-fade-right');
+    const fadeLeftElement = rootElement.querySelector('.kr-footer-fade-left');
+
+    fadeRightElement?.classList.add('kr-footer-fade-right-visible');
+    fadeLeftElement?.classList.add('kr-footer-fade-left-visible');
+  }
+
+  ngOnDestroy(): void {
+    if (globalThis.window !== undefined) {
+      globalThis.window.removeEventListener('scroll', this.handleScroll);
+    }
+  }
 }

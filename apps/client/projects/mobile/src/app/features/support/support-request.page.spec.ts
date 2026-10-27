@@ -1,8 +1,11 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+// apps\client\projects\mobile\src\app\features\support\support-request.page.spec.ts
+
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ApiError } from '@kraak/api-client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileSupportService } from './mobile-support.service';
 import SupportRequestPage from './support-request.page';
 
@@ -16,6 +19,8 @@ describe('Mobile SupportRequestPage', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     supportService.submitContactForm.mockReset();
     supportService.submitContactForm.mockResolvedValue({
       success: true,
@@ -27,9 +32,12 @@ describe('Mobile SupportRequestPage', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         provideRouter([]),
+        provideKraakI18n(),
         { provide: MobileSupportService, useValue: supportService },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
 
     router = TestBed.inject(Router);
     navigateByUrlSpy = vi
@@ -65,14 +73,76 @@ describe('Mobile SupportRequestPage', () => {
     expect(element.querySelector('#support-message')).toBeTruthy();
   });
 
+  it('Given untouched empty fields, when the page renders, then inline validation messages are hidden', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).not.toContain(
+      'Le nom est requis (2 à 80 caractères).',
+    );
+    expect(element.textContent).not.toContain(
+      'Saisissez une adresse email valide.',
+    );
+    expect(element.textContent).not.toContain(
+      "L'objet est requis (3 à 120 caractères).",
+    );
+    expect(element.textContent).not.toContain(
+      'Le message est requis (10 à 2 000 caractères).',
+    );
+  });
+
+  it('Given touched invalid fields, when the page renders, then all inline validation messages are displayed', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    const { form } = fixture.componentInstance;
+    form.controls.name.setValue('');
+    form.controls.email.setValue('not-an-email');
+    form.controls.subject.setValue('');
+    form.controls.message.setValue('court');
+    form.markAllAsTouched();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Le nom est requis (2 à 80 caractères).',
+    );
+    expect(element.textContent).toContain(
+      'Saisissez une adresse email valide.',
+    );
+    expect(element.textContent).toContain(
+      "L'objet est requis (3 à 120 caractères).",
+    );
+    expect(element.textContent).toContain(
+      'Le message est requis (10 à 2 000 caractères).',
+    );
+  });
+
+  it('Given a submit in progress and an error message, when the page renders, then loading button label and error banner are shown', () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    fixture.detectChanges();
+
+    fixture.componentInstance.submitting.set(true);
+    fixture.componentInstance.errorMessage.set(
+      'Une erreur test utilisateur est survenue.',
+    );
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Envoi en cours...');
+    expect(element.textContent).toContain(
+      'Une erreur test utilisateur est survenue.',
+    );
+  });
+
   it('Given a fully valid form, when submit is called, then the support service is called with trimmed values and the app navigates back', async () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     fixture.componentInstance.form.setValue({
       name: '  Alice Dupont  ',
       email: '  alice@kraak.org  ',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     });
 
@@ -81,9 +151,8 @@ describe('Mobile SupportRequestPage', () => {
     expect(supportService.submitContactForm).toHaveBeenCalledWith({
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     });
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/tabs/support');
@@ -122,7 +191,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(400, 'Bad Request', {
-        errors: ['Le message doit contenir au moins 10 caract\u00E8res.'],
+        errors: ['Le message doit contenir au moins 10 caractères.'],
       }),
     );
 
@@ -137,7 +206,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Le message doit contenir au moins 10 caract\u00E8res.',
+      'Le message doit contenir au moins 10 caractères.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -162,8 +231,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(422, 'Unprocessable Entity', {
-        message:
-          'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+        message: 'Ce sujet a déjà été soumis récemment.',
       }),
     );
 
@@ -178,7 +246,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Ce sujet a d\u00E9j\u00E0 \u00E9t\u00E9 soumis r\u00E9cemment.',
+      'Ce sujet a déjà été soumis récemment.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -187,7 +255,7 @@ describe('Mobile SupportRequestPage', () => {
     const fixture = TestBed.createComponent(SupportRequestPage);
     supportService.submitContactForm.mockRejectedValue(
       new ApiError(400, 'Bad Request', {
-        errors: 'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+        errors: 'Formulaire invalide, veuillez vérifier vos saisies.',
       }),
     );
 
@@ -202,7 +270,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Formulaire invalide, veuillez v\u00E9rifier vos saisies.',
+      'Formulaire invalide, veuillez vérifier vos saisies.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -252,7 +320,7 @@ describe('Mobile SupportRequestPage', () => {
     await fixture.componentInstance.submit();
 
     expect(fixture.componentInstance.errorMessage()).toBe(
-      'Une erreur est survenue. Veuillez r\u00E9essayer ult\u00E9rieurement.',
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
   });
@@ -304,5 +372,116 @@ describe('Mobile SupportRequestPage', () => {
       '422 Unprocessable Entity',
     );
     expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError 400 without usable body or message, when submit is called, then the invalid-form fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(400, '', { errors: {} });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Les informations saisies sont invalides. Veuillez vérifier le formulaire.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError non-400 without usable body or message, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(422, '', { errors: {} });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError with errors array containing only blank or non-string values, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(500, '', {
+      errors: ['   ', 42, null],
+    });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given an ApiError body without errors field and no usable message, when submit is called, then generic fallback message is shown', async () => {
+    const fixture = TestBed.createComponent(SupportRequestPage);
+    const apiError = new ApiError(500, '', { message: '   ' });
+    apiError.message = '   ';
+    supportService.submitContactForm.mockRejectedValue(apiError);
+
+    fixture.componentInstance.form.setValue({
+      name: 'Alice Dupont',
+      email: 'alice@kraak.org',
+      subject: 'Question sur un programme',
+      message: 'Quand commence la prochaine session de formation ?',
+      category: 'program',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'Une erreur est survenue. Veuillez réessayer ultérieurement.',
+    );
+    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+  });
+
+  it('Given English is selected, when support request renders, then the request form chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(SupportRequestPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('New request');
+    expect(text).toContain('Full name');
+    expect(text).toContain('Email address');
+    expect(text).toContain('Category');
+    expect(text).toContain('Subject');
+    expect(text).toContain('Message');
+    expect(text).toContain('Send request');
   });
 });

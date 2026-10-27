@@ -1,31 +1,19 @@
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDirectory, '..');
-const workspacePath = normalizeWorkspacePath(
-  path.relative(repoRoot, process.cwd()),
-);
-const dryRun = process.argv.includes('--dry-run');
 
 const targetsByWorkspace = new Map([
   [
     '.',
-    [
-      '.cache',
-      '.vercel',
-      'blob-report',
-      'coverage',
-      'playwright-report',
-      'test-results',
-    ],
+    ['.cache', 'blob-report', 'coverage', 'playwright-report', 'test-results'],
   ],
   [
     'apps/client',
     [
       '.angular',
-      '.vercel',
       'blob-report',
       'coverage',
       'dist',
@@ -40,30 +28,38 @@ const targetsByWorkspace = new Map([
   ['packages/tokens', ['coverage', 'dist']],
 ]);
 
-const targets = targetsByWorkspace.get(workspacePath);
+export async function cleanWorkspace(workspacePath, directory, dryRun) {
+  const targets = targetsByWorkspace.get(workspacePath);
 
-if (targets) {
-  const cleanedTargets = [];
-
-  for (const target of targets) {
-    const absoluteTarget = path.join(process.cwd(), target);
-
+  if (targets) {
     if (!dryRun) {
-      await rm(absoluteTarget, { force: true, recursive: true });
+      await Promise.all(
+        targets.map((target) =>
+          rm(path.join(directory, target), { force: true, recursive: true }),
+        ),
+      );
     }
 
-    cleanedTargets.push(target);
+    const action = dryRun ? 'seraient nettoyés' : 'nettoyés';
+    console.log(`[clean] ${workspacePath} : ${targets.join(', ')} ${action}.`);
+    return 0;
+  } else {
+    console.error(
+      `Aucune configuration clean définie pour le workspace "${workspacePath}".`,
+    );
+    return 1;
   }
+}
 
-  const action = dryRun ? 'seraient nettoyés' : 'nettoyés';
-  console.log(
-    `[clean] ${workspacePath} : ${cleanedTargets.join(', ')} ${action}.`,
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  process.exitCode = await cleanWorkspace(
+    normalizeWorkspacePath(path.relative(repoRoot, process.cwd())),
+    process.cwd(),
+    process.argv.includes('--dry-run'),
   );
-} else {
-  console.error(
-    `Aucune configuration clean définie pour le workspace "${workspacePath}".`,
-  );
-  process.exitCode = 1;
 }
 
 function normalizeWorkspacePath(value) {

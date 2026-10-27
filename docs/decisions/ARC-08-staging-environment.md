@@ -1,19 +1,47 @@
+---
+status: reference
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: false
+---
+
 # ARC-08 — Environnement de staging stable et branche longue `staging`
+
+## Table des matières
+
+- [ARC-08 — Environnement de staging stable et branche longue staging](#arc-08-environnement-de-staging-stable-et-branche-longue-staging)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Exception explicite à ARC-02](#21-exception-explicite-a-arc-02)
+    - [2.2 Flux complet de promotion](#22-flux-complet-de-promotion)
+    - [2.3 Périmètre couvert par cette décision](#23-perimetre-couvert-par-cette-decision)
+    - [2.4 Ce que cette décision ne change pas](#24-ce-que-cette-decision-ne-change-pas)
+  - [3 · Justification](#3-justification)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Création initiale de la branche](#41-creation-initiale-de-la-branche)
+    - [4.2 Protection GitHub de staging](#42-protection-github-de-staging)
+    - [4.3 Configuration Render](#43-configuration-render)
+    - [4.4 Configuration Render (UI)](#44-configuration-render-ui)
+    - [4.5 Promotion staging-first](#45-promotion-staging-first)
+    - [4.6 Rollback staging](#46-rollback-staging)
+  - [5 · Conséquences](#5-consequences)
+  - [6 · Conditions de levée / révision](#6-conditions-de-levee-revision)
+  - [7 · Références](#7-references)
 
 > ⚠️ **Mise à jour 2026-05-03** : les sections « 2.1 Exception à ARC-02 »
 > et « 2.2 Flux complet de promotion » sont **remplacées par
 > [ARC-09](./ARC-09-inversion-main-staging.md)**. Dans le modèle actuel,
 > `staging` est la branche d'intégration (toutes les PR la ciblent) et
 > `main` n'avance que par PR de release depuis `staging`. Le reste de cette
-> ADR (motivations, choix Render/Vercel/Supabase, runbook) reste applicable.
+> ADR (motivations, choix Render/Supabase, runbook) reste applicable.
 
-| Champ           | Valeur                                                                               |
-| --------------- | ------------------------------------------------------------------------------------ |
-| **Statut**      | Acceptée (partiellement remplacée par ARC-09)                                        |
-| **Date**        | 2026-05-03                                                                           |
-| **Auteurs**     | Équipe KRAAK                                                                         |
-| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag)                                 |
-| **Liée à**      | `docs/runbooks/STAGING_PROMOTION.md`, `docs/runbooks/RELEASE_PROD.md`, `render.yaml` |
+| Champ           | Valeur                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| **Statut**      | Acceptée (partiellement remplacée par ARC-09)                                             |
+| **Date**        | 2026-05-03                                                                                |
+| **Auteurs**     | Équipe KRAAK                                                                              |
+| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag)                                      |
+| **Liée à**      | `docs/operations/STAGING_VALIDATION.md`, `docs/operations/RELEASE_PROD.md`, `render.yaml` |
 
 ---
 
@@ -21,15 +49,15 @@
 
 Avant de livrer en production, KRAAK doit valider chaque incrément du MVP dans
 un environnement **prod-like exposé sur Internet**, branché à des services
-réels (Supabase, Resend, Vercel, Render), mais **isolé des données de
+réels (Supabase, Resend, Render, Render), mais **isolé des données de
 production**.
 
 L'environnement staging existait déjà partiellement :
 
 - `apps/api/.env.staging`, `apps/client/.env.staging`, `supabase/.env.staging` ;
 - service Render `kraak-api-staging` (`autoDeploy: true`, branche `main`) ;
-- projet Vercel staging avec preview branch `main` (URL stable
-  `https://client-six-indol-58.vercel.app`).
+- projet Render staging avec preview branch `main` (URL stable
+  `https://kraak-web-staging.onrender.com`).
 
 Avec ARC-07, la prod a été figée sur un déclenchement par **tag SemVer**. Le
 flux tel quel devient :
@@ -67,7 +95,7 @@ déploiement de l'environnement staging**, avec les contraintes suivantes :
    propre.
 3. `staging` n'avance **que par fast-forward depuis `main`**. Aucun merge
    commit, aucun rebase non trivial, aucun cherry-pick n'y est autorisé.
-4. Pousser sur `staging` déclenche le déploiement staging (Render Vercel
+4. Pousser sur `staging` déclenche le déploiement staging (Render Render
    Supabase migrations).
 5. Le **tag SemVer** créé depuis `main` (ou depuis le commit pointé par
    `staging`) reste le seul déclencheur prod (ARC-07 inchangé).
@@ -106,12 +134,12 @@ feat/* ──► PR ──► main (rebase only, ARC-02)
 | Bloc                | Décision                                                                                  |
 | ------------------- | ----------------------------------------------------------------------------------------- |
 | Render (API)        | `kraak-api-staging` suit la branche `staging` (`autoDeploy: true`, `branch: staging`)     |
-| Vercel (web)        | Projet Vercel staging configure « Production Branch = `staging` » dans son dashboard      |
+| Render (web)        | Projet Render staging configure « Production Branch = `staging` » dans son dashboard      |
 | Supabase            | Projet Supabase **`kraak-staging`** distinct de `kraak-prod` (déjà acté ARC-07)           |
 | Migrations Supabase | `supabase db push` staging déclenché manuellement avant le fast-forward staging si schéma |
 | Branch protection   | `staging` protégée GitHub : pas de push direct, pas de force-push hors rollback contrôlé  |
 | Workflow Git        | Aucun PR ne cible `staging` ; promotion par script `pnpm staging:promote` (cf. runbook)   |
-| Runbook             | `docs/runbooks/STAGING_PROMOTION.md` documente la procédure et les rollbacks staging      |
+| Runbook             | `docs/operations/STAGING_VALIDATION.md` documente la procédure et les rollbacks staging   |
 | ARC-07              | Inchangé : prod toujours par tag SemVer, jamais par push `staging` ni `main`              |
 
 ### 2.4 Ce que cette décision **ne change pas**
@@ -174,52 +202,42 @@ Dans `Settings → Branches → Add branch protection rule` :
 Le service `kraak-api-prod` reste sur `autoDeploy: false` (déclenché par le
 workflow `release-prod.yml` sur tag).
 
-### 4.4 Configuration Vercel (UI)
+### 4.4 Configuration Render (UI)
 
-Sur le projet Vercel staging :
+Sur le projet Render staging :
 
 - `Settings → Git → Production Branch` : `staging`
 - `Settings → Git → Ignored Build Step` : conserver le comportement existant
-  défini par `vercel.json`.
+  défini par `render.yaml`.
 
-Sur le projet Vercel prod :
+Sur le projet Render prod :
 
 - `Production Branch` : `(none)` (inchangé, ARC-07).
 
-### 4.5 Promotion `main → staging`
+### 4.5 Promotion staging-first
 
-Procédure standard (détaillée dans le runbook) :
+Cette ADR est remplacée, pour le sens de promotion, par
+[`ARC-09`](./ARC-09-inversion-main-staging.md). Le flux actif part de branches
+courtes vers `staging`, puis utilise une PR de release de `staging` vers `main`
+quand la préproduction est validée.
 
-```bash
-git checkout staging
-git pull --ff-only
-git merge --ff-only origin/main
-git push origin staging
-```
-
-Aucun rebase, aucun merge non fast-forward. Si le fast-forward échoue, c'est
-qu'un commit a été créé directement sur `staging` (interdit) → rollback à
-l'état de `main` :
-
-```bash
-git fetch origin
-git reset --hard origin/main
-git push --force-with-lease origin staging
-```
+Aucun workflow ne doit synchroniser `staging` depuis `main`. Si un correctif est
+nécessaire après une release, il doit repartir d'une branche courte créée depuis
+`staging`, puis suivre le workflow Git standard.
 
 ### 4.6 Rollback staging
 
-Pour repointer staging sur un commit antérieur de `main` (ex. après détection
-d'un bug en pré-prod) :
+Pour repointer staging sur un commit antérieur validé (ex. après détection d'un
+bug en pré-prod) :
 
 ```bash
 git checkout staging
 git fetch origin
-git reset --hard <sha-commit-main-stable>
+git reset --hard <sha-commit-staging-stable>
 git push --force-with-lease origin staging
 ```
 
-Render et Vercel staging redéploient automatiquement le commit pointé.
+Render staging redéploient automatiquement le commit pointé.
 
 ---
 
@@ -236,10 +254,11 @@ Positives :
 
 Négatives / à surveiller :
 
-- Une étape manuelle supplémentaire (le fast-forward `main → staging`) entre
-  un merge et son apparition en staging.
-- Risque de désynchronisation : staging peut être en retard sur `main` ; il
-  faut accepter cette latence et la documenter.
+- Une étape de release contrôlée reste nécessaire entre la validation staging et
+  la production.
+- Risque de désynchronisation : `main` peut être en retard sur `staging` tant
+  qu'une release n'est pas prête ; il faut accepter cette latence et la
+  documenter.
 - Risque de tentation de commit direct sur `staging` : la protection GitHub +
   cette ADR doivent l'interdire explicitement.
 - L'exception à ARC-02 doit rester strictement bornée : si une seconde
@@ -255,7 +274,7 @@ Cette décision est révisable si :
    justifie une automatisation par GitHub Action déclenchée sur `main`.
 2. KRAAK introduit un environnement supplémentaire (par ex. `qa`, `demo`)
    nécessitant une matrice de branches plus riche.
-3. Un outil tiers (Vercel, Render) impose un autre modèle de promotion qui
+3. Un outil tiers (Render) impose un autre modèle de promotion qui
    rendrait la branche `staging` redondante.
 
 ---
@@ -264,7 +283,7 @@ Cette décision est révisable si :
 
 - [ARC-02 — Conventions dépôt et workflow Git](./ARC-02-conventions-repo.md)
 - [ARC-07 — Stratégie de release production basée sur les tags](./ARC-07-prod-release-tag-based.md)
-- [Runbook — Promotion staging](../runbooks/STAGING_PROMOTION.md)
-- [Runbook — Release prod](../runbooks/RELEASE_PROD.md)
-- [Runbook — Variables d'environnement](../runbooks/ENVIRONMENT_VARIABLES.md)
+- [Runbook — Promotion staging](../operations/STAGING_VALIDATION.md)
+- [Runbook — Release prod](../operations/RELEASE_PROD.md)
+- [Runbook — Variables d'environnement](../operations/ENVIRONMENTS.md)
 - [`render.yaml`](../../render.yaml)

@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { FaqAccordion } from './faq-accordion.component';
@@ -14,11 +15,19 @@ const SAMPLE_ITEMS = [
   },
 ];
 
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
+
 describe('FaqAccordion', () => {
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     await TestBed.configureTestingModule({
       imports: [FaqAccordion],
+      providers: [provideKraakI18n()],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
 
   it('Given aucun item, When le composant est rendu, Then il s affiche sans erreur', () => {
@@ -47,7 +56,29 @@ describe('FaqAccordion', () => {
     const answers = (fixture.nativeElement as HTMLElement).querySelectorAll(
       'p-accordion-content p',
     );
-    expect(answers.length).toBe(SAMPLE_ITEMS.length);
+    expect(answers).toHaveLength(SAMPLE_ITEMS.length);
+  });
+
+  it('Given des libellés localisés, When le composant est rendu, Then le titre, la description et le texte alternatif utilisent les entrées fournies', () => {
+    const fixture = TestBed.createComponent(FaqAccordion);
+    fixture.componentRef.setInput('items', SAMPLE_ITEMS);
+    fixture.componentRef.setInput('heading', 'Frequently asked questions');
+    fixture.componentRef.setInput(
+      'description',
+      'Answers to common questions.',
+    );
+    fixture.componentRef.setInput('backgroundAlt', 'Advisory conversation');
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('h2')?.textContent).toContain(
+      'Frequently asked questions',
+    );
+    expect(host.textContent).toContain('Answers to common questions.');
+    expect(host.querySelector('img')?.getAttribute('alt')).toBe(
+      'Advisory conversation',
+    );
   });
 
   it('Given une liste d items, When une question est ouverte, Then la réponse devient visible', async () => {
@@ -83,6 +114,25 @@ describe('FaqAccordion', () => {
     ).toBe('visible');
     expect(answer?.textContent).toContain(
       'KRAAK est un cabinet de conseil en formation',
+    );
+  });
+  it('Given the English locale and no explicit chrome inputs, When the accordion renders, Then its defaults are localized', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(FaqAccordion);
+    fixture.componentRef.setInput('items', []);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('h2')?.textContent).toContain(
+      'Frequently asked questions',
+    );
+    expect(host.textContent).toContain(
+      'Find quick answers to the most common questions',
+    );
+    expect(host.querySelector('img')?.getAttribute('alt')).toBe(
+      'Background image for the frequently asked questions section',
     );
   });
 });

@@ -1,6 +1,6 @@
 <kraak-page-shell
   [title]="pageTitle()"
-  eyebrow="D&eacute;tail du programme"
+  [eyebrow]="'mobile.programs.detail.header.eyebrow' | kraakTranslate"
   backHref="/tabs/programmes"
 >
   @if (errorMessage()) {
@@ -17,16 +17,21 @@
         (click)="reloadProgram()"
         (keydown.enter)="reloadProgram()"
       >
-        R&eacute;essayer
+        {{ 'mobile.programs.detail.actions.retry' | kraakTranslate }}
       </ion-button>
     </section>
   } @else if (loading()) {
     <section
       class="rounded-card border-brand-blue/12 bg-brand-white shadow-card m-4 flex flex-col items-center justify-center gap-4 border p-5"
     >
-      <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+      <ion-spinner
+        name="crescent"
+        [attr.aria-label]="
+          'mobile.programs.detail.loading.aria' | kraakTranslate
+        "
+      ></ion-spinner>
       <p class="text-sm leading-6 text-neutral-700">
-        Chargement du d&eacute;tail du programme...
+        {{ 'mobile.programs.detail.loading.text' | kraakTranslate }}
       </p>
     </section>
   } @else if (programDetail(); as detail) {
@@ -38,7 +43,7 @@
           <p
             class="text-xs leading-5 font-semibold tracking-wide text-neutral-700 uppercase"
           >
-            Programme
+            {{ 'mobile.programs.detail.sections.program' | kraakTranslate }}
           </p>
           <p class="text-primary text-2xl font-semibold">
             {{ detail.program.title }}
@@ -52,18 +57,37 @@
           class="border-t border-neutral-200/50 pt-3 text-xs leading-5 text-neutral-700"
         >
           <p>
-            <span class="font-semibold">Cr&eacute;&eacute; le:</span>
-            {{ detail.program.createdAt | date: 'mediumDate' }}
+            <span class="font-semibold"
+              >{{
+                'mobile.programs.detail.labels.createdAt' | kraakTranslate
+              }}:</span
+            >
+            {{ formatMediumDate(detail.program.createdAt) }}
           </p>
           <p class="mt-1">
-            <span class="font-semibold">Statut d'inscription:</span>
-            {{ detail.enrollmentStatus }}
+            <span class="font-semibold"
+              >{{
+                'mobile.programs.detail.labels.enrollmentStatus'
+                  | kraakTranslate
+              }}:</span
+            >
+            {{ getEnrollmentStatusLabel(detail.enrollmentStatus) }}
           </p>
           <p class="mt-1">
-            <span class="font-semibold">Progression:</span>
-            {{ detail.progress.completionRate }}% ({{
-              detail.progress.completedSessions
-            }}/{{ detail.progress.totalSessions }} sessions)
+            <span class="font-semibold"
+              >{{
+                'mobile.programs.detail.labels.progress' | kraakTranslate
+              }}:</span
+            >
+            {{
+              'mobile.programs.detail.progress.summary'
+                | kraakTranslate
+                  : {
+                      rate: detail.progress.completionRate,
+                      completed: detail.progress.completedSessions,
+                      total: detail.progress.totalSessions,
+                    }
+            }}
           </p>
         </div>
       </article>
@@ -72,31 +96,54 @@
         <article
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
         >
-          <p class="text-primary text-lg font-semibold">Cohorte</p>
+          <p class="text-primary text-lg font-semibold">
+            {{ 'mobile.programs.detail.sections.cohort' | kraakTranslate }}
+          </p>
           <div class="space-y-2 text-sm leading-6 text-neutral-700">
             <p>
-              <span class="font-semibold">Nom:</span> {{ detail.cohort.name }}
+              <span class="font-semibold"
+                >{{
+                  'mobile.programs.detail.labels.name' | kraakTranslate
+                }}:</span
+              >
+              {{ detail.cohort.name }}
             </p>
             @if (detail.cohort.code) {
               <p>
-                <span class="font-semibold">Code:</span>
+                <span class="font-semibold"
+                  >{{
+                    'mobile.programs.detail.labels.code' | kraakTranslate
+                  }}:</span
+                >
                 {{ detail.cohort.code }}
               </p>
             }
             <p>
-              <span class="font-semibold">D&eacute;but:</span>
-              {{ detail.cohort.startDate | date: 'mediumDate' }}
+              <span class="font-semibold"
+                >{{
+                  'mobile.programs.detail.labels.start' | kraakTranslate
+                }}:</span
+              >
+              {{ formatMediumDate(detail.cohort.startDate) }}
             </p>
             @if (detail.cohort.endDate) {
               <p>
-                <span class="font-semibold">Fin:</span>
-                {{ detail.cohort.endDate | date: 'mediumDate' }}
+                <span class="font-semibold"
+                  >{{
+                    'mobile.programs.detail.labels.end' | kraakTranslate
+                  }}:</span
+                >
+                {{ formatMediumDate(detail.cohort.endDate) }}
               </p>
             }
             @if (detail.cohort.capacity) {
               <p>
-                <span class="font-semibold">Capacit&eacute;:</span>
-                {{ detail.cohort.capacity }} participants
+                <span class="font-semibold"
+                  >{{
+                    'mobile.programs.detail.labels.capacity' | kraakTranslate
+                  }}:</span
+                >
+                {{ getCapacityLabel(detail.cohort.capacity) }}
               </p>
             }
           </div>
@@ -108,7 +155,10 @@
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
         >
           <p class="text-primary text-lg font-semibold">
-            Sessions ({{ detail.sessions.length }})
+            {{
+              'mobile.programs.detail.sections.sessions'
+                | kraakTranslate: { count: detail.sessions.length }
+            }}
           </p>
           <ul class="flex flex-col gap-3">
             @for (session of detail.sessions; track session.id) {
@@ -119,12 +169,16 @@
                   {{ session.title }}
                 </p>
                 <p class="text-xs leading-5 text-neutral-700">
-                  {{ session.startsAt | date: 'medium' }}
+                  {{ formatMediumDateTime(session.startsAt) }}
                 </p>
                 @if (session.locationType) {
                   <p class="text-xs leading-5 text-neutral-700">
-                    <span class="font-semibold">Type:</span>
-                    {{ session.locationType }}
+                    <span class="font-semibold"
+                      >{{
+                        'mobile.programs.detail.labels.type' | kraakTranslate
+                      }}:</span
+                    >
+                    {{ getLocationTypeLabel(session.locationType) }}
                   </p>
                 }
                 <ion-button
@@ -138,7 +192,10 @@
                   expand="block"
                   class="kraak-primary-button mt-2"
                 >
-                  Voir les d&eacute;tails
+                  {{
+                    'mobile.programs.detail.actions.viewSessionDetails'
+                      | kraakTranslate
+                  }}
                 </ion-button>
               </li>
             }
@@ -146,7 +203,7 @@
         </article>
       } @else {
         <p class="px-1 text-sm leading-6 text-neutral-700">
-          Aucune session programm&eacute;e pour le moment.
+          {{ 'mobile.programs.detail.empty.sessions' | kraakTranslate }}
         </p>
       }
 
@@ -155,7 +212,10 @@
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
         >
           <p class="text-primary text-lg font-semibold">
-            Ressources ({{ detail.resources.length }})
+            {{
+              'mobile.programs.detail.sections.resources'
+                | kraakTranslate: { count: detail.resources.length }
+            }}
           </p>
           <ul class="flex flex-col gap-3">
             @for (resource of detail.resources; track resource.id) {
@@ -171,8 +231,12 @@
                   </p>
                 }
                 <p class="text-xs leading-5 text-neutral-700">
-                  <span class="font-semibold">Type:</span>
-                  {{ resource.resourceType }}
+                  <span class="font-semibold"
+                    >{{
+                      'mobile.programs.detail.labels.type' | kraakTranslate
+                    }}:</span
+                  >
+                  {{ getResourceTypeLabel(resource.resourceType) }}
                 </p>
                 @if (resource.url) {
                   <ion-button
@@ -183,7 +247,9 @@
                     expand="block"
                     class="kraak-primary-button mt-2"
                   >
-                    Acc&eacute;der
+                    {{
+                      'mobile.programs.detail.actions.access' | kraakTranslate
+                    }}
                   </ion-button>
                 }
               </li>
@@ -192,7 +258,7 @@
         </article>
       } @else {
         <p class="px-1 text-sm leading-6 text-neutral-700">
-          Aucune ressource disponible pour le moment.
+          {{ 'mobile.programs.detail.empty.resources' | kraakTranslate }}
         </p>
       }
 
@@ -201,7 +267,10 @@
           class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-3 border p-5"
         >
           <p class="text-primary text-lg font-semibold">
-            Annonces ({{ detail.announcements.length }})
+            {{
+              'mobile.programs.detail.sections.announcements'
+                | kraakTranslate: { count: detail.announcements.length }
+            }}
           </p>
           <ul class="flex flex-col gap-3">
             @for (announcement of detail.announcements; track announcement.id) {
@@ -212,8 +281,10 @@
                   {{ announcement.title }}
                 </p>
                 <p class="text-xs leading-5 text-neutral-700">
-                  Publi&eacute;:
-                  {{ announcement.publishedAt | date: 'mediumDate' }}
+                  {{
+                    'mobile.programs.detail.labels.published' | kraakTranslate
+                  }}:
+                  {{ formatMediumDate(announcement.publishedAt) }}
                 </p>
               </li>
             }
@@ -227,7 +298,7 @@
         fill="outline"
         class="kraak-secondary-button mb-4"
       >
-        Retour &agrave; la liste
+        {{ 'mobile.programs.detail.actions.backToList' | kraakTranslate }}
       </ion-button>
     </section>
   }

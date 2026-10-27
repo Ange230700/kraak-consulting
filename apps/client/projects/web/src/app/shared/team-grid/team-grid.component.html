@@ -6,14 +6,15 @@
           <p
             class="border-secondary/20 bg-brand-white text-secondary inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase"
           >
-            Prévisualisation de l'équipe KRAAK
+            {{ 'web.shared.teamGrid.previewLabel' | kraakTranslate }}
           </p>
         }
 
-        <h2 class="mt-4 text-3xl font-bold lg:text-4xl">L'équipe KRAAK</h2>
+        <h2 class="mt-4 text-3xl font-bold lg:text-4xl">
+          {{ 'web.shared.teamGrid.heading' | kraakTranslate }}
+        </h2>
         <p class="mt-4 text-lg text-neutral-700">
-          En attendant la liste officielle, voici un aperçu du format de
-          présentation des membres de l'équipe.
+          {{ 'web.shared.teamGrid.description' | kraakTranslate }}
         </p>
       </div>
 
@@ -39,7 +40,9 @@
               {{ member.name }}
             </h3>
             <p class="mt-1 text-xs leading-snug text-neutral-600">
-              {{ member.role }}
+              {{
+                isPreviewMode() ? (member.role | kraakTranslate) : member.role
+              }}
             </p>
           </article>
         }

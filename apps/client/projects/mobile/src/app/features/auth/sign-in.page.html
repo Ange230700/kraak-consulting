@@ -1,14 +1,14 @@
 <kraak-page-shell
-  eyebrow="Acc&egrave;s"
-  title="Se connecter"
-  description="Retrouvez vos programmes, vos annonces et votre canal de support en un seul acc&egrave;s."
+  [eyebrow]="'mobile.auth.signIn.header.eyebrow' | kraakTranslate"
+  [title]="'mobile.auth.signIn.header.title' | kraakTranslate"
+  [description]="'mobile.auth.signIn.header.description' | kraakTranslate"
   backHref="/welcome"
 >
   <section
     class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col gap-4 border p-5"
   >
     <form
-      [formGroup]="form"
+      [formGroup]="templateFormGroup"
       (ngSubmit)="submit()"
       class="flex flex-col gap-4"
       novalidate
@@ -18,7 +18,7 @@
           for="sign-in-email"
           class="text-sm font-semibold text-neutral-900"
         >
-          Adresse email
+          {{ 'mobile.auth.signIn.fields.email' | kraakTranslate }}
         </label>
         <input
           id="sign-in-email"
@@ -30,7 +30,7 @@
         />
         @if (form.controls.email.touched && form.controls.email.invalid) {
           <p class="text-sm leading-6 text-rose-700">
-            Saisissez une adresse email valide.
+            {{ 'mobile.auth.signIn.validation.email' | kraakTranslate }}
           </p>
         }
       </div>
@@ -40,19 +40,21 @@
           for="sign-in-password"
           class="text-sm font-semibold text-neutral-900"
         >
-          Mot de passe
+          {{ 'mobile.auth.signIn.fields.password' | kraakTranslate }}
         </label>
         <input
           id="sign-in-password"
           type="password"
           formControlName="password"
           autocomplete="current-password"
-          placeholder="Minimum 8 caract&egrave;res"
+          [placeholder]="
+            'mobile.auth.signIn.placeholders.password' | kraakTranslate
+          "
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
         @if (form.controls.password.touched && form.controls.password.invalid) {
           <p class="text-sm leading-6 text-rose-700">
-            Votre mot de passe doit contenir au moins 8 caract&egrave;res.
+            {{ 'mobile.auth.signIn.validation.password' | kraakTranslate }}
           </p>
         }
       </div>
@@ -71,19 +73,24 @@
         class="kraak-primary-button"
         [disabled]="submitting()"
       >
-        {{ submitting() ? 'Connexion en cours...' : 'Se connecter' }}
+        {{
+          (submitting()
+            ? 'mobile.auth.signIn.actions.submitting'
+            : 'mobile.auth.signIn.actions.submit'
+          ) | kraakTranslate
+        }}
       </ion-button>
     </form>
 
     <div class="border-brand-blue/12 flex flex-col gap-3 border-t pt-4">
       <a routerLink="/sign-up" class="text-brand-blue text-sm font-semibold">
-        Cr&eacute;er un compte
+        {{ 'mobile.auth.signIn.actions.createAccount' | kraakTranslate }}
       </a>
       <a
         routerLink="/password-reset"
         class="text-brand-blue text-sm font-semibold"
       >
-        Mot de passe oubli&eacute;
+        {{ 'mobile.auth.signIn.actions.forgotPassword' | kraakTranslate }}
       </a>
     </div>
   </section>

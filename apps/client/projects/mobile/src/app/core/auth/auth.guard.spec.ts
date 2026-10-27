@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Component } from '@angular/core';
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import {
   adminRoleChildGuard,
   adminRoleGuard,
@@ -36,6 +37,7 @@ describe('authGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([]),
           {
             provide: MobileAuthService,
@@ -58,6 +60,7 @@ describe('authGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([{ path: 'sign-in', component: DummyComponent }]),
           {
             provide: MobileAuthService,
@@ -83,6 +86,7 @@ describe('authChildGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([]),
           {
             provide: MobileAuthService,
@@ -105,6 +109,7 @@ describe('authChildGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([{ path: 'sign-in', component: DummyComponent }]),
           {
             provide: MobileAuthService,
@@ -130,6 +135,7 @@ describe('participantRoleGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([]),
           {
             provide: MobileAuthService,
@@ -152,6 +158,7 @@ describe('participantRoleGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([{ path: 'sign-in', component: DummyComponent }]),
           {
             provide: MobileAuthService,
@@ -176,6 +183,7 @@ describe('participantRoleChildGuard (mobile)', () => {
   it('Given an authenticated participant user, when the child role guard is triggered, then navigation is allowed', () => {
     TestBed.configureTestingModule({
       providers: [
+        provideKraakI18n(),
         provideRouter([]),
         {
           provide: MobileAuthService,
@@ -190,6 +198,26 @@ describe('participantRoleChildGuard (mobile)', () => {
 
     expect(result).toBe(true);
   });
+
+  it('Given an unauthenticated user, when the child role guard is triggered, then the user is redirected to sign-in', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideKraakI18n(),
+        provideRouter([{ path: 'sign-in', component: DummyComponent }]),
+        {
+          provide: MobileAuthService,
+          useValue: mockAuthService(false),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      participantRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    const router = TestBed.inject(Router);
+    expect(result).toEqual(router.createUrlTree(['/sign-in']));
+  });
 });
 
 describe('adminRoleGuard (mobile)', () => {
@@ -197,6 +225,7 @@ describe('adminRoleGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([]),
           {
             provide: MobileAuthService,
@@ -219,6 +248,7 @@ describe('adminRoleGuard (mobile)', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
+          provideKraakI18n(),
           provideRouter([{ path: 'sign-in', component: DummyComponent }]),
           {
             provide: MobileAuthService,
@@ -243,6 +273,7 @@ describe('adminRoleChildGuard (mobile)', () => {
   it('Given an authenticated admin user, when the child admin role guard is triggered, then navigation is allowed', () => {
     TestBed.configureTestingModule({
       providers: [
+        provideKraakI18n(),
         provideRouter([]),
         {
           provide: MobileAuthService,
@@ -256,5 +287,25 @@ describe('adminRoleChildGuard (mobile)', () => {
     );
 
     expect(result).toBe(true);
+  });
+
+  it('Given an unauthenticated user, when the child admin role guard is triggered, then the user is redirected to sign-in', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideKraakI18n(),
+        provideRouter([{ path: 'sign-in', component: DummyComponent }]),
+        {
+          provide: MobileAuthService,
+          useValue: mockAuthService(false),
+        },
+      ],
+    });
+
+    const result = TestBed.runInInjectionContext(() =>
+      adminRoleChildGuard(buildRoute(), buildState()),
+    );
+
+    const router = TestBed.inject(Router);
+    expect(result).toEqual(router.createUrlTree(['/sign-in']));
   });
 });

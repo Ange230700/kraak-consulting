@@ -1,5 +1,8 @@
+// apps\client\projects\mobile\src\app\features\support\mobile-support.service.spec.ts
+
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import type { ContactFormDto } from '@kraak/contracts';
 import { MobileAuthService } from '../../features/auth/mobile-auth.service';
 import { MobileSupportService } from './mobile-support.service';
@@ -8,7 +11,9 @@ const fetchMock = vi.fn();
 
 describe('MobileSupportService', () => {
   const authServiceMock = {
-    currentSession: vi.fn(() => ({ accessToken: 'test-token' })),
+    currentSession: vi.fn<() => { accessToken: string } | null>(() => ({
+      accessToken: 'test-token',
+    })),
   };
 
   beforeEach(() => {
@@ -17,6 +22,7 @@ describe('MobileSupportService', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideKraakI18n(),
         MobileSupportService,
         { provide: MobileAuthService, useValue: authServiceMock },
       ],
@@ -37,9 +43,8 @@ describe('MobileSupportService', () => {
     const payload: ContactFormDto = {
       name: 'Alice Dupont',
       email: 'alice@kraak.org',
-      subject: 'Probl\u00E8me de connexion',
-      message:
-        'Je ne parviens pas \u00E0 acc\u00E9der \u00E0 mon espace participant.',
+      subject: 'Problème de connexion',
+      message: 'Je ne parviens pas à accéder à mon espace participant.',
       category: 'technical',
     };
 
@@ -104,5 +109,29 @@ describe('MobileSupportService', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toContain('/support/requests');
     expect(result).toHaveLength(1);
     expect(result[0]?.status).toBe('open');
+  });
+
+  it('Given no mobile session, when listMyRequests is called, then it sends the request without Authorization header', async () => {
+    authServiceMock.currentSession.mockReturnValue(null);
+    const service = TestBed.inject(MobileSupportService);
+
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => [],
+    });
+
+    const result = await service.listMyRequests();
+    const call = fetchMock.mock.calls[0];
+
+    expect(call?.[0]).toContain('/support/requests');
+    expect(call?.[1]).toEqual(
+      expect.objectContaining({
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
+        }),
+      }),
+    );
+    expect(result).toEqual([]);
   });
 });

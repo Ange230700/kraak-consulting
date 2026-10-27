@@ -313,7 +313,7 @@ describe('DashboardService', () => {
     await expect(service.getAggregate('access-token')).rejects.toMatchObject({
       response: {
         success: false,
-        message: 'Impossible de charger les annonces du dashboard.',
+        message: { key: 'dashboard.announcementsLoadFailed' },
       },
     });
   });
@@ -330,7 +330,7 @@ describe('DashboardService', () => {
     await expect(service.getAggregate('access-token')).rejects.toMatchObject({
       response: {
         success: false,
-        message: 'Impossible de charger le participant courant.',
+        message: { key: 'dashboard.currentParticipantLoadFailed' },
       },
     });
   });
@@ -347,9 +347,22 @@ describe('DashboardService', () => {
     await expect(service.getAggregate('access-token')).rejects.toMatchObject({
       response: {
         success: false,
-        message: 'Impossible de charger les programmes du dashboard.',
+        message: { key: 'dashboard.programsLoadFailed' },
       },
     });
+  });
+
+  // Given enrollmentData null sans erreur
+  // When l'agrégat dashboard est demandé
+  // Then programs est une liste vide via le fallback de lecture
+  it('Given enrollmentData null sans erreur, When getAggregate est appelé, Then programs vaut []', async () => {
+    mockDashboardQueries({
+      enrollmentData: null,
+      enrollmentError: null,
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.programs).toEqual([]);
   });
 
   // Given une erreur de lecture des sessions
@@ -364,9 +377,22 @@ describe('DashboardService', () => {
     await expect(service.getAggregate('access-token')).rejects.toMatchObject({
       response: {
         success: false,
-        message: 'Impossible de charger les sessions à venir du dashboard.',
+        message: { key: 'dashboard.upcomingSessionsLoadFailed' },
       },
     });
+  });
+
+  // Given sessionData null sans erreur
+  // When l'agrégat dashboard est demandé
+  // Then upcomingSessions est une liste vide via le fallback de lecture
+  it('Given sessionData null sans erreur, When getAggregate est appelé, Then upcomingSessions vaut []', async () => {
+    mockDashboardQueries({
+      sessionData: null,
+      sessionError: null,
+    });
+
+    const result = await service.getAggregate('access-token');
+    expect(result.upcomingSessions).toEqual([]);
   });
 
   // Given un enrollment avec program et cohort null (relations absentes)

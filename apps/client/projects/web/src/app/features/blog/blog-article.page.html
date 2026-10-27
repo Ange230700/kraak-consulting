@@ -1,0 +1,218 @@
+@if (article) {
+  <section
+    class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 md:px-8 lg:px-12 lg:py-28"
+    [ngStyle]="heroBackgroundStyle"
+  >
+    <div
+      aria-hidden="true"
+      class="via-brand-navy/30 to-brand-navy/80 absolute inset-0 bg-linear-to-b from-transparent"
+    ></div>
+
+    <div class="relative z-10 mx-auto max-w-4xl px-4 text-center lg:px-6">
+      <a
+        [routerLink]="'blog' | localizedPublicPath"
+        class="text-brand-white/85 text-sm font-semibold underline"
+      >
+        {{ 'web.blogArticle.backToBlog' | kraakTranslate }}
+      </a>
+      <p
+        class="text-brand-white/85 mt-4 text-xs font-semibold tracking-[0.3em] uppercase"
+      >
+        {{ article.categoryLabel }}
+      </p>
+      <h1
+        class="text-brand-white mt-4 text-4xl leading-tight font-bold lg:text-5xl"
+      >
+        {{ article.title }}
+      </h1>
+      <p
+        class="text-brand-white/90 mx-auto mt-6 max-w-3xl text-lg leading-relaxed"
+      >
+        {{ article.summary }}
+      </p>
+      <div
+        class="text-brand-white/90 mt-8 flex flex-wrap items-center justify-center gap-3 text-sm"
+      >
+        <span>{{ article.publishedLabel }}</span>
+        <span>•</span>
+        <span
+          >{{ article.readingTimeMinutes }}
+          {{ 'web.blogArticle.readingTimeSuffix' | kraakTranslate }}</span
+        >
+        <span>•</span>
+        <span>{{ article.author.name }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-brand-white py-16">
+    <div
+      class="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1.1fr_0.9fr] lg:px-6"
+    >
+      <article>
+        <figure
+          class="reveal-on-scroll rounded-card shadow-card overflow-hidden"
+        >
+          <img
+            [src]="article.coverImagePath"
+            [alt]="article.title"
+            class="h-72 w-full object-cover"
+            loading="eager"
+          />
+        </figure>
+
+        <div class="mt-10 space-y-10">
+          <p class="text-brand-navy text-lg leading-relaxed">
+            {{ article.intro }}
+          </p>
+
+          <section class="rounded-card bg-neutral-50 p-6">
+            <h2 class="text-2xl font-bold">
+              {{ 'web.blogArticle.contentHeading' | kraakTranslate }}
+            </h2>
+            <div
+              class="prose prose-neutral mt-4 max-w-none"
+              [innerHTML]="article.content"
+            ></div>
+          </section>
+
+          @if (article.takeawayPoints.length > 0) {
+            <section class="rounded-card bg-brand-blue/5 p-6">
+              <h2 class="text-2xl font-bold">
+                {{ 'web.blogArticle.takeawaysHeading' | kraakTranslate }}
+              </h2>
+              <ul class="mt-4 space-y-3">
+                @for (point of article.takeawayPoints; track point) {
+                  <li class="flex gap-3 text-neutral-700">
+                    <i
+                      class="pi pi-check-circle text-brand-blue mt-1"
+                      aria-hidden="true"
+                    ></i>
+                    <span>{{ point }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      </article>
+
+      <aside class="space-y-6">
+        <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.blogArticle.authorHeading' | kraakTranslate }}
+          </p>
+          <div class="mt-4 flex items-center gap-4">
+            <img
+              [src]="article.author.avatar"
+              [alt]="article.author.name"
+              class="h-16 w-16 rounded-full object-cover"
+              loading="lazy"
+            />
+            <div>
+              <h2 class="text-brand-navy text-xl font-bold">
+                {{ article.author.name }}
+              </h2>
+              <p class="text-neutral-600">{{ article.author.role }}</p>
+            </div>
+          </div>
+          <p class="mt-4 leading-relaxed text-neutral-700">
+            {{ article.author.bio }}
+          </p>
+        </section>
+
+        @if (article.tagLabels.length > 0) {
+          <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+            <p
+              class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+            >
+              {{ 'web.blogArticle.categoryTagsHeading' | kraakTranslate }}
+            </p>
+            <p class="mt-3 text-lg font-semibold">
+              {{ article.categoryLabel }}
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              @for (tag of article.tagLabels; track tag) {
+                <span
+                  class="rounded-full bg-white px-3 py-1 text-sm text-neutral-700 shadow-sm"
+                >
+                  {{ tag }}
+                </span>
+              }
+            </div>
+          </section>
+        }
+
+        <section class="rounded-card bg-neutral-50 p-6 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.blogArticle.relatedHeading' | kraakTranslate }}
+          </p>
+          <div class="mt-4 space-y-4">
+            @for (related of relatedArticles; track related.slug) {
+              <article class="rounded-card bg-brand-white p-4 shadow-sm">
+                <p class="text-brand-blue text-sm font-semibold">
+                  {{ related.categoryLabel }}
+                </p>
+                <h3 class="mt-2 text-lg font-bold">{{ related.title }}</h3>
+                <a
+                  [routerLink]="
+                    ('blog' | localizedPublicPath) + '/' + related.slug
+                  "
+                  class="text-brand-blue mt-3 inline-flex font-semibold"
+                >
+                  {{ 'web.blogArticle.readArticle' | kraakTranslate }}
+                </a>
+              </article>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <kraak-cta-banner
+    [heading]="'web.blogArticle.cta.heading' | kraakTranslate"
+    [body]="'web.blogArticle.cta.body' | kraakTranslate"
+    [ctaLabel]="'web.blogArticle.cta.label' | kraakTranslate"
+    ctaLink="/contact"
+    ctaContext="blog_article_cta"
+  />
+} @else {
+  <section class="bg-brand-white py-20">
+    <div class="mx-auto max-w-4xl px-4 text-center lg:px-6">
+      <p
+        class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+      >
+        {{ 'web.blogArticle.missing.eyebrow' | kraakTranslate }}
+      </p>
+      <h1 class="mt-4 text-4xl font-bold lg:text-5xl">
+        {{ 'web.blogArticle.missing.title' | kraakTranslate }}
+      </h1>
+      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg leading-relaxed">
+        {{ 'web.blogArticle.missing.description' | kraakTranslate }}
+      </p>
+      <div
+        class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+      >
+        <a
+          pButton
+          [routerLink]="'blog' | localizedPublicPath"
+          [label]="'web.blogArticle.backToBlog' | kraakTranslate"
+          class="kr-button-primary"
+          >{{ 'web.blogArticle.backToBlog' | kraakTranslate }}</a
+        >
+        <a
+          pButton
+          [routerLink]="'contact' | localizedPublicPath"
+          [label]="'web.blogArticle.missing.contact' | kraakTranslate"
+          class="kr-button-ghost"
+          >{{ 'web.blogArticle.missing.contact' | kraakTranslate }}</a
+        >
+      </div>
+    </div>
+  </section>
+}

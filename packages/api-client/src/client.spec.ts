@@ -19,7 +19,7 @@ function mockFetch(status: number, body: unknown = null, statusText = 'OK') {
     statusText,
     json: () => Promise.resolve(body),
     text: () => Promise.resolve(JSON.stringify(body)),
-  } satisfies Partial<Response> as unknown as Response);
+  } satisfies Partial<Response>);
 }
 
 function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
@@ -31,19 +31,26 @@ function baseConfig(overrides?: Partial<ApiClientConfig>): ApiClientConfig {
 // ---------------------------------------------------------------------------
 
 describe('createApiClient', () => {
-  it('retourne un objet avec les 14 groupes de ressources', () => {
+  it('retourne un objet avec les groupes de ressources attendus', () => {
     const client = createApiClient(baseConfig());
     const keys = Object.keys(client).sort((a, b) => a.localeCompare(b));
     expect(keys).toEqual([
       'announcements',
       'auth',
+      'chapterLessons',
+      'chapters',
       'cohorts',
       'contact',
+      'courseModules',
+      'courses',
       'dashboard',
       'enrollments',
+      'learningModules',
+      'lessons',
       'notifications',
       'participantPrograms',
       'participants',
+      'programCourses',
       'programs',
       'resources',
       'sessions',
@@ -73,6 +80,43 @@ describe('createApiClient', () => {
     expect(typeof client[resource].update).toBe('function');
     expect(typeof client[resource].remove).toBe('function');
   });
+
+  it.each(['courses', 'learningModules', 'lessons'] as const)(
+    '%s expose list, create, update, remove sans getById',
+    (resource) => {
+      const client = createApiClient(baseConfig()) as unknown as Record<
+        string,
+        Record<string, unknown>
+      >;
+
+      expect(typeof client[resource].list).toBe('function');
+      expect(typeof client[resource].create).toBe('function');
+      expect(typeof client[resource].update).toBe('function');
+      expect(typeof client[resource].remove).toBe('function');
+      expect(client[resource].getById).toBeUndefined();
+    },
+  );
+
+  it.each([
+    'chapters',
+    'programCourses',
+    'courseModules',
+    'chapterLessons',
+  ] as const)(
+    '%s expose le CRUD de collection filtrable sans getById',
+    (resource) => {
+      const client = createApiClient(baseConfig()) as unknown as Record<
+        string,
+        Record<string, unknown>
+      >;
+
+      expect(typeof client[resource].list).toBe('function');
+      expect(typeof client[resource].create).toBe('function');
+      expect(typeof client[resource].update).toBe('function');
+      expect(typeof client[resource].remove).toBe('function');
+      expect(client[resource].getById).toBeUndefined();
+    },
+  );
 
   it('notifications expose getById, list, create mais PAS update ni remove', () => {
     const client = createApiClient(baseConfig());
@@ -117,6 +161,48 @@ describe('HTTP behaviour', () => {
   beforeEach(() => {
     fetchSpy = mockFetch(200, { id: '1' });
     vi.stubGlobal('fetch', fetchSpy);
+  });
+
+  it.each([undefined, {}, { learningModuleId: '' }])(
+    'Given un filtre vide %j, When les chapitres sont demandés, Then aucune query vide n’est envoyée',
+    async (filter) => {
+      const client = createApiClient(baseConfig());
+      await client.chapters.list(filter);
+      expect(fetchSpy.mock.calls[0][0]).toBe(
+        'https://api.test/curriculum/chapters',
+      );
+    },
+  );
+
+  it('Given un placement de chapitre, When il est créé puis modifié et supprimé, Then le contrat HTTP conserve les identifiants et le contenu', async () => {
+    const client = createApiClient(baseConfig());
+    const placement = {
+      chapterId: 'chapter-1',
+      lessonId: 'lesson-1',
+      sortOrder: 2,
+      isRequired: true,
+    };
+    await client.chapterLessons.create(placement);
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(placement),
+      }),
+    ]);
+    await client.chapterLessons.update('placement-1', { sortOrder: 3 });
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons/placement-1',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify({ sortOrder: 3 }),
+      }),
+    ]);
+    await client.chapterLessons.remove('placement-1');
+    expect(fetchSpy.mock.calls.at(-1)).toEqual([
+      'https://api.test/curriculum/chapter-lessons/placement-1',
+      expect.objectContaining({ method: 'DELETE', body: undefined }),
+    ]);
   });
 
   it('GET /users/42 appelle fetch avec la bonne URL et méthode', async () => {
@@ -209,6 +295,85 @@ describe('HTTP behaviour', () => {
 
     expect(fetchSpy.mock.calls[0][0]).toBe('https://api.test/notifications');
     expect(result).toEqual(dto);
+  });
+
+  it('le CRUD des cours utilise les endpoints curriculum', async () => {
+    const client = createApiClient(baseConfig());
+
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.courses.list();
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/courses',
+    );
+    expect(fetchSpy.mock.calls[0][1].method).toBe('GET');
+
+    fetchSpy = mockFetch(201, { id: 'course-1' });
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.courses.create({
+      slug: 'leadership',
+      title: 'Leadership',
+      summary: 'Résumé',
+      description: 'Description',
+      status: 'draft',
+    });
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/courses',
+    );
+    expect(fetchSpy.mock.calls[0][1].method).toBe('POST');
+
+    fetchSpy = mockFetch(200, { id: 'course-1' });
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.courses.update('course-1', { status: 'published' });
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/courses/course-1',
+    );
+    expect(fetchSpy.mock.calls[0][1].method).toBe('PATCH');
+
+    fetchSpy = mockFetch(204);
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.courses.remove('course-1');
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/courses/course-1',
+    );
+    expect(fetchSpy.mock.calls[0][1].method).toBe('DELETE');
+  });
+
+  it('GET /curriculum/chapters applique learningModuleId', async () => {
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const client = createApiClient(baseConfig());
+    await client.chapters.list({ learningModuleId: 'module-1' });
+
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/chapters?learningModuleId=module-1',
+    );
+  });
+
+  it('les placements curriculum appliquent leurs filtres parents', async () => {
+    const client = createApiClient(baseConfig());
+
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.programCourses.list({ programId: 'program-1' });
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/program-courses?programId=program-1',
+    );
+
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.courseModules.list({ courseId: 'course-1' });
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/course-modules?courseId=course-1',
+    );
+
+    fetchSpy = mockFetch(200, []);
+    vi.stubGlobal('fetch', fetchSpy);
+    await client.chapterLessons.list({ chapterId: 'chapter-1' });
+    expect(fetchSpy.mock.calls[0][0]).toBe(
+      'https://api.test/curriculum/chapter-lessons?chapterId=chapter-1',
+    );
   });
 
   it('support-requests utilise le bon chemin avec tiret', async () => {
@@ -332,11 +497,11 @@ describe('HTTP behaviour', () => {
 
     const client = createApiClient(baseConfig());
     await client.contact.submit({
-      firstName: 'Alice',
-      lastName: 'Dupont',
+      name: 'Alice Dupont',
       email: 'alice@example.com',
-      subject: 'question',
+      subject: 'Question',
       message: 'Bonjour',
+      category: 'other',
     });
 
     const [url, init] = fetchSpy.mock.calls[0];
@@ -431,6 +596,47 @@ describe('en-têtes et authentification', () => {
     const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
     expect(headers['Content-Type']).toBe('application/json');
     expect(headers['Accept']).toBe('application/json');
+  });
+
+  it('injecte Accept-Language quand getLocale est fourni', async () => {
+    const client = createApiClient(baseConfig({ getLocale: () => 'en-GB' }));
+    await client.users.list();
+
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+
+    expect(headers['Accept-Language']).toBe('en-GB');
+  });
+
+  it('supporte getLocale asynchrone', async () => {
+    const client = createApiClient(
+      baseConfig({ getLocale: async () => 'fr-CI' }),
+    );
+    await client.users.list();
+
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+
+    expect(headers['Accept-Language']).toBe('fr-CI');
+  });
+
+  it("n'envoie pas Accept-Language quand getLocale retourne null", async () => {
+    const client = createApiClient(baseConfig({ getLocale: () => null }));
+    await client.users.list();
+
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+
+    expect(headers['Accept-Language']).toBeUndefined();
+  });
+
+  it('permet aux headers de requête de remplacer Accept-Language', async () => {
+    const client = createApiClient(baseConfig({ getLocale: () => 'fr-CI' }));
+
+    await client.users.list({
+      headers: { 'Accept-Language': 'en-GB' },
+    });
+
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+
+    expect(headers['Accept-Language']).toBe('en-GB');
   });
 
   it('injecte le token Authorization quand getAuthToken est fourni', async () => {
@@ -530,6 +736,30 @@ describe('gestion des erreurs', () => {
 
     const client = createApiClient(baseConfig());
     await expect(client.programs.list()).rejects.toThrow(ApiError);
+  });
+
+  it('lance ApiError avec body null quand json et text échouent tous les deux', async () => {
+    const badFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      statusText: 'Bad Gateway',
+      json: () => Promise.reject(new Error('invalid json')),
+      text: () => Promise.reject(new Error('text unavailable')),
+    });
+    vi.stubGlobal('fetch', badFetch);
+
+    const client = createApiClient(baseConfig());
+
+    try {
+      await client.programs.list();
+      throw new Error('Expected programs.list to throw');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiError);
+      const apiErr = err as ApiError;
+      expect(apiErr.status).toBe(502);
+      expect(apiErr.statusText).toBe('Bad Gateway');
+      expect(apiErr.body).toBeNull();
+    }
   });
 
   it('ApiError.message contient status et statusText', () => {

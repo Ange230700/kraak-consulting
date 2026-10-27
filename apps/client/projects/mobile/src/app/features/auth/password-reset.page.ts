@@ -8,6 +8,10 @@ import {
 import { RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import {
   MOBILE_AUTH_RESET_URL,
@@ -22,11 +26,18 @@ interface PasswordResetFormModel {
 @Component({
   selector: 'kraak-password-reset-page',
   standalone: true,
-  imports: [PageShellComponent, ReactiveFormsModule, RouterLink, IonButton],
+  imports: [
+    PageShellComponent,
+    ReactiveFormsModule,
+    RouterLink,
+    IonButton,
+    KraakTranslatePipe,
+  ],
   templateUrl: './password-reset.page.html',
 })
 export default class PasswordResetPage {
   private readonly authService = inject(MobileAuthService);
+  private readonly i18n = inject(KraakI18nService);
 
   readonly form = new FormGroup<PasswordResetFormModel>({
     email: new FormControl('', {
@@ -65,7 +76,9 @@ export default class PasswordResetPage {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          "Impossible d'envoyer l'email de r\u00E9initialisation pour le moment.",
+          this.i18n.translate(
+            'mobile.auth.passwordReset.feedback.submitFailure',
+          ),
         ),
       );
     } finally {

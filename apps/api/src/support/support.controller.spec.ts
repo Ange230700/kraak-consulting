@@ -121,10 +121,10 @@ describe('SupportController', () => {
       response: {
         success: false,
         errors: [
-          'Le nom doit contenir au moins 2 caractères.',
-          "L'adresse e-mail est invalide.",
-          "L'objet est requis.",
-          'Le message doit contenir au moins 10 caractères.',
+          { key: 'support.nameTooShort' },
+          { key: 'validation.invalidEmail' },
+          { key: 'support.subjectRequired' },
+          { key: 'support.messageTooShort' },
         ],
       },
     });

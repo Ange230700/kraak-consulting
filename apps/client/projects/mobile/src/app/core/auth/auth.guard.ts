@@ -1,3 +1,5 @@
+// apps\client\projects\mobile\src\app\core\auth\auth.guard.ts
+
 import { inject } from '@angular/core';
 import {
   type CanActivateFn,

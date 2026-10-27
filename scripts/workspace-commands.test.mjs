@@ -1,11 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createWorkflows } from './workspace-commands.mjs';
+import { createWorkflows, getPnpmCommand } from './workspace-commands.mjs';
 
-test('test workflow runs shared libraries before unit and e2e phases', () => {
+test('Given une plateforme, When pnpm est résolu, Then le bon exécutable est choisi', () => {
+  assert.equal(getPnpmCommand('win32'), 'pnpm.cmd');
+  assert.equal(getPnpmCommand('linux'), 'pnpm');
+  assert.equal(
+    getPnpmCommand(),
+    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+  );
+});
+
+test('test workflow runs shared libraries before unit, integration and e2e phases', () => {
   const workflows = createWorkflows();
-  const [librariesPhase, unitPhase, e2ePhase] = workflows.test.phases;
+  const [librariesPhase, unitPhase, integrationPhase, e2ePhase] =
+    workflows.test.phases;
 
   assert.equal(librariesPhase.parallel, false);
   assert.deepEqual(
@@ -19,6 +29,12 @@ test('test workflow runs shared libraries before unit and e2e phases', () => {
     ['api', 'client'],
   );
 
+  assert.equal(integrationPhase.parallel, false);
+  assert.deepEqual(
+    integrationPhase.commands.map((command) => command.name),
+    ['api-integration'],
+  );
+
   assert.equal(e2ePhase.parallel, false);
   assert.deepEqual(
     e2ePhase.commands.map((command) => command.name),
@@ -28,10 +44,12 @@ test('test workflow runs shared libraries before unit and e2e phases', () => {
 
 test('test workflow preserves the current root test commands', () => {
   const workflows = createWorkflows();
-  const [librariesPhase, unitPhase, e2ePhase] = workflows.test.phases;
+  const [librariesPhase, unitPhase, integrationPhase, e2ePhase] =
+    workflows.test.phases;
 
   assert.deepEqual(librariesPhase.commands[0].args, ['test:libs']);
-  assert.deepEqual(unitPhase.commands[0].args, ['test:api']);
+  assert.deepEqual(unitPhase.commands[0].args, ['test:api:unit']);
   assert.deepEqual(unitPhase.commands[1].args, ['test:unit']);
+  assert.deepEqual(integrationPhase.commands[0].args, ['test:integration']);
   assert.deepEqual(e2ePhase.commands[0].args, ['test:e2e']);
 });

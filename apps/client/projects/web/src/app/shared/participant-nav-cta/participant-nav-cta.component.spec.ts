@@ -1,13 +1,40 @@
-import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+// apps\client\projects\web\src\app\shared\participant-nav-cta\participant-nav-cta.component.spec.ts
 
+import { ApplicationInitStatus, Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
+import { vi } from 'vitest';
+
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { ParticipantNavCta } from './participant-nav-cta.component';
+
+@Component({
+  standalone: true,
+  template: '',
+})
+class BlankRouteComponent {}
 
 async function compile(): Promise<void> {
   await TestBed.configureTestingModule({
     imports: [ParticipantNavCta],
-    providers: [provideRouter([{ path: 'participant', children: [] }])],
+    providers: [
+      provideKraakI18n(),
+      provideRouter([
+        {
+          path: 'participant',
+          children: [
+            {
+              path: 'dashboard',
+              component: BlankRouteComponent,
+            },
+          ],
+        },
+      ]),
+    ],
   }).compileComponents();
+
+  await TestBed.inject(ApplicationInitStatus).donePromise;
+  await TestBed.inject(KraakI18nService).setLocale('fr-CI');
 }
 
 describe('ParticipantNavCta', () => {
@@ -35,9 +62,10 @@ describe('ParticipantNavCta', () => {
       expect(participantCta?.textContent).toContain('Espace participant');
     });
 
-    it('When the CTA link is clicked Then the wrapper emits the activation event', () => {
+    it('When the CTA link is clicked Then the wrapper emits the activation event', async () => {
       const fixture = TestBed.createComponent(ParticipantNavCta);
       const emitSpy = vi.fn();
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       fixture.componentInstance.activated.subscribe(emitSpy);
       fixture.detectChanges();
@@ -47,6 +75,18 @@ describe('ParticipantNavCta', () => {
           'a[aria-label="Espace participant"]',
         ) as HTMLAnchorElement
       ).click();
+
+      await fixture.whenStable();
+
+      expect(emitSpy).toHaveBeenCalled();
+    });
+
+    it('When the wrapper notifies activation directly Then it emits the activation event', () => {
+      const fixture = TestBed.createComponent(ParticipantNavCta);
+      const emitSpy = vi.fn();
+
+      fixture.componentInstance.activated.subscribe(emitSpy);
+      fixture.componentInstance['notifyActivated']();
 
       expect(emitSpy).toHaveBeenCalled();
     });

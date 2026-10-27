@@ -15,7 +15,7 @@
       <p
         class="border-secondary/20 bg-brand-white text-secondary mx-auto mb-8 inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase"
       >
-        Pr&eacute;visualisation du format t&eacute;moignages
+        {{ 'web.shared.testimonials.previewLabel' | kraakTranslate }}
       </p>
     }
 
@@ -25,10 +25,14 @@
       <button
         class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
         type="button"
-        aria-label="Voir le t&eacute;moignage pr&eacute;c&eacute;dent"
+        [attr.aria-label]="
+          'web.shared.testimonials.previousAria' | kraakTranslate
+        "
         (click)="prevCard()"
       >
         <svg
+          aria-hidden="true"
+          focusable="false"
           class="h-6 w-6"
           viewBox="0 0 24 24"
           fill="none"
@@ -46,7 +50,9 @@
 
       <section
         class="relative h-96 w-full max-w-4xl md:h-112"
-        aria-label="Carrousel de t&eacute;moignages"
+        [attr.aria-label]="
+          'web.shared.testimonials.carouselAria' | kraakTranslate
+        "
       >
         @for (card of visibleCards(); track card.id; let index = $index) {
           <article
@@ -58,7 +64,13 @@
               class="bg-brand-white rounded-(--kr-radius-card) border border-neutral-200 p-8 shadow-[0px_12px_32px_0px_rgba(17,24,39,0.12)]"
             >
               <p class="text-lg leading-relaxed text-neutral-700">
-                &laquo; {{ card.comment }} &raquo;
+                @if (isPreviewMode()) {
+                  &laquo;
+                  {{ card.comment | kraakTranslate }}
+                  &raquo;
+                } @else {
+                  &laquo; {{ card.comment }} &raquo;
+                }
               </p>
               <div class="mt-8 flex items-center gap-4">
                 <div
@@ -75,7 +87,15 @@
                   <h3 class="text-primary text-base font-semibold">
                     {{ card.name }}
                   </h3>
-                  <p class="text-sm text-neutral-600">{{ card.job }}</p>
+                  @if (isPreviewMode()) {
+                    <p class="text-sm text-neutral-600">
+                      {{ card.job | kraakTranslate }}
+                    </p>
+                  } @else {
+                    <p class="text-sm text-neutral-600">
+                      {{ card.job }}
+                    </p>
+                  }
                 </div>
               </div>
             </div>
@@ -86,10 +106,12 @@
       <button
         class="bg-brand-white text-primary shadow-card hidden h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-50 md:inline-flex"
         type="button"
-        aria-label="Voir le t&eacute;moignage suivant"
+        [attr.aria-label]="'web.shared.testimonials.nextAria' | kraakTranslate"
         (click)="nextCard()"
       >
         <svg
+          aria-hidden="true"
+          focusable="false"
           class="h-6 w-6"
           viewBox="0 0 24 24"
           fill="none"

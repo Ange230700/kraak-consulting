@@ -1,3 +1,5 @@
+<!-- apps\client\projects\web\src\app\features\auth\sign-up.page.html -->
+
 <main
   class="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(15,23,42,0.08),transparent_45%),linear-gradient(165deg,#f8fafc_0%,#eef6ff_45%,#fff8ee_100%)] px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16"
 >
@@ -32,7 +34,7 @@
               <p
                 class="text-xs font-semibold tracking-[0.22em] text-white/75 uppercase"
               >
-                Espace participant
+                {{ 'web.auth.common.participantArea' | kraakTranslate }}
               </p>
               <p class="text-lg leading-tight font-semibold text-white">
                 KRAAK
@@ -42,7 +44,7 @@
 
           <div class="relative z-10 mt-12 flex flex-col gap-8">
             <p class="max-w-sm text-3xl leading-tight font-semibold text-white">
-              Rejoignez KRAAK et lancez votre parcours d&apos;accompagnement.
+              {{ 'web.auth.signUp.hero.title' | kraakTranslate }}
             </p>
             <div class="space-y-5 text-sm leading-6 text-slate-100/90">
               <div class="flex items-start gap-3">
@@ -52,8 +54,7 @@
                   <i class="pi pi-star text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
-                  Acc&eacute;dez &agrave; vos programmes de formation, de
-                  conseil et d&apos;accompagnement en un seul espace.
+                  {{ 'web.auth.signUp.hero.programs' | kraakTranslate }}
                 </p>
               </div>
               <div class="flex items-start gap-3">
@@ -63,9 +64,7 @@
                   <i class="pi pi-users text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
-                  B&eacute;n&eacute;ficiez d&apos;un suivi personnalis&eacute;
-                  et d&apos;une communaut&eacute; engag&eacute;e autour de vos
-                  objectifs.
+                  {{ 'web.auth.signUp.hero.community' | kraakTranslate }}
                 </p>
               </div>
               <div class="flex items-start gap-3">
@@ -75,8 +74,7 @@
                   <i class="pi pi-shield text-xs" aria-hidden="true"></i>
                 </span>
                 <p>
-                  Vos donn&eacute;es personnelles sont prot&eacute;g&eacute;es
-                  avec nos standards de s&eacute;curit&eacute;.
+                  {{ 'web.auth.signUp.hero.security' | kraakTranslate }}
                 </p>
               </div>
             </div>
@@ -87,14 +85,13 @@
           <p
             class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase lg:hidden"
           >
-            Espace participant
+            {{ 'web.auth.common.participantArea' | kraakTranslate }}
           </p>
           <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-            Créer un compte
+            {{ 'web.auth.signUp.title' | kraakTranslate }}
           </h1>
           <p class="mt-3 max-w-lg text-sm leading-6 text-slate-600">
-            Ouvrez votre espace KRAAK pour suivre vos programmes et vos
-            prochaines sessions.
+            {{ 'web.auth.signUp.subtitle' | kraakTranslate }}
           </p>
 
           <form
@@ -109,7 +106,7 @@
                   for="web-sign-up-first-name"
                   class="text-sm font-semibold text-slate-900"
                 >
-                  Pr&eacute;nom
+                  {{ 'web.auth.signUp.firstName' | kraakTranslate }}
                 </label>
                 <input
                   id="web-sign-up-first-name"
@@ -125,7 +122,7 @@
                   for="web-sign-up-last-name"
                   class="text-sm font-semibold text-slate-900"
                 >
-                  Nom
+                  {{ 'web.auth.signUp.lastName' | kraakTranslate }}
                 </label>
                 <input
                   id="web-sign-up-last-name"
@@ -143,7 +140,7 @@
               (form.controls.lastName.touched && form.controls.lastName.invalid)
             ) {
               <p class="text-sm leading-6 text-rose-700">
-                Renseignez votre pr&eacute;nom et votre nom.
+                {{ 'web.auth.signUp.nameRequired' | kraakTranslate }}
               </p>
             }
 
@@ -152,7 +149,7 @@
                 for="web-sign-up-email"
                 class="text-sm font-semibold text-slate-900"
               >
-                Adresse email
+                {{ 'web.auth.common.email' | kraakTranslate }}
               </label>
               <input
                 id="web-sign-up-email"
@@ -164,7 +161,7 @@
               />
               @if (form.controls.email.touched && form.controls.email.invalid) {
                 <p class="text-sm leading-6 text-rose-700">
-                  Saisissez une adresse email valide.
+                  {{ 'web.auth.common.invalidEmail' | kraakTranslate }}
                 </p>
               }
             </div>
@@ -174,21 +171,23 @@
                 for="web-sign-up-password"
                 class="text-sm font-semibold text-slate-900"
               >
-                Mot de passe
+                {{ 'web.auth.common.password' | kraakTranslate }}
               </label>
               <input
                 id="web-sign-up-password"
                 type="password"
                 formControlName="password"
                 autocomplete="new-password"
-                placeholder="Minimum 8 caract&egrave;res"
+                [placeholder]="
+                  'web.auth.common.passwordPlaceholder' | kraakTranslate
+                "
                 class="focus:border-brand-blue focus:ring-brand-blue/20 min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition-shadow outline-none focus:ring-4"
               />
               @if (
                 form.controls.password.touched && form.controls.password.invalid
               ) {
                 <p class="text-sm leading-6 text-rose-700">
-                  Le mot de passe doit contenir au moins 8 caract&egrave;res.
+                  {{ 'web.auth.signUp.passwordMinLength' | kraakTranslate }}
                 </p>
               }
             </div>
@@ -199,7 +198,7 @@
                 [text]="successMessage()!"
                 [closable]="false"
                 styleClass="w-full"
-              />
+              ></p-message>
             }
 
             @if (errorMessage()) {
@@ -208,33 +207,40 @@
                 [text]="errorMessage()!"
                 [closable]="false"
                 styleClass="w-full"
-              />
+              ></p-message>
             }
 
-            <button
-              pButton
+            <p-button
               type="submit"
               size="large"
               [label]="
-                submitting() ? 'Création en cours...' : 'Créer mon compte'
+                (submitting()
+                  ? 'web.auth.signUp.submitting'
+                  : 'web.auth.signUp.submit'
+                ) | kraakTranslate
               "
               [loading]="submitting()"
               [disabled]="submitting()"
-              [attr.aria-label]="
-                submitting() ? 'Création en cours...' : 'Créer mon compte'
+              [ariaLabel]="
+                (submitting()
+                  ? 'web.auth.signUp.submitting'
+                  : 'web.auth.signUp.submit'
+                ) | kraakTranslate
               "
               class="kr-button-primary mt-1 w-full"
-            ></button>
+            ></p-button>
           </form>
 
           <div
             class="mt-7 flex flex-col gap-2 border-t border-slate-200 pt-5 text-sm font-semibold"
           >
             <p class="text-sm font-semibold text-slate-600">
-              D&eacute;j&agrave; un compte&nbsp;?
+              {{ 'web.auth.signUp.alreadyAccount' | kraakTranslate }}
             </p>
-            <a routerLink="/connexion" class="text-brand-blue hover:underline"
-              >Se connecter</a
+            <a
+              routerLink="/connexion"
+              class="text-brand-blue hover:underline"
+              >{{ 'web.auth.signUp.signIn' | kraakTranslate }}</a
             >
           </div>
         </div>

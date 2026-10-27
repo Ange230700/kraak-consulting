@@ -1,0 +1,488 @@
+<section
+  class="bg-brand-white border-b border-neutral-200 px-4 py-10 md:px-8 lg:px-12"
+>
+  <div class="mx-auto max-w-6xl">
+    <div
+      class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+    >
+      <div>
+        <p
+          class="text-brand-blue text-xs font-semibold tracking-[0.3em] uppercase"
+        >
+          {{ 'web.admin.curriculum.header.eyebrow' | kraakTranslate }}
+        </p>
+        <h1 class="mt-2 text-3xl font-bold lg:text-4xl">
+          {{ 'web.admin.curriculum.header.title' | kraakTranslate }}
+        </h1>
+        <p class="mt-2 max-w-3xl text-neutral-600">
+          {{ 'web.admin.curriculum.header.description' | kraakTranslate }}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <a
+          pButton
+          routerLink="/admin/dashboard"
+          icon="pi pi-arrow-left"
+          class="kr-button-ghost"
+        >
+          {{ 'web.admin.curriculum.header.backDashboard' | kraakTranslate }}
+        </a>
+        <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          [label]="'web.admin.curriculum.header.newCourse' | kraakTranslate"
+          class="kr-button-primary"
+          (click)="openCreateCourseForm()"
+        ></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="min-h-screen bg-neutral-50 py-10">
+  <div class="mx-auto max-w-6xl space-y-8 px-4 lg:px-6">
+    @if (successMessage()) {
+      <p-message
+        severity="success"
+        [text]="successMessage()!"
+        [closable]="false"
+        styleClass="w-full block"
+      ></p-message>
+    }
+
+    @if (errorMessage()) {
+      <p-message
+        severity="error"
+        [text]="errorMessage()!"
+        [closable]="false"
+        styleClass="w-full block"
+      ></p-message>
+    }
+
+    @if (showCourseForm()) {
+      <section class="rounded-card bg-brand-white p-6 shadow-sm sm:p-8">
+        <div class="mb-6">
+          <p
+            class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.admin.curriculum.catalog.title' | kraakTranslate }}
+          </p>
+          <h2 class="mt-2 text-2xl font-bold">
+            {{
+              (isEditingCourse()
+                ? 'web.admin.curriculum.catalog.form.title.edit'
+                : 'web.admin.curriculum.catalog.form.title.create'
+              ) | kraakTranslate
+            }}
+          </h2>
+        </div>
+
+        <form [formGroup]="courseForm" (ngSubmit)="submitCourse()" novalidate>
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="flex flex-col gap-2 text-sm font-semibold">
+              {{
+                'web.admin.curriculum.catalog.form.fields.slug.label'
+                  | kraakTranslate
+              }}
+              <input
+                formControlName="slug"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 font-normal focus:outline-none"
+                [placeholder]="
+                  'web.admin.curriculum.catalog.form.fields.slug.placeholder'
+                    | kraakTranslate
+                "
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold">
+              {{
+                'web.admin.curriculum.catalog.form.fields.title.label'
+                  | kraakTranslate
+              }}
+              <input
+                formControlName="title"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 font-normal focus:outline-none"
+                [placeholder]="
+                  'web.admin.curriculum.catalog.form.fields.title.placeholder'
+                    | kraakTranslate
+                "
+              />
+            </label>
+
+            <label
+              class="flex flex-col gap-2 text-sm font-semibold md:col-span-2"
+            >
+              {{
+                'web.admin.curriculum.catalog.form.fields.summary.label'
+                  | kraakTranslate
+              }}
+              <textarea
+                formControlName="summary"
+                rows="2"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 font-normal focus:outline-none"
+              ></textarea>
+            </label>
+
+            <label
+              class="flex flex-col gap-2 text-sm font-semibold md:col-span-2"
+            >
+              {{
+                'web.admin.curriculum.catalog.form.fields.description.label'
+                  | kraakTranslate
+              }}
+              <textarea
+                formControlName="description"
+                rows="4"
+                class="focus:border-brand-blue rounded border border-neutral-300 px-3 py-2 font-normal focus:outline-none"
+              ></textarea>
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold">
+              {{
+                'web.admin.curriculum.catalog.form.fields.status.label'
+                  | kraakTranslate
+              }}
+              <select
+                formControlName="status"
+                class="focus:border-brand-blue rounded border border-neutral-300 bg-white px-3 py-2 font-normal focus:outline-none"
+              >
+                @for (status of publicationStatuses; track status) {
+                  <option [value]="status">
+                    {{ getPublicationStatusLabel(status) }}
+                  </option>
+                }
+              </select>
+            </label>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button
+              type="submit"
+              pButton
+              icon="pi pi-check"
+              [label]="
+                (isEditingCourse()
+                  ? 'web.admin.curriculum.catalog.form.actions.save'
+                  : 'web.admin.curriculum.catalog.form.actions.create'
+                ) | kraakTranslate
+              "
+              class="kr-button-primary"
+              [disabled]="submittingCourse()"
+            ></button>
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              [label]="
+                'web.admin.curriculum.catalog.form.actions.cancel'
+                  | kraakTranslate
+              "
+              class="kr-button-ghost"
+              (click)="cancelCourseForm()"
+            ></button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="rounded-card bg-brand-white p-8 text-center shadow-sm">
+        <p class="text-neutral-600">
+          {{ 'web.admin.curriculum.catalog.loading' | kraakTranslate }}
+        </p>
+      </div>
+    } @else {
+      <section class="grid gap-8 xl:grid-cols-[0.8fr_1.2fr]">
+        <aside class="space-y-6">
+          <article class="rounded-card bg-brand-white p-6 shadow-sm">
+            <p
+              class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+            >
+              {{ 'web.admin.curriculum.programs.title' | kraakTranslate }}
+            </p>
+            <h2 class="mt-2 text-2xl font-bold">
+              {{ 'web.admin.curriculum.programs.choose' | kraakTranslate }}
+            </h2>
+
+            @if (programs().length > 0) {
+              <div class="mt-5 space-y-2">
+                @for (program of programs(); track program.id) {
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl border px-4 py-3 text-left transition"
+                    [class.border-brand-blue]="
+                      selectedProgramId() === program.id
+                    "
+                    [class.bg-blue-50]="selectedProgramId() === program.id"
+                    [class.border-neutral-200]="
+                      selectedProgramId() !== program.id
+                    "
+                    [class.bg-neutral-50]="selectedProgramId() !== program.id"
+                    (click)="selectProgram(program.id)"
+                  >
+                    <span class="block font-semibold text-neutral-950">
+                      {{ program.title }}
+                    </span>
+                    <span class="mt-1 block text-xs text-neutral-500">
+                      {{ getPublicationStatusLabel(program.status) }} ·
+                      {{ getProgramVisibilityLabel(program.visibility) }}
+                    </span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="mt-5 text-sm text-neutral-600">
+                {{ 'web.admin.curriculum.programs.empty' | kraakTranslate }}
+              </p>
+            }
+          </article>
+
+          <article class="rounded-card bg-brand-white p-6 shadow-sm">
+            <div class="flex items-end justify-between gap-4">
+              <div>
+                <p
+                  class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+                >
+                  {{ 'web.admin.curriculum.catalog.title' | kraakTranslate }}
+                </p>
+                <h2 class="mt-2 text-2xl font-bold">
+                  {{ 'web.admin.curriculum.courses.title' | kraakTranslate }}
+                </h2>
+              </div>
+              <span class="text-sm font-semibold text-neutral-500">
+                {{ courses().length }}
+              </span>
+            </div>
+
+            @if (courses().length > 0) {
+              <div class="mt-5 space-y-3">
+                @for (course of courses(); track course.id) {
+                  <article
+                    class="rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
+                  >
+                    <div class="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 class="font-semibold text-neutral-950">
+                          {{ course.title }}
+                        </h3>
+                        <p class="mt-1 text-xs text-neutral-500">
+                          {{ getPublicationStatusLabel(course.status) }}
+                        </p>
+                      </div>
+                      <div class="flex gap-1">
+                        <button
+                          type="button"
+                          pButton
+                          icon="pi pi-pencil"
+                          class="kr-button-ghost text-xs"
+                          (click)="openEditCourseForm(course)"
+                          [attr.aria-label]="getEditCourseAriaLabel(course)"
+                        ></button>
+                        <button
+                          type="button"
+                          pButton
+                          icon="pi pi-archive"
+                          class="text-xs text-red-600"
+                          (click)="archiveCourse(course)"
+                          [attr.aria-label]="getArchiveCourseAriaLabel(course)"
+                        ></button>
+                      </div>
+                    </div>
+                    <p class="mt-3 text-sm leading-6 text-neutral-600">
+                      {{ course.summary }}
+                    </p>
+                  </article>
+                }
+              </div>
+            } @else {
+              <p class="mt-5 text-sm text-neutral-600">
+                {{ 'web.admin.curriculum.courses.empty' | kraakTranslate }}
+              </p>
+            }
+          </article>
+        </aside>
+
+        <article class="rounded-card bg-brand-white p-6 shadow-sm sm:p-8">
+          <p
+            class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.admin.curriculum.composition.title' | kraakTranslate }}
+          </p>
+          <h2 class="mt-2 text-2xl font-bold">
+            {{
+              selectedProgram()?.title ??
+                ('web.admin.curriculum.composition.selectedProgramFallback'
+                  | kraakTranslate)
+            }}
+          </h2>
+          <p class="mt-2 text-sm leading-6 text-neutral-600">
+            {{
+              'web.admin.curriculum.composition.description' | kraakTranslate
+            }}
+          </p>
+
+          @if (selectedProgram()) {
+            <form
+              [formGroup]="placementForm"
+              (ngSubmit)="attachCourse()"
+              class="mt-6 grid gap-4 rounded-2xl bg-neutral-50 p-5 md:grid-cols-[minmax(0,1fr)_7rem_auto_auto] md:items-end"
+            >
+              <label class="flex flex-col gap-2 text-sm font-semibold">
+                {{
+                  'web.admin.curriculum.composition.fields.course.label'
+                    | kraakTranslate
+                }}
+                <select
+                  formControlName="courseId"
+                  class="focus:border-brand-blue min-w-0 rounded border border-neutral-300 bg-white px-3 py-2 font-normal focus:outline-none"
+                >
+                  <option value="">
+                    {{
+                      'web.admin.curriculum.composition.fields.course.placeholder'
+                        | kraakTranslate
+                    }}
+                  </option>
+                  @for (course of availableCourses(); track course.id) {
+                    <option [value]="course.id">{{ course.title }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="flex flex-col gap-2 text-sm font-semibold">
+                {{
+                  'web.admin.curriculum.composition.fields.order.label'
+                    | kraakTranslate
+                }}
+                <input
+                  type="number"
+                  min="0"
+                  formControlName="sortOrder"
+                  class="focus:border-brand-blue rounded border border-neutral-300 bg-white px-3 py-2 font-normal focus:outline-none"
+                />
+              </label>
+
+              <label
+                class="flex min-h-10 items-center gap-2 text-sm font-semibold"
+              >
+                <input type="checkbox" formControlName="isRequired" />
+                {{
+                  'web.admin.curriculum.composition.fields.required.label'
+                    | kraakTranslate
+                }}
+              </label>
+
+              <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+              <button
+                type="submit"
+                pButton
+                icon="pi pi-plus"
+                [label]="
+                  'web.admin.curriculum.composition.actions.add'
+                    | kraakTranslate
+                "
+                class="kr-button-primary"
+                [disabled]="
+                  attachingCourse() ||
+                  !placementsReady() ||
+                  availableCourses().length === 0
+                "
+              ></button>
+            </form>
+
+            @if (placementsLoading()) {
+              <p class="mt-8 text-sm text-neutral-600">
+                {{
+                  'web.admin.curriculum.composition.loading' | kraakTranslate
+                }}
+              </p>
+            } @else if (placements().length > 0) {
+              <div class="mt-7 space-y-3">
+                @for (
+                  placement of placements();
+                  track placement.id;
+                  let index = $index
+                ) {
+                  @if (courseById(placement.courseId); as course) {
+                    <article
+                      class="grid gap-4 rounded-2xl border border-neutral-200 p-4 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center"
+                    >
+                      <span
+                        class="text-brand-blue flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-sm font-semibold"
+                      >
+                        {{ (index + 1).toString().padStart(2, '0') }}
+                      </span>
+
+                      <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <h3 class="font-semibold text-neutral-950">
+                            {{ course.title }}
+                          </h3>
+                          @if (placement.isRequired) {
+                            <span
+                              class="bg-brand-cyan/15 text-brand-navy rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                              >{{
+                                'web.admin.curriculum.composition.fields.required.label'
+                                  | kraakTranslate
+                              }}</span
+                            >
+                          }
+                        </div>
+                        <p class="mt-1 text-sm text-neutral-600">
+                          {{ course.summary }}
+                        </p>
+                        <p class="mt-2 text-xs text-neutral-400">
+                          {{
+                            'web.admin.curriculum.composition.orderValue'
+                              | kraakTranslate: { order: placement.sortOrder }
+                          }}
+                        </p>
+                      </div>
+
+                      <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+                      <button
+                        type="button"
+                        pButton
+                        icon="pi pi-times"
+                        [label]="
+                          'web.admin.curriculum.composition.actions.remove'
+                            | kraakTranslate
+                        "
+                        class="kr-button-ghost text-xs"
+                        (click)="detachCourse(placement)"
+                      ></button>
+                    </article>
+                  }
+                }
+              </div>
+            } @else {
+              <div
+                class="mt-7 rounded-2xl border border-dashed border-neutral-200 p-8 text-center"
+              >
+                <p class="text-sm text-neutral-600">
+                  {{
+                    'web.admin.curriculum.composition.empty' | kraakTranslate
+                  }}
+                </p>
+              </div>
+            }
+          } @else {
+            <div
+              class="mt-7 rounded-2xl border border-dashed border-neutral-200 p-8 text-center"
+            >
+              <p class="text-sm text-neutral-600">
+                {{
+                  'web.admin.curriculum.composition.noProgram' | kraakTranslate
+                }}
+              </p>
+            </div>
+          }
+        </article>
+      </section>
+    }
+  </div>
+</section>

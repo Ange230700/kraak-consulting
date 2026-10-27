@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
@@ -9,11 +10,17 @@ function buildTestAvatarUrl(fileName: string): string {
   return `${TEST_AVATAR_BASE_URL}/${fileName}`;
 }
 
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
+
 describe('Testimonials', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideKraakI18n()],
       imports: [Testimonials],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
   });
 
   it('Given aucun item et placeholder actif, When le composant est rendu, Then la prévisualisation de stack est affichée', () => {
@@ -25,6 +32,31 @@ describe('Testimonials', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Prévisualisation du format témoignages');
     expect(text).toContain('Aïcha K.');
+    expect(text).toContain('Jeune professionnelle');
+    expect(text).toContain(
+      "Grâce à KRAAK, j'ai clarifié mon objectif de mobilité",
+    );
+  });
+
+  it('Given the English locale and preview fallback testimonials, When rendered, Then fallback copy is localized', async () => {
+    await TestBed.inject(KraakI18nService).setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', []);
+    fixture.componentRef.setInput('placeholder', true);
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('Testimonial format preview');
+    expect(text).toContain('Aïcha K.');
+    expect(text).toContain('Young professional');
+    expect(text).toContain('Thanks to KRAAK, I clarified my mobility goal');
+
+    expect(text).not.toContain('Jeune professionnelle');
+    expect(text).not.toContain(
+      "Grâce à KRAAK, j'ai clarifié mon objectif de mobilité",
+    );
   });
 
   it('Given aucun item et placeholder désactivé, When le composant est rendu, Then rien n est affiché', () => {
@@ -35,6 +67,15 @@ describe('Testimonials', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent?.trim();
     expect(text).toBe('');
+  });
+
+  it('Given aucun item et placeholder désactivé, When visibleCards est évalué, Then une liste vide est renvoyée', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', []);
+    fixture.componentRef.setInput('placeholder', false);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.visibleCards()).toEqual([]);
   });
 
   it('Given des témoignages fournis, When le composant est rendu, Then nom et métier sont affichés', () => {
@@ -107,6 +148,269 @@ describe('Testimonials', () => {
 
     vi.advanceTimersByTime(250);
     expect(component.currentIndex()).toBe(1);
+    expect(component.isAnimating()).toBe(false);
+
+    vi.useRealTimers();
+  });
+
+  it('Given un seul témoignage, When visibleCards est calculé, Then une seule carte est renvoyée', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'Unique',
+        name: 'Solo',
+        job: 'Coach',
+        avatar: buildTestAvatarUrl('solo.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    expect(component.visibleCards()).toHaveLength(1);
+    expect(component.isPreviewMode()).toBe(false);
+  });
+
+  it('Given deux témoignages, When getCardStyles est invoqué, Then un style neutre est retourné', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    expect(component.visibleCards()).toHaveLength(2);
+    expect(component.getCardStyles(0)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+  });
+
+  it('Given une animation next active, When getCardStyles est appelé, Then le style animé next est appliqué', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    component.isAnimating.set(true);
+    component.animationDirection.set('next');
+
+    expect(component.getCardStyles(0)['transform']).toContain(
+      'translateX(120px)',
+    );
+    expect(component.getCardStyles(1)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+    expect(component.getCardClasses(2)).toBe('z-10');
+    expect(component.getCardClasses(99)).toBe('');
+  });
+
+  it('Given une animation prev active, When getCardStyles et visibleCards sont appelés, Then la branche prev est utilisée', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    component.currentIndex.set(1);
+    component.isAnimating.set(true);
+    component.animationDirection.set('prev');
+
+    const prevVisible = component.visibleCards();
+    expect(prevVisible.map((item) => item.id)).toEqual([1, 2, 3]);
+    expect(component.getCardStyles(1)['transform']).toContain(
+      'translateX(-120px)',
+    );
+  });
+
+  it('Given des index hors pile, When getCardStyles est appelé dans chaque état, Then les styles par défaut sont renvoyés', () => {
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    component.isAnimating.set(true);
+    component.animationDirection.set('next');
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+
+    component.animationDirection.set('prev');
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+
+    component.isAnimating.set(false);
+    component.animationDirection.set(null);
+    expect(component.getCardStyles(99)).toEqual({
+      transform: 'rotate(0deg) scale(1)',
+      opacity: '1',
+    });
+  });
+
+  it('Given le composant anime déjà, When nextCard ou prevCard est déclenché, Then l état reste inchangé', () => {
+    vi.useFakeTimers();
+
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    component.currentIndex.set(1);
+    component.isAnimating.set(true);
+
+    component.nextCard();
+    component.prevCard();
+
+    vi.advanceTimersByTime(300);
+    expect(component.currentIndex()).toBe(1);
+    expect(component.isAnimating()).toBe(true);
+
+    vi.useRealTimers();
+  });
+
+  it('Given au moins trois témoignages, When prevCard est déclenché, Then l index recule avec gestion circulaire', () => {
+    vi.useFakeTimers();
+
+    const fixture = TestBed.createComponent(Testimonials);
+    fixture.componentRef.setInput('items', [
+      {
+        id: 1,
+        comment: 'A',
+        name: 'A',
+        job: 'A',
+        avatar: buildTestAvatarUrl('a.png'),
+      },
+      {
+        id: 2,
+        comment: 'B',
+        name: 'B',
+        job: 'B',
+        avatar: buildTestAvatarUrl('b.png'),
+      },
+      {
+        id: 3,
+        comment: 'C',
+        name: 'C',
+        job: 'C',
+        avatar: buildTestAvatarUrl('c.png'),
+      },
+    ]);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    expect(component.currentIndex()).toBe(0);
+
+    component.prevCard();
+    expect(component.animationDirection()).toBe('prev');
+    vi.advanceTimersByTime(250);
+
+    expect(component.currentIndex()).toBe(2);
+    expect(component.animationDirection()).toBeNull();
     expect(component.isAnimating()).toBe(false);
 
     vi.useRealTimers();

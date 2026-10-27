@@ -1,15 +1,60 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { environment } from '../../../environments/environment';
+import { KraakI18nService } from '../../../../../shared/i18n';
 import { WebAuthService, WEB_AUTH_STORAGE_KEY } from './web-auth.service';
 
 describe('WebAuthService', () => {
   const fetchMock = vi.fn();
 
+  let activeLocale = 'fr-CI';
+
+  const recoveryMessagesByLocale: Record<string, Record<string, string>> = {
+    'fr-CI': {
+      'web.auth.resetPassword.tokenRequired':
+        'Le jeton de réinitialisation est requis.',
+      'web.auth.resetPassword.passwordLength':
+        'Le mot de passe doit contenir entre 8 et 128 caractères.',
+      'web.auth.resetPassword.configurationMissing':
+        'Configuration Supabase manquante pour finaliser la réinitialisation.',
+      'web.auth.resetPassword.success':
+        'Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.',
+      'web.auth.resetPassword.updateFallback':
+        'Impossible de mettre à jour le mot de passe.',
+    },
+    'en-GB': {
+      'web.auth.resetPassword.tokenRequired': 'The reset token is required.',
+      'web.auth.resetPassword.passwordLength':
+        'The password must contain between 8 and 128 characters.',
+      'web.auth.resetPassword.configurationMissing':
+        'Supabase configuration is missing and the password reset cannot be completed.',
+      'web.auth.resetPassword.success':
+        'Your password has been updated. You can now sign in.',
+      'web.auth.resetPassword.updateFallback': 'Unable to update the password.',
+    },
+  };
+
+  const i18nStub = {
+    locale: () => activeLocale,
+    translate: (key: string): string =>
+      recoveryMessagesByLocale[activeLocale]?.[key] ?? key,
+  };
+
   beforeEach(() => {
+    activeLocale = 'fr-CI';
     localStorage.clear();
     fetchMock.mockReset();
     vi.stubGlobal('fetch', fetchMock);
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: KraakI18nService,
+          useValue: i18nStub,
+        },
+      ],
+    });
   });
 
   afterEach(() => {
@@ -490,6 +535,461 @@ describe('WebAuthService', () => {
     });
   });
 
+  describe('Given resolveRecoveryAccessTokenFromUrl', () => {
+    it('when URL hash contains access_token with recovery type, then token is returned directly', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset#access_token=recovery-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('recovery-123');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when URL contains token_hash, then verify endpoint is called and exchanged token is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: 'exchanged-token' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('exchanged-token');
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/v1/verify'),
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('when URL query contains access_token with recovery type, then token is returned directly', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?access_token=query-token-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('query-token-123');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when URL includes token_hash but type is not recovery, then null is returned without verify call', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=signup',
+        ),
+      );
+
+      expect(token).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when verify endpoint responds with a non-ok status, then null is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ message: 'invalid token hash' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBeNull();
+    });
+
+    it('when verify endpoint returns an empty access_token, then null is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: '   ' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+        ),
+      );
+
+      expect(token).toBeNull();
+    });
+
+    it('when Supabase URL is missing, then token hash exchange returns null without calling verify', async () => {
+      const originalSupabaseUrl = environment.supabaseUrl;
+
+      environment.supabaseUrl = '';
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl(
+          new URL(
+            'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+          ),
+        );
+
+        expect(token).toBeNull();
+        expect(fetchMock).not.toHaveBeenCalled();
+      } finally {
+        environment.supabaseUrl = originalSupabaseUrl;
+      }
+    });
+
+    it('when running on server without an explicit URL, then recovery token resolution returns null', async () => {
+      TestBed.configureTestingModule({
+        providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+      });
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+      expect(token).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when Supabase publishable key is configured, then verify call includes apikey header', async () => {
+      const originalPublishableKey = environment.supabasePublishableKey;
+
+      environment.supabasePublishableKey = 'pk-test-public-key';
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: 'exchanged-token' }),
+      } satisfies Partial<Response>);
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await service.resolveRecoveryAccessTokenFromUrl(
+          new URL(
+            'https://kraak.example/auth/reset?token_hash=hash-123&type=recovery',
+          ),
+        );
+
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining('/auth/v1/verify'),
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              apikey: 'pk-test-public-key',
+            }),
+          }),
+        );
+      } finally {
+        environment.supabasePublishableKey = originalPublishableKey;
+      }
+    });
+
+    it('when token_hash and type are only present in URL hash fragment, then exchange is attempted and token is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: 'hash-fragment-token' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl(
+        new URL(
+          'https://kraak.example/auth/reset#token_hash=hash-abc&type=recovery',
+        ),
+      );
+
+      expect(token).toBe('hash-fragment-token');
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/v1/verify'),
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('when called without explicit URL in browser mode, then current window URL is parsed and direct query token is returned', async () => {
+      const replaceStateSpy = vi.spyOn(globalThis.history, 'replaceState');
+      globalThis.history.replaceState(
+        {},
+        '',
+        '/auth/reset?access_token=browser-query-token&type=recovery',
+      );
+
+      TestBed.configureTestingModule({
+        providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+      });
+      const service = TestBed.inject(WebAuthService);
+
+      const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+      expect(token).toBe('browser-query-token');
+      expect(fetchMock).not.toHaveBeenCalled();
+      replaceStateSpy.mockRestore();
+    });
+
+    it('when window access throws in browser mode and no explicit URL is provided, then null is returned safely', async () => {
+      const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'window',
+      );
+
+      Object.defineProperty(globalThis, 'window', {
+        configurable: true,
+        get: () => {
+          throw new Error('window unavailable');
+        },
+      });
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        });
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+        expect(token).toBeNull();
+      } finally {
+        if (originalWindowDescriptor) {
+          Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+        }
+      }
+    });
+
+    it('when window is undefined in browser mode and no explicit URL is provided, then null is returned safely', async () => {
+      const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+        globalThis,
+        'window',
+      );
+
+      Object.defineProperty(globalThis, 'window', {
+        configurable: true,
+        get: () => undefined,
+      });
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        });
+        const service = TestBed.inject(WebAuthService);
+
+        const token = await service.resolveRecoveryAccessTokenFromUrl();
+
+        expect(token).toBeNull();
+      } finally {
+        if (originalWindowDescriptor) {
+          Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+        }
+      }
+    });
+  });
+
+  describe('Given completePasswordRecovery', () => {
+    it('when access token is blank, then an explicit validation error is thrown before any HTTP call', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: '   ',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Le jeton de réinitialisation est requis.');
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when new password length is below 8 characters, then an explicit validation error is thrown', async () => {
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'short',
+        }),
+      ).rejects.toThrow(
+        'Le mot de passe doit contenir entre 8 et 128 caractères.',
+      );
+
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('when Supabase URL is missing, then an explicit configuration error is thrown', async () => {
+      const originalSupabaseUrl = environment.supabaseUrl;
+
+      environment.supabaseUrl = '';
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await expect(
+          service.completePasswordRecovery({
+            accessToken: 'access-token',
+            newPassword: 'NouveauMotDePasse123!',
+          }),
+        ).rejects.toThrow(
+          'Configuration Supabase manquante pour finaliser la réinitialisation.',
+        );
+
+        expect(fetchMock).not.toHaveBeenCalled();
+      } finally {
+        environment.supabaseUrl = originalSupabaseUrl;
+      }
+    });
+
+    it('when Supabase update password succeeds, then success response is returned', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({}),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      const result = await service.completePasswordRecovery({
+        accessToken: 'access-token',
+        newPassword: 'NouveauMotDePasse123!',
+      });
+
+      expect(result.success).toBe(true);
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/v1/user'),
+        expect.objectContaining({ method: 'PUT' }),
+      );
+    });
+
+    it('when Supabase update password fails, then an explicit error is thrown', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ error_description: 'Token invalide ou expiré.' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Token invalide ou expiré.');
+    });
+
+    it('when Supabase publishable key is configured, then password update call includes apikey header', async () => {
+      const originalPublishableKey = environment.supabasePublishableKey;
+      environment.supabasePublishableKey = 'pk-test-public-key';
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({}),
+      } satisfies Partial<Response>);
+
+      try {
+        TestBed.configureTestingModule({});
+        const service = TestBed.inject(WebAuthService);
+
+        await service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringContaining('/auth/v1/user'),
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              apikey: 'pk-test-public-key',
+            }),
+          }),
+        );
+      } finally {
+        environment.supabasePublishableKey = originalPublishableKey;
+      }
+    });
+
+    it('when Supabase error payload provides msg only, then msg is used as thrown error message', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ msg: 'Erreur msg prioritaire.' }),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Erreur msg prioritaire.');
+    });
+
+    it('when Supabase error payload has no explicit message fields, then default fallback message is used', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Impossible de mettre à jour le mot de passe.');
+    });
+
+    it('when Supabase error response is not JSON, then a fallback error message is thrown', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => {
+          throw new Error('invalid json');
+        },
+      } satisfies Partial<Response>);
+
+      TestBed.configureTestingModule({});
+      const service = TestBed.inject(WebAuthService);
+
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'NouveauMotDePasse123!',
+        }),
+      ).rejects.toThrow('Impossible de mettre à jour le mot de passe.');
+    });
+  });
+
   describe('Given getSession', () => {
     it('when currentSession is null, then getSession returns null without calling the API', async () => {
       TestBed.configureTestingModule({});
@@ -713,5 +1213,71 @@ describe('WebAuthService', () => {
 
       expect(service.currentRole()).toBeNull();
     });
+  });
+  it('Given English locale, when password recovery uses client-owned messages, then validation success and fallback copy are English', async () => {
+    activeLocale = 'en-GB';
+    const service = TestBed.inject(WebAuthService);
+
+    await expect(
+      service.completePasswordRecovery({
+        accessToken: '   ',
+        newPassword: 'SecurePassword123!',
+      }),
+    ).rejects.toThrow('The reset token is required.');
+
+    await expect(
+      service.completePasswordRecovery({
+        accessToken: 'access-token',
+        newPassword: 'short',
+      }),
+    ).rejects.toThrow(
+      'The password must contain between 8 and 128 characters.',
+    );
+
+    const originalSupabaseUrl = environment.supabaseUrl;
+
+    environment.supabaseUrl = '';
+
+    try {
+      await expect(
+        service.completePasswordRecovery({
+          accessToken: 'access-token',
+          newPassword: 'SecurePassword123!',
+        }),
+      ).rejects.toThrow(
+        'Supabase configuration is missing and the password reset cannot be completed.',
+      );
+    } finally {
+      environment.supabaseUrl = originalSupabaseUrl;
+    }
+
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({}),
+    } satisfies Partial<Response>);
+
+    const success = await service.completePasswordRecovery({
+      accessToken: 'access-token',
+      newPassword: 'SecurePassword123!',
+    });
+
+    expect(success).toEqual({
+      success: true,
+      message: 'Your password has been updated. You can now sign in.',
+    });
+
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({}),
+    } satisfies Partial<Response>);
+
+    await expect(
+      service.completePasswordRecovery({
+        accessToken: 'access-token',
+        newPassword: 'SecurePassword123!',
+      }),
+    ).rejects.toThrow('Unable to update the password.');
   });
 });

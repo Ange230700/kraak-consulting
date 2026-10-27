@@ -17,7 +17,12 @@ import { Message } from 'primeng/message';
 import { environment } from '../../../../environments/environment';
 import { resolveApiBaseUrl } from '../../../core/runtime/runtime-config';
 import { WebAuthService } from '../../../core/auth/web-auth.service';
+import { RevealOnScrollDirective } from '../../../shared/motion/reveal-on-scroll.directive';
 
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../../shared/i18n';
 interface DashboardQuickLink {
   readonly label: string;
   readonly detail: string;
@@ -31,38 +36,51 @@ interface DashboardSummaryIndicator {
   readonly detail: string;
 }
 
-const QUICK_LINKS: readonly DashboardQuickLink[] = [
-  {
-    label: 'Voir les programmes',
-    detail:
-      "Retrouver l'offre, les parcours et les informations publiques utiles.",
-    href: '/programmes',
-  },
-  {
-    label: "Contacter l'\u00E9quipe",
-    detail: 'Poser une question ou signaler un besoin de suivi.',
-    href: '/contact',
-  },
-];
-
 @Component({
   selector: 'kraak-web-participant-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, Message],
+  imports: [
+    CommonModule,
+    RouterLink,
+    Message,
+    RevealOnScrollDirective,
+    KraakTranslatePipe,
+  ],
   templateUrl: './dashboard.page.html',
 })
 export default class DashboardPage implements OnInit {
+  private readonly i18n = inject(KraakI18nService);
   private readonly authService = inject(WebAuthService);
   private readonly messageService = inject(MessageService);
   protected dashboardClient: Pick<ApiClient['dashboard'], 'getAggregate'> =
     createApiClient({
+      getLocale: () => this.i18n.locale(),
       baseUrl: resolveApiBaseUrl(environment.apiBaseUrl),
       getAuthToken: () =>
         this.authService.currentSession()?.accessToken ?? null,
     }).dashboard;
 
   readonly currentProfile = this.authService.currentProfile;
-  readonly quickLinks = QUICK_LINKS;
+  readonly quickLinks = computed<readonly DashboardQuickLink[]>(() => [
+    {
+      label: this.translate(
+        'web.participant.dashboard.quickLinks.programs.label',
+      ),
+      detail: this.translate(
+        'web.participant.dashboard.quickLinks.programs.detail',
+      ),
+      href: '/participant/programmes',
+    },
+    {
+      label: this.translate(
+        'web.participant.dashboard.quickLinks.contact.label',
+      ),
+      detail: this.translate(
+        'web.participant.dashboard.quickLinks.contact.detail',
+      ),
+      href: '/contact',
+    },
+  ]);
 
   protected readonly dashboardState = signal<DashboardAggregateDto | null>(
     null,
@@ -86,21 +104,33 @@ export default class DashboardPage implements OnInit {
     () => [
       {
         id: 'programs',
-        label: 'Programmes actifs',
+        label: this.translate(
+          'web.participant.dashboard.summary.indicators.programs.label',
+        ),
         value: `${this.programs().length}`,
-        detail: 'Parcours en cours ou r\u00E9cemment activ\u00E9s',
+        detail: this.translate(
+          'web.participant.dashboard.summary.indicators.programs.detail',
+        ),
       },
       {
         id: 'sessions',
-        label: 'Sessions \u00E0 venir',
+        label: this.translate(
+          'web.participant.dashboard.summary.indicators.sessions.label',
+        ),
         value: `${this.upcomingSessions().length}`,
-        detail: 'Rappels des prochains rendez-vous',
+        detail: this.translate(
+          'web.participant.dashboard.summary.indicators.sessions.detail',
+        ),
       },
       {
         id: 'announcements',
-        label: 'Annonces r\u00E9centes',
+        label: this.translate(
+          'web.participant.dashboard.summary.indicators.announcements.label',
+        ),
         value: `${this.recentAnnouncements().length}`,
-        detail: 'Informations r\u00E9centes publi\u00E9es par KRAAK',
+        detail: this.translate(
+          'web.participant.dashboard.summary.indicators.announcements.detail',
+        ),
       },
     ],
   );
@@ -114,13 +144,15 @@ export default class DashboardPage implements OnInit {
     const itemCount = this.totalSummaryItems();
 
     return itemCount === 1
-      ? '1 \u00E9l\u00E9ment cl\u00E9 disponible aujourd\u2019hui.'
-      : `${itemCount} \u00E9l\u00E9ments cl\u00E9s disponibles aujourd\u2019hui.`;
+      ? this.translate('web.participant.dashboard.summary.totalSingular')
+      : `${itemCount} ${this.translate(
+          'web.participant.dashboard.summary.totalPluralSuffix',
+        )}`;
   });
   readonly nextSessionSummary = computed(() => {
     const nextSession = this.upcomingSessions()[0];
     if (!nextSession) {
-      return 'Aucune session planifi\u00E9e pour le moment.';
+      return this.translate('web.participant.dashboard.nextStep.noSession');
     }
 
     return `${nextSession.title} - ${this.formatDate(nextSession.startsAt)}`;
@@ -160,7 +192,7 @@ export default class DashboardPage implements OnInit {
       this.messageService.add({
         key: 'app-feedback',
         severity: 'error',
-        summary: 'Dashboard',
+        summary: this.translate('web.participant.dashboard.toast.title'),
         detail: currentError,
         life: 7000,
       });
@@ -172,12 +204,18 @@ export default class DashboardPage implements OnInit {
       this.messageService.add({
         key: 'app-feedback',
         severity: 'success',
-        summary: 'Dashboard',
-        detail: 'Les données ont été rechargées avec succès.',
+        summary: this.translate('web.participant.dashboard.toast.title'),
+        detail: this.translate('web.participant.dashboard.toast.reloadSuccess'),
         life: 4500,
       });
       this.hasRecoveredFromError.set(false);
     }
+  }
+
+  private translate(key: string): string {
+    // Make computed values depend explicitly on the locale signal.
+    this.i18n.locale();
+    return this.i18n.translate(key);
   }
 
   private formatDate(rawDate: string): string {
@@ -186,7 +224,7 @@ export default class DashboardPage implements OnInit {
       return rawDate;
     }
 
-    return new Intl.DateTimeFormat('fr-FR', {
+    return new Intl.DateTimeFormat(this.i18n.locale(), {
       day: '2-digit',
       month: 'long',
       year: 'numeric',

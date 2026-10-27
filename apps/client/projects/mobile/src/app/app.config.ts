@@ -7,6 +7,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 
+import { provideKraakI18n } from '../../../shared/i18n';
 import { routes } from './app.routes';
 
 function scheduleAfterFirstRender(task: () => void): void {
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideIonicAngular(),
+    provideKraakI18n(),
     provideAppInitializer(() => {
       const injector = inject(Injector);
 

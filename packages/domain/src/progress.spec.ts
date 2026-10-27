@@ -36,6 +36,22 @@ describe('applySessionProgressMark', () => {
 });
 
 describe('calculateProgramProgress', () => {
+  it('returns zero progress when the program has no sessions', () => {
+    const progress = calculateProgramProgress({
+      sessionIds: [],
+      completedSessionIds: ['session-1'],
+    });
+
+    expect(progress).toMatchObject({
+      totalSessions: 0,
+      completedSessions: 0,
+      completionRate: 0,
+      status: ProgramProgressStatus.NOT_STARTED,
+      completedSessionIds: [],
+      updatedAt: null,
+    });
+  });
+
   it('returns not_started when no session is completed', () => {
     const progress = calculateProgramProgress({
       sessionIds: ['session-1', 'session-2'],

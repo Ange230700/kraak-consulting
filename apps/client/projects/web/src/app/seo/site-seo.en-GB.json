@@ -1,0 +1,32 @@
+[
+  {
+    "path": "",
+    "title": "Build your skills. Launch your projects. | KRAAK Consulting",
+    "description": "KRAAK Consulting supports students, professionals, businesses and members of the diaspora with practical solutions in training, project management and immigration.",
+    "openGraph": {
+      "title": "Build your skills. Launch your projects. | KRAAK Consulting",
+      "description": "KRAAK Consulting supports students, professionals, businesses and members of the diaspora with practical solutions in training, project management and immigration.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Participants attending a professional development session in a collaborative workshop"
+    },
+    "sitemap": {
+      "changeFrequency": "weekly",
+      "priority": 1
+    }
+  },
+  {
+    "path": "blog",
+    "title": "Blog | News and insights | KRAAK Consulting",
+    "description": "Explore KRAAK articles on employability, training, project management and international mobility.",
+    "openGraph": {
+      "title": "KRAAK Consulting Blog",
+      "description": "A public editorial space to clarify a project, prepare an application and choose your next step with greater confidence.",
+      "imagePath": "/assets/site-visuals/photos/home-hero-workshop.jpg",
+      "imageAlt": "Photo of a KRAAK Consulting workshop with participants in a work session."
+    },
+    "sitemap": {
+      "changeFrequency": "weekly",
+      "priority": 0.75
+    }
+  }
+]

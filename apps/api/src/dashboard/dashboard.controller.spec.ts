@@ -72,7 +72,7 @@ describe('DashboardController', () => {
     expect(thrownError).toBeInstanceOf(UnauthorizedException);
     expect((thrownError as UnauthorizedException).getResponse()).toEqual({
       success: false,
-      message: "Le header d'autorisation Bearer est requis.",
+      message: { key: 'auth.bearerRequired' },
     });
   });
 });

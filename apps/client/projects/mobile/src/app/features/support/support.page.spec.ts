@@ -1,7 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileSupportService } from './mobile-support.service';
 import SupportPage from './support.page';
 
@@ -11,6 +12,8 @@ describe('Mobile SupportPage', () => {
   };
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     supportService.listMyRequests.mockReset();
     supportService.listMyRequests.mockResolvedValue([]);
 
@@ -19,9 +22,12 @@ describe('Mobile SupportPage', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         provideRouter([]),
+        provideKraakI18n(),
         { provide: MobileSupportService, useValue: supportService },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('should create', () => {
@@ -62,5 +68,51 @@ describe('Mobile SupportPage', () => {
     expect(element.textContent).toContain('Suivi de vos demandes');
     expect(element.textContent).toContain('Connexion impossible');
     expect(element.textContent).toContain('En cours');
+  });
+
+  it('Given each support status, when getStatusLabel is called, then the localized label is returned', () => {
+    const fixture = TestBed.createComponent(SupportPage);
+
+    expect(fixture.componentInstance.getStatusLabel('open')).toBe('Ouverte');
+    expect(fixture.componentInstance.getStatusLabel('in_progress')).toBe(
+      'En cours',
+    );
+    expect(fixture.componentInstance.getStatusLabel('resolved')).toBe(
+      'Résolue',
+    );
+    expect(fixture.componentInstance.getStatusLabel('closed')).toBe('Clôturée');
+  });
+
+  it('Given the support tracking API fails, when the page initializes, then a fallback error message is displayed', async () => {
+    supportService.listMyRequests.mockRejectedValue(new Error('API down'));
+
+    const fixture = TestBed.createComponent(SupportPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain(
+      'Impossible de charger le suivi de vos demandes pour le moment.',
+    );
+  });
+
+  it('Given English is selected, when support renders, then the support chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(SupportPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('Help');
+    expect(text).toContain('Support');
+    expect(text).toContain('Need help? Contact our team.');
+    expect(text).toContain('Start a request');
+    expect(text).toContain('Your requests');
   });
 });

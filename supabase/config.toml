@@ -1,4 +1,4 @@
-project_id = "kraak-group"
+project_id = "kraak-consulting"
 
 [auth]
 enabled = true
@@ -12,22 +12,14 @@ additional_redirect_urls = [
   "http://localhost:4300/auth/reset",
   "http://localhost:4300/connexion",
   "http://localhost:4300/mot-de-passe-oublie",
-  "https://client-six-indol-58.vercel.app/auth/callback",
-  "https://client-six-indol-58.vercel.app/auth/reset",
-  "https://client-six-indol-58.vercel.app/connexion",
-  "https://client-six-indol-58.vercel.app/mot-de-passe-oublie",
-  "https://kraak-consulting.vercel.app/auth/callback",
-  "https://kraak-consulting.vercel.app/auth/reset",
-  "https://kraak-consulting.vercel.app/connexion",
-  "https://kraak-consulting.vercel.app/mot-de-passe-oublie",
-  "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/auth/callback",
-  "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/auth/reset",
-  "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/connexion",
-  "https://kraak-consulting-git-staging-ange230700s-projects.vercel.app/mot-de-passe-oublie",
-  "https://kraak-consulting-*-ange230700s-projects.vercel.app/auth/callback",
-  "https://kraak-consulting-*-ange230700s-projects.vercel.app/auth/reset",
-  "https://kraak-consulting-*-ange230700s-projects.vercel.app/connexion",
-  "https://kraak-consulting-*-ange230700s-projects.vercel.app/mot-de-passe-oublie",
+  "https://kraak-web-staging.onrender.com/auth/callback",
+  "https://kraak-web-staging.onrender.com/auth/reset",
+  "https://kraak-web-staging.onrender.com/connexion",
+  "https://kraak-web-staging.onrender.com/mot-de-passe-oublie",
+  "https://kraak-web-prod.onrender.com/auth/callback",
+  "https://kraak-web-prod.onrender.com/auth/reset",
+  "https://kraak-web-prod.onrender.com/connexion",
+  "https://kraak-web-prod.onrender.com/mot-de-passe-oublie",
   "kraak://auth/callback",
   "kraak://auth/reset",
 ]
@@ -39,7 +31,10 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = true
 secure_password_change = true
-max_frequency = "1m"
+max_frequency = "30s"
+
+[auth.rate_limit]
+email_sent = 30
 
 [auth.email.template.confirmation]
 subject = "Confirmez votre inscription KRAAK"
@@ -48,3 +43,12 @@ content_path = "./supabase/templates/auth/confirmation.html"
 [auth.email.template.recovery]
 subject = "Réinitialisez votre mot de passe KRAAK"
 content_path = "./supabase/templates/auth/recovery.html"
+
+[analytics]
+enabled = false
+
+[storage.vector]
+enabled = false
+
+[storage.analytics]
+enabled = false

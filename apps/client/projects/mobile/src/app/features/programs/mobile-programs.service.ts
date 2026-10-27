@@ -8,12 +8,15 @@ import type {
 import { environment } from '../../../environments/environment';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 
+import { KraakI18nService } from '../../../../../shared/i18n';
 @Injectable({
   providedIn: 'root',
 })
 export class MobileProgramsService {
   private readonly authService = inject(MobileAuthService);
+  private readonly i18n = inject(KraakI18nService);
   private readonly client = createApiClient({
+    getLocale: () => this.i18n.locale(),
     baseUrl: environment.apiBaseUrl,
     getAuthToken: () => this.authService.currentSession()?.accessToken ?? null,
   });

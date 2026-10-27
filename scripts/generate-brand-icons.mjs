@@ -9,16 +9,12 @@
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import sharp from 'sharp';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 
 const BRAND_NAVY = { r: 0x12, g: 0x2b, b: 0x4a, alpha: 1 };
-
-const projects = [
-  path.join(repoRoot, 'apps', 'client', 'projects', 'web', 'public'),
-  path.join(repoRoot, 'apps', 'client', 'projects', 'mobile', 'public'),
-];
 
 const faviconPngSizes = [
   { name: 'favicon-16x16.png', size: 16 },
@@ -30,15 +26,22 @@ const faviconPngSizes = [
 
 async function symbolOnTransparent(sourcePath, size) {
   return sharp(sourcePath)
-    .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(size, size, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .png()
     .toBuffer();
 }
 
-async function symbolOnBrand(sourcePath, size, padding = 0.18) {
+async function symbolOnBrand(sourcePath, size) {
+  const padding = 0.18;
   const inner = Math.round(size * (1 - padding * 2));
   const symbolBuffer = await sharp(sourcePath)
-    .resize(inner, inner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(inner, inner, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .png()
     .toBuffer();
   return sharp({
@@ -58,7 +61,7 @@ async function symbolOnBrand(sourcePath, size, padding = 0.18) {
  * Construit un fichier ICO multi-tailles (16, 32, 48) à partir d'images PNG.
  * Format ICO : header (6 octets) + entrées (16 octets) + données PNG.
  */
-function buildIcoFile(pngBuffers) {
+export function buildIcoFile(pngBuffers) {
   const count = pngBuffers.length;
   const header = Buffer.alloc(6);
   header.writeUInt16LE(0, 0); // reserved
@@ -81,7 +84,11 @@ function buildIcoFile(pngBuffers) {
     offset += buffer.length;
   }
 
-  return Buffer.concat([header, entries, ...pngBuffers.map((entry) => entry.buffer)]);
+  return Buffer.concat([
+    header,
+    entries,
+    ...pngBuffers.map((entry) => entry.buffer),
+  ]);
 }
 
 async function generateForProject(publicDir) {
@@ -90,16 +97,18 @@ async function generateForProject(publicDir) {
     throw new Error(`Source manquante : ${symbolPath}`);
   }
 
-  for (const target of faviconPngSizes) {
-    const buffer = await sharp(symbolPath)
-      .resize(target.size, target.size, {
-        fit: 'contain',
-        background: { r: 0xff, g: 0xff, b: 0xff, alpha: 1 },
-      })
-      .png()
-      .toBuffer();
-    writeFileSync(path.join(publicDir, target.name), buffer);
-  }
+  await Promise.all(
+    faviconPngSizes.map(async (target) => {
+      const buffer = await sharp(symbolPath)
+        .resize(target.size, target.size, {
+          fit: 'contain',
+          background: { r: 0xff, g: 0xff, b: 0xff, alpha: 1 },
+        })
+        .png()
+        .toBuffer();
+      writeFileSync(path.join(publicDir, target.name), buffer);
+    }),
+  );
 
   const icoSizes = [16, 32, 48];
   const icoPngs = await Promise.all(
@@ -119,9 +128,9 @@ const androidMipmaps = [
   { dir: 'mipmap-xxxhdpi', launcher: 192, foreground: 432 },
 ];
 
-async function generateAndroidLauncherIcons() {
+export async function generateAndroidLauncherIcons(root) {
   const symbolPath = path.join(
-    repoRoot,
+    root,
     'apps',
     'client',
     'projects',
@@ -129,50 +138,71 @@ async function generateAndroidLauncherIcons() {
     'public',
     'kraak-symbol.png',
   );
-  const resRoot = path.join(repoRoot, 'apps', 'client', 'android', 'app', 'src', 'main', 'res');
+  const resRoot = path.join(
+    root,
+    'apps',
+    'client',
+    'android',
+    'app',
+    'src',
+    'main',
+    'res',
+  );
   if (!existsSync(resRoot)) {
     return;
   }
 
-  for (const entry of androidMipmaps) {
-    const targetDir = path.join(resRoot, entry.dir);
-    mkdirSync(targetDir, { recursive: true });
+  await Promise.all(
+    androidMipmaps.map(async (entry) => {
+      const targetDir = path.join(resRoot, entry.dir);
+      mkdirSync(targetDir, { recursive: true });
 
-    const launcher = await symbolOnBrand(symbolPath, entry.launcher);
-    writeFileSync(path.join(targetDir, 'ic_launcher.png'), launcher);
+      const launcher = await symbolOnBrand(symbolPath, entry.launcher);
+      writeFileSync(path.join(targetDir, 'ic_launcher.png'), launcher);
 
-    const round = await sharp(launcher)
-      .composite([
-        {
-          input: Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="${entry.launcher}" height="${entry.launcher}"><rect x="0" y="0" width="${entry.launcher}" height="${entry.launcher}" rx="${entry.launcher / 2}" ry="${entry.launcher / 2}" fill="#000"/></svg>`,
-          ),
-          blend: 'dest-in',
-        },
-      ])
-      .png()
-      .toBuffer();
-    writeFileSync(path.join(targetDir, 'ic_launcher_round.png'), round);
+      const round = await sharp(launcher)
+        .composite([
+          {
+            input: Buffer.from(
+              `<svg xmlns="http://www.w3.org/2000/svg" width="${entry.launcher}" height="${entry.launcher}"><rect x="0" y="0" width="${entry.launcher}" height="${entry.launcher}" rx="${entry.launcher / 2}" ry="${entry.launcher / 2}" fill="#000"/></svg>`,
+            ),
+            blend: 'dest-in',
+          },
+        ])
+        .png()
+        .toBuffer();
+      writeFileSync(path.join(targetDir, 'ic_launcher_round.png'), round);
 
-    const foreground = await sharp(symbolPath)
-      .resize(Math.round(entry.foreground * 0.66), Math.round(entry.foreground * 0.66), {
-        fit: 'contain',
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .extend({
-        top: Math.round(entry.foreground * 0.17),
-        bottom: Math.round(entry.foreground * 0.17),
-        left: Math.round(entry.foreground * 0.17),
-        right: Math.round(entry.foreground * 0.17),
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .png()
-      .toBuffer();
-    writeFileSync(path.join(targetDir, 'ic_launcher_foreground.png'), foreground);
-  }
+      const foregroundSize = Math.round(entry.foreground * 0.66);
+      const paddingBefore = Math.floor((entry.foreground - foregroundSize) / 2);
+      const paddingAfter = entry.foreground - foregroundSize - paddingBefore;
+      const foreground = await sharp(symbolPath)
+        .resize(foregroundSize, foregroundSize, {
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .extend({
+          top: paddingBefore,
+          bottom: paddingAfter,
+          left: paddingBefore,
+          right: paddingAfter,
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .png()
+        .toBuffer();
+      writeFileSync(
+        path.join(targetDir, 'ic_launcher_foreground.png'),
+        foreground,
+      );
+    }),
+  );
 
   // Vérifie que le fond du launcher adaptatif utilise la couleur navy de marque.
-  const backgroundXmlPath = path.join(resRoot, 'values', 'ic_launcher_background.xml');
+  const backgroundXmlPath = path.join(
+    resRoot,
+    'values',
+    'ic_launcher_background.xml',
+  );
   if (existsSync(backgroundXmlPath)) {
     const current = readFileSync(backgroundXmlPath, 'utf8');
     const updated = current.replace(
@@ -185,17 +215,32 @@ async function generateAndroidLauncherIcons() {
   }
 }
 
-async function main() {
-  for (const publicDir of projects) {
-    await generateForProject(publicDir);
-  }
-  await generateAndroidLauncherIcons();
+export async function main(root) {
+  await Promise.all(
+    ['web', 'mobile'].map((project) => {
+      const publicDir = path.join(
+        root,
+        'apps',
+        'client',
+        'projects',
+        project,
+        'public',
+      );
+      return generateForProject(publicDir);
+    }),
+  );
+  await generateAndroidLauncherIcons(root);
   console.log('Icônes de marque régénérées avec succès.');
 }
 
-try {
-  await main();
-} catch (error) {
-  console.error(error);
-  process.exit(1);
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  try {
+    await main(repoRoot);
+  } catch (error) {
+    console.error(error);
+    process.exitCode = 1;
+  }
 }

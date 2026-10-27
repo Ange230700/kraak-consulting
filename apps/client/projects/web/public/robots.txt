@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kraak-consulting.vercel.app/sitemap.xml
+Sitemap: https://kraak-web-prod.onrender.com/sitemap.xml

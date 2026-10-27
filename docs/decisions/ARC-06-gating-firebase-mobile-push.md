@@ -1,4 +1,20 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-06 — Gating natif des notifications push mobile sur Firebase
+
+## Table des matières
+
+- [ARC-06 — Gating natif des notifications push mobile sur Firebase](#arc-06-gating-natif-des-notifications-push-mobile-sur-firebase)
+  - [Contexte](#contexte)
+  - [Décision](#decision)
+  - [Conséquences](#consequences)
+  - [Conditions de levée](#conditions-de-levee)
+  - [Liens](#liens)
 
 - Statut : Acceptée
 - Date : 2026-04-10
@@ -60,5 +76,5 @@ Le test de garde `scripts/verify-capacitor-android-plugins.test.mjs` se désacti
 - Service concerné : `apps/client/projects/mobile/src/app/core/mobile-push-notifications.service.ts`
 - Configuration Capacitor : `apps/client/capacitor.config.ts`
 - Test de garde : `scripts/verify-capacitor-android-plugins.test.mjs`
-- Runbook : `docs/runbooks/MOBILE_BUILD.md`
+- Runbook : `docs/operations/MOBILE_BUILD.md`
 - Référence Capacitor : option `includePlugins` (`@capacitor/cli` v7.x)

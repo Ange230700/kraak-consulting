@@ -1,0 +1,108 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    {{ 'web.admin.users.create.businessInformation.step' | kraakTranslate }}
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    {{ 'web.admin.users.create.businessInformation.title' | kraakTranslate }}
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    {{
+      'web.admin.users.create.businessInformation.description' | kraakTranslate
+    }}
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="role">
+        {{
+          'web.admin.users.create.businessInformation.role.label'
+            | kraakTranslate
+        }}
+        <span class="text-red-500">*</span>
+      </label>
+      <select
+        id="role"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+        [(ngModel)]="role"
+        (ngModelChange)="sync()"
+        required
+        aria-required="true"
+      >
+        <option value="">
+          {{
+            'web.admin.users.create.businessInformation.role.placeholder'
+              | kraakTranslate
+          }}
+        </option>
+        @for (r of roles; track r.value) {
+          <option [value]="r.value">{{ r.labelKey | kraakTranslate }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="position">
+        {{
+          'web.admin.users.create.businessInformation.position.label'
+            | kraakTranslate
+        }}
+      </label>
+      <input
+        id="position"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        [placeholder]="
+          'web.admin.users.create.businessInformation.position.placeholder'
+            | kraakTranslate
+        "
+        [(ngModel)]="position"
+        (ngModelChange)="sync()"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="department">
+        {{
+          'web.admin.users.create.businessInformation.department.label'
+            | kraakTranslate
+        }}
+      </label>
+      <input
+        id="department"
+        type="text"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        [placeholder]="
+          'web.admin.users.create.businessInformation.department.placeholder'
+            | kraakTranslate
+        "
+        [(ngModel)]="department"
+        (ngModelChange)="sync()"
+      />
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      {{
+        'web.admin.users.create.businessInformation.actions.previous'
+          | kraakTranslate
+      }}
+    </button>
+    <button
+      pButton
+      class="kr-button-primary"
+      type="button"
+      (click)="goNext()"
+      [disabled]="!formState.isStep2Valid()"
+    >
+      {{
+        'web.admin.users.create.businessInformation.actions.next'
+          | kraakTranslate
+      }}
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>

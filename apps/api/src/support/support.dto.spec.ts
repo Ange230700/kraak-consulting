@@ -63,11 +63,11 @@ describe('validateContactForm', () => {
     expect(result).toEqual({
       valid: false,
       errors: [
-        'Le nom doit contenir au moins 2 caractères.',
-        "L'adresse e-mail est invalide.",
-        "L'objet est requis.",
-        'Le message doit contenir au moins 10 caractères.',
-        'La catégorie de support est invalide.',
+        { key: 'support.nameTooShort' },
+        { key: 'validation.invalidEmail' },
+        { key: 'support.subjectRequired' },
+        { key: 'support.messageTooShort' },
+        { key: 'support.categoryInvalid' },
       ],
     });
   });
@@ -78,7 +78,7 @@ describe('validateContactForm', () => {
   it('Given un corps invalide, When la validation est appliquée, Then la requête est rejetée proprement', () => {
     expect(validateContactForm(null)).toEqual({
       valid: false,
-      errors: ['Corps de requête invalide.'],
+      errors: [{ key: 'validation.invalidBody' }],
     });
   });
 
@@ -94,9 +94,9 @@ describe('validateContactForm', () => {
     expect(result).toEqual({
       valid: false,
       errors: [
-        'Le nom est requis.',
-        "L'objet est requis.",
-        'Le message est requis.',
+        { key: 'support.nameRequired' },
+        { key: 'support.subjectRequired' },
+        { key: 'support.messageRequired' },
       ],
     });
   });
@@ -112,7 +112,7 @@ describe('validateContactForm', () => {
 
     expect(result).toEqual({
       valid: false,
-      errors: ["L'objet doit contenir au moins 3 caractères."],
+      errors: [{ key: 'support.subjectTooShort' }],
     });
   });
 
@@ -128,9 +128,9 @@ describe('validateContactForm', () => {
     expect(result).toEqual({
       valid: false,
       errors: [
-        'Le nom ne peut pas dépasser 80 caractères.',
-        "L'objet ne peut pas dépasser 120 caractères.",
-        'Le message ne peut pas dépasser 2000 caractères.',
+        { key: 'support.nameTooLong' },
+        { key: 'support.subjectTooLong' },
+        { key: 'support.messageTooLong' },
       ],
     });
   });
@@ -155,14 +155,14 @@ describe('validateSupportStatusUpdatePayload', () => {
 
     expect(result).toEqual({
       valid: false,
-      errors: ['Le statut de la demande de support est invalide.'],
+      errors: [{ key: 'support.statusInvalid' }],
     });
   });
 
   it('Given un corps non objet, When la validation de statut est appliquée, Then une erreur de requête invalide est renvoyée', () => {
     expect(validateSupportStatusUpdatePayload([])).toEqual({
       valid: false,
-      errors: ['Corps de requête invalide.'],
+      errors: [{ key: 'validation.invalidBody' }],
     });
   });
 });

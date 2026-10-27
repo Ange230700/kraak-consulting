@@ -1,60 +1,85 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { NgStyle } from '@angular/common';
+import {
+  Component,
+  Injector,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ButtonDirective } from 'primeng/button';
 
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
+import { initializeMarketingPageAnimations } from '../../core/animations/marketing-page-animations';
+import { LazyGsapLoader } from '../../core/animations/lazy-gsap-loader';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import { KraakI18nService } from '../../../../../shared/i18n/kraak-i18n.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
-const SERVICES_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/services-hero-project-planning.avif',
-);
+const SERVICES_FAQ_TRANSLATIONS = [
+  {
+    questionKey: 'web.services.faq.items.serviceChoice.question',
+    answerKey: 'web.services.faq.items.serviceChoice.answer',
+  },
+  {
+    questionKey: 'web.services.faq.items.initialGuidance.question',
+    answerKey: 'web.services.faq.items.initialGuidance.answer',
+  },
+  {
+    questionKey: 'web.services.faq.items.organisationSupport.question',
+    answerKey: 'web.services.faq.items.organisationSupport.answer',
+  },
+] as const;
 
 @Component({
   selector: 'kraak-services-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, FaqAccordion, CtaBanner],
+  imports: [
+    RouterLink,
+    ButtonDirective,
+    FaqAccordion,
+    CtaBanner,
+    RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
+    KraakTranslatePipe,
+  ],
   templateUrl: './services.page.html',
 })
 export default class ServicesPage implements OnInit, OnDestroy {
-  protected readonly heroBackgroundStyle = SERVICES_HERO_BACKGROUND_STYLE;
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question:
-        'Comment choisir le service le plus adapt\u00e9 \u00e0 mon objectif ?',
-      answer:
-        'Nous commen\u00e7ons par votre objectif principal, votre contexte et votre contrainte prioritaire. Si besoin, nous vous orientons vers la bonne combinaison entre formation, projet, immigration ou offre entreprise.',
-    },
-    {
-      question:
-        'Proposez-vous une premi\u00e8re orientation avant de d\u00e9marrer ?',
-      answer:
-        "Oui. Une premi\u00e8re consultation permet de clarifier le besoin, d'identifier le bon format et de d\u00e9finir la prochaine \u00e9tape utile.",
-    },
-    {
-      question:
-        'Les accompagnements sont-ils r\u00e9serv\u00e9s aux particuliers ?',
-      answer:
-        'Non. KRAAK accompagne aussi les entreprises, startups, organisations et fonctions RH selon le type de besoin et le niveau de structuration attendu.',
-    },
-  ];
+  private readonly i18n = inject(KraakI18nService);
+  private readonly animations = new LazyGsapLoader(inject(Injector));
 
-  private readonly gsapService = inject(GsapAnimationsService);
+  protected readonly faqItems = computed<readonly FaqItem[]>(() => {
+    this.i18n.locale();
+
+    return SERVICES_FAQ_TRANSLATIONS.map(({ questionKey, answerKey }) => ({
+      question: this.i18n.translate(questionKey),
+      answer: this.i18n.translate(answerKey),
+    }));
+  });
 
   ngOnInit(): void {
-    this.gsapService.animatePageIn();
-    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
-    this.gsapService.initializeInteractiveCardAnimations('article');
-    this.gsapService.initializeButtonTransitions();
-    this.gsapService.initializeSectionAnimations();
-    this.gsapService.initializeIconAnimations();
+    void this.initializeAnimations();
   }
 
   ngOnDestroy(): void {
-    this.gsapService.killAllAnimations();
+    this.animations.destroy();
+  }
+
+  private async initializeAnimations(): Promise<void> {
+    const gsapService = await this.animations.resolve();
+    if (!gsapService) {
+      return;
+    }
+
+    initializeMarketingPageAnimations(gsapService);
+    gsapService.initializeReversibleScrollAnimations(
+      '.services-method-step[data-motion="reversible"]',
+    );
   }
 }

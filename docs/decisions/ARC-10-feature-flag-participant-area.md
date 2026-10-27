@@ -1,4 +1,28 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
+<!-- docs\decisions\ARC-10-feature-flag-participant-area.md -->
+
 # ARC-10 — Feature flag espace participant
+
+## Table des matières
+
+- [ARC-10 — Feature flag espace participant](#arc-10-feature-flag-espace-participant)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Mécanisme — feature flag runtime](#21-mecanisme-feature-flag-runtime)
+    - [2.2 Comportement quand le flag est false (défaut prod)](#22-comportement-quand-le-flag-est-false-defaut-prod)
+    - [2.3 Configuration par environnement](#23-configuration-par-environnement)
+    - [2.4 Implémentation](#24-implementation)
+  - [3 · Conséquences](#3-consequences)
+    - [3.1 Positives](#31-positives)
+    - [3.2 Négatives / dette](#32-negatives-dette)
+    - [3.3 Sortie du drapeau](#33-sortie-du-drapeau)
+  - [4 · Alternatives écartées](#4-alternatives-ecartees)
 
 | Champ          | Valeur                      |
 | -------------- | --------------------------- |
@@ -24,7 +48,7 @@ L'équipe souhaite **mettre en production le site vitrine immédiatement**, sans
 attendre la stabilisation de l'espace participant, tout en continuant à itérer
 sur ce dernier sur l'environnement de **staging** (cf. ARC-08).
 
-Le projet Vercel unique `kraak-consulting` (cf. ARC-11)
+Le projet Render unique `kraak-consulting` (cf. ARC-11)
 partagent **le même artefact de build** : la sélection ne peut donc pas se
 faire au build-time. Une bascule **runtime** est requise.
 
@@ -54,16 +78,16 @@ encapsule la lecture et le défaut sécurisé `false`.
 
 ### 2.3 Configuration par environnement
 
-Toutes les valeurs sont configurées sur le projet Vercel unique
+Toutes les valeurs sont configurées sur le projet Render unique
 `kraak-consulting` (cf. ARC-11), avec un override par branche pour le
 déploiement Preview de `staging` :
 
-| Environnement Vercel                 | `gitBranch` | Valeur du flag    |
+| Environnement Render                 | `gitBranch` | Valeur du flag    |
 | ------------------------------------ | ----------- | ----------------- |
 | `production` (branche `main`)        | —           | `false`           |
 | `preview` (override branche staging) | `staging`   | `true`            |
 | `preview` (autres branches/PR)       | —           | `false`           |
-| `development` (`vercel dev`)         | —           | `true`            |
+| `development` (`render dev`)         | —           | `true`            |
 | Local dev (`apps/client/.env`)       | —           | `true` recommandé |
 
 ### 2.4 Implémentation
@@ -71,7 +95,7 @@ déploiement Preview de `staging` :
 - [`apps/client/projects/web/src/app/app.routes.ts`](../../apps/client/projects/web/src/app/app.routes.ts) :
   factory `buildRoutes(participantAreaEnabled)` qui compose `marketingRoutes`
   (toujours actives) avec `participantAreaRoutes` (gardées par le flag).
-- [`apps/client/projects/web/src/app/layouts/navbar/navbar.ts`](../../apps/client/projects/web/src/app/layouts/navbar/navbar.ts) :
+- [`apps/client/projects/web/src/app/layouts/navbar/navbar.component.ts`](../../apps/client/projects/web/src/app/layouts/navbar/navbar.component.ts) :
   champ `participantAreaEnabled` consommé par le template.
 - Tests unitaires (Vitest) : `runtime-config.spec.ts`, `app.routes.spec.ts`,
   `navbar.spec.ts` couvrent les deux états du flag.
@@ -86,7 +110,7 @@ déploiement Preview de `staging` :
   participant.
 - **Itération continue** : le staging conserve l'intégralité du parcours
   authentifié.
-- **Réversibilité** : bascule en O(1) en modifiant la variable Vercel.
+- **Réversibilité** : bascule en O(1) en modifiant la variable Render.
 
 ### 3.2 Négatives / dette
 
@@ -106,7 +130,7 @@ Le flag est **temporaire**. Il sera retiré dès que :
 
 La suppression consistera à : retirer le flag de `runtime-config`, dégrader
 `buildRoutes` en `routes` constant unique, retirer le `@if` dans la navbar,
-nettoyer les `.env*`, supprimer la variable Vercel (les 4 entrées du projet
+nettoyer les `.env*`, supprimer la variable Render (les 4 entrées du projet
 unique `kraak-consulting`).
 
 ---
@@ -119,5 +143,5 @@ unique `kraak-consulting`).
   participant chargés au premier match d'URL, et exigerait un `redirect` au
   niveau du `CanMatchFn` → équivalent fonctionnel mais plus verbeux que
   l'absence de route.
-- **Reverse proxy / réécriture Vercel** : externaliserait la logique produit
+- **Reverse proxy / réécriture Render** : externaliserait la logique produit
   hors du code, plus difficile à tester unitairement.

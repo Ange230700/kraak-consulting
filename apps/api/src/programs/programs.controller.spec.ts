@@ -1,11 +1,13 @@
 import {
   BadRequestException,
+  ForbiddenException,
   NotFoundException,
   RequestMethod,
   UnauthorizedException,
 } from '@nestjs/common';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from '../auth/auth.service';
 import { ProgramsController } from './programs.controller';
 import { ProgramsService } from './programs.service';
 
@@ -13,16 +15,39 @@ describe('ProgramsController', () => {
   let controller: ProgramsController;
   const programsService = {
     listPrograms: jest.fn(),
+    listAllPrograms: jest.fn(),
+    listProgramFeatures: jest.fn(),
     getProgramDetail: jest.fn(),
+    createProgram: jest.fn(),
+    createProgramFeature: jest.fn(),
+    updateProgram: jest.fn(),
+    updateProgramFeature: jest.fn(),
+    deleteProgram: jest.fn(),
+    deleteProgramFeature: jest.fn(),
     markSessionProgress: jest.fn(),
+  };
+
+  const authService = {
+    getSession: jest.fn(),
   };
 
   beforeEach(async () => {
     programsService.listPrograms.mockReset();
+    programsService.listAllPrograms.mockReset();
+    programsService.listProgramFeatures.mockReset();
     programsService.getProgramDetail.mockReset();
+    programsService.createProgram.mockReset();
+    programsService.createProgramFeature.mockReset();
+    programsService.updateProgram.mockReset();
+    programsService.updateProgramFeature.mockReset();
+    programsService.deleteProgram.mockReset();
+    programsService.deleteProgramFeature.mockReset();
     programsService.markSessionProgress.mockReset();
+    authService.getSession.mockReset();
 
     programsService.listPrograms.mockResolvedValue([]);
+    programsService.listAllPrograms.mockResolvedValue([]);
+    programsService.listProgramFeatures.mockResolvedValue([]);
     programsService.getProgramDetail.mockResolvedValue({
       enrollmentId: 'enrollment-1',
       enrollmentStatus: 'active',
@@ -62,6 +87,22 @@ describe('ProgramsController', () => {
         updatedAt: '2026-04-29T10:00:00.000Z',
       },
     });
+    programsService.createProgramFeature.mockResolvedValue({
+      id: 'feature-1',
+      programId: 'program-1',
+      title: 'Mentorat',
+      sortOrder: 0,
+      createdAt: '2026-04-29T10:00:00.000Z',
+      updatedAt: '2026-04-29T10:00:00.000Z',
+    });
+    programsService.updateProgramFeature.mockResolvedValue({
+      id: 'feature-1',
+      programId: 'program-1',
+      title: 'Mentorat avancé',
+      sortOrder: 1,
+      createdAt: '2026-04-29T10:00:00.000Z',
+      updatedAt: '2026-04-30T10:00:00.000Z',
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProgramsController],
@@ -70,10 +111,22 @@ describe('ProgramsController', () => {
           provide: ProgramsService,
           useValue: programsService,
         },
+        {
+          provide: AuthService,
+          useValue: authService,
+        },
       ],
     }).compile();
 
     controller = module.get<ProgramsController>(ProgramsController);
+
+    authService.getSession.mockResolvedValue({
+      profile: {
+        appUser: {
+          role: 'participant',
+        },
+      },
+    });
   });
 
   it('devrait être défini', () => {
@@ -107,10 +160,30 @@ describe('ProgramsController', () => {
   // Given un header Authorization Bearer valide
   // When GET /programs est appelé
   // Then le token est transmis au service programmes
-  it('Given un header Authorization valide, When listPrograms est appelé, Then le token est transmis au service', async () => {
+  it('Given un header Authorization valide pour un participant, When listPrograms est appelé, Then le token est transmis au service', async () => {
     await controller.listPrograms('Bearer access-token');
 
     expect(programsService.listPrograms).toHaveBeenCalledWith('access-token');
+  });
+
+  it('Given un header Authorization valide pour un admin, When listPrograms est appelé, Then la liste admin est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.listPrograms('Bearer access-token');
+
+    expect(programsService.listAllPrograms).toHaveBeenCalledTimes(1);
+  });
+
+  it('Given un header Authorization invalide, When listPrograms est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.listPrograms('Bearer ')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
   });
 
   // Given un header Authorization Bearer valide
@@ -135,12 +208,393 @@ describe('ProgramsController', () => {
     expect(programsService.listPrograms).toHaveBeenCalledWith();
   });
 
+  it('Given un payload création valide, When createProgram est appelé, Then le service createProgram est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    programsService.createProgram.mockResolvedValueOnce({
+      id: 'program-2',
+      slug: 'new-program',
+      title: 'New Program',
+      summary: 'Summary',
+      description: 'Description',
+      status: 'draft',
+      visibility: 'private',
+      createdAt: '2026-04-10T10:00:00.000Z',
+      updatedAt: '2026-04-10T10:00:00.000Z',
+    });
+
+    await controller.createProgram(
+      {
+        slug: 'new-program',
+        title: 'New Program',
+        summary: 'Summary',
+        description: 'Description',
+        status: 'draft',
+        visibility: 'private',
+      },
+      'Bearer access-token',
+    );
+
+    expect(programsService.createProgram).toHaveBeenCalledWith({
+      slug: 'new-program',
+      title: 'New Program',
+      summary: 'Summary',
+      description: 'Description',
+      status: 'draft',
+      visibility: 'private',
+    });
+  });
+
+  it('Given un utilisateur non admin, When createProgram est appelé, Then la ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.createProgram(
+        {
+          slug: 'new-program',
+          title: 'New Program',
+          summary: 'Summary',
+          description: 'Description',
+          status: 'draft',
+          visibility: 'private',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un payload création invalide admin, When createProgram est appelé, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.createProgram(
+        {
+          slug: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
   // Given un header Authorization absent
   // When GET /programs/:programId est appelé
   // Then une erreur d'authentification explicite est renvoyée
   it('Given un header Authorization absent, When getProgramDetail est appelé, Then une UnauthorizedException est renvoyée', async () => {
     await expect(
       controller.getProgramDetail('program-1'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un payload mise à jour valide, When updateProgram est appelé, Then le service updateProgram est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    programsService.updateProgram.mockResolvedValueOnce({
+      id: 'program-1',
+      slug: 'leadership-essentials',
+      title: 'Leadership Essentials',
+      summary: 'Bases du leadership.',
+      description: 'Parcours complet.',
+      status: 'published',
+      visibility: 'participants',
+      createdAt: '2026-04-10T10:00:00.000Z',
+      updatedAt: '2026-04-10T10:00:00.000Z',
+    });
+
+    await controller.updateProgram(
+      'program-1',
+      {
+        slug: 'leadership-essentials',
+        title: 'Leadership Essentials',
+        summary: 'Bases du leadership.',
+        description: 'Parcours complet.',
+        status: 'published',
+        visibility: 'participants',
+      },
+      'Bearer access-token',
+    );
+
+    expect(programsService.updateProgram).toHaveBeenCalledWith('program-1', {
+      slug: 'leadership-essentials',
+      title: 'Leadership Essentials',
+      summary: 'Bases du leadership.',
+      description: 'Parcours complet.',
+      status: 'published',
+      visibility: 'participants',
+    });
+  });
+
+  it('Given un payload mise à jour invalide, When updateProgram est appelé, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.updateProgram(
+        'program-1',
+        {
+          status: 'invalid-status',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When updateProgram est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateProgram('program-1', {
+        title: 'Programme',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un token admin valide, When patchProgram est appelé, Then la route PUT est réutilisée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.patchProgram(
+      'program-1',
+      {
+        summary: 'Résumé mis à jour',
+      },
+      'Bearer access-token',
+    );
+
+    expect(programsService.updateProgram).toHaveBeenCalledWith('program-1', {
+      summary: 'Résumé mis à jour',
+    });
+  });
+
+  it('Given un token admin valide, When deleteProgram est appelé, Then le service deleteProgram est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.deleteProgram('program-1', 'Bearer access-token'),
+    ).resolves.toBeUndefined();
+
+    expect(programsService.deleteProgram).toHaveBeenCalledWith('program-1');
+  });
+
+  it('Given un token participant valide, When deleteProgram est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.deleteProgram('program-1', 'Bearer access-token'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un header Authorization absent, When deleteProgram est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.deleteProgram('program-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un programId valide, When listProgramFeatures est appelé, Then le service listProgramFeatures est invoqué', async () => {
+    await controller.listProgramFeatures('program-1');
+
+    expect(programsService.listProgramFeatures).toHaveBeenCalledWith(
+      'program-1',
+    );
+  });
+
+  it('Given un token admin valide, When createProgramFeature est appelé, Then le service createProgramFeature est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.createProgramFeature(
+      'program-1',
+      {
+        title: 'Mentorat',
+        sortOrder: 2,
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.createProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      {
+        title: 'Mentorat',
+        sortOrder: 2,
+      },
+    );
+  });
+
+  it('Given un payload create feature invalide, When createProgramFeature est appelé, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.createProgramFeature(
+        'program-1',
+        {
+          title: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When createProgramFeature est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.createProgramFeature('program-1', {
+        title: 'Mentorat',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un token participant valide, When createProgramFeature est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.createProgramFeature(
+        'program-1',
+        {
+          title: 'Mentorat',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un token admin valide, When patchProgramFeature est appelé, Then la route PUT est réutilisée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.patchProgramFeature(
+      'program-1',
+      'feature-1',
+      {
+        title: 'Mentorat avancé',
+      },
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.updateProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      'feature-1',
+      {
+        title: 'Mentorat avancé',
+      },
+    );
+  });
+
+  it('Given un payload update feature invalide, When updateProgramFeature est appelé, Then une BadRequestException est renvoyée', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await expect(
+      controller.updateProgramFeature(
+        'program-1',
+        'feature-1',
+        {
+          title: '',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('Given un header Authorization absent, When updateProgramFeature est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.updateProgramFeature('program-1', 'feature-1', {
+        title: 'Mentorat avancé',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un token participant valide, When updateProgramFeature est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.updateProgramFeature(
+        'program-1',
+        'feature-1',
+        {
+          title: 'Mentorat avancé',
+        },
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un token admin valide, When deleteProgramFeature est appelé, Then le service deleteProgramFeature est invoqué', async () => {
+    authService.getSession.mockResolvedValueOnce({
+      profile: {
+        appUser: {
+          role: 'admin',
+        },
+      },
+    });
+
+    await controller.deleteProgramFeature(
+      'program-1',
+      'feature-1',
+      'Bearer ' + 'access-token',
+    );
+
+    expect(programsService.deleteProgramFeature).toHaveBeenCalledWith(
+      'program-1',
+      'feature-1',
+    );
+  });
+
+  it('Given un token participant valide, When deleteProgramFeature est appelé, Then une ForbiddenException est renvoyée', async () => {
+    await expect(
+      controller.deleteProgramFeature(
+        'program-1',
+        'feature-1',
+        'Bearer access-token',
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('Given un header Authorization absent, When deleteProgramFeature est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(
+      controller.deleteProgramFeature('program-1', 'feature-1'),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 

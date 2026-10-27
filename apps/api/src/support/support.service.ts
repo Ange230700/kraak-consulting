@@ -1,3 +1,5 @@
+import { ApiLocaleContext } from '../i18n/api-locale-context';
+import { apiMessage, translateApiMessage } from '../i18n/api-message';
 import {
   ForbiddenException,
   Injectable,
@@ -16,12 +18,13 @@ import type {
 } from '@kraak/contracts';
 import { Resend } from 'resend';
 import { SupabaseService } from '../supabase/supabase.service';
+import { resolveParticipantId } from '../shared/supabase-record.utils';
 import {
   type ContactTriagePlan,
   resolveContactTriagePlan,
 } from './contact-triage.config';
 
-type UserRole = 'participant' | 'admin' | 'trainer';
+type UserRole = 'participant' | 'admin' | 'trainer' | 'employee';
 
 type SessionUserContext = {
   userId: string;
@@ -37,14 +40,12 @@ type SupportRequestRow = {
   status: SupportRequestStatusValue;
   category: ContactFormDto['category'];
   assigned_to_user_id: string | null;
+  is_read: boolean;
   created_at: string;
   updated_at: string;
 };
 
-type ParticipantRow = {
-  id: string;
-};
-
+type SupportRequestWithReadDto = SupportRequestDto & { isRead: boolean };
 const allowedStatusTransitions: Record<
   SupportRequestStatusValue,
   SupportRequestStatusValue[]
@@ -55,8 +56,9 @@ const allowedStatusTransitions: Record<
   closed: [],
 };
 
-const contactNotificationFailureMessage =
-  "Le formulaire est temporairement indisponible. Veuillez utiliser l'e-mail direct ou WhatsApp indiqué sur la page contact.";
+const contactNotificationFailureMessage = apiMessage(
+  'support.contactNotificationFailed',
+);
 
 @Injectable()
 export class SupportService {
@@ -65,6 +67,7 @@ export class SupportService {
   constructor(
     private readonly configService: ConfigService,
     private readonly supabaseService: SupabaseService,
+    private readonly localeContext: ApiLocaleContext,
   ) {}
 
   async submitContact(
@@ -89,26 +92,36 @@ export class SupportService {
 
     return {
       success: true,
-      message: emailSent
-        ? 'Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.'
-        : 'Votre demande a bien été enregistrée. La notification e-mail est temporairement indisponible, mais le suivi interne reste ouvert.',
+      message: translateApiMessage(
+        this.localeContext.locale(),
+        apiMessage(
+          emailSent
+            ? 'support.contactReceived'
+            : 'support.contactReceivedWithEmailUnavailable',
+        ),
+      ),
       requestId: trackingRequest?.id,
       requestStatus: trackingRequest?.status,
     };
   }
 
-  async listSupportRequests(accessToken: string): Promise<SupportRequestDto[]> {
+  async listSupportRequests(
+    accessToken: string,
+  ): Promise<SupportRequestWithReadDto[]> {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const adminClient = this.supabaseService.getClient();
     let query = adminClient
       .from('support_request')
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (sessionUser.role === 'participant') {
+    const isPrivilegedRole = ['admin', 'employee', 'trainer'].includes(
+      sessionUser.role,
+    );
+    if (!isPrivilegedRole) {
       query = query.eq('user_id', sessionUser.userId);
     }
 
@@ -117,7 +130,7 @@ export class SupportService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les demandes de support.',
+        message: apiMessage('support.requestsLoadFailed'),
       });
     }
 
@@ -130,14 +143,13 @@ export class SupportService {
     requestId: string,
     payload: UpdateSupportRequestStatusDto,
     accessToken: string,
-  ): Promise<SupportRequestDto> {
+  ): Promise<SupportRequestWithReadDto> {
     const sessionUser = await this.resolveSessionUser(accessToken);
 
     if (sessionUser.role === 'participant') {
       throw new ForbiddenException({
         success: false,
-        message:
-          "Vous ne pouvez pas modifier le statut d'une demande de support.",
+        message: apiMessage('support.statusChangeForbidden'),
       });
     }
 
@@ -145,7 +157,7 @@ export class SupportService {
     const { data: existing, error: readError } = await adminClient
       .from('support_request')
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .eq('id', requestId)
       .maybeSingle();
@@ -153,14 +165,14 @@ export class SupportService {
     if (readError) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de lire la demande de support.',
+        message: apiMessage('support.requestReadFailed'),
       });
     }
 
     if (!existing) {
       throw new NotFoundException({
         success: false,
-        message: 'Demande de support introuvable.',
+        message: apiMessage('support.requestNotFound'),
       });
     }
 
@@ -182,14 +194,57 @@ export class SupportService {
       })
       .eq('id', requestId)
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .maybeSingle();
 
     if (updateError || !updated) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de mettre à jour le statut de la demande.',
+        message: apiMessage('support.statusUpdateFailed'),
+      });
+    }
+
+    return this.mapSupportRequest(updated as SupportRequestRow);
+  }
+
+  async markSupportRequestAsRead(
+    requestId: string,
+    accessToken: string,
+  ): Promise<SupportRequestWithReadDto> {
+    const sessionUser = await this.resolveSessionUser(accessToken);
+    const adminClient = this.supabaseService.getClient();
+
+    const isPrivilegedRole = ['admin', 'employee', 'trainer'].includes(
+      sessionUser.role,
+    );
+
+    let updateQuery = adminClient
+      .from('support_request')
+      .update({ is_read: true })
+      .eq('id', requestId);
+
+    if (!isPrivilegedRole) {
+      updateQuery = updateQuery.eq('user_id', sessionUser.userId);
+    }
+
+    const { data: updated, error: updateError } = await updateQuery
+      .select(
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
+      )
+      .maybeSingle();
+
+    if (updateError) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('support.markReadFailed'),
+      });
+    }
+
+    if (!updated) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('support.requestNotFound'),
       });
     }
 
@@ -199,7 +254,7 @@ export class SupportService {
   private async createTrackedSupportRequest(
     dto: ContactFormDto,
     accessToken: string,
-  ): Promise<SupportRequestDto> {
+  ): Promise<SupportRequestWithReadDto> {
     const sessionUser = await this.resolveSessionUser(accessToken);
     const participantId = await this.resolveParticipantId(sessionUser.userId);
     const adminClient = this.supabaseService.getClient();
@@ -215,15 +270,14 @@ export class SupportService {
         status: 'open',
       })
       .select(
-        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, created_at, updated_at',
+        'id, user_id, participant_id, subject, message, status, category, assigned_to_user_id, is_read, created_at, updated_at',
       )
       .maybeSingle();
 
     if (error || !data) {
       throw new InternalServerErrorException({
         success: false,
-        message:
-          'Votre demande a été reçue mais son suivi est indisponible pour le moment.',
+        message: apiMessage('support.trackingUnavailable'),
       });
     }
 
@@ -240,7 +294,7 @@ export class SupportService {
     if (authError || !authData.user) {
       throw new UnauthorizedException({
         success: false,
-        message: 'La session est invalide ou expirée.',
+        message: apiMessage('auth.sessionInvalidOrExpired'),
       });
     }
 
@@ -254,7 +308,7 @@ export class SupportService {
     if (appUserError || !appUser) {
       throw new UnauthorizedException({
         success: false,
-        message: 'Impossible de résoudre le profil utilisateur courant.',
+        message: apiMessage('support.currentUserProfileResolveFailed'),
       });
     }
 
@@ -265,24 +319,14 @@ export class SupportService {
   }
 
   private async resolveParticipantId(userId: string): Promise<string | null> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('participant')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de résoudre le participant associé.',
-      });
-    }
-
-    return (data as ParticipantRow | null)?.id ?? null;
+    return resolveParticipantId(
+      this.supabaseService,
+      userId,
+      apiMessage('support.participantResolveFailed'),
+    );
   }
 
-  private mapSupportRequest(row: SupportRequestRow): SupportRequestDto {
+  private mapSupportRequest(row: SupportRequestRow): SupportRequestWithReadDto {
     return {
       id: row.id,
       userId: row.user_id,
@@ -292,6 +336,7 @@ export class SupportService {
       status: row.status,
       category: row.category,
       assignedToUserId: row.assigned_to_user_id,
+      isRead: row.is_read,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -414,7 +459,10 @@ class BadTransitionException extends ForbiddenException {
   ) {
     super({
       success: false,
-      message: `Transition de statut invalide: ${fromStatus} -> ${toStatus}.`,
+      message: apiMessage('support.invalidStatusTransition', {
+        fromStatus,
+        toStatus,
+      }),
     });
   }
 }

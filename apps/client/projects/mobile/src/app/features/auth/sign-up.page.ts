@@ -8,6 +8,10 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { IonButton } from '@ionic/angular/standalone';
 import { logDebugError } from '@kraak/api-client';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import {
   MOBILE_AUTH_CALLBACK_URL,
@@ -26,12 +30,19 @@ interface SignUpFormModel {
 @Component({
   selector: 'kraak-sign-up-page',
   standalone: true,
-  imports: [PageShellComponent, ReactiveFormsModule, RouterLink, IonButton],
+  imports: [
+    PageShellComponent,
+    ReactiveFormsModule,
+    RouterLink,
+    IonButton,
+    KraakTranslatePipe,
+  ],
   templateUrl: './sign-up.page.html',
 })
 export default class SignUpPage {
   private readonly authService = inject(MobileAuthService);
   private readonly router = inject(Router);
+  private readonly i18n = inject(KraakI18nService);
 
   readonly form = new FormGroup<SignUpFormModel>({
     firstName: new FormControl('', {
@@ -100,7 +111,7 @@ export default class SignUpPage {
       this.errorMessage.set(
         resolveAuthErrorMessage(
           error,
-          'Impossible de cr\u00E9er votre compte pour le moment.',
+          this.i18n.translate('mobile.auth.signUp.feedback.submitFailure'),
         ),
       );
     } finally {

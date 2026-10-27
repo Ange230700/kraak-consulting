@@ -1,13 +1,38 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-10-22
+source_of_truth: true
+---
+
 # ARC-09 — Inversion `main` ↔ `staging` : staging devient la branche d'intégration
 
-| Champ           | Valeur                                                                               |
-| --------------- | ------------------------------------------------------------------------------------ |
-| **Statut**      | Acceptée                                                                             |
-| **Date**        | 2026-05-03                                                                           |
-| **Auteurs**     | Équipe KRAAK                                                                         |
-| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag), ARC-08 (environnement staging) |
-| **Liée à**      | `docs/runbooks/STAGING_PROMOTION.md`, `docs/runbooks/RELEASE_PROD.md`, `AGENTS.md`   |
-| **Remplace**    | Sections « branchage » de ARC-02 et § 2.1/2.2 de ARC-08                              |
+## Table des matières
+
+- [ARC-09 — Inversion main ↔ staging : staging devient la branche d'intégration](#arc-09-inversion-main-staging-staging-devient-la-branche-dintegration)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [2.1 Règles de branchage (remplace ARC-02 § Workflow Git)](#21-regles-de-branchage-remplace-arc-02-workflow-git)
+    - [2.2 Flux complet](#22-flux-complet)
+    - [2.3 Protections de branche (appliquées par script)](#23-protections-de-branche-appliquees-par-script)
+      - [staging (intégration)](#staging-integration)
+      - [main (release)](#main-release)
+    - [2.4 Check supprimé sur main](#24-check-supprime-sur-main)
+  - [3 · Conséquences](#3-consequences)
+    - [Positives](#positives)
+    - [Négatives / à surveiller](#negatives-a-surveiller)
+    - [Migration](#migration)
+  - [4 · Conditions de levée / révision](#4-conditions-de-levee-revision)
+  - [5 · Références](#5-references)
+
+| Champ           | Valeur                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------- |
+| **Statut**      | Acceptée                                                                                |
+| **Date**        | 2026-05-03                                                                              |
+| **Auteurs**     | Équipe KRAAK                                                                            |
+| **Dépendances** | ARC-02 (workflow Git), ARC-07 (release prod par tag), ARC-08 (environnement staging)    |
+| **Liée à**      | `docs/operations/STAGING_VALIDATION.md`, `docs/operations/RELEASE_PROD.md`, `AGENTS.md` |
+| **Remplace**    | Sections « branchage » de ARC-02 et § 2.1/2.2 de ARC-08                                 |
 
 ---
 
@@ -24,8 +49,8 @@ chaque tag SemVer le seul déclencheur de release.
    atterrir alors que la prod attendait juste un tag, ce qui rendait `main`
    à la fois branche d'intégration ET point d'ancrage des tags — sans
    séparation claire des deux rôles.
-2. **Le check requis `Vercel – kraak-consulting` (Production) n'est plus
-   émis** depuis que les déploiements Vercel git-triggered ont été désactivés
+2. **Le check requis `Render – kraak-consulting` (Production) n'est plus
+   émis** depuis que les déploiements Render git-triggered ont été désactivés
    (ARC-07). Cela bloque mécaniquement tout merge sur `main` (`Missing
 successful active Production – kraak-consulting deployment`), même quand
    tous les autres checks sont verts.
@@ -41,7 +66,7 @@ KRAAK **inverse les rôles** des deux branches longues posés par ARC-08 :
 
 | Branche   | Rôle                                                                                                         |
 | --------- | ------------------------------------------------------------------------------------------------------------ |
-| `staging` | **Branche d'intégration longue.** Toutes les branches courtes en sont issues et y sont mergées par PR.       |
+| `staging` | **Branche d'intégration longue.** Toutes les branches courtes en sont issues et y sont mergée par PR.        |
 | `main`    | **Branche de release uniquement.** Avance par PR depuis `staging` ; sert d'ancrage aux tags SemVer (ARC-07). |
 
 ### 2.1 Règles de branchage (remplace ARC-02 § Workflow Git)
@@ -58,7 +83,7 @@ KRAAK **inverse les rôles** des deux branches longues posés par ARC-08 :
 ### 2.2 Flux complet
 
 ```text
-feat/* ──► PR ──► staging ──► déploiement staging (Render + Vercel + Supabase)
+feat/* ──► PR ──► staging ──► déploiement staging (Render + Supabase)
                      │
                      ▼
             validation manuelle + E2E
@@ -90,21 +115,29 @@ gitGraph LR:
 
 Le script `scripts/github/update-branch-protection.mjs` applique les règles
 ci-dessous via `gh api`. Toute modification doit passer par ce script (et
-non par l'UI GitHub) pour rester reproductible.
+non par l'UI GitHub) pour rester reproductible. L'option `--staging-only`
+permet d'appliquer uniquement la protection de `staging`.
 
 #### `staging` (intégration)
 
-| Option                             |                  Valeur                   | Justification                                                          |
-| ---------------------------------- | :---------------------------------------: | ---------------------------------------------------------------------- |
-| `lock_branch`                      |                  `false`                  | Branche d'écriture via PR.                                             |
-| `required_linear_history`          |                  `true`                   | Rebase only (cohérent avec ARC-02 résiduel).                           |
-| `allow_force_pushes`               |                  `false`                  | Préserve l'historique partagé.                                         |
-| `allow_deletions`                  |                  `false`                  | Branche permanente.                                                    |
-| `required_conversation_resolution` |                  `true`                   | Pas de merge avec discussion ouverte.                                  |
-| `required_pull_request_reviews`    |                 0 review                  | Solo dev ; 1 review obligatoire dès qu'un second mainteneur rejoint.   |
-| `enforce_admins`                   |                  `false`                  | Permet un override admin documenté en cas d'incident.                  |
-| `required_status_checks.strict`    |                  `true`                   | La PR doit être à jour avec `staging`.                                 |
-| `required_status_checks.contexts`  | CI complète + `Vercel – kraak-consulting` | La staging Preview est obligatoire (cf. ARC-11, projet Vercel unique). |
+| Option                             |            Valeur             | Justification                                                                        |
+| ---------------------------------- | :---------------------------: | ------------------------------------------------------------------------------------ |
+| `lock_branch`                      |            `false`            | Branche d'écriture via PR.                                                           |
+| `required_linear_history`          |            `true`             | Rebase only (cohérent avec ARC-02 résiduel).                                         |
+| `allow_force_pushes`               |            `false`            | Préserve l'historique partagé.                                                       |
+| `allow_deletions`                  |            `false`            | Branche permanente.                                                                  |
+| `required_conversation_resolution` |            `true`             | Pas de merge avec discussion ouverte.                                                |
+| `required_pull_request_reviews`    | 0 approbation, PR obligatoire | Modèle mainteneur solo ; passer à 1 approbation dès qu'un second mainteneur rejoint. |
+| `enforce_admins`                   |            `true`             | La protection s'applique aussi aux administrateurs.                                  |
+| `required_status_checks.strict`    |            `true`             | La PR doit être à jour avec `staging`.                                               |
+| `required_status_checks.contexts`  |   CI complète + SonarCloud    | Tous les jobs CI et les analyses SonarCloud sont requis.                             |
+
+Les services Render staging restent configurés avec `autoDeploy: true` sur la
+branche `staging` dans [`render.yaml`](../../render.yaml). Render déploie après
+la fusion d'une PR conforme ; le déploiement ne peut donc pas être un check
+préalable à cette même fusion. Les checks requis sont les jobs CI et SonarCloud
+qui s'exécutent sur la PR, puis les commits fusionnés déclenchent le déploiement
+automatique habituel.
 
 #### `main` (release)
 
@@ -118,13 +151,13 @@ non par l'UI GitHub) pour rester reproductible.
 | `required_pull_request_reviews`    |                     0 review                     | Cohérent avec `staging` ; à monter à 1 dès second mainteneur.         |
 | `enforce_admins`                   |                     `false`                      | Permet un hot-fix tag de release contrôlé.                            |
 | `required_status_checks.strict`    |                      `true`                      | La PR de release doit être à jour avec `main`.                        |
-| `required_status_checks.contexts`  | CI complète **sans** `Vercel – kraak-consulting` | La prod n'est plus git-triggered (ARC-07) ; ce check n'est plus émis. |
+| `required_status_checks.contexts`  | CI complète **sans** `Render – kraak-consulting` | La prod n'est plus git-triggered (ARC-07) ; ce check n'est plus émis. |
 
 ### 2.4 Check supprimé sur `main`
 
-Le contexte `Vercel – kraak-consulting` est **retiré** des
+Le contexte `Render – kraak-consulting` est **retiré** des
 `required_status_checks` de `main`. Justification : depuis ARC-07, la prod
-Vercel n'est plus déployée par push git mais par job manuel sur tag. Le
+Render n'est plus déployée par push git mais par job manuel sur tag. Le
 check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
 
 ---
@@ -137,7 +170,7 @@ check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
   (`main`).
 - `main` redevient une branche **stable et rare** : un commit = une release.
 - Le script de protection rend le modèle reproductible et auditable.
-- Les PR ne sont plus bloquées par un check Vercel Production fantôme.
+- Les PR ne sont plus bloquées par un check Render Production fantôme.
 
 ### Négatives / à surveiller
 
@@ -147,6 +180,10 @@ check n'est donc plus émis, et le maintenir bloquerait toute PR de release.
   un `git checkout -b feat/x main` casserait la chaîne d'intégration.
 - La PR de release `staging → main` doit être traitée comme un livrable
   (titre clair, changelog, vérification finale avant tag).
+- Une promotion est bloquée si `main` n'est pas un ancêtre de `staging`.
+  L'état de divergence courant, son historique commun et la procédure
+  reproductible de vérification sont consignés dans
+  [`STAGING_VALIDATION.md`](../operations/STAGING_VALIDATION.md#81-controle-de-la-lignee-des-branches).
 
 ### Migration
 
@@ -183,5 +220,5 @@ Cette décision est révisable si :
 - [ARC-08 — Environnement staging et branche longue `staging`](./ARC-08-staging-environment.md)
   (§ 2.1 et 2.2 remplacés par cette ADR)
 - [`scripts/github/update-branch-protection.mjs`](../../scripts/github/update-branch-protection.mjs)
-- [Runbook — Promotion staging](../runbooks/STAGING_PROMOTION.md)
-- [Runbook — Release prod](../runbooks/RELEASE_PROD.md)
+- [Runbook — Promotion staging](../operations/STAGING_VALIDATION.md)
+- [Runbook — Release prod](../operations/RELEASE_PROD.md)

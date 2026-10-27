@@ -1,13 +1,22 @@
 import {
+  BadRequestException,
   Controller,
   Get,
+  Body,
+  Delete,
   Param,
   Query,
   Post,
+  Put,
+  Patch,
   HttpCode,
   HttpStatus,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
+  ApiBody,
   ApiTags,
   ApiOperation,
   ApiResponse,
@@ -17,8 +26,17 @@ import {
 import type {
   ResourceAudienceValue,
   ResourceThemeValue,
+  ResourceDto,
 } from '@kraak/contracts';
+import { AuthService } from '../auth/auth.service';
+import { extractAccessToken } from '../auth/auth.dto';
+import { requireAdminAccess } from '../shared/admin-access.utils';
+import {
+  validateCreateResourcePayload,
+  validateUpdateResourcePayload,
+} from './resources.dto';
 import { ResourcesService } from './resources.service';
+import { apiMessage } from '../i18n/api-message';
 
 const RESOURCE_THEME_ENUM = [
   'training',
@@ -37,6 +55,32 @@ const RESOURCE_AUDIENCE_ENUM = [
 const RESOURCE_TYPE_ENUM = ['link', 'file', 'video', 'document'];
 const PUBLICATION_STATUS_ENUM = ['draft', 'published', 'archived'];
 
+const resourceTypedProperties = {
+  resourceType: {
+    type: 'string',
+    enum: RESOURCE_TYPE_ENUM,
+  },
+  resourceTheme: {
+    type: 'string',
+    enum: RESOURCE_THEME_ENUM,
+  },
+  resourceAudience: {
+    type: 'string',
+    enum: RESOURCE_AUDIENCE_ENUM,
+  },
+  url: { type: 'string', nullable: true },
+  filePath: { type: 'string', nullable: true },
+  status: {
+    type: 'string',
+    enum: PUBLICATION_STATUS_ENUM,
+  },
+  publishedAt: {
+    type: 'string',
+    format: 'date-time',
+    nullable: true,
+  },
+};
+
 const RESOURCE_SCHEMA = {
   type: 'object',
   properties: {
@@ -45,29 +89,7 @@ const RESOURCE_SCHEMA = {
     cohortId: { type: 'string', nullable: true },
     title: { type: 'string' },
     description: { type: 'string', nullable: true },
-    resourceType: {
-      type: 'string',
-      enum: RESOURCE_TYPE_ENUM,
-    },
-    resourceTheme: {
-      type: 'string',
-      enum: RESOURCE_THEME_ENUM,
-    },
-    resourceAudience: {
-      type: 'string',
-      enum: RESOURCE_AUDIENCE_ENUM,
-    },
-    url: { type: 'string', nullable: true },
-    filePath: { type: 'string', nullable: true },
-    status: {
-      type: 'string',
-      enum: PUBLICATION_STATUS_ENUM,
-    },
-    publishedAt: {
-      type: 'string',
-      format: 'date-time',
-      nullable: true,
-    },
+    ...resourceTypedProperties,
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },
   },
@@ -93,10 +115,36 @@ const apiErrorSchema = {
   },
 };
 
+const createResourceBodySchema = {
+  type: 'object',
+  required: [
+    'title',
+    'resourceType',
+    'resourceTheme',
+    'resourceAudience',
+    'status',
+  ],
+  properties: {
+    programId: { type: 'string', nullable: true },
+    cohortId: { type: 'string', nullable: true },
+    title: { type: 'string' },
+    description: { type: 'string', nullable: true },
+    ...resourceTypedProperties,
+  },
+};
+
+const updateResourceBodySchema = {
+  type: 'object',
+  properties: createResourceBodySchema.properties,
+};
+
 @ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
-  constructor(private readonly resourcesService: ResourcesService) {}
+  constructor(
+    private readonly resourcesService: ResourcesService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -150,7 +198,31 @@ export class ResourcesController {
     @Query('programId') programId?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @Headers('authorization') authorizationHeader?: string,
   ) {
+    if (authorizationHeader) {
+      const accessToken = extractAccessToken(authorizationHeader);
+
+      if (!accessToken.valid) {
+        throw new UnauthorizedException({
+          success: false,
+          message: accessToken.error,
+        });
+      }
+
+      const session = await this.authService.getSession(accessToken.data);
+
+      if (session.profile.appUser.role === 'admin') {
+        return this.resourcesService.listAllResources({
+          resourceTheme,
+          resourceAudience,
+          programId,
+          page,
+          limit,
+        });
+      }
+    }
+
     return this.resourcesService.listResources({
       resourceTheme,
       resourceAudience,
@@ -158,6 +230,96 @@ export class ResourcesController {
       page,
       limit,
     });
+  }
+
+  @Post()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Create a resource' })
+  @ApiBody({ schema: createResourceBodySchema })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Resource created successfully',
+    schema: RESOURCE_SCHEMA,
+  })
+  async createResource(
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ResourceDto> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+
+    const validated = validateCreateResourcePayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: apiMessage('validation.invalidPayload'),
+        errors: validated.errors,
+      });
+    }
+
+    return this.resourcesService.createResource(validated.data);
+  }
+
+  @Put(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Update a resource' })
+  @ApiBody({ schema: updateResourceBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Resource updated successfully',
+    schema: RESOURCE_SCHEMA,
+  })
+  async updateResource(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ResourceDto> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+
+    const validated = validateUpdateResourcePayload(body);
+
+    if (!validated.valid) {
+      throw new BadRequestException({
+        success: false,
+        message: apiMessage('validation.invalidPayload'),
+        errors: validated.errors,
+      });
+    }
+
+    return this.resourcesService.updateResource(id, validated.data);
+  }
+
+  @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Update a resource (compatibility PATCH)' })
+  @ApiBody({ schema: updateResourceBodySchema })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Resource updated successfully',
+    schema: RESOURCE_SCHEMA,
+  })
+  async patchResource(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<ResourceDto> {
+    return this.updateResource(id, body, authorizationHeader);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Archive a resource' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Resource archived successfully',
+  })
+  async deleteResource(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    await requireAdminAccess(this.authService, authorizationHeader);
+    await this.resourcesService.deleteResource(id);
   }
 
   @Get(':id')

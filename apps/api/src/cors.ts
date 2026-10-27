@@ -37,9 +37,9 @@ function compilePatterns(value: string | undefined): RegExp[] {
 /**
  * Construit la configuration CORS de l'API en combinant :
  *   - une liste d'origines exactes (`CORS_ALLOWED_ORIGINS`),
- *   - une liste d'expressions régulières (`CORS_ALLOWED_ORIGIN_PATTERNS`)
- *     utilisée notamment pour autoriser les déploiements de prévisualisation
- *     Vercel dont l'URL change à chaque commit.
+ *   - une liste optionnelle d'expressions régulières
+ *     (`CORS_ALLOWED_ORIGIN_PATTERNS`) pour les familles d'origines
+ *     explicitement maîtrisées.
  *
  * Si aucune variable n'est définie, la politique reste permissive
  * (utile en local et pour les outils côté serveur).

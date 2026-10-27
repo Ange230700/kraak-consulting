@@ -1,0 +1,117 @@
+<div class="min-h-dvh bg-[#f3f6f8] pb-16 sm:pb-20 lg:pb-24">
+  <section
+    class="relative overflow-hidden bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_24px_64px_-32px_rgba(18,43,74,0.55)] lg:mx-4 lg:mt-4 lg:rounded-[2rem]"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-cyan-300/15 blur-3xl"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-white/8 blur-3xl"
+    ></div>
+
+    <div
+      class="relative mx-auto w-full max-w-6xl px-4 pt-6 pb-10 lg:px-6 lg:pt-7 lg:pb-14"
+    >
+      <header class="flex flex-wrap items-center justify-between gap-5">
+        <a
+          routerLink="/participant/dashboard"
+          class="focus-visible:ring-offset-brand-navy flex items-center gap-3 rounded-full text-white no-underline outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2"
+          [attr.aria-label]="'web.participant.shell.brandAria' | kraakTranslate"
+        >
+          <span
+            class="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_1px_2px_rgba(18,55,105,0.12)]"
+          >
+            <img
+              src="/kraak_symbol.svg"
+              alt=""
+              width="36"
+              height="36"
+              loading="eager"
+              decoding="async"
+              class="h-9 w-9"
+            />
+          </span>
+
+          <span class="hidden sm:block">
+            <span class="block text-base leading-none font-semibold">
+              KRAAK Consulting
+            </span>
+            <span class="mt-1 block text-xs text-white/60">
+              {{ 'web.participant.shell.participantArea' | kraakTranslate }}
+            </span>
+          </span>
+        </a>
+
+        <div
+          class="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 p-1.5 pl-1.5 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_12px_24px_rgba(0,0,0,0.06)] backdrop-blur-[48px] sm:pl-4"
+        >
+          <div class="hidden text-right sm:block">
+            <p class="text-sm font-medium text-white">
+              {{ displayName() }}
+            </p>
+            @if (currentProfile()?.appUser?.email; as email) {
+              <p class="mt-0.5 max-w-48 truncate text-xs text-white/56">
+                {{ email }}
+              </p>
+            }
+          </div>
+
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/16 bg-white/14 text-sm font-semibold text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+            aria-hidden="true"
+          >
+            {{ initials() }}
+          </span>
+
+          <button
+            type="button"
+            class="motion-hover-lift motion-press flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/12 bg-white/6 text-white/72 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl transition hover:bg-white/14 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none"
+            [attr.aria-label]="'web.participant.shell.logout' | kraakTranslate"
+            (click)="logout()"
+          >
+            <i class="pi pi-sign-out text-sm" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <nav
+        [attr.aria-label]="
+          'web.participant.shell.navigationAria' | kraakTranslate
+        "
+        class="mx-auto mt-10 flex w-full max-w-[calc(100%_-_1rem)] flex-col items-center gap-2 rounded-3xl border border-white/8 bg-white/16 p-2 shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_12px_20px_rgba(0,0,0,0.06)] backdrop-blur-[48px] md:max-w-[55rem] md:flex-row md:rounded-full"
+      >
+        <a
+          routerLink="/participant/dashboard"
+          routerLinkActive="bg-white/20 text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)]"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
+        >
+          {{ 'web.participant.shell.dashboard' | kraakTranslate }}
+        </a>
+
+        <a
+          routerLink="/participant/programmes"
+          routerLinkActive="bg-white/20 text-white shadow-[0_2px_5px_rgba(255,255,255,0.06)_inset,0_8px_18px_rgba(0,0,0,0.06)]"
+          ariaCurrentWhenActive="page"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
+        >
+          {{ 'web.participant.shell.programs' | kraakTranslate }}
+        </a>
+
+        <a
+          [routerLink]="supportPath()"
+          class="motion-press flex h-10 w-full items-center justify-center rounded-full px-5 text-sm font-medium text-white/64 transition-all select-none hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:outline-none md:flex-1"
+        >
+          {{ 'web.participant.shell.support' | kraakTranslate }}
+        </a>
+      </nav>
+    </div>
+  </section>
+
+  <div class="mx-auto w-full max-w-6xl px-4 py-10 lg:px-6 lg:py-14">
+    <router-outlet />
+  </div>
+</div>

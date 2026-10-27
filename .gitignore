@@ -13,8 +13,13 @@ out/
 
 # Environnement
 .env
-.env.staging
-.env.prod
+.env.*
+.envrc
+.envrc.local
+!.env.example
+!.env.*.example
+!**/.env.example
+!**/.env.*.example
 
 # IDE / Éditeurs
 .idea/
@@ -33,6 +38,7 @@ desktop.ini
 # Tests / Couverture
 coverage/
 .nyc_output/
+.reports/
 
 # Playwright
 test-results/
@@ -58,6 +64,7 @@ pnpm-debug.log*
 # Divers
 *.tgz
 .cache/
+.artifacts/
 tmp/
 
 # Playwright MCP
@@ -65,6 +72,7 @@ tmp/
 
 # SonarQube / SonarLint (cache local, ne pas committer)
 .scannerwork/
+.scannerwork-isolated-*/
 .sonarlint/connectedMode.local.json
 
 
@@ -74,3 +82,28 @@ apps/client/android/
 
 .vercel
 .env*.local
+
+# Secrets / credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cert
+
+# Local security scan outputs
+hardcoded-audit*.txt
+*secrets*.txt
+docs/generated/evidence/security/*.raw.json
+docs/generated/evidence/security/*.exitcode
+
+# Local repository audit outputs
+apps/client/lint-web.json
+.extract-keys.cjs
+.rank-coverage.cjs
+.keys-batch*.json
+fields.json
+items.json
+pr_body.txt
+sonar-tree-tmp.json
+test-output.txt

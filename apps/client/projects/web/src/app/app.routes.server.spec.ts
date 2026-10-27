@@ -1,63 +1,40 @@
+// apps\client\projects\web\src\app\app.routes.server.spec.ts
+
 import { RenderMode } from '@angular/ssr';
 
 import { serverRoutes } from './app.routes.server';
-import { seoPages } from './seo/site-seo';
+import { localizedPublicPrerenderPaths } from './routing/localized-public-routes';
 
 describe('Web server routes', () => {
-  const frozenPrerenderPaths = [
-    ...seoPages.map((page) => page.path),
-    '401',
-    '403',
-    '404',
-    '500',
-  ];
-
-  it('Given the frozen vitrine surface, When server routes are inspected, Then the prerender list exactly matches public pages and support status pages', () => {
+  it('Given localized public routes, When server routes are inspected, Then every French and English route is prerendered deterministically', () => {
     const prerenderPaths = serverRoutes
       .filter((route) => route.renderMode === RenderMode.Prerender)
       .map((route) => route.path);
 
-    expect(prerenderPaths).toEqual(frozenPrerenderPaths);
+    expect(prerenderPaths).toEqual([...localizedPublicPrerenderPaths]);
+    expect(prerenderPaths).toContain('fr/services');
+    expect(prerenderPaths).toContain('en/services');
+    expect(prerenderPaths).toContain('fr/404');
+    expect(prerenderPaths).toContain('en/404');
+    expect(new Set(prerenderPaths).size).toBe(prerenderPaths.length);
   });
 
-  it('Given the public support surface, When server routes are inspected, Then /401 is prerendered', () => {
-    const unauthorizedRoute = serverRoutes.find(
-      (route) => route.path === '401',
-    );
+  it('Given private and auth routes, When server routes are inspected, Then they keep their client render mode and unlocalized paths', () => {
+    const clientPaths = serverRoutes
+      .filter((route) => route.renderMode === RenderMode.Client)
+      .map((route) => route.path);
 
-    expect(unauthorizedRoute).toBeDefined();
-    expect(unauthorizedRoute?.renderMode).toBe(RenderMode.Prerender);
+    expect(clientPaths).toEqual([
+      'connexion',
+      'inscription',
+      'mot-de-passe-oublie',
+      'auth/reset',
+      'participant',
+      'participant/**',
+    ]);
   });
 
-  it('Given the public support surface, When server routes are inspected, Then /403 is prerendered', () => {
-    const forbiddenRoute = serverRoutes.find((route) => route.path === '403');
-
-    expect(forbiddenRoute).toBeDefined();
-    expect(forbiddenRoute?.renderMode).toBe(RenderMode.Prerender);
-  });
-
-  it('Given the public support surface, When server routes are inspected, Then /404 is prerendered with the marketing pages', () => {
-    const notFoundRoute = serverRoutes.find((route) => route.path === '404');
-
-    expect(notFoundRoute).toBeDefined();
-    expect(notFoundRoute?.renderMode).toBe(RenderMode.Prerender);
-  });
-
-  it('Given the public support surface, When server routes are inspected, Then /500 is prerendered', () => {
-    const serverErrorRoute = serverRoutes.find((route) => route.path === '500');
-
-    expect(serverErrorRoute).toBeDefined();
-    expect(serverErrorRoute?.renderMode).toBe(RenderMode.Prerender);
-  });
-
-  it('Given unknown routes, When server routes are inspected, Then dynamic fallback remains available', () => {
-    const wildcardRoute = serverRoutes.find((route) => route.path === '**');
-
-    expect(wildcardRoute).toBeDefined();
-    expect(wildcardRoute?.renderMode).toBe(RenderMode.Server);
-  });
-
-  it('Given the server route table, When it is inspected, Then only the wildcard remains dynamic', () => {
+  it('Given unknown routes, When server routes are inspected, Then dynamic fallback remains available only for the wildcard', () => {
     const dynamicRoutes = serverRoutes.filter(
       (route) => route.renderMode === RenderMode.Server,
     );

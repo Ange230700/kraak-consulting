@@ -1,4 +1,6 @@
-import { NgClass, NgStyle } from '@angular/common';
+// apps\client\projects\web\src\app\features\contact\contact.page.ts
+
+import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import {
@@ -8,9 +10,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import type { ContactFormDto } from '@kraak/contracts';
 import { logDebugError } from '@kraak/api-client';
-import { ButtonDirective } from 'primeng/button';
+import { ButtonDirective, Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
@@ -22,12 +25,18 @@ import {
   CONTACT_PHONE_DISPLAY,
   CONTACT_PHONE_HREF,
   CONTACT_VISUAL_URL,
+  WHATSAPP_CONTACT_HREF,
   KRAAK_SOCIAL_LINKS,
-  buildHeroBackgroundStyle,
   type SocialLink,
 } from '../../shared/brand/brand-constants';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { ContactService } from './contact.service';
 
 type ServiceType =
@@ -47,12 +56,57 @@ interface ServiceOption {
   fallbackWorkflow: string;
 }
 
-const GENERIC_CONTACT_ERROR_MESSAGE =
-  'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.';
+interface ServiceOptionDefinition {
+  readonly translationId:
+    | 'training'
+    | 'project'
+    | 'immigration'
+    | 'business'
+    | 'partnership'
+    | 'other';
+  readonly value: ServiceType;
+  readonly category: ContactFormDto['category'];
+  readonly triagePath: string;
+}
 
-const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/services-coaching.avif',
-);
+const SERVICE_OPTION_DEFINITIONS: readonly ServiceOptionDefinition[] = [
+  {
+    translationId: 'training',
+    value: 'formation',
+    category: 'training',
+    triagePath: 'formation/orientation-public',
+  },
+  {
+    translationId: 'project',
+    value: 'project',
+    category: 'project_management',
+    triagePath: 'conseil/gestion-de-projets',
+  },
+  {
+    translationId: 'immigration',
+    value: 'immigration',
+    category: 'immigration',
+    triagePath: 'conseil/mobilite-internationale',
+  },
+  {
+    translationId: 'business',
+    value: 'business',
+    category: 'business',
+    triagePath: 'partenariats/organisations-et-entreprises',
+  },
+  {
+    translationId: 'partnership',
+    value: 'program',
+    category: 'partnership',
+    triagePath: 'partenariats/institutionnel',
+  },
+  {
+    translationId: 'other',
+    value: 'other',
+    category: 'other',
+    triagePath: 'intake/general',
+  },
+];
 
 @Component({
   selector: 'kraak-contact-page',
@@ -60,13 +114,17 @@ const CONTACT_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
   imports: [
     ReactiveFormsModule,
     NgClass,
-    NgStyle,
     ButtonDirective,
+    Button,
     InputText,
     Textarea,
     Message,
+    RouterLink,
     CtaBanner,
     PublicConversionTrackingDirective,
+    RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
+    KraakTranslatePipe,
   ],
   templateUrl: './contact.page.html',
   styles: [
@@ -84,67 +142,40 @@ export default class ContactPage implements OnInit, OnDestroy {
   protected readonly contactEmailHref = `mailto:${CONTACT_EMAIL}`;
   protected readonly contactPhone = CONTACT_PHONE_DISPLAY;
   protected readonly contactPhoneHref = CONTACT_PHONE_HREF;
-  protected readonly heroBackgroundStyle = CONTACT_HERO_BACKGROUND_STYLE;
 
   private readonly contactService = inject(ContactService);
   private readonly gsapService = inject(GsapAnimationsService);
   private readonly analyticsService = inject(AnalyticsService);
+  private readonly i18n = inject(KraakI18nService);
 
-  protected readonly serviceOptions: ServiceOption[] = [
-    {
-      label: 'Formation',
-      value: 'formation',
-      category: 'training',
-      triagePath: 'formation/orientation-public',
-      responseWorkflow: 'orientation formation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Gestion de projets',
-      value: 'project',
-      category: 'project_management',
-      triagePath: 'conseil/gestion-de-projets',
-      responseWorkflow: 'cadrage projet sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Conseil en immigration',
-      value: 'immigration',
-      category: 'immigration',
-      triagePath: 'conseil/mobilite-internationale',
-      responseWorkflow: 'orientation mobilité sans dépôt de dossier sensible',
-      fallbackWorkflow: 'WhatsApp ou e-mail direct',
-    },
-    {
-      label: 'Solutions entreprises',
-      value: 'business',
-      category: 'business',
-      triagePath: 'partenariats/organisations-et-entreprises',
-      responseWorkflow: 'qualification organisation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct',
-    },
-    {
-      label: 'Partenariat',
-      value: 'program',
-      category: 'partnership',
-      triagePath: 'partenariats/institutionnel',
-      responseWorkflow: 'qualification partenariat sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-    {
-      label: 'Autre demande',
-      value: 'other',
-      category: 'other',
-      triagePath: 'intake/general',
-      responseWorkflow: 'triage général puis réorientation sous 48h ouvrées',
-      fallbackWorkflow: 'e-mail direct ou WhatsApp',
-    },
-  ];
+  protected get serviceOptions(): readonly ServiceOption[] {
+    this.i18n.locale();
+
+    return SERVICE_OPTION_DEFINITIONS.map((definition) => {
+      const translationPrefix =
+        'web.contact.form.serviceOptions.' + definition.translationId;
+
+      return {
+        value: definition.value,
+        category: definition.category,
+        triagePath: definition.triagePath,
+        label: this.i18n.translate(translationPrefix + '.label'),
+        responseWorkflow: this.i18n.translate(
+          translationPrefix + '.responseWorkflow',
+        ),
+        fallbackWorkflow: this.i18n.translate(
+          translationPrefix + '.fallbackWorkflow',
+        ),
+      };
+    });
+  }
+
+  protected get helpLabelSeparator(): string {
+    return this.i18n.locale() === 'fr-CI' ? ' :' : ':';
+  }
 
   protected readonly socialLinks: readonly SocialLink[] = KRAAK_SOCIAL_LINKS;
-  protected readonly whatsappLink =
-    KRAAK_SOCIAL_LINKS.find((social) => social.label === 'WhatsApp')?.href ??
-    '';
+  protected readonly whatsappLink = WHATSAPP_CONTACT_HREF;
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -235,22 +266,39 @@ export default class ContactPage implements OnInit, OnDestroy {
       },
       error: (errorResponse: HttpErrorResponse) => {
         this.loading.set(false);
-        const extractedErrors = this.extractApiErrors(errorResponse);
-        this.apiErrors.set(extractedErrors);
+        const resolvedErrors = this.resolveApiErrors(errorResponse);
+        this.apiErrors.set(resolvedErrors.messages);
         this.trackContactSubmitFailure('api', selectedOption, {
-          error_count: extractedErrors.length,
+          error_count: resolvedErrors.sourceCount,
           status: errorResponse.status,
         });
         logDebugError('web.contact.submit', errorResponse, {
           route: '/contact',
           status: errorResponse.status,
-          apiErrorCount: extractedErrors.length,
+          apiErrorCount: resolvedErrors.sourceCount,
         });
       },
     });
   }
 
-  private extractApiErrors(errorResponse: HttpErrorResponse): string[] {
+  private resolveApiErrors(errorResponse: HttpErrorResponse): {
+    messages: string[];
+    sourceCount: number;
+  } {
+    const sourceErrors = this.extractSourceApiErrors(errorResponse);
+    const genericError = this.i18n.translate('web.contact.form.genericError');
+    const messages =
+      this.i18n.locale() === 'fr-CI' && sourceErrors.length > 0
+        ? sourceErrors
+        : [genericError];
+
+    return {
+      messages,
+      sourceCount: Math.max(sourceErrors.length, 1),
+    };
+  }
+
+  private extractSourceApiErrors(errorResponse: HttpErrorResponse): string[] {
     const errorBody = errorResponse.error as
       | { errors?: unknown; message?: unknown }
       | undefined;
@@ -272,7 +320,7 @@ export default class ContactPage implements OnInit, OnDestroy {
       return [errorBody.message.trim()];
     }
 
-    return [GENERIC_CONTACT_ERROR_MESSAGE];
+    return [];
   }
 
   private buildPayload(selectedOption: ServiceOption): ContactFormDto {
@@ -287,14 +335,34 @@ export default class ContactPage implements OnInit, OnDestroy {
 
   private buildMessage(selectedOption: ServiceOption): string {
     return [
-      `Pays : ${this.form.value.country!}`,
-      `Type de service : ${selectedOption.label}`,
-      `File interne : ${selectedOption.triagePath}`,
-      `Workflow de réponse : ${selectedOption.responseWorkflow}`,
-      `Fallback opérationnel : ${selectedOption.fallbackWorkflow}`,
+      this.buildMessageLine(
+        'web.contact.form.fields.country.label',
+        this.form.value.country!,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.label',
+        selectedOption.label,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.internalQueueLabel',
+        selectedOption.triagePath,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.responseWorkflowLabel',
+        selectedOption.responseWorkflow,
+      ),
+      this.buildMessageLine(
+        'web.contact.form.fields.serviceType.fallbackWorkflowLabel',
+        selectedOption.fallbackWorkflow,
+      ),
       '',
       this.form.value.message!,
     ].join('\n');
+  }
+
+  private buildMessageLine(labelKey: string, value: string): string {
+    const separator = this.i18n.locale() === 'fr-CI' ? ' : ' : ': ';
+    return this.i18n.translate(labelKey) + separator + value;
   }
 
   protected getSelectedServiceOption(): ServiceOption {

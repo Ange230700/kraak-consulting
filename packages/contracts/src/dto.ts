@@ -198,6 +198,152 @@ export interface ParticipantProgramDetailDto {
   sessions: SessionDto[];
   resources: ResourceDto[];
   announcements: ProgramAnnouncementPreviewDto[];
+  curriculum: ParticipantProgramCurriculumDto;
+}
+
+// ---------------------------------------------------------------------------
+// CMS / Editorial model
+// ---------------------------------------------------------------------------
+export interface AuthorDto {
+  id: string;
+  email: string;
+  displayName: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateAuthorDto = Omit<AuthorDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateAuthorDto = Partial<CreateAuthorDto>;
+
+export interface CategoryDto {
+  id: string;
+  slug: string;
+  label: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateCategoryDto = Omit<
+  CategoryDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
+
+export interface TagDto {
+  id: string;
+  slug: string;
+  label: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTagDto = Omit<TagDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateTagDto = Partial<CreateTagDto>;
+
+export interface ArticleDto {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  status: PublicationStatusValue;
+  coverImageUrl: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  publishedAt: string | null;
+  authorId: string;
+  categoryIds: string[];
+  tagIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateArticleDto = Omit<
+  ArticleDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateArticleDto = Partial<CreateArticleDto>;
+
+export interface StatisticDto {
+  id: string;
+  label: string;
+  value: string;
+  suffix: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateStatisticDto = Omit<
+  StatisticDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateStatisticDto = Partial<CreateStatisticDto>;
+
+export interface PartnerDto {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreatePartnerDto = Omit<
+  PartnerDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdatePartnerDto = Partial<CreatePartnerDto>;
+
+export interface TestimonialDto {
+  id: string;
+  quote: string;
+  authorName: string;
+  authorRole: string | null;
+  company: string | null;
+  avatarUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTestimonialDto = Omit<
+  TestimonialDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateTestimonialDto = Partial<CreateTestimonialDto>;
+
+export interface TeamMemberDto {
+  id: string;
+  fullName: string;
+  role: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  linkedinUrl: string | null;
+  sortOrder: number;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateTeamMemberDto = Omit<
+  TeamMemberDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateTeamMemberDto = Partial<CreateTeamMemberDto>;
+
+export interface CmsHomepageContentDto {
+  statistics: StatisticDto[];
+  partners: PartnerDto[];
+  testimonials: TestimonialDto[];
+  teamMembers: TeamMemberDto[];
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +409,146 @@ export type CreateProgramDto = Omit<
   'id' | 'createdAt' | 'updatedAt'
 >;
 export type UpdateProgramDto = Partial<CreateProgramDto>;
+
+// ---------------------------------------------------------------------------
+// Curriculum
+// ---------------------------------------------------------------------------
+export interface CourseDto {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateCourseDto = Omit<CourseDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateCourseDto = Partial<CreateCourseDto>;
+
+export interface LearningModuleDto {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateLearningModuleDto = Omit<
+  LearningModuleDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateLearningModuleDto = Partial<CreateLearningModuleDto>;
+
+export interface ChapterDto {
+  id: string;
+  learningModuleId: string;
+  slug: string;
+  title: string;
+  summary: string;
+  status: PublicationStatusValue;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateChapterDto = Omit<
+  ChapterDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateChapterDto = Partial<CreateChapterDto>;
+
+export interface LessonDto {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  status: PublicationStatusValue;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateLessonDto = Omit<LessonDto, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateLessonDto = Partial<CreateLessonDto>;
+
+export interface ProgramCourseDto {
+  id: string;
+  programId: string;
+  courseId: string;
+  sortOrder: number;
+  isRequired: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateProgramCourseDto = Omit<
+  ProgramCourseDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateProgramCourseDto = Partial<CreateProgramCourseDto>;
+
+export interface CourseModuleDto {
+  id: string;
+  courseId: string;
+  learningModuleId: string;
+  sortOrder: number;
+  isRequired: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateCourseModuleDto = Omit<
+  CourseModuleDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateCourseModuleDto = Partial<CreateCourseModuleDto>;
+
+export interface ChapterLessonDto {
+  id: string;
+  chapterId: string;
+  lessonId: string;
+  sortOrder: number;
+  isRequired: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateChapterLessonDto = Omit<
+  ChapterLessonDto,
+  'id' | 'createdAt' | 'updatedAt'
+>;
+export type UpdateChapterLessonDto = Partial<CreateChapterLessonDto>;
+
+export interface ParticipantCurriculumLessonDto {
+  placement: ChapterLessonDto;
+  lesson: LessonDto;
+}
+
+export interface ParticipantCurriculumChapterDto {
+  chapter: ChapterDto;
+  lessons: ParticipantCurriculumLessonDto[];
+}
+
+export interface ParticipantCurriculumModuleDto {
+  placement: CourseModuleDto;
+  learningModule: LearningModuleDto;
+  chapters: ParticipantCurriculumChapterDto[];
+}
+
+export interface ParticipantCurriculumCourseDto {
+  placement: ProgramCourseDto;
+  course: CourseDto;
+  modules: ParticipantCurriculumModuleDto[];
+}
+
+export interface ParticipantProgramCurriculumDto {
+  courses: ParticipantCurriculumCourseDto[];
+}
 
 // ---------------------------------------------------------------------------
 // Cohort

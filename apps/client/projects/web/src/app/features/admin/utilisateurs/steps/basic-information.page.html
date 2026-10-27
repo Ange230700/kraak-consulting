@@ -1,0 +1,128 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    {{ 'web.admin.users.create.basicInformation.step' | kraakTranslate }}
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    {{ 'web.admin.users.create.basicInformation.title' | kraakTranslate }}
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    {{ 'web.admin.users.create.basicInformation.description' | kraakTranslate }}
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="firstName">
+          {{
+            'web.admin.users.create.basicInformation.firstName.label'
+              | kraakTranslate
+          }}
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="firstName"
+          type="text"
+          pInputText
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          [placeholder]="
+            'web.admin.users.create.basicInformation.firstName.placeholder'
+              | kraakTranslate
+          "
+          [(ngModel)]="firstName"
+          (ngModelChange)="sync()"
+          required
+          aria-required="true"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-neutral-600" for="lastName">
+          {{
+            'web.admin.users.create.basicInformation.lastName.label'
+              | kraakTranslate
+          }}
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="lastName"
+          type="text"
+          pInputText
+          class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+          [placeholder]="
+            'web.admin.users.create.basicInformation.lastName.placeholder'
+              | kraakTranslate
+          "
+          [(ngModel)]="lastName"
+          (ngModelChange)="sync()"
+          required
+          aria-required="true"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="email">
+        {{
+          'web.admin.users.create.basicInformation.email.label' | kraakTranslate
+        }}
+        <span class="text-red-500">*</span>
+      </label>
+      <input
+        id="email"
+        type="email"
+        pInputText
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        [placeholder]="
+          'web.admin.users.create.basicInformation.email.placeholder'
+            | kraakTranslate
+        "
+        [(ngModel)]="email"
+        (ngModelChange)="sync()"
+        required
+        aria-required="true"
+      />
+      <p class="text-xs text-neutral-400">
+        {{
+          'web.admin.users.create.basicInformation.email.help' | kraakTranslate
+        }}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="phone">
+        {{
+          'web.admin.users.create.basicInformation.phone.label' | kraakTranslate
+        }}
+      </label>
+      <input
+        id="phone"
+        type="tel"
+        pInputText
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        [placeholder]="
+          'web.admin.users.create.basicInformation.phone.placeholder'
+            | kraakTranslate
+        "
+        [(ngModel)]="phone"
+        (ngModelChange)="sync()"
+      />
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-end">
+    <button
+      pButton
+      class="kr-button-primary"
+      type="button"
+      (click)="goNext()"
+      [disabled]="!formState.isStep1Valid()"
+    >
+      {{
+        'web.admin.users.create.basicInformation.actions.next' | kraakTranslate
+      }}
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>

@@ -11,7 +11,7 @@ export class SupabaseService implements OnModuleInit {
 
   onModuleInit(): void {
     const url = this.configService.get<string>('SUPABASE_URL');
-    const key = this.configService.get<string>('SUPABASE_SECRET_KEY');
+    const key = this.readSupabaseSecretKey();
 
     if (!url || !key) {
       this.logger.warn(
@@ -40,12 +40,11 @@ export class SupabaseService implements OnModuleInit {
   createAuthClient(): SupabaseClient {
     const url = this.configService.get<string>('SUPABASE_URL');
     const authKey =
-      this.configService.get<string>('SUPABASE_PUBLISHABLE_KEY') ??
-      this.configService.get<string>('SUPABASE_SECRET_KEY');
+      this.readSupabasePublishableKey() ?? this.readSupabaseSecretKey();
 
     if (!url || !authKey) {
       throw new Error(
-        "Le client Auth Supabase n'est pas disponible â€” vérifiez SUPABASE_URL et SUPABASE_PUBLISHABLE_KEY ou SUPABASE_SECRET_KEY",
+        "Le client Auth Supabase n'est pas disponible — vérifiez SUPABASE_URL et SUPABASE_PUBLISHABLE_KEY (ou SUPABASE_ANON_KEY), ou SUPABASE_SECRET_KEY (ou SUPABASE_SERVICE_ROLE_KEY).",
       );
     }
 
@@ -56,5 +55,19 @@ export class SupabaseService implements OnModuleInit {
         persistSession: false,
       },
     });
+  }
+
+  private readSupabasePublishableKey(): string | undefined {
+    return (
+      this.configService.get<string>('SUPABASE_PUBLISHABLE_KEY') ??
+      this.configService.get<string>('SUPABASE_ANON_KEY')
+    );
+  }
+
+  private readSupabaseSecretKey(): string | undefined {
+    return (
+      this.configService.get<string>('SUPABASE_SECRET_KEY') ??
+      this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY')
+    );
   }
 }

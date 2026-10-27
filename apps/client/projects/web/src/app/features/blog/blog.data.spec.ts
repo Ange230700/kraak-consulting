@@ -1,0 +1,277 @@
+import type { ArticleDto } from '@kraak/contracts';
+import {
+  blogArticles,
+  englishBlogArticles,
+  buildBlogArticleSeo,
+  buildMissingBlogArticleSeo,
+  findBlogArticleBySlug,
+  getFallbackBlogArticles,
+  getRelatedBlogArticles,
+  mapPublicArticleToBlogArticle,
+  mapPublicArticlesToBlogArticles,
+  requireFrenchFallbackArticle,
+} from './blog.data';
+
+describe('blog.data', () => {
+  it('Given les traductions éditoriales, When les articles anglais sont assemblés, Then les auteurs, les sections et les métadonnées de référence sont conservés', () => {
+    for (const [index, article] of englishBlogArticles.entries()) {
+      const reference = blogArticles[index];
+      expect(article.author.name).toBe(reference.author.name);
+      expect(article.author.avatar).toBe(reference.author.avatar);
+      expect(article.author.role).not.toBe(reference.author.role);
+      expect(article.author.bio).not.toBe(reference.author.bio);
+      expect(article.categoryIds).toBe(reference.categoryIds);
+      expect(article.tagIds).toBe(reference.tagIds);
+      expect(article.coverImagePath).toBe(reference.coverImagePath);
+      expect(article.sections).toHaveLength(3);
+      expect(article.takeawayPoints).toHaveLength(3);
+    }
+    expect(englishBlogArticles[0].sections[0].bullets).toEqual([
+      'What role or assignment are you targeting?',
+      'How soon do you want to move forward?',
+      'What constraints do you need to respect?',
+    ]);
+    expect(englishBlogArticles[1].sections[0]).toEqual({
+      heading: '1. Check the actual need',
+      paragraphs: [
+        'Before choosing a format, clarify the problem to solve. Is it a lack of method, a need for practice or a need to develop your professional posture?',
+      ],
+    });
+    expect(englishBlogArticles[2].sections[2]).toEqual({
+      heading: '3. Keep a safety margin',
+      paragraphs: [
+        'Deadlines, translations and additional administrative requests require margin. Avoid working right up against the deadline.',
+      ],
+    });
+  });
+  it('Given une référence éditoriale française absente, When son contenu de repli est exigé, Then la génération signale explicitement l’article manquant', () => {
+    expect(() => requireFrenchFallbackArticle('article-absent')).toThrow(
+      'Missing French fallback Blog article "article-absent".',
+    );
+  });
+  it('Given fallback blog articles, When requested by locale, Then the matching editorial dataset is returned', () => {
+    expect(getFallbackBlogArticles()).toBe(blogArticles);
+    expect(getFallbackBlogArticles('fr-CI')).toBe(blogArticles);
+    expect(getFallbackBlogArticles('en-GB')).toBe(englishBlogArticles);
+
+    expect(englishBlogArticles).toHaveLength(blogArticles.length);
+    expect(englishBlogArticles.map((article) => article.id)).toEqual(
+      blogArticles.map((article) => article.id),
+    );
+    expect(englishBlogArticles.map((article) => article.slug)).toEqual(
+      blogArticles.map((article) => article.slug),
+    );
+    expect(englishBlogArticles.map((article) => article.relatedSlugs)).toEqual(
+      blogArticles.map((article) => article.relatedSlugs),
+    );
+
+    expect(englishBlogArticles[0]?.title).toBe(
+      'Clarify your project before applying',
+    );
+    expect(englishBlogArticles[0]?.publishedLabel).toBe('12 May 2026');
+  });
+
+  it('Given a public article sharing an existing slug, When mapped, Then fallback metadata is reused', () => {
+    const source: ArticleDto = {
+      id: 'api-article-1',
+      slug: blogArticles[0].slug,
+      title: 'Titre API',
+      excerpt: 'Résumé API',
+      content: '<p>Contenu API</p>',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: '2026-01-01T00:00:00.000Z',
+      authorId: 'author-api',
+      categoryIds: ['cat-a'],
+      tagIds: ['tag-a'],
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-02T00:00:00.000Z',
+    };
+
+    const mapped = mapPublicArticleToBlogArticle(source);
+
+    expect(mapped.author).toEqual(blogArticles[0].author);
+    expect(mapped.coverImagePath).toBe(blogArticles[0].coverImagePath);
+    expect(mapped.readingTimeMinutes).toBe(blogArticles[0].readingTimeMinutes);
+    expect(mapped.intro).toBe(blogArticles[0].intro);
+    expect(mapped.sections).toEqual(blogArticles[0].sections);
+  });
+
+  it('Given a public article with fallback by id only, When mapped, Then id fallback is applied', () => {
+    const source: ArticleDto = {
+      id: blogArticles[1].id,
+      slug: 'slug-non-reference',
+      title: 'Titre API 2',
+      excerpt: 'Résumé API 2',
+      content: '<p>Contenu API 2</p>',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: '2026-01-03T00:00:00.000Z',
+      authorId: 'author-api-2',
+      categoryIds: ['cat-b'],
+      tagIds: ['tag-b'],
+      createdAt: '2026-01-03T00:00:00.000Z',
+      updatedAt: '2026-01-04T00:00:00.000Z',
+    };
+
+    const mapped = mapPublicArticleToBlogArticle(source);
+
+    expect(mapped.author).toEqual(blogArticles[1].author);
+    expect(mapped.categorySlug).toBe(blogArticles[1].categorySlug);
+    expect(mapped.relatedSlugs).toEqual(blogArticles[1].relatedSlugs);
+  });
+
+  it('Given a public article without fallback and empty content, When mapped, Then default copy and fallback SEO fields are used', () => {
+    const source: ArticleDto = {
+      id: 'api-no-fallback',
+      slug: 'nouvel-article',
+      title: 'Nouvel article',
+      excerpt: 'Résumé neuf',
+      content: '   ',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: null,
+      authorId: 'author-api-3',
+      categoryIds: ['cat-c'],
+      tagIds: ['tag-c'],
+      createdAt: '2026-02-01T00:00:00.000Z',
+      updatedAt: '2026-02-02T00:00:00.000Z',
+    };
+
+    const mapped = mapPublicArticleToBlogArticle(source);
+
+    expect(mapped.categoryLabel).toBe('Actualités');
+    expect(mapped.categorySlug).toBe('actualites');
+    expect(mapped.coverImagePath).toContain('home-hero-workshop');
+    expect(mapped.publishedLabel).toBe('Publication à venir');
+    expect(mapped.intro).toBe('Cet article est disponible dans le blog KRAAK.');
+    expect(mapped.sections[0].heading).toBe('Contenu');
+    expect(mapped.sections[0].paragraphs[0]).toContain('bientôt enrichi');
+    expect(mapped.featured).toBe(false);
+  });
+
+  it('Given a public article with invalid date and HTML content, When mapped, Then date fallback and reading-time estimation are used', () => {
+    const source: ArticleDto = {
+      id: 'api-invalid-date',
+      slug: 'article-date-invalide',
+      title: 'Article date invalide',
+      excerpt: 'Résumé date invalide',
+      content: '<p>Premier mot</p> <p>Deuxième mot</p>',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: 'date-invalide',
+      authorId: 'author-api-4',
+      categoryIds: ['cat-d'],
+      tagIds: ['tag-d'],
+      createdAt: '2026-03-01T00:00:00.000Z',
+      updatedAt: '2026-03-02T00:00:00.000Z',
+    };
+
+    const mapped = mapPublicArticleToBlogArticle(source);
+
+    expect(mapped.publishedLabel).toBe('Publication récente');
+    expect(mapped.readingTimeMinutes).toBeGreaterThanOrEqual(1);
+    expect(mapped.intro.length).toBeGreaterThan(0);
+    expect(mapped.sections[0].paragraphs[0]).toContain('Premier mot');
+  });
+
+  it('Given a mixed list of public articles, When mapped as a collection, Then they are sorted by publication date descending', () => {
+    const older: ArticleDto = {
+      id: 'collection-1',
+      slug: 'collection-older',
+      title: 'Older',
+      excerpt: 'Older',
+      content: '<p>Older</p>',
+      status: 'published',
+      coverImageUrl: null,
+      seoTitle: null,
+      seoDescription: null,
+      publishedAt: '2026-01-01T00:00:00.000Z',
+      authorId: 'a',
+      categoryIds: [],
+      tagIds: [],
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    };
+    const newer: ArticleDto = {
+      ...older,
+      id: 'collection-2',
+      slug: 'collection-newer',
+      publishedAt: '2026-02-01T00:00:00.000Z',
+    };
+    const undated: ArticleDto = {
+      ...older,
+      id: 'collection-3',
+      slug: 'collection-undated',
+      publishedAt: null,
+    };
+
+    const mapped = mapPublicArticlesToBlogArticles([older, undated, newer]);
+
+    expect(mapped[0].slug).toBe('collection-newer');
+    expect(mapped[1].slug).toBe('collection-older');
+    expect(mapped[2].slug).toBe('collection-undated');
+  });
+
+  it('Given mapped blog article SEO helpers, When building SEO payloads, Then defaults and article metadata are consistent', () => {
+    const articleSeo = buildBlogArticleSeo({
+      ...blogArticles[0],
+      seoTitle: null,
+      seoDescription: null,
+    });
+    const missingSeo = buildMissingBlogArticleSeo('inconnu');
+
+    expect(articleSeo.path).toBe(`/fr/blog/${blogArticles[0].slug}`);
+    expect(articleSeo.canonicalPath).toBe(`/fr/blog/${blogArticles[0].slug}`);
+    expect(articleSeo.title).toContain(blogArticles[0].title);
+    expect(articleSeo.description).toBe(blogArticles[0].summary);
+    expect(missingSeo.path).toBe('/fr/blog/inconnu');
+    expect(missingSeo.title).toContain('Article introuvable');
+  });
+
+  it('Given blog search helpers, When querying by slug and related articles, Then lookup and ranking honor filters and limits', () => {
+    const found = findBlogArticleBySlug(blogArticles[0].slug);
+    const missing = findBlogArticleBySlug('slug-absent');
+    const related = getRelatedBlogArticles(blogArticles[0], blogArticles, 2);
+
+    expect(found?.slug).toBe(blogArticles[0].slug);
+    expect(missing).toBeUndefined();
+    expect(related).toHaveLength(2);
+    expect(
+      related.every((article) => article.slug !== blogArticles[0].slug),
+    ).toBe(true);
+  });
+
+  it('Given related articles with mixed categories, When scored, Then same-category bonus outranks tag-only matches', () => {
+    const reference = blogArticles[0];
+    const sameCategory = {
+      ...blogArticles[1],
+      slug: 'same-category',
+      categorySlug: reference.categorySlug,
+      tagLabels: ['Tag différent'],
+    };
+    const tagMatchOnly = {
+      ...blogArticles[2],
+      slug: 'tag-match-only',
+      categorySlug: 'categorie-differente',
+      tagLabels: [reference.tagLabels[0]],
+    };
+
+    const ranked = getRelatedBlogArticles(
+      reference,
+      [reference, tagMatchOnly, sameCategory],
+      2,
+    );
+
+    expect(ranked[0].slug).toBe('same-category');
+    expect(ranked[1].slug).toBe('tag-match-only');
+  });
+});

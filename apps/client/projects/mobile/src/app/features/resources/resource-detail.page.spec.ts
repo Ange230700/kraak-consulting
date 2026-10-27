@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRoute,
@@ -8,6 +8,7 @@ import {
 import type { ResourceDto } from '@kraak/contracts';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BehaviorSubject } from 'rxjs';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileResourcesService } from './mobile-resources.service';
 import ResourceDetailPage from './resource-detail.page';
 
@@ -38,6 +39,8 @@ describe('Mobile ResourceDetailPage', () => {
   };
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     service = {
       getResourceById: vi.fn(),
       trackResourceConsultation: vi.fn().mockResolvedValue(undefined),
@@ -51,6 +54,7 @@ describe('Mobile ResourceDetailPage', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         provideRouter([]),
+        provideKraakI18n(),
         {
           provide: MobileResourcesService,
           useValue: service,
@@ -66,6 +70,8 @@ describe('Mobile ResourceDetailPage', () => {
         },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('should create', () => {
@@ -155,6 +161,50 @@ describe('Mobile ResourceDetailPage', () => {
     expect(element.textContent).not.toContain('Tracking unavailable');
   });
 
+  it('Given a resource with filePath, when detail loads, then file path information is displayed', async () => {
+    service.getResourceById.mockResolvedValue({
+      ...mockResource,
+      id: 'resource-file',
+      filePath: '/files/guide-detail.pdf',
+      url: null,
+    });
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Fichier: /files/guide-detail.pdf');
+  });
+
+  it('Given a resource without description, when detail loads, then description block is not rendered', async () => {
+    service.getResourceById.mockResolvedValue({
+      ...mockResource,
+      id: 'resource-no-description',
+      description: null,
+    });
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Guide detail');
+    expect(element.textContent).not.toContain('Description detail');
+  });
+
   it('Given no resourceId in route params, when the component initializes, then errorMessage is set and resource is null', async () => {
     service.getResourceById.mockResolvedValue(mockResource);
     paramMapSubject.next(convertToParamMap({}));
@@ -203,5 +253,31 @@ describe('Mobile ResourceDetailPage', () => {
         }
       ).errorMessage(),
     ).toBe('Identifiant de ressource manquant.');
+  });
+
+  it('Given English is selected, when resource detail renders, then the resource detail chrome is translated', async () => {
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    service.getResourceById.mockResolvedValue(mockResource);
+
+    const fixture = TestBed.createComponent(ResourceDetailPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await (
+      fixture.componentInstance as unknown as {
+        reloadResource: () => Promise<void>;
+      }
+    ).reloadResource();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('Resource');
+    expect(text).toContain('Resource details');
+    expect(text).toContain('Type');
+    expect(text).toContain('Document');
+    expect(text).toContain('Open link');
   });
 });

@@ -1,10 +1,20 @@
 # Signalement de bug
 
+## Table des matières
+
+- [Signalement de bug](#signalement-de-bug)
+  - [Contexte](#contexte)
+  - [Étapes pour reproduire](#etapes-pour-reproduire)
+  - [Comportement attendu](#comportement-attendu)
+  - [Comportement observé](#comportement-observe)
+  - [Criticité](#criticite)
+  - [Définition de fini](#definition-de-fini)
+
 ---
 
 name: 'Signalement de bug'
 about: Signaler un problème qui impacte le MVP
-labels: ['type: bug', 'status: ready']
+labels: ['type: bug']
 
 ---
 

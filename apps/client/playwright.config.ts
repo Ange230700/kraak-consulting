@@ -1,25 +1,85 @@
+// apps\client\playwright.config.ts
+
 import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Configuration Playwright pour les tests E2E du site web KRAAK.
  * Voir https://playwright.dev/docs/test-configuration
  */
-const localWebPort = Number(process.env['KRAAK_WEB_PORT'] ?? '4200');
-const localWebBaseUrl = `http://localhost:${localWebPort}`;
+const requireEnv = (key: string): string => {
+  const value = process.env[key]?.trim();
+  if (!value) {
+    throw new Error(
+      `Variable d'environnement requise pour Playwright web: ${key}`,
+    );
+  }
+
+  return value;
+};
+const getEnvOrFallback = (key: string, fallback: string): string => {
+  const value = process.env[key]?.trim();
+  return value && value.length > 0 ? value : fallback;
+};
 const reuseExistingServer = process.env['KRAAK_E2E_REUSE_SERVER'] === 'true';
+const resolvedBrowserChannel = process.env['KRAAK_E2E_BROWSER_CHANNEL']?.trim();
+const shouldStartWebServer =
+  process.env['KRAAK_E2E_START_WEB_SERVER'] === 'true' || !process.env['CI'];
+const isCi = !!process.env['CI'];
+const resolvedBaseUrl = process.env['CI']
+  ? requireEnv('KRAAK_E2E_BASE_URL')
+  : getEnvOrFallback('KRAAK_E2E_BASE_URL', 'http://localhost:4200');
+const resolvedClientApiBaseUrl = process.env['CI']
+  ? requireEnv('CLIENT_API_BASE_URL')
+  : getEnvOrFallback('CLIENT_API_BASE_URL', 'http://localhost:3000');
+const resolvedClientSiteUrl = process.env['CI']
+  ? requireEnv('CLIENT_SITE_URL')
+  : getEnvOrFallback('CLIENT_SITE_URL', 'http://localhost:4200');
+
+const resolvedParticipantAreaExpected = getEnvOrFallback(
+  'KRAAK_E2E_EXPECT_PARTICIPANT_AREA',
+  getEnvOrFallback('CLIENT_FEATURE_PARTICIPANT_AREA', 'true'),
+);
+
+const resolvedParticipantCtaExpected = getEnvOrFallback(
+  'KRAAK_E2E_EXPECT_PARTICIPANT_CTA',
+  resolvedParticipantAreaExpected,
+);
+
+process.env['KRAAK_E2E_EXPECT_PARTICIPANT_AREA'] =
+  resolvedParticipantAreaExpected;
+process.env['KRAAK_E2E_EXPECT_PARTICIPANT_CTA'] =
+  resolvedParticipantCtaExpected;
+
+let resolvedWebServerUrl = '';
+let resolvedWebServerCommand = '';
+
+if (shouldStartWebServer) {
+  resolvedWebServerUrl = isCi
+    ? requireEnv('KRAAK_E2E_WEB_SERVER_URL')
+    : getEnvOrFallback('KRAAK_E2E_WEB_SERVER_URL', 'http://localhost:4200');
+
+  resolvedWebServerCommand = isCi
+    ? requireEnv('KRAAK_E2E_WEB_SERVER_COMMAND')
+    : getEnvOrFallback(
+        'KRAAK_E2E_WEB_SERVER_COMMAND',
+        "node ../../scripts/generate-client-runtime-config.mjs --env local && node -e \"require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })\" && npx ng serve web --configuration local --port 4200 --prebundle=false --live-reload=false",
+      );
+}
 
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 1,
-  workers: process.env['CI'] ? 1 : undefined,
+  workers: process.env['CI'] ? 1 : 3,
   timeout: 60_000,
   reporter: process.env['CI']
     ? 'github'
     : [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: localWebBaseUrl,
+    baseURL: resolvedBaseUrl,
+    locale: 'fr-CI',
+    contextOptions: { reducedMotion: 'reduce' },
     navigationTimeout: 60_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -27,7 +87,10 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(resolvedBrowserChannel ? { channel: resolvedBrowserChannel } : {}),
+      },
     },
     {
       name: 'firefox',
@@ -38,14 +101,19 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
   ],
-  webServer: {
-    command: `node ../../scripts/generate-client-runtime-config.mjs --env local && node -e "require('node:fs').rmSync('.angular/cache', { recursive: true, force: true })" && npx ng serve web --port ${localWebPort} --prebundle=false --live-reload=false`,
-    url: localWebBaseUrl,
-    reuseExistingServer,
-    timeout: 180_000,
-    env: {
-      CLIENT_FEATURE_PARTICIPANT_AREA: 'true',
-      CLIENT_API_BASE_URL: localWebBaseUrl,
-    },
-  },
+  webServer: shouldStartWebServer
+    ? {
+        command: resolvedWebServerCommand,
+        url: resolvedWebServerUrl,
+        reuseExistingServer,
+        timeout: isCi ? 300_000 : 180_000,
+        env: {
+          CLIENT_FEATURE_PARTICIPANT_AREA: resolvedParticipantAreaExpected,
+          CLIENT_API_BASE_URL: resolvedClientApiBaseUrl,
+          CLIENT_SITE_URL: resolvedClientSiteUrl,
+          KRAAK_E2E_EXPECT_PARTICIPANT_AREA: resolvedParticipantAreaExpected,
+          KRAAK_E2E_EXPECT_PARTICIPANT_CTA: resolvedParticipantCtaExpected,
+        },
+      }
+    : undefined,
 });

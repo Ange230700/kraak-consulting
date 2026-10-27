@@ -4,6 +4,7 @@ import type {
   ParticipantProgramDetailDto,
   ParticipantProgramListItemDto,
 } from '@kraak/contracts';
+import { provideKraakI18n } from '../../../../../shared/i18n';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 import { MobileProgramsService } from './mobile-programs.service';
 
@@ -52,6 +53,7 @@ describe('MobileProgramsService', () => {
     sessions: [],
     resources: [],
     announcements: [],
+    curriculum: { courses: [] },
   };
 
   beforeEach(() => {
@@ -62,6 +64,7 @@ describe('MobileProgramsService', () => {
     TestBed.configureTestingModule({
       providers: [
         MobileProgramsService,
+        provideKraakI18n(),
         { provide: MobileAuthService, useValue: authService },
       ],
     });

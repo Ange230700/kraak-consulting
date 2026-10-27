@@ -47,6 +47,23 @@
   --radius-card: var(--kr-radius-card);
 
   --shadow-card: var(--kr-shadow-card);
+
+  --motion-duration-xs: 120ms;
+  --motion-duration-sm: 180ms;
+  --motion-duration-md: 260ms;
+  --motion-duration-lg: 360ms;
+
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --motion-shift-xs: 4px;
+  --motion-shift-sm: 8px;
+  --motion-shift-md: 16px;
+  --motion-shift-lg: 24px;
+
+  --motion-opacity-from: 0;
+  --motion-opacity-to: 1;
 }
 
 /*
@@ -101,9 +118,54 @@
     max-width: 100%;
     height: auto;
   }
+
+  ::view-transition-old(root) {
+    animation: kr-route-fade-out var(--motion-duration-sm)
+      var(--motion-ease-exit) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: kr-route-fade-in var(--motion-duration-md)
+      var(--motion-ease-enter) both;
+  }
 }
 
 @layer components {
+  .kr-navbar-interactive {
+    transition:
+      transform 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .kr-navbar-interactive:hover {
+    transform: translateY(-1px);
+  }
+
+  .kr-navbar-brand {
+    transition: opacity 180ms ease;
+  }
+
+  .kr-navbar-brand-symbol {
+    transition: transform 220ms ease;
+    transform-origin: center;
+  }
+
+  .kr-navbar-brand-name {
+    transition: color 180ms ease;
+  }
+
+  .kr-navbar-brand:hover .kr-navbar-brand-symbol {
+    transform: scale(1.02);
+  }
+
+  .kr-navbar-brand:hover .kr-navbar-brand-name {
+    color: var(--color-primary);
+  }
+
   .kr-skip-link {
     position: absolute;
     top: 1rem;
@@ -132,6 +194,9 @@
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.01em;
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
   }
 
   .kr-nav-link::after {
@@ -154,6 +219,11 @@
 
   .kr-nav-link:hover {
     color: var(--color-primary);
+    transform: translateY(-0.5px);
+  }
+
+  .kr-nav-link:hover::after {
+    transform: scaleX(1);
   }
 
   .kr-link,
@@ -287,16 +357,181 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .motion-reveal-base {
+    opacity: var(--motion-opacity-to);
+
+    @media (prefers-reduced-motion: no-preference) {
+      opacity: var(--motion-opacity-from);
+      transform: translateY(var(--motion-shift-md));
+      transition-property: transform, opacity;
+      transition-duration: var(--motion-duration-md);
+      transition-delay: var(--reveal-delay, 0ms);
+      transition-timing-function: var(--motion-ease-enter);
+    }
+  }
+
+  .motion-reveal-visible {
+    opacity: var(--motion-opacity-to);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(0);
+    }
+  }
+
+  .motion-hover-lift {
+    @media (prefers-reduced-motion: no-preference) {
+      transition-property:
+        transform, box-shadow, border-color, background-color;
+      transition-duration: var(--motion-duration-xs);
+      transition-timing-function: var(--motion-ease-standard);
+    }
+  }
+
+  .motion-hover-lift:hover,
+  .motion-hover-lift:focus-visible {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(calc(-1 * var(--motion-shift-xs)));
+    }
+  }
+
+  .motion-press:active {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(0.98);
+    }
+  }
+
+  .kr-footer-fade-right,
+  .kr-footer-fade-left {
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  .kr-footer-fade-right {
+    transform: translate3d(-28px, 0, 0);
+  }
+
+  .kr-footer-fade-left {
+    transform: translate3d(28px, 0, 0);
+  }
+
+  .kr-footer-fade-right-visible {
+    animation: kr-footer-fade-right 800ms ease-out both;
+  }
+
+  .kr-footer-fade-left-visible {
+    animation: kr-footer-fade-left 800ms ease-out both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kr-footer-fade-right,
+    .kr-footer-fade-left,
+    .kr-footer-fade-right-visible,
+    .kr-footer-fade-left-visible {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto;
-    transition-duration: 0ms !important;
-    transition-delay: 0ms !important;
-    animation-duration: 0ms !important;
-    animation-iteration-count: 1 !important;
+@keyframes kr-partner-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@utility fade-gradient-left {
+  background: linear-gradient(
+    to right,
+    var(--fade-start-color, rgb(248, 248, 248)),
+    transparent
+  );
+}
+
+@utility fade-gradient-right {
+  background: linear-gradient(
+    to left,
+    var(--fade-start-color, rgb(248, 248, 248)),
+    transparent
+  );
+}
+
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-scroll {
+      animation: kr-partner-scroll 20s linear infinite;
+    }
+  }
+
+  .kr-program-progress {
+    appearance: none;
+    border: 0;
+  }
+
+  .kr-program-progress::-webkit-progress-bar {
+    background: var(--color-slate-100);
+    border-radius: inherit;
+  }
+
+  .kr-program-progress::-webkit-progress-value {
+    background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
+    border-radius: inherit;
+  }
+
+  .kr-program-progress::-moz-progress-bar {
+    background: linear-gradient(90deg, #1673ae 0%, #4cc3d9 100%);
+    border-radius: inherit;
+  }
+}
+
+@keyframes kr-route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-shift-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kr-route-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(var(--motion-shift-sm));
+  }
+}
+
+@keyframes kr-footer-fade-right {
+  from {
+    opacity: 0;
+    transform: translate3d(-28px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes kr-footer-fade-left {
+  from {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }

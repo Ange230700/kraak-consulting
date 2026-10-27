@@ -1,0 +1,434 @@
+<div class="space-y-10">
+  <a
+    [routerLink]="['/participant/programmes', programId()]"
+    class="hover:text-brand-blue inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition"
+  >
+    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+    {{ 'web.participant.sessionDetail.common.backToProgram' | kraakTranslate }}
+  </a>
+
+  @if (errorMessage()) {
+    <section
+      class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:p-8"
+      role="alert"
+    >
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-700"
+        aria-hidden="true"
+      >
+        <i class="pi pi-exclamation-circle"></i>
+      </span>
+
+      <h1 class="mt-5 text-2xl font-semibold text-slate-950">
+        {{ 'web.participant.sessionDetail.error.title' | kraakTranslate }}
+      </h1>
+
+      <p class="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+        {{ errorMessage() }}
+      </p>
+
+      <button
+        type="button"
+        class="kr-button-primary mt-6"
+        (click)="reloadSession()"
+      >
+        {{ 'web.participant.sessionDetail.error.retry' | kraakTranslate }}
+      </button>
+    </section>
+  } @else if (loading()) {
+    <section
+      [attr.aria-label]="
+        'web.participant.sessionDetail.common.loadingAria' | kraakTranslate
+      "
+      aria-busy="true"
+    >
+      <div
+        class="relative min-h-72 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] p-6 shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.5)] sm:p-8 lg:min-h-80 lg:p-12"
+        aria-hidden="true"
+      >
+        <div
+          class="absolute -top-28 -right-20 h-72 w-72 rounded-full bg-cyan-300/16 blur-3xl"
+        ></div>
+        <div class="relative max-w-2xl">
+          <div
+            class="h-7 w-32 rounded-full bg-white/12 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-10 h-3 w-28 rounded-full bg-white/14 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-4 h-10 w-4/5 rounded-full bg-white/18 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-6 h-4 w-2/3 rounded-full bg-white/12 motion-safe:animate-pulse"
+          ></div>
+        </div>
+      </div>
+
+      <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_22rem]">
+        <div
+          class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.14)] sm:p-8"
+          aria-hidden="true"
+        >
+          <div
+            class="h-3 w-28 rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+          <div
+            class="mt-4 h-7 w-44 rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+
+          <div class="mt-7 grid gap-4 sm:grid-cols-2">
+            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+              <div class="rounded-3xl bg-slate-50 p-5">
+                <div
+                  class="h-3 w-16 rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+                <div
+                  class="mt-3 h-4 w-24 rounded-full bg-slate-200 motion-safe:animate-pulse"
+                ></div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div
+          class="h-fit rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.14)] sm:p-8"
+          aria-hidden="true"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <div class="space-y-3">
+              <div
+                class="h-3 w-20 rounded-full bg-slate-200 motion-safe:animate-pulse"
+              ></div>
+              <div
+                class="h-6 w-32 rounded-full bg-slate-200 motion-safe:animate-pulse"
+              ></div>
+            </div>
+            <div
+              class="h-10 w-10 rounded-2xl bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+          </div>
+
+          <div class="mt-6 space-y-3">
+            <div
+              class="h-4 w-full rounded-full bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+            <div
+              class="h-4 w-4/5 rounded-full bg-slate-100 motion-safe:animate-pulse"
+            ></div>
+          </div>
+
+          <div
+            class="mt-7 h-10 w-full rounded-full bg-slate-200 motion-safe:animate-pulse"
+          ></div>
+        </div>
+      </div>
+    </section>
+  } @else if (session(); as sess) {
+    <header
+      kraakRevealOnScroll
+      class="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_54%,#1673ae_100%)] px-6 py-8 text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-40px_rgba(18,43,74,0.75)] sm:px-8 sm:py-10 lg:px-12"
+    >
+      <div
+        aria-hidden="true"
+        class="absolute -top-28 -right-20 h-72 w-72 rounded-full bg-cyan-300/24 blur-3xl"
+      ></div>
+      <div
+        aria-hidden="true"
+        class="absolute -bottom-36 -left-16 h-80 w-80 rounded-full bg-amber-300/12 blur-3xl"
+      ></div>
+
+      <div class="relative max-w-4xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            class="inline-flex rounded-full border border-white/16 bg-white/12 px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase backdrop-blur-xl"
+          >
+            {{ sessionStatusLabel(sess.status) }}
+          </span>
+
+          <span
+            class="inline-flex rounded-full border border-white/16 bg-white/8 px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-white/72 uppercase backdrop-blur-xl"
+          >
+            {{ locationTypeLabel(sess.locationType) }}
+          </span>
+        </div>
+
+        <p
+          class="mt-8 text-xs font-semibold tracking-[0.22em] text-cyan-100/72 uppercase"
+        >
+          {{
+            'web.participant.sessionDetail.hero.program'
+              | kraakTranslate: { title: programDetail()?.program?.title ?? '' }
+          }}
+        </p>
+
+        <h1
+          class="mt-3 max-w-3xl text-3xl leading-tight font-semibold sm:text-4xl lg:text-5xl"
+        >
+          {{ sess.title }}
+        </h1>
+
+        @if (sess.description) {
+          <p class="mt-5 max-w-2xl text-base leading-7 text-white/72">
+            {{ sess.description }}
+          </p>
+        }
+      </div>
+    </header>
+
+    <section
+      kraakRevealOnScroll
+      [revealDelayMs]="60"
+      [revealDelayMobileMs]="30"
+      class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]"
+    >
+      <div class="space-y-8">
+        <article
+          class="rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.16)] sm:p-8"
+        >
+          <p
+            class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.participant.sessionDetail.info.eyebrow' | kraakTranslate }}
+          </p>
+          <h2 class="mt-2 text-2xl font-semibold text-slate-950">
+            {{ 'web.participant.sessionDetail.info.title' | kraakTranslate }}
+          </h2>
+
+          <dl class="mt-7 grid gap-5 sm:grid-cols-2">
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                {{
+                  'web.participant.sessionDetail.info.start' | kraakTranslate
+                }}
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ formatDateTime(sess.startsAt) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                {{ 'web.participant.sessionDetail.info.end' | kraakTranslate }}
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ formatDateTime(sess.endsAt) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                {{
+                  'web.participant.sessionDetail.info.format' | kraakTranslate
+                }}
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{ locationTypeLabel(sess.locationType) }}
+              </dd>
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 p-5">
+              <dt
+                class="text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
+              >
+                {{
+                  'web.participant.sessionDetail.info.location' | kraakTranslate
+                }}
+              </dt>
+              <dd class="mt-2 text-sm font-semibold text-slate-800">
+                {{
+                  sess.locationLabel ||
+                    ('web.participant.sessionDetail.info.unspecified'
+                      | kraakTranslate)
+                }}
+              </dd>
+            </div>
+          </dl>
+
+          @if (sess.meetingLink) {
+            <div
+              class="mt-6 flex flex-col gap-4 rounded-3xl bg-slate-950 p-5 text-white sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p class="text-sm font-semibold">
+                  {{
+                    'web.participant.sessionDetail.info.onlineTitle'
+                      | kraakTranslate
+                  }}
+                </p>
+                <p class="mt-1 text-xs leading-5 text-white/56">
+                  {{
+                    'web.participant.sessionDetail.info.onlineDetail'
+                      | kraakTranslate
+                  }}
+                </p>
+              </div>
+
+              <a
+                [href]="sess.meetingLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="motion-hover-lift motion-press inline-flex h-10 w-full items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-slate-950 sm:w-auto sm:shrink-0"
+              >
+                {{ 'web.participant.sessionDetail.info.join' | kraakTranslate }}
+                <i class="pi pi-arrow-up-right text-xs" aria-hidden="true"></i>
+              </a>
+            </div>
+          }
+        </article>
+      </div>
+
+      <aside
+        class="h-fit rounded-[2rem] bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_12px_30px_-18px_rgba(18,43,74,0.16)] sm:p-8"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p
+              class="text-brand-blue text-xs font-semibold tracking-[0.18em] uppercase"
+            >
+              {{
+                'web.participant.sessionDetail.progress.eyebrow'
+                  | kraakTranslate
+              }}
+            </p>
+            <h2 class="mt-2 text-xl font-semibold text-slate-950">
+              {{
+                'web.participant.sessionDetail.progress.title' | kraakTranslate
+              }}
+            </h2>
+          </div>
+
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-2xl"
+            [class.bg-emerald-50]="isSessionCompleted()"
+            [class.text-emerald-700]="isSessionCompleted()"
+            [class.bg-slate-100]="!isSessionCompleted()"
+            [class.text-slate-500]="!isSessionCompleted()"
+            aria-hidden="true"
+          >
+            <i
+              class="pi"
+              [class.pi-check]="isSessionCompleted()"
+              [class.pi-clock]="!isSessionCompleted()"
+            ></i>
+          </span>
+        </div>
+
+        <p class="mt-5 text-sm leading-6 text-slate-600">
+          @if (isSessionCompleted()) {
+            {{
+              'web.participant.sessionDetail.progress.completed'
+                | kraakTranslate
+            }}
+          } @else {
+            {{
+              'web.participant.sessionDetail.progress.incomplete'
+                | kraakTranslate
+            }}
+          }
+        </p>
+
+        @if (markErrorMessage()) {
+          <p
+            class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
+            role="alert"
+          >
+            {{ markErrorMessage() }}
+          </p>
+        }
+
+        @if (isSessionCompleted()) {
+          <button
+            type="button"
+            class="kr-button-secondary mt-6 w-full"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(false)"
+          >
+            {{
+              'web.participant.sessionDetail.progress.markIncomplete'
+                | kraakTranslate
+            }}
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="kr-button-primary mt-6 w-full"
+            [disabled]="markingProgress()"
+            (click)="markSessionCompletion(true)"
+          >
+            {{
+              'web.participant.sessionDetail.progress.markComplete'
+                | kraakTranslate
+            }}
+          </button>
+        }
+
+        @if (programDetail(); as detail) {
+          <div class="mt-7 border-t border-dashed border-slate-200 pt-6">
+            <div class="flex items-end justify-between gap-3">
+              <span class="text-xs font-semibold text-slate-500">
+                {{
+                  'web.participant.sessionDetail.progress.global'
+                    | kraakTranslate
+                }}
+              </span>
+              <span class="text-sm font-semibold text-slate-950">
+                {{ detail.progress.completionRate }}%
+              </span>
+            </div>
+
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div
+                class="h-full rounded-full bg-[linear-gradient(90deg,#1673ae_0%,#4cc3d9_100%)]"
+                [style.width.%]="detail.progress.completionRate"
+              ></div>
+            </div>
+
+            <p class="mt-2 text-xs leading-5 text-slate-500">
+              {{ detail.progress.completedSessions }}/{{
+                detail.progress.totalSessions
+              }}
+              {{
+                'web.participant.sessionDetail.progress.sessionsCompleted'
+                  | kraakTranslate
+              }}
+            </p>
+          </div>
+        }
+      </aside>
+    </section>
+  } @else {
+    <section
+      class="rounded-[2rem] bg-white px-6 py-12 text-center shadow-[0_1px_1px_rgba(0,0,0,0.06),0_-1px_1px_rgba(0,0,0,0.06)_inset,0_8px_24px_rgba(18,43,74,0.08)] sm:px-10"
+    >
+      <span
+        class="text-brand-blue mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 shadow-[0_1px_2px_rgba(164,172,185,0.24),0_0_0_1px_rgba(18,55,105,0.08)]"
+        aria-hidden="true"
+      >
+        <i class="pi pi-calendar-times text-lg"></i>
+      </span>
+
+      <h1 class="mt-5 text-2xl font-semibold text-slate-950">
+        {{ 'web.participant.sessionDetail.notFound.title' | kraakTranslate }}
+      </h1>
+      <p class="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-600">
+        {{ 'web.participant.sessionDetail.notFound.detail' | kraakTranslate }}
+      </p>
+
+      <a
+        [routerLink]="['/participant/programmes', programId()]"
+        class="kr-button-primary mt-6"
+      >
+        {{
+          'web.participant.sessionDetail.common.backToProgram' | kraakTranslate
+        }}
+      </a>
+    </section>
+  }
+</div>

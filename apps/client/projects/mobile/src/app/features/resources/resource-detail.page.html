@@ -1,7 +1,7 @@
 <kraak-page-shell
-  eyebrow="Ressource"
-  title="D&eacute;tail de la ressource"
-  description="Consultez le contenu et acc&eacute;dez rapidement au lien ou au fichier associ&eacute;."
+  [eyebrow]="'mobile.resources.detail.header.eyebrow' | kraakTranslate"
+  [title]="'mobile.resources.detail.header.title' | kraakTranslate"
+  [description]="'mobile.resources.detail.header.description' | kraakTranslate"
   backHref="/tabs/programmes/ressources"
 >
   <section class="flex flex-col gap-4 px-4 py-5">
@@ -18,16 +18,21 @@
           (click)="reloadResource()"
           (keydown.enter)="reloadResource()"
         >
-          R&eacute;essayer
+          {{ 'mobile.resources.detail.actions.retry' | kraakTranslate }}
         </ion-button>
       </article>
     } @else if (loading()) {
       <article
         class="rounded-card border-brand-blue/12 bg-brand-white shadow-card flex flex-col items-center gap-4 border p-5"
       >
-        <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+        <ion-spinner
+          name="crescent"
+          [attr.aria-label]="
+            'mobile.resources.detail.loading.aria' | kraakTranslate
+          "
+        ></ion-spinner>
         <p class="text-sm leading-6 text-neutral-700">
-          Chargement de la ressource...
+          {{ 'mobile.resources.detail.loading.text' | kraakTranslate }}
         </p>
       </article>
     } @else if (resource()) {
@@ -45,7 +50,8 @@
         }
 
         <p class="text-xs leading-5 text-neutral-700 uppercase">
-          Type: {{ resource()!.resourceType }}
+          {{ 'mobile.resources.detail.labels.type' | kraakTranslate }}:
+          {{ getResourceTypeLabel(resource()!.resourceType) }}
         </p>
 
         @if (resource()!.url) {
@@ -56,13 +62,14 @@
             expand="block"
             class="kraak-primary-button"
           >
-            Ouvrir le lien
+            {{ 'mobile.resources.detail.actions.openLink' | kraakTranslate }}
           </ion-button>
         }
 
         @if (resource()!.filePath) {
           <p class="text-xs leading-5 text-neutral-700">
-            Fichier: {{ resource()!.filePath }}
+            {{ 'mobile.resources.detail.labels.file' | kraakTranslate }}:
+            {{ resource()!.filePath }}
           </p>
         }
       </article>

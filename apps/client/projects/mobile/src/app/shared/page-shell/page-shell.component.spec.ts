@@ -20,6 +20,17 @@ import { PageShellComponent } from './page-shell.component';
 })
 class TestHostComponent {}
 
+@Component({
+  standalone: true,
+  imports: [PageShellComponent],
+  template: `
+    <kraak-page-shell title="Vue simple">
+      <p>Contenu minimal</p>
+    </kraak-page-shell>
+  `,
+})
+class TestMinimalHostComponent {}
+
 describe('PageShell', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -48,5 +59,18 @@ describe('PageShell', () => {
 
     const content = fixture.nativeElement.querySelector('ion-content');
     expect(content?.textContent).toContain('Contenu de test');
+  });
+
+  it('Given optional header fields are omitted, when the shell renders, then back button, eyebrow and description are hidden', () => {
+    const fixture = TestBed.createComponent(TestMinimalHostComponent);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Vue simple');
+    expect(element.querySelector('ion-back-button')).toBeFalsy();
+    expect(element.textContent).not.toContain('KRAAK mobile');
+    expect(element.textContent).not.toContain(
+      'Retrouvez les parcours actifs et les ressources utiles.',
+    );
   });
 });

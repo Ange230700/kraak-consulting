@@ -1,0 +1,237 @@
+<section
+  class="relative overflow-hidden bg-cover bg-center bg-no-repeat"
+  [ngStyle]="heroBackgroundStyle"
+>
+  <div
+    aria-hidden="true"
+    class="from-brand-navy-soft/95 to-brand-navy/45 absolute inset-0 bg-linear-to-r"
+  ></div>
+
+  <div
+    class="relative z-10 mx-auto grid min-h-[70vh] w-full max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[76vh] lg:px-8 lg:py-20"
+  >
+    <div class="max-w-3xl text-left">
+      <p
+        class="text-brand-cyan text-[11px] font-semibold tracking-[0.26em] uppercase sm:text-xs"
+      >
+        {{ 'web.blog.hero.eyebrow' | kraakTranslate }}
+      </p>
+      <h1
+        class="text-brand-white mt-3 text-4xl leading-[1.08] font-black sm:mt-4 sm:text-5xl lg:text-6xl lg:leading-[1.04]"
+      >
+        {{ 'web.blog.hero.titleLead' | kraakTranslate }}
+        <span class="text-brand-cyan">{{
+          'web.blog.hero.titleHighlight' | kraakTranslate
+        }}</span>
+        {{ 'web.blog.hero.titleTail' | kraakTranslate }}
+      </h1>
+      <p
+        class="mt-6 max-w-2xl text-base leading-relaxed text-neutral-200 sm:mt-7 sm:text-lg lg:text-xl"
+      >
+        {{ 'web.blog.hero.description' | kraakTranslate }}
+      </p>
+      <div
+        class="mt-8 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-4"
+      >
+        <a
+          pButton
+          [routerLink]="'contact' | localizedPublicPath"
+          [label]="'web.blog.hero.primaryCta' | kraakTranslate"
+          icon="pi pi-comments"
+          [attr.aria-label]="'web.blog.hero.primaryCta' | kraakTranslate"
+          class="kr-button-primary w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase sm:w-auto"
+        ></a>
+        <a
+          pButton
+          [routerLink]="'services' | localizedPublicPath"
+          [label]="'web.blog.hero.secondaryCta' | kraakTranslate"
+          icon="pi pi-compass"
+          [attr.aria-label]="'web.blog.hero.secondaryCta' | kraakTranslate"
+          class="kr-button-ghost border-brand-white/20 bg-brand-white/10 w-full justify-center rounded-2xl px-8 py-4 text-xs font-black tracking-widest uppercase backdrop-blur-md sm:w-auto"
+        ></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-white py-14">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    @if (featuredArticle) {
+      <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
+        <article class="rounded-card bg-neutral-50 p-8 shadow-sm">
+          <p
+            class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+          >
+            {{ 'web.blog.featured.eyebrow' | kraakTranslate }}
+          </p>
+          <h2 class="mt-3 text-3xl font-bold lg:text-4xl">
+            {{ featuredArticle.title }}
+          </h2>
+          <p class="text-brand-navy mt-4 text-lg leading-relaxed">
+            {{ featuredArticle.summary }}
+          </p>
+
+          <div class="mt-6 flex items-center gap-3 text-sm text-neutral-600">
+            <span>{{ featuredArticle.publishedLabel }}</span>
+            <span>•</span>
+            <span>{{ featuredArticle.readingTimeMinutes }} min</span>
+          </div>
+
+          <a
+            pButton
+            [routerLink]="
+              ('blog' | localizedPublicPath) + '/' + featuredArticle.slug
+            "
+            [label]="'web.blog.featured.readArticle' | kraakTranslate"
+            icon="pi pi-arrow-right"
+            class="kr-button-primary mt-8"
+            [attr.aria-label]="
+              'web.blog.featured.readArticleAria' | kraakTranslate
+            "
+            >{{ 'web.blog.card.readArticle' | kraakTranslate }}</a
+          >
+        </article>
+
+        <aside class="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+          <article
+            class="rounded-card bg-brand-white border border-neutral-200 p-6 shadow-sm"
+          >
+            <p class="text-brand-navy text-2xl font-bold">
+              {{ totalArticles }}
+            </p>
+            <p class="mt-2 text-neutral-700">
+              {{ 'web.blog.featured.articlesAvailable' | kraakTranslate }}
+            </p>
+          </article>
+          <article
+            class="rounded-card bg-brand-white border border-neutral-200 p-6 shadow-sm"
+          >
+            <p class="text-brand-navy text-2xl font-bold">{{ totalPages }}</p>
+            <p class="mt-2 text-neutral-700">
+              {{ 'web.blog.featured.readingPages' | kraakTranslate }}
+            </p>
+          </article>
+        </aside>
+      </div>
+    } @else {
+      <article class="rounded-card bg-neutral-50 p-8 text-center shadow-sm">
+        <p class="text-brand-blue font-semibold">
+          {{ 'web.blog.featured.empty' | kraakTranslate }}
+        </p>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="bg-neutral-50 py-16">
+  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+    <div class="flex flex-col gap-4 text-center">
+      <p
+        class="text-brand-blue text-sm font-semibold tracking-[0.18em] uppercase"
+      >
+        {{ 'web.blog.latest.eyebrow' | kraakTranslate }}
+      </p>
+      <h2 class="text-3xl font-bold lg:text-4xl">
+        {{ 'web.blog.latest.title' | kraakTranslate }}
+      </h2>
+      <p class="text-brand-navy mx-auto max-w-3xl text-lg">
+        {{ 'web.blog.latest.description' | kraakTranslate }}
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      @for (article of pagedArticles; track article.slug) {
+        <article
+          class="reveal-on-scroll rounded-card bg-brand-white shadow-card overflow-hidden"
+        >
+          <img
+            [src]="article.coverImagePath"
+            [alt]="article.title"
+            class="h-52 w-full object-cover"
+            loading="lazy"
+          />
+          <div class="p-6">
+            <div class="flex items-center gap-3 text-sm text-neutral-600">
+              <span>{{ article.publishedLabel }}</span>
+              <span>•</span>
+              <span
+                >{{ article.readingTimeMinutes }}
+                {{ 'web.blog.card.readingTimeShort' | kraakTranslate }}</span
+              >
+            </div>
+            <h3 class="mt-4 text-2xl leading-tight font-bold">
+              {{ article.title }}
+            </h3>
+            <p class="mt-3 leading-relaxed text-neutral-700">
+              {{ article.summary }}
+            </p>
+            <a
+              [routerLink]="('blog' | localizedPublicPath) + '/' + article.slug"
+              class="text-brand-blue mt-6 inline-flex font-semibold"
+            >
+              {{ 'web.blog.card.readArticle' | kraakTranslate }}
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (totalPages >= 1 && totalArticles > 0) {
+      <nav
+        class="mt-10 flex flex-wrap items-center justify-center gap-2"
+        [attr.aria-label]="'web.blog.pagination.aria' | kraakTranslate"
+      >
+        <button
+          type="button"
+          pButton
+          class="kr-button-ghost"
+          [label]="'web.blog.pagination.previous' | kraakTranslate"
+          (click)="goToPreviousPage()"
+          [disabled]="currentPage === 1"
+        >
+          {{ 'web.blog.pagination.previous' | kraakTranslate }}
+        </button>
+
+        @for (pageNumber of pageNumbers; track pageNumber) {
+          <button
+            type="button"
+            pButton
+            [label]="pageNumber.toString()"
+            (click)="goToPage(pageNumber)"
+            [class]="
+              pageNumber === currentPage
+                ? 'kr-button-primary'
+                : 'kr-button-ghost'
+            "
+            [attr.aria-label]="
+              ('web.blog.pagination.pageAriaPrefix' | kraakTranslate) +
+              ' ' +
+              pageNumber
+            "
+          >
+            {{ pageNumber }}
+          </button>
+        }
+
+        <button
+          type="button"
+          pButton
+          class="kr-button-ghost"
+          [label]="'web.blog.pagination.next' | kraakTranslate"
+          (click)="goToNextPage()"
+          [disabled]="currentPage === totalPages"
+        >
+          {{ 'web.blog.pagination.next' | kraakTranslate }}
+        </button>
+      </nav>
+    }
+  </div>
+</section>
+
+<kraak-cta-banner
+  [heading]="'web.blog.cta.heading' | kraakTranslate"
+  [body]="'web.blog.cta.body' | kraakTranslate"
+  [ctaLabel]="'web.blog.cta.label' | kraakTranslate"
+  ctaLink="/contact"
+  ctaContext="blog_main_cta"
+/>

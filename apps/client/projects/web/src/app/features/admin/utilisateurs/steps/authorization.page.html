@@ -1,0 +1,77 @@
+<div class="p-8">
+  <p
+    class="text-brand-blue mb-1 text-xs font-semibold tracking-[0.3em] uppercase"
+  >
+    {{ 'web.admin.users.create.authorization.step' | kraakTranslate }}
+  </p>
+  <h2 class="text-brand-navy mb-1 text-xl font-bold">
+    {{ 'web.admin.users.create.authorization.title' | kraakTranslate }}
+  </h2>
+  <p class="mb-8 text-sm text-neutral-600">
+    {{ 'web.admin.users.create.authorization.description' | kraakTranslate }}
+  </p>
+
+  <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label
+        class="text-xs font-medium text-neutral-600"
+        for="preferredContactChannel"
+      >
+        {{
+          'web.admin.users.create.authorization.channel.label' | kraakTranslate
+        }}
+      </label>
+      <select
+        id="preferredContactChannel"
+        class="text-brand-navy focus:border-brand-blue w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none"
+        [(ngModel)]="preferredContactChannel"
+        (ngModelChange)="sync()"
+      >
+        <option value="">
+          {{
+            'web.admin.users.create.authorization.channel.placeholder'
+              | kraakTranslate
+          }}
+        </option>
+        @for (channel of contactChannels; track channel.value) {
+          <option [value]="channel.value">
+            {{ channel.labelKey | kraakTranslate }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-neutral-600" for="notes">{{
+        'web.admin.users.create.authorization.notes.label' | kraakTranslate
+      }}</label>
+      <textarea
+        id="notes"
+        rows="4"
+        class="text-brand-navy focus:border-brand-blue w-full resize-none rounded-lg border border-neutral-200 px-3 py-2 text-sm outline-none"
+        [placeholder]="
+          'web.admin.users.create.authorization.notes.placeholder'
+            | kraakTranslate
+        "
+        [(ngModel)]="notes"
+        (ngModelChange)="sync()"
+      ></textarea>
+      <p class="text-xs text-neutral-400">
+        {{ 'web.admin.users.create.authorization.notes.help' | kraakTranslate }}
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-between">
+    <button pButton class="kr-button-ghost" type="button" (click)="goPrev()">
+      <i class="pi pi-arrow-left mr-2"></i>
+      {{
+        'web.admin.users.create.authorization.actions.previous' | kraakTranslate
+      }}
+    </button>
+    <button pButton class="kr-button-primary" type="button" (click)="goNext()">
+      {{ 'web.admin.users.create.authorization.actions.next' | kraakTranslate }}
+      <i class="pi pi-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>

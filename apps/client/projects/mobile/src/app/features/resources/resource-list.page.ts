@@ -8,6 +8,10 @@ import type {
   ResourceThemeValue,
   ResourceTypeValue,
 } from '@kraak/contracts';
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 import { PageShellComponent } from '../../shared/page-shell/page-shell.component';
 import { resolveAuthErrorMessage } from '../auth/mobile-auth.service';
 import { MobileResourcesService } from './mobile-resources.service';
@@ -16,40 +20,49 @@ const RESOURCE_THEME_OPTIONS: readonly {
   value: ResourceThemeValue;
   label: string;
 }[] = [
-  { value: 'training', label: 'Formation' },
-  { value: 'project_management', label: 'Gestion de projet' },
-  { value: 'immigration', label: 'Immigration' },
-  { value: 'career', label: 'Carri\u00E8re' },
+  { value: 'training', label: 'mobile.resources.list.themes.training' },
+  {
+    value: 'project_management',
+    label: 'mobile.resources.list.themes.project_management',
+  },
+  { value: 'immigration', label: 'mobile.resources.list.themes.immigration' },
+  { value: 'career', label: 'mobile.resources.list.themes.career' },
 ];
 
 const RESOURCE_AUDIENCE_OPTIONS: readonly {
   value: ResourceAudienceValue;
   label: string;
 }[] = [
-  { value: 'all', label: 'Tous' },
+  { value: 'all', label: 'mobile.resources.list.audiences.all' },
   {
     value: 'young_professionals_students',
-    label: 'Jeunes pros et \u00E9tudiants',
+    label: 'mobile.resources.list.audiences.young_professionals_students',
   },
-  { value: 'organizations', label: 'Organisations' },
-  { value: 'international_candidates', label: 'Candidats internationaux' },
+  {
+    value: 'organizations',
+    label: 'mobile.resources.list.audiences.organizations',
+  },
+  {
+    value: 'international_candidates',
+    label: 'mobile.resources.list.audiences.international_candidates',
+  },
 ];
-
-const RESOURCE_TYPE_LABELS: Record<ResourceTypeValue, string> = {
-  link: 'Lien',
-  file: 'Fichier',
-  video: 'Vid\u00E9o',
-  document: 'Document',
-};
 
 @Component({
   selector: 'kraak-resource-list-page',
   standalone: true,
-  imports: [PageShellComponent, IonButton, IonSpinner, RouterLink],
+  imports: [
+    PageShellComponent,
+    IonButton,
+    IonSpinner,
+    RouterLink,
+    KraakTranslatePipe,
+  ],
   templateUrl: './resource-list.page.html',
 })
 export default class ResourceListPage implements OnInit {
   private readonly resourcesService = inject(MobileResourcesService);
+  private readonly i18n = inject(KraakI18nService);
   private latestLoadRequestId = 0;
 
   protected readonly resources = signal<ResourceDto[]>([]);
@@ -83,7 +96,7 @@ export default class ResourceListPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadResources();
+    void this.loadResources();
   }
 
   protected onSearchInput(event: Event): void {
@@ -110,21 +123,23 @@ export default class ResourceListPage implements OnInit {
   }
 
   protected getResourceThemeLabel(theme: ResourceThemeValue): string {
-    return (
-      this.resourceThemeOptions.find((option) => option.value === theme)
-        ?.label ?? theme
+    const option = this.resourceThemeOptions.find(
+      (candidate) => candidate.value === theme,
     );
+
+    return option ? this.i18n.translate(option.label) : theme;
   }
 
   protected getResourceAudienceLabel(audience: ResourceAudienceValue): string {
-    return (
-      this.resourceAudienceOptions.find((option) => option.value === audience)
-        ?.label ?? audience
+    const option = this.resourceAudienceOptions.find(
+      (candidate) => candidate.value === audience,
     );
+
+    return option ? this.i18n.translate(option.label) : audience;
   }
 
   protected getResourceTypeLabel(type: ResourceTypeValue): string {
-    return RESOURCE_TYPE_LABELS[type];
+    return this.i18n.translate(`mobile.resources.list.types.${type}`);
   }
 
   private async loadResources(): Promise<void> {
@@ -152,7 +167,7 @@ export default class ResourceListPage implements OnInit {
         this.errorMessage.set(
           resolveAuthErrorMessage(
             error,
-            'Erreur lors du chargement des ressources.',
+            this.i18n.translate('mobile.resources.list.feedback.loadFailure'),
           ),
         );
         this.resources.set([]);

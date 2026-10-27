@@ -1,6 +1,6 @@
-# Pipeline CI — kraak-group monorepo
-# Déclenché sur push vers main et sur les pull requests ciblant main.
-# Couvre : format, lint, build, tests unitaires, tests E2E.
+# Pipeline CI — kraak-consulting monorepo
+# Déclenché sur push et pull request vers staging et main.
+# Couvre : format, lint, build, tests unitaires et integration.
 
 name: CI
 
@@ -14,61 +14,214 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+env:
+  GIT_EXECUTABLE: /usr/bin/git
 
 jobs:
+  quality-gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Contrôle qualité complet, identique aux hooks locaux
+        run: pnpm check
+
+      - name: Conserver les rapports de couverture, même en cas de seuil non atteint
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quality-coverage
+          path: |
+            coverage/lcov.info
+            coverage/coverage-summary.json
+            apps/api/coverage/
+            apps/client/coverage/
+            packages/*/coverage/
+          if-no-files-found: warn
+          retention-days: 14
+
   # ──────────────────────────────────────────────
   # Vérifications rapides : format + lint
   # ──────────────────────────────────────────────
   lint:
     name: Format & Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+      - name: Install pnpm
+        run: npm install -g --ignore-scripts pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1
+        with:
+          version: latest
 
       - name: Vérifier le formatage (Prettier)
         run: pnpm format:check
 
       - name: Lint (ESLint)
-        run: pnpm lint
+        run: pnpm affected:lint
 
-  # ──────────────────────────────────────────────
-  # Build de production (web + mobile)
-  # ──────────────────────────────────────────────
-  build:
-    name: Build
+      - name: Linter les scripts et configurations racine
+        run: pnpm lint:root
+
+      - name: Linter la documentation Markdown
+        run: pnpm lint:markdown
+
+      - name: Lint Supabase lié
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_STAGING_PROJECT_REF: ${{ secrets.SUPABASE_STAGING_PROJECT_REF }}
+        run: |
+          if [[ -z "${SUPABASE_ACCESS_TOKEN:-}" || -z "${SUPABASE_STAGING_PROJECT_REF:-}" ]]; then
+            echo "Supabase secrets manquants: étape Splinter ignorée."
+            exit 0
+          fi
+          supabase link --project-ref "$SUPABASE_STAGING_PROJECT_REF"
+          set +e
+          splinter_output="$(pnpm splinter:linked 2>&1)"
+          splinter_code=$?
+          set -e
+
+          echo "$splinter_output"
+
+          if [[ $splinter_code -eq 0 ]]; then
+            exit 0
+          fi
+
+          if echo "$splinter_output" | grep -q "unexpected performance advisors status 400"; then
+            echo "::warning::Supabase advisors a retourné une erreur 400 côté service (incident externe connu). Étape marquée non bloquante."
+            exit 0
+          fi
+
+          exit $splinter_code
+
+  migration-lineage:
+    name: Migration Lineage Tests
     runs-on: ubuntu-latest
-    needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+
+      - name: Test migration lineage without database access
+        run: node --test scripts/check-supabase-migration-lineage.test.mjs
+
+  # ──────────────────────────────────────────────
+  # Audit de dépendances reproductible
+  # ──────────────────────────────────────────────
+  dependency-audit:
+    name: Audit dépendances
+    runs-on: ubuntu-latest
+    needs: lint
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
+      - name: Exécuter pnpm audit
+        run: |
+          mkdir -p .reports/dependency-audit
+          set +e
+          pnpm audit --json > .reports/dependency-audit/pnpm-audit-all.raw.json
+          all_code=$?
+          pnpm audit --prod --json > .reports/dependency-audit/pnpm-audit-prod.raw.json
+          prod_code=$?
+          set -e
 
-      - name: Build web (production SSR)
-        run: pnpm build:web
+          cat > .reports/dependency-audit/summary.json <<EOF
+          {
+            "generatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "tool": "pnpm audit",
+            "results": {
+              "all": { "exitCode": $all_code },
+              "prod": { "exitCode": $prod_code }
+            }
+          }
+          EOF
 
-      - name: Build mobile (production)
-        run: pnpm build:mobile
+          if [[ "$all_code" -gt 1 || "$prod_code" -gt 1 ]]; then
+            exit 1
+          fi
+
+      - name: Publier les sorties brutes pnpm audit
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dependency-audit-raw
+          path: .reports/dependency-audit/
+          retention-days: 30
+
+  # Build de production (web + mobile)
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
 
   # ──────────────────────────────────────────────
   # Tests unitaires (Vitest via Angular builder)
@@ -77,23 +230,139 @@ jobs:
     name: Tests unitaires
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
+
+      - name: Exécuter les tests unitaires
+        run: pnpm affected:test
+
+  # ──────────────────────────────────────────────
+  # Tests integration API
+  # ──────────────────────────────────────────────
+  integration:
+    name: Tests integration
+    runs-on: ubuntu-latest
+    needs: lint
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Exécuter les tests integration
+        run: pnpm test:integration
+
+  # ──────────────────────────────────────────────
+  # Navigateurs et dépendances système préinstallés, sans téléchargement en CI.
+  # ──────────────────────────────────────────────
+  e2e-browsers:
+    name: E2E (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --ipc=host
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            config: playwright.config.ts
+          - project: firefox
+            config: playwright.config.ts
+          - project: webkit
+            config: playwright.config.ts
+          - project: chrome-android
+            config: playwright.mobile.config.ts
+          - project: safari-iphone
+            config: playwright.mobile.config.ts
+    permissions:
+      contents: read
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      HOME: /root
+      KRAAK_E2E_BASE_URL: http://localhost:4200
+      CLIENT_API_BASE_URL: http://localhost:3000
+      CLIENT_SITE_URL: http://localhost:4200
+      KRAAK_E2E_START_WEB_SERVER: 'true'
+      KRAAK_E2E_WEB_SERVER_URL: http://localhost:4200
+      KRAAK_E2E_WEB_SERVER_COMMAND: node ../../scripts/generate-client-runtime-config.mjs --env local && pnpm exec ng serve web --configuration local --port 4200 --prebundle=false --live-reload=false
+      CLIENT_FEATURE_PARTICIPANT_AREA: 'true'
+      KRAAK_E2E_EXPECT_PARTICIPANT_AREA: 'true'
+      KRAAK_E2E_EXPECT_PARTICIPANT_CTA: 'true'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Construire les packages workspace
         run: pnpm -r --filter "./packages/**" build
 
-      - name: Exécuter les tests unitaires
-        run: pnpm test:unit
+      - name: Vérifier le typage des configurations Playwright
+        run: pnpm --filter @kraak/client exec tsc --noEmit --skipLibCheck --target es2022 --module commonjs --moduleResolution node --esModuleInterop playwright.config.ts playwright.mobile.config.ts
+
+      - name: Exécuter les tests E2E
+        timeout-minutes: 25
+        run: pnpm --filter @kraak/client exec playwright test --config=${{ matrix.config }} --project=${{ matrix.project }} --global-timeout=1200000
+
+      - name: Sauvegarder les preuves Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: playwright-results-${{ matrix.project }}
+          path: |
+            apps/client/test-results/
+            apps/client/playwright-report/
+          retention-days: 14
+
+  e2e:
+    name: Tests E2E
+    runs-on: ubuntu-latest
+    needs: e2e-browsers
+    if: ${{ always() }}
+    permissions:
+      contents: read
+    steps:
+      - name: Vérifier tous les navigateurs
+        env:
+          E2E_RESULT: ${{ needs.e2e-browsers.result }}
+        run: test "$E2E_RESULT" = success
 
   # ──────────────────────────────────────────────
   # Tests scripts / workspace (Node --test)
@@ -102,17 +371,24 @@ jobs:
     name: Workspace Checks
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
+
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Exécuter les tests workspace
         run: pnpm test:workspace
@@ -124,55 +400,13 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Construire l'image Docker API
         run: docker build -f apps/api/Dockerfile -t kraak-api:ci .
-
-  # ──────────────────────────────────────────────
-  # Tests E2E (Playwright — Chromium)
-  # ──────────────────────────────────────────────
-  e2e:
-    name: Tests E2E
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: 0
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version-file: package.json
-          cache: pnpm
-
-      - run: pnpm install --ignore-scripts --frozen-lockfile
-
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
-
-      - name: Installer les navigateurs Playwright
-        # Note: playwright install exécute une commande officielle Playwright (non pnpm install),
-        # donc --ignore-scripts ne s'applique pas. Les dépendances système (--with-deps)
-        # proviennent de distributions officielles et ne représentent pas un risque de sécurité.
-        # NOSONAR
-        run: |
-          pnpm --filter @kraak/client exec playwright --version
-          pnpm --filter @kraak/client exec playwright install --with-deps
-
-      - name: Exécuter les tests E2E
-        run: pnpm test:e2e:all
-
-      - name: Sauvegarder les rapports Playwright
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: playwright-report
-          path: apps/client/playwright-report/
-          retention-days: 14
 
   # ──────────────────────────────────────────────
   # Build debug APK Android (Capacitor + Gradle)
@@ -181,25 +415,33 @@ jobs:
     name: Android Debug APK
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: package.json
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
 
       - run: pnpm install --ignore-scripts --frozen-lockfile
 
-      - name: Construire les packages workspace
-        run: pnpm -r --filter "./packages/**" build
+      - name: Construire les workspaces affectés
+        run: pnpm affected:build
+
+      # Prébuild des dépendances workspace requises par le mobile même si non "affected"
+      - name: Construire les dépendances workspace du mobile
+        run: pnpm --filter @kraak/contracts --filter @kraak/domain build
 
       - name: Build mobile & sync Android
         run: pnpm build:debug:android

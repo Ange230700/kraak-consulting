@@ -1,3 +1,4 @@
+import { apiMessage } from '../i18n/api-message';
 import {
   InternalServerErrorException,
   Injectable,
@@ -14,10 +15,7 @@ import type {
   SessionStatusValue,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
-
-type ParticipantRow = {
-  id: string;
-};
+import { resolveParticipantId } from '../shared/supabase-record.utils';
 
 type EnrollmentProgramRow = {
   id: string;
@@ -96,11 +94,15 @@ export class DashboardService {
     if (error || !data.user) {
       throw new UnauthorizedException({
         success: false,
-        message: 'La session est invalide ou expirée.',
+        message: apiMessage('auth.sessionInvalidOrExpired'),
       });
     }
 
-    const participantId = await this.resolveParticipantId(data.user.id);
+    const participantId = await resolveParticipantId(
+      this.supabaseService,
+      data.user.id,
+      apiMessage('dashboard.currentParticipantLoadFailed'),
+    );
 
     if (!participantId) {
       return this.buildEmptyAggregate();
@@ -133,24 +135,6 @@ export class DashboardService {
     };
   }
 
-  private async resolveParticipantId(userId: string): Promise<string | null> {
-    const adminClient = this.supabaseService.getClient();
-    const { data, error } = await adminClient
-      .from('participant')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: 'Impossible de charger le participant courant.',
-      });
-    }
-
-    return (data as ParticipantRow | null)?.id ?? null;
-  }
-
   private async readPrograms(
     participantId: string,
   ): Promise<DashboardProgramSummaryDto[]> {
@@ -168,7 +152,7 @@ export class DashboardService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les programmes du dashboard.',
+        message: apiMessage('dashboard.programsLoadFailed'),
       });
     }
 
@@ -211,7 +195,7 @@ export class DashboardService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les sessions à venir du dashboard.',
+        message: apiMessage('dashboard.upcomingSessionsLoadFailed'),
       });
     }
 
@@ -271,7 +255,7 @@ export class DashboardService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les annonces du dashboard.',
+        message: apiMessage('dashboard.announcementsLoadFailed'),
       });
     }
 

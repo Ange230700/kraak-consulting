@@ -1,63 +1,126 @@
-<section
-  class="relative overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20 text-center md:px-8 lg:px-12 lg:py-28"
-  [ngStyle]="heroBackgroundStyle"
->
-  <div
-    aria-hidden="true"
-    class="via-brand-navy/20 to-brand-navy/70 absolute inset-0 bg-linear-to-b from-transparent"
-  ></div>
+<!-- apps\client\projects\web\src\app\features\contact\contact.page.html -->
 
-  <div class="relative z-10 mx-auto max-w-4xl px-6">
+<section class="bg-brand-white px-4 py-6 sm:px-6 lg:py-8" kraakRevealOnScroll>
+  <div
+    class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#122b4a_0%,#1c4e86_52%,#1673ae_100%)] text-white shadow-[0_2px_5px_rgba(18,55,105,0.08),0_30px_70px_-38px_rgba(18,43,74,0.62)]"
+  >
+    <span
+      aria-hidden="true"
+      class="bg-brand-cyan/18 pointer-events-none absolute -top-40 -right-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+    <span
+      aria-hidden="true"
+      class="bg-brand-gold/10 pointer-events-none absolute -bottom-44 -left-20 h-96 w-96 rounded-full blur-3xl"
+    ></span>
+
     <div
-      class="bg-brand-white text-brand-navy border-brand-blue/15 mx-auto max-w-4xl rounded-3xl border px-6 py-10 shadow-[0_24px_60px_rgb(18_43_74/18%)] lg:px-8"
+      class="relative z-10 grid items-center gap-10 px-6 py-10 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(24rem,1.08fr)] lg:gap-12 lg:px-12 lg:py-14 xl:px-16"
     >
-      <h1 class="text-brand-navy text-4xl leading-tight font-bold lg:text-5xl">
-        Parlez-nous de votre objectif.
-      </h1>
-      <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg">
-        Vous souhaitez suivre une formation, structurer un projet,
-        pr&eacute;parer une mobilit&eacute; internationale ou discuter d'un
-        partenariat ? L'&eacute;quipe KRAAK est disponible pour vous orienter
-        vers l'accompagnement le plus adapt&eacute;.
-      </p>
+      <div class="min-w-0">
+        <span
+          class="inline-flex min-h-9 items-center rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/80 uppercase shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] backdrop-blur-xl"
+        >
+          {{ 'web.contact.hero.eyebrow' | kraakTranslate }}
+        </span>
+
+        <h1
+          class="mt-6 max-w-3xl text-4xl leading-[1.08] font-semibold text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+        >
+          {{ 'web.contact.hero.titleLead' | kraakTranslate }}
+          <span class="text-brand-cyan">{{
+            'web.contact.hero.titleEmphasis' | kraakTranslate
+          }}</span
+          >.
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg sm:leading-8"
+        >
+          {{ 'web.contact.hero.description' | kraakTranslate }}
+        </p>
+
+        <div
+          class="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4"
+        >
+          <a
+            pButton
+            [routerLink]="[]"
+            fragment="contact-form"
+            queryParamsHandling="preserve"
+            [label]="'web.contact.hero.primaryCta' | kraakTranslate"
+            icon="pi pi-send"
+            [attr.aria-label]="
+              'web.contact.hero.primaryCtaAriaLabel' | kraakTranslate
+            "
+            class="kr-button-primary w-full justify-center sm:w-auto"
+          ></a>
+
+          <a
+            pButton
+            [routerLink]="'services' | localizedPublicPath"
+            [label]="'web.contact.hero.secondaryCta' | kraakTranslate"
+            icon="pi pi-compass"
+            [attr.aria-label]="'web.contact.hero.secondaryCta' | kraakTranslate"
+            class="kr-button-ghost w-full justify-center border-white/16 bg-white/10 text-white backdrop-blur-xl sm:w-auto"
+          ></a>
+        </div>
+      </div>
+
+      <figure
+        class="group relative min-h-72 overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/8 shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset,0_24px_50px_-30px_rgba(0,0,0,0.48)] sm:min-h-96 lg:min-h-[32rem]"
+      >
+        <img
+          src="/assets/site-visuals/photos/services-coaching.avif"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.025]"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.01)_32%,rgba(18,43,74,0.44)_100%)]"
+        ></div>
+
+        <div
+          aria-hidden="true"
+          class="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white/14 bg-slate-950/22 px-4 py-3 backdrop-blur-xl"
+        >
+          <span
+            class="bg-brand-cyan h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_5px_rgba(76,195,217,0.14)]"
+          ></span>
+          <span
+            class="text-xs font-semibold tracking-[0.13em] text-white/84 uppercase"
+          >
+            KRAAK Consulting
+          </span>
+        </div>
+      </figure>
     </div>
   </div>
 </section>
 
-<section class="kr-perf-section bg-brand-white py-10">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <figure
-      class="reveal-on-scroll rounded-card shadow-card overflow-hidden bg-neutral-50"
-    >
-      <img
-        src="/assets/site-visuals/photos/services-immigration.avif"
-        alt="Discussion d'accompagnement avec documents pour orienter une demande"
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        class="h-60 w-full object-cover"
-      />
-      <figcaption class="text-brand-navy p-4 text-center text-sm">
-        Un parcours simple pour clarifier votre besoin et activer la bonne
-        solution.
-      </figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="kr-perf-section bg-neutral-50 py-16 lg:py-20">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
+<section
+  id="contact-form"
+  class="kr-perf-section bg-brand-white py-16 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="60"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
     <div
-      class="border-brand-blue/15 bg-brand-white overflow-hidden rounded-3xl border shadow-[0_24px_60px_rgb(18_43_74/12%)]"
+      class="bg-brand-white overflow-hidden rounded-[2rem] border border-slate-200/80 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-40px_rgba(18,43,74,0.38)]"
     >
-      <div class="flex flex-col lg:min-h-184 lg:flex-row">
+      <div
+        class="grid lg:min-h-[46rem] lg:grid-cols-[minmax(20rem,0.88fr)_minmax(0,1.12fr)]"
+      >
         <aside
-          class="bg-brand-navy relative order-2 min-h-96 flex-1 lg:order-1 lg:min-h-full"
-          aria-label="Informations de contact KRAAK"
+          class="bg-brand-navy relative order-2 min-h-[28rem] overflow-hidden lg:order-1 lg:min-h-full"
+          [attr.aria-label]="'web.contact.details.ariaLabel' | kraakTranslate"
         >
           <img
             [src]="contactVisualUrl"
-            alt="Entretien d'orientation pour clarifier un besoin d'accompagnement"
+            [alt]="'web.contact.details.imageAlt' | kraakTranslate"
             class="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
             decoding="async"
@@ -65,32 +128,32 @@
           />
 
           <div
-            class="via-brand-navy/30 to-brand-navy/92 absolute inset-0 bg-linear-to-b from-transparent"
+            class="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,43,74,0.08)_8%,rgba(18,43,74,0.42)_48%,rgba(18,43,74,0.96)_100%)]"
           ></div>
 
           <div
-            class="relative z-10 flex h-full flex-col justify-end gap-6 p-6 lg:p-10"
+            class="relative z-10 flex h-full flex-col justify-end gap-7 p-6 sm:p-8 lg:p-10 xl:p-12"
           >
             <div>
               <p
-                class="text-brand-cyan text-xs font-semibold tracking-[0.18em] uppercase"
+                class="text-brand-cyan inline-flex min-h-8 items-center rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] uppercase backdrop-blur-xl"
               >
-                Contact KRAAK
+                {{ 'web.contact.hero.eyebrow' | kraakTranslate }}
               </p>
               <h2
-                class="text-brand-white mt-3 text-3xl leading-tight font-bold lg:text-4xl"
+                class="mt-5 max-w-md text-3xl leading-tight font-semibold text-white lg:text-5xl"
               >
-                Donnez-nous les bons rep&egrave;res pour vous orienter.
+                {{ 'web.contact.details.heading' | kraakTranslate }}
               </h2>
-              <p class="text-brand-white mt-4 text-sm leading-6">
-                Formation, projets, leadership, mobilit&eacute; internationale :
-                d&eacute;crivez votre priorit&eacute; et nous revenons vers vous
-                avec un plan d'action clair.
+              <p
+                class="mt-4 max-w-md text-sm leading-6 text-white/78 sm:text-base sm:leading-7"
+              >
+                {{ 'web.contact.details.description' | kraakTranslate }}
               </p>
             </div>
 
             <address class="not-italic">
-              <ul class="text-brand-white space-y-3 text-sm leading-6">
+              <ul class="space-y-4 text-sm leading-6 text-white/86">
                 <li class="flex items-center gap-3">
                   <i
                     class="pi pi-envelope text-brand-cyan"
@@ -114,14 +177,18 @@
                     class="pi pi-map-marker text-brand-cyan"
                     aria-hidden="true"
                   ></i>
-                  <span>Afrique &amp; international</span>
+                  <span>{{
+                    'web.contact.details.serviceArea' | kraakTranslate
+                  }}</span>
                 </li>
                 <li class="flex items-center gap-3">
                   <i
                     class="pi pi-whatsapp text-brand-cyan"
                     aria-hidden="true"
                   ></i>
-                  <span>WhatsApp :</span>
+                  <span>{{
+                    'web.contact.details.whatsappPrefix' | kraakTranslate
+                  }}</span>
                   <a
                     [href]="contactPhoneHref"
                     class="hover:text-brand-cyan transition-colors"
@@ -140,19 +207,23 @@
                     }"
                     class="hover:text-brand-cyan transition-colors"
                   >
-                    Ouvrir WhatsApp
+                    {{ 'web.contact.details.openWhatsApp' | kraakTranslate }}
                   </a>
                 </li>
                 <li class="flex items-center gap-3">
                   <i class="pi pi-clock text-brand-cyan" aria-hidden="true"></i>
-                  <span>R&eacute;ponse sous 48h ouvr&eacute;es</span>
+                  <span>{{
+                    'web.contact.details.responseTime' | kraakTranslate
+                  }}</span>
                 </li>
               </ul>
             </address>
 
             <nav
               class="flex items-center gap-3"
-              aria-label="R&eacute;seaux sociaux KRAAK"
+              [attr.aria-label]="
+                'web.contact.details.socialNavigationLabel' | kraakTranslate
+              "
             >
               @for (social of socialLinks; track social.label) {
                 <a
@@ -168,7 +239,7 @@
                     link_label: social.label,
                     link_url: social.href,
                   }"
-                  class="border-brand-white/35 hover:border-brand-cyan hover:text-brand-cyan text-brand-white bg-brand-white/10 flex h-12 w-12 items-center justify-center rounded-full border shadow-sm transition-all hover:-translate-y-px hover:scale-[1.03]"
+                  class="hover:border-brand-cyan hover:text-brand-cyan flex h-12 w-12 items-center justify-center rounded-full border border-white/16 bg-white/10 text-white shadow-[0_2px_5px_rgba(255,255,255,0.05)_inset] transition-all hover:-translate-y-px hover:scale-[1.03]"
                   [attr.aria-label]="social.label"
                   [attr.title]="social.label"
                 >
@@ -182,27 +253,27 @@
           </div>
         </aside>
 
-        <div class="order-1 flex-1 p-6 lg:order-2 lg:p-10">
+        <div class="order-1 bg-white p-6 sm:p-8 lg:order-2 lg:p-12 xl:p-14">
           <div class="mb-8 space-y-3">
             <h2
-              class="text-brand-navy text-3xl leading-tight font-bold lg:text-4xl"
+              class="text-brand-navy max-w-xl text-3xl leading-tight font-semibold lg:text-5xl"
             >
-              Envoyez votre demande
+              {{ 'web.contact.form.heading' | kraakTranslate }}
             </h2>
-            <p class="text-brand-navy text-base leading-relaxed">
-              D&eacute;crivez brièvement votre objectif : formation, projet,
-              immigration, partenariat, ou autre demande. Nous vous
-              r&eacute;pondrons dans les meilleurs d&eacute;lais.
+            <p
+              class="text-brand-navy max-w-xl text-base leading-7 sm:text-lg sm:leading-8"
+            >
+              {{ 'web.contact.form.description' | kraakTranslate }}
             </p>
           </div>
 
           @if (success()) {
             <p-message
               severity="success"
-              text="Votre message a bien &eacute;t&eacute; envoy&eacute;. Nous vous r&eacute;pondrons dans les plus brefs d&eacute;lais."
+              [text]="'web.contact.form.success' | kraakTranslate"
               [closable]="false"
               styleClass="w-full mb-6"
-            />
+            ></p-message>
           } @else {
             @if (apiErrors().length > 0) {
               <div class="mb-6">
@@ -212,7 +283,7 @@
                     [text]="err"
                     [closable]="false"
                     styleClass="w-full mb-2"
-                  />
+                  ></p-message>
                 }
                 @if (shouldShowContactFallback()) {
                   <div
@@ -220,11 +291,12 @@
                     role="alert"
                   >
                     <p class="font-semibold">
-                      Fallback opérationnel : votre demande peut continuer sans
-                      le formulaire.
+                      {{ 'web.contact.form.fallback.heading' | kraakTranslate }}
                     </p>
                     <p class="mt-2">
-                      Écrivez directement à
+                      {{
+                        'web.contact.form.fallback.emailLead' | kraakTranslate
+                      }}
                       <a
                         [href]="contactEmailHref"
                         kraakPublicConversion="direct_email_click"
@@ -236,7 +308,10 @@
                         class="kr-link font-semibold"
                         >{{ contactEmail }}</a
                       >
-                      ou ouvrez
+                      {{
+                        'web.contact.form.fallback.whatsappConnector'
+                          | kraakTranslate
+                      }}
                       <a
                         [href]="whatsappLink"
                         target="_blank"
@@ -249,8 +324,10 @@
                         }"
                         class="kr-link font-semibold"
                         >WhatsApp</a
-                      >. Indiquez le type de demande sélectionné pour garder le
-                      triage interne.
+                      >.
+                      {{
+                        'web.contact.form.fallback.instruction' | kraakTranslate
+                      }}
                     </p>
                   </div>
                 }
@@ -261,7 +338,7 @@
               [formGroup]="form"
               (ngSubmit)="onSubmit()"
               novalidate
-              class="space-y-5"
+              class="space-y-6"
             >
               <div class="grid gap-5 sm:grid-cols-2">
                 <div>
@@ -269,14 +346,17 @@
                     for="name"
                     class="text-brand-navy mb-2 block text-sm font-semibold"
                   >
-                    Nom complet
+                    {{ 'web.contact.form.fields.name.label' | kraakTranslate }}
                     <span class="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <input
                     pInputText
                     id="name"
                     type="text"
-                    placeholder="Votre nom"
+                    [placeholder]="
+                      'web.contact.form.fields.name.placeholder'
+                        | kraakTranslate
+                    "
                     formControlName="name"
                     class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
@@ -296,9 +376,15 @@
                       role="alert"
                     >
                       @if (name.errors?.['required']) {
-                        Le nom est requis.
+                        {{
+                          'web.contact.form.fields.name.required'
+                            | kraakTranslate
+                        }}
                       } @else if (name.errors?.['minlength']) {
-                        Le nom doit contenir au moins 2 caract&egrave;res.
+                        {{
+                          'web.contact.form.fields.name.minLength'
+                            | kraakTranslate
+                        }}
                       }
                     </p>
                   }
@@ -309,14 +395,17 @@
                     for="email"
                     class="text-brand-navy mb-2 block text-sm font-semibold"
                   >
-                    Adresse e-mail
+                    {{ 'web.contact.form.fields.email.label' | kraakTranslate }}
                     <span class="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <input
                     pInputText
                     id="email"
                     type="email"
-                    placeholder="votre.email@exemple.com"
+                    [placeholder]="
+                      'web.contact.form.fields.email.placeholder'
+                        | kraakTranslate
+                    "
                     formControlName="email"
                     class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
@@ -336,9 +425,15 @@
                       role="alert"
                     >
                       @if (email.errors?.['required']) {
-                        L'adresse e-mail est requise.
+                        {{
+                          'web.contact.form.fields.email.required'
+                            | kraakTranslate
+                        }}
                       } @else if (email.errors?.['email']) {
-                        Veuillez saisir une adresse e-mail valide.
+                        {{
+                          'web.contact.form.fields.email.invalid'
+                            | kraakTranslate
+                        }}
                       }
                     </p>
                   }
@@ -350,14 +445,17 @@
                   for="subject"
                   class="text-brand-navy mb-2 block text-sm font-semibold"
                 >
-                  Objectif
+                  {{ 'web.contact.form.fields.subject.label' | kraakTranslate }}
                   <span class="text-red-500" aria-hidden="true">*</span>
                 </label>
                 <input
                   pInputText
                   id="subject"
                   type="text"
-                  placeholder="Ex. lancer un projet, trouver une formation, &eacute;valuer un profil"
+                  [placeholder]="
+                    'web.contact.form.fields.subject.placeholder'
+                      | kraakTranslate
+                  "
                   formControlName="subject"
                   class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                   [ngClass]="{
@@ -376,7 +474,10 @@
                     class="mt-1 text-sm text-red-600"
                     role="alert"
                   >
-                    L'objectif est requis.
+                    {{
+                      'web.contact.form.fields.subject.required'
+                        | kraakTranslate
+                    }}
                   </p>
                 }
               </div>
@@ -387,13 +488,19 @@
                     for="country"
                     class="text-brand-navy mb-2 block text-sm font-semibold"
                   >
-                    Pays <span class="text-red-500" aria-hidden="true">*</span>
+                    {{
+                      'web.contact.form.fields.country.label' | kraakTranslate
+                    }}
+                    <span class="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <input
                     pInputText
                     id="country"
                     type="text"
-                    placeholder="Votre pays de r&eacute;sidence"
+                    [placeholder]="
+                      'web.contact.form.fields.country.placeholder'
+                        | kraakTranslate
+                    "
                     formControlName="country"
                     class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 h-12 w-full rounded-2xl border px-4 text-sm shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                     [ngClass]="{
@@ -412,7 +519,10 @@
                       class="mt-1 text-sm text-red-600"
                       role="alert"
                     >
-                      Le pays est requis.
+                      {{
+                        'web.contact.form.fields.country.required'
+                          | kraakTranslate
+                      }}
                     </p>
                   }
                 </div>
@@ -422,7 +532,10 @@
                     for="serviceType"
                     class="text-brand-navy mb-2 block text-sm font-semibold"
                   >
-                    Type de service
+                    {{
+                      'web.contact.form.fields.serviceType.label'
+                        | kraakTranslate
+                    }}
                     <span class="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <select
@@ -445,8 +558,15 @@
                     id="serviceType-help"
                     class="text-brand-navy mt-2 text-xs leading-5"
                   >
-                    File interne :
-                    {{ getSelectedServiceOption().triagePath }}. Workflow :
+                    {{
+                      'web.contact.form.fields.serviceType.internalQueueLabel'
+                        | kraakTranslate
+                    }}{{ helpLabelSeparator }}
+                    {{ getSelectedServiceOption().triagePath }}.
+                    {{
+                      'web.contact.form.fields.serviceType.workflowLabel'
+                        | kraakTranslate
+                    }}{{ helpLabelSeparator }}
                     {{ getSelectedServiceOption().responseWorkflow }}.
                   </p>
                 </div>
@@ -457,13 +577,17 @@
                   for="message"
                   class="text-brand-navy mb-2 block text-sm font-semibold"
                 >
-                  Message <span class="text-red-500" aria-hidden="true">*</span>
+                  {{ 'web.contact.form.fields.message.label' | kraakTranslate }}
+                  <span class="text-red-500" aria-hidden="true">*</span>
                 </label>
                 <textarea
                   pTextarea
                   id="message"
                   rows="6"
-                  placeholder="D&eacute;crivez votre besoin, votre calendrier ou la prochaine d&eacute;cision &agrave; prendre..."
+                  [placeholder]="
+                    'web.contact.form.fields.message.placeholder'
+                      | kraakTranslate
+                  "
                   formControlName="message"
                   class="border-brand-blue/20 bg-brand-white/95 text-brand-navy focus:border-brand-blue focus:bg-brand-white focus:ring-brand-cyan/25 min-h-36 w-full rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_rgb(18_43_74/8%)] transition duration-200 outline-none placeholder:text-neutral-600 focus:-translate-y-px focus:shadow-[0_14px_32px_rgb(18_43_74/14%)] focus:ring-4"
                   [ngClass]="{
@@ -483,25 +607,32 @@
                     role="alert"
                   >
                     @if (message.errors?.['required']) {
-                      Le message est requis.
+                      {{
+                        'web.contact.form.fields.message.required'
+                          | kraakTranslate
+                      }}
                     } @else if (message.errors?.['minlength']) {
-                      Le message doit contenir au moins 10 caract&egrave;res.
+                      {{
+                        'web.contact.form.fields.message.minLength'
+                          | kraakTranslate
+                      }}
                     }
                   </p>
                 }
               </div>
 
               <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center">
-                <button
-                  pButton
+                <p-button
                   type="submit"
-                  label="Envoyer ma demande"
+                  [label]="'web.contact.form.actions.submit' | kraakTranslate"
                   size="large"
-                  aria-label="Envoyer ma demande"
+                  [ariaLabel]="
+                    'web.contact.form.actions.submit' | kraakTranslate
+                  "
                   [loading]="loading()"
                   [disabled]="loading()"
                   class="kr-button-primary w-full sm:w-auto"
-                ></button>
+                ></p-button>
                 <a
                   pButton
                   [href]="whatsappLink"
@@ -513,8 +644,10 @@
                     contact_surface: 'contact_form_secondary_cta',
                     link_url: whatsappLink,
                   }"
-                  label="Discuter sur WhatsApp"
-                  aria-label="Discuter sur WhatsApp"
+                  [label]="'web.contact.form.actions.whatsapp' | kraakTranslate"
+                  [attr.aria-label]="
+                    'web.contact.form.actions.whatsapp' | kraakTranslate
+                  "
                   icon="pi pi-whatsapp"
                   class="kr-button-secondary w-full sm:w-auto"
                 ></a>
@@ -527,15 +660,36 @@
   </div>
 </section>
 
-<section class="kr-perf-section bg-neutral-50 py-16">
-  <div class="mx-auto max-w-6xl px-4 lg:px-6">
-    <h2 class="text-center text-3xl font-bold lg:text-4xl">
-      Nos coordonn&eacute;es
-    </h2>
-    <div class="mt-10 grid gap-8 md:grid-cols-2">
-      <div class="text-center">
-        <i class="pi pi-envelope text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">E-mail</h3>
+<section
+  class="kr-perf-section bg-brand-white px-4 py-16 sm:px-6 lg:py-24"
+  kraakRevealOnScroll
+  [revealDelayMs]="100"
+>
+  <div
+    class="mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-slate-50 px-6 py-10 shadow-[0_1px_2px_rgba(164,172,185,0.18),0_0_0_1px_rgba(18,55,105,0.05)] sm:px-8 lg:px-12 lg:py-14"
+  >
+    <div class="mx-auto max-w-3xl text-center">
+      <h2
+        class="text-3xl leading-tight font-semibold text-slate-950 lg:text-5xl"
+      >
+        {{ 'web.contact.coordinates.heading' | kraakTranslate }}
+      </h2>
+    </div>
+
+    <div
+      class="mt-10 grid gap-8 border-t border-slate-200 pt-8 md:grid-cols-2 lg:mt-12 lg:grid-cols-3"
+    >
+      <div class="border-t border-slate-200 pt-6 md:border-t-0 md:pt-0">
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-envelope text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
+          {{ 'web.contact.coordinates.emailLabel' | kraakTranslate }}
+        </h3>
+
         <a
           [href]="contactEmailHref"
           kraakPublicConversion="direct_email_click"
@@ -544,17 +698,30 @@
             contact_surface: 'contact_coordinates',
             link_url: contactEmailHref,
           }"
-          class="kr-link mt-1 block"
+          class="kr-link mt-3 inline-block text-sm font-semibold break-all"
         >
           {{ contactEmail }}
         </a>
       </div>
-      <div class="text-center">
-        <i class="pi pi-whatsapp text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">WhatsApp</h3>
-        <a [href]="contactPhoneHref" class="kr-link mt-1 block">
+
+      <div class="border-t border-slate-200 pt-6 md:border-t-0 md:pt-0">
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-whatsapp text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
+          {{ 'web.contact.coordinates.whatsappLabel' | kraakTranslate }}
+        </h3>
+
+        <a
+          [href]="contactPhoneHref"
+          class="kr-link mt-3 block text-sm font-semibold"
+        >
           {{ contactPhone }}
         </a>
+
         <a
           [href]="whatsappLink"
           target="_blank"
@@ -565,17 +732,27 @@
             contact_surface: 'contact_coordinates',
             link_url: whatsappLink,
           }"
-          class="kr-link mt-2 inline-block"
+          class="kr-link mt-2 inline-block text-sm font-semibold"
         >
-          Ouvrir WhatsApp
+          {{ 'web.contact.details.openWhatsApp' | kraakTranslate }}
         </a>
       </div>
-      <div class="text-center md:col-span-2">
-        <i class="pi pi-map-marker text-3xl" aria-hidden="true"></i>
-        <h3 class="mt-2 text-lg font-bold">Zone d'intervention</h3>
-        <p class="mt-1 text-neutral-700">
-          Afrique &amp; international &mdash; accompagnement &agrave; distance
-          et en pr&eacute;sentiel.
+
+      <div
+        class="border-t border-slate-200 pt-6 md:col-span-2 lg:col-span-1 lg:border-t-0 lg:pt-0"
+      >
+        <div
+          class="bg-brand-cyan/12 text-brand-navy-soft flex h-11 w-11 items-center justify-center rounded-2xl shadow-[0_1px_2px_rgba(164,172,185,0.16),0_0_0_1px_rgba(18,55,105,0.05)]"
+        >
+          <i class="pi pi-map-marker text-xl" aria-hidden="true"></i>
+        </div>
+
+        <h3 class="mt-5 text-xl font-semibold text-slate-950">
+          {{ 'web.contact.coordinates.areaHeading' | kraakTranslate }}
+        </h3>
+
+        <p class="text-brand-navy mt-3 max-w-md text-sm leading-6 sm:text-base">
+          {{ 'web.contact.coordinates.areaDescription' | kraakTranslate }}
         </p>
       </div>
     </div>
@@ -583,6 +760,6 @@
 </section>
 
 <kraak-cta-banner
-  heading="Parlons de votre prochaine &eacute;tape."
-  body="Envoyez votre demande via le formulaire ou lancez directement un &eacute;change sur WhatsApp."
+  [heading]="'web.contact.closing.heading' | kraakTranslate"
+  [body]="'web.contact.closing.body' | kraakTranslate"
 />

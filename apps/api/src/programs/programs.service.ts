@@ -1,3 +1,5 @@
+import type { ApiMessageValue } from '../i18n/api-message';
+import { apiMessage } from '../i18n/api-message';
 import {
   InternalServerErrorException,
   Injectable,
@@ -14,6 +16,7 @@ import type {
   AudienceTypeValue,
   CohortDto,
   CohortStatusValue,
+  CreateProgramDto,
   EnrollmentStatusValue,
   MarkProgramSessionProgressRequestDto,
   MarkProgramSessionProgressResponseDto,
@@ -27,14 +30,23 @@ import type {
   SessionDto,
   SessionStatusValue,
   LocationTypeValue,
+  UpdateProgramDto,
 } from '@kraak/contracts';
 import { SupabaseService } from '../supabase/supabase.service';
+import { archivePublishedRecord } from '../shared/supabase-record.utils';
+import { mapPublicationUpdate } from '../shared/publication-mapper.utils';
+import { CurriculumService } from '../curriculum/curriculum.service';
 import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
 import {
   isSupabaseColumnMissingError,
   readSupabaseQueryWithFallback,
   type SupabaseQueryResult,
 } from '../shared/supabase-query-fallback.utils';
+import type {
+  CreateProgramFeatureDto,
+  ProgramFeatureDto,
+  UpdateProgramFeatureDto,
+} from './programs.dto';
 
 type ParticipantRow = {
   id: string;
@@ -105,17 +117,30 @@ type AnnouncementPreviewRow = Pick<
   'id' | 'title' | 'audience_type' | 'program_id' | 'cohort_id' | 'published_at'
 >;
 
+type ProgramFeatureRow = {
+  id: string;
+  program_id: string;
+  title: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 const enrollmentProgramSelect =
   'id, status, completed_at, program_id, cohort_id, progress_completed_session_ids, progress_updated_at, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
 const enrollmentProgramSelectWithoutProgress =
   'id, status, completed_at, program_id, cohort_id, program:program(id, slug, title, summary, description, status, visibility, created_at, updated_at), cohort:cohort(id, program_id, name, code, status, start_date, end_date, capacity, created_at, updated_at)';
 
-const progressUpdateErrorMessage =
-  'Impossible de mettre à jour la progression du programme.';
+const progressUpdateErrorMessage = apiMessage('programs.progressUpdateFailed');
 const sessionProgressPageSize = 200;
-const programNotFoundMessage = 'Programme introuvable pour ce participant.';
-const resourcesReadErrorMessage =
-  'Impossible de charger les ressources du programme.';
+const programNotFoundMessage = apiMessage(
+  'programs.participantProgramNotFound',
+);
+const resourcesReadErrorMessage = apiMessage('programs.resourcesLoadFailed');
+const programSelectFields =
+  'id, slug, title, summary, description, status, visibility, created_at, updated_at';
+const programFeatureSelectFields =
+  'id, program_id, title, sort_order, created_at, updated_at';
 
 function normalizeRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) {
@@ -154,7 +179,10 @@ function executeEnrollmentQueryWithFallback<T>(
 
 @Injectable()
 export class ProgramsService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly curriculumService: CurriculumService,
+  ) {}
 
   async listPrograms(
     accessToken?: string,
@@ -220,7 +248,7 @@ export class ProgramsService {
           data: EnrollmentRow[] | null;
           error: unknown;
         }>,
-      'Impossible de charger la liste des programmes.',
+      apiMessage('programs.listLoadFailed'),
       'programs.listPrograms',
     );
 
@@ -231,7 +259,7 @@ export class ProgramsService {
     loadQuery: (
       selectClause: string,
     ) => PromiseLike<{ data: T; error: unknown }>,
-    errorMessage: string,
+    errorMessage: ApiMessageValue,
     context: string,
   ): Promise<T> {
     const result = await executeEnrollmentQueryWithFallback(loadQuery, context);
@@ -250,9 +278,7 @@ export class ProgramsService {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('program')
-      .select(
-        'id, slug, title, summary, description, status, visibility, created_at, updated_at',
-      )
+      .select(programSelectFields)
       .eq('status', 'published')
       .order('updated_at', { ascending: false })
       .limit(20);
@@ -260,13 +286,200 @@ export class ProgramsService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger la liste des programmes.',
+        message: apiMessage('programs.listLoadFailed'),
       });
     }
 
     return ((data as ProgramRow[] | null) ?? []).map((row) =>
       this.mapProgram(row),
     );
+  }
+
+  async listAllPrograms(): Promise<ProgramDto[]> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select(programSelectFields)
+      .order('updated_at', { ascending: false })
+      .limit(1000);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('programs.listLoadFailed'),
+      });
+    }
+
+    return ((data as ProgramRow[] | null) ?? []).map((row) =>
+      this.mapProgram(row),
+    );
+  }
+
+  async createProgram(payload: CreateProgramDto): Promise<ProgramDto> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .insert({
+        slug: payload.slug,
+        title: payload.title,
+        summary: payload.summary,
+        description: payload.description,
+        status: payload.status,
+        visibility: payload.visibility,
+      })
+      .select(programSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('programs.createFailed'),
+      });
+    }
+
+    return this.mapProgram(data as ProgramRow);
+  }
+
+  async updateProgram(
+    programId: string,
+    payload: UpdateProgramDto,
+  ): Promise<ProgramDto> {
+    const updatePayload = mapPublicationUpdate(payload);
+
+    if (payload.visibility !== undefined) {
+      updatePayload['visibility'] = payload.visibility;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .update(updatePayload)
+      .eq('id', programId)
+      .select(programSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.notFound'),
+      });
+    }
+
+    return this.mapProgram(data as ProgramRow);
+  }
+
+  async deleteProgram(programId: string): Promise<void> {
+    await archivePublishedRecord(
+      this.supabaseService,
+      'program',
+      programId,
+      apiMessage('programs.notFound'),
+    );
+  }
+
+  async listProgramFeatures(programId: string): Promise<ProgramFeatureDto[]> {
+    await this.ensureProgramIsPublic(programId);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .select(programFeatureSelectFields)
+      .eq('program_id', programId)
+      .order('sort_order', { ascending: true })
+      .limit(1000);
+
+    if (error) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('programs.featuresLoadFailed'),
+      });
+    }
+
+    return ((data as ProgramFeatureRow[] | null) ?? []).map((row) =>
+      this.mapProgramFeature(row),
+    );
+  }
+
+  async createProgramFeature(
+    programId: string,
+    payload: CreateProgramFeatureDto,
+  ): Promise<ProgramFeatureDto> {
+    await this.ensureProgramExists(programId);
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .insert({
+        program_id: programId,
+        title: payload.title,
+        sort_order: payload.sortOrder ?? 0,
+      })
+      .select(programFeatureSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('programs.featureCreateFailed'),
+      });
+    }
+
+    return this.mapProgramFeature(data as ProgramFeatureRow);
+  }
+
+  async updateProgramFeature(
+    programId: string,
+    featureId: string,
+    payload: UpdateProgramFeatureDto,
+  ): Promise<ProgramFeatureDto> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+
+    if (payload.sortOrder !== undefined) {
+      updatePayload['sort_order'] = payload.sortOrder;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .update(updatePayload)
+      .eq('program_id', programId)
+      .eq('id', featureId)
+      .select(programFeatureSelectFields)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.featureNotFound'),
+      });
+    }
+
+    return this.mapProgramFeature(data as ProgramFeatureRow);
+  }
+
+  async deleteProgramFeature(
+    programId: string,
+    featureId: string,
+  ): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program_feature')
+      .delete()
+      .eq('program_id', programId)
+      .eq('id', featureId)
+      .select('id')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.featureNotFound'),
+      });
+    }
   }
 
   async getProgramDetail(
@@ -285,7 +498,7 @@ export class ProgramsService {
     const enrollment = await this.readEnrollmentByProgram(
       participantId,
       programId,
-      'Impossible de charger le programme demandé.',
+      apiMessage('programs.detailLoadFailed'),
     );
 
     if (!enrollment) {
@@ -305,10 +518,11 @@ export class ProgramsService {
     }
 
     const cohort = this.mapCohort(normalizeRelation(enrollment.cohort));
-    const [sessions, resources, announcements] = await Promise.all([
+    const [sessions, resources, announcements, curriculum] = await Promise.all([
       cohort ? this.readSessions(cohort.id) : Promise.resolve<SessionDto[]>([]),
       this.readResources(program.id, cohort?.id ?? null),
       this.readAnnouncements(program.id, cohort?.id ?? null),
+      this.curriculumService.getPublishedProgramCurriculum(program.id),
     ]);
 
     const progress = calculateProgramProgress({
@@ -326,6 +540,7 @@ export class ProgramsService {
       sessions,
       resources,
       announcements,
+      curriculum,
     };
   }
 
@@ -362,7 +577,7 @@ export class ProgramsService {
     if (!cohort) {
       throw new NotFoundException({
         success: false,
-        message: 'Session introuvable pour ce programme.',
+        message: apiMessage('programs.sessionNotFound'),
       });
     }
 
@@ -371,7 +586,7 @@ export class ProgramsService {
     if (!canMarkSessionProgress(sessionIds, payload.sessionId)) {
       throw new NotFoundException({
         success: false,
-        message: 'Session introuvable pour ce programme.',
+        message: apiMessage('programs.sessionNotFound'),
       });
     }
 
@@ -436,7 +651,7 @@ export class ProgramsService {
     if (error || !data.user) {
       throw new UnauthorizedException({
         success: false,
-        message: 'La session est invalide ou expirée.',
+        message: apiMessage('auth.sessionInvalidOrExpired'),
       });
     }
 
@@ -450,7 +665,7 @@ export class ProgramsService {
     if (participantError) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger le participant courant.',
+        message: apiMessage('programs.currentParticipantLoadFailed'),
       });
     }
 
@@ -472,7 +687,7 @@ export class ProgramsService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les sessions du programme.',
+        message: apiMessage('programs.sessionsLoadFailed'),
       });
     }
 
@@ -495,7 +710,7 @@ export class ProgramsService {
       id: string;
       cohort_id: string;
     }>(
-      async (from, to) =>
+      (from, to) =>
         adminClient
           .from('session')
           .select('id, cohort_id')
@@ -503,7 +718,7 @@ export class ProgramsService {
           .in('status', ['scheduled', 'live', 'completed'])
           .order('id', { ascending: true })
           .range(from, to),
-      'Impossible de charger la progression des programmes.',
+      apiMessage('programs.progressLoadFailed'),
     );
 
     const grouped = new Map<string, string[]>();
@@ -522,7 +737,7 @@ export class ProgramsService {
   ): Promise<string[]> {
     const adminClient = this.supabaseService.getClient();
     const rows = await this.readPagedSessionRows<{ id: string }>(
-      async (from, to) =>
+      (from, to) =>
         adminClient
           .from('session')
           .select('id')
@@ -540,8 +755,8 @@ export class ProgramsService {
     loadPage: (
       from: number,
       to: number,
-    ) => Promise<{ data: T[] | null; error: unknown }>,
-    errorMessage: string,
+    ) => PromiseLike<{ data: T[] | null; error: unknown }>,
+    errorMessage: ApiMessageValue,
   ): Promise<T[]> {
     const rows: T[] = [];
     let from = 0;
@@ -627,7 +842,7 @@ export class ProgramsService {
     if (error) {
       throw new InternalServerErrorException({
         success: false,
-        message: 'Impossible de charger les annonces du programme.',
+        message: apiMessage('programs.announcementsLoadFailed'),
       });
     }
 
@@ -644,7 +859,7 @@ export class ProgramsService {
   private async readEnrollmentByProgram(
     participantId: string,
     programId: string,
-    errorMessage: string,
+    errorMessage: ApiMessageValue,
   ): Promise<EnrollmentRow | null> {
     const data = await this.readEnrollmentQuery<EnrollmentRow | null>(
       (selectClause) =>
@@ -700,6 +915,47 @@ export class ProgramsService {
     }
 
     return (data as ResourceRow[] | null) ?? [];
+  }
+
+  private async ensureProgramExists(programId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select('id')
+      .eq('id', programId)
+      .maybeSingle();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.notFound'),
+      });
+    }
+  }
+
+  private async ensureProgramIsPublic(programId: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('program')
+      .select('id, status, visibility')
+      .eq('id', programId)
+      .maybeSingle();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.notFound'),
+      });
+    }
+
+    const program = data as Pick<ProgramRow, 'status' | 'visibility'>;
+
+    if (program.status !== 'published' || program.visibility !== 'public') {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('programs.notFound'),
+      });
+    }
   }
 
   private isVisibleAnnouncement(
@@ -768,6 +1024,17 @@ export class ProgramsService {
       locationLabel: row.location_label,
       meetingLink: row.meeting_link,
       trainerUserId: row.trainer_user_id,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
+
+  private mapProgramFeature(row: ProgramFeatureRow): ProgramFeatureDto {
+    return {
+      id: row.id,
+      programId: row.program_id,
+      title: row.title,
+      sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

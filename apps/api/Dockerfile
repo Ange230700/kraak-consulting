@@ -42,7 +42,7 @@ FROM gcr.io/distroless/nodejs22-debian12:nonroot AS production
 
 LABEL org.opencontainers.image.title="kraak-api" \
   org.opencontainers.image.description="API NestJS du projet KRAAK" \
-  org.opencontainers.image.source="https://github.com/Ange230700/kraak-group"
+  org.opencontainers.image.source="https://github.com/Ange230700/kraak-consulting"
 
 WORKDIR /app
 ENV NODE_ENV=production \

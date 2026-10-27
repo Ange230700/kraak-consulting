@@ -1,135 +1,308 @@
+// apps\client\projects\web\src\app\app.routes.spec.ts
+
+import { Routes } from '@angular/router';
+
+import { environment } from '../environments/environment';
 import {
   buildMarketingRoute,
   buildRoutes,
+  findRequiredLocalizedSeoPage,
   participantAreaCanMatch,
   routes,
 } from './app.routes';
 import {
-  participantRoleGuard,
+  adminRoleChildGuard,
+  adminRoleGuard,
   participantRoleChildGuard,
+  participantRoleGuard,
 } from './core/auth/auth.guard';
-import { environment } from '../environments/environment';
 import NotFoundPage from './features/support/not-found.page';
+import {
+  localizedPublicRouteEntries,
+  renderPublicRedirects,
+  toAngularRoutePath,
+} from './routing/localized-public-routes';
+
+const PARTICIPANT_ROUTE_PATHS = [
+  'connexion',
+  'inscription',
+  'mot-de-passe-oublie',
+  'participant',
+];
+
+function routePathsOf(routeList: Routes): (string | undefined)[] {
+  return routeList.map((route) => route.path);
+}
+
+function localeRoute(routeList: Routes, path: 'fr' | 'en') {
+  return routeList.find((route) => route.path === path);
+}
 
 describe('Web routes', () => {
-  const marketingPaths = [
-    '',
-    'a-propos',
-    'services',
-    'faq',
-    'programmes',
-    'ressources',
-    'contact',
-    'mentions-legales',
-    'politique-de-confidentialite',
-  ];
-  const aliasRedirectPaths = ['about', 'programs', 'resources'];
-  const frozenPublicPaths = [
-    ...marketingPaths,
-    ...aliasRedirectPaths,
-    '401',
-    '403',
-    '500',
-    '404',
-    '**',
-  ];
-  const participantPaths = [
-    'connexion',
-    'inscription',
-    'mot-de-passe-oublie',
-    'participant',
-  ];
+  it('Given la récupération de mot de passe, When son composant lazy est chargé, Then le formulaire dédié est disponible', async () => {
+    expect(
+      await routes.find((route) => route.path === 'auth/reset')!
+        .loadComponent!(),
+    ).toBeDefined();
+  });
+  it('Given les options par défaut, When les routes sont construites, Then l’espace participant reste disponible', () => {
+    expect(buildRoutes().some((route) => route.path === 'participant')).toBe(
+      true,
+    );
+  });
 
-  describe('Given public marketing pages', () => {
-    it('When building routes Then all public marketing routes are defined', () => {
-      const builtRoutes = buildRoutes();
-      const paths = builtRoutes.map((route) => route.path);
+  it('Given un ancien lien d’article, When sa redirection dynamique est résolue, Then le slug est conservé dans la route française', () => {
+    const route = routes.find((entry) => entry.path === 'blog/:slug')!;
+    const redirect = route.redirectTo as unknown as (data: {
+      params: { slug: string };
+    }) => string;
+    expect(redirect({ params: { slug: 'article-test' } })).toBe(
+      '/fr/blog/article-test',
+    );
+  });
 
-      for (const path of marketingPaths) {
-        expect(paths).toContain(path);
-      }
-    });
-
-    it('When building public routes without participant area Then the frozen public surface exactly matches ARC-14 and support status pages', () => {
+  it('Given une route localisée sans SEO, When sa définition est exigée, Then une erreur explicite empêche la publication', () => {
+    expect(() => findRequiredLocalizedSeoPage('/fr/page-absente')).toThrow(
+      'Missing localized SEO configuration',
+    );
+  });
+  describe('Given localized public routes', () => {
+    it('When building routes Then the public locale route trees are defined', () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: false });
-      const paths = builtRoutes.map((route) => route.path ?? '');
+      const routePaths = routePathsOf(builtRoutes);
 
-      expect(paths).toEqual(frozenPublicPaths);
+      expect(routePaths).toContain('fr');
+      expect(routePaths).toContain('en');
     });
 
-    it('When inspecting marketing routes Then every route exposes a title and SEO metadata', () => {
-      const builtRoutes = buildRoutes();
-      const pageRoutes = builtRoutes.filter((route) =>
-        marketingPaths.includes(route.path ?? ''),
+    it('When inspecting the French route tree Then every French public child route is present', () => {
+      const frenchRoute = localeRoute(
+        buildRoutes({ includeParticipantArea: false }),
+        'fr',
       );
+      const frenchChildPaths = routePathsOf(frenchRoute?.children ?? []);
 
-      for (const route of pageRoutes) {
-        expect(route.title).toEqual(expect.any(String));
-        expect(route.data?.['seo']).toBeDefined();
+      expect(frenchChildPaths).toEqual([
+        'blog/:slug',
+        '',
+        'a-propos',
+        'services',
+        'faq',
+        'programmes',
+        'ressources',
+        'blog',
+        'contact',
+        'mentions-legales',
+        'politique-de-confidentialite',
+        '401',
+        '403',
+        '404',
+        '500',
+        '**',
+      ]);
+    });
+
+    it('When inspecting the English route tree Then every scaffold child route is present', () => {
+      const englishRoute = localeRoute(
+        buildRoutes({ includeParticipantArea: false }),
+        'en',
+      );
+      const englishChildPaths = routePathsOf(englishRoute?.children ?? []);
+
+      expect(englishChildPaths).toEqual([
+        'blog/:slug',
+        '',
+        'about',
+        'services',
+        'faq',
+        'programs',
+        'resources',
+        'blog',
+        'contact',
+        'legal-notice',
+        'privacy-policy',
+        '401',
+        '403',
+        '404',
+        '500',
+        '**',
+      ]);
+    });
+
+    it('When inspecting localized page routes Then every public route exposes title and SEO metadata', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+
+      for (const localePath of ['fr', 'en'] as const) {
+        const publicRoute = localeRoute(builtRoutes, localePath);
+
+        expect(publicRoute?.resolve?.['locale']).toBeDefined();
+
+        for (const childRoute of publicRoute?.children ?? []) {
+          if (childRoute.path === '**' || childRoute.path === 'blog/:slug') {
+            continue;
+          }
+
+          expect(childRoute.title).toEqual(expect.any(String));
+          expect(childRoute.data?.['seo']).toBeDefined();
+          expect(childRoute.loadComponent).toBeDefined();
+        }
       }
     });
 
-    it('When inspecting alias routes Then english slugs redirect to french canonical paths', () => {
-      const builtRoutes = buildRoutes();
-      const aboutAliasRoute = builtRoutes.find(
-        (route) => route.path === 'about',
+    it('When inspecting localized Blog article routes Then dynamic articles preserve locale ownership without static SEO metadata', () => {
+      const builtRoutes = buildRoutes({
+        includeParticipantArea: false,
+      });
+
+      for (const [localePath, locale] of [
+        ['fr', 'fr-CI'],
+        ['en', 'en-GB'],
+      ] as const) {
+        const articleRoute = localeRoute(
+          builtRoutes,
+          localePath,
+        )?.children?.find((route) => route.path === 'blog/:slug');
+
+        expect(articleRoute).toBeDefined();
+        expect(articleRoute?.data?.['locale']).toBe(locale);
+        expect(articleRoute?.data?.['pageId']).toBe('blog');
+        expect(articleRoute?.title).toBeUndefined();
+        expect(articleRoute?.data?.['seo']).toBeUndefined();
+        expect(articleRoute?.loadComponent).toBeDefined();
+      }
+    });
+
+    it('Given the approved English homepage, When inspecting English routes, Then only the homepage is indexable', () => {
+      const englishRoute = localeRoute(
+        buildRoutes({ includeParticipantArea: false }),
+        'en',
       );
-      const programsAliasRoute = builtRoutes.find(
-        (route) => route.path === 'programs',
+      const pageRoutes = (englishRoute?.children ?? []).filter(
+        (route) => route.path !== '**' && route.path !== 'blog/:slug',
       );
-      const resourcesAliasRoute = builtRoutes.find(
-        (route) => route.path === 'resources',
+      const homeRoute = pageRoutes.find((route) => route.path === '');
+
+      expect(homeRoute?.data?.['seo']?.robots).toBeUndefined();
+      expect(homeRoute?.data?.['seo']?.temporary).toBe(false);
+
+      for (const route of pageRoutes.filter((route) => route.path !== '')) {
+        expect(route.data?.['seo']?.robots).toBe('noindex, nofollow');
+        expect(route.data?.['seo']?.temporary).toBe(true);
+      }
+    });
+
+    it('When inspecting locale-aware wildcard routes Then localized 404 metadata is used', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const frenchWildcard = localeRoute(builtRoutes, 'fr')?.children?.find(
+        (route) => route.path === '**',
+      );
+      const englishWildcard = localeRoute(builtRoutes, 'en')?.children?.find(
+        (route) => route.path === '**',
       );
 
-      expect(aboutAliasRoute).toBeDefined();
-      expect(aboutAliasRoute?.redirectTo).toBe('a-propos');
-      expect(aboutAliasRoute?.pathMatch).toBe('full');
-
-      expect(programsAliasRoute).toBeDefined();
-      expect(programsAliasRoute?.redirectTo).toBe('programmes');
-      expect(programsAliasRoute?.pathMatch).toBe('full');
-
-      expect(resourcesAliasRoute).toBeDefined();
-      expect(resourcesAliasRoute?.redirectTo).toBe('ressources');
-      expect(resourcesAliasRoute?.pathMatch).toBe('full');
+      expect(frenchWildcard?.data?.['seo']?.path).toBe('/fr/404');
+      expect(englishWildcard?.data?.['seo']?.path).toBe('/en/404');
+      expect(englishWildcard?.data?.['seo']?.robots).toBe('noindex, nofollow');
     });
   });
 
-  describe('Given the participant area is disabled for the build', () => {
-    it('When building routes Then auth and participant routes are excluded', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: false });
-      const paths = builtRoutes.map((route) => route.path);
+  describe('Given legacy public routes', () => {
+    it('When inspecting root route Then it redirects to the French localized home', () => {
+      const rootRoute = buildRoutes({ includeParticipantArea: false }).find(
+        (route) => route.path === '',
+      );
 
-      for (const path of participantPaths) {
-        expect(paths).not.toContain(path);
+      expect(rootRoute).toEqual({
+        path: '',
+        redirectTo: '/fr/',
+        pathMatch: 'full',
+      });
+    });
+
+    it('When inspecting legacy redirects Then every rule targets a French localized route without loops', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+
+      for (const redirect of renderPublicRedirects) {
+        const route = builtRoutes.find(
+          (candidate) => candidate.path === toAngularRoutePath(redirect.source),
+        );
+
+        expect(route?.redirectTo).toBe(redirect.destination);
+        expect(route?.pathMatch).toBe('full');
+        expect(redirect.destination.startsWith('/fr/')).toBe(true);
+        expect(redirect.destination).not.toBe(redirect.source);
       }
+    });
+
+    it('When inspecting conservative English aliases Then they redirect to French canonical paths for PR 3', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+
+      expect(
+        builtRoutes.find((route) => route.path === 'about')?.redirectTo,
+      ).toBe('/fr/a-propos');
+      expect(
+        builtRoutes.find((route) => route.path === 'programs')?.redirectTo,
+      ).toBe('/fr/programmes');
+      expect(
+        builtRoutes.find((route) => route.path === 'resources')?.redirectTo,
+      ).toBe('/fr/ressources');
     });
   });
 
-  describe('Given the participant area is enabled for the build', () => {
-    it('When building routes Then auth and participant routes are defined', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const paths = builtRoutes.map((route) => route.path);
+  describe('Given stable private and technical routes', () => {
+    it('When building public routes without participant area Then private auth routes stay outside the vitrine surface', () => {
+      const publicRoutes = buildRoutes({ includeParticipantArea: false });
+      const routePaths = routePathsOf(publicRoutes);
 
-      for (const path of participantPaths) {
-        expect(paths).toContain(path);
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).not.toContain(participantPath);
+        expect(routePaths).not.toContain(`fr/${participantPath}`);
+        expect(routePaths).not.toContain(`en/${participantPath}`);
+      }
+    });
+
+    it('When building routes with participant area enabled Then auth and participant routes are defined without locale prefixes', () => {
+      const previewRoutes = buildRoutes({ includeParticipantArea: true });
+      const routePaths = routePathsOf(previewRoutes);
+
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        expect(routePaths).toContain(participantPath);
       }
     });
 
     it('When inspecting participant routes Then every auth and participant route is protected by canMatch gating', () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const gatedRoutes = builtRoutes.filter((route) =>
-        participantPaths.includes(route.path ?? ''),
+        PARTICIPANT_ROUTE_PATHS.includes(route.path ?? ''),
       );
 
-      expect(gatedRoutes.length).toBe(participantPaths.length);
+      expect(gatedRoutes).toHaveLength(PARTICIPANT_ROUTE_PATHS.length);
 
       for (const route of gatedRoutes) {
         expect(route.canMatch).toContain(participantAreaCanMatch);
       }
     });
 
-    it('When inspecting the participant route Then it is protected by both auth guards', () => {
+    it('When inspecting auth reset Then the path and noindex policy remain unchanged', () => {
+      const authResetRoute = buildRoutes().find(
+        (route) => route.path === 'auth/reset',
+      );
+
+      expect(authResetRoute?.data?.['seo']?.path).toBe('auth/reset');
+      expect(authResetRoute?.data?.['seo']?.robots).toBe('noindex, nofollow');
+    });
+
+    it('When inspecting the admin route Then it remains unlocalized and guarded', () => {
+      const builtRoutes = buildRoutes();
+      const adminRoute = builtRoutes.find((route) => route.path === 'admin');
+
+      expect(adminRoute).toBeDefined();
+      expect(adminRoute!.canActivate).toContain(adminRoleGuard);
+      expect(adminRoute!.canActivateChild).toContain(adminRoleChildGuard);
+      expect(routePathsOf(adminRoute!.children ?? [])).toContain('dashboard');
+    });
+
+    it('When inspecting the participant route Then it remains unlocalized and guarded', () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const participantRoute = builtRoutes.find(
         (route) => route.path === 'participant',
@@ -141,115 +314,14 @@ describe('Web routes', () => {
         participantRoleChildGuard,
       );
     });
-
-    it('When inspecting the participant route Then a dashboard child route exists', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const participantRoute = builtRoutes.find(
-        (route) => route.path === 'participant',
-      );
-      const dashboardRoute = participantRoute!.children?.find(
-        (route) => route.path === 'dashboard',
-      );
-
-      expect(dashboardRoute).toBeDefined();
-      expect(dashboardRoute!.loadComponent).toBeDefined();
-    });
-
-    it('When navigating to /participant Then the default child redirects to /participant/dashboard', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const participantRoute = builtRoutes.find(
-        (route) => route.path === 'participant',
-      );
-      const defaultRedirect = participantRoute!.children?.find(
-        (route) => route.path === '',
-      );
-
-      expect(defaultRedirect).toBeDefined();
-      expect(defaultRedirect!.redirectTo).toBe('dashboard');
-      expect(defaultRedirect!.pathMatch).toBe('full');
-    });
   });
 
   describe('Given the route table', () => {
-    it('When inspecting public routes Then auth routes stay outside the frozen vitrine surface', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: false });
-      const paths = builtRoutes.map((route) => route.path ?? '');
+    it('When inspecting unsupported prefixes Then they are not accepted as localized public route trees', () => {
+      const routePaths = routePathsOf(buildRoutes());
 
-      for (const path of participantPaths) {
-        expect(paths).not.toContain(path);
-      }
-    });
-
-    it('When inspecting routes Then /401 serves the dedicated unauthorized page with SEO metadata', () => {
-      const builtRoutes = buildRoutes();
-      const unauthorizedRoute = builtRoutes.find(
-        (route) => route.path === '401',
-      );
-
-      expect(unauthorizedRoute).toBeDefined();
-      expect(unauthorizedRoute!.loadComponent).toBeDefined();
-      expect(unauthorizedRoute!.title).toBe(
-        'Authentification requise | KRAAK Consulting',
-      );
-      expect(unauthorizedRoute!.data?.['seo']).toBeDefined();
-    });
-
-    it('When inspecting routes Then /403 serves the dedicated forbidden page with SEO metadata', () => {
-      const builtRoutes = buildRoutes();
-      const forbiddenRoute = builtRoutes.find((route) => route.path === '403');
-
-      expect(forbiddenRoute).toBeDefined();
-      expect(forbiddenRoute!.loadComponent).toBeDefined();
-      expect(forbiddenRoute!.title).toBe('Accès refusé | KRAAK Consulting');
-      expect(forbiddenRoute!.data?.['seo']).toBeDefined();
-    });
-
-    it('When inspecting routes Then /500 serves the dedicated server-error page with SEO metadata', () => {
-      const builtRoutes = buildRoutes();
-      const serverErrorRoute = builtRoutes.find(
-        (route) => route.path === '500',
-      );
-
-      expect(serverErrorRoute).toBeDefined();
-      expect(serverErrorRoute!.loadComponent).toBeDefined();
-      expect(serverErrorRoute!.title).toBe(
-        'Incident technique | KRAAK Consulting',
-      );
-      expect(serverErrorRoute!.data?.['seo']).toBeDefined();
-    });
-
-    it('When inspecting routes Then /404 serves the dedicated not-found page with SEO metadata', () => {
-      const builtRoutes = buildRoutes();
-      const notFoundRoute = builtRoutes.find((route) => route.path === '404');
-
-      expect(notFoundRoute).toBeDefined();
-      expect(notFoundRoute!.loadComponent).toBeDefined();
-      expect(notFoundRoute!.title).toBe('Page introuvable | KRAAK Consulting');
-      expect(notFoundRoute!.data?.['seo']).toBeDefined();
-    });
-
-    it('When inspecting routes Then a wildcard fallback serves the dedicated not-found page', () => {
-      const builtRoutes = buildRoutes();
-      const wildcard = builtRoutes.find((route) => route.path === '**');
-
-      expect(wildcard).toBeDefined();
-      expect(wildcard!.loadComponent).toBeDefined();
-      expect(wildcard!.title).toBe('Page introuvable | KRAAK Consulting');
-      expect(wildcard!.data?.['seo']).toBeDefined();
-    });
-
-    it('When inspecting page routes Then every page component is lazy-loaded', () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const pageRoutes = builtRoutes.filter(
-        (route) =>
-          route.path !== '**' &&
-          route.path !== 'participant' &&
-          !route.redirectTo,
-      );
-
-      for (const route of pageRoutes) {
-        expect(route.loadComponent).toBeDefined();
-      }
+      expect(routePaths).not.toContain('de');
+      expect(routePaths).not.toContain(':locale');
     });
 
     it('When comparing exported routes Then they match the environment default', () => {
@@ -259,6 +331,38 @@ describe('Web routes', () => {
       }).map((route) => route.path);
 
       expect(exportedPaths).toEqual(rebuiltPaths);
+    });
+
+    it('When building routes with the environment default Then participant routes follow environment.enableParticipantArea', () => {
+      const routePaths = routePathsOf(buildRoutes());
+
+      for (const participantPath of PARTICIPANT_ROUTE_PATHS) {
+        if (environment.enableParticipantArea) {
+          expect(routePaths).toContain(participantPath);
+        } else {
+          expect(routePaths).not.toContain(participantPath);
+        }
+      }
+    });
+
+    it('When comparing localized entries to Angular child routes Then every entry is represented once', () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const angularPaths = new Set<string>();
+
+      for (const localePath of ['fr', 'en'] as const) {
+        for (const childRoute of localeRoute(builtRoutes, localePath)
+          ?.children ?? []) {
+          if (childRoute.path !== '**' && childRoute.path !== 'blog/:slug') {
+            angularPaths.add(
+              childRoute.path ? `${localePath}/${childRoute.path}` : localePath,
+            );
+          }
+        }
+      }
+
+      expect([...angularPaths].sort()).toEqual(
+        localizedPublicRouteEntries.map((entry) => entry.routePath).sort(),
+      );
     });
   });
 
@@ -277,36 +381,21 @@ describe('Web routes', () => {
   });
 
   describe('Given lazy-loaded route components', () => {
-    it('When each marketing route loadComponent is invoked Then it resolves to a component', async () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const targets = builtRoutes.filter(
-        (route) =>
-          route.path !== '**' &&
-          route.path !== 'participant' &&
-          route.loadComponent,
+    it('When each localized public route loadComponent is invoked Then it resolves to a component', async () => {
+      const builtRoutes = buildRoutes({ includeParticipantArea: false });
+      const targets = ['fr', 'en'].flatMap(
+        (localePath) =>
+          localeRoute(builtRoutes, localePath as 'fr' | 'en')?.children?.filter(
+            (route) => route.path !== '**' && route.loadComponent,
+          ) ?? [],
       );
 
       for (const route of targets) {
         const loaded = await (route.loadComponent as () => Promise<unknown>)();
         expect(loaded).toBeTruthy();
       }
-    }, 15000);
+    }, 45000);
 
-    it('When the participant dashboard child loadComponent is invoked Then it resolves to a component', async () => {
-      const builtRoutes = buildRoutes({ includeParticipantArea: true });
-      const participantRoute = builtRoutes.find(
-        (route) => route.path === 'participant',
-      );
-      const dashboardRoute = participantRoute!.children!.find(
-        (childRoute) => childRoute.path === 'dashboard',
-      );
-
-      const loaded = await (
-        dashboardRoute!.loadComponent as () => Promise<unknown>
-      )();
-
-      expect(loaded).toBeTruthy();
-    });
     it('When the wildcard route loadComponent is invoked Then it resolves to the not-found page component', async () => {
       const builtRoutes = buildRoutes({ includeParticipantArea: true });
       const wildcard = builtRoutes.find((route) => route.path === '**');
@@ -316,7 +405,6 @@ describe('Web routes', () => {
       const loaded = await (
         wildcard!.loadComponent as () => Promise<unknown>
       )();
-
       const resolvedComponent =
         (loaded as { default?: unknown }).default ?? loaded;
 

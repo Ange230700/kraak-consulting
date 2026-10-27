@@ -1,5 +1,5 @@
-# Analyse SonarQube Cloud — kraak-group
-# Déclenchée sur push vers main et sur les pull requests ciblant main.
+# Analyse SonarQube Cloud — kraak-consulting
+# Déclenchée sur staging/main et leurs pull requests.
 # Nécessite les secrets : SONAR_TOKEN (token utilisateur SonarCloud).
 
 name: SonarCloud
@@ -19,22 +19,21 @@ env:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           # Profondeur complète requise pour une analyse fiable (blame, etc.)
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
-        with:
-          version: 10.23.0
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
 
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -45,14 +44,60 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Build workspace packages
-        run: pnpm -r --filter "./packages/**" build
+      - name: Installer le moteur PDF pour les tests workspace
+        run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage
+      - name: Contrôle qualité complet et couverture à 100 % par fichier
+        run: pnpm check
+
+      - name: Conserver les rapports de couverture
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sonar-coverage
+          path: |
+            coverage/lcov.info
+            coverage/coverage-summary.json
+            apps/api/coverage/
+            apps/client/coverage/
+            packages/*/coverage/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Scan SonarCloud
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
+        id: scan
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        # pnpm sonar impose -Dsonar.qualitygate.wait=true.
+        run: pnpm sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
+          # Requis pour la résolution du contexte PR et la décoration des pull requests
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Identifier les anomalies Sonar bloquantes
+        if: ${{ failure() && steps.scan.outcome == 'failure' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_PR: ${{ github.event.pull_request.number }}
+          SONAR_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          project_key="$(sed -n 's/^sonar.projectKey=//p' sonar-project.properties)"
+          context=(--data-urlencode "branch=${SONAR_BRANCH}")
+          if [[ -n "${SONAR_PR}" ]]; then
+            context=(--data-urlencode "pullRequest=${SONAR_PR}")
+          fi
+          curl --fail --silent --show-error --get \
+            --user "${SONAR_TOKEN}:" \
+            --data-urlencode "componentKeys=${project_key}" \
+            --data-urlencode "types=BUG,VULNERABILITY" \
+            --data-urlencode "resolved=false" \
+            --data-urlencode "ps=500" \
+            "${context[@]}" \
+            "${SONAR_HOST_URL}/api/issues/search" \
+            --output "${RUNNER_TEMP}/sonar-blockers.json"
+          jq '{paging, issues: [.issues[] | {key,type,severity,rule,component,line}]}' \
+            "${RUNNER_TEMP}/sonar-blockers.json"
+          jq --exit-status '.paging.total <= 500' "${RUNNER_TEMP}/sonar-blockers.json"

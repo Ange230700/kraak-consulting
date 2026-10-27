@@ -1,3 +1,5 @@
+// apps\client\projects\web\src\app\features\auth\sign-up.page.ts
+
 import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
@@ -6,21 +8,22 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { logDebugError } from '@kraak/api-client';
 import { MessageService } from 'primeng/api';
-import { ButtonDirective } from 'primeng/button';
+import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { environment } from '../../../environments/environment';
-import {
-  WebAuthService,
-  resolveAuthErrorMessage,
-} from '../../core/auth/web-auth.service';
+import { WebAuthService } from '../../core/auth/web-auth.service';
+import { runAuthSubmission } from './auth-submission.utils';
 import {
   normalizeRequiredText,
   normalizeTextControl,
   resolveWebRedirectUrl,
 } from './auth-form.utils';
 
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
 interface SignUpFormModel {
   firstName: FormControl<string>;
   lastName: FormControl<string>;
@@ -31,10 +34,18 @@ interface SignUpFormModel {
 @Component({
   selector: 'kraak-web-sign-up-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonDirective, Message],
+  imports: [
+    KraakTranslatePipe,
+    ReactiveFormsModule,
+    RouterLink,
+    Button,
+    Message,
+  ],
   templateUrl: './sign-up.page.html',
 })
 export default class SignUpPage {
+  private readonly i18n = inject(KraakI18nService);
+
   private readonly authService = inject(WebAuthService);
   private readonly messageService = inject(MessageService);
   private readonly router = inject(Router);
@@ -71,46 +82,37 @@ export default class SignUpPage {
       return;
     }
 
-    this.submitting.set(true);
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
-
-    try {
-      const { firstName, lastName, email, password } = this.form.getRawValue();
-
-      const response = await this.authService.signUp({
-        firstName: normalizeRequiredText(firstName),
-        lastName: normalizeRequiredText(lastName),
-        email: normalizeRequiredText(email),
-        password,
-        redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
-      });
-
-      if (response.session && response.profile) {
-        await this.router.navigateByUrl('/participant/dashboard');
-        return;
-      }
-
-      this.successMessage.set(response.message);
-      this.messageService.add({
-        key: 'app-feedback',
-        severity: 'success',
-        summary: 'Inscription',
-        detail: response.message,
-        life: 6000,
-      });
-    } catch (error) {
-      logDebugError('web.auth.sign-up.submit', error, {
+    await runAuthSubmission(
+      {
+        submitting: this.submitting,
+        successMessage: this.successMessage,
+        errorMessage: this.errorMessage,
+        messageService: this.messageService,
+        successTitle: () => this.i18n.translate('web.auth.signUp.toastTitle'),
+        fallbackError: () =>
+          this.i18n.translate('web.auth.signUp.genericError'),
+        debugContext: 'web.auth.sign-up.submit',
         route: '/inscription',
-      });
-      this.errorMessage.set(
-        resolveAuthErrorMessage(
-          error,
-          'Impossible de créer le compte pour le moment.',
-        ),
-      );
-    } finally {
-      this.submitting.set(false);
-    }
+      },
+      async () => {
+        const { firstName, lastName, email, password } =
+          this.form.getRawValue();
+
+        const response = await this.authService.signUp({
+          firstName: normalizeRequiredText(firstName),
+          lastName: normalizeRequiredText(lastName),
+          email: normalizeRequiredText(email),
+          password,
+          redirectTo: resolveWebRedirectUrl('/connexion', environment.siteUrl),
+        });
+
+        if (response.session && response.profile) {
+          await this.router.navigateByUrl('/participant/dashboard');
+          return;
+        }
+
+        return response.message;
+      },
+    );
   }
 }

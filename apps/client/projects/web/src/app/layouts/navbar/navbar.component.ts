@@ -1,29 +1,59 @@
-import { Component, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+// apps\client\projects\web\src\app\layouts\navbar\navbar.component.ts
 
+import { Location } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import type { SupportedLocale } from '@kraak/domain';
+
+import { KraakI18nService } from '../../../../../shared/i18n/kraak-i18n.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
+
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import {
+  buildLocalizedPublicLocalePath,
+  type LocalizedPublicPageId,
+} from '../../routing/localized-public-routes';
 import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
 import { ParticipantNavCta } from '../../shared/participant-nav-cta/participant-nav-cta.component';
 
 interface NavLink {
-  label: string;
-  path: string;
+  labelKey: string;
+  pageId: LocalizedPublicPageId;
 }
 
 @Component({
   selector: 'kraak-navbar',
   standalone: true,
-  imports: [RouterModule, ParticipantNavCta, PublicConversionTrackingDirective],
+  imports: [
+    RouterModule,
+    PublicConversionTrackingDirective,
+    ParticipantNavCta,
+    LocalizedPublicPathPipe,
+    KraakTranslatePipe,
+  ],
   templateUrl: './navbar.component.html',
 })
 export class Navbar {
+  private readonly location = inject(Location);
+  private readonly i18n = inject(KraakI18nService);
+
   protected readonly links: NavLink[] = [
-    { label: '\u00C0 propos', path: '/a-propos' },
-    { label: 'Services', path: '/services' },
-    { label: 'Programmes', path: '/programmes' },
-    { label: 'Contact', path: '/contact' },
+    { labelKey: 'web.nav.links.home', pageId: 'home' },
+    { labelKey: 'web.nav.links.services', pageId: 'services' },
+    { labelKey: 'web.nav.links.programs', pageId: 'programs' },
+    { labelKey: 'web.nav.links.about', pageId: 'about' },
+    { labelKey: 'web.nav.links.contact', pageId: 'contact' },
   ];
 
+  protected readonly locale = this.i18n.locale;
   protected readonly mobileMenuOpen = signal(false);
+
+  protected buildLanguageHref(targetLocale: SupportedLocale): string {
+    return buildLocalizedPublicLocalePath(
+      this.location.path(true),
+      targetLocale,
+    );
+  }
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update((v) => !v);

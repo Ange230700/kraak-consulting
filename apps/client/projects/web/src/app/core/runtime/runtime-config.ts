@@ -1,7 +1,18 @@
+// apps\client\projects\web\src\app\core\runtime\runtime-config.ts
+
 import { environment } from '../../../environments/environment';
 
 interface KraakRuntimeConfig {
   readonly apiBaseUrl?: string;
+  readonly publicAssetBaseUrl?: string;
+  readonly contactPhoneE164?: string;
+  readonly contactPhoneDisplay?: string;
+  readonly contactEmail?: string;
+  readonly whatsappContactHref?: string;
+  readonly facebookUrl?: string;
+  readonly instagramUrl?: string;
+  readonly tiktokUrl?: string;
+  readonly siteUrl?: string;
   readonly supabaseUrl?: string;
   readonly supabasePublishableKey?: string;
   readonly enableParticipantArea?: boolean;
@@ -27,7 +38,9 @@ export function isProductionEnvironment(): boolean {
 }
 
 export function canShowPreviewContent(): boolean {
-  return !isProductionEnvironment();
+  // Preview content should follow the environment-level participant-space flag.
+  // This keeps staging preview-friendly while production remains stable.
+  return isParticipantAreaEnabled();
 }
 
 function stripTrailingSlashes(value: string): string {
@@ -45,6 +58,16 @@ export function resolveApiBaseUrl(fallback = ''): string {
 
   if (runtimeApiBaseUrl) {
     return stripTrailingSlashes(runtimeApiBaseUrl);
+  }
+
+  return stripTrailingSlashes(fallback);
+}
+
+export function resolveSiteUrl(fallback = ''): string {
+  const runtimeSiteUrl = getRuntimeConfig().siteUrl?.trim();
+
+  if (runtimeSiteUrl) {
+    return stripTrailingSlashes(runtimeSiteUrl);
   }
 
   return stripTrailingSlashes(fallback);

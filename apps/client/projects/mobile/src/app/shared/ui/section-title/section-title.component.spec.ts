@@ -11,19 +11,16 @@ describe('SectionTitleComponent', () => {
 
   it('Given une section title When on renseigne les inputs Then il affiche le contenu', () => {
     const fixture = TestBed.createComponent(SectionTitleComponent);
-    fixture.componentRef.setInput('overline', 'D\u00E9couvrir');
+    fixture.componentRef.setInput('overline', 'Découvrir');
     fixture.componentRef.setInput('title', 'Bienvenue sur KRAAK');
-    fixture.componentRef.setInput(
-      'subtitle',
-      'Un accompagnement structur\u00E9.',
-    );
+    fixture.componentRef.setInput('subtitle', 'Un accompagnement structuré.');
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
 
-    expect(text).toContain('D\u00E9couvrir');
+    expect(text).toContain('Découvrir');
     expect(text).toContain('Bienvenue sur KRAAK');
-    expect(text).toContain('Un accompagnement structur\u00E9.');
+    expect(text).toContain('Un accompagnement structuré.');
 
     const overline = fixture.nativeElement.querySelector('p.kraak-overline');
     const title = fixture.nativeElement.querySelector('h2.kraak-section-title');
@@ -34,5 +31,21 @@ describe('SectionTitleComponent', () => {
     expect(overline).toBeTruthy();
     expect(title).toBeTruthy();
     expect(subtitle).toBeTruthy();
+  });
+
+  it('Given only the required title, when the component renders, then optional overline and subtitle are hidden', () => {
+    const fixture = TestBed.createComponent(SectionTitleComponent);
+    fixture.componentRef.setInput('title', 'Titre seul');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    const overline = fixture.nativeElement.querySelector('p.kraak-overline');
+    const subtitle = fixture.nativeElement.querySelector(
+      'p.kraak-section-subtitle',
+    );
+
+    expect(text).toContain('Titre seul');
+    expect(overline).toBeFalsy();
+    expect(subtitle).toBeFalsy();
   });
 });

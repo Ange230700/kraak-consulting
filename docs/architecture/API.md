@@ -1,0 +1,80 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-10-26
+source_of_truth: true
+---
+
+# Architecture API
+
+## Table des matières
+
+- [Architecture API](#architecture-api)
+  - [Contrat courant](#contrat-courant)
+  - [Structure minimale](#structure-minimale)
+  - [Internationalisation cible](#internationalisation-cible)
+  - [Sources liées](#sources-liees)
+
+L'API KRAAK est l'application NestJS située dans `apps/api`.
+
+## Contrat courant
+
+- Framework : NestJS.
+- Documentation : Swagger/OpenAPI exposé à `/api-docs`.
+- Contrats : DTO et types partagés via `packages/contracts` lorsque le partage
+  web/mobile/API est utile.
+- Validation : validation explicite sans `class-validator` par défaut.
+- Données, auth et stockage : Supabase.
+- ORM : aucun ORM par défaut ; toute introduction doit être décidée et
+  documentée avant ajout.
+
+## Structure minimale
+
+Chaque module exposant une route doit garder :
+
+- `<name>.module.ts`
+- `<name>.controller.ts`
+- `<name>.controller.spec.ts`
+- `<name>.service.ts`
+- `<name>.service.spec.ts`
+
+Tout payload d'entrée complexe ajoute `<name>.dto.ts` et
+`<name>.dto.spec.ts`.
+
+Dans le module `curriculum`, les cours, modules et leçons partagent leurs
+opérations de lecture, création, mise à jour et leur mapping SQL vers les DTO.
+Les messages d'erreur restent propres à chaque entité. L'agrégation participante
+ne charge que les contenus publiés, déduplique les identifiants interrogés et
+conserve chaque placement dans l'ordre reçu. Le chargement des chapitres et
+leçons est séparé de l'assemblage de la hiérarchie, sans requête descendante
+lorsqu'aucun parent publié n'est disponible.
+
+## Internationalisation cible
+
+Les réponses localisées actuelles utilisent `src/i18n/api-message.ts` et les
+catalogues JSON `api-messages.fr-CI.json` et `api-messages.en-GB.json`. Les clés
+sont dérivées du catalogue français ; le typage et les tests imposent la même
+liste de clés en anglais. TypeScript copie les deux catalogues dans
+`dist/i18n/` lors du build, sans chargement réseau ni dépendance supplémentaire.
+
+L'API exposera progressivement des codes d'erreur machine-readable stables,
+associés aux statuts HTTP. Les clients web et mobile traduiront ces codes en
+messages visibles dans leur propre catalogue. Les messages de debug resteront
+séparés, courts et sans données sensibles.
+
+Les e-mails et notifications rendus côté serveur appartiendront à des templates
+localisés côté API. Leur locale cible viendra du choix explicite, du profil
+utilisateur ou du contexte de requête, puis retombera sur `fr-CI`.
+
+Le stockage des messages dans ces catalogues ne modifie ni les routes, ni les
+DTO, ni le contenu des réponses API.
+
+## Sources liées
+
+- [`DATA_MODEL.md`](DATA_MODEL.md) pour le modèle de données.
+- [`../engineering/SHARED_PACKAGES.md`](../engineering/SHARED_PACKAGES.md) pour
+  les packages partagés.
+- [`../operations/SUPABASE_AUTH.md`](../operations/SUPABASE_AUTH.md) pour la
+  configuration Supabase Auth.
+- [`../decisions/ARC-19-i18n-localization-strategy.md`](../decisions/ARC-19-i18n-localization-strategy.md)
+  pour la stratégie d'internationalisation français / anglais.

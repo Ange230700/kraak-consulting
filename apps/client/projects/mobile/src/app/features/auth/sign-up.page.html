@@ -1,7 +1,7 @@
 <kraak-page-shell
-  eyebrow="Compte"
-  title="Cr&eacute;er un compte"
-  description="Pr&eacute;parez votre acc&egrave;s participant avec vos informations de base, puis confirmez votre email."
+  [eyebrow]="'mobile.auth.signUp.header.eyebrow' | kraakTranslate"
+  [title]="'mobile.auth.signUp.header.title' | kraakTranslate"
+  [description]="'mobile.auth.signUp.header.description' | kraakTranslate"
   backHref="/sign-in"
 >
   <section
@@ -19,7 +19,7 @@
             for="sign-up-first-name"
             class="text-sm font-semibold text-neutral-900"
           >
-            Pr&eacute;nom
+            {{ 'mobile.auth.signUp.fields.firstName' | kraakTranslate }}
           </label>
           <input
             id="sign-up-first-name"
@@ -35,7 +35,7 @@
             for="sign-up-last-name"
             class="text-sm font-semibold text-neutral-900"
           >
-            Nom
+            {{ 'mobile.auth.signUp.fields.lastName' | kraakTranslate }}
           </label>
           <input
             id="sign-up-last-name"
@@ -52,7 +52,7 @@
           for="sign-up-email"
           class="text-sm font-semibold text-neutral-900"
         >
-          Adresse email
+          {{ 'mobile.auth.signUp.fields.email' | kraakTranslate }}
         </label>
         <input
           id="sign-up-email"
@@ -69,14 +69,16 @@
           for="sign-up-password"
           class="text-sm font-semibold text-neutral-900"
         >
-          Mot de passe
+          {{ 'mobile.auth.signUp.fields.password' | kraakTranslate }}
         </label>
         <input
           id="sign-up-password"
           type="password"
           formControlName="password"
           autocomplete="new-password"
-          placeholder="Minimum 8 caract&egrave;res"
+          [placeholder]="
+            'mobile.auth.signUp.placeholders.password' | kraakTranslate
+          "
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
       </div>
@@ -86,7 +88,7 @@
           for="sign-up-phone"
           class="text-sm font-semibold text-neutral-900"
         >
-          T&eacute;l&eacute;phone
+          {{ 'mobile.auth.signUp.fields.phone' | kraakTranslate }}
         </label>
         <input
           id="sign-up-phone"
@@ -97,14 +99,13 @@
           class="rounded-card border-brand-blue/12 focus:border-brand-blue min-h-12 border bg-white px-4 py-3 text-sm text-neutral-900 outline-none"
         />
         <p class="text-sm leading-6 text-neutral-700">
-          Optionnel. Ajoutez-le si vous souhaitez &ecirc;tre recontact&eacute;
-          plus facilement.
+          {{ 'mobile.auth.signUp.helpers.phone' | kraakTranslate }}
         </p>
       </div>
 
       @if (form.invalid && form.touched) {
         <p class="text-sm leading-6 text-rose-700">
-          V&eacute;rifiez vos informations avant de continuer.
+          {{ 'mobile.auth.signUp.validation.form' | kraakTranslate }}
         </p>
       }
 
@@ -131,14 +132,17 @@
         [disabled]="submitting()"
       >
         {{
-          submitting() ? 'Cr\u00e9ation en cours...' : 'Cr\u00e9er un compte'
+          (submitting()
+            ? 'mobile.auth.signUp.actions.submitting'
+            : 'mobile.auth.signUp.actions.submit'
+          ) | kraakTranslate
         }}
       </ion-button>
     </form>
 
     <div class="border-brand-blue/12 border-t pt-4">
       <a routerLink="/sign-in" class="text-brand-blue text-sm font-semibold">
-        Se connecter
+        {{ 'mobile.auth.signUp.actions.signIn' | kraakTranslate }}
       </a>
     </div>
   </section>

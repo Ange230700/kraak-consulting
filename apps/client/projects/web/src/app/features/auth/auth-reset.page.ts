@@ -1,0 +1,184 @@
+// apps\client\projects\web\src\app\features\auth\auth-reset.page.ts
+
+import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { logDebugError } from '@kraak/api-client';
+import { MessageService } from 'primeng/api';
+import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
+import {
+  WebAuthService,
+  resolveAuthErrorMessage,
+} from '../../core/auth/web-auth.service';
+
+import {
+  KraakI18nService,
+  KraakTranslatePipe,
+} from '../../../../../shared/i18n';
+interface AuthResetFormModel {
+  password: FormControl<string>;
+  confirmPassword: FormControl<string>;
+}
+
+@Component({
+  selector: 'kraak-web-auth-reset-page',
+  standalone: true,
+  imports: [
+    KraakTranslatePipe,
+    ReactiveFormsModule,
+    RouterLink,
+    Button,
+    Message,
+  ],
+  templateUrl: './auth-reset.page.html',
+})
+export default class AuthResetPage implements OnInit {
+  private readonly i18n = inject(KraakI18nService);
+
+  private readonly authService = inject(WebAuthService);
+  private readonly messageService = inject(MessageService);
+  private readonly invalidRecoveryLinkMessage = this.i18n.translate(
+    'web.auth.resetPassword.invalidLink',
+  );
+
+  readonly form = new FormGroup<AuthResetFormModel>({
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8)],
+    }),
+    confirmPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8)],
+    }),
+  });
+
+  readonly recoveryToken = signal<string | null>(null);
+  readonly tokenReady = signal(false);
+  readonly successMessage = signal<string | null>(null);
+  readonly errorMessage = signal<string | null>(null);
+  readonly submitting = signal(false);
+
+  ngOnInit(): void {
+    void this.initializeRecoveryContext();
+  }
+
+  private async initializeRecoveryContext(): Promise<void> {
+    try {
+      const token = await this.authService.resolveRecoveryAccessTokenFromUrl();
+      this.recoveryToken.set(token);
+
+      if (!token) {
+        this.errorMessage.set(this.invalidRecoveryLinkMessage);
+      }
+
+      this.clearSensitiveUrlFragments();
+    } catch (error) {
+      logDebugError('web.auth.reset.init', error, {
+        route: '/auth/reset',
+      });
+      this.errorMessage.set(
+        resolveAuthErrorMessage(
+          error,
+          this.i18n.translate('web.auth.resetPassword.prepareError'),
+        ),
+      );
+    } finally {
+      this.tokenReady.set(true);
+    }
+  }
+
+  async submit(): Promise<void> {
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid || this.submitting()) {
+      return;
+    }
+
+    if (!this.recoveryToken()) {
+      this.errorMessage.set(this.invalidRecoveryLinkMessage);
+      return;
+    }
+
+    const { password, confirmPassword } = this.form.getRawValue();
+
+    if (password !== confirmPassword) {
+      this.errorMessage.set(
+        this.i18n.translate('web.auth.resetPassword.passwordMismatch'),
+      );
+      return;
+    }
+
+    this.submitting.set(true);
+    this.successMessage.set(null);
+    this.errorMessage.set(null);
+
+    const token = this.recoveryToken();
+
+    if (!token) {
+      this.errorMessage.set(this.invalidRecoveryLinkMessage);
+      this.submitting.set(false);
+      return;
+    }
+
+    try {
+      const response = await this.authService.completePasswordRecovery({
+        accessToken: token,
+        newPassword: password,
+      });
+
+      this.successMessage.set(response.message);
+      this.messageService.add({
+        key: 'app-feedback',
+        severity: 'success',
+        summary: this.i18n.translate('web.auth.resetPassword.toastTitle'),
+        detail: response.message,
+        life: 6000,
+      });
+
+      this.form.reset({
+        password: '',
+        confirmPassword: '',
+      });
+    } catch (error) {
+      logDebugError('web.auth.reset.submit', error, {
+        route: '/auth/reset',
+      });
+      this.errorMessage.set(
+        resolveAuthErrorMessage(
+          error,
+          this.i18n.translate('web.auth.resetPassword.genericError'),
+        ),
+      );
+    } finally {
+      this.submitting.set(false);
+    }
+  }
+
+  private clearSensitiveUrlFragments(): void {
+    const browserWindow = globalThis.window;
+
+    if (!browserWindow) {
+      return;
+    }
+
+    const currentUrl = new URL(browserWindow.location.href);
+    currentUrl.hash = '';
+
+    // Remove recovery parameters from browser history to avoid token leakage.
+    currentUrl.searchParams.delete('access_token');
+    currentUrl.searchParams.delete('refresh_token');
+    currentUrl.searchParams.delete('token_type');
+    currentUrl.searchParams.delete('expires_in');
+    currentUrl.searchParams.delete('expires_at');
+    currentUrl.searchParams.delete('type');
+    currentUrl.searchParams.delete('token_hash');
+
+    browserWindow.history.replaceState({}, '', currentUrl.toString());
+  }
+}

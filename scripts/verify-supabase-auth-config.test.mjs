@@ -41,7 +41,7 @@ test("Given l'auth Supabase versionnée, When on lit la config locale, Then le p
   const confirmationTemplate = readTextFile(confirmationTemplatePath);
   const recoveryTemplate = readTextFile(recoveryTemplatePath);
 
-  assert.match(config, /^project_id = "kraak-group"$/m);
+  assert.match(config, /^project_id = "kraak-consulting"$/m);
   assert.match(config, /^\[auth\]$/m);
   assert.match(config, /^site_url = "http:\/\/localhost:4200"$/m);
   assert.match(config, /http:\/\/localhost:4200\/auth\/callback/);
@@ -98,7 +98,9 @@ test('Given le schéma initial, When on vérifie la sécurité de base, Then les
   ]) {
     assert.match(
       schema,
-      new RegExp(`ALTER TABLE ${tableName}\\s+ENABLE ROW LEVEL SECURITY;`),
+      new RegExp(
+        String.raw`ALTER TABLE ${tableName}\s+ENABLE ROW LEVEL SECURITY;`,
+      ),
     );
   }
 
@@ -112,6 +114,6 @@ test('Given le schéma initial, When on vérifie la sécurité de base, Then les
     'notification_select_own',
     'support_request_select_own',
   ]) {
-    assert.match(schema, new RegExp(`CREATE POLICY ${policyName}\\b`));
+    assert.match(schema, new RegExp(String.raw`CREATE POLICY ${policyName}\b`));
   }
 });

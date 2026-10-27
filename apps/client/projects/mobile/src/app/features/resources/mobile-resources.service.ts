@@ -4,6 +4,7 @@ import type {
   ResourceDto,
   ResourceThemeValue,
 } from '@kraak/contracts';
+import { KraakI18nService } from '../../../../../shared/i18n';
 import { environment } from '../../../environments/environment';
 import { MobileAuthService } from '../auth/mobile-auth.service';
 
@@ -24,6 +25,7 @@ export interface ResourceListResponse {
 })
 export class MobileResourcesService {
   private readonly authService = inject(MobileAuthService);
+  private readonly i18n = inject(KraakI18nService);
 
   async listResources(
     filters?: ResourceListFilters,
@@ -88,7 +90,11 @@ export class MobileResourcesService {
         throw new Error(responseMessage);
       }
 
-      throw new Error(`Erreur API (${response.status})`);
+      throw new Error(
+        this.i18n.translate('mobile.resources.feedback.apiError', {
+          status: response.status,
+        }),
+      );
     }
 
     if (response.status === 204) {

@@ -1,7 +1,9 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApplicationInitStatus, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ApiError } from '@kraak/api-client';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
+import { MobileAuthService } from '../auth/mobile-auth.service';
 import HomePage from './home.page';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
@@ -21,14 +23,93 @@ function configureDashboardClient(
 }
 
 describe('Mobile HomePage', () => {
+  const mobileAuthServiceMock = {
+    currentSession: vi.fn(),
+  };
+
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     vi.restoreAllMocks();
+    mobileAuthServiceMock.currentSession.mockReset();
+    mobileAuthServiceMock.currentSession.mockReturnValue({
+      accessToken: 'token-mobile-dashboard',
+    });
 
     await TestBed.configureTestingModule({
       imports: [HomePage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [provideRouter([])],
+      providers: [
+        provideKraakI18n(),
+        provideRouter([]),
+        { provide: MobileAuthService, useValue: mobileAuthServiceMock },
+      ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
+  });
+
+  it('Given a valid mobile session, when dashboard aggregate is loaded through the real API client, then Authorization header uses the current session token', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () =>
+        Promise.resolve({
+          generatedAt: '2026-04-29T11:00:00.000Z',
+          programs: [],
+          upcomingSessions: [],
+          recentAnnouncements: [],
+        }),
+      text: () => Promise.resolve('{}'),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const fixture = TestBed.createComponent(HomePage);
+    const component = fixture.componentInstance as unknown as {
+      reloadDashboard: () => Promise<void>;
+    };
+
+    await component.reloadDashboard();
+
+    expect(fetchMock).toHaveBeenCalled();
+    const [, init] = fetchMock.mock.calls[0] as [
+      string,
+      { headers: Record<string, string> },
+    ];
+    expect(init.headers['Authorization']).toBe('Bearer token-mobile-dashboard');
+  });
+
+  it('Given no mobile session, when dashboard aggregate is loaded through the real API client, then Authorization header is omitted', async () => {
+    mobileAuthServiceMock.currentSession.mockReturnValue(null);
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () =>
+        Promise.resolve({
+          generatedAt: '2026-04-29T11:00:00.000Z',
+          programs: [],
+          upcomingSessions: [],
+          recentAnnouncements: [],
+        }),
+      text: () => Promise.resolve('{}'),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const fixture = TestBed.createComponent(HomePage);
+    const component = fixture.componentInstance as unknown as {
+      reloadDashboard: () => Promise<void>;
+    };
+
+    await component.reloadDashboard();
+
+    expect(fetchMock).toHaveBeenCalled();
+    const [, init] = fetchMock.mock.calls[0] as [
+      string,
+      { headers: Record<string, string> },
+    ];
+    expect(init.headers['Authorization']).toBeUndefined();
   });
 
   it('should create', async () => {
@@ -91,7 +172,7 @@ describe('Mobile HomePage', () => {
     const actions = element.querySelectorAll('ion-button');
 
     expect(brandImage?.getAttribute('src')).toContain('kraak-logo.png');
-    expect(actions.length).toBe(2);
+    expect(actions).toHaveLength(2);
     expect(element.textContent).toContain('Voir les ressources utiles');
   });
 

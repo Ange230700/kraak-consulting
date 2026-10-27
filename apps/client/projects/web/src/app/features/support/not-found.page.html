@@ -25,89 +25,98 @@
     class="relative z-10 mx-auto flex min-h-[calc(100vh-6rem)] max-w-5xl items-center justify-center"
   >
     <div
-      class="border-brand-blue/12 bg-brand-white/95 w-full rounded-3xl border px-6 py-10 text-center shadow-[0_24px_60px_rgb(18_43_74/14%)] backdrop-blur-sm sm:px-10 lg:px-14 lg:py-14"
+      class="w-full rounded-[2rem] border border-slate-200/80 bg-white/95 px-6 py-10 text-center shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-42px_rgba(18,43,74,0.32)] backdrop-blur-xl sm:px-10 lg:px-14 lg:py-14"
     >
       <p
         class="text-brand-blue text-sm font-semibold tracking-[0.2em] uppercase"
       >
-        Page introuvable
+        {{ 'web.status.notFound.eyebrow' | kraakTranslate }}
       </p>
       <h1
-        class="text-brand-navy mt-5 text-5xl font-bold sm:text-6xl lg:text-7xl"
+        class="text-brand-navy mt-5 text-5xl font-semibold sm:text-6xl lg:text-7xl"
       >
-        Oups.
+        {{ 'web.status.notFound.title' | kraakTranslate }}
       </h1>
       <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg leading-8">
-        La page que vous cherchez n'existe pas, a &eacute;t&eacute;
-        d&eacute;plac&eacute;e ou n'est plus disponible. Nous vous ramenons vers
-        une prochaine &eacute;tape utile.
+        {{ 'web.status.notFound.description' | kraakTranslate }}
       </p>
 
       <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           pButton
-          routerLink="/"
-          label="Retour &agrave; l'accueil"
+          [routerLink]="'home' | localizedPublicPath"
+          [label]="'web.status.common.homeLabel' | kraakTranslate"
           icon="pi pi-home"
           size="large"
           class="kr-button-primary"
-          aria-label="Retour à la page d'accueil"
-        ></a>
+          [attr.aria-label]="'web.status.common.homeAria' | kraakTranslate"
+        >
+          <span class="sr-only">
+            {{ 'web.status.common.homeAria' | kraakTranslate }}
+          </span>
+        </a>
         <a
           pButton
-          routerLink="/faq"
-          label="Consulter l'aide"
+          [routerLink]="'faq' | localizedPublicPath"
+          [label]="'web.status.notFound.helpLabel' | kraakTranslate"
           icon="pi pi-question-circle"
           size="large"
           class="kr-button-ghost"
-          aria-label="Consulter la FAQ KRAAK"
-        ></a>
+          [attr.aria-label]="'web.status.notFound.helpAria' | kraakTranslate"
+        >
+          <span class="sr-only">
+            {{ 'web.status.notFound.helpAria' | kraakTranslate }}
+          </span>
+        </a>
         <a
           pButton
-          routerLink="/contact"
-          label="Nous contacter"
+          [routerLink]="'contact' | localizedPublicPath"
+          [label]="'web.status.common.contactLabel' | kraakTranslate"
           icon="pi pi-envelope"
           size="large"
           class="kr-button-ghost"
-          aria-label="Contacter KRAAK"
-        ></a>
+          [attr.aria-label]="'web.status.common.contactAria' | kraakTranslate"
+        >
+          <span class="sr-only">
+            {{ 'web.status.common.contactAria' | kraakTranslate }}
+          </span>
+        </a>
       </div>
 
       <div class="mt-12 grid gap-4 text-left md:grid-cols-3">
         <a
-          routerLink="/"
+          [routerLink]="'home' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">
-            Reprendre depuis l'accueil
+            {{ 'web.status.notFound.cardHomeTitle' | kraakTranslate }}
           </h2>
           <p class="text-brand-navy mt-2 text-sm leading-6">
-            Retrouvez les points d'entr&eacute;e principaux selon votre profil
-            et votre objectif.
+            {{ 'web.status.notFound.cardHomeDescription' | kraakTranslate }}
           </p>
         </a>
         <a
-          routerLink="/faq"
+          [routerLink]="'faq' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">
-            Consulter l'aide
+            {{ 'web.status.notFound.cardHelpTitle' | kraakTranslate }}
           </h2>
           <p class="text-brand-navy mt-2 text-sm leading-6">
-            FAQ, conseils et orientation: trouvez la r&eacute;ponse &agrave; vos
-            questions fr&eacute;quentes.
+            {{ 'web.status.notFound.cardHelpDescription' | kraakTranslate }}
           </p>
         </a>
         <a
-          routerLink="/contact"
+          [routerLink]="'contact' | localizedPublicPath"
           class="rounded-card bg-neutral-50 p-5 transition-all hover:bg-neutral-100 hover:shadow-md"
         >
           <h2 class="text-brand-navy text-base font-semibold">
-            Demander une orientation
+            {{ 'web.status.notFound.cardOrientationTitle' | kraakTranslate }}
           </h2>
           <p class="text-brand-navy mt-2 text-sm leading-6">
-            Si vous h&eacute;sitez, nous vous aidons &agrave; identifier la
-            bonne prochaine &eacute;tape.
+            {{
+              'web.status.notFound.cardOrientationDescription' | kraakTranslate
+            }}
           </p>
         </a>
       </div>

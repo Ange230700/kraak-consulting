@@ -20,7 +20,7 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   {
     path: 'accueil',
     tab: {
-      label: 'Accueil',
+      label: 'mobile.navigation.home',
       tab: 'accueil',
       href: '/tabs/accueil',
       icon: 'home-outline',
@@ -35,7 +35,7 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   {
     path: 'programmes',
     tab: {
-      label: 'Programmes',
+      label: 'mobile.navigation.programs',
       tab: 'programmes',
       href: '/tabs/programmes',
       icon: 'book-outline',
@@ -71,7 +71,7 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   {
     path: 'annonces',
     tab: {
-      label: 'Annonces',
+      label: 'mobile.navigation.announcements',
       tab: 'annonces',
       href: '/tabs/annonces',
       icon: 'megaphone-outline',
@@ -92,7 +92,7 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   {
     path: 'support',
     tab: {
-      label: 'Support',
+      label: 'mobile.navigation.support',
       tab: 'support',
       href: '/tabs/support',
       icon: 'help-circle-outline',
@@ -111,18 +111,24 @@ export const MOBILE_SHELL_SECTIONS: readonly MobileShellSectionConfig[] = [
   },
 ] as const;
 
-export const MOBILE_PRIMARY_TABS = MOBILE_SHELL_SECTIONS.flatMap((section) =>
-  section.tab
-    ? [
-        {
-          label: section.tab.label,
-          tab: section.tab.tab,
-          href: section.tab.href,
-          icon: section.tab.icon,
-        },
-      ]
-    : [],
-);
+export function getMobilePrimaryTabs(
+  sections: readonly MobileShellSectionConfig[],
+): readonly NonNullable<MobileShellSectionConfig['tab']>[] {
+  return sections.flatMap((section) =>
+    section.tab
+      ? [
+          {
+            label: section.tab.label,
+            tab: section.tab.tab,
+            href: section.tab.href,
+            icon: section.tab.icon,
+          },
+        ]
+      : [],
+  );
+}
+
+export const MOBILE_PRIMARY_TABS = getMobilePrimaryTabs(MOBILE_SHELL_SECTIONS);
 
 export const MOBILE_SHELL_CHILD_ROUTES: readonly Route[] =
   MOBILE_SHELL_SECTIONS.map((section) => ({

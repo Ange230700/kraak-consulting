@@ -1,3 +1,6 @@
+// apps\client\projects\web\src\app\features\auth\sign-in.page.spec.ts
+
+import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -5,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebAuthService } from '../../core/auth/web-auth.service';
 import SignInPage from './sign-in.page';
 
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 describe('Web SignInPage', () => {
   const authService = {
     signIn: vi.fn(),
@@ -17,17 +21,22 @@ describe('Web SignInPage', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
     authService.signIn.mockReset();
     authService.signIn.mockResolvedValue(undefined);
 
     await TestBed.configureTestingModule({
       imports: [SignInPage],
       providers: [
+        provideKraakI18n(),
         provideRouter([]),
         { provide: WebAuthService, useValue: authService },
         MessageService,
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    await TestBed.inject(KraakI18nService).setLocale('fr-CI');
 
     router = TestBed.inject(Router);
     messageService = TestBed.inject(MessageService);

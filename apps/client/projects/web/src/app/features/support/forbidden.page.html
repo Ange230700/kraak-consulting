@@ -11,42 +11,49 @@
     class="relative z-10 mx-auto flex min-h-[calc(100vh-6rem)] max-w-4xl items-center justify-center"
   >
     <div
-      class="border-brand-blue/12 bg-brand-white/95 w-full rounded-3xl border px-6 py-10 text-center shadow-[0_24px_60px_rgb(18_43_74/14%)] backdrop-blur-sm sm:px-10 lg:px-14 lg:py-14"
+      class="w-full rounded-[2rem] border border-slate-200/80 bg-white/95 px-6 py-10 text-center shadow-[0_1px_2px_rgba(164,172,185,0.18),0_28px_70px_-42px_rgba(18,43,74,0.32)] backdrop-blur-xl sm:px-10 lg:px-14 lg:py-14"
     >
       <p
         class="text-brand-blue text-sm font-semibold tracking-[0.2em] uppercase"
       >
-        Acc&egrave;s refus&eacute;
+        {{ 'web.status.forbidden.eyebrow' | kraakTranslate }}
       </p>
       <h1
-        class="text-brand-navy mt-5 text-5xl font-bold sm:text-6xl lg:text-7xl"
+        class="text-brand-navy mt-5 text-5xl font-semibold sm:text-6xl lg:text-7xl"
       >
         403
       </h1>
       <p class="text-brand-navy mx-auto mt-6 max-w-2xl text-lg leading-8">
-        Vous n'avez pas les droits n&eacute;cessaires pour consulter cette page.
-        Contactez notre &eacute;quipe si vous pensez qu'il s'agit d'une erreur.
+        {{ 'web.status.forbidden.description' | kraakTranslate }}
       </p>
 
       <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
         <a
           pButton
-          routerLink="/"
-          label="Retour à l'accueil"
+          [routerLink]="'home' | localizedPublicPath"
+          [label]="'web.status.common.homeLabel' | kraakTranslate"
           icon="pi pi-home"
           size="large"
           class="kr-button-primary"
-          aria-label="Retour à la page d'accueil"
-        ></a>
+          [attr.aria-label]="'web.status.common.homeAria' | kraakTranslate"
+        >
+          <span class="sr-only">
+            {{ 'web.status.common.homeAria' | kraakTranslate }}
+          </span>
+        </a>
         <a
           pButton
-          routerLink="/contact"
-          label="Nous contacter"
+          [routerLink]="'contact' | localizedPublicPath"
+          [label]="'web.status.common.contactLabel' | kraakTranslate"
           icon="pi pi-envelope"
           size="large"
           class="kr-button-ghost"
-          aria-label="Contacter KRAAK"
-        ></a>
+          [attr.aria-label]="'web.status.common.contactAria' | kraakTranslate"
+        >
+          <span class="sr-only">
+            {{ 'web.status.common.contactAria' | kraakTranslate }}
+          </span>
+        </a>
       </div>
     </div>
   </div>

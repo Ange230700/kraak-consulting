@@ -3,7 +3,7 @@ name: Changesets
 on:
   push:
     branches:
-      - main
+      - staging
   workflow_dispatch:
 
 concurrency:
@@ -40,7 +40,6 @@ jobs:
         uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
         with:
           version: pnpm run changesets:version
-          publish: pnpm run changesets:publish
           commit: 'chore: bump versions and update changelogs'
           title: 'chore: bump versions and update changelogs'
         env:

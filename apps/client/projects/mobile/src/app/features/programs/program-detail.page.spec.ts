@@ -1,3 +1,4 @@
+import { ApplicationInitStatus } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
@@ -9,6 +10,7 @@ import type {
   SessionDto,
 } from '@kraak/contracts';
 import { MobileProgramsService } from './mobile-programs.service';
+import { KraakI18nService, provideKraakI18n } from '../../../../../shared/i18n';
 import ProgramDetailPage from './program-detail.page';
 
 const TEST_PROGRAM_RESOURCE_URL = 'https://example.com/guide.pdf';
@@ -62,9 +64,12 @@ describe('Mobile ProgramDetailPage', () => {
     sessions: [],
     resources: [],
     announcements: [],
+    curriculum: { courses: [] },
   };
 
   beforeEach(async () => {
+    globalThis.window.localStorage.setItem('kraak:locale', 'fr-CI');
+
     service = {
       getProgramDetail: vi.fn(),
     };
@@ -86,11 +91,14 @@ describe('Mobile ProgramDetailPage', () => {
       imports: [ProgramDetailPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
+        provideKraakI18n(),
         provideRouter([]),
         { provide: MobileProgramsService, useValue: service },
         { provide: ActivatedRoute, useValue: activatedRoute },
       ],
     }).compileComponents();
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
   });
 
   it('should create', () => {
@@ -100,6 +108,12 @@ describe('Mobile ProgramDetailPage', () => {
   });
 
   describe('On load', () => {
+    it('Given des dates absentes ou invalides et une place unique, When les libellés sont calculés, Then les valeurs restent lisibles', () => {
+      const page = TestBed.createComponent(ProgramDetailPage).componentInstance;
+      expect(page['formatMediumDate'](null)).toBe('');
+      expect(page['formatMediumDate']('date invalide')).toBe('date invalide');
+      expect(page['getCapacityLabel'](1)).toContain('1');
+    });
     it('Given the page is initialized with a program ID, when program loads successfully, then the detail is displayed', async () => {
       service.getProgramDetail.mockResolvedValue(mockProgramDetail);
       const fixture = TestBed.createComponent(ProgramDetailPage);
@@ -123,13 +137,35 @@ describe('Mobile ProgramDetailPage', () => {
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('API Error');
     });
+
+    it('Given no program id in route on init, when the page initializes, then no detail loading is triggered', async () => {
+      activatedRoute.snapshot.paramMap.get.mockReturnValue(null);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(service.getProgramDetail).not.toHaveBeenCalled();
+    });
+
+    it('Given a program id is present, when reloadProgram is called, then detail loading is triggered again', async () => {
+      service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+
+      await fixture.componentInstance['reloadProgram']();
+
+      expect(service.getProgramDetail).toHaveBeenCalledWith('prog-1');
+      expect(fixture.componentInstance['programDetail']()).toEqual(
+        mockProgramDetail,
+      );
+    });
   });
 
   describe('Rich content', () => {
     const mockSession: SessionDto = {
       id: 'session-1',
       cohortId: 'cohort-1',
-      title: 'Session de d\u00E9marrage',
+      title: 'Session de démarrage',
       description: null,
       status: 'scheduled',
       startsAt: new Date('2026-06-01T10:00:00Z').toISOString(),
@@ -200,7 +236,7 @@ describe('Mobile ProgramDetailPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).toContain('Sessions (2)');
-      expect(element.textContent).toContain('Session de d\u00E9marrage');
+      expect(element.textContent).toContain('Session de démarrage');
       expect(element.textContent).toContain('Ressources (2)');
       expect(element.textContent).toContain('Guide de formation');
       expect(element.textContent).toContain('Un guide complet');
@@ -224,6 +260,37 @@ describe('Mobile ProgramDetailPage', () => {
 
       const element = fixture.nativeElement as HTMLElement;
       expect(element.textContent).not.toContain('Cohorte');
+    });
+
+    it('Given optional cohort fields are absent, when the page loads, then optional cohort badges are not rendered', async () => {
+      service.getProgramDetail.mockResolvedValue({
+        ...mockProgramDetail,
+        cohort: {
+          ...mockCohort,
+          code: null,
+          capacity: null,
+        },
+        sessions: [
+          {
+            ...mockSession,
+            id: 'session-no-location-type',
+            locationType: 'onsite',
+          },
+        ],
+        resources: [],
+        announcements: [],
+      } satisfies ParticipantProgramDetailDto);
+
+      const fixture = TestBed.createComponent(ProgramDetailPage);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.textContent).toContain('Cohorte');
+      expect(element.textContent).toContain('Sessions (1)');
+      expect(element.textContent).not.toContain('Code:');
+      expect(element.textContent).not.toContain('Capacité:');
     });
 
     it('Given a loaded program, when reloadProgram is called, then the service is called again', async () => {
@@ -269,5 +336,39 @@ describe('Mobile ProgramDetailPage', () => {
 
       expect(title).toBe('Programme');
     });
+  });
+
+  it('Given English is selected, when programme detail is rendered, then page chrome and enum labels are translated while business content stays unchanged', async () => {
+    service.getProgramDetail.mockResolvedValue(mockProgramDetail);
+
+    const i18n = TestBed.inject(KraakI18nService);
+    await i18n.setLocale('en-GB');
+
+    const fixture = TestBed.createComponent(ProgramDetailPage);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement.textContent ?? '').replace(/\s+/g, ' ');
+
+    expect(text).toContain('Programme details');
+    expect(text).toContain('Programme');
+    expect(text).toContain('Enrollment status:');
+    expect(text).toContain('Active');
+    expect(text).toContain('Progress:');
+    expect(text).toContain('Cohort');
+    expect(text).toContain('Name:');
+
+    // Dynamic business content remains source-language data
+    // until Layer 6 introduces multilingual DTO fields.
+    expect(text).toContain('Programme test');
+    expect(text).toContain('Un programme de test');
+
+    const component = fixture.componentInstance;
+
+    expect(component['getLocationTypeLabel']('online')).toBe('Online');
+
+    expect(component['getResourceTypeLabel']('video')).toBe('Video');
   });
 });

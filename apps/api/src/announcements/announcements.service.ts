@@ -1,4 +1,6 @@
+import { apiMessage } from '../i18n/api-message';
 import {
+  InternalServerErrorException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -14,6 +16,10 @@ import {
   sortAnnouncementsByPriority,
 } from '@kraak/domain';
 import { SupabaseService } from '../supabase/supabase.service';
+import type {
+  CreateAnnouncementDto,
+  UpdateAnnouncementDto,
+} from './announcements.dto';
 import {
   isSupabaseColumnMissingError,
   readSupabaseErrorCode,
@@ -53,6 +59,117 @@ function isAnnouncementPriorityColumnMissing(error: unknown): boolean {
 @Injectable()
 export class AnnouncementsService {
   constructor(private readonly supabaseService: SupabaseService) {}
+
+  async createAnnouncement(
+    payload: CreateAnnouncementDto,
+    createdByUserId: string,
+  ): Promise<AnnouncementDto> {
+    const adminClient = this.supabaseService.getClient();
+    const status = payload.status ?? 'draft';
+    const publishedAt = this.resolvePublishedAt({
+      status,
+      publishedAt: payload.publishedAt,
+    });
+    const { data, error } = await adminClient
+      .from('announcement')
+      .insert({
+        title: payload.title,
+        body: payload.body,
+        priority: payload.priority ?? 'normal',
+        audience_type: payload.audienceType,
+        program_id: payload.programId ?? null,
+        cohort_id: payload.cohortId ?? null,
+        status,
+        published_at: publishedAt,
+        created_by_user_id: createdByUserId,
+      })
+      .select(ANNOUNCEMENT_SELECT_FIELDS)
+      .single();
+
+    if (error || !data) {
+      throw new InternalServerErrorException({
+        success: false,
+        message: apiMessage('announcements.createFailed'),
+      });
+    }
+
+    return this.mapAnnouncement(data as AnnouncementRow);
+  }
+
+  async updateAnnouncement(
+    id: string,
+    payload: UpdateAnnouncementDto,
+  ): Promise<AnnouncementDto> {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (payload.title !== undefined) {
+      updatePayload['title'] = payload.title;
+    }
+
+    if (payload.body !== undefined) {
+      updatePayload['body'] = payload.body;
+    }
+
+    if (payload.priority !== undefined) {
+      updatePayload['priority'] = payload.priority;
+    }
+
+    if (payload.audienceType !== undefined) {
+      updatePayload['audience_type'] = payload.audienceType;
+    }
+
+    if (payload.programId !== undefined) {
+      updatePayload['program_id'] = payload.programId;
+    }
+
+    if (payload.cohortId !== undefined) {
+      updatePayload['cohort_id'] = payload.cohortId;
+    }
+
+    if (payload.status !== undefined) {
+      updatePayload['status'] = payload.status;
+      updatePayload['published_at'] = this.resolvePublishedAt({
+        status: payload.status,
+        publishedAt: payload.publishedAt,
+      });
+    } else if (payload.publishedAt !== undefined) {
+      updatePayload['published_at'] = payload.publishedAt;
+    }
+
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('announcement')
+      .update(updatePayload)
+      .eq('id', id)
+      .select(ANNOUNCEMENT_SELECT_FIELDS)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('announcements.notFound'),
+      });
+    }
+
+    return this.mapAnnouncement(data as AnnouncementRow);
+  }
+
+  async deleteAnnouncement(id: string): Promise<void> {
+    const adminClient = this.supabaseService.getClient();
+    const { data, error } = await adminClient
+      .from('announcement')
+      .delete()
+      .eq('id', id)
+      .select('id')
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundException({
+        success: false,
+        message: apiMessage('announcements.notFound'),
+      });
+    }
+  }
 
   /**
    * List announcements visible to the authenticated participant.
@@ -111,7 +228,7 @@ export class AnnouncementsService {
     if (!participantId) {
       throw new UnauthorizedException({
         success: false,
-        message: 'La session est invalide ou expirée.',
+        message: apiMessage('auth.sessionInvalidOrExpired'),
       });
     }
 
@@ -240,7 +357,11 @@ export class AnnouncementsService {
       await this.readPublishedAnnouncementById(id);
 
     if (announcementError || !announcementData) {
-      throw new NotFoundException('Announcement not found or not published');
+      throw new NotFoundException({
+        statusCode: 404,
+        message: apiMessage('announcements.notFoundOrNotPublished'),
+        error: 'Not Found',
+      });
     }
 
     const announcement = announcementData;
@@ -258,7 +379,11 @@ export class AnnouncementsService {
     );
 
     if (!isVisible) {
-      throw new NotFoundException('Announcement not found or not accessible');
+      throw new NotFoundException({
+        statusCode: 404,
+        message: apiMessage('announcements.notFoundOrNotAccessible'),
+        error: 'Not Found',
+      });
     }
 
     return this.mapAnnouncement(announcement);
@@ -400,5 +525,20 @@ export class AnnouncementsService {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
+  }
+
+  private resolvePublishedAt(params: {
+    status: PublicationStatusValue;
+    publishedAt?: string | null;
+  }): string | null {
+    if (params.status === 'draft') {
+      return null;
+    }
+
+    if (params.publishedAt) {
+      return params.publishedAt;
+    }
+
+    return new Date().toISOString();
   }
 }

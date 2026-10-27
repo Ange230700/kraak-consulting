@@ -1,11 +1,15 @@
+import { resolveRuntimeClientConfig } from '../../../shared/runtime-client-config';
+
+const runtimeClientConfig = resolveRuntimeClientConfig();
+
 export const environment = {
   environmentName: 'production',
   production: true,
-  siteUrl: 'https://kraak-consulting.vercel.app',
-  apiBaseUrl: 'https://kraak-api-prod.onrender.com',
+  siteUrl: runtimeClientConfig.siteUrl,
+  apiBaseUrl: runtimeClientConfig.apiBaseUrl,
   pushNotificationsEnabled: true,
   pushNotificationsProvider: 'fcm',
-  supabaseUrl: 'https://pwuivkqnmjpxxpppmnvu.supabase.co',
-  supabasePublishableKey: 'sb_publishable_GucCTbOp6G0qJYbblIXPAQ_HztMaJ-r',
+  supabaseUrl: runtimeClientConfig.supabaseUrl,
+  supabasePublishableKey: runtimeClientConfig.supabasePublishableKey,
   ga4Id: '',
 };

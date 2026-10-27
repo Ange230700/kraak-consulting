@@ -7,10 +7,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { KraakTranslatePipe } from '../../../../../shared/i18n';
+
 @Component({
   selector: 'kraak-scroll-to-top',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, KraakTranslatePipe],
   templateUrl: './scroll-to-top.component.html',
 })
 export class ScrollToTop implements OnInit, OnDestroy {

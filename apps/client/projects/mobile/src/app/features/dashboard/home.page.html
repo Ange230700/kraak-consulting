@@ -3,10 +3,12 @@
     <div class="flex items-center gap-3 px-4 py-3">
       <img
         src="/kraak-logo.png"
-        alt="Logo KRAAK Consulting"
+        [alt]="'mobile.dashboard.header.logoAlt' | kraakTranslate"
         class="h-11 w-auto"
       />
-      <ion-title>Votre espace KRAAK</ion-title>
+      <ion-title>{{
+        'mobile.dashboard.header.title' | kraakTranslate
+      }}</ion-title>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -29,30 +31,27 @@
         >
           <img
             src="/kraak-symbol.png"
-            alt="Symbole KRAAK Consulting"
+            [alt]="'mobile.dashboard.hero.symbolAlt' | kraakTranslate"
             class="bg-brand-white/94 h-10 w-10 rounded-full p-2"
           />
           <div class="text-left">
             <p
               class="text-brand-white/70 text-xs font-semibold tracking-[0.28em] uppercase"
             >
-              KRAAK mobile
+              {{ 'mobile.dashboard.hero.mobileLabel' | kraakTranslate }}
             </p>
             <p class="text-brand-white/84 text-sm">
-              Un point d'entr&eacute;e simple vers vos programmes, annonces et
-              ressources.
+              {{ 'mobile.dashboard.hero.mobileDescription' | kraakTranslate }}
             </p>
           </div>
         </div>
 
         <div class="space-y-3">
           <h1 class="text-brand-white text-3xl font-semibold">
-            Bienvenue sur KRAAK.
+            {{ 'mobile.dashboard.hero.title' | kraakTranslate }}
           </h1>
           <p class="text-brand-white/80 max-w-md text-sm leading-7">
-            Retrouvez rapidement les informations utiles, les
-            opportunit&eacute;s &agrave; suivre et les canaux pour rester en
-            lien avec notre &eacute;quipe.
+            {{ 'mobile.dashboard.hero.description' | kraakTranslate }}
           </p>
         </div>
 
@@ -62,7 +61,7 @@
             expand="block"
             class="kraak-primary-button"
           >
-            Explorer les programmes
+            {{ 'mobile.dashboard.actions.explorePrograms' | kraakTranslate }}
           </ion-button>
           <ion-button
             routerLink="/tabs/support"
@@ -70,7 +69,7 @@
             fill="outline"
             class="kraak-secondary-button"
           >
-            Contacter le support
+            {{ 'mobile.dashboard.actions.contactSupport' | kraakTranslate }}
           </ion-button>
         </div>
       </div>
@@ -79,15 +78,15 @@
     <section class="grid gap-3 px-4">
       @for (highlight of highlights; track highlight.title) {
         <kraak-feature-card
-          [tag]="highlight.tag"
-          [title]="highlight.title"
-          [description]="highlight.description"
+          [tag]="highlight.tag | kraakTranslate"
+          [title]="highlight.title | kraakTranslate"
+          [description]="highlight.description | kraakTranslate"
           [tone]="highlight.tone"
         ></kraak-feature-card>
       }
 
       <a [routerLink]="resourceLibraryHref" class="kraak-inline-link px-1">
-        Voir les ressources utiles
+        {{ 'mobile.dashboard.actions.viewResources' | kraakTranslate }}
       </a>
     </section>
 
@@ -96,9 +95,16 @@
         class="rounded-card border-brand-blue/12 bg-brand-white shadow-card border p-5"
       >
         <div class="flex items-center justify-between gap-3">
-          <h2 class="text-primary text-lg font-semibold">Mon dashboard</h2>
+          <h2 class="text-primary text-lg font-semibold">
+            {{ 'mobile.dashboard.content.title' | kraakTranslate }}
+          </h2>
           @if (loading()) {
-            <ion-spinner name="crescent" aria-label="Chargement"></ion-spinner>
+            <ion-spinner
+              name="crescent"
+              [attr.aria-label]="
+                'mobile.dashboard.content.loadingAriaLabel' | kraakTranslate
+              "
+            ></ion-spinner>
           }
         </div>
 
@@ -115,24 +121,28 @@
               (keydown)="$event.stopPropagation()"
               onKeyDown="void(0)"
             >
-              R&eacute;essayer
+              {{ 'mobile.dashboard.content.retry' | kraakTranslate }}
             </ion-button>
           </div>
         } @else if (loading()) {
           <p class="mt-4 text-sm leading-6 text-neutral-700">
-            Chargement de votre dashboard...
+            {{ 'mobile.dashboard.content.loading' | kraakTranslate }}
           </p>
         } @else if (!hasDashboardContent) {
           <p class="mt-4 text-sm leading-6 text-neutral-700">
-            Aucun contenu n'est disponible pour l'instant sur votre espace.
+            {{ 'mobile.dashboard.content.empty' | kraakTranslate }}
           </p>
         } @else {
           <div class="mt-5 space-y-5">
             <div class="space-y-2">
-              <p class="kraak-overline">Programmes actifs</p>
+              <p class="kraak-overline">
+                {{ 'mobile.dashboard.content.programs.title' | kraakTranslate }}
+              </p>
               @if (programs.length === 0) {
                 <p class="text-sm leading-6 text-neutral-700">
-                  Aucun programme actif actuellement.
+                  {{
+                    'mobile.dashboard.content.programs.empty' | kraakTranslate
+                  }}
                 </p>
               } @else {
                 <ul class="space-y-2">
@@ -151,10 +161,14 @@
             </div>
 
             <div class="space-y-2">
-              <p class="kraak-overline">Prochaines sessions</p>
+              <p class="kraak-overline">
+                {{ 'mobile.dashboard.content.sessions.title' | kraakTranslate }}
+              </p>
               @if (upcomingSessions.length === 0) {
                 <p class="text-sm leading-6 text-neutral-700">
-                  Aucune session planifi&eacute;e pour le moment.
+                  {{
+                    'mobile.dashboard.content.sessions.empty' | kraakTranslate
+                  }}
                 </p>
               } @else {
                 <ul class="space-y-2">
@@ -174,17 +188,28 @@
 
             <div class="space-y-2">
               <div class="flex items-center justify-between gap-3">
-                <p class="kraak-overline">Annonces r&eacute;centes</p>
+                <p class="kraak-overline">
+                  {{
+                    'mobile.dashboard.content.announcements.title'
+                      | kraakTranslate
+                  }}
+                </p>
                 <a
                   routerLink="/tabs/annonces"
                   class="kraak-inline-link text-xs"
                 >
-                  Voir tout
+                  {{
+                    'mobile.dashboard.content.announcements.viewAll'
+                      | kraakTranslate
+                  }}
                 </a>
               </div>
               @if (recentAnnouncements.length === 0) {
                 <p class="text-sm leading-6 text-neutral-700">
-                  Aucune annonce r&eacute;cente pour l'instant.
+                  {{
+                    'mobile.dashboard.content.announcements.empty'
+                      | kraakTranslate
+                  }}
                 </p>
               } @else {
                 <ul class="space-y-2">

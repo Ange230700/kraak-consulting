@@ -1,11 +1,17 @@
 import {
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ApiLocaleContext } from '../i18n/api-locale-context';
 import { SupabaseService } from '../supabase/supabase.service';
 import { AuthService } from './auth.service';
+
+const localeContext = {
+  locale: jest.fn(() => 'fr-CI'),
+};
 
 function createSingleRowQuery(result: { data: unknown; error: unknown }) {
   return {
@@ -18,6 +24,44 @@ function createSingleRowQuery(result: { data: unknown; error: unknown }) {
 
 describe('AuthService', () => {
   let service: AuthService;
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    localeContext.locale.mockReturnValue('fr-CI');
+    mockProfile();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: SupabaseService,
+          useValue: supabaseService,
+        },
+        {
+          provide: ApiLocaleContext,
+          useValue: localeContext,
+        },
+      ],
+    }).compile();
+
+    service = module.get<AuthService>(AuthService);
+  });
+
+  it('Given une erreur fournisseur sans détails, When la réinitialisation est demandée, Then une erreur utilisateur est renvoyée et diagnostiquée', async () => {
+    const warning = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({ error: {} });
+    await expect(
+      service.requestPasswordReset({ email: 'alice@example.com' }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(warning).toHaveBeenCalledWith(expect.any(String), {
+      status: null,
+      code: null,
+      message: null,
+    });
+    warning.mockRestore();
+  });
 
   const authClient = {
     auth: {
@@ -77,23 +121,6 @@ describe('AuthService', () => {
       throw new Error(`Unexpected table ${tableName}`);
     });
   }
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    mockProfile();
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        {
-          provide: SupabaseService,
-          useValue: supabaseService,
-        },
-      ],
-    }).compile();
-
-    service = module.get<AuthService>(AuthService);
-  });
 
   it('devrait être défini', () => {
     expect(service).toBeDefined();
@@ -325,7 +352,99 @@ describe('AuthService', () => {
       }),
     ).rejects.toMatchObject({
       response: {
-        message: 'Impossible de créer le compte avec ces informations.',
+        message: { key: 'auth.signUpFailed' },
+      },
+    });
+  });
+
+  it('Given un signup avec message already, When signUp est appelé, Then le message email déjà utilisé est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'A user already exists' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: { key: 'auth.signUpAccountExists' },
+      },
+    });
+  });
+
+  it('Given un signup avec message password, When signUp est appelé, Then le message exigences mot de passe est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Password should be at least 8 characters' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'court',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: { key: 'auth.signUpPasswordRequirements' },
+      },
+    });
+  });
+
+  it('Given un signup avec message invalid email, When signUp est appelé, Then le message email invalide est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Invalid email format' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice-at-example',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: { key: 'auth.signUpEmailInvalid' },
+      },
+    });
+  });
+
+  it('Given un signup avec message rate limit, When signUp est appelé, Then le message indisponibilité temporaire est renvoyé', async () => {
+    authClient.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Rate limit exceeded' },
+    });
+
+    await expect(
+      service.signUp({
+        email: 'alice@example.com',
+        password: 'motdepasse-securise',
+        firstName: 'Alice',
+        lastName: 'Dupont',
+        phone: null,
+        preferredContactChannel: null,
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        message: { key: 'auth.signUpRateLimited' },
       },
     });
   });
@@ -457,13 +576,39 @@ describe('AuthService', () => {
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
-  // Given une erreur Supabase lors du reset
+  // Given une erreur Supabase de type rate limit lors du reset
   // When requestPasswordReset est appelé
-  // Then une BadRequestException explicite est renvoyée
-  it('Given une erreur Supabase lors du reset, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+  // Then une HttpException 429 explicite est renvoyée
+  it('Given un rate limit Supabase lors du reset, When requestPasswordReset est appelé, Then une HttpException 429 est renvoyée', async () => {
     authClient.auth.resetPasswordForEmail.mockResolvedValue({
       data: null,
-      error: { message: 'Email rate limit exceeded' },
+      error: {
+        message: 'email rate limit exceeded',
+        status: 429,
+        code: 'over_email_send_rate_limit',
+      },
+    });
+
+    await expect(
+      service.requestPasswordReset({
+        email: 'alice@example.com',
+        redirectTo: null,
+      }),
+    ).rejects.toMatchObject({
+      status: 429,
+      response: {
+        success: false,
+      },
+    });
+  });
+
+  // Given une erreur Supabase générique lors du reset
+  // When requestPasswordReset est appelé
+  // Then une BadRequestException explicite est renvoyée
+  it('Given une erreur Supabase générique lors du reset, When requestPasswordReset est appelé, Then une BadRequestException est renvoyée', async () => {
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({
+      data: null,
+      error: { message: 'invalid email' },
     });
 
     await expect(
@@ -689,6 +834,123 @@ describe('AuthService', () => {
     );
   });
 
+  it('Given un app_user toujours introuvable après provisionnement, When getSession est appelé, Then une NotFoundException est renvoyée', async () => {
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-404',
+          email: '   ',
+          user_metadata: null,
+        },
+      },
+      error: null,
+    });
+
+    const missingForeverQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: null }),
+      maybeSingle: jest
+        .fn()
+        .mockResolvedValueOnce({ data: null, error: null })
+        .mockResolvedValueOnce({ data: null, error: null }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return missingForeverQuery;
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+
+    expect(missingForeverQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'user-404',
+        email: 'user-404',
+        first_name: 'user-404',
+        last_name: 'Participant',
+        role: 'participant',
+      }),
+      { onConflict: 'id' },
+    );
+  });
+
+  it('Given un user auth malformé avec split sans local-part, When getSession provisionne le profil, Then first_name fallback sur Participant', async () => {
+    const malformedId = {
+      split: jest.fn(() => [undefined]),
+      toString: () => 'malformed-id',
+    } as unknown as string;
+
+    authClient.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: malformedId,
+          email: '   ',
+          user_metadata: {},
+        },
+      },
+      error: null,
+    });
+
+    const malformedProvisionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockResolvedValue({ error: null }),
+      maybeSingle: jest
+        .fn()
+        .mockResolvedValueOnce({ data: null, error: null })
+        .mockResolvedValueOnce({
+          data: {
+            id: 'user-fixed',
+            email: 'fallback@example.com',
+            role: 'participant',
+            first_name: 'Participant',
+            last_name: 'Participant',
+            phone: null,
+            preferred_contact_channel: null,
+            is_active: true,
+            created_at: '2026-04-14T12:00:00.000Z',
+            updated_at: '2026-04-14T12:00:00.000Z',
+          },
+          error: null,
+        }),
+    };
+
+    adminClient.from.mockImplementation((tableName: string) => {
+      if (tableName === 'app_user') {
+        return malformedProvisionQuery;
+      }
+
+      if (tableName === 'participant') {
+        return createSingleRowQuery({ data: null, error: null });
+      }
+
+      throw new Error(`Unexpected table ${tableName}`);
+    });
+
+    await expect(service.getSession('access-token')).resolves.toMatchObject({
+      profile: {
+        appUser: {
+          id: 'user-fixed',
+        },
+      },
+    });
+
+    expect(malformedProvisionQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        first_name: 'Participant',
+        last_name: 'Participant',
+        role: 'participant',
+      }),
+      { onConflict: 'id' },
+    );
+  });
+
   // Given un signIn Supabase qui renvoie un user null sans erreur
   // When signIn est appelé
   // Then une UnauthorizedException est renvoyée (branche !data.user couverte)
@@ -727,7 +989,7 @@ describe('AuthService', () => {
       }),
     ).rejects.toMatchObject({
       response: {
-        message: 'Impossible de créer le compte avec ces informations.',
+        message: { key: 'auth.signUpFailed' },
       },
     });
   });
@@ -746,5 +1008,83 @@ describe('AuthService', () => {
         password: 'motdepasse-securise',
       }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given en-GB and signup requiring confirmation, When signUp is called, Then the public message is English', async () => {
+    localeContext.locale.mockReturnValue('en-GB');
+
+    authClient.auth.signUp.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: null,
+      },
+      error: null,
+    });
+
+    const result = await service.signUp({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      phone: null,
+      preferredContactChannel: null,
+      redirectTo: 'kraak://auth/callback',
+    });
+
+    expect(result.message).toBe(
+      'Your account has been created. Check your email to confirm your access.',
+    );
+  });
+
+  it('Given en-GB and signup with an active session, When signUp is called, Then the public message is English', async () => {
+    localeContext.locale.mockReturnValue('en-GB');
+
+    authClient.auth.signUp.mockResolvedValue({
+      data: {
+        user: { id: 'user-1' },
+        session: {
+          access_token: 'access-token',
+          refresh_token: 'refresh-token',
+          expires_in: 3600,
+          expires_at: 1_776_172_800,
+          token_type: 'bearer',
+        },
+      },
+      error: null,
+    });
+
+    const result = await service.signUp({
+      email: 'alice@example.com',
+      password: 'motdepasse-securise',
+      firstName: 'Alice',
+      lastName: 'Dupont',
+      phone: null,
+      preferredContactChannel: null,
+      redirectTo: null,
+    });
+
+    expect(result.message).toBe(
+      'Your account is ready. You are now signed in.',
+    );
+  });
+
+  it('Given en-GB and a password reset request, When requestPasswordReset is called, Then the acknowledgement is English', async () => {
+    localeContext.locale.mockReturnValue('en-GB');
+
+    authClient.auth.resetPasswordForEmail.mockResolvedValue({
+      data: {},
+      error: null,
+    });
+
+    await expect(
+      service.requestPasswordReset({
+        email: 'alice@example.com',
+        redirectTo: 'kraak://auth/reset',
+      }),
+    ).resolves.toEqual({
+      success: true,
+      message:
+        'If this address exists, a password reset email has just been sent.',
+    });
   });
 });

@@ -9,11 +9,13 @@ describe('SupportRequestsController', () => {
   const supportService = {
     listSupportRequests: jest.fn(),
     updateSupportRequestStatus: jest.fn(),
+    markSupportRequestAsRead: jest.fn(),
   };
 
   beforeEach(async () => {
     supportService.listSupportRequests.mockReset();
     supportService.updateSupportRequestStatus.mockReset();
+    supportService.markSupportRequestAsRead.mockReset();
 
     supportService.listSupportRequests.mockResolvedValue([
       {
@@ -25,6 +27,7 @@ describe('SupportRequestsController', () => {
         status: 'open',
         category: 'technical',
         assignedToUserId: null,
+        isRead: false,
         createdAt: '2026-04-29T10:00:00.000Z',
         updatedAt: '2026-04-29T10:00:00.000Z',
       },
@@ -39,6 +42,21 @@ describe('SupportRequestsController', () => {
       status: 'in_progress',
       category: 'technical',
       assignedToUserId: 'admin-1',
+      isRead: false,
+      createdAt: '2026-04-29T10:00:00.000Z',
+      updatedAt: '2026-04-29T10:05:00.000Z',
+    });
+
+    supportService.markSupportRequestAsRead.mockResolvedValue({
+      id: 'req-1',
+      userId: 'user-1',
+      participantId: 'participant-1',
+      subject: 'Connexion impossible',
+      message: 'Je ne peux plus acceder a mon espace.',
+      status: 'open',
+      category: 'technical',
+      assignedToUserId: null,
+      isRead: true,
       createdAt: '2026-04-29T10:00:00.000Z',
       updatedAt: '2026-04-29T10:05:00.000Z',
     });
@@ -116,5 +134,26 @@ describe('SupportRequestsController', () => {
     await expect(
       controller.updateStatus('req-1', { status: 'in_progress' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('Given un header Bearer valide, When markAsRead est appelé, Then le token est transmis au service', async () => {
+    await controller.markAsRead('req-1', 'Bearer access-token');
+
+    expect(supportService.markSupportRequestAsRead).toHaveBeenCalledWith(
+      'req-1',
+      'access-token',
+    );
+  });
+
+  it('Given un header absent, When markAsRead est appelé, Then une UnauthorizedException est renvoyée', async () => {
+    await expect(controller.markAsRead('req-1')).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+  });
+
+  it('Given un header Bearer valide, When markAsRead est appelé, Then la demande avec isRead=true est renvoyée', async () => {
+    const result = await controller.markAsRead('req-1', 'Bearer access-token');
+
+    expect(result).toMatchObject({ id: 'req-1', isRead: true });
   });
 });

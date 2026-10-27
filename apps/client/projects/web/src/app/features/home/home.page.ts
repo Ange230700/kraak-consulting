@@ -1,24 +1,108 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { NgStyle } from '@angular/common';
+import {
+  Component,
+  Injector,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonDirective } from 'primeng/button';
 
-import { GsapAnimationsService } from '../../core/animations/gsap-animations.service';
-import { buildHeroBackgroundStyle } from '../../shared/brand/brand-constants';
-import { CtaBanner } from '../../shared/cta-banner/cta-banner.component';
+import { initializeMarketingPageAnimations } from '../../core/animations/marketing-page-animations';
+import { LazyGsapLoader } from '../../core/animations/lazy-gsap-loader';
+import { PublicConversionTrackingDirective } from '../../shared/analytics/public-conversion-tracking.directive';
+import { RevealOnScrollDirective } from '../../shared/motion/reveal-on-scroll.directive';
 import {
   FaqAccordion,
   type FaqItem,
 } from '../../shared/faq-accordion/faq-accordion.component';
+import { LocalizedPublicPathPipe } from '../../routing/localized-public-path.pipe';
+import { KraakI18nService } from '../../../../../shared/i18n/kraak-i18n.service';
+import { KraakTranslatePipe } from '../../../../../shared/i18n/kraak-i18n.pipe';
 
-const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
-  '/assets/site-visuals/photos/home-hero-workshop.avif',
-);
+interface HomeTextTranslation {
+  readonly textKey: string;
+}
+
+interface HomeCardTranslation {
+  readonly titleKey: string;
+  readonly descriptionKey: string;
+}
+
+const HOME_SOLUTION_TRANSLATIONS: readonly HomeTextTranslation[] = [
+  { textKey: 'web.home.solutions.items.personalDevelopment' },
+  { textKey: 'web.home.solutions.items.professionalLanguages' },
+  { textKey: 'web.home.solutions.items.leadership' },
+  { textKey: 'web.home.solutions.items.interviewPreparation' },
+  { textKey: 'web.home.solutions.items.projectStructuring' },
+  { textKey: 'web.home.solutions.items.businessSupport' },
+  { textKey: 'web.home.solutions.items.internationalMobility' },
+  { textKey: 'web.home.solutions.items.recruitment' },
+];
+
+const HOME_PROOF_TRANSLATIONS: readonly HomeCardTranslation[] = [
+  {
+    titleKey: 'web.home.proof.items.socioeconomicIntegration.title',
+    descriptionKey: 'web.home.proof.items.socioeconomicIntegration.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.twoWayApproach.title',
+    descriptionKey: 'web.home.proof.items.twoWayApproach.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.internationalExperience.title',
+    descriptionKey: 'web.home.proof.items.internationalExperience.description',
+  },
+  {
+    titleKey: 'web.home.proof.items.structuredSupport.title',
+    descriptionKey: 'web.home.proof.items.structuredSupport.description',
+  },
+];
+
+const HOME_WHY_CHOOSE_TRANSLATIONS: readonly HomeCardTranslation[] = [
+  {
+    titleKey: 'web.home.whyChoose.items.internationalExpertise.title',
+    descriptionKey:
+      'web.home.whyChoose.items.internationalExpertise.description',
+  },
+  {
+    titleKey: 'web.home.whyChoose.items.personalisedSupport.title',
+    descriptionKey: 'web.home.whyChoose.items.personalisedSupport.description',
+  },
+  {
+    titleKey: 'web.home.whyChoose.items.measurableResults.title',
+    descriptionKey: 'web.home.whyChoose.items.measurableResults.description',
+  },
+];
+
+const HOME_FAQ_TRANSLATIONS = [
+  {
+    questionKey: 'web.home.faq.items.gettingStarted.question',
+    answerKey: 'web.home.faq.items.gettingStarted.answer',
+  },
+  {
+    questionKey: 'web.home.faq.items.businessSupport.question',
+    answerKey: 'web.home.faq.items.businessSupport.answer',
+  },
+  {
+    questionKey: 'web.home.faq.items.consultationFormat.question',
+    answerKey: 'web.home.faq.items.consultationFormat.answer',
+  },
+] as const;
 
 @Component({
   selector: 'kraak-home-page',
   standalone: true,
-  imports: [NgStyle, RouterLink, ButtonDirective, FaqAccordion, CtaBanner],
+  imports: [
+    RouterLink,
+    ButtonDirective,
+    FaqAccordion,
+    PublicConversionTrackingDirective,
+    RevealOnScrollDirective,
+    LocalizedPublicPathPipe,
+    KraakTranslatePipe,
+  ],
   templateUrl: './home.page.html',
   styles: [
     `
@@ -26,54 +110,80 @@ const HOME_HERO_BACKGROUND_STYLE = buildHeroBackgroundStyle(
         content-visibility: auto;
         contain-intrinsic-size: 1px 900px;
       }
+
+      .hero-copy {
+        animation: hero-fade-up 720ms ease-out both;
+      }
+
+      .hero-media {
+        animation: hero-fade-left 820ms ease-out both;
+        animation-delay: 120ms;
+      }
+
+      @keyframes hero-fade-up {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 24px, 0);
+        }
+
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @keyframes hero-fade-left {
+        from {
+          opacity: 0;
+          transform: translate3d(24px, 0, 0);
+        }
+
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero-copy,
+        .hero-media {
+          animation: none;
+        }
+      }
     `,
   ],
 })
 export default class HomePage implements OnInit, OnDestroy {
-  readonly heroBackgroundStyle = HOME_HERO_BACKGROUND_STYLE;
-  protected readonly keySolutions: readonly string[] = [
-    'D\u00e9veloppement personnel et professionnel',
-    'Anglais et fran\u00e7ais professionnel',
-    'Leadership et prise de parole',
-    'Pr\u00e9paration aux entretiens',
-    'Structuration de projets',
-    "Accompagnement d'entreprises et startups",
-    'Conseils en mobilit\u00e9 internationale',
-    'Recrutement et placement en emploi',
-  ];
+  protected readonly keySolutions = HOME_SOLUTION_TRANSLATIONS;
+  protected readonly proofItems = HOME_PROOF_TRANSLATIONS;
+  protected readonly whyChooseItems = HOME_WHY_CHOOSE_TRANSLATIONS;
 
-  protected readonly faqItems: FaqItem[] = [
-    {
-      question:
-        'Je ne sais pas par o\u00f9 commencer, quelle est la premi\u00e8re \u00e9tape ?',
-      answer:
-        "Commencez par partager votre objectif, votre contexte et votre d\u00e9lai via le formulaire de contact. Nous vous orientons ensuite vers le bon point d'entree.",
-    },
-    {
-      question: 'Proposez-vous un accompagnement pour les entreprises ?',
-      answer:
-        "Oui. KRAAK accompagne aussi les organisations sur la gestion de projets, la formation du personnel, le recrutement et la performance d'\u00e9quipe.",
-    },
-    {
-      question:
-        'Les consultations sont-elles pr\u00e9sentiel ou \u00e0 distance ?',
-      answer:
-        'Les \u00e9changes peuvent se faire \u00e0 distance ou en pr\u00e9sentiel selon le besoin, le service et les contraintes du projet.',
-    },
-  ];
+  private readonly i18n = inject(KraakI18nService);
+  private readonly animations = new LazyGsapLoader(inject(Injector));
 
-  private readonly gsapService = inject(GsapAnimationsService);
+  protected readonly faqItems = computed<readonly FaqItem[]>(() => {
+    this.i18n.locale();
+
+    return HOME_FAQ_TRANSLATIONS.map(({ questionKey, answerKey }) => ({
+      question: this.i18n.translate(questionKey),
+      answer: this.i18n.translate(answerKey),
+    }));
+  });
 
   ngOnInit(): void {
-    this.gsapService.animatePageIn();
-    this.gsapService.initializeFigureAnimations('figure.reveal-on-scroll');
-    this.gsapService.initializeInteractiveCardAnimations('article');
-    this.gsapService.initializeButtonTransitions();
-    this.gsapService.initializeSectionAnimations();
-    this.gsapService.initializeIconAnimations();
+    void this.initializeAnimations();
   }
 
   ngOnDestroy(): void {
-    this.gsapService.killAllAnimations();
+    this.animations.destroy();
+  }
+
+  private async initializeAnimations(): Promise<void> {
+    const gsapService = await this.animations.resolve();
+    if (!gsapService) {
+      return;
+    }
+
+    initializeMarketingPageAnimations(gsapService);
   }
 }

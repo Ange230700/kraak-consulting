@@ -1,4 +1,28 @@
+---
+status: active
+owner: platform
+last_reviewed: 2026-07-23
+source_of_truth: true
+---
+
 # ARC-01 — Architecture cible MVP
+
+## Table des matières
+
+- [ARC-01 — Architecture cible MVP](#arc-01-architecture-cible-mvp)
+  - [1 · Contexte](#1-contexte)
+  - [2 · Décision](#2-decision)
+    - [Structure du dépôt](#structure-du-depot)
+  - [3 · Justification](#3-justification)
+    - [3.1 Principes structurants](#31-principes-structurants)
+    - [3.2 Comparaison des alternatives évaluées](#32-comparaison-des-alternatives-evaluees)
+  - [4 · Implémentation](#4-implementation)
+    - [4.1 Contraintes dures](#41-contraintes-dures)
+    - [4.2 Contrats et flux de données](#42-contrats-et-flux-de-donnees)
+    - [4.3 Déploiement](#43-deploiement)
+  - [5 · Alternatives considérées](#5-alternatives-considerees)
+  - [6 · Limites et évolutions](#6-limites-et-evolutions)
+  - [7 · Références](#7-references)
 
 | Champ          | Valeur                 |
 | -------------- | ---------------------- |
@@ -40,7 +64,7 @@ Adopter une architecture **monorepo** organisée comme suit :
 | BaaS / Base       | Supabase (PostgreSQL managé, Auth, Storage, RLS)       |
 | Notifications     | Firebase Cloud Messaging (FCM) via Capacitor           |
 | Analytics         | PostHog ou Google Analytics (léger, MVP seulement)     |
-| Déploiement web   | Vercel (prerendering statique, SSR si nécessaire)      |
+| Déploiement web   | Render (prerendering statique, SSR si nécessaire)      |
 | Déploiement API   | Render (Docker)                                        |
 | Packages partagés | `packages/tokens`, `contracts`, `domain`, `api-client` |
 
@@ -91,7 +115,7 @@ docs/
 | SEO natif                  | ✅ Prerender Angular                 | ✅ SSR natif       | ❌ Web limité    |
 | Mobile natif               | ✅ Ionic + Capacitor                 | ⚠️ PWA seulement   | ✅ Natif         |
 | Partage de code web/mobile | ✅ Services Angular partagés         | ❌ Pas de partage  | ✅ Dart unifié   |
-| Complexité infrastructure  | ✅ Simple (Vercel + Render)          | ✅ Simple          | ⚠️ Moyenne       |
+| Complexité infrastructure  | ✅ Simple (Render)                   | ✅ Simple          | ⚠️ Moyenne       |
 | Écosystème composants UI   | ✅ PrimeNG mature                    | ✅ Large choix     | ⚠️ Plus jeune    |
 
 ---
@@ -126,7 +150,7 @@ Auth (Supabase Auth)
 
 ### 4.3 Déploiement
 
-- **Web** : Vercel, `outputDirectory: apps/client/dist/web/browser`
+- **Web** : Render, `outputDirectory: apps/client/dist/web/browser`
 - **API** : Render, conteneur Docker depuis `apps/api/Dockerfile`
 - **Base** : Supabase Cloud, migrations versionnées dans `supabase/migrations/`
 
@@ -162,5 +186,5 @@ Auth (Supabase Auth)
 - [ARCHITECTURE.md](../../ARCHITECTURE.md) — document source validé
 - [ARC-03 — Stratégie SEO et prerendering](./ARC-03-seo-prerender-strategy.md)
 - [ARC-04 — Modèles de données MVP](./ARC-04-modeles-donnees-mvp.md)
-- [docs/context/tech_stack.md](../context/tech_stack.md)
-- [docs/context/mvp_brief.md](../context/mvp_brief.md)
+- [docs/architecture/OVERVIEW.md](../architecture/OVERVIEW.md)
+- [docs/product/MVP_SCOPE.md](../product/MVP_SCOPE.md)
