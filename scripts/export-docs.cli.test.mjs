@@ -94,6 +94,16 @@ test('Given les formats documentaires When la CLI pilote une QA simulée et une 
       },
     });
     assert.deepEqual(formats, ['pdf', 'pptx']);
+    const previousEvidence = path.join(output, 'source', 'visual-qa', 'pdf');
+    await writeFile(
+      path.join(previousEvidence, 'obsolete.png'),
+      'ancienne page',
+    );
+    await main([...args, '--operation', 'visual-qa'], {
+      visualRenderer: async (options) => {
+        assert.deepEqual(await readdir(options.output), []);
+      },
+    });
     const specPath = path.join(output, 'source', 'presentation.json');
     const spec = JSON.parse(await readFile(specPath, 'utf8'));
     spec.slides[0].title = 'Altéré';

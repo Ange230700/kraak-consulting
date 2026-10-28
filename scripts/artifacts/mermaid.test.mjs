@@ -89,6 +89,7 @@ test('Given un diagramme français When deux rendus et un cache corrompu sont tr
     );
     assert.equal(first.svgSha256, second.svgSha256);
     const original = await readFile(first.svgPath);
+    assert.match(original.toString(), /xml:space="preserve"/);
     await writeFile(first.svgPath, 'corrompu');
     const [repaired] = await renderDiagrams(
       document,

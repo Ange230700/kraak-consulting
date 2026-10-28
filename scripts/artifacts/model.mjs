@@ -99,7 +99,7 @@ function createSections(tokens, title) {
   return sections;
 }
 
-function containsMermaidBlock(tokens) {
+export function containsMermaidBlock(tokens) {
   return tokens.some((token) => {
     if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
       return true;

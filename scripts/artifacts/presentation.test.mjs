@@ -46,7 +46,7 @@ test('Given des tableaux complexes When la spécification est préparée Then le
 
 test('Given du Mermaid imbriqué When les assets sont résolus Then la figure apparaît dans le deck et une ressource manquante échoue', () => {
   const document = createDocument(
-    '- Étape\n\n  ```mermaid\n  graph TD; A-->B\n  ```',
+    '- Étape\n  - Sous-étape\n\n    ```mermaid\n    graph TD; A-->B\n    ```',
   );
   assert.throws(() => createPresentation(document), /manquante/);
   const spec = createPresentation(document, document.diagrams);

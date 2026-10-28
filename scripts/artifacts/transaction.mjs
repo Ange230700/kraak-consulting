@@ -30,7 +30,12 @@ export async function renameDirectory(
 export async function directoryTransaction(
   destination,
   action,
-  { preserveFailure = false, move = renameDirectory, inspect = stat } = {},
+  {
+    preserveFailure = false,
+    copyExisting = true,
+    move = renameDirectory,
+    inspect = stat,
+  } = {},
 ) {
   const parent = path.dirname(destination);
   await mkdir(parent, { recursive: true });
@@ -48,7 +53,8 @@ export async function directoryTransaction(
       }
       console.debug('[docs:transaction] Nouveau dossier de sortie.');
     }
-    if (exists) await cp(destination, temporary, { recursive: true });
+    if (exists && copyExisting)
+      await cp(destination, temporary, { recursive: true });
     const result = await action(temporary);
     if (exists) {
       await move(destination, backup);

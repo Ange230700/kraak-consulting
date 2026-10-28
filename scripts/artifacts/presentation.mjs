@@ -1,4 +1,9 @@
-import { blockText, inlineText, paginateSections } from './model.mjs';
+import {
+  blockText,
+  inlineText,
+  paginateSections,
+  containsMermaidBlock,
+} from './model.mjs';
 import { sha256, stableJson } from './identity.mjs';
 
 export function createPresentation(document, images = []) {
@@ -68,10 +73,7 @@ export function createPresentation(document, images = []) {
         });
       } else if (token.type === 'blockquote') {
         visit(token.tokens);
-      } else if (
-        token.type === 'list' &&
-        token.items.some((item) => item.tokens.some((child) => child.diagramId))
-      ) {
+      } else if (token.type === 'list' && containsMermaidBlock([token])) {
         for (const item of token.items) visit(item.tokens);
       } else {
         const value = blockText(token);

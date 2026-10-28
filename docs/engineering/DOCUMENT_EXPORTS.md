@@ -114,6 +114,9 @@ configuration intégrée ou directives `click`. Fournir le type de diagramme ava
 contenu, la configuration, les versions du moteur/navigateur et la plateforme.
 Les empreintes, le XML SVG et les dimensions sont contrôlés avant réutilisation.
 Un cache incomplet ou corrompu est régénéré avec une trace de diagnostic.
+La normalisation SVG versionnée préserve les espaces entre mots lors de la
+conversion PNG. Les diagrammes des listes imbriquées deviennent aussi des figures
+dans la présentation dérivée.
 
 Les exports ordinaires substituent les figures dans une représentation dérivée,
 sans remplacer les blocs dans le Markdown. La règle existante pour
@@ -180,6 +183,8 @@ Elle compare le texte et le nombre de slides au modèle, compte les pixels encr�
 signale les pages presque vides et refuse les pages vides ou les textes mesurés
 hors page. Les planches sont découpées par groupes de douze, dans l'ordre.
 Des preuves partielles sont conservées dans un dossier `.failed-*` si la QA échoue.
+Une QA réussie remplace son dossier de preuves pour supprimer les anciennes pages
+et planches devenues inutiles ; un échec conserve les preuves valides précédentes.
 Une alerte de faible densité mérite une revue humaine ; une page de couverture
 peut être intentionnellement peu remplie. Les métriques ne prouvent pas une mise
 en page parfaite.

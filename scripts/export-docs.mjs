@@ -141,7 +141,7 @@ export async function main(args, { visualRenderer } = {}) {
               output: directory,
               spec,
             }),
-          { preserveFailure: true },
+          { preserveFailure: true, copyExisting: false },
         );
       } else
         await atomicWrite(

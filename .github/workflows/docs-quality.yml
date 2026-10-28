@@ -10,9 +10,8 @@ on:
       - 'scripts/audit-docs.test.mjs'
       - 'scripts/generate-docs-index.mjs'
       - 'scripts/generate-docs-index.test.mjs'
-      - 'scripts/export-docs.mjs'
-      - 'scripts/export-docs.test.mjs'
-      - 'scripts/export-docs.integration.test.mjs'
+      - 'scripts/export-docs*.mjs'
+      - 'scripts/artifacts/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - '.github/workflows/docs-quality.yml'
@@ -67,6 +66,15 @@ jobs:
       - name: PDF, PowerPoint and transcript integration
         run: pnpm test:docs:export:integration
 
+      - name: Upload export diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: document-export-diagnostics
+          path: .artifacts/
+          include-hidden-files: true
+          retention-days: 7
+
       - name: Prettier on changed docs
         run: |
           node <<'NODE'
@@ -94,6 +102,46 @@ jobs:
 
       - name: ADR index check
         run: pnpm docs:index:check
+
+  artifact-visual-qa:
+    name: Artifact Visual QA
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Install pnpm
+        run: npm install --ignore-scripts -g pnpm@10.23.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.13.0'
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+      - name: Install rendering tools
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-impress fonts-liberation
+          libreoffice --version
+      - name: Generate, verify and render bilingual fixtures
+        run: |
+          for lang in fr en; do
+            source="scripts/artifacts/fixtures/document-$lang.md"
+            pnpm docs:export --source "$source" --format all
+            pnpm docs:export --source "$source" --format tts
+            pnpm docs:verify --source "$source" --format all
+            pnpm docs:verify --source "$source" --format tts
+            pnpm docs:visual-qa --source "$source" --format all
+          done
+      - name: Upload visual evidence and verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: document-visual-qa
+          path: .artifacts/docs/
+          include-hidden-files: true
+          retention-days: 14
 
   weekly-docs-audit:
     name: Weekly Docs Audit
