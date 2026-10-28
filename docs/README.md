@@ -107,6 +107,7 @@ document obsolète dans le même changement.
 | `operations/RELEASE_PROD.md`                                           | active | true             | Release production                                                        |
 | `operations/SONARCLOUD_SETUP.md`                                       | active | true             | Runbook — Configuration SonarQube Cloud & SonarLint                       |
 | `operations/SUPABASE_AUTH.md`                                          | active | true             | Configuration Supabase Auth                                               |
+| `planning/GITHUB_PROJECT.md`                                           | active | true             | Pilotage GitHub Project                                                   |
 | `product/ANNOUNCEMENTS.md`                                             | active | true             | Format des annonces et règles de publication MVP (ANN-01)                 |
 | `product/MOBILE_MVP.md`                                                | active | true             | MVP Mobile                                                                |
 | `product/MVP_SCOPE.md`                                                 | active | true             | Périmètre MVP — Site web KRAAK                                            |
