@@ -151,6 +151,11 @@ Si un workflow Changesets crée une PR de version, cette PR doit respecter le mo
 - contrôles identiques aux autres PR ;
 - aucun mécanisme ne doit recréer une branche ou infrastructure staging.
 
+Le workflow Changesets crée uniquement cette PR de version. La fusion ne publie
+pas en production : la promotion reste déclenchée par un tag SemVer créé
+manuellement sur `main`, selon le runbook
+[`RELEASE_PROD`](../operations/RELEASE_PROD.md).
+
 Le mainteneur doit vérifier :
 
 - les versions modifiées ;

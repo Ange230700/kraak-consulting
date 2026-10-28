@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
 const read = (file) =>
@@ -72,6 +72,35 @@ test('Given une release production, When les migrations et la version sont mises
   assert.match(workflow, /secrets\.SUPABASE_DB_URL_PRODUCTION_READONLY/);
   assert.match(workflow, /env-vars\/\$key/);
   assert.doesNotMatch(workflow, /env-vars"\s*\\/);
+});
+
+test('Given le modèle de release par tag, When les workflows actifs sont inspectés, Then seul un tag SemVer accessible depuis main peut promouvoir en production', () => {
+  const workflow = read('.github/workflows/release-prod.yml');
+  const validateTag = workflow.slice(
+    workflow.indexOf('name: Résoudre la référence cible'),
+    workflow.indexOf('# ──────────────────────────────────────────────\n  # Build'),
+  );
+  const semverValidation = validateTag.indexOf(
+    '^v[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$',
+  );
+  const mainAncestryValidation = validateTag.indexOf(
+    'git merge-base --is-ancestor "$sha" origin/main',
+  );
+
+  assert.match(workflow, /push:\s+tags:\s+- 'v\*'/);
+  assert.match(workflow, /workflow_dispatch:\s+inputs:\s+tag:/);
+  assert.ok(semverValidation >= 0);
+  assert.ok(mainAncestryValidation > semverValidation);
+  assert.equal(
+    existsSync(
+      new URL('../.github/workflows/publish-release.yml', import.meta.url),
+    ),
+    false,
+  );
+  assert.match(
+    read('docs/operations/RELEASE_PROD.md'),
+    /Créer un nouveau tag SemVer sur le commit validé/,
+  );
 });
 
 test('Given le retrait staging documenté, When le registre et le pilotage sont lus, Then l’état final et les limites de facturation restent distincts', () => {
