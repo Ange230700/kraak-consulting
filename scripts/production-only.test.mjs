@@ -78,7 +78,9 @@ test('Given le modèle de release par tag, When les workflows actifs sont inspec
   const workflow = read('.github/workflows/release-prod.yml');
   const validateTag = workflow.slice(
     workflow.indexOf('name: Résoudre la référence cible'),
-    workflow.indexOf('# ──────────────────────────────────────────────\n  # Build'),
+    workflow.indexOf(
+      '# ──────────────────────────────────────────────\n  # Build',
+    ),
   );
   const semverValidation = validateTag.indexOf(
     '^v[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$',
