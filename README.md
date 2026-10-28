@@ -278,6 +278,7 @@ changement.
 | [`DESIGN.md`](DESIGN.md)                                                                 | Principes de design actifs                         |
 | [`AGENTS.md`](AGENTS.md)                                                                 | Règles de fonctionnement pour les assistants IA    |
 | [`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md)                     | Variables d'environnement                          |
+| [`docs/operations/DIGITAL_TOOLS.md`](docs/operations/DIGITAL_TOOLS.md)                   | Outils numériques, gouvernance et budget indicatif |
 | [`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md)                   | Configuration Auth Supabase du MVP                 |
 | [`docs/engineering/LOCAL_DEVELOPMENT.md`](docs/engineering/LOCAL_DEVELOPMENT.md)         | Guide détaillé du mode développement               |
 | [`docs/architecture/OVERVIEW.md`](docs/architecture/OVERVIEW.md)                         | Vue d'ensemble de la stack pour débutants          |

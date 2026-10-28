@@ -98,6 +98,7 @@ document obsolète dans le même changement.
 | `operations/CLI_TOOLS.md`                                              | active | true             | CLI_TOOLS — Outils en ligne de commande Render, Supabase et GitHub        |
 | `operations/CONTACT_OPERATIONS.md`                                     | active | true             | Opérations de contact public                                              |
 | `operations/DEPLOYMENT.md`                                             | active | true             | Déploiement Render                                                        |
+| `operations/DIGITAL_TOOLS.md`                                          | active | true             | Plan des outils numériques                                                |
 | `operations/ENVIRONMENTS.md`                                           | active | true             | Variables d’environnement                                                 |
 | `operations/MIGRATION_RECONCILIATION.md`                               | active | true             | Réconciliation des migrations                                             |
 | `operations/MOBILE_BUILD.md`                                           | active | true             | Guide de build mobile (Capacitor Android / iOS)                           |

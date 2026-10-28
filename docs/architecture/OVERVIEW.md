@@ -216,6 +216,10 @@ pnpm run <script>     # Exécuter un script du package.json
 | Site web    | **Render** | Plateforme cible configurée via `render.yaml`       |
 | API         | **Render** | Déploiement via Docker (voir `apps/api/Dockerfile`) |
 
+Pour le dimensionnement opérationnel des comptes, la gouvernance et les budgets
+indicatifs des outils numériques, voir le
+[plan des outils numériques](../operations/DIGITAL_TOOLS.md).
+
 ---
 
 ## Règle documentaire
