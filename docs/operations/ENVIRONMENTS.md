@@ -17,10 +17,13 @@ source_of_truth: true
 
 ## Deux profils : local et production
 
-`main` est la branche permanente. Aucun profil Angular, script de lancement ni
-service distant permanent staging n’est nécessaire au développement ou aux PR.
-Les anciens fichiers locaux contenant des secrets ne sont pas supprimés
-automatiquement : les conserver hors Git jusqu’à la fin des sauvegardes.
+`main` est la branche permanente cible. Aucun profil Angular ni script de
+lancement staging n’est nécessaire au développement ou aux PR. Cela ne signifie
+pas que les ressources distantes staging préexistantes ont été supprimées : la
+branche, les services Render et le projet Supabase restent conservés tant que
+les barrières du [registre de transition](PRODUCTION_ONLY_TRANSITION.md) ne sont
+pas levées. Les anciens fichiers locaux contenant des secrets ne sont pas
+supprimés automatiquement : les conserver hors Git jusqu’à la fin des sauvegardes.
 
 | Surface | Local                                  | Production                                                    |
 | ------- | -------------------------------------- | ------------------------------------------------------------- |
@@ -77,10 +80,12 @@ Ne jamais afficher leur valeur, ni la copier dans une variable GitHub non secrè
 La variable de dépôt non secrète inutilisée `SONAR_TOKEN` a été retirée ; le
 secret utilisé par le workflow SonarCloud est conservé.
 
-L’environnement GitHub `staging`, ses secrets `KRAAK_JOURNEY_EMAIL`,
-`KRAAK_JOURNEY_PASSWORD` et `SUPABASE_DB_URL_STAGING`, ainsi que le secret de
-dépôt `SUPABASE_STAGING_PROJECT_REF`, ont été supprimés. Les déploiements
-historiques restent consultables ; aucun workflow actif ne cible ces ressources.
+La configuration des workflows ne cible plus les ressources staging. Cela ne
+prouve pas que l’environnement GitHub `staging` ou ses secrets ont été retirés :
+aucun environnement préexistant n'a été supprimé lors du contrôle de transition.
+Le statut de chaque secret doit être vérifié par un inventaire autorisé, sans
+exposer sa valeur. Les déploiements historiques restent consultables ; aucun
+workflow actif ne doit être redirigé vers ces ressources.
 La présence des noms restants ne prouve pas la validité des valeurs.
 Le [registre de transition](PRODUCTION_ONLY_TRANSITION.md) conserve les preuves
 et limites de vérification des fournisseurs.
