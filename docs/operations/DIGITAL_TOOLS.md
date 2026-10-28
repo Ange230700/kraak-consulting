@@ -39,16 +39,16 @@ les ressources existantes conformément à leurs règles.
 
 ## Outils retenus
 
-| Besoin | Outil et dimensionnement de départ | Rôle prévu |
-| ------ | ---------------------------------- | ---------- |
-| Domaine et DNS | Porkbun pour le `.com` ; Cloudflare Free | Posséder l'adresse officielle et gérer les enregistrements DNS. Vérifier d'abord le domaine et le registrar déjà en service. |
-| Courriel et fichiers | Google Workspace Business Starter, 6 utilisateurs | Courriels professionnels, espace partagé, calendrier et réunions. |
-| IA et productivité | ChatGPT Business, 2 sièges | Préparer et réviser des contenus, documents et travaux de productivité ; un humain valide les livrables importants. |
-| Design et marque | Canva Teams, 3 sièges | Maintenir le kit de marque et produire des supports cohérents. |
-| Vidéo | CapCut Standard, 1 siège | Monter les formats vidéo courts ; confirmer le prix et les fonctions sur l'appareil utilisé. |
-| Hébergement | Render Starter pour un service web dans l'estimation initiale | Héberger les services KRAAK. La production actuelle et son coût effectif restent gouvernés par les documents de déploiement et de release. |
-| Données et accès | Supabase Pro avant une mise en production, selon le plan initial | Base PostgreSQL, authentification et stockage ; suivre le projet de production déjà documenté et ses règles d'accès. |
-| Code et collaboration | GitHub Team, 2 sièges techniques | Héberger le code, contrôler les changements et organiser la collaboration. |
+| Besoin                | Outil et dimensionnement de départ                               | Rôle prévu                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Domaine et DNS        | Porkbun pour le `.com` ; Cloudflare Free                         | Posséder l'adresse officielle et gérer les enregistrements DNS. Vérifier d'abord le domaine et le registrar déjà en service.               |
+| Courriel et fichiers  | Google Workspace Business Starter, 6 utilisateurs                | Courriels professionnels, espace partagé, calendrier et réunions.                                                                          |
+| IA et productivité    | ChatGPT Business, 2 sièges                                       | Préparer et réviser des contenus, documents et travaux de productivité ; un humain valide les livrables importants.                        |
+| Design et marque      | Canva Teams, 3 sièges                                            | Maintenir le kit de marque et produire des supports cohérents.                                                                             |
+| Vidéo                 | CapCut Standard, 1 siège                                         | Monter les formats vidéo courts ; confirmer le prix et les fonctions sur l'appareil utilisé.                                               |
+| Hébergement           | Render Starter pour un service web dans l'estimation initiale    | Héberger les services KRAAK. La production actuelle et son coût effectif restent gouvernés par les documents de déploiement et de release. |
+| Données et accès      | Supabase Pro avant une mise en production, selon le plan initial | Base PostgreSQL, authentification et stockage ; suivre le projet de production déjà documenté et ses règles d'accès.                       |
+| Code et collaboration | GitHub Team, 2 sièges techniques                                 | Héberger le code, contrôler les changements et organiser la collaboration.                                                                 |
 
 Les adresses comme `contact@kraakconsulting.com` et le domaine
 `kraakconsulting.com` sont des exemples issus du plan, pas une preuve de
@@ -57,16 +57,16 @@ actifs avant toute création ou communication.
 
 ## Budget indicatif
 
-| Outil | Hypothèse du plan | Estimation mensuelle |
-| ----- | ----------------- | -------------------- |
-| Google Workspace Business Starter | 6 utilisateurs | 24 500 XOF |
-| ChatGPT Business | 2 sièges | 29 000 XOF |
-| Canva Teams | 3 sièges | 17 500 XOF |
-| CapCut Standard | 1 siège | 6 000 XOF |
-| Render Starter | 1 service web | 4 000 XOF |
-| Supabase Pro | 1 projet de production | 14 500 XOF |
-| GitHub Team | 2 utilisateurs techniques | 4 500 XOF |
-| **Total de pilotage** | **7 abonnements** | **100 000 XOF/mois** |
+| Outil                             | Hypothèse du plan         | Estimation mensuelle |
+| --------------------------------- | ------------------------- | -------------------- |
+| Google Workspace Business Starter | 6 utilisateurs            | 24 500 XOF           |
+| ChatGPT Business                  | 2 sièges                  | 29 000 XOF           |
+| Canva Teams                       | 3 sièges                  | 17 500 XOF           |
+| CapCut Standard                   | 1 siège                   | 6 000 XOF            |
+| Render Starter                    | 1 service web             | 4 000 XOF            |
+| Supabase Pro                      | 1 projet de production    | 14 500 XOF           |
+| GitHub Team                       | 2 utilisateurs techniques | 4 500 XOF            |
+| **Total de pilotage**             | **7 abonnements**         | **100 000 XOF/mois** |
 
 Prévoir séparément environ 7 000 XOF/an pour le domaine `.com` (estimation
 source : environ 6 500 XOF/an) et Cloudflare Free à 0 XOF/mois. Les prix de
@@ -118,13 +118,13 @@ production.
 
 ## Usages combinés
 
-| Activité | Outils et circulation |
-| -------- | --------------------- |
-| Lancer une formation | ChatGPT aide à structurer le contenu, Canva prépare le visuel, CapCut monte une courte vidéo et Google Drive conserve les fichiers. |
-| Préparer une proposition partenaire | ChatGPT prépare un brouillon, Google Docs permet la validation et Canva met en forme la présentation. |
-| Publier le site | Le code est versionné dans GitHub, le site et l'API sont déployés sur Render, et le domaine dirige les visiteurs vers le site. |
-| Recevoir une demande web | Le formulaire et son traitement suivent les runbooks de contact et d'environnement ; ne pas créer un stockage parallèle à l'architecture documentée. |
-| Produire un témoignage vidéo | Google Drive conserve les sources, CapCut réalise le montage et Canva fournit les éléments de marque. Vérifier les droits d'utilisation des médias. |
+| Activité                            | Outils et circulation                                                                                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lancer une formation                | ChatGPT aide à structurer le contenu, Canva prépare le visuel, CapCut monte une courte vidéo et Google Drive conserve les fichiers.                  |
+| Préparer une proposition partenaire | ChatGPT prépare un brouillon, Google Docs permet la validation et Canva met en forme la présentation.                                                |
+| Publier le site                     | Le code est versionné dans GitHub, le site et l'API sont déployés sur Render, et le domaine dirige les visiteurs vers le site.                       |
+| Recevoir une demande web            | Le formulaire et son traitement suivent les runbooks de contact et d'environnement ; ne pas créer un stockage parallèle à l'architecture documentée. |
+| Produire un témoignage vidéo        | Google Drive conserve les sources, CapCut réalise le montage et Canva fournit les éléments de marque. Vérifier les droits d'utilisation des médias.  |
 
 ## Sources
 
