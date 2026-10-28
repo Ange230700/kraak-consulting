@@ -10,6 +10,7 @@ import {
   loadClientRuntimeConfig,
   serializeRuntimeConfig,
 } from './generate-client-runtime-config.mjs';
+import { resolveEndpoints } from './resolve-endpoints.mjs';
 
 test('le runtime client expose aussi les URLs publiques de marque et contact quand elles sont définies', () => {
   const tempRoot = mkdtempSync(
@@ -93,7 +94,7 @@ test('le runtime client peut lire les variables locales depuis apps/client/.env 
   }
 });
 
-test('Given une production sans fichier env, When le runtime est chargé, Then les variables injectées sont utilisées', () => {
+test('Given une production sans fichier env, When le runtime est chargé, Then les endpoints canoniques et les variables publiques sont utilisés', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -109,7 +110,8 @@ test('Given une production sans fichier env, When le runtime est chargé, Then l
     });
 
     assert.deepEqual(runtimeConfig, {
-      apiBaseUrl: 'https://api.example.test/',
+      apiBaseUrl: resolveEndpoints('production').api,
+      siteUrl: resolveEndpoints('production').web,
       supabaseUrl: 'https://data.example.test',
       supabasePublishableKey: 'public-test-key',
       enableParticipantArea: true,
@@ -119,7 +121,7 @@ test('Given une production sans fichier env, When le runtime est chargé, Then l
   }
 });
 
-test("le runtime client active le flag participant par défaut en production quand aucune variable publique n'est fournie", () => {
+test('Given aucune variable publique, When le runtime de production est chargé, Then les endpoints canoniques et le flag participant sont présents', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -130,13 +132,17 @@ test("le runtime client active le flag participant par défaut en production qua
       processEnv: {},
     });
 
-    assert.deepEqual(runtimeConfig, { enableParticipantArea: true });
+    assert.deepEqual(runtimeConfig, {
+      apiBaseUrl: resolveEndpoints('production').api,
+      siteUrl: resolveEndpoints('production').web,
+      enableParticipantArea: true,
+    });
   } finally {
     rmSync(tempRoot, { recursive: true, force: true });
   }
 });
 
-test('le runtime client lit les variables production depuis .env.prod quand le fichier existe', () => {
+test('Given des variables Supabase dans .env.prod, When le runtime de production est chargé, Then les endpoints restent canoniques et les variables Supabase sont chargées', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -159,7 +165,8 @@ test('le runtime client lit les variables production depuis .env.prod quand le f
     });
 
     assert.deepEqual(runtimeConfig, {
-      apiBaseUrl: 'https://api.kraak.example',
+      apiBaseUrl: resolveEndpoints('production').api,
+      siteUrl: resolveEndpoints('production').web,
       supabaseUrl: 'https://kraak.supabase.co',
       supabasePublishableKey: 'production-publishable-key',
       enableParticipantArea: true,
@@ -169,7 +176,7 @@ test('le runtime client lit les variables production depuis .env.prod quand le f
   }
 });
 
-test('le runtime client priorise les variables du fichier .env sur celles de process.env', () => {
+test('Given des valeurs Supabase dans le fichier et le processus, When le runtime de production est chargé, Then les endpoints canoniques priment et le fichier garde priorité pour Supabase', () => {
   const tempRoot = mkdtempSync(
     path.join(os.tmpdir(), 'kraak-client-runtime-config-'),
   );
@@ -196,7 +203,8 @@ test('le runtime client priorise les variables du fichier .env sur celles de pro
     });
 
     assert.deepEqual(runtimeConfig, {
-      apiBaseUrl: 'https://from-file.example',
+      apiBaseUrl: resolveEndpoints('production').api,
+      siteUrl: resolveEndpoints('production').web,
       supabaseUrl: 'https://from-file.supabase.co',
       supabasePublishableKey: 'from-file-key',
       enableParticipantArea: true,
