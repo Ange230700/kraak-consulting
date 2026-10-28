@@ -51,14 +51,14 @@ Les couleurs ci-dessous sont définies dans
 [`packages/tokens/src/tokens.css`](packages/tokens/src/tokens.css) ; ce fichier
 de tokens est la référence pour leurs valeurs dans le code.
 
-| Rôle | Jeton | Valeur | Usage |
-| --- | --- | --- | --- |
-| Structure et action principale | `--kr-brand-navy` | `#122b4a` | Navigation, titres structurants et CTA principal |
-| Liens et accent secondaire | `--kr-brand-blue` | `#1673ae` | Liens et éléments d’interface mis en avant |
-| Accent léger | `--kr-brand-cyan` | `#4cc3d9` | Détails et états actifs, avec contraste vérifié |
-| Accent de valeur | `--kr-brand-gold` | `#f0c433` | Mise en évidence ponctuelle |
-| Fond de page | `--kr-brand-page` | `#f3f3f3` | Fonds clairs et sections alternées |
-| Texte et surfaces | `--kr-neutral-*` | Échelle dans les tokens | Texte, bordures et surfaces neutres |
+| Rôle                           | Jeton             | Valeur                  | Usage                                            |
+| ------------------------------ | ----------------- | ----------------------- | ------------------------------------------------ |
+| Structure et action principale | `--kr-brand-navy` | `#122b4a`               | Navigation, titres structurants et CTA principal |
+| Liens et accent secondaire     | `--kr-brand-blue` | `#1673ae`               | Liens et éléments d’interface mis en avant       |
+| Accent léger                   | `--kr-brand-cyan` | `#4cc3d9`               | Détails et états actifs, avec contraste vérifié  |
+| Accent de valeur               | `--kr-brand-gold` | `#f0c433`               | Mise en évidence ponctuelle                      |
+| Fond de page                   | `--kr-brand-page` | `#f3f3f3`               | Fonds clairs et sections alternées               |
+| Texte et surfaces              | `--kr-neutral-*`  | Échelle dans les tokens | Texte, bordures et surfaces neutres              |
 
 Privilégier les fonds clairs et limiter les accents concurrents. Le bleu marine
 structure l’interface ; le cyan et l’or restent secondaires. Ne pas utiliser
