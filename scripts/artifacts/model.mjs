@@ -155,7 +155,7 @@ export function createDocument(sourceText) {
   const tables = [];
   const links = [];
   const headings = [];
-  markdown.walkTokens(tokens, (token) => {
+  void markdown.walkTokens(tokens, (token) => {
     if (token.type === 'code') {
       token.sourceSha256 = sha256(
         token.text.replaceAll('\r\n', '\n').trimEnd() + '\n',

@@ -157,7 +157,8 @@ Les sorties se trouvent dans `.artifacts/docs/<nom>/` :
 - `visual-qa/pdf/` et `visual-qa/pptx/`, avec PNG, planches contact et rapports.
 
 Les compagnons incluent SHA-256 source/sortie, version du modèle, identité du code
-et du lockfile, versions du moteur et ressources. Une source, image, configuration
+et du lockfile, versions du moteur et ressources. Les clés sont sérialisées par
+ordre binaire UTF-8 indépendant de la locale. Une source, image, configuration
 ou sortie obsolète fait échouer `docs:verify`. Les rapports d'exécution n'ajoutent
 pas d'horodatage à l'identité stable. Le manifeste décrit la génération demandée ;
 les compagnons des autres formats restent disponibles et doivent être revérifiés.
