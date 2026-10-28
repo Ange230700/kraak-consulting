@@ -114,6 +114,15 @@ test('Given le modèle de release par tag, When les workflows actifs sont inspec
     ),
     false,
   );
+  assert.equal(
+    [...workflow.matchAll(/ref: \$\{\{ github\.workflow_sha \}\}/gu)].length,
+    2,
+  );
+  assert.equal(
+    [...workflow.matchAll(/SHA: \$\{\{ needs\.validate-tag\.outputs\.sha \}\}/gu)]
+      .length,
+    2,
+  );
   assert.match(
     read('docs/operations/RELEASE_PROD.md'),
     /Créer un nouveau tag SemVer sur le commit validé/,

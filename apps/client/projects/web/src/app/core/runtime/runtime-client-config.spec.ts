@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { resolveRuntimeClientConfig } from '../../../../../shared/runtime-client-config';
+import productionEndpoints from '../../../../../shared/production-endpoints.json';
 
 const runtimeGlobals = globalThis as typeof globalThis & {
   process: {
@@ -76,5 +77,15 @@ describe('resolveRuntimeClientConfig', () => {
 
     expect(config.apiBaseUrl).toBe('https://env-api.kraak.example');
     expect(config.siteUrl).toBe('https://env-site.kraak.example');
+  });
+
+  it('Given the production profile without configured endpoints, when config is resolved, then canonical endpoints are used', () => {
+    globalThis.__KRAAK_RUNTIME_CONFIG__ = undefined;
+    setRuntimeEnv({});
+
+    const config = resolveRuntimeClientConfig('production');
+
+    expect(config.apiBaseUrl).toBe(productionEndpoints.production.api);
+    expect(config.siteUrl).toBe(productionEndpoints.production.web);
   });
 });

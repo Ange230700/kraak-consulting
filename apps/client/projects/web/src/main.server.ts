@@ -4,6 +4,7 @@ import {
   BootstrapContext,
   bootstrapApplication,
 } from '@angular/platform-browser';
+import { environment } from './environments/environment';
 import { App } from './app/app.component';
 import { config } from './app/app.config.server';
 
@@ -28,8 +29,12 @@ if (!globalThis.__KRAAK_RUNTIME_CONFIG__) {
   globalThis.__KRAAK_RUNTIME_CONFIG__ = Object.freeze({
     enableParticipantArea:
       typeof flag === 'string' ? flag.trim() === 'true' : true,
-    apiBaseUrl: readOptionalEnv(['CLIENT_API_BASE_URL']),
-    siteUrl: readOptionalEnv(['CLIENT_SITE_URL']),
+    apiBaseUrl:
+      readOptionalEnv(['CLIENT_API_BASE_URL']) ||
+      (environment.production ? environment.apiBaseUrl : undefined),
+    siteUrl:
+      readOptionalEnv(['CLIENT_SITE_URL']) ||
+      (environment.production ? environment.siteUrl : undefined),
     supabaseUrl: readOptionalEnv(['CLIENT_SUPABASE_URL', 'SUPABASE_URL']),
     supabasePublishableKey: readOptionalEnv([
       'CLIENT_SUPABASE_PUBLISHABLE_KEY',
