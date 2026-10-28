@@ -104,6 +104,7 @@ document obsolète dans le même changement.
 | `operations/MOBILE_BUILD.md`                                           | active | true             | Guide de build mobile (Capacitor Android / iOS)                           |
 | `operations/NIGHTLY_REGRESSION.md`                                     | active | true             | Régression nocturne sans environnement permanent                          |
 | `operations/OBSERVABILITY.md`                                          | active | true             | Observabilité et alerting minimum                                         |
+| `operations/OUTILS_NUMERIQUES.md`                                      | active | true             | Plan des outils numériques KRAAK                                          |
 | `operations/PRODUCTION_ONLY_TRANSITION.md`                             | active | true             | Transition vers une production unique                                     |
 | `operations/RELEASE_PROD.md`                                           | active | true             | Release production                                                        |
 | `operations/SONARCLOUD_SETUP.md`                                       | active | true             | Runbook — Configuration SonarQube Cloud & SonarLint                       |
