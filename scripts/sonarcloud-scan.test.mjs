@@ -59,8 +59,12 @@ test('Given les fichiers de configuration et les scripts PowerShell, When le pé
     '**/vitest.setup.ts',
     'apps/api/jest.config.ts',
     'apps/client/capacitor.config.ts',
-    'apps/client/eslint.config.js',
+    '**/eslint.config.*',
     'scripts/**/*.ps1',
+    '.czrc.cjs',
+    'commit-scopes.cjs',
+    'commitlint.config.js',
+    'lint-staged.config.cjs',
   ];
 
   for (const exclusion of expectedExclusions) {
