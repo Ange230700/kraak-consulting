@@ -21,20 +21,35 @@ test('Given une production unique, When le Blueprint Render est lu, Then seuls l
   assert.equal([...config.matchAll(/^ {4}autoDeploy: false$/gm)].length, 2);
 });
 
+test('Given la configuration canonique des endpoints, When les workflows actifs sont lus, Then ils résolvent les URL sans copie locale', () => {
+  const observability = read('.github/workflows/observability.yml');
+  const release = read('.github/workflows/release-prod.yml');
+
+  assert.match(
+    observability,
+    /node scripts\/resolve-endpoints\.mjs production/,
+  );
+  assert.match(release, /node scripts\/resolve-endpoints\.mjs production/);
+  assert.doesNotMatch(observability, /kraak-(web|api)-prod\.onrender\.com/);
+  assert.doesNotMatch(release, /PROD_(API_HEALTH|WEB)_URL/);
+  assert.doesNotMatch(read('render.yaml'), /CLIENT_(API_BASE|SITE)_URL/);
+});
+
 test('Given les services staging retirés, When le diagnostic est inspecté, Then seuls les services production sont vérifiés', () => {
   const diagnostic = read('scripts/repo-awareness.sh');
   assert.doesNotMatch(
     diagnostic,
     /branches\/staging\/protection|kraak-web-staging\.onrender\.com|kraak-api-staging\.onrender\.com/,
   );
-  assert.match(diagnostic, /kraak-web-prod\.onrender\.com/);
-  assert.match(diagnostic, /kraak-api-prod\.onrender\.com/);
+  assert.match(diagnostic, /resolve-endpoints\.mjs production web/);
+  assert.match(diagnostic, /resolve-endpoints\.mjs production api/);
+  assert.doesNotMatch(diagnostic, /kraak-(web|api)-prod\.onrender\.com/);
 });
 
-test('Given la suppression du projet Supabase staging, When les redirections locales sont lues, Then seules les URL locales et production sont configurées', () => {
+test('Given la configuration Supabase locale, When les redirections sont lues, Then elles ne dépendent pas de services distants', () => {
   const config = read('supabase/config.toml');
   assert.doesNotMatch(config, /kraak-web-staging\.onrender\.com/);
-  assert.match(config, /kraak-web-prod\.onrender\.com/);
+  assert.doesNotMatch(config, /onrender\.com/);
   assert.match(config, /http:\/\/localhost:4200\/auth\/callback/);
 });
 

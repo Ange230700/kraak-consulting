@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import productionEndpoints from '../../../../shared/production-endpoints.json';
+
 const runtimeGlobals = globalThis as typeof globalThis & {
   process: {
     env: Record<string, string | undefined>;
@@ -67,7 +69,7 @@ describe('CLIENT_DEFAULTS', () => {
 
     const { CLIENT_DEFAULTS } = await loadClientDefaults();
 
-    expect(CLIENT_DEFAULTS.siteUrl).toBe('https://kraak-web-prod.onrender.com');
+    expect(CLIENT_DEFAULTS.siteUrl).toBe(productionEndpoints.production.web);
   });
 
   it('Given no defaults profile, when the module loads, then production defaults are selected', async () => {
@@ -75,6 +77,6 @@ describe('CLIENT_DEFAULTS', () => {
 
     const { CLIENT_DEFAULTS } = await loadClientDefaults();
 
-    expect(CLIENT_DEFAULTS.siteUrl).toBe('https://kraak-web-prod.onrender.com');
+    expect(CLIENT_DEFAULTS.siteUrl).toBe(productionEndpoints.production.web);
   });
 });

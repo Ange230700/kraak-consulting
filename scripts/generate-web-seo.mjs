@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { resolveEndpoint } from './resolve-endpoints.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -51,7 +52,7 @@ const routeModelSourcePath = join(
   'localized-public-routes.json',
 );
 const publicDir = join(repoRoot, 'apps', 'client', 'projects', 'web', 'public');
-const defaultSiteUrl = 'https://kraak-web-prod.onrender.com';
+const defaultSiteUrl = resolveEndpoint('production', 'web');
 const sourceLocale = 'fr-CI';
 
 const trimTrailingSlashes = (value) => {

@@ -67,10 +67,15 @@ contrôles en lecture seule.
 Secrets de production :
 
 - `RENDER_API_KEY`, `RENDER_PROD_SERVICE_ID`, `RENDER_PROD_WEB_SERVICE_ID`.
-- `PROD_API_HEALTH_URL`, `PROD_WEB_URL`.
 - `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROD_PROJECT_REF`,
   `SUPABASE_PROD_DB_PASSWORD`.
 - `SUPABASE_DB_URL_PRODUCTION_READONLY` pour le garde de lignée en lecture seule.
+
+Les endpoints web et API locaux et de production ont une seule source versionnée :
+[`production-endpoints.json`](../../apps/client/projects/shared/production-endpoints.json).
+Le résolveur refuse explicitement le profil `staging`, qui a été retiré.
+Les workflows de release et d'observabilité ainsi que les builds client utilisent
+ce fichier ; aucun secret GitHub d'URL n'est nécessaire.
 
 `SONAR_TOKEN` et `SUPABASE_ACCESS_TOKEN` restent des secrets de dépôt.
 Ne jamais afficher leur valeur, ni la copier dans une variable GitHub non secrète.

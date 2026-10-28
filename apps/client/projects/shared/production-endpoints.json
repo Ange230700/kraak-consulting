@@ -1,0 +1,10 @@
+{
+  "local": {
+    "web": "http://localhost:4200",
+    "api": "http://localhost:3000"
+  },
+  "production": {
+    "web": "https://kraak-web-prod.onrender.com",
+    "api": "https://kraak-api-prod.onrender.com"
+  }
+}

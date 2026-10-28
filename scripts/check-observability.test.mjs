@@ -48,30 +48,30 @@ test('Given deux cibles indépendantes, When la page web attend sa réponse, The
 test('Given une URL publique valide, When on la normalise, Then le slash terminal est retire', () => {
   assert.equal(
     normalizePublicUrl(
-      'https://kraak-web-prod.onrender.com/',
+      'https://web.example.test/',
       'KRAAK_OBSERVABILITY_WEB_URL',
     ),
-    'https://kraak-web-prod.onrender.com',
+    'https://web.example.test',
   );
 });
 
 test('Given les URLs web et API, When on construit les checks, Then la home web et /health sont surveilles', () => {
   assert.deepEqual(
     createObservabilityTargets({
-      webUrl: 'https://kraak-web-prod.onrender.com/',
-      apiUrl: 'https://kraak-api-staging.onrender.com/',
+      webUrl: 'https://web.example.test/',
+      apiUrl: 'https://api.example.test/',
       environment: 'production',
     }),
     [
       {
         name: 'web-home',
-        url: 'https://kraak-web-prod.onrender.com/',
+        url: 'https://web.example.test/',
         expectedStatus: 200,
         expectedContentType: 'text/html',
       },
       {
         name: 'api-health',
-        url: 'https://kraak-api-staging.onrender.com/health',
+        url: 'https://api.example.test/health',
         expectedStatus: 200,
         expectedContentType: 'application/json',
         expectedEnvironment: 'production',
@@ -84,7 +84,7 @@ test('Given un endpoint API sain, When le check passe, Then le payload de superv
   const result = await checkTarget(
     {
       name: 'api-health',
-      url: 'https://kraak-api-staging.onrender.com/health',
+      url: 'https://api.example.test/health',
       expectedStatus: 200,
       expectedContentType: 'application/json',
       expectedEnvironment: 'production',
@@ -120,7 +120,7 @@ test('Given un endpoint API staging identifié en production, When le check pass
       checkTarget(
         {
           name: 'api-health',
-          url: 'https://kraak-api-staging.onrender.com/health',
+          url: 'https://api.example.test/health',
           expectedStatus: 200,
           expectedContentType: 'application/json',
           expectedEnvironment: 'staging',
@@ -152,7 +152,7 @@ test('Given un endpoint web qui repond en JSON, When le check s execute, Then un
       checkTarget(
         {
           name: 'web-home',
-          url: 'https://kraak-web-prod.onrender.com/',
+          url: 'https://web.example.test/',
           expectedStatus: 200,
           expectedContentType: 'text/html',
         },

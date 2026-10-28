@@ -158,7 +158,8 @@ Pour les détails, voir [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Surface vitrine publique
 
-Site public : <https://kraak-web-prod.onrender.com>.
+Site public : voir l'endpoint de production défini dans
+[`production-endpoints.json`](apps/client/projects/shared/production-endpoints.json).
 
 La surface vitrine publique actuellement gelée et considérée comme complète
 pour le MVP est :

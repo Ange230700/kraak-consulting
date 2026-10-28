@@ -60,12 +60,11 @@ Pour le projet Supabase de production, vérifier dans le Dashboard :
 5. Redirect URLs alignées avec web, mobile et deep links KRAAK
 
 Autoriser uniquement les callbacks du site de production effectivement validé
-et des applications mobiles autorisées. Les URL Render ci-dessous sont la cible
-de configuration, pas une preuve de disponibilité. Ne pas recopier des
-redirections de staging ou de localhost en production :
-
-- `https://kraak-web-prod.onrender.com/auth/callback`
-- `https://kraak-web-prod.onrender.com/auth/reset`
+et des applications mobiles autorisées. Construire les URL web à partir de
+l'endpoint de production défini dans
+[`production-endpoints.json`](../../apps/client/projects/shared/production-endpoints.json)
+et des chemins `/auth/callback` et `/auth/reset`. Ne pas recopier des
+redirections de staging ou de localhost en production.
 
 Le développement utilise Supabase local et les redirections suivantes :
 

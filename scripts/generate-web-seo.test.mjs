@@ -10,9 +10,10 @@ import {
   buildRobotsTxt,
   buildSitemapXml,
 } from './generate-web-seo.mjs';
+import { resolveEndpoint } from './resolve-endpoints.mjs';
 
 const repoRoot = process.cwd();
-const defaultSiteUrl = 'https://kraak-web-prod.onrender.com';
+const defaultSiteUrl = resolveEndpoint('production', 'web');
 const seoPages = JSON.parse(
   readFileSync(
     join(
@@ -107,14 +108,8 @@ test('Given the approved English homepage, When sitemap XML is generated, Then u
   });
 
   assert.match(sitemap, /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
-  assert.match(
-    sitemap,
-    /<loc>https:\/\/kraak-web-prod\.onrender\.com\/fr\/services<\/loc>/,
-  );
-  assert.match(
-    sitemap,
-    /<loc>https:\/\/kraak-web-prod\.onrender\.com\/en\/<\/loc>/,
-  );
+  assert.ok(sitemap.includes(`<loc>${defaultSiteUrl}/fr/services</loc>`));
+  assert.ok(sitemap.includes(`<loc>${defaultSiteUrl}/en/</loc>`));
   assert.doesNotMatch(sitemap, /\/en\/services/);
   assert.doesNotMatch(sitemap, /\/connexion/);
   assert.doesNotMatch(sitemap, /\/auth\/reset/);
