@@ -63,6 +63,10 @@ Redéployer un tag antérieur déjà validé et conservé. Ne jamais forcer `mai
 ni réécrire l’historique de migrations. Un rollback applicatif ne restaure pas
 les données modifiées par une migration.
 
+Les jobs Render chargent les outils de smoke test depuis la révision du workflow
+(`github.workflow_sha`), même si le tag cible précède leur introduction. Le SHA
+envoyé à Render reste celui du tag validé, pour l’API comme pour le web.
+
 Le retrait de ressources suit les barrières du
 [registre de transition](PRODUCTION_ONLY_TRANSITION.md), indépendamment du
 changement de branche par défaut. Ne pas déclarer une économie avant confirmation

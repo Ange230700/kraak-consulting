@@ -74,6 +74,8 @@ Secrets de production :
 Les endpoints web et API locaux et de production ont une seule source versionnée :
 [`production-endpoints.json`](../../apps/client/projects/shared/production-endpoints.json).
 Le résolveur refuse explicitement le profil `staging`, qui a été retiré.
+Le runtime navigateur, le démarrage serveur et la configuration de prérendu web
+utilisent ces mêmes endpoints de production, sans variable d’URL supplémentaire.
 Les workflows de release et d'observabilité ainsi que les builds client utilisent
 ce fichier ; aucun secret GitHub d'URL n'est nécessaire.
 
