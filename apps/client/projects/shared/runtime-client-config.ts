@@ -1,3 +1,5 @@
+import productionEndpoints from './production-endpoints.json';
+
 interface RuntimeClientConfig {
   readonly apiBaseUrl: string;
   readonly publicAssetBaseUrl: string;
@@ -46,13 +48,19 @@ function readProcessEnv(...keys: string[]): string {
   return '';
 }
 
-export function resolveRuntimeClientConfig(): RuntimeClientConfig {
+export function resolveRuntimeClientConfig(
+  profile?: 'local' | 'production',
+): RuntimeClientConfig {
   const runtimeConfig = runtimeGlobals.__KRAAK_RUNTIME_CONFIG__;
+  const productionDefaults =
+    profile === 'production' ? productionEndpoints.production : undefined;
 
   return {
     apiBaseUrl:
       runtimeConfig?.apiBaseUrl?.trim() ||
-      readProcessEnv('CLIENT_API_BASE_URL'),
+      readProcessEnv('CLIENT_API_BASE_URL') ||
+      productionDefaults?.api ||
+      '',
     publicAssetBaseUrl:
       runtimeConfig?.publicAssetBaseUrl?.trim() ||
       readProcessEnv('KRAAK_PUBLIC_ASSET_BASE_URL'),
@@ -78,7 +86,9 @@ export function resolveRuntimeClientConfig(): RuntimeClientConfig {
       runtimeConfig?.tiktokUrl?.trim() || readProcessEnv('KRAAK_TIKTOK_URL'),
     siteUrl:
       runtimeConfig?.siteUrl?.trim() ||
-      readProcessEnv('PUBLIC_SITE_URL', 'CLIENT_SITE_URL'),
+      readProcessEnv('PUBLIC_SITE_URL', 'CLIENT_SITE_URL') ||
+      productionDefaults?.web ||
+      '',
     supabaseUrl:
       runtimeConfig?.supabaseUrl?.trim() || readProcessEnv('SUPABASE_URL'),
     supabasePublishableKey:

@@ -4,6 +4,20 @@ import {
   type BootstrapContext,
 } from '@angular/platform-browser';
 
+vi.mock('./environments/environment', async () => {
+  const { default: productionEndpoints } = await import(
+    '../../shared/production-endpoints.json'
+  );
+
+  return {
+    environment: {
+      production: true,
+      apiBaseUrl: productionEndpoints.production.api,
+      siteUrl: productionEndpoints.production.web,
+    },
+  };
+});
+
 vi.mock('@angular/platform-browser', async (original) => ({
   ...(await original<typeof import('@angular/platform-browser')>()),
   bootstrapApplication: vi.fn().mockResolvedValue({}),
@@ -67,8 +81,8 @@ describe('Démarrage SSR', { timeout: 60_000 }, () => {
     await import('./main.server');
     expect(globalThis.__KRAAK_RUNTIME_CONFIG__).toEqual({
       enableParticipantArea: true,
-      apiBaseUrl: undefined,
-      siteUrl: undefined,
+      apiBaseUrl: 'https://kraak-api-prod.onrender.com',
+      siteUrl: 'https://kraak-web-prod.onrender.com',
       supabaseUrl: undefined,
       supabasePublishableKey: undefined,
     });

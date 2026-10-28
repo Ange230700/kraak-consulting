@@ -6,7 +6,7 @@ const runtimeGlobals = globalThis as typeof globalThis & {
   };
 };
 
-const runtimeClientConfig = resolveRuntimeClientConfig();
+const runtimeClientConfig = resolveRuntimeClientConfig('production');
 const runtimeGa4Id =
   runtimeGlobals.process?.env?.['PUBLIC_GA4_ID']?.trim() ?? '';
 

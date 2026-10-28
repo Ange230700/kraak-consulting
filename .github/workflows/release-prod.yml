@@ -184,7 +184,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          ref: ${{ needs.validate-tag.outputs.sha }}
+          ref: ${{ github.workflow_sha }}
 
       - name: Mettre à jour APP_VERSION et APP_ENV sur le service prod
         env:
@@ -297,7 +297,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          ref: ${{ needs.validate-tag.outputs.sha }}
+          ref: ${{ github.workflow_sha }}
 
       - name: Déclencher le déploiement Render web (commit épinglé)
         id: render-web-deploy
