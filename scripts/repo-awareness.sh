@@ -645,11 +645,13 @@ fi
 
 section "16. Deployed Render service checks"
 if ((RUN_NETWORK)); then
-  if have curl; then
-    run curl -sS -I --max-time 20 https://kraak-web-prod.onrender.com
-    run curl -sS -i --max-time 30 https://kraak-api-prod.onrender.com/health
+  if have curl && have node; then
+    WEB_URL="$(node scripts/resolve-endpoints.mjs production web)"
+    API_URL="$(node scripts/resolve-endpoints.mjs production api)"
+    run curl -sS -I --max-time 20 "$WEB_URL"
+    run curl -sS -i --max-time 30 "$API_URL/health"
   else
-    warn "--network requested, but curl is unavailable."
+    warn "--network requested, but curl or node is unavailable."
   fi
 else
   note "Skipped deployed-service checks. Use --network to include them."

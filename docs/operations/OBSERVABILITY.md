@@ -36,8 +36,8 @@ ajouter d'infrastructure externe supplémentaire :
 ## Dépendances
 
 - DEP-02 : disponibilité à revérifier
-  - le site Render renvoyait HTTP 404 lors du contrôle du 27 octobre 2026
-  - URL publique documentée: `https://kraak-web-prod.onrender.com`
+  - le contrôle du 28 octobre 2026 a confirmé HTTP 200 pour le site de production
+    (voir le registre de transition)
 - DEP-03: satisfaite
   - l'API est déjà déployée via Render
   - endpoint de santé déclaré dans `render.yaml` via `healthCheckPath: /health`
@@ -93,21 +93,17 @@ Comportement:
 3. en cas d'échec, il ouvre (ou met à jour) une issue dédiée à l'environnement
 4. quand les checks repassent au vert, le workflow commente puis ferme l'issue dédiée
 
-Valeurs versionnées actuellement dans le workflow:
-
-- production
-  - `KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com`
-  - `KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com`
-  - `KRAAK_OBSERVABILITY_ENVIRONMENT=production`
-  - issue: `[ALERT][DEP-05][production] Observability check failure`
+Les URLs de supervision production sont résolues par
+[`production-endpoints.json`](../../apps/client/projects/shared/production-endpoints.json).
+Le workflow ne maintient pas de copie des endpoints.
 
 ## Exploitation manuelle
 
 Commande locale ou CI:
 
 ```bash
-KRAAK_OBSERVABILITY_WEB_URL=https://kraak-web-prod.onrender.com \
-KRAAK_OBSERVABILITY_API_URL=https://kraak-api-prod.onrender.com \
+KRAAK_OBSERVABILITY_WEB_URL="$(node scripts/resolve-endpoints.mjs production web)" \
+KRAAK_OBSERVABILITY_API_URL="$(node scripts/resolve-endpoints.mjs production api)" \
 KRAAK_OBSERVABILITY_ENVIRONMENT=production \
 pnpm check:observability
 ```

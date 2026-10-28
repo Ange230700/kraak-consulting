@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { resolveEndpoints } from './resolve-endpoints.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -181,11 +182,11 @@ export function loadClientRuntimeConfig(
     path.join(clientRootPath, envFileName),
   );
   const fileVariables = loadEnvFiles(envPaths);
-  const apiBaseUrl = readRuntimeVariable(
-    'CLIENT_API_BASE_URL',
-    fileVariables,
-    processEnv,
-  );
+  const configuredEndpoints = resolveEndpoints(environmentName);
+  const apiBaseUrl =
+    environmentName === 'production'
+      ? configuredEndpoints.api
+      : readRuntimeVariable('CLIENT_API_BASE_URL', fileVariables, processEnv);
   const publicAssetBaseUrl = readRuntimeVariable(
     'KRAAK_PUBLIC_ASSET_BASE_URL',
     fileVariables,
@@ -226,11 +227,10 @@ export function loadClientRuntimeConfig(
     fileVariables,
     processEnv,
   );
-  const siteUrl = readRuntimeVariable(
-    'CLIENT_SITE_URL',
-    fileVariables,
-    processEnv,
-  );
+  const siteUrl =
+    environmentName === 'production'
+      ? configuredEndpoints.web
+      : readRuntimeVariable('CLIENT_SITE_URL', fileVariables, processEnv);
 
   const supabaseUrl = readFirstRuntimeVariable(
     ['CLIENT_SUPABASE_URL', 'SUPABASE_URL'],

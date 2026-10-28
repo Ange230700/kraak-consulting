@@ -200,6 +200,14 @@ test('Given the repository awareness script, When Bash checks syntax, Then the s
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
+test('Given les checks réseau du diagnostic, When ils ciblent Render, Then ils résolvent les endpoints canoniques', () => {
+  const script = readFileSync(scriptPath, 'utf8');
+
+  assert.match(script, /node scripts\/resolve-endpoints\.mjs production web/);
+  assert.match(script, /node scripts\/resolve-endpoints\.mjs production api/);
+  assert.doesNotMatch(script, /kraak-(web|api)-prod\.onrender\.com/);
+});
+
 test('Given the repository awareness script, When help is requested, Then usage is printed without running the report', () => {
   const result = runScript(['--help']);
 

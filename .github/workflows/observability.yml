@@ -11,21 +11,11 @@ permissions:
 
 jobs:
   uptime-check:
-    name: Uptime Check (${{ matrix.environment }})
+    name: Uptime Check (production)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - environment: production
-            web_url: https://kraak-web-prod.onrender.com
-            api_url: https://kraak-api-prod.onrender.com
-            alert_issue_title: '[ALERT][DEP-05][production] Observability check failure'
     env:
-      KRAAK_OBSERVABILITY_ENVIRONMENT: ${{ matrix.environment }}
-      KRAAK_OBSERVABILITY_WEB_URL: ${{ matrix.web_url }}
-      KRAAK_OBSERVABILITY_API_URL: ${{ matrix.api_url }}
-      ALERT_ISSUE_TITLE: ${{ matrix.alert_issue_title }}
+      KRAAK_OBSERVABILITY_ENVIRONMENT: production
+      ALERT_ISSUE_TITLE: '[ALERT][DEP-05][production] Observability check failure'
     steps:
       - uses: actions/checkout@v4
 
@@ -34,9 +24,22 @@ jobs:
         with:
           node-version: 22
 
+      - name: Resolve canonical production endpoints
+        id: endpoints
+        run: |
+          web_url="$(node scripts/resolve-endpoints.mjs production web)"
+          api_url="$(node scripts/resolve-endpoints.mjs production api)"
+          echo "web_url=$web_url" >> "$GITHUB_OUTPUT"
+          echo "api_url=$api_url" >> "$GITHUB_OUTPUT"
+          echo "KRAAK_OBSERVABILITY_WEB_URL=$web_url" >> "$GITHUB_ENV"
+          echo "KRAAK_OBSERVABILITY_API_URL=$api_url" >> "$GITHUB_ENV"
+
       - name: Execute observability checks
         id: observability
         continue-on-error: true
+        env:
+          KRAAK_OBSERVABILITY_WEB_URL: ${{ steps.endpoints.outputs.web_url }}
+          KRAAK_OBSERVABILITY_API_URL: ${{ steps.endpoints.outputs.api_url }}
         run: node ./scripts/check-observability.mjs
 
       - name: Publish workflow summary

@@ -182,6 +182,10 @@ jobs:
     needs: [validate-tag, supabase-migrate]
     environment: production
     steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ needs.validate-tag.outputs.sha }}
+
       - name: Mettre à jour APP_VERSION et APP_ENV sur le service prod
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
@@ -263,12 +267,12 @@ jobs:
 
       - name: Smoke test /health (API prod) avec vérification de version et environnement
         env:
-          PROD_API_HEALTH_URL: ${{ secrets.PROD_API_HEALTH_URL }}
           EXPECTED_VERSION: ${{ needs.validate-tag.outputs.ref }}
         run: |
           set -euo pipefail
+          api_url="$(node scripts/resolve-endpoints.mjs production api)/health"
           for i in $(seq 1 20); do
-            body="$(curl -fSs "$PROD_API_HEALTH_URL" || true)"
+            body="$(curl -fSs "$api_url" || true)"
             status="$(echo "$body" | jq -r '.status // empty')"
             environment="$(echo "$body" | jq -r '.environment // empty')"
             version="$(echo "$body" | jq -r '.version // empty')"
@@ -291,6 +295,10 @@ jobs:
     needs: [validate-tag, deploy-render]
     environment: production
     steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ needs.validate-tag.outputs.sha }}
+
       - name: Déclencher le déploiement Render web (commit épinglé)
         id: render-web-deploy
         env:
@@ -346,12 +354,11 @@ jobs:
           exit 1
 
       - name: Smoke test web prod
-        env:
-          PROD_WEB_URL: ${{ secrets.PROD_WEB_URL }}
         run: |
           set -euo pipefail
+          web_url="$(node scripts/resolve-endpoints.mjs production web)"
           for i in $(seq 1 20); do
-            code="$(curl -fSs -o /dev/null -w "%{http_code}" "$PROD_WEB_URL" || true)"
+            code="$(curl -fSs -o /dev/null -w "%{http_code}" "$web_url" || true)"
             echo "[$i] http=$code"
             if [[ "$code" =~ ^(200|301|302)$ ]]; then
               echo "Web prod OK"

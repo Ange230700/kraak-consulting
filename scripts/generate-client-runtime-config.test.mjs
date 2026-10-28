@@ -13,6 +13,23 @@ test('Given un environnement retiré, When le runtime est demandé, Then une err
   );
 });
 
+test('Given une génération de runtime production, When aucune URL personnalisée n’est définie, Then les endpoints canoniques sont injectés', () => {
+  assert.deepEqual(
+    loadClientRuntimeConfig('production', {
+      clientRootPath: '/chemin-inexistant',
+      processEnv: {
+        CLIENT_API_BASE_URL: 'https://api-obsolete.example',
+        CLIENT_SITE_URL: 'https://web-obsolete.example',
+      },
+    }),
+    {
+      enableParticipantArea: true,
+      apiBaseUrl: 'https://kraak-api-prod.onrender.com',
+      siteUrl: 'https://kraak-web-prod.onrender.com',
+    },
+  );
+});
+
 test('Given des lignes env incomplètes, When le runtime est chargé, Then commentaires et clés invalides sont ignorés', (t) => {
   const root = mkdtempSync(path.join(os.tmpdir(), 'kraak-runtime-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -41,7 +58,13 @@ test('Given la CLI runtime, When les options et fichiers varient, Then les sorti
       { encoding: 'utf8' },
     );
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, api ? /https:\/\/api.test/ : /fallback/);
+    if (api) {
+      assert.match(result.stdout, /https:\/\/api\.test/);
+    } else if (args.includes('production')) {
+      assert.match(result.stdout, /https:\/\/kraak-api-prod\.onrender\.com/);
+    } else {
+      assert.match(result.stdout, /fallback/);
+    }
   }
   for (const setup of ['', "fs.existsSync=()=>{throw 'erreur inattendue'}"]) {
     const code = `import fs from 'node:fs';import {syncBuiltinESMExports} from 'node:module';import {fileURLToPath} from 'node:url';${setup};syncBuiltinESMExports();process.argv=['node',fileURLToPath(${JSON.stringify(url)}),...${JSON.stringify(setup ? [] : ['--env', 'inconnu'])}];await import(${JSON.stringify(url)});`;

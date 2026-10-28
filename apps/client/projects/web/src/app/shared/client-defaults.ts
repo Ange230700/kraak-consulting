@@ -1,5 +1,7 @@
 // apps\client\projects\web\src\app\shared\client-defaults.ts
 
+import productionEndpoints from '../../../../shared/production-endpoints.json';
+
 interface ClientDefaults {
   siteUrl: string;
   siteName: string;
@@ -71,7 +73,7 @@ const DEFAULTS_BY_PROFILE: Record<DefaultsProfile, ClientDefaults> = {
   },
   production: {
     ...BASE_DEFAULTS,
-    siteUrl: 'https://kraak-web-prod.onrender.com',
+    siteUrl: productionEndpoints.production.web,
   },
 };
 
