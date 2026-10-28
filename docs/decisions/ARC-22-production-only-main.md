@@ -44,11 +44,8 @@ préservés. Ni l’historique de migrations ni les données de production ne so
 
 Le [registre de transition](../operations/PRODUCTION_ONLY_TRANSITION.md) et
 l'[inventaire daté](../generated/PRODUCTION_ONLY_INVENTORY_2026-10-27.md)
-consignent l'avancement et les preuves. La configuration production-only est
-fusionnée dans `main`, mais le retrait opérationnel reste bloqué. La branche
-distante `staging`, les services Render staging et le projet Supabase staging
-sont conservés ; la fusion d'une configuration cible ne vaut pas suppression
-des ressources existantes ni validation de production. Une seule preview
-Supabase vide créée pour la PR #735 a été supprimée après vérification.
-Ne retirer aucune ressource racine avant la sauvegarde restaurable, la décision
-sur les données uniques et la validation indépendante de la production.
+consignent l'exécution et les preuves. Les services Render staging et le projet
+Supabase staging ont été retirés après vérification de la production et
+conservation des sauvegardes complètes. Les comptes et contenus fictifs restent
+en sauvegarde uniquement ; aucune donnée staging n'a été transférée en production.
+La branche distante est archivée sous `archive/staging-2026-10-27`, puis supprimée.

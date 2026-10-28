@@ -21,7 +21,7 @@ test('Given une production unique, When le Blueprint Render est lu, Then seuls l
   assert.equal([...config.matchAll(/^ {4}autoDeploy: false$/gm)].length, 2);
 });
 
-test('Given la configuration cible sans staging, When le diagnostic est inspecté, Then seuls les services production sont vérifiés', () => {
+test('Given les services staging retirés, When le diagnostic est inspecté, Then seuls les services production sont vérifiés', () => {
   const diagnostic = read('scripts/repo-awareness.sh');
   assert.doesNotMatch(
     diagnostic,
@@ -31,7 +31,7 @@ test('Given la configuration cible sans staging, When le diagnostic est inspect�
   assert.match(diagnostic, /kraak-api-prod\.onrender\.com/);
 });
 
-test('Given la configuration cible Supabase, When les redirections sont lues, Then seules les URL locales et production sont configurées', () => {
+test('Given la suppression du projet Supabase staging, When les redirections locales sont lues, Then seules les URL locales et production sont configurées', () => {
   const config = read('supabase/config.toml');
   assert.doesNotMatch(config, /kraak-web-staging\.onrender\.com/);
   assert.match(config, /kraak-web-prod\.onrender\.com/);
@@ -74,18 +74,21 @@ test('Given une release production, When les migrations et la version sont mises
   assert.doesNotMatch(workflow, /env-vars"\s*\\/);
 });
 
-test('Given le retrait staging bloqué, When le registre est lu, Then les ressources préexistantes et les barrières sont explicites', () => {
+test('Given le retrait staging documenté, When le registre et le pilotage sont lus, Then l’état final et les limites de facturation restent distincts', () => {
   const transition = read('docs/operations/PRODUCTION_ONLY_TRANSITION.md');
   const requiredEvidence = [
-    /retrait opérationnel des ressources staging préexistantes reste bloqué/i,
-    /551704b4073647d7c63363c9fd9eaf4c24c1a975/,
-    /srv-d8aj943eo5us739nobeg/,
-    /qgttdsnupelohowwkkwb/,
-    /HTTP\s+404/,
-    /aucune économie réalisée n'est confirmée/i,
+    /## État final vérifié/,
+    /archive\/staging-2026-10-27/,
+    /répondent HTTP 200/,
+    /facture finale et l'arrêt des frais récurrents ne sont\s+pas encore attestés/,
+    /Une correction documentaire ne doit pas la fermer automatiquement/,
   ];
 
   for (const evidence of requiredEvidence) {
     assert.match(transition, evidence);
   }
+  assert.match(
+    read('docs/planning/GITHUB_PROJECT.md'),
+    /`Status: In Progress`/,
+  );
 });

@@ -10,66 +10,70 @@ source_of_truth: false
 ## Table des matières
 
 - [Inventaire de transition production-only — 27 octobre 2026](#inventaire-de-transition-production-only-27-octobre-2026)
-  - [Point après fusion](#point-apres-fusion)
   - [État initial et conditions de retrait](#etat-initial-et-conditions-de-retrait)
+  - [Complément de clôture](#complement-de-cloture)
   - [Git, GitHub et SonarCloud](#git-github-et-sonarcloud)
   - [Inventaire initial des ressources](#inventaire-initial-des-ressources)
   - [Données et récupération](#donnees-et-recuperation)
   - [Production et contrôles initiaux](#production-et-controles-initiaux)
-  - [Coûts et prochaines étapes](#couts-et-prochaines-etapes)
+  - [Coûts et prochaine étape initiale](#couts-et-prochaine-etape-initiale)
 
-## Point après fusion
+## Complément de clôture
 
-Point de situation après la fusion de la PR #735 le 27 octobre 2026. La
-configuration production-only est sur `main`, mais le retrait opérationnel des
-ressources staging préexistantes n'a pas eu lieu et reste bloqué. Les
-observations d'ouverture ci-dessous ne sont pas un inventaire final exhaustif.
+Vérifications effectuées le 27 octobre 2026 après les observations initiales
+ci-dessous. Ce complément remplace uniquement les statuts de ressources et de
+production ; les constats plus anciens sont conservés comme historique daté.
 
-- GitHub confirme `main` comme branche par défaut. La PR #735 est fusionnée au
-  commit `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`, avec les contrôles requis.
-  La branche distante `staging` existe toujours au commit
-  `551704b4073647d7c63363c9fd9eaf4c24c1a975`. L'environnement GitHub et les
-  ressources staging préexistantes n'ont pas été supprimés. Le workflow
-  `Nightly Regression` est désactivé ; les contrôles requis ne sont pas abaissés.
-- Les services Render `kraak-web-staging` (`srv-d8aj943eo5us739nobeg`) et
-  `kraak-api-staging` (`srv-d7putr0k1i2s738d4410`) restent présents et préservés.
-  Le Blueprint ne déclare que les services production, mais son Auto Sync est
-  suspendu ; aucune synchronisation ne doit être interprétée comme autorisation
-  de supprimer des ressources existantes.
-- Le projet Supabase staging `qgttdsnupelohowwkkwb` et le projet production
-  restent présents. Le branching et l'intégration GitHub ont été désactivés
-  uniquement pour le projet staging racine. Seule la preview vide créée
-  automatiquement pour la PR #735 a été supprimée après contrôle et export ;
-  les racines n'ont pas été modifiées.
-- Le web Render de production répondait HTTP 404 sur `/`, `/fr/`, `/en/` et
-  `/assets/runtime-config.js`. L'API `/health` répondait HTTP 200 en version
-  `v1.1.6`, ce qui ne valide pas les parcours, Auth ou les données. Le dernier
-  déploiement web observé était `fc46d626…` et celui de l'API
-  `0c084cbf…`, pas la PR #735. Auth production reste configuré sur localhost ;
-  redirections et SMTP ne sont pas prêts.
-- Les bundles Git privés et les exports DB/Auth/Storage ont été contrôlés ; les
-  données sensibles ne sont pas publiées. Les exports Management API sont
-  séquentiels, non transactionnels. La restauration isolée complète n'est pas
-  démontrée, la tentative étant bloquée par `supabase_vault` absent. Les données
-  uniques (dont 15 comptes Auth et six objets Storage) n'ont pas de décision
-  métier de conservation ou transfert.
-- Aucun montant d'économie réalisée n'est confirmé. Render staging était
-  Free/Static à `$0.00` de compute. Supabase indiquait 683 heures Micro staging
-  sur le cycle ; les frais de Branching sont partagés et la facture finale n'est
-  pas vérifiée. Le forfait Render, l'abonnement Supabase, la production et les
-  autres applications/projets restent préservés.
-
-L'issue #733 et l'item du Project #8 restent en cours. Les prérequis incluent
-une sauvegarde DB cohérente restaurée, une décision sur les données uniques, un
-site production fonctionnel, Auth prêt, les accès privés manquants et un
-inventaire fournisseur/facturation complet. Aucune ressource staging racine ne
-doit être retirée avant la levée documentée de ces barrières.
+- GitHub confirme `main` comme défaut. La PR #735 est fusionnée au commit
+  `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`, avec les protections requises.
+  Le tag `archive/staging-2026-10-27` pointe vers le commit staging final
+  `551704b4073647d7c63363c9fd9eaf4c24c1a975`. La protection classique était
+  déjà absente avant la suppression de la branche distante ; l'environnement
+  `staging` est supprimé.
+- Les secrets GitHub propres à staging (`KRAAK_JOURNEY_EMAIL`,
+  `KRAAK_JOURNEY_PASSWORD`, `SUPABASE_DB_URL_STAGING` et
+  `SUPABASE_STAGING_PROJECT_REF`) sont supprimés. Les secrets SonarCloud et
+  Supabase partagés ne sont pas retirés. Les déploiements historiques restent
+  conservés.
+- L'inventaire Render en lecture seule (run GitHub
+  [40555390264](https://github.com/Ange230700/kraak-consulting/actions/runs/40555390264))
+  ne trouve que `kraak-web-prod` (`srv-d8aj9e0jo6nc73ep1hm0`) et
+  `kraak-api-prod` (`srv-d7r81hv7f7vs73cqcnmg`) pour ce dépôt. Ils suivent
+  `main`, restent actifs avec l'auto-déploiement désactivé et leur déploiement
+  courant correspond à `dc64c354…`. Les ressources Postgres, Key Value, disques
+  et groupes d'environnement de l'espace sont absentes. Les hôtes staging
+  répondent HTTP 404. Le Blueprint versionné ne déclare que les services
+  production ; son auto-sync reste suspendu.
+- L'API Management Supabase renvoie HTTP 404 pour le projet staging supprimé et
+  `ACTIVE_HEALTHY` pour `kraak-prod` (`pwuivkqnmjpxxpppmnvu`, `eu-west-1`).
+  L'organisation et les autres projets partagés restent hors périmètre.
+- Le contrôle de lignée des migrations de production en lecture seule réussit
+  sur le commit `dc64c354` ([run 40555666291](https://github.com/Ange230700/kraak-consulting/actions/runs/40555666291)).
+- Le propriétaire confirme le test du formulaire de contact et l'envoi d'email.
+  Aucun email additionnel ni changement de données réelles n'a été effectué.
+- Les copies de sauvegarde locale et OneDrive comportent 13 fichiers chacune ;
+  les empreintes des fichiers et des six objets Storage concordent. Les bases
+  isolées `kraak_restore` et `kraak_restore_permissions` contiennent chacune
+  15 utilisateurs Auth, 25 migrations applicatives, un bucket, six objets
+  Storage et zéro secret Vault. Le propriétaire confirme la restauration des
+  rôles et permissions après ajout du rôle technique manquant. Le dump
+  PostgreSQL a l'empreinte SHA-256
+  `A1CECC828CA5EB216928CA0B27288060CA8D68D0E6C7BF420705FAE013A2057A`.
+  Les comptes fictifs et contenus restent en sauvegarde ; aucun transfert
+  n'a eu lieu vers la production.
+- La variable GitHub non secrète inutilisée `SONAR_TOKEN` a été supprimée ; le
+  secret SonarCloud requis par le workflow est conservé. Les identifiants
+  `VERCEL_*` de l'environnement Production restent en place, faute de preuve
+  qu'ils soient exclusivement staging ou sans propriétaire.
+- Supabase affichait 683 heures Micro staging avant la suppression. La facture
+  finale et les économies nettes ne sont pas vérifiées ; aucun frais partagé
+  n'est déclaré supprimé. Les deux services Render staging étaient à 0,00 $
+  selon le relevé précédent.
 
 ## État initial et conditions de retrait
 
-Les éléments ci-dessous décrivent principalement l'inventaire d'ouverture. Le
-point après fusion fournit les dernières vérifications ; les autres observations
-ne démontrent pas l'état fournisseur actuel.
+Les éléments de cette section et des suivantes décrivent l'inventaire d'ouverture.
+Le complément de clôture ci-dessus apporte les mises à jour vérifiées.
 
 Suivi : [issue #733](https://github.com/Ange230700/kraak-consulting/issues/733).
 Décision : [ARC-22](../decisions/ARC-22-production-only-main.md).
@@ -77,11 +81,10 @@ Procédure active : [registre de transition](../operations/PRODUCTION_ONLY_TRANS
 Ce document est un relevé de preuves daté, pas une recommandation de réutiliser
 un hébergeur historique.
 
-**Constat initial : le retrait des ressources était bloqué.** La branche par
-défaut GitHub était désormais `main`, mais cela ne démontre ni une livraison en
-production ni l'absence de dépendances aux anciennes ressources. L'état le plus
-récent confirme que les services, projets de données, l'environnement GitHub et
-la branche `staging` préexistants sont encore préservés.
+**Constat initial : le retrait des ressources était bloqué.** La branche par défaut GitHub était
+désormais `main`, mais cela ne démontre ni une livraison en production ni
+l'absence de dépendances aux anciennes ressources. Aucun service, projet de
+données, environnement GitHub ou branche `staging` n'a été supprimé.
 
 Les contrôles suivants doivent tous réussir avant une suppression :
 
@@ -129,8 +132,8 @@ n'est pas fusionnée.
 
 ## Inventaire initial des ressources
 
-Les identifiants du tableau ci-dessous ont été relevés lors de l'inventaire
-initial ; les dispositions staging reflètent le point après fusion ci-dessus.
+Les statuts et décisions du tableau ci-dessous correspondent à l'inventaire
+avant les suppressions décrites dans le complément de clôture.
 
 Les identifiants ci-dessous ne sont pas des secrets. Les valeurs de configuration,
 jetons, comptes, sessions et exports de données restent hors du dépôt.
@@ -139,26 +142,26 @@ jetons, comptes, sessions et exports de données restent hors du dépôt.
 | ----------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | Render      | `kraak-web-prod` — `srv-d8aj9e0jo6nc73ep1hm0`                                              | Production ; préserver                                                                                   |
 | Render      | `kraak-api-prod` — `srv-d7r81hv7f7vs73cqcnmg`                                              | Production ; préserver                                                                                   |
-| Render      | `kraak-web-staging` — `srv-d8aj943eo5us739nobeg`                                           | Staging préexistant ; conservé, retrait bloqué                                                          |
-| Render      | `kraak-api-staging` — `srv-d7putr0k1i2s738d4410`                                           | Staging préexistant ; conservé, retrait bloqué                                                          |
+| Render      | `kraak-web-staging` — `srv-d8aj943eo5us739nobeg`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                 |
+| Render      | `kraak-api-staging` — `srv-d7putr0k1i2s738d4410`                                           | Candidate staging ; ne pas supprimer avant les contrôles                                                 |
 | Render      | Blueprint `exs-d7r7j01kh4rs73em7mm0`                                                       | Partagé par les API ; ne pas supprimer globalement                                                       |
 | Render      | Workspace `tea-cspqc2d6l47c73c4alu0`                                                       | Partagé ; préserver l'abonnement et les autres applications                                              |
 | Render      | `alex-career-api-staging` — `srv-d79cfm4hg0os7390npg0`                                     | Autre application ; hors périmètre                                                                       |
 | Supabase    | `kraak-prod` — `pwuivkqnmjpxxpppmnvu`, `eu-west-1`                                         | Production ; préserver                                                                                   |
-| Supabase    | `kraak` — `qgttdsnupelohowwkkwb`, `eu-west-3`                                              | Staging préexistant ; conservé, contient des données uniques                                             |
+| Supabase    | `kraak` — `qgttdsnupelohowwkkwb`, `eu-west-3`                                              | Candidate staging ; contient des données uniques                                                         |
 | Supabase    | Métadonnée de branche `12be592f-2804-42de-b54f-c7b87c2aff59`                               | Ancienne branche par défaut ; retirée par désactivation du branching, projet racine et données préservés |
 | Supabase    | Preview PR #735 — `e2ceb604-887d-4c48-aa1c-ca49c1934100`, référence `bougahdeywjzdjlkaaub` | Preview vide créée automatiquement ; exportée puis supprimée, absence vérifiée ; parent préservé         |
 | Supabase    | Organisation `omoaplqfkowknstamhty`                                                        | Partagée ; ne pas supprimer                                                                              |
 | Supabase    | `alex-career-app-staging` — `arlwinwurrbssunnwkrc`                                         | Autre application ; hors périmètre                                                                       |
 | Supabase    | Référence d'assets `fqjltiegiezfetthbags`                                                  | Propriété non établie ; préserver                                                                        |
 | Vercel      | `kraak-consulting.vercel.app`                                                              | Ancien site public encore accessible ; dépendances à établir                                             |
-| GitHub      | Environnement `staging` — `16165118557`                                                    | Environnement préexistant ; conservé, retrait bloqué                                                     |
+| GitHub      | Environnement `staging` — `16165118557`                                                    | Conserver jusqu'à la fin des vérifications                                                               |
 | GitHub      | `Production` — `13987506363`                                                               | Production ; conserver approbation, secrets et politiques                                                |
 | GitHub      | `Preview`, `copilot`, `main - kraak-api-prod`                                              | Usages non entièrement établis ; ne pas supprimer sur leur seul nom                                      |
 
 Les paramètres des quatre services Render ont été consultés : ils référencent
 explicitement `Ange230700/kraak-consulting`. Les deux services production suivent
-`main`, les services staging préexistants suivent `staging`. Le web staging utilise
+`main`, les deux candidats staging suivent `staging`. Le web staging utilise
 encore `build:web:staging` ; le web production utilise `build:web`. Les deux API
 utilisent `apps/api/Dockerfile` et `/health`. Cette association confirme leur
 origine, pas l'absence de dépendances entre environnements.
@@ -327,7 +330,7 @@ Validation locale de la transition :
 - `pnpm test:integration` réussit : 31 scénarios API. Les dépendances métier
   sont simulées ; ce n'est pas une validation des données/RLS de production.
 
-## Coûts et prochaines étapes
+## Coûts et prochaine étape initiale
 
 **Aucune économie réalisée n'est confirmée.** La preview vide créée par la tâche
 a été supprimée et le branching désactivé, mais leur facturation reste à vérifier.
@@ -348,8 +351,7 @@ autre application pour afficher une économie. Les frais Supabase, Vercel,
 domaines et autres intégrations ne sont pas encore attestés.
 Les frais déjà accumulés restent distincts des économies futures.
 
-La configuration validée est fusionnée dans `main`, mais n'est pas attestée
-comme déployée. Prochaine étape : rétablir et valider le site de production,
-obtenir une sauvegarde restaurable et la décision de conservation des données,
-puis reprendre la liste de retrait. Garder l'issue et le Project en cours tant
-que ces barrières restent ouvertes.
+Prochaine étape : fusionner uniquement la configuration validée, établir le
+vrai site de production et le commit livré, obtenir une sauvegarde restaurable
+et la décision de conservation des données, puis reprendre la liste de retrait.
+Garder l'issue et le Project en cours tant que ces barrières restent ouvertes.
