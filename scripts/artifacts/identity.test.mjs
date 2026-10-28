@@ -11,6 +11,10 @@ test('Given des configurations de même contenu When leurs empreintes sont calcu
     stableJson({ a: 'é', b: [1, null, { z: true }] }),
   );
   assert.notEqual(sha256('A'), sha256('B'));
+  assert.equal(
+    stableJson({ '😀': 1, '\uE000': 2 }),
+    '{\n  "\uE000": 2,\n  "😀": 1\n}\n',
+  );
 });
 
 test('Given une destination existante When un fichier est publié Then les octets et l’empreinte sont cohérents', async () => {

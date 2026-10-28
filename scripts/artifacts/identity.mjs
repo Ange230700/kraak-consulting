@@ -14,16 +14,18 @@ export function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 export function stableJson(value) {
-  const sort = (entry) =>
-    Array.isArray(entry)
-      ? entry.map(sort)
-      : entry && typeof entry === 'object'
-        ? Object.fromEntries(
-            Object.keys(entry)
-              .sort()
-              .map((key) => [key, sort(entry[key])]),
+  const sort = (entry) => {
+    if (Array.isArray(entry)) return entry.map(sort);
+    if (entry && typeof entry === 'object')
+      return Object.fromEntries(
+        Object.keys(entry)
+          .sort((left, right) =>
+            Buffer.compare(Buffer.from(left), Buffer.from(right)),
           )
-        : entry;
+          .map((key) => [key, sort(entry[key])]),
+      );
+    return entry;
+  };
   return `${JSON.stringify(sort(value), null, 2)}\n`;
 }
 export async function atomicWrite(destination, data) {
