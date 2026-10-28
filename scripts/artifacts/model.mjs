@@ -62,12 +62,12 @@ export function blockText(token) {
   }
 }
 
-function stripFrontmatter(sourceText) {
+function parseFrontmatter(sourceText) {
   const body = sourceText.replace(/^\uFEFF/, '').replaceAll('\r\n', '\n');
   const lines = body.split('\n');
-  if (lines[0] !== '---') return body;
+  if (lines[0] !== '---') return { body, metadata: '' };
   const end = lines.indexOf('---', 1);
-  if (end === -1) return body;
+  if (end === -1) return { body, metadata: '' };
   const entries = lines
     .slice(1, end)
     .filter((line) => line.trim() && !line.trimStart().startsWith('#'));
@@ -75,9 +75,12 @@ function stripFrontmatter(sourceText) {
     !entries.length ||
     !entries.every((line) => /^[a-zA-Z_][\w-]*:[ \t]+\S.*$/.test(line))
   ) {
-    return body;
+    return { body, metadata: '' };
   }
-  return lines.slice(end + 1).join('\n');
+  return {
+    body: lines.slice(end + 1).join('\n'),
+    metadata: entries.join('\n'),
+  };
 }
 
 function createSections(tokens, title) {
@@ -138,17 +141,12 @@ export function semanticBlocksFromTokens(tokens) {
 }
 
 export function createDocument(sourceText) {
-  const tokens = markdown.lexer(stripFrontmatter(sourceText));
-  const body = stripFrontmatter(sourceText);
-  const frontmatter = sourceText
-    .replace(/^\uFEFF/, '')
-    .replaceAll('\r\n', '\n');
+  const { body, metadata } = parseFrontmatter(sourceText);
+  const tokens = markdown.lexer(body);
   const language =
-    body !== frontmatter
-      ? (frontmatter.match(
-          /^(?:lang|language):\s*['"]?(fr-CI|en-GB|[^\s'"]+)['"]?\s*$/m,
-        )?.[1] ?? 'fr-CI')
-      : 'fr-CI';
+    metadata.match(
+      /^(?:lang|language):[ \t]*['"]?(fr-CI|en-GB|[^\s'"]+)['"]?[ \t]*$/m,
+    )?.[1] ?? 'fr-CI';
   if (!['fr-CI', 'en-GB'].includes(language))
     throw new Error(`Langue non prise en charge : ${language}`);
   const diagrams = [];

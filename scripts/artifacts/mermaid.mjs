@@ -23,6 +23,31 @@ const configuration = Object.freeze({
   },
 });
 
+export function containsMermaidInteraction(definition) {
+  let plain = '';
+  let quote = '';
+  let depth = 0;
+  for (let index = 0; index < definition.length; index += 1) {
+    const character = definition[index];
+    if (quote) {
+      if (character === '\\') index += 1;
+      else if (character === quote) quote = '';
+    } else if (character === '"' || character === '`') {
+      quote = character;
+    } else if (character === '%' && definition[index + 1] === '%') {
+      const end = definition.indexOf('\n', index);
+      index = end < 0 ? definition.length : end - 1;
+    } else if ('[({'.includes(character)) {
+      depth += 1;
+    } else if ('])}'.includes(character)) {
+      depth = Math.max(0, depth - 1);
+    } else if (!depth) plain += character;
+  }
+  return /(?:^|;)[ \t]*click[ \t]+/im.test(
+    plain.replace(/^(?:accTitle|accDescr):.*$/gm, ''),
+  );
+}
+
 function validateSvg(svg) {
   const errors = [];
   const xml = new DOMParser({
@@ -76,7 +101,10 @@ export async function renderDiagrams(document, output) {
     });
     const results = [];
     for (const diagram of document.diagrams) {
-      if (/%%\{|^\s*---|\bclick\s/im.test(diagram.definition))
+      if (
+        /%%\{|^[ \t]*---/m.test(diagram.definition) ||
+        containsMermaidInteraction(diagram.definition)
+      )
         throw new Error(
           `Mermaid ${diagram.id} : configuration et interactions intégrées interdites.`,
         );
@@ -91,12 +119,14 @@ export async function renderDiagrams(document, output) {
         const cached = JSON.parse(await readFile(recordPath, 'utf8'));
         const svg = await readFile(svgPath, 'utf8');
         const png = await readFile(pngPath);
-        validateSvg(svg);
+        const dimensions = validateSvg(svg);
         const info = await sharp(png).metadata();
         if (
           cached.renderHash !== renderHash ||
           cached.svgSha256 !== sha256(svg) ||
           cached.pngSha256 !== sha256(png) ||
+          cached.width !== dimensions.width ||
+          cached.height !== dimensions.height ||
           !info.width ||
           !info.height
         )

@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import { DOMParser } from '@xmldom/xmldom';
 import path from 'node:path';
-import { sha256 } from './identity.mjs';
+import { sha256, stableJson } from './identity.mjs';
 
 export const normalizeText = (text) =>
   text.normalize('NFKC').replaceAll('\u00ad', '').replace(/\s+/gu, '').trim();
@@ -63,7 +63,14 @@ export async function verifyPdf(bytes, document) {
       (block) => block.length > 80,
     )) {
       const normalized = normalizeText(block);
-      if (text.split(normalized).length > expectedText.split(normalized).length)
+      const repeatedHeaders = document.tables.filter(
+        (table) => normalizeText(table[0].join(' ')) === normalized,
+      ).length;
+      const allowedRepeats = (pdf.numPages - 1) * repeatedHeaders;
+      if (
+        text.split(normalized).length >
+        expectedText.split(normalized).length + allowedRepeats
+      )
         throw new Error('PDF : contenu substantiel dupliqué.');
     }
     if (!pdf.numPages || !tagged)
@@ -79,9 +86,14 @@ export async function verifyPdf(bytes, document) {
       throw new Error('PDF : titre incorrect.');
     if (metadata.info.Language !== document.language)
       throw new Error(`PDF : langue incorrecte (${metadata.info.Language}).`);
+    const destinations = await pdf.getDestinations();
     for (const href of document.links) {
       if (href.startsWith('#')) {
-        if (!links.some((link) => link.dest))
+        const anchor = decodeURIComponent(href.slice(1));
+        if (
+          !destinations[anchor] ||
+          !links.some((link) => link.dest === anchor)
+        )
           throw new Error('PDF : lien interne absent.');
       } else if (
         /^https?:/i.test(href) &&
@@ -248,6 +260,20 @@ export async function verifyPptx(bytes, spec) {
     tables += elements(slide, 'tbl').length;
     if (expected.kind === 'table' && !elements(slide, 'tbl').length)
       throw new Error('OOXML : tableau natif absent.');
+    if (expected.kind === 'table') {
+      const nativeTables = elements(slide, 'tbl');
+      const actualRows = elements(nativeTables[0], 'tr').map((row) =>
+        elements(row, 'tc').map((cell) => normalizeText(textContent(cell))),
+      );
+      const expectedRows = expected.rows.map((row) => row.map(normalizeText));
+      if (
+        nativeTables.length !== 1 ||
+        stableJson(actualRows) !== stableJson(expectedRows)
+      )
+        throw new Error(
+          'OOXML : ordre ou multiplicité des cellules du tableau incorrects.',
+        );
+    }
     if (expected.kind === 'image' && !elements(slide, 'pic').length)
       throw new Error('OOXML : image absente.');
     for (const transform of elements(slide, 'xfrm')) {

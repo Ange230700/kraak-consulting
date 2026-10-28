@@ -9,6 +9,84 @@ import { verifyPdf, verifyPptx } from './verify.mjs';
 import { createPresentation } from './presentation.mjs';
 import { renderPdf } from './render.mjs';
 
+test('Given un tableau multipage et plusieurs ancres When le PDF est vérifié Then les en-têtes répétés sont permis et chaque ancre est contrôlée', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'kraak-pdf-table-'));
+  try {
+    const header =
+      'Description détaillée des résultats attendus pour les équipes et les organisations participantes';
+    const source =
+      `# Mission\n\n[Mission](#mission) [Tableau](#tableau)\n\n## Tableau\n\n| ${header} |\n| --- |\n` +
+      Array.from(
+        { length: 90 },
+        (_, i) => `| Résultat attendu numéro ${i + 1} |`,
+      ).join('\n');
+    const document = createDocument(source);
+    const file = path.join(root, 'table.pdf');
+    await renderPdf(document, file, []);
+    const bytes = await readFile(file);
+    const report = await verifyPdf(bytes, document);
+    assert.ok(report.pageCount > 1);
+    await assert.rejects(
+      verifyPdf(bytes, { ...document, links: ['#mission', '#absent'] }),
+      /interne/,
+    );
+    const missingDestination = Buffer.from(
+      bytes.toString('latin1').replaceAll('/Dests', '/NoDst'),
+      'latin1',
+    );
+    await assert.rejects(verifyPdf(missingDestination, document), /interne/);
+    const wrongTarget = Buffer.from(
+      bytes.toString('latin1').replace('/Dest /tableau', '/Dest /mission'),
+      'latin1',
+    );
+    await assert.rejects(verifyPdf(wrongTarget, document), /interne/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('Given un tableau natif avec valeurs répétées When les cellules ou lignes sont altérées Then leur ordre et multiplicité sont vérifiés', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'kraak-pptx-table-'));
+  try {
+    const document = createDocument(
+      '# Mission\n\n| Offre | Public |\n| --- | --- |\n| Conseil | Équipes |\n| Conseil | Équipes |',
+    );
+    const file = path.join(root, 'table.pptx');
+    await exportDocument(document, { format: 'pptx', destination: file });
+    const bytes = await readFile(file);
+    const spec = createPresentation(document);
+    const index = spec.slides.findIndex((s) => s.kind === 'table') + 1;
+    const part = `ppt/slides/slide${index}.xml`;
+    for (const change of [
+      (xml) =>
+        xml
+          .replaceAll('Conseil', 'TEMP')
+          .replaceAll('Équipes', 'Conseil')
+          .replaceAll('TEMP', 'Équipes'),
+      (xml) => {
+        let removed = false;
+        return xml.replace(/<a:tr\b[^>]*>.*?<\/a:tr>/gs, (row) => {
+          if (!removed && row.includes('Conseil')) {
+            removed = true;
+            return '';
+          }
+          return row;
+        });
+      },
+      (xml) => xml.replace(/<a:tbl>.*?<\/a:tbl>/s, '$&$&'),
+    ]) {
+      const zip = await JSZip.loadAsync(bytes);
+      zip.file(part, change(await zip.file(part).async('string')));
+      await assert.rejects(
+        verifyPptx(await zip.generateAsync({ type: 'nodebuffer' }), spec),
+        /tableau|contenu/,
+      );
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('Given un PDF valide When sa structure ou les attentes sont altérées Then chaque contrôle sémantique échoue explicitement', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'kraak-pdf-negative-'));
   try {

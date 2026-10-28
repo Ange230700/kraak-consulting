@@ -4,8 +4,26 @@ import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { createDocument } from './model.mjs';
-import { renderDiagrams } from './mermaid.mjs';
+import { renderDiagrams, containsMermaidInteraction } from './mermaid.mjs';
 import { chromium } from 'playwright';
+
+test('Given des mots click dans des textes et de vraies directives When les interactions sont détectées Then seules les commandes exécutables sont rejetées', () => {
+  for (const definition of [
+    'graph TD; A[Click here]-->B[Done]',
+    'graph TD; A["; click A \\"example\\""]-->B',
+    'graph TD; A[`; click A example`]-->B',
+    'graph TD\n%% click A example\nA((Click here))-->B{Done}',
+    'graph TD\n%% click A example',
+    'graph TD\naccDescr: click here to continue\naccTitle: click here\nA-->B',
+  ])
+    assert.equal(containsMermaidInteraction(definition), false, definition);
+  for (const definition of [
+    'graph TD\nclick A "example"',
+    'graph TD; click A callback',
+    ')\nclick A callback',
+  ])
+    assert.equal(containsMermaidInteraction(definition), true, definition);
+});
 
 test('Given un navigateur simulé When un SVG invalide ou une directive est produit Then le moteur refuse le résultat sans publier de cache valide', async (context) => {
   const directory = await mkdtemp(
@@ -80,7 +98,7 @@ test('Given un diagramme français When deux rendus et un cache corrompu sont tr
   const directory = await mkdtemp(path.join(os.tmpdir(), 'kraak-mermaid-'));
   try {
     const document = createDocument(
-      '```mermaid\ngraph TD\naccTitle: Équipe\naccDescr: Formation puis action.\nA[Équipe]-->B[Action]\n```',
+      '```mermaid\ngraph TD\naccTitle: Équipe\naccDescr: Formation puis action.\nA[Click here]-->B[Action]\n```',
     );
     const [first] = await renderDiagrams(document, path.join(directory, 'one'));
     const [second] = await renderDiagrams(
@@ -96,6 +114,24 @@ test('Given un diagramme français When deux rendus et un cache corrompu sont tr
       path.join(directory, 'one'),
     );
     assert.deepEqual(await readFile(repaired.svgPath), original);
+    const cached = JSON.parse(
+      await readFile(
+        path.join(directory, 'one', `${first.renderHash}.json`),
+        'utf8',
+      ),
+    );
+    for (const dimension of ['width', 'height']) {
+      await writeFile(
+        path.join(directory, 'one', `${first.renderHash}.json`),
+        JSON.stringify({ ...cached, [dimension]: first[dimension] + 30 }),
+      );
+      assert.equal(
+        (await renderDiagrams(document, path.join(directory, 'one')))[0][
+          dimension
+        ],
+        first[dimension],
+      );
+    }
     assert.ok(first.width > 0 && first.height > 0);
     await assert.rejects(
       renderDiagrams(

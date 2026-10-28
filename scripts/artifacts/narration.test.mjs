@@ -3,6 +3,13 @@ import { test } from 'node:test';
 import { createDocument } from './model.mjs';
 import { renderNarration, chunkNarration } from './narration.mjs';
 
+test('Given un tableau sans données When la narration est produite Then les en-têtes canoniques restent audibles', () => {
+  assert.equal(
+    renderNarration(createDocument('| Offre | Public |\n| --- | --- |')),
+    'Offre; Public\n',
+  );
+});
+
 test('Given un nœud texte sans enveloppe When la narration est produite Then le contenu est conservé', () => {
   assert.equal(
     renderNarration({
