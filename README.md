@@ -272,7 +272,7 @@ changement.
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | [`docs/engineering/CONTRIBUTION_WORKFLOW.md`](docs/engineering/CONTRIBUTION_WORKFLOW.md) | Workflow Git, conventions de commits, hooks, PR    |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)                                                     | Décisions d'architecture validées                  |
-| [`DESIGN.md`](DESIGN.md)                                                                 | Principes de design actifs                        |
+| [`DESIGN.md`](DESIGN.md)                                                                 | Principes de design actifs                         |
 | [`AGENTS.md`](AGENTS.md)                                                                 | Règles de fonctionnement pour les assistants IA    |
 | [`docs/operations/ENVIRONMENTS.md`](docs/operations/ENVIRONMENTS.md)                     | Variables d'environnement                          |
 | [`docs/operations/SUPABASE_AUTH.md`](docs/operations/SUPABASE_AUTH.md)                   | Configuration Auth Supabase du MVP                 |
