@@ -664,6 +664,13 @@ Pour tout deck Marp dans `docs/reference/*.marp.md` qui contient des blocs Merma
 Cette règle est obligatoire pour chaque export de deck afin que les sorties de
 présentation restent déterministes d’un environnement à l’autre.
 
+Pour les documents Markdown ordinaires, `pnpm docs:export` rend automatiquement
+les blocs Mermaid dans une représentation dérivée, sans modifier la source.
+Cette automatisation ne remplace pas la règle Marp ci-dessus. Fournir `accDescr`
+pour la narration et vérifier les dérivés avec `pnpm docs:verify` ; la QA visuelle
+`pnpm docs:visual-qa` complète les contrôles structurels. Les sorties restent dans
+`.artifacts/`. Voir `docs/engineering/DOCUMENT_EXPORTS.md`.
+
 ---
 
 ## Définition De Terminé

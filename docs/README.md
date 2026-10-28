@@ -85,6 +85,7 @@ document obsolète dans le même changement.
 | `decisions/ARC-19-i18n-localization-strategy.md`                       | active | true             | ARC-19 - Stratégie d'internationalisation français / anglais              |
 | `decisions/ARC-20-runtime-i18n-library.md`                             | active | true             | ARC-20 - Bibliothèque runtime i18n client                                 |
 | `decisions/ARC-22-production-only-main.md`                             | active | true             | ARC-22 — Production unique et branche main                                |
+| `engineering/ARTIFACT_ENGINE_AUDIT.md`                                 | active | true             | Audit du moteur documentaire                                              |
 | `engineering/CHANGESETS.md`                                            | active | true             | CHANGESETS — Versionnage et release                                       |
 | `engineering/CONTRIBUTION_WORKFLOW.md`                                 | active | true             | Guide de contribution                                                     |
 | `engineering/DOCUMENT_EXPORTS.md`                                      | active | true             | Exports documentaires                                                     |
