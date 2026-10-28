@@ -202,6 +202,9 @@ Pour dériver un document Markdown en PDF, PPTX éditable ou TXT de préparation
 audio : `pnpm docs:export --source README.md --format all`. Les prérequis, les
 sorties locales et les limites sont décrits dans le
 [guide des exports documentaires](docs/engineering/DOCUMENT_EXPORTS.md).
+Le mode `--format tts` génère une narration dédiée à ElevenLabs sans appel API.
+`pnpm docs:plan`, `pnpm docs:verify` et `pnpm docs:visual-qa` permettent de
+planifier les sorties, contrôler leur provenance et produire les preuves visuelles.
 
 | Commande                  | Description                                                    |
 | ------------------------- | -------------------------------------------------------------- |
