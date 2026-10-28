@@ -4,20 +4,6 @@ import {
   type BootstrapContext,
 } from '@angular/platform-browser';
 
-vi.mock('./environments/environment', async () => {
-  const { default: productionEndpoints } = await import(
-    '../../shared/production-endpoints.json'
-  );
-
-  return {
-    environment: {
-      production: true,
-      apiBaseUrl: productionEndpoints.production.api,
-      siteUrl: productionEndpoints.production.web,
-    },
-  };
-});
-
 vi.mock('@angular/platform-browser', async (original) => ({
   ...(await original<typeof import('@angular/platform-browser')>()),
   bootstrapApplication: vi.fn().mockResolvedValue({}),
@@ -81,10 +67,35 @@ describe('Démarrage SSR', { timeout: 60_000 }, () => {
     await import('./main.server');
     expect(globalThis.__KRAAK_RUNTIME_CONFIG__).toEqual({
       enableParticipantArea: true,
-      apiBaseUrl: 'https://kraak-api-prod.onrender.com',
-      siteUrl: 'https://kraak-web-prod.onrender.com',
+      apiBaseUrl: undefined,
+      siteUrl: undefined,
       supabaseUrl: undefined,
       supabasePublishableKey: undefined,
     });
+  });
+
+  it('Given un environnement de production sans URL serveur, When le runtime est hydraté, Then les URL de production sont utilisées', async () => {
+    vi.stubGlobal('__KRAAK_RUNTIME_CONFIG__', undefined);
+    for (const key of ['CLIENT_API_BASE_URL', 'CLIENT_SITE_URL']) {
+      vi.stubEnv(key, undefined);
+    }
+
+    vi.resetModules();
+    const { environment } = await import('./environments/environment');
+    const production = environment.production;
+    environment.production = true;
+
+    try {
+      await import('./main.server');
+      expect(globalThis.__KRAAK_RUNTIME_CONFIG__).toEqual({
+        enableParticipantArea: true,
+        apiBaseUrl: environment.apiBaseUrl,
+        siteUrl: environment.siteUrl,
+        supabaseUrl: undefined,
+        supabasePublishableKey: undefined,
+      });
+    } finally {
+      environment.production = production;
+    }
   });
 });

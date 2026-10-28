@@ -119,8 +119,11 @@ test('Given le modèle de release par tag, When les workflows actifs sont inspec
     2,
   );
   assert.equal(
-    [...workflow.matchAll(/SHA: \$\{\{ needs\.validate-tag\.outputs\.sha \}\}/gu)]
-      .length,
+    [
+      ...workflow.matchAll(
+        /SHA: \$\{\{ needs\.validate-tag\.outputs\.sha \}\}/gu,
+      ),
+    ].length,
     2,
   );
   assert.match(
