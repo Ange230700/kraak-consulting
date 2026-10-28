@@ -78,6 +78,13 @@ localiser implicitement les routes privées, admin ou mobiles.
 
 ## Garde-fous
 
+Le moteur documentaire local reste sous `scripts/artifacts/`, derrière
+`pnpm docs:export`. Un modèle Marked partagé alimente TXT/TTS, PDF Chromium et
+PPTX natif ; Mermaid partage le navigateur Playwright. La vérification PDF.js /
+OOXML est indépendante du rendu, et LibreOffice reste optionnel pour la QA
+visuelle. Aucun service de production n'intervient. Voir
+[les exports documentaires](docs/engineering/DOCUMENT_EXPORTS.md).
+
 - Ne pas introduire d'ORM par défaut. Toute décision d'ORM doit être documentée
   dans `ARCHITECTURE.md` et `docs/decisions/` avant ajout.
 - Ne pas ajouter de nouvelle pile frontend hors Angular sans ADR accepté.

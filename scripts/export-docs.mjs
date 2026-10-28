@@ -1,446 +1,223 @@
-import { createHash, randomUUID } from 'node:crypto';
-import {
-  mkdir,
-  readFile,
-  realpath,
-  rename,
-  rm,
-  writeFile,
-} from 'node:fs/promises';
+import { readFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { Marked } from 'marked';
-import { decodeHTML } from 'entities';
+import { createDocument } from './artifacts/model.mjs';
+import {
+  exportDocument,
+  verifyArtifact,
+  supportedFormats,
+  rendererIdentity,
+} from './artifacts/engine.mjs';
+import { atomicWrite, stableJson, sha256 } from './artifacts/identity.mjs';
+import { directoryTransaction } from './artifacts/transaction.mjs';
+import { chunkNarration, renderNarration } from './artifacts/narration.mjs';
+export { createDocument, paginateSections } from './artifacts/model.mjs';
+export { exportDocument } from './artifacts/engine.mjs';
 
-import { createHeadingSlug } from './generate-markdown-tocs.mjs';
-
-const formats = new Set(['pdf', 'pptx', 'txt', 'all']);
-const markdown = new Marked({ gfm: true });
+const help = `Usage : pnpm docs:export --source document.md --format txt|tts|pdf|pptx|all
+  [--output dossier] [--operation generate|plan|verify|visual-qa|provenance]
+  [--chunk-size 4000]
+--help : afficher cette aide ; --dry-run : planifier sans écrire.
+all conserve les trois exports historiques ; demander tts séparément.
+Les erreurs produisent le code de sortie 1. Aucun service distant requis.`;
 
 export function parseArguments(args) {
+  if (args.length === 1 && args[0] === '--help') return { help: true };
   const options = {};
-  for (let index = 0; index < args.length; index += 2) {
+  for (let index = 0; index < args.length; index += 1) {
     const name = args[index]?.replace(/^--/, '');
-    if (!['source', 'format', 'output'].includes(name)) {
+    if (name === 'dry-run') {
+      options.operation = 'plan';
+      continue;
+    }
+    if (
+      !['source', 'format', 'output', 'operation', 'chunk-size'].includes(name)
+    )
       throw new Error(`Option inconnue : ${args[index]}`);
-    }
-    const value = args[index + 1];
-    if (!value || value.startsWith('--') || options[name]) {
-      throw new Error(`Valeur manquante ou option répétée : ${args[index]}`);
-    }
+    const value = args[++index];
+    if (!value || value.startsWith('--') || options[name])
+      throw new Error(`Valeur manquante ou option répétée : --${name}`);
     options[name] = value;
   }
-  if (!options.source || !formats.has(options.format)) {
+  if (!options.source || ![...supportedFormats, 'all'].includes(options.format))
+    throw new Error(help);
+  if (
+    options.operation &&
+    !['generate', 'plan', 'verify', 'visual-qa', 'provenance'].includes(
+      options.operation,
+    )
+  )
+    throw new Error('Opération inconnue.');
+  if (
+    options['chunk-size'] &&
+    (!Number.isInteger(Number(options['chunk-size'])) ||
+      Number(options['chunk-size']) < 1 ||
+      options.format !== 'tts')
+  )
     throw new Error(
-      'Usage : pnpm docs:export --source README.md --format pdf|pptx|txt|all [--output dossier]',
+      'La taille de segment exige un entier positif et le format tts.',
     );
-  }
   return options;
 }
 
-function inlineText(tokens = []) {
-  return tokens
-    .map((token) => {
-      if (token.type === 'html') return '';
-      if (token.type === 'br') return '\n';
-      if (token.type === 'image')
-        return `Illustration : ${decodeHTML(token.text)}`;
-      if (token.tokens) return inlineText(token.tokens);
-      return token.type === 'codespan'
-        ? token.text
-        : decodeHTML(token.text ?? '');
-    })
-    .join('');
-}
-
-function blockText(token) {
-  switch (token.type) {
-    case 'space':
-    case 'html':
-    case 'hr':
-    case 'def':
-      return '';
-    case 'code': {
-      const label = token.lang ? `Code (${token.lang})` : 'Code';
-      return `${label} :\n${token.text}`;
-    }
-    case 'list':
-      return token.items
-        .map((item, index) => {
-          const marker = token.ordered
-            ? `${Number(token.start) + index}.`
-            : '-';
-          let checked = '';
-          if (item.checked !== undefined)
-            checked = item.checked ? '[x] ' : '[ ] ';
-          return `${marker} ${checked}${item.tokens.map(blockText).filter(Boolean).join('\n')}`;
-        })
-        .join('\n');
-    case 'blockquote':
-      return token.tokens.map(blockText).filter(Boolean).join('\n\n');
-    case 'table': {
-      const headers = token.header.map((cell) => inlineText(cell.tokens));
-      if (!token.rows.length) return headers.join(' / ');
-      return token.rows
-        .map((row) =>
-          row
-            .map(
-              (cell, index) => `${headers[index]} : ${inlineText(cell.tokens)}`,
-            )
-            .join(' ; '),
-        )
-        .join('\n');
-    }
-    default:
-      return inlineText(token.tokens ?? [token]);
-  }
-}
-
-function stripFrontmatter(sourceText) {
-  const body = sourceText.replace(/^\uFEFF/, '').replaceAll('\r\n', '\n');
-  const lines = body.split('\n');
-  if (lines[0] !== '---') return body;
-  const end = lines.indexOf('---', 1);
-  if (end === -1) return body;
-  const entries = lines
-    .slice(1, end)
-    .filter((line) => line.trim() && !line.trimStart().startsWith('#'));
-  if (
-    !entries.length ||
-    !entries.every((line) => /^[a-zA-Z_][\w-]*:[ \t]+\S.*$/.test(line))
-  ) {
-    return body;
-  }
-  return lines.slice(end + 1).join('\n');
-}
-
-function createSections(tokens, title) {
-  const sections = [];
-  let section;
-  for (const token of tokens) {
-    if (token.type === 'heading') {
-      if (section) sections.push(section);
-      section = { title: inlineText(token.tokens), text: '' };
-    } else {
-      const text = blockText(token);
-      if (text) {
-        section ??= { title, text: '' };
-        section.text += `${section.text ? '\n\n' : ''}${text}`;
-      }
-    }
-  }
-  if (section) sections.push(section);
-  return sections;
-}
-
-function containsMermaidBlock(tokens) {
-  return tokens.some((token) => {
-    if (token.type === 'code' && token.lang?.split(/\s/)[0] === 'mermaid') {
-      return true;
-    }
-    if (token.tokens && containsMermaidBlock(token.tokens)) {
-      return true;
-    }
-    return (
-      token.type === 'list' &&
-      token.items.some((item) => containsMermaidBlock(item.tokens))
-    );
-  });
-}
-
-export function createDocument(sourceText) {
-  const tokens = markdown.lexer(stripFrontmatter(sourceText));
-  const titleToken = tokens.find((token) => token.type === 'heading');
-  const title = titleToken ? inlineText(titleToken.tokens) : 'Document KRAAK';
-  const hasMermaid = containsMermaidBlock(tokens);
-  const text = `${tokens.map(blockText).filter(Boolean).join('\n\n')}\n`;
-  const images = [];
-  const usedSlugs = new Set();
-  const renderer = new Marked({
-    gfm: true,
-    renderer: {
-      html: () => '',
-      heading({ depth, text, tokens }) {
-        const id = createHeadingSlug(text, usedSlugs);
-        return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
-      },
-      image({ href, text }) {
-        const title = decodeHTML(text) || 'Illustration';
-        images.push({ href, title });
-        return `<img data-export-image="${images.length - 1}" alt="${escapeHtml(title)}">`;
-      },
-    },
-  });
-  return {
-    title,
-    text,
-    html: renderer.parser(tokens),
-    images,
-    sections: createSections(tokens, title),
-    hasMermaid,
-    sourceSha256: checksum(sourceText),
-  };
-}
-
-function wrapParagraph(paragraph, width) {
-  const lines = [];
-  if (!paragraph.trim()) return [''];
-  let line = '';
-  for (const word of paragraph.trim().split(/\s+/)) {
-    if (line && line.length + word.length + 1 > width) {
-      lines.push(line);
-      line = '';
-    }
-    let remainder = word;
-    while (remainder.length > width) {
-      lines.push(remainder.slice(0, width));
-      remainder = remainder.slice(width);
-    }
-    line += `${line ? ' ' : ''}${remainder}`;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
-export function paginateSections(sections) {
-  return sections.flatMap((section) => {
-    const lines = section.text
-      .split('\n')
-      .flatMap((paragraph) => wrapParagraph(paragraph, 80));
-    const pages = [];
-    for (let index = 0; index < Math.max(lines.length, 1); index += 12) {
-      pages.push({
-        title: section.title,
-        continuation: index > 0,
-        lines: lines.slice(index, index + 12),
-      });
-    }
-    return pages;
-  });
-}
-
-function escapeHtml(value) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('"', '&quot;');
-}
-
-async function loadImages(document, source) {
-  if (!document.images.length) return [];
-  if (!source)
-    throw new Error('Le chemin source est requis pour les illustrations.');
-  const root = await realpath(process.cwd());
-  const { default: sharp } = await import('sharp');
-  return Promise.all(
-    document.images.map(async (image) => {
-      if (/^[a-z][a-z\d+.-]*:|^[/\\]{2}/i.test(image.href)) {
-        throw new Error(`Illustration non locale interdite : ${image.href}`);
-      }
-      const imagePath = await realpath(
-        path.resolve(path.dirname(source), decodeURIComponent(image.href)),
-      );
-      const relative = path.relative(root, imagePath);
-      if (
-        relative === '..' ||
-        relative.startsWith(`..${path.sep}`) ||
-        path.isAbsolute(relative)
-      ) {
-        throw new Error(`Illustration hors du dépôt : ${image.href}`);
-      }
-      const { data, info } = await sharp(await readFile(imagePath))
-        .png()
-        .toBuffer({ resolveWithObject: true });
-      return {
-        ...image,
-        data: `data:image/png;base64,${data.toString('base64')}`,
-        width: info.width,
-        height: info.height,
-      };
-    }),
-  );
-}
-
-async function renderPdf(document, destination, images) {
-  const { chromium } = await import('playwright');
-  const browser = await chromium.launch();
-  try {
-    const page = await browser.newPage();
-    await page.route('**/*', (route) => route.abort());
-    const html = document.html.replace(
-      /<img data-export-image="(\d+)"[^>]*>/g,
-      (_, index) => {
-        const image = images[Number(index)];
-        return `<figure><img src="${image.data}" alt="${escapeHtml(image.title)}"><figcaption>${escapeHtml(image.title)}</figcaption></figure>`;
-      },
-    );
-    await page.setContent(
-      `<!doctype html><html lang="fr"><head>
-      <meta charset="utf-8">
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
-      <title>${escapeHtml(document.title)}</title>
-      <style>
-        @page { size: A4; margin: 20mm; }
-        body { font: 11pt/1.5 Arial, sans-serif; color: #182b3a; }
-        h1, h2, h3 { break-after: avoid; line-height: 1.2; }
-        h1 { color: #173e50; } a { color: #173e50; overflow-wrap: anywhere; }
-        pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: #f2f5f6; }
-        table { border-collapse: collapse; width: 100%; }
-        td, th { border: 1px solid #aab6bd; padding: 6px; overflow-wrap: anywhere; }
-        tr { break-inside: avoid; } blockquote { border-left: 3px solid #aab6bd; padding-left: 12px; }
-        figure { break-inside: avoid; margin: 12px 0; } img { max-width: 100%; max-height: 230mm; }
-      </style></head><body>${html}</body></html>`,
-      { waitUntil: 'load' },
-    );
-    await page.pdf({ path: destination, printBackground: true, tagged: true });
-  } finally {
-    await browser.close();
-  }
-}
-
-async function renderPptx(document, destination, images) {
-  const { default: PptxGenJS } = await import('pptxgenjs');
-  const presentation = new PptxGenJS();
-  presentation.layout = 'LAYOUT_WIDE';
-  presentation.author = 'KRAAK';
-  presentation.subject = 'Export documentaire';
-  presentation.title = document.title;
-  presentation.lang = 'fr-FR';
-  const pages = paginateSections([
-    { title: document.title, text: 'KRAAK — Export documentaire' },
-    ...document.sections,
-  ]);
-  for (const [index, page] of pages.entries()) {
-    const slide = presentation.addSlide();
-    slide.background = { color: 'FFFFFF' };
-    slide.addText(`${page.title}${page.continuation ? ' (suite)' : ''}`, {
-      x: 0.6,
-      y: 0.35,
-      w: 12.1,
-      h: 1.1,
-      fontFace: 'Arial',
-      fontSize: 26,
-      bold: true,
-      color: '173E50',
-      breakLine: false,
-      fit: 'shrink',
-    });
-    slide.addText(page.lines.join('\n'), {
-      x: 0.6,
-      y: 1.6,
-      w: 12.1,
-      h: 5,
-      fontFace: 'Arial',
-      fontSize: 18,
-      color: '182B3A',
-      margin: 0,
-      breakLine: false,
-      fit: 'shrink',
-    });
-    slide.addText(`KRAAK · ${index + 1} / ${pages.length}`, {
-      x: 0.6,
-      y: 7,
-      w: 12.1,
-      h: 0.2,
-      fontSize: 10,
-      color: '526774',
-    });
-    slide.addNotes(`${page.title}\n\n${page.lines.join('\n')}`);
-  }
-  for (const image of images) {
-    const slide = presentation.addSlide();
-    slide.addText(image.title, {
-      x: 0.6,
-      y: 0.3,
-      w: 12.1,
-      h: 0.8,
-      fontSize: 24,
-      fit: 'shrink',
-    });
-    const scale = Math.min(12.1 / image.width, 5.8 / image.height);
-    const w = image.width * scale;
-    const h = image.height * scale;
-    slide.addImage({
-      data: image.data,
-      x: (13.333 - w) / 2,
-      y: 1.2 + (5.8 - h) / 2,
-      w,
-      h,
-    });
-    slide.addNotes(image.title);
-  }
-  await presentation.writeFile({ fileName: destination });
-}
-
-function checksum(value) {
-  return createHash('sha256').update(value).digest('hex');
-}
-
-export async function exportDocument(
-  document,
-  { format, destination, source },
-) {
-  if (!formats.has(format) || format === 'all') {
-    throw new Error(`Format non pris en charge : ${format}`);
-  }
-  if (format !== 'txt' && document.hasMermaid) {
-    throw new Error(
-      'Mermaid brut détecté : rendre les diagrammes en images et remplacer les blocs avant un export PDF/PPTX.',
-    );
-  }
-  await mkdir(path.dirname(destination), { recursive: true });
-  const temporary = `${destination}.${randomUUID()}.tmp.${format}`;
-  try {
-    const images = format === 'txt' ? [] : await loadImages(document, source);
-    const renderers = {
-      txt: () => writeFile(temporary, document.text, 'utf8'),
-      pdf: () => renderPdf(document, temporary, images),
-      pptx: () => renderPptx(document, temporary, images),
-    };
-    await renderers[format]();
-    const artifact = await readFile(temporary);
-    await rename(temporary, destination);
-    await writeFile(
-      `${destination}.json`,
-      `${JSON.stringify(
-        {
-          source: source ? path.relative(process.cwd(), source) : null,
-          sourceSha256: document.sourceSha256,
-          artifactSha256: checksum(artifact),
-          format,
-          generatedAt: new Date().toISOString(),
-          generator: 'scripts/export-docs.mjs',
-        },
-        null,
-        2,
-      )}\n`,
-    );
-  } finally {
-    await rm(temporary, { force: true });
-  }
-}
-
-async function main(args) {
+export async function main(args, { visualRenderer } = {}) {
   const options = parseArguments(args);
-  const source = path.resolve(options.source);
-  if (path.extname(source).toLowerCase() !== '.md') {
-    throw new Error('La source doit être un fichier Markdown (.md).');
+  if (options.help) {
+    console.info(help);
+    return;
   }
+  const source = path.resolve(options.source);
+  if (path.extname(source).toLowerCase() !== '.md')
+    throw new Error('La source doit être un fichier Markdown (.md).');
   const document = createDocument(await readFile(source, 'utf8'));
   const name = path.parse(source).name;
   const output = path.resolve(options.output ?? '.artifacts/docs', name);
-  const requestedFormats =
+  const sourceWithinOutput = path.relative(output, source);
+  if (
+    !sourceWithinOutput.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(sourceWithinOutput)
+  )
+    throw new Error(
+      'Le dossier de sortie ne doit pas contenir la source canonique.',
+    );
+  const formats =
     options.format === 'all' ? ['txt', 'pdf', 'pptx'] : [options.format];
-  const destinations = await Promise.all(
-    requestedFormats.map(async (format) => {
-      const destination = path.join(output, `${name}.${format}`);
-      await exportDocument(document, { format, source, destination });
-      return destination;
-    }),
-  );
-  for (const destination of destinations) {
-    console.info(`[docs:export] ${destination}`);
+  const filename = (format) =>
+    `${name}.${format === 'tts' ? 'tts.txt' : format}`;
+  const operation = options.operation ?? 'generate';
+  if (operation === 'plan') {
+    console.info(
+      stableJson({
+        source,
+        sourceSha256: document.sourceSha256,
+        language: document.language,
+        diagrams: document.diagrams.length,
+        output,
+        formats,
+        renderer: await rendererIdentity(),
+      }),
+    );
+    return;
   }
+  if (operation === 'provenance') {
+    for (const format of formats)
+      console.info(
+        await readFile(path.join(output, `${filename(format)}.json`), 'utf8'),
+      );
+    return;
+  }
+  if (operation === 'verify' || operation === 'visual-qa') {
+    for (const format of formats) {
+      if (operation === 'visual-qa' && !['pdf', 'pptx'].includes(format))
+        continue;
+      const destination = path.join(output, filename(format));
+      const report = await verifyArtifact(document, {
+        format,
+        destination,
+        source,
+      });
+      if (operation === 'visual-qa') {
+        const { visualQa } = await import('./artifacts/visual-qa.mjs');
+        const spec =
+          format === 'pptx'
+            ? JSON.parse(
+                await readFile(path.join(output, 'presentation.json'), 'utf8'),
+              )
+            : undefined;
+        if (spec) {
+          const { sha256: identity, ...content } = spec;
+          if (
+            identity !== report.specSha256 ||
+            sha256(stableJson(content)) !== identity
+          )
+            throw new Error('Spécification de présentation obsolète.');
+        }
+        await directoryTransaction(
+          path.join(output, 'visual-qa', format),
+          (directory) =>
+            (visualRenderer ?? visualQa)({
+              destination,
+              format,
+              output: directory,
+              spec,
+            }),
+          { preserveFailure: true, copyExisting: false },
+        );
+      } else
+        await atomicWrite(
+          path.join(output, 'verification', `${format}.json`),
+          stableJson(report),
+        );
+      console.info(`[docs:${operation}] ${destination}`);
+    }
+    return;
+  }
+  await directoryTransaction(output, async (directory) => {
+    if (formats.includes('tts'))
+      await rm(path.join(directory, 'narration'), {
+        recursive: true,
+        force: true,
+      });
+    const records = [];
+    for (const format of formats)
+      records.push(
+        await exportDocument(document, {
+          format,
+          source,
+          destination: path.join(directory, filename(format)),
+        }),
+      );
+    if (options['chunk-size']) {
+      const chunks = chunkNarration(
+        renderNarration(document),
+        Number(options['chunk-size']),
+      );
+      const chunking = {
+        maximum: Number(options['chunk-size']),
+        chunks: chunks.map((chunk, index) => ({
+          file: `${String(index + 1).padStart(3, '0')}.txt`,
+          sha256: sha256(`${chunk}\n`),
+        })),
+      };
+      for (const [index, chunk] of chunks.entries())
+        await atomicWrite(
+          path.join(
+            directory,
+            'narration',
+            `${String(index + 1).padStart(3, '0')}.txt`,
+          ),
+          `${chunk}\n`,
+        );
+      await atomicWrite(
+        path.join(directory, 'narration', 'manifest.json'),
+        stableJson({
+          sourceSha256: document.sourceSha256,
+          count: chunks.length,
+          maximum: Number(options['chunk-size']),
+          chunks: chunking.chunks,
+          oversizedParagraphs: chunks.filter(
+            (chunk) => chunk.length > Number(options['chunk-size']),
+          ).length,
+        }),
+      );
+      records[0].chunking = chunking;
+      await atomicWrite(
+        path.join(directory, `${filename('tts')}.json`),
+        stableJson(records[0]),
+      );
+    }
+    await atomicWrite(
+      path.join(directory, 'manifest.json'),
+      stableJson({
+        schemaVersion: 1,
+        source: path.relative(process.cwd(), source).replaceAll('\\', '/'),
+        sourceSha256: document.sourceSha256,
+        outputs: records,
+      }),
+    );
+  });
+  for (const format of formats)
+    console.info(`[docs:export] ${path.join(output, filename(format))}`);
 }
 
 if (
