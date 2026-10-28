@@ -54,6 +54,7 @@ export async function renderDiagrams(document, output) {
   const browser = await chromium.launch();
   const renderer = {
     engineVersion: renderSpec.version,
+    svgNormalizationVersion: 1,
     sharp: sharp.versions,
     mermaid: renderSpec.mermaid,
     playwright: require('playwright/package.json').version,
@@ -131,6 +132,7 @@ export async function renderDiagrams(document, output) {
             cause: error,
           });
         }
+        svg = svg.replace('<svg ', '<svg xml:space="preserve" ');
         const dimensions = validateSvg(svg);
         const png = await sharp(Buffer.from(svg)).png().toBuffer();
         record = {
