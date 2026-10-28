@@ -114,6 +114,8 @@ configuration intégrée ou directives `click`. Fournir le type de diagramme ava
 contenu, la configuration, les versions du moteur/navigateur et la plateforme.
 Les empreintes, le XML SVG et les dimensions sont contrôlés avant réutilisation.
 Un cache incomplet ou corrompu est régénéré avec une trace de diagnostic.
+Les dimensions enregistrées doivent correspondre au SVG. Les commandes Mermaid
+interactives sont distinguées des mots présents dans les libellés et descriptions.
 La normalisation SVG versionnée préserve les espaces entre mots lors de la
 conversion PNG. Les diagrammes des listes imbriquées deviennent aussi des figures
 dans la présentation dérivée.
@@ -145,7 +147,10 @@ ont leurs propres slides après le contenu.
 
 JSZip et xmldom contrôlent CRC, XML, relations internes, ressources orphelines,
 ordre et nombre de slides, texte éditable, tableaux, images, notes et limites
-physiques des objets. Les collisions et débordements internes de zones de texte
+physiques des objets. Les lignes et cellules des tableaux sont comparées dans
+l'ordre, avec leur multiplicité. Les PDF contrôlent chaque destination d'ancre
+et bornent les répétitions d'en-têtes de tableaux par le nombre de pages.
+Les collisions et débordements internes de zones de texte
 ne sont pas entièrement démontrables par OOXML ; la QA visuelle complète ce contrôle.
 
 ## Provenance et publication

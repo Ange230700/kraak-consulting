@@ -56,6 +56,29 @@ test('Given des sources bilingues illustrées When deux exports réels sont prod
         records.diagrams = pdfRecord.resources
           .filter((resource) => resource.id)
           .map((resource) => resource.svgSha256);
+        const provenancePath = path.join(
+          directory,
+          `document ${language}.pdf.json`,
+        );
+        for (const resources of [
+          [],
+          [...pdfRecord.resources, ...pdfRecord.resources],
+          [...pdfRecord.resources, { title: 'Orpheline' }],
+        ]) {
+          await writeFile(
+            provenancePath,
+            JSON.stringify({ ...pdfRecord, resources }),
+          );
+          await assert.rejects(
+            verifyArtifact(createDocument(await readFile(source, 'utf8')), {
+              source,
+              destination: path.join(directory, `document ${language}.pdf`),
+              format: 'pdf',
+            }),
+            /ressources|diagrammes/,
+          );
+        }
+        await writeFile(provenancePath, JSON.stringify(pdfRecord));
         snapshots.push(records);
       }
       assert.equal(snapshots[0].txt, snapshots[1].txt);

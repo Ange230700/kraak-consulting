@@ -166,6 +166,19 @@ export async function verifyArtifact(
   const localImages = ['pdf', 'pptx'].includes(format)
     ? await loadImages(document, source)
     : [];
+  if (['pdf', 'pptx'].includes(format)) {
+    const expected = document.diagrams.map((diagram) => diagram.id);
+    const actual = record.resources
+      .filter((resource) => resource.id)
+      .map((resource) => resource.id);
+    if (
+      stableJson(expected) !== stableJson(actual) ||
+      record.resources.length !== localImages.length + expected.length
+    )
+      throw new Error(
+        'Provenance : ressources de diagrammes absentes ou dupliquées.',
+      );
+  }
   for (const [index, image] of localImages.entries())
     if (
       sha256(Buffer.from(image.data.split(',')[1], 'base64')) !==

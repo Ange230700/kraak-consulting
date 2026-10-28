@@ -32,7 +32,11 @@ export function renderNarration(document, options = {}) {
         .join('\n\n');
     if (token.type === 'blockquote')
       return token.tokens.map(render).filter(Boolean).join('\n\n');
-    if (token.type === 'table')
+    if (token.type === 'table') {
+      if (!token.rows.length)
+        return token.header
+          .map((cell) => spokenInline(cell.tokens, language))
+          .join('; ');
       return token.rows
         .map((row) =>
           row
@@ -43,6 +47,7 @@ export function renderNarration(document, options = {}) {
             .join('; '),
         )
         .join('\n\n');
+    }
     return spokenInline(token.tokens ?? [token], language);
   };
   return (

@@ -5,6 +5,16 @@ import { renderNarration, chunkNarration } from './narration.mjs';
 import { stableJson, sha256 } from './identity.mjs';
 import { semanticBlocksFromTokens } from './model.mjs';
 
+test('Given une langue dans un exemple du corps When les métadonnées sont lues Then seule la langue du frontmatter est utilisée', () => {
+  for (const language of ['en-GB', 'de-DE'])
+    assert.equal(
+      createDocument(
+        `---\nstatus: active\n---\n# Mission\n\n\`\`\`yaml\nlang: ${language}\n\`\`\``,
+      ).language,
+      'fr-CI',
+    );
+});
+
 test('Given un texte AST élémentaire et une description multiligne When le modèle est normalisé Then leur contenu reste explicite', () => {
   assert.deepEqual(
     semanticBlocksFromTokens([{ type: 'text', text: 'Texte' }]),
