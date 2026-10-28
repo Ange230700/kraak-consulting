@@ -32,10 +32,12 @@ source_of_truth: false
   - [10 · Anti-patterns interdits](#10-anti-patterns-interdits)
   - [11 · Tableau de synthèse](#11-tableau-de-synthese)
 
-> Archive historique d'un environnement retiré. Ne pas exécuter les commandes
-> ci-dessous ni recréer les services. Le dernier commit Git staging est conservé
-> sous le tag `archive/staging-2026-10-27`. Consulter le [registre de transition](PRODUCTION_ONLY_TRANSITION.md)
-> pour l'état réel et le runbook [RELEASE_PROD](RELEASE_PROD.md) pour le processus actif.
+> Archive historique des procédures de staging retirées du flux actif. Ne pas
+> exécuter les commandes ci-dessous ni recréer des services. Les ressources
+> staging préexistantes restent toutefois conservées pendant que leur retrait
+> est bloqué ; consulter le [registre de transition](PRODUCTION_ONLY_TRANSITION.md)
+> pour l'état vérifié et le runbook [RELEASE_PROD](RELEASE_PROD.md) pour le
+> processus actif.
 
 Voir aussi :
 

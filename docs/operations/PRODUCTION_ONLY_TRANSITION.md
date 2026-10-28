@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-10-27
+last_reviewed: 2026-10-28
 source_of_truth: true
 ---
 
@@ -10,44 +10,45 @@ source_of_truth: true
 ## Table des matières
 
 - [Transition vers une production unique](#transition-vers-une-production-unique)
-  - [État final vérifié](#etat-final-verifie)
+  - [Avancement vérifié](#avancement-verifie)
   - [GitHub et automatisations](#github-et-automatisations)
   - [Fournisseurs et production](#fournisseurs-et-production)
   - [Sauvegardes et récupération](#sauvegardes-et-recuperation)
   - [Coûts et limites](#couts-et-limites)
 
-## État final vérifié
+## Avancement vérifié
 
-La transition a été exécutée le 27 octobre 2026. `main` est la branche par
-défaut et la seule branche distante permanente. Les contrôles de production
-restent obligatoires ; aucun environnement de remplacement n'a été créé.
+La configuration de la cible production-only a été fusionnée le 27 octobre 2026,
+mais le retrait opérationnel des ressources staging préexistantes reste bloqué.
+La branche distante `staging`, les services Render staging et le projet Supabase
+staging sont conservés. Ne supprimer aucune ressource sur la seule base de la
+configuration versionnée ou des exports disponibles.
 
 Suivi : [issue #733](https://github.com/Ange230700/kraak-consulting/issues/733).
 PR de configuration : [#735](https://github.com/Ange230700/kraak-consulting/pull/735).
 Décision : [ARC-22](../decisions/ARC-22-production-only-main.md).
 L'[inventaire daté](../generated/PRODUCTION_ONLY_INVENTORY_2026-10-27.md)
-sépare les observations initiales des vérifications finales.
+consigne les observations et les limites de vérification. L'issue reste ouverte
+et l'item du Project #8 en `In Progress`.
 
 ## GitHub et automatisations
 
-- La PR #735 a fusionné par rebase ; le commit de configuration déployé est
-  `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`. Les protections de `main`
+- La PR #735 a fusionné par rebase ; le commit de configuration sur `main` est
+  `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`. Cette fusion ne constitue pas un
+  déploiement. Les protections de `main`
   conservent les 14 checks requis, l'application aux administrateurs, la
   résolution des conversations, l'historique linéaire et l'interdiction de
   suppression et de force-push.
-- Le commit staging final `551704b4073647d7c63363c9fd9eaf4c24c1a975` est
-  récupérable via le tag `archive/staging-2026-10-27`.
-- La branche distante `staging` et l'environnement GitHub `staging` ont été
-  supprimés. La protection classique de la branche était déjà absente lors du
-  dernier contrôle avant suppression. Les trois secrets de cet environnement
-  (`KRAAK_JOURNEY_EMAIL`, `KRAAK_JOURNEY_PASSWORD`,
-  `SUPABASE_DB_URL_STAGING`) et le secret de dépôt
-  `SUPABASE_STAGING_PROJECT_REF` ont également été supprimés.
-- Aucun PR ouvert ne ciblait `staging`. Les 23 enregistrements historiques de
-  déploiement GitHub ont été conservés comme preuves ; ils ne sont pas actifs.
+- La branche distante `staging` existe toujours au commit
+  `551704b4073647d7c63363c9fd9eaf4c24c1a975`. Aucun environnement GitHub,
+  service ou projet staging préexistant n'a été supprimé. Seule la preview
+  Supabase vide créée automatiquement pour la PR #735 a été supprimée après
+  vérification de son absence de données métier.
 - Les workflows actifs, Changesets et scripts de diagnostic utilisent `main`
-  et les ressources de production. Les tests locaux et PostgreSQL éphémères
-  restent disponibles ; aucun job actif ne dépend de staging.
+  et ne déclarent pas de service staging. La régression nocturne staging est
+  désactivée ; le branching Supabase et l'intégration GitHub ont été désactivés
+  uniquement pour le projet staging d'origine. Les tests locaux et PostgreSQL
+  éphémères restent disponibles.
 - La variable de dépôt non secrète inutilisée `SONAR_TOKEN` a été retirée après
   vérification que le workflow utilise le secret protégé de même nom. Le secret
   SonarCloud reste présent. Les trois secrets `VERCEL_*` de l'environnement
@@ -58,55 +59,55 @@ sépare les observations initiales des vérifications finales.
 
 ## Fournisseurs et production
 
-- L'inventaire Render en lecture seule (run GitHub
-  [40555390264](https://github.com/Ange230700/kraak-consulting/actions/runs/40555390264))
-  ne trouve pour ce dépôt que `kraak-web-prod`
-  (`srv-d8aj9e0jo6nc73ep1hm0`) et `kraak-api-prod`
-  (`srv-d7r81hv7f7vs73cqcnmg`). Les deux suivent `main`, sont actifs, ont
-  l'auto-déploiement désactivé et leur déploiement courant correspond à
-  `dc64c354f22d1f521b4ca2a7dd8b3bbce570ffe3`. Aucune ressource Render Postgres,
-  Key Value, disque ou groupe d'environnement n'est présente dans l'espace.
-  Aucun service staging n'est présent et ses hôtes répondent HTTP 404.
-- Le projet Supabase staging `qgttdsnupelohowwkkwb` a été supprimé par le
-  propriétaire et son endpoint Management API répond HTTP 404. Le projet
-  `kraak-prod` (`pwuivkqnmjpxxpppmnvu`, `eu-west-1`) répond
-  `ACTIVE_HEALTHY`. Aucun compte ou contenu staging n'a été importé en production.
+- Les services Render staging `kraak-web-staging` (`srv-d8aj943eo5us739nobeg`)
+  et `kraak-api-staging` (`srv-d7putr0k1i2s738d4410`) restent présents. Les
+  services production restent préservés ; l'auto-déploiement des services est
+  désactivé et l'Auto Sync du Blueprint partagé est suspendu.
+- Les projets Supabase de production et de staging restent présents. Le projet
+  staging `qgttdsnupelohowwkkwb` n'a pas été supprimé ; le branching et
+  l'intégration GitHub ont été désactivés sur ce seul projet. La preview vide
+  de la PR #735 ne doit pas être confondue avec le projet staging racine.
 - Le contrôle protégé strictement en lecture seule de l'historique des migrations
   de production réussit sur le commit `dc64c354`
   ([run 40555666291](https://github.com/Ange230700/kraak-consulting/actions/runs/40555666291)).
-- La configuration versionnée du Blueprint ne déclare que les deux services
-  production, sur `main`, avec l'auto-déploiement désactivé. Les autres projets
-  et forfaits partagés n'ont pas été supprimés.
-- Au contrôle final, les routes `/`, `/fr/` et `/en/` du site production et
-  `/health` de l'API répondent HTTP 200. Le propriétaire confirme aussi avoir
-  testé le formulaire de contact et l'envoi d'email ; aucun email supplémentaire
-  n'a été envoyé pendant cette vérification.
+- Le Blueprint versionné ne déclare que les deux services production, sur
+  `main`, avec l'auto-déploiement désactivé. Cela ne supprime pas les services
+  déjà créés chez Render.
+- Au contrôle public du 27 octobre, le web Render de production répondait HTTP
+  404 sur `/`, `/fr/`, `/en/` et la configuration runtime. L'API répondait HTTP
+  200 sur `/health` en version `v1.1.6`, ce qui ne valide pas les parcours web,
+  Auth ou les données. Les déploiements Render observés n'étaient pas la PR #735.
+- Auth production pointe encore vers `localhost:3000` ; les redirections et le
+  SMTP personnalisé ne sont pas prêts. Les DNS, le site public faisant autorité
+  et une partie de l'inventaire fournisseur restent à établir.
 
 ## Sauvegardes et récupération
 
-- Les sauvegardes locales et OneDrive datées du 27 octobre sont conservées hors
-  du dépôt. Les 13 fichiers et les six objets Storage des deux copies ont des
-  empreintes identiques ; le dump PostgreSQL (SHA-256
-  `A1CECC828CA5EB216928CA0B27288060CA8D68D0E6C7BF420705FAE013A2057A`) et
-  l'export des rôles correspondent au manifeste de checksums.
-- Les bases isolées `kraak_restore` et `kraak_restore_permissions` dans le
-  conteneur conservé répondent : 15 comptes Auth, 25 migrations applicatives,
-  un bucket, six objets Storage et zéro secret Vault. Le propriétaire confirme
-  aussi la restauration des rôles et permissions après création du rôle
-  technique manquant. Ces comptes fictifs et contenus restent en sauvegarde ;
-  aucun transfert vers la production n'a été demandé.
-- Le bundle Git et le tag d'archive préservent l'historique final de staging.
-  Ne pas supprimer les deux copies de sauvegarde ni le conteneur de restauration.
+- Les bundles Git privés ont été clonés et vérifiés avec `git fsck --full` ; le
+  bundle final complet et les exports privés DB/Auth/Storage ont été contrôlés.
+  Aucun export sensible n'est joint au dépôt ou à l'issue.
+- Les exports Management API sont des lectures séquentielles, pas une sauvegarde
+  transactionnelle complète. Une restauration isolée complète n'est pas
+  démontrée : la tentative native a été bloquée par l'extension fournisseur
+  `supabase_vault` absente. Ne pas supprimer le projet staging sur cette base.
+- Le staging contient des comptes Auth, des contenus métier et six objets
+  Storage uniques. Leur conservation ou transfert n'est pas décidé ; aucune
+  donnée, migration ou historique de production n'a été modifié.
+- Préserver les sauvegardes et l'environnement de restauration hors du dépôt ;
+  ne jamais publier de secrets, jetons, exports sensibles ou valeurs de
+  configuration.
 
 ## Coûts et limites
 
-La suppression des ressources confirme leur retrait, pas le montant d'une
-économie nette. Avant la suppression, Supabase affichait 683 heures Micro
-staging pour le mois ; la facture finale et l'arrêt des frais récurrents ne sont
-pas encore attestés. Les deux services Render staging étaient Free/Static à
-0,00 $ au relevé précédent. Le forfait Render partagé, l'abonnement Supabase
-partagé et les autres projets restent préservés.
+**Aucune économie réalisée n'est confirmée.** Render staging reste Free/Static
+avec 0,00 $ de compute observé. Supabase indiquait 683 heures Micro staging
+pendant le cycle en cours, mais la facture finale et les ajustements après
+retrait de la preview ne sont pas attestés ; le Branching est partagé et ne peut
+pas être attribué avec certitude. Le forfait Render et l'abonnement Supabase
+partagés, la production et les autres applications/projets sont préservés.
 
-Ne pas reprendre la synchronisation automatique du Blueprint avant d'avoir
-vérifié son état réel chez Render. Garder les anciennes décisions et procédures
-staging en archives historiques ; elles ne décrivent plus le fonctionnement actif.
+Le retrait reste bloqué par l'échec du web production, l'absence de sauvegarde
+DB cohérente restaurée, la décision métier sur les données uniques, les réglages
+Auth incomplets, les accès manquants et les inventaires DNS/facturation incomplets.
+Garder l'issue #733 et l'item du Project #8 en cours. Ne retirer une ressource
+qu'après vérification privée de ses prérequis, de sa propriété et de ses coûts.
