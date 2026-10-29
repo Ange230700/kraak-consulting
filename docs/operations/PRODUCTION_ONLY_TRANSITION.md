@@ -64,7 +64,7 @@ les anciennes barrières de retrait comme l’état opérationnel courant.
 - Le 29 octobre 2026, les secrets GitHub Production `VERCEL_ORG_ID`,
   `VERCEL_PROD_PROJECT_ID` et `VERCEL_TOKEN` ont été supprimés après vérification
   de l'absence de références dans les fichiers suivis. Ce retrait de GitHub ne
-  constitue pas une révocation du token chez Vercel ni une suppression de projet.
+  constitue pas une révocation du token chez son fournisseur ni une suppression de projet.
   Les secrets d'URL inutilisés `PROD_WEB_URL` et `PROD_API_HEALTH_URL` ont aussi
   été supprimés ; les sept secrets Render et Supabase ont été conservés.
 - Les profils `local` et `production` de
