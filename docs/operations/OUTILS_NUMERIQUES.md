@@ -66,6 +66,17 @@ nécessaires ; ne pas additionner les options qui ne sont pas retenues.
 Cet ordre est une séquence de cadrage et de décision, pas une commande
 d'implémentation. Une étape peut être différée si le besoin n'est pas démontré.
 
+Vue d'ensemble du parcours ; les conditions du tableau restent déterminantes :
+
+```mermaid
+flowchart TD
+  accDescr: Le parcours va de l'inventaire à la communication et à la création de contenus, puis à la plateforme MVP et à la mesure après sa mise en ligne.
+  A["1. Inventaire<br/>Comptes, propriétaires, coûts et usages"] --> B["2. Communication de base<br/>Besoin d'équipe confirmé, accès sécurisés"]
+  B --> C["3. Création de contenus<br/>Modèles réutilisables, offres gratuites d'abord"]
+  C --> D["4. Plateforme technique MVP<br/>Selon les besoins, après validation des coûts et de l'architecture"]
+  D --> E["5. Mesure et optimisation<br/>Après mise en ligne utile, indicateurs et consentement définis"]
+```
+
 ## Gouvernance
 
 - **Responsable métier** : confirme le besoin, l'audience, les contenus et le
