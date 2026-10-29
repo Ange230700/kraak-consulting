@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-10-28
+last_reviewed: 2026-10-29
 source_of_truth: true
 ---
 
@@ -60,9 +60,20 @@ les anciennes barrières de retrait comme l’état opérationnel courant.
   restent disponibles ; aucun job actif ne dépend de staging.
 - La variable de dépôt non secrète inutilisée `SONAR_TOKEN` a été retirée après
   vérification que le workflow utilise le secret protégé de même nom. Le secret
-  SonarCloud reste présent. Les trois secrets `VERCEL_*` de l'environnement
-  Production sont conservés : leur propriété et leur usage historique ne sont
-  pas suffisamment établis pour les révoquer sans risque.
+  SonarCloud reste présent.
+- Le 29 octobre 2026, les secrets GitHub Production `VERCEL_ORG_ID`,
+  `VERCEL_PROD_PROJECT_ID` et `VERCEL_TOKEN` ont été supprimés après vérification
+  de l'absence de références dans les fichiers suivis. Ce retrait de GitHub ne
+  constitue pas une révocation du token chez Vercel ni une suppression de projet.
+  Les secrets d'URL inutilisés `PROD_WEB_URL` et `PROD_API_HEALTH_URL` ont aussi
+  été supprimés ; les sept secrets Render et Supabase ont été conservés.
+- Les profils `local` et `production` de
+  [`production-endpoints.json`](../../apps/client/projects/shared/production-endpoints.json)
+  sont la source des endpoints consommés par la release et l'observabilité.
+  Les trois tests du résolveur passent ; le profil `staging` est refusé,
+  conformément à ARC-22. Le workflow d'observabilité réussit sur `main`
+  ([run 40836206704](https://github.com/Ange230700/kraak-consulting/actions/runs/40836206704))
+  et les routes `/`, `/fr/`, `/en/` et `/health` répondent HTTP 200.
 - La page d'accueil GitHub du dépôt pointe vers
   `https://kraak-web-prod.onrender.com`.
 
