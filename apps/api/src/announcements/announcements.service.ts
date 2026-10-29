@@ -22,7 +22,6 @@ import type {
 } from './announcements.dto';
 import {
   isSupabaseColumnMissingError,
-  readSupabaseErrorCode,
   readSupabaseErrorMessage,
   readSupabaseQueryWithFallback,
 } from '../shared/supabase-query-fallback.utils';
@@ -187,49 +186,27 @@ export class AnnouncementsService {
     const paginationLimit = this.resolvePaginationLimit(limit);
     const paginationPage = this.resolvePaginationPage(page);
 
-    const { data: allAnnouncements, error: announcementsError } =
-      await this.readPublishedAnnouncements();
-
-    if (announcementsError) {
-      if (!accessToken) {
-        console.error('Public announcements listing failed', {
-          context: 'announcements.list.public',
-          code: readSupabaseErrorCode(announcementsError),
-          message: readSupabaseErrorMessage(announcementsError),
-        });
-        return {
-          data: [],
-          total: 0,
-        };
-      }
-
-      throw new Error(
-        `Failed to list announcements: ${readSupabaseErrorMessage(announcementsError) ?? 'unknown error'}`,
-      );
-    }
-
-    // Public mode: return all published announcements when no token is provided.
     if (!accessToken) {
-      const announcementRows = allAnnouncements ?? [];
-      const sorted = sortAnnouncementsByPriority(
-        announcementRows.map((row) => this.mapAnnouncement(row)),
-      );
-      const offset = (paginationPage - 1) * paginationLimit;
-      const paginated = sorted.slice(offset, offset + paginationLimit);
-
       return {
-        data: paginated,
-        total: sorted.length,
+        data: [],
+        total: 0,
       };
     }
 
-    // Authenticated mode: filter by participant scope.
     const participantId = await this.resolveParticipantId(accessToken);
     if (!participantId) {
       throw new UnauthorizedException({
         success: false,
         message: apiMessage('auth.sessionInvalidOrExpired'),
       });
+    }
+
+    const { data: allAnnouncements, error: announcementsError } =
+      await this.readPublishedAnnouncements();
+    if (announcementsError) {
+      throw new Error(
+        `Failed to list announcements: ${readSupabaseErrorMessage(announcementsError) ?? 'unknown error'}`,
+      );
     }
 
     // Get participant's enrollments
@@ -353,6 +330,14 @@ export class AnnouncementsService {
     id: string,
     accessToken: string,
   ): Promise<AnnouncementDto> {
+    const participantId = await this.resolveParticipantId(accessToken);
+    if (!participantId) {
+      throw new UnauthorizedException({
+        success: false,
+        message: apiMessage('auth.sessionInvalidOrExpired'),
+      });
+    }
+
     const { data: announcementData, error: announcementError } =
       await this.readPublishedAnnouncementById(id);
 
@@ -365,12 +350,6 @@ export class AnnouncementsService {
     }
 
     const announcement = announcementData;
-
-    // Get participant ID from access token
-    const participantId = await this.resolveParticipantId(accessToken);
-    if (!participantId) {
-      throw new Error('Could not resolve participant ID from access token');
-    }
 
     // Check if announcement is visible to participant
     const isVisible = await this.isAnnouncementVisibleToParticipant(
