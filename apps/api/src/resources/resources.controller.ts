@@ -35,7 +35,10 @@ import {
   validateCreateResourcePayload,
   validateUpdateResourcePayload,
 } from './resources.dto';
-import { ResourcesService } from './resources.service';
+import {
+  ResourcesService,
+  type ResourceAccessContext,
+} from './resources.service';
 import { apiMessage } from '../i18n/api-message';
 
 const RESOURCE_THEME_ENUM = [
@@ -149,47 +152,52 @@ export class ResourcesController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'List published resources with optional filtering',
+    summary: 'Lister les ressources explicitement publiques',
     description:
-      'Retrieve a paginated list of published resources. Supports filtering by theme and audience.',
+      "Retourne uniquement les ressources publiées d'audience « all » sans périmètre de programme ni de cohorte.",
   })
   @ApiQuery({
     name: 'resourceTheme',
     required: false,
     enum: RESOURCE_THEME_ENUM,
-    description: 'Filter by resource theme',
+    description: 'Filtrer par thème de ressource',
   })
   @ApiQuery({
     name: 'resourceAudience',
     required: false,
     enum: RESOURCE_AUDIENCE_ENUM,
-    description: 'Filter by resource audience',
+    description: 'Filtrer par audience de ressource',
   })
   @ApiQuery({
     name: 'programId',
     required: false,
-    description: 'Filter by program ID',
+    description: 'Filtrer par identifiant de programme',
   })
   @ApiQuery({
     name: 'page',
     required: false,
     type: Number,
-    description: 'Page number (1-based, default: 1)',
+    description: 'Numéro de page (base 1, valeur par défaut : 1)',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
-    description: 'Items per page (default: 20, max: 100)',
+    description: 'Nombre d’éléments par page (défaut : 20, maximum : 100)',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'List of published resources',
+    description: 'Liste des ressources publiques publiées',
     schema: RESOURCE_LIST_SCHEMA,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Error fetching resources',
+    description: 'Erreur lors du chargement des ressources',
+    schema: apiErrorSchema,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Session fournie invalide ou expirée',
     schema: apiErrorSchema,
   })
   async listResources(
@@ -200,27 +208,17 @@ export class ResourcesController {
     @Query('limit') limit?: number,
     @Headers('authorization') authorizationHeader?: string,
   ) {
-    if (authorizationHeader) {
-      const accessToken = extractAccessToken(authorizationHeader);
+    const accessContext =
+      await this.getOptionalResourceAccessContext(authorizationHeader);
 
-      if (!accessToken.valid) {
-        throw new UnauthorizedException({
-          success: false,
-          message: accessToken.error,
-        });
-      }
-
-      const session = await this.authService.getSession(accessToken.data);
-
-      if (session.profile.appUser.role === 'admin') {
-        return this.resourcesService.listAllResources({
-          resourceTheme,
-          resourceAudience,
-          programId,
-          page,
-          limit,
-        });
-      }
+    if (accessContext?.role === 'admin' && accessContext.isActive) {
+      return this.resourcesService.listAllResources({
+        resourceTheme,
+        resourceAudience,
+        programId,
+        page,
+        limit,
+      });
     }
 
     return this.resourcesService.listResources({
@@ -325,58 +323,115 @@ export class ResourcesController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Get a single published resource by ID',
-    description: 'Retrieve details of a specific published resource.',
+    summary: 'Récupérer une ressource publiée',
+    description:
+      "Les ressources sans programme ni cohorte et d'audience « all » sont publiques. Les autres ressources nécessitent une session autorisée selon leur périmètre.",
   })
   @ApiParam({
     name: 'id',
-    description: 'Resource ID',
+    description: 'Identifiant de la ressource',
     type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Resource details',
+    description: 'Détails de la ressource',
     schema: RESOURCE_SCHEMA,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Resource not found or not published',
+    description: 'Ressource introuvable, non publiée ou non accessible',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Session fournie invalide ou expirée',
+    schema: apiErrorSchema,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Error fetching resource',
+    description: 'Erreur lors du chargement de la ressource',
     schema: apiErrorSchema,
   })
-  async getResourceById(@Param('id') id: string) {
-    return this.resourcesService.getResourceById(id);
+  async getResourceById(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ) {
+    const accessContext =
+      await this.getOptionalResourceAccessContext(authorizationHeader);
+    return this.resourcesService.getResourceById(id, accessContext);
   }
 
   @Post(':id/consultations')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Track a resource consultation',
+    summary: 'Enregistrer la consultation autorisée d’une ressource',
     description:
-      'Record a consultation event for a published resource and update its tracking counters.',
+      'La consultation et la mise à jour des compteurs exigent une session active autorisée pour la ressource.',
   })
   @ApiParam({
     name: 'id',
-    description: 'Resource ID',
+    description: 'Identifiant de la ressource',
     type: String,
   })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'Consultation recorded successfully',
+    description: 'Consultation enregistrée',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Resource not found or not published',
+    description: 'Ressource introuvable, non publiée ou non accessible',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Session absente, invalide ou expirée',
+    schema: apiErrorSchema,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Error recording resource consultation',
+    description: 'Erreur lors de l’enregistrement de la consultation',
     schema: apiErrorSchema,
   })
-  async trackResourceConsultation(@Param('id') id: string): Promise<void> {
-    await this.resourcesService.trackResourceConsultation(id);
+  async trackResourceConsultation(
+    @Param('id') id: string,
+    @Headers('authorization') authorizationHeader?: string,
+  ): Promise<void> {
+    const accessContext =
+      await this.getOptionalResourceAccessContext(authorizationHeader);
+
+    if (!accessContext) {
+      throw new UnauthorizedException({
+        success: false,
+        message: apiMessage('auth.bearerRequired'),
+      });
+    }
+
+    await this.resourcesService.trackResourceConsultation(id, accessContext);
+  }
+
+  private async getOptionalResourceAccessContext(
+    authorizationHeader?: string,
+  ): Promise<ResourceAccessContext | undefined> {
+    if (!authorizationHeader) {
+      return undefined;
+    }
+
+    const accessToken = extractAccessToken(authorizationHeader);
+
+    if (!accessToken.valid) {
+      throw new UnauthorizedException({
+        success: false,
+        message: accessToken.error,
+      });
+    }
+
+    const session = await this.authService.getSession(accessToken.data);
+    const profile = session.profile;
+
+    return {
+      userId: profile.appUser.id,
+      participantId: profile.participant?.id ?? null,
+      role: profile.appUser.role,
+      isActive: profile.appUser.isActive,
+    };
   }
 }

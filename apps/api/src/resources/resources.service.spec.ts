@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
+import type { ResourceAccessContext } from './resources.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import type { ResourceDto } from '@kraak/contracts';
 
@@ -39,6 +40,13 @@ describe('ResourcesService', () => {
     publishedAt: '2026-04-20T10:00:00Z',
     createdAt: '2026-04-19T10:00:00Z',
     updatedAt: '2026-04-20T10:00:00Z',
+  };
+
+  const activeAdmin: ResourceAccessContext = {
+    userId: 'admin-001',
+    participantId: null,
+    role: 'admin',
+    isActive: true,
   };
 
   const mockSupabaseService = {
@@ -187,6 +195,22 @@ describe('ResourcesService', () => {
       expect(result.data).toHaveLength(1);
       expect(result.data[0]).toEqual(mockResourceDto);
       expect(result.total).toBe(1);
+    });
+
+    it('Given a public listing, When listResources is called, Then it excludes resources with a private audience or program or cohort scope', async () => {
+      const mockClient = createListQuery({
+        data: [mockResourceRow],
+        error: null,
+        count: 1,
+      });
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await service.listResources();
+
+      expect(mockClient.eq).toHaveBeenCalledWith('resource_audience', 'all');
+      expect(mockClient.is).toHaveBeenCalledWith('program_id', null);
+      expect(mockClient.is).toHaveBeenCalledWith('cohort_id', null);
     });
 
     it('Given filters and out-of-range pagination, When listResources is called, Then it applies filters and pagination boundaries', async () => {
@@ -544,6 +568,28 @@ describe('ResourcesService', () => {
 
   describe('getResourceById', () => {
     it('Given an existing published resource id, When getResourceById is called, Then it returns the mapped resource', async () => {
+      const publicResourceRow = {
+        ...mockResourceRow,
+        program_id: null,
+      };
+      const mockClient = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: publicResourceRow,
+          error: null,
+        }),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      const result = await service.getResourceById('res-001');
+
+      expect(result).toEqual({ ...mockResourceDto, programId: null });
+    });
+
+    it('Given a scoped resource and no authenticated identity, When getResourceById is called, Then it throws NotFoundException', async () => {
       const mockClient = {
         from: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -556,9 +602,310 @@ describe('ResourcesService', () => {
 
       mockSupabaseService.getClient.mockReturnValue(mockClient);
 
-      const result = await service.getResourceById('res-001');
+      await expect(service.getResourceById('res-001')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
 
-      expect(result).toEqual(mockResourceDto);
+    it('Given a program-scoped resource and its enrolled participant, When getResourceById is called, Then it returns the resource', async () => {
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: mockResourceRow,
+          error: null,
+        }),
+      };
+      const enrollmentQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockResolvedValue({
+          data: [{ program_id: 'prog-001', cohort_id: null }],
+          error: null,
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : enrollmentQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      ).resolves.toEqual(mockResourceDto);
+
+      expect(enrollmentQuery.eq).toHaveBeenCalledWith(
+        'participant_id',
+        'participant-001',
+      );
+      expect(enrollmentQuery.in).toHaveBeenCalledWith('status', [
+        'pending',
+        'active',
+        'completed',
+      ]);
+    });
+
+    it('Given a cohort-scoped resource and an enrollment in another cohort, When getResourceById is called, Then it throws NotFoundException', async () => {
+      const cohortResource = { ...mockResourceRow, cohort_id: 'cohort-001' };
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: cohortResource,
+          error: null,
+        }),
+      };
+      const enrollmentQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockResolvedValue({
+          data: [{ program_id: 'prog-001', cohort_id: 'cohort-002' }],
+          error: null,
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : enrollmentQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('Given a cohort-scoped resource and its assigned trainer, When getResourceById is called, Then it returns the resource', async () => {
+      const cohortResource = { ...mockResourceRow, cohort_id: 'cohort-001' };
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: cohortResource,
+          error: null,
+        }),
+      };
+      const trainerQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        maybeSingle: jest.fn().mockResolvedValue({
+          data: { id: 'session-001' },
+          error: null,
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : trainerQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'trainer-user',
+          participantId: null,
+          role: 'trainer',
+          isActive: true,
+        }),
+      ).resolves.toEqual({ ...mockResourceDto, cohortId: 'cohort-001' });
+
+      expect(trainerQuery.eq).toHaveBeenCalledWith(
+        'trainer_user_id',
+        'trainer-user',
+      );
+    });
+
+    it('Given an unscoped non-public resource and an enrolled participant, When getResourceById is called, Then it throws NotFoundException', async () => {
+      const privateResource = {
+        ...mockResourceRow,
+        program_id: null,
+        resource_audience: 'organizations' as const,
+      };
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: privateResource,
+          error: null,
+        }),
+      };
+      const enrollmentQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockResolvedValue({
+          data: null,
+          error: null,
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : enrollmentQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('Given a scoped resource and a session without a participant profile, When getResourceById is called, Then it throws NotFoundException', async () => {
+      const mockClient = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: mockResourceRow,
+          error: null,
+        }),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'staff-user',
+          participantId: null,
+          role: 'employee',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockClient.from).toHaveBeenCalledTimes(1);
+    });
+
+    it('Given a trainer assignment lookup error, When getResourceById is called, Then it fails closed', async () => {
+      const consoleError = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: { ...mockResourceRow, cohort_id: 'cohort-001' },
+          error: null,
+        }),
+      };
+      const trainerQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        maybeSingle: jest.fn().mockResolvedValue({
+          data: null,
+          error: new Error('Lookup failed'),
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : trainerQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'trainer-user',
+          participantId: null,
+          role: 'trainer',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(consoleError).toHaveBeenCalledWith(
+        'Resource trainer access check failed',
+        expect.objectContaining({ context: 'resources.access.trainer' }),
+      );
+      consoleError.mockRestore();
+    });
+
+    it('Given an enrollment lookup error, When getResourceById is called, Then it fails closed', async () => {
+      const consoleError = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      const resourceQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: mockResourceRow,
+          error: null,
+        }),
+      };
+      const enrollmentQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockResolvedValue({
+          data: null,
+          error: new Error('Lookup failed'),
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementation((table: string) =>
+            table === 'resource' ? resourceQuery : enrollmentQuery,
+          ),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.getResourceById('res-001', {
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(consoleError).toHaveBeenCalledWith(
+        'Resource participant access check failed',
+        expect.objectContaining({ context: 'resources.access.participant' }),
+      );
+      consoleError.mockRestore();
     });
 
     it('Given an unknown id with error, When getResourceById is called, Then it throws NotFoundException', async () => {
@@ -599,9 +946,24 @@ describe('ResourcesService', () => {
   });
 
   describe('trackResourceConsultation', () => {
+    it('Given no authenticated identity, When trackResourceConsultation is called, Then it rejects without mutating analytics', async () => {
+      const mockClient = {
+        from: jest.fn(),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.trackResourceConsultation('res-001'),
+      ).rejects.toThrow(UnauthorizedException);
+
+      expect(mockClient.from).not.toHaveBeenCalled();
+    });
+
     it('Given a published resource, When trackResourceConsultation is called, Then it increments consultation_count and updates last_consulted_at', async () => {
       const trackingSelectQuery = createTrackingSelectQuery({
         data: {
+          ...mockResourceRow,
           id: 'res-001',
           consultation_count: 5,
           last_consulted_at: null,
@@ -622,7 +984,7 @@ describe('ResourcesService', () => {
       mockSupabaseService.getClient.mockReturnValue(mockClient);
 
       await expect(
-        service.trackResourceConsultation('res-001'),
+        service.trackResourceConsultation('res-001', activeAdmin),
       ).resolves.toBeUndefined();
 
       expect(trackingUpdateQuery.update).toHaveBeenCalledWith(
@@ -631,6 +993,46 @@ describe('ResourcesService', () => {
           last_consulted_at: expect.any(String),
         }),
       );
+    });
+
+    it('Given a cohort-scoped resource and a participant enrolled in another cohort, When trackResourceConsultation is called, Then it rejects without changing analytics', async () => {
+      const trackingSelectQuery = createTrackingSelectQuery({
+        data: {
+          ...mockResourceRow,
+          cohort_id: 'cohort-001',
+          consultation_count: 5,
+          last_consulted_at: null,
+        },
+        error: null,
+      });
+      const enrollmentQuery = {
+        from: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockResolvedValue({
+          data: [{ program_id: 'prog-001', cohort_id: 'cohort-002' }],
+          error: null,
+        }),
+      };
+      const mockClient = {
+        from: jest
+          .fn()
+          .mockImplementationOnce(() => trackingSelectQuery)
+          .mockImplementationOnce(() => enrollmentQuery),
+      };
+
+      mockSupabaseService.getClient.mockReturnValue(mockClient);
+
+      await expect(
+        service.trackResourceConsultation('res-001', {
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockClient.from).toHaveBeenCalledTimes(2);
     });
 
     it('Given an unknown resource, When trackResourceConsultation is called, Then it throws NotFoundException', async () => {
@@ -645,13 +1047,14 @@ describe('ResourcesService', () => {
       mockSupabaseService.getClient.mockReturnValue(mockClient);
 
       await expect(
-        service.trackResourceConsultation('res-missing'),
+        service.trackResourceConsultation('res-missing', activeAdmin),
       ).rejects.toThrow(NotFoundException);
     });
 
     it('Given an update failure, When trackResourceConsultation is called, Then it throws an explicit tracking error', async () => {
       const trackingSelectQuery = createTrackingSelectQuery({
         data: {
+          ...mockResourceRow,
           id: 'res-001',
           consultation_count: 9,
           last_consulted_at: '2026-04-20T10:00:00Z',
@@ -672,7 +1075,7 @@ describe('ResourcesService', () => {
       mockSupabaseService.getClient.mockReturnValue(mockClient);
 
       await expect(
-        service.trackResourceConsultation('res-001'),
+        service.trackResourceConsultation('res-001', activeAdmin),
       ).rejects.toThrow('Failed to track resource consultation');
     });
   });

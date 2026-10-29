@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type {
   CreateResourceDto,
@@ -17,13 +18,21 @@ import { mapResource, type ResourceRow } from '../shared/resource-mapper.utils';
 const RESOURCE_SELECT_FIELDS =
   'id, program_id, cohort_id, title, description, resource_type, resource_theme, resource_audience, url, file_path, status, published_at, created_at, updated_at';
 
-const RESOURCE_TRACKING_SELECT_FIELDS =
-  'id, consultation_count, last_consulted_at';
+const RESOURCE_TRACKING_SELECT_FIELDS = `${RESOURCE_SELECT_FIELDS}, consultation_count, last_consulted_at`;
 type ResourceTrackingRow = {
   id: string;
   consultation_count: number;
   last_consulted_at: string | null;
 };
+
+export type ResourceAccessContext = {
+  userId: string;
+  participantId: string | null;
+  role: string;
+  isActive: boolean;
+};
+
+const ACCESSIBLE_ENROLLMENT_STATUSES = ['pending', 'active', 'completed'];
 
 @Injectable()
 export class ResourcesService {
@@ -50,6 +59,10 @@ export class ResourcesService {
 
     if (!options?.includeUnpublished) {
       query = query.eq('status', 'published');
+      query = query
+        .eq('resource_audience', 'all')
+        .is('program_id', null)
+        .is('cohort_id', null);
     }
 
     if (options?.programId) {
@@ -135,7 +148,10 @@ export class ResourcesService {
    * Get a single resource by ID.
    * @param id - Resource ID
    */
-  async getResourceById(id: string): Promise<ResourceDto> {
+  async getResourceById(
+    id: string,
+    accessContext?: ResourceAccessContext,
+  ): Promise<ResourceDto> {
     const adminClient = this.supabaseService.getClient();
     const { data, error } = await adminClient
       .from('resource')
@@ -152,7 +168,16 @@ export class ResourcesService {
       });
     }
 
-    return this.mapResource(data as ResourceRow);
+    const resource = data as ResourceRow;
+
+    if (
+      !this.isPublicResource(resource) &&
+      !(await this.hasResourceAccess(resource, accessContext, adminClient))
+    ) {
+      throw this.resourceNotFound(id);
+    }
+
+    return this.mapResource(resource);
   }
 
   async createResource(payload: CreateResourceDto): Promise<ResourceDto> {
@@ -281,7 +306,17 @@ export class ResourcesService {
    * Record a consultation event for a published resource.
    * @param id - Resource ID
    */
-  async trackResourceConsultation(id: string): Promise<void> {
+  async trackResourceConsultation(
+    id: string,
+    accessContext?: ResourceAccessContext,
+  ): Promise<void> {
+    if (!accessContext?.isActive) {
+      throw new UnauthorizedException({
+        success: false,
+        message: apiMessage('auth.sessionInvalid'),
+      });
+    }
+
     const adminClient = this.supabaseService.getClient();
 
     const { data: existingData, error: existingError } = await adminClient
@@ -299,7 +334,18 @@ export class ResourcesService {
       });
     }
 
-    const currentResource = existingData as ResourceTrackingRow;
+    const currentResource = existingData as ResourceTrackingRow & ResourceRow;
+
+    if (
+      !(await this.hasResourceAccess(
+        currentResource,
+        accessContext,
+        adminClient,
+      ))
+    ) {
+      throw this.resourceNotFound(id);
+    }
+
     const { error: updateError } = await adminClient
       .from('resource')
       .update({
@@ -412,5 +458,88 @@ export class ResourcesService {
 
   private mapResource(row: ResourceRow): ResourceDto {
     return mapResource(row);
+  }
+
+  private isPublicResource(resource: ResourceRow): boolean {
+    return (
+      resource.resource_audience === 'all' &&
+      resource.program_id === null &&
+      resource.cohort_id === null
+    );
+  }
+
+  private async hasResourceAccess(
+    resource: ResourceRow,
+    accessContext: ResourceAccessContext | undefined,
+    adminClient: ReturnType<SupabaseService['getClient']>,
+  ): Promise<boolean> {
+    if (!accessContext?.isActive) {
+      return false;
+    }
+
+    if (accessContext.role === 'admin') {
+      return true;
+    }
+
+    if (accessContext.role === 'trainer' && resource.cohort_id) {
+      const { data, error } = await adminClient
+        .from('session')
+        .select('id')
+        .eq('cohort_id', resource.cohort_id)
+        .eq('trainer_user_id', accessContext.userId)
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Resource trainer access check failed', {
+          context: 'resources.access.trainer',
+          message: error.message,
+        });
+      }
+
+      return Boolean(data && !error);
+    }
+
+    if (!accessContext.participantId) {
+      return false;
+    }
+
+    const { data, error } = await adminClient
+      .from('enrollment')
+      .select('program_id, cohort_id')
+      .eq('participant_id', accessContext.participantId)
+      .in('status', ACCESSIBLE_ENROLLMENT_STATUSES);
+
+    if (error) {
+      console.error('Resource participant access check failed', {
+        context: 'resources.access.participant',
+        message: error.message,
+      });
+      return false;
+    }
+
+    const enrollments =
+      (data as Array<{
+        program_id: string;
+        cohort_id: string | null;
+      }> | null) ?? [];
+
+    return resource.cohort_id
+      ? enrollments.some(
+          (enrollment) => enrollment.cohort_id === resource.cohort_id,
+        )
+      : resource.program_id
+        ? enrollments.some(
+            (enrollment) => enrollment.program_id === resource.program_id,
+          )
+        : false;
+  }
+
+  private resourceNotFound(id: string): NotFoundException {
+    return new NotFoundException({
+      statusCode: 404,
+      message: apiMessage('resources.notFoundOrNotPublished', { id }),
+      error: 'Not Found',
+    });
   }
 }

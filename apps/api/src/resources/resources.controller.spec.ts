@@ -74,7 +74,12 @@ describe('ResourcesController', () => {
     authService.getSession.mockResolvedValue({
       profile: {
         appUser: {
+          id: 'participant-user',
+          isActive: true,
           role: 'participant',
+        },
+        participant: {
+          id: 'participant-001',
         },
       },
     });
@@ -115,8 +120,11 @@ describe('ResourcesController', () => {
     authService.getSession.mockResolvedValueOnce({
       profile: {
         appUser: {
+          id: 'admin-user',
+          isActive: true,
           role: 'admin',
         },
+        participant: null,
       },
     });
     mockResourcesService.listAllResources.mockResolvedValue(mockListResponse);
@@ -148,8 +156,37 @@ describe('ResourcesController', () => {
 
     expect(mockResourcesService.getResourceById).toHaveBeenCalledWith(
       resourceId,
+      undefined,
     );
     expect(result).toEqual(mockResource);
+  });
+
+  it('Given a scoped resource and an authenticated participant, When getResourceById is called, Then it forwards the verified identity', async () => {
+    mockResourcesService.getResourceById.mockResolvedValue(mockResource);
+
+    await controller.getResourceById(
+      'res-001',
+      ['Bearer', 'resource-test-token'].join(' '),
+    );
+
+    expect(mockResourcesService.getResourceById).toHaveBeenCalledWith(
+      'res-001',
+      {
+        userId: 'participant-user',
+        participantId: 'participant-001',
+        role: 'participant',
+        isActive: true,
+      },
+    );
+    expect(authService.getSession).toHaveBeenCalledWith('resource-test-token');
+  });
+
+  it('Given a malformed Authorization header, When getResourceById is called, Then it throws an UnauthorizedException', async () => {
+    await expect(
+      controller.getResourceById('res-001', 'invalid'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+
+    expect(mockResourcesService.getResourceById).not.toHaveBeenCalled();
   });
 
   it('Given a resource id, When trackResourceConsultation is called, Then it delegates to service and returns no content', async () => {
@@ -157,12 +194,31 @@ describe('ResourcesController', () => {
     mockResourcesService.trackResourceConsultation.mockResolvedValue(undefined);
 
     await expect(
-      controller.trackResourceConsultation(resourceId),
+      controller.trackResourceConsultation(
+        resourceId,
+        ['Bearer', 'resource-test-token'].join(' '),
+      ),
     ).resolves.toBeUndefined();
 
     expect(mockResourcesService.trackResourceConsultation).toHaveBeenCalledWith(
       resourceId,
+      {
+        userId: 'participant-user',
+        participantId: 'participant-001',
+        role: 'participant',
+        isActive: true,
+      },
     );
+  });
+
+  it('Given no Authorization header, When trackResourceConsultation is called, Then it throws an UnauthorizedException', async () => {
+    await expect(
+      controller.trackResourceConsultation('res-001'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+
+    expect(
+      mockResourcesService.trackResourceConsultation,
+    ).not.toHaveBeenCalled();
   });
 
   it('Given un payload création valide, When createResource is called, Then it delegates to the service', async () => {
