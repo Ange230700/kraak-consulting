@@ -177,9 +177,12 @@ DO $$ BEGIN
  END IF;
 END; $$;
 RESET ROLE;
-INSERT INTO public.resource(cohort_id,title,resource_type)
+INSERT INTO public.resource(
+ cohort_id,title,resource_type,resource_theme,resource_audience
+)
 SELECT ('20000000-0000-4000-8000-00000000000'||n)::uuid,
- 'Resource '||n,'link' FROM generate_series(1,2) n;
+ 'Resource '||n,'link','training','young_professionals_students'
+ FROM generate_series(1,2) n;
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000004',true);
 DO $$
