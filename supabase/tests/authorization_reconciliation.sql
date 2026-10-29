@@ -122,6 +122,61 @@ SELECT ('20000000-0000-4000-8000-00000000000'||n)::uuid,
  'Session '||n,now(),now()+interval '1 hour',
  ('00000000-0000-4000-8000-00000000000'||(n+3))::uuid
 FROM generate_series(1,2) n;
+INSERT INTO public.participant(id,user_id)
+VALUES
+ ('40000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001'),
+ ('40000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000002');
+INSERT INTO public.enrollment(participant_id,program_id,cohort_id,status)
+VALUES (
+ '40000000-0000-4000-8000-000000000001',
+ '10000000-0000-4000-8000-000000000001',
+ '20000000-0000-4000-8000-000000000001',
+ 'active'
+);
+INSERT INTO public.announcement(
+ id,title,body,audience_type,program_id,cohort_id,status,published_at,created_by_user_id
+)
+VALUES
+ (
+ '30000000-0000-4000-8000-000000000001','All participants','Body',
+ 'all_participants',NULL,NULL,'published',now(),
+ '00000000-0000-4000-8000-000000000001'
+ ),
+ (
+ '30000000-0000-4000-8000-000000000002','Program participants','Body',
+ 'program','10000000-0000-4000-8000-000000000001',NULL,'published',now(),
+ '00000000-0000-4000-8000-000000000001'
+ ),
+ (
+ '30000000-0000-4000-8000-000000000003','Cohort participants','Body',
+ 'cohort','10000000-0000-4000-8000-000000000001',
+ '20000000-0000-4000-8000-000000000001','published',now(),
+ '00000000-0000-4000-8000-000000000001'
+ );
+SET LOCAL ROLE anon;
+SELECT set_config('request.jwt.claim.sub','',true);
+DO $$ BEGIN
+ IF (SELECT count(*) FROM public.announcement)<>0 THEN
+   RAISE EXCEPTION 'Annonces visibles anonymement';
+ END IF;
+END; $$;
+RESET ROLE;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
+DO $$ BEGIN
+ IF (SELECT count(*) FROM public.announcement)<>1
+   OR EXISTS (SELECT 1 FROM public.announcement
+     WHERE id='30000000-0000-4000-8000-000000000002') THEN
+   RAISE EXCEPTION 'Annonce ciblée visible sans inscription';
+ END IF;
+END; $$;
+SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+DO $$ BEGIN
+ IF (SELECT count(*) FROM public.announcement)<>3 THEN
+   RAISE EXCEPTION 'Annonces correspondant aux inscriptions masquées';
+ END IF;
+END; $$;
+RESET ROLE;
 INSERT INTO public.resource(cohort_id,title,resource_type)
 SELECT ('20000000-0000-4000-8000-00000000000'||n)::uuid,
  'Resource '||n,'link' FROM generate_series(1,2) n;

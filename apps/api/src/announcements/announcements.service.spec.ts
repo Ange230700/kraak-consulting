@@ -117,7 +117,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements', () => {
-    it('Given no access token, When public announcements are listed, Then mapped results are returned', async () => {
+    it('Given no access token, When announcements are listed, Then audience-targeted announcements are not returned', async () => {
       const announcementsQuery = createAsyncQuery(
         {
           data: [
@@ -163,14 +163,11 @@ describe('AnnouncementsService', () => {
 
       const result = await service.listAnnouncements(undefined, 1, 20);
 
-      expect(result.total).toBe(2);
-      expect(result.data).toHaveLength(2);
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({ id: mockAnnouncement.id }),
-      );
+      expect(result).toEqual({ data: [], total: 0 });
+      expect(mockSupabaseService.getClient).not.toHaveBeenCalled();
     });
 
-    it('Given: valid access token and enrolled participant, When: listAnnouncements called, Then: return filtered announcements', async () => {
+    it('Given: valid access token and enrolled participant, When: listAnnouncements called, Then: only matching audience scopes are returned', async () => {
       const accessToken = 'valid-token';
       const participantId = 'participant-001';
       const userId = 'user-001';
@@ -204,6 +201,34 @@ describe('AnnouncementsService', () => {
               created_at: mockAnnouncement.createdAt,
               updated_at: mockAnnouncement.updatedAt,
             },
+            {
+              id: mockProgramAnnouncement.id,
+              title: mockProgramAnnouncement.title,
+              body: mockProgramAnnouncement.body,
+              priority: mockProgramAnnouncement.priority,
+              audience_type: mockProgramAnnouncement.audienceType,
+              program_id: mockProgramAnnouncement.programId,
+              cohort_id: mockProgramAnnouncement.cohortId,
+              status: mockProgramAnnouncement.status,
+              published_at: mockProgramAnnouncement.publishedAt,
+              created_by_user_id: mockProgramAnnouncement.createdByUserId,
+              created_at: mockProgramAnnouncement.createdAt,
+              updated_at: mockProgramAnnouncement.updatedAt,
+            },
+            {
+              id: 'ann-other-program',
+              title: 'Other Program Notice',
+              body: 'This announcement is for another program',
+              priority: 'normal',
+              audience_type: 'program',
+              program_id: 'prog-other',
+              cohort_id: null,
+              status: 'published',
+              published_at: '2026-04-20T12:00:00Z',
+              created_by_user_id: 'user-001',
+              created_at: '2026-04-19T12:00:00Z',
+              updated_at: '2026-04-20T12:00:00Z',
+            },
           ],
           error: null,
         },
@@ -235,11 +260,15 @@ describe('AnnouncementsService', () => {
 
       expect(result).toHaveProperty('data');
       expect(result).toHaveProperty('total');
-      expect(result.data.length).toBeGreaterThan(0);
+      expect(result.data.map(({ id }) => id)).toEqual([
+        mockAnnouncement.id,
+        mockProgramAnnouncement.id,
+      ]);
+      expect(result.total).toBe(2);
       expect(mockAuthClient.auth.getUser).toHaveBeenCalledWith(accessToken);
     });
 
-    it('Given: invalid access token, When: listAnnouncements called, Then: throw error', async () => {
+    it('Given: invalid access token, When: listAnnouncements called, Then: throw UnauthorizedException', async () => {
       const accessToken = 'invalid-token';
 
       mockAuthClient.auth.getUser.mockResolvedValue({
@@ -247,7 +276,9 @@ describe('AnnouncementsService', () => {
         error: new Error('Invalid token'),
       });
 
-      await expect(service.listAnnouncements(accessToken)).rejects.toThrow();
+      await expect(
+        service.listAnnouncements(accessToken),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('Given: invalid pagination values, When: listAnnouncements called, Then: fallback pagination defaults are applied', async () => {
@@ -423,6 +454,18 @@ describe('AnnouncementsService', () => {
   });
 
   describe('getAnnouncementById', () => {
+    it('Given: invalid access token, When: getAnnouncementById called, Then: throw UnauthorizedException', async () => {
+      mockAuthClient.auth.getUser.mockResolvedValue({
+        data: { user: null },
+        error: new Error('Invalid token'),
+      });
+
+      await expect(
+        service.getAnnouncementById('ann-001', 'expired-token'),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(mockSupabaseService.getClient).not.toHaveBeenCalled();
+    });
+
     it('Given: valid announcement ID and authorized participant, When: getAnnouncementById called, Then: return announcement detail', async () => {
       const accessToken = 'valid-token';
       const participantId = 'participant-001';
@@ -937,7 +980,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('getAnnouncementById — branches non couvertes (regression doublons staging-main)', () => {
-    it('Given: auth réussit mais participant introuvable, When: getAnnouncementById appelé, Then: lève une erreur de résolution participant', async () => {
+    it('Given: participant introuvable, When: getAnnouncementById appelé, Then: lève une UnauthorizedException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -975,10 +1018,10 @@ describe('AnnouncementsService', () => {
 
       await expect(
         service.getAnnouncementById('ann-001', 'valid-token'),
-      ).rejects.toThrow('Could not resolve participant ID from access token');
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it("Given: annonce inexistante (data null, pas d'erreur), When: getAnnouncementById appelé, Then: lève une NotFoundException", async () => {
+    it('Given: une session valide et une annonce inexistante, When: getAnnouncementById appelé, Then: lève une NotFoundException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -989,9 +1032,15 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
       mockSupabaseService.getClient.mockReturnValue(
         createClientMock({
           announcement: announcementQuery,
+          participant: participantQuery,
         }),
       );
 
@@ -1668,7 +1717,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('getAnnouncementById — branches non couvertes (série 2)', () => {
-    it('Given: auth réussit mais participant introuvable, When: getAnnouncementById appelé, Then: lève une erreur de résolution participant', async () => {
+    it('Given: participant introuvable, When: getAnnouncementById appelé, Then: lève une UnauthorizedException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -1706,10 +1755,10 @@ describe('AnnouncementsService', () => {
 
       await expect(
         service.getAnnouncementById('ann-001', 'valid-token'),
-      ).rejects.toThrow('Could not resolve participant ID from access token');
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it("Given: annonce inexistante (data null, pas d'erreur), When: getAnnouncementById appelé, Then: lève une NotFoundException", async () => {
+    it('Given: une session valide et une annonce inexistante, When: getAnnouncementById appelé, Then: lève une NotFoundException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -1720,9 +1769,15 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
       mockSupabaseService.getClient.mockReturnValue(
         createClientMock({
           announcement: announcementQuery,
+          participant: participantQuery,
         }),
       );
 
@@ -2137,7 +2192,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('listAnnouncements — cas limites', () => {
-    it('Given: une erreur DB sur les annonces publiques sans token, When: listAnnouncements appelé, Then: une liste vide est renvoyée', async () => {
+    it('Given: une session absente et une erreur DB, When: listAnnouncements appelé, Then: une liste vide est renvoyée sans lire les annonces', async () => {
       const announcementsQuery = createAsyncQuery(
         { data: null, error: { message: 'public-db-error' } },
         { withOrder: true },
@@ -2153,9 +2208,10 @@ describe('AnnouncementsService', () => {
         data: [],
         total: 0,
       });
+      expect(mockSupabaseService.getClient).not.toHaveBeenCalled();
     });
 
-    it('Given: des annonces publiques null sans erreur, When: listAnnouncements est appelé sans token, Then: une pagination vide est renvoyée', async () => {
+    it('Given: une session absente et des annonces, When: listAnnouncements est appelé, Then: une pagination vide est renvoyée', async () => {
       const announcementsQuery = createAsyncQuery(
         { data: null, error: null },
         { withOrder: true },
@@ -2173,6 +2229,7 @@ describe('AnnouncementsService', () => {
         data: [],
         total: 0,
       });
+      expect(mockSupabaseService.getClient).not.toHaveBeenCalled();
     });
 
     it('Given: participant introuvable (resolveParticipantId retourne null), When: listAnnouncements appelé, Then: une erreur est levée', async () => {
@@ -2466,7 +2523,7 @@ describe('AnnouncementsService', () => {
   });
 
   describe('getAnnouncementById — branches non couvertes', () => {
-    it('Given: auth réussit mais participant introuvable, When: getAnnouncementById appelé, Then: lève une erreur de résolution participant', async () => {
+    it('Given: participant introuvable, When: getAnnouncementById appelé, Then: lève une UnauthorizedException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -2505,10 +2562,10 @@ describe('AnnouncementsService', () => {
 
       await expect(
         service.getAnnouncementById('ann-001', 'valid-token'),
-      ).rejects.toThrow('Could not resolve participant ID from access token');
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it("Given: annonce inexistante (data null, pas d'erreur), When: getAnnouncementById appelé, Then: lève une NotFoundException", async () => {
+    it('Given: une session valide et une annonce inexistante, When: getAnnouncementById appelé, Then: lève une NotFoundException', async () => {
       mockAuthClient.auth.getUser.mockResolvedValue({
         data: { user: { id: 'user-001' } },
         error: null,
@@ -2519,9 +2576,15 @@ describe('AnnouncementsService', () => {
         error: null,
       });
 
+      const participantQuery = createAsyncQuery({
+        data: { id: 'participant-001' },
+        error: null,
+      });
+
       mockSupabaseService.getClient.mockReturnValue({
         from: jest.fn((table: string) => {
           if (table === 'announcement') return announcementQuery;
+          if (table === 'participant') return participantQuery;
           return undefined;
         }),
       });
