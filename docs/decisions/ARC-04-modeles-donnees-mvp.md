@@ -71,7 +71,7 @@ automatiques.
 | `program`         | Programme de formation (slug, statut publication, visibilité, description)           |
 | `cohort`          | Cohorte rattachée à un programme (dates, capacité, statut)                           |
 | `session`         | Session de formation dans une cohorte (date, lieu, formateur)                        |
-| `resource`        | Ressource pédagogique rattachée à un programme ou une cohorte                        |
+| `resource`        | Ressource publique ou rattachée à un programme/une cohorte                           |
 | `announcement`    | Annonce ciblée (audience : tous, programme, cohorte)                                 |
 | `enrollment`      | Inscription d'un participant à un programme et/ou une cohorte                        |
 | `notification`    | Notification utilisateur (in-app, email, push)                                       |
@@ -312,9 +312,12 @@ erDiagram
 - `cohort.capacity` : `CHECK (capacity > 0)`
 - `enrollment` : `UNIQUE (participant_id, program_id)` — un participant ne
   s'inscrit qu'une fois par programme
-- `resource` : `CHECK` — au moins un parent (`program_id` ou `cohort_id`)
+- `resource` : `CHECK` — au moins un parent (`program_id` ou `cohort_id`), sauf
+  les ressources d'audience `all` sans périmètre, explicitement publiques
 - `resource.resource_theme` : catégorisation métier pour filtrer les contenus
 - `resource.resource_audience` : segment de public visé pour la ressource
+- `resource.consultation_count` et `resource.last_consulted_at` : suivi des
+  consultations après validation de l'accès à la ressource
 - `announcement` : priorité explicite (`low|normal|high|critical`) et règles
   de publication MVP (all_participants sans parent, program avec `program_id`
   uniquement, cohort avec `program_id` + `cohort_id`)

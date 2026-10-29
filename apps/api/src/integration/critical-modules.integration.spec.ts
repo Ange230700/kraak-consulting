@@ -227,6 +227,33 @@ describe('Critical API Modules Integration', () => {
 
     beforeEach(() => {
       jest.clearAllMocks();
+      authServiceMock.getSession.mockResolvedValue({
+        profile: {
+          appUser: {
+            id: 'participant-user',
+            email: 'participant@example.com',
+            role: 'participant',
+            firstName: 'Ada',
+            lastName: 'Lovelace',
+            phone: null,
+            preferredContactChannel: null,
+            isActive: true,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-01T00:00:00.000Z',
+          },
+          participant: {
+            id: 'participant-001',
+            userId: 'participant-user',
+            lifecycleStatus: 'active',
+            referenceCode: null,
+            country: null,
+            city: null,
+            notes: null,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-01T00:00:00.000Z',
+          },
+        },
+      });
       resourcesServiceMock.listResources.mockResolvedValue({
         data: [],
         total: 0,
@@ -278,11 +305,39 @@ describe('Critical API Modules Integration', () => {
     it('returns 204 for consultation tracking', async () => {
       await (request(app.getHttpServer())
         .post('/resources/resource-1/consultations')
+        .set('authorization', ['Bearer', 'resource-test-token'].join(' '))
         .expect(204) as unknown as Promise<void>);
 
       expect(
         resourcesServiceMock.trackResourceConsultation,
-      ).toHaveBeenCalledWith('resource-1');
+      ).toHaveBeenCalledWith(
+        'resource-1',
+        expect.objectContaining({
+          userId: 'participant-user',
+          participantId: 'participant-001',
+          role: 'participant',
+          isActive: true,
+        }),
+      );
+    });
+
+    it('Given no session, When tracking a resource consultation, Then it returns 401 without mutating analytics', async () => {
+      await request(app.getHttpServer())
+        .post('/resources/resource-1/consultations')
+        .expect(401);
+
+      expect(
+        resourcesServiceMock.trackResourceConsultation,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('Given a malformed session, When loading a resource, Then it returns 401', async () => {
+      await request(app.getHttpServer())
+        .get('/resources/resource-1')
+        .set('authorization', 'invalid')
+        .expect(401);
+
+      expect(authServiceMock.getSession).not.toHaveBeenCalled();
     });
 
     it('Given a published resource exists, When loading it by id, Then it returns 200 and forwards the identifier', async () => {
@@ -293,6 +348,7 @@ describe('Critical API Modules Integration', () => {
       expect(response.body.id).toBe('resource-1');
       expect(resourcesServiceMock.getResourceById).toHaveBeenCalledWith(
         'resource-1',
+        undefined,
       );
     });
 
@@ -314,6 +370,7 @@ describe('Critical API Modules Integration', () => {
 
       expect(resourcesServiceMock.getResourceById).toHaveBeenCalledWith(
         'resource-404',
+        undefined,
       );
     });
   });
