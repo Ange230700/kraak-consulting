@@ -137,9 +137,9 @@ export class AnnouncementsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary:
-      'Lister les annonces publiées (public) avec filtrage participant optionnel',
+      'Lister les annonces publiées accessibles au participant authentifié',
     description:
-      "Récupère une liste paginée d'annonces publiées. Sans token: retourne toutes les annonces publiées. Avec token valide: filtre selon le périmètre du participant (all_participants, program, cohort).",
+      "Récupère une liste paginée d'annonces publiées selon le périmètre du participant (all_participants, program, cohort). Sans session valide, aucune annonce n'est retournée.",
   })
   @ApiQuery({
     name: 'page',
@@ -160,7 +160,7 @@ export class AnnouncementsController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: "Session invalide ou header d'autorisation manquant",
+    description: 'Session fournie invalide ou expirée',
     schema: apiErrorSchema,
   })
   @ApiResponse({
