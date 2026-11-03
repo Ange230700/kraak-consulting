@@ -9,8 +9,8 @@ export function inlineText(tokens = []) {
     .map((token) => {
       if (token.type === 'html') return '';
       if (token.type === 'br') return '\n';
-      if (token.type === 'image')
-        return `Illustration : ${decodeHTML(token.text)}`;
+      if (token.type === 'image' || token.type === 'imageReference')
+        return `Illustration : ${decodeHTML(token.text ?? token.alt ?? '')}`;
       if (token.tokens) return inlineText(token.tokens);
       return token.type === 'codespan'
         ? token.text
