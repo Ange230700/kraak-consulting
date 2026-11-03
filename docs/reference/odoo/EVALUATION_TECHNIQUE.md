@@ -30,14 +30,14 @@ services Render/Supabase documentés dans le dépôt. Odoo est étudié comme
 **outil de gestion complémentaire**, et non comme remplacement de la
 vitrine publique ou de l'application participant.
 
-| Domaine | Socle KRAAK | Écosystème Odoo à évaluer |
-| --- | --- | --- |
-| Interface | Angular / PrimeNG | Interface Odoo et composants Owl |
-| Backend | NestJS / Fastify | Framework Odoo en Python |
-| Données | PostgreSQL via Supabase | PostgreSQL géré par Odoo |
-| Exécution | Render et services existants | Odoo Online, Odoo.sh ou autohébergement |
-| Personnalisation | Modules NestJS et Angular | Configuration, Studio, modules Odoo |
-| Échanges | API HTTP contrôlées | Interfaces d'intégration selon l'offre |
+| Domaine          | Socle KRAAK                  | Écosystème Odoo à évaluer               |
+| ---------------- | ---------------------------- | --------------------------------------- |
+| Interface        | Angular / PrimeNG            | Interface Odoo et composants Owl        |
+| Backend          | NestJS / Fastify             | Framework Odoo en Python                |
+| Données          | PostgreSQL via Supabase      | PostgreSQL géré par Odoo                |
+| Exécution        | Render et services existants | Odoo Online, Odoo.sh ou autohébergement |
+| Personnalisation | Modules NestJS et Angular    | Configuration, Studio, modules Odoo     |
+| Échanges         | API HTTP contrôlées          | Interfaces d'intégration selon l'offre  |
 
 L'usage du même moteur PostgreSQL ne donne **aucune compatibilité directe**
 entre schémas ni droit d'interroger la base Odoo depuis Supabase.

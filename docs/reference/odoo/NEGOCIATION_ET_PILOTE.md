@@ -41,13 +41,13 @@ la réunion interne, non une nomination ou délégation contractuelle.
 
 ## 2. Déroulement suggéré — 60 minutes
 
-| Minute | Sujet | Résultat à obtenir |
-| --- | --- | --- |
-| 00–10 | Présentation de KRAAK | Positionnement et cibles |
-| 10–20 | Présentation et démonstration Odoo | Offre, périmètre et statut proposé |
-| 20–35 | Partenariat commercial | Frais, commissions, suivi des prospects |
-| 35–50 | Échanges techniques | Formation, API, hébergement et conformité |
-| 50–60 | Synthèse | Documents, contacts, prochaine échéance |
+| Minute | Sujet                              | Résultat à obtenir                        |
+| ------ | ---------------------------------- | ----------------------------------------- |
+| 00–10  | Présentation de KRAAK              | Positionnement et cibles                  |
+| 10–20  | Présentation et démonstration Odoo | Offre, périmètre et statut proposé        |
+| 20–35  | Partenariat commercial             | Frais, commissions, suivi des prospects   |
+| 35–50  | Échanges techniques                | Formation, API, hébergement et conformité |
+| 50–60  | Synthèse                           | Documents, contacts, prochaine échéance   |
 
 ## 3. Questions commerciales et contractuelles
 
@@ -68,22 +68,22 @@ la réunion interne, non une nomination ou délégation contractuelle.
 
 ## 4. Questions formation, produit et technique
 
-8. Quel parcours de formation est inclus, à quel prix et pour
+1. Quel parcours de formation est inclus, à quel prix et pour
    combien de personnes ? Existe-t-il une certification conseillée ?
-9. Quelle licence ou instance de démonstration peut être mise à
+2. Quelle licence ou instance de démonstration peut être mise à
    disposition de KRAAK, avec quelles limites de durée et de données ?
-10. Quelle offre permet les API externes et les modules personnalisés ?
-    Pouvez-vous montrer une intégration existante ?
-11. Peut-on connecter Odoo à une application Angular/NestJS déjà en
-    production sans remplacer son site web ni son domaine ?
-12. Quelles preuves fournissez-vous pour FNE, SYSCOHADA, XOF et
-    les paiements locaux, notamment le mobile money ?
-13. Où sont hébergées les données ? Comment les exporter, les
-    restaurer et quitter la plateforme ? Quel support est inclus ?
-14. Qui assure l'implémentation, la maintenance et l'assistance
-    lors du premier client, puis après certification de KRAAK ?
-15. Pouvons-nous mener ensemble un pilote interne mesurable,
-    sans migration en production, puis évaluer les résultats ?
+3. Quelle offre permet les API externes et les modules personnalisés ?
+   Pouvez-vous montrer une intégration existante ?
+4. Peut-on connecter Odoo à une application Angular/NestJS déjà en
+   production sans remplacer son site web ni son domaine ?
+5. Quelles preuves fournissez-vous pour FNE, SYSCOHADA, XOF et
+   les paiements locaux, notamment le mobile money ?
+6. Où sont hébergées les données ? Comment les exporter, les
+   restaurer et quitter la plateforme ? Quel support est inclus ?
+7. Qui assure l'implémentation, la maintenance et l'assistance
+   lors du premier client, puis après certification de KRAAK ?
+8. Pouvons-nous mener ensemble un pilote interne mesurable,
+   sans migration en production, puis évaluer les résultats ?
 
 ## 5. Conditions à obtenir par écrit
 
@@ -133,15 +133,15 @@ Critères d'acceptation :
 
 ## 7. Registre des risques et décisions ouvertes
 
-| Risque | Mesure immédiate | État |
-| --- | --- | --- |
+| Risque                 | Mesure immédiate                                        | État        |
+| ---------------------- | ------------------------------------------------------- | ----------- |
 | Dépendance commerciale | Vérifier attribution des prospects et clauses de sortie | À confirmer |
-| Coûts mal connus | Exiger grille et simulation écrites | À confirmer |
-| Perte de domaine | Conserver registrar/DNS ; vérifier titularité | À confirmer |
-| Non-conformité locale | Démonstration FNE/SYSCOHADA et revue professionnelle | À confirmer |
-| Surpromesse technique | Pilote limité et formation préalable | À confirmer |
-| Doublons logiciels | Comparer chaque module aux outils KRAAK actifs | À confirmer |
-| Fuite de données | Données fictives, droits minimaux et export testé | À confirmer |
+| Coûts mal connus       | Exiger grille et simulation écrites                     | À confirmer |
+| Perte de domaine       | Conserver registrar/DNS ; vérifier titularité           | À confirmer |
+| Non-conformité locale  | Démonstration FNE/SYSCOHADA et revue professionnelle    | À confirmer |
+| Surpromesse technique  | Pilote limité et formation préalable                    | À confirmer |
+| Doublons logiciels     | Comparer chaque module aux outils KRAAK actifs          | À confirmer |
+| Fuite de données       | Données fictives, droits minimaux et export testé       | À confirmer |
 
 ## 8. Script d'intervention du référent technique
 
