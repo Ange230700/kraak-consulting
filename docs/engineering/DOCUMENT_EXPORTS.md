@@ -77,9 +77,11 @@ en tête sont exclues du rendu ; les séparateurs ordinaires restent du Markdown
 Les métadonnées imbriquées YAML ne sont pas prises en charge : conserver les
 conventions plates du dépôt. `lang: fr-CI` est la valeur par défaut ; `en-GB` est
 également accepté. Une autre langue déclarée est rejetée.
-Le HTML brut et les commentaires HTML sont exclus. Les images doivent rester
-dans le dépôt après résolution des liens symboliques. Les images distantes sont
-refusées. Les liens restent cliquables dans le PDF, y compris les ancres de titres.
+Le HTML brut et les commentaires HTML sont exclus. Le texte alternatif des
+images, y compris celles définies par référence Markdown, est conservé dans les
+rendus. Les images doivent rester dans le dépôt après résolution des liens
+symboliques. Les images distantes sont refusées. Les liens restent cliquables
+dans le PDF, y compris les ancres de titres.
 
 ## Narration
 

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { createDocument } from '../export-docs.mjs';
 import { renderNarration, chunkNarration } from './narration.mjs';
 import { stableJson, sha256 } from './identity.mjs';
-import { semanticBlocksFromTokens } from './model.mjs';
+import { inlineText, semanticBlocksFromTokens } from './model.mjs';
 
 test('Given une langue dans un exemple du corps When les métadonnées sont lues Then seule la langue du frontmatter est utilisée', () => {
   for (const language of ['en-GB', 'de-DE'])
@@ -13,6 +13,19 @@ test('Given une langue dans un exemple du corps When les métadonnées sont lues
       ).language,
       'fr-CI',
     );
+});
+
+test('Given une image référencée avec son texte alternatif When le texte en ligne est rendu Then la description est conservée', () => {
+  assert.equal(
+    inlineText([{ type: 'imageReference', alt: 'Description de référence' }]),
+    'Illustration : Description de référence',
+  );
+  assert.equal(inlineText([{ type: 'imageReference' }]), 'Illustration : ');
+  const document = createDocument(
+    '# Image\n\n![Description de référence][illustration]\n\n[illustration]: image.png',
+  );
+  assert.equal(document.images[0].title, 'Description de référence');
+  assert.match(document.html, /alt="Description de référence"/);
 });
 
 test('Given un texte AST élémentaire et une description multiligne When le modèle est normalisé Then leur contenu reste explicite', () => {
