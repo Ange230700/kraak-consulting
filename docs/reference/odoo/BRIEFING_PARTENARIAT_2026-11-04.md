@@ -71,18 +71,18 @@ automatiquement les activités ou contrats actuels de l'entreprise.
 La priorisation ci-dessous est une **recommandation**, non une décision
 d'achat. Elle ne suppose pas qu'Odoo impose une limite de dix applications.
 
-| Priorité | Application | Cas d'usage et décision provisoire |
-| --- | --- | --- |
-| P1 | CRM | Suivre prospects, partenaires et opportunités ; démonstration prioritaire |
-| P1 | Sales / Ventes | Préparer des devis et suivre les propositions |
-| P1 | Invoicing / Facturation | Tester factures, paiements et contraintes FNE avant tout usage légal |
-| P1 | Project / Projet | Piloter missions, responsabilités, livrables et échéances |
-| P2 | Accounting / Comptabilité | Étudier SYSCOHADA, rapprochement et obligations locales avec un professionnel |
-| P2 | eLearning | Étudier un complément aux parcours pédagogiques KRAAK existants |
-| P2 | Email Marketing | Évaluer la pertinence par rapport aux outils déjà disponibles |
-| P3 | Knowledge / Connaissances | Centraliser procédures, guides et documentation d'équipe |
-| P3 | Sign / Signature | Évaluer l'utilité et les exigences de validité de la signature électronique |
-| P3 | Website / Site web | Étude comparative uniquement ; ne pas remplacer la vitrine existante |
+| Priorité | Application               | Cas d'usage et décision provisoire                                            |
+| -------- | ------------------------- | ----------------------------------------------------------------------------- |
+| P1       | CRM                       | Suivre prospects, partenaires et opportunités ; démonstration prioritaire     |
+| P1       | Sales / Ventes            | Préparer des devis et suivre les propositions                                 |
+| P1       | Invoicing / Facturation   | Tester factures, paiements et contraintes FNE avant tout usage légal          |
+| P1       | Project / Projet          | Piloter missions, responsabilités, livrables et échéances                     |
+| P2       | Accounting / Comptabilité | Étudier SYSCOHADA, rapprochement et obligations locales avec un professionnel |
+| P2       | eLearning                 | Étudier un complément aux parcours pédagogiques KRAAK existants               |
+| P2       | Email Marketing           | Évaluer la pertinence par rapport aux outils déjà disponibles                 |
+| P3       | Knowledge / Connaissances | Centraliser procédures, guides et documentation d'équipe                      |
+| P3       | Sign / Signature          | Évaluer l'utilité et les exigences de validité de la signature électronique   |
+| P3       | Website / Site web        | Étude comparative uniquement ; ne pas remplacer la vitrine existante          |
 
 **Premier périmètre de démonstration : CRM, Ventes, Facturation et Projet.**
 La comptabilité et eLearning viennent ensuite, selon l'intérêt démontré.
