@@ -1,7 +1,7 @@
 ---
 status: active
 owner: platform
-last_reviewed: 2026-10-25
+last_reviewed: 2026-11-03
 source_of_truth: true
 ---
 
@@ -29,6 +29,7 @@ source_of_truth: true
   - [Hooks Git (Husky)](#hooks-git-husky)
     - [Si un hook échoue](#si-un-hook-echoue)
   - [Pull Requests](#pull-requests)
+    - [Réglages GitHub du dépôt](#reglages-github-du-depot)
   - [Formatage du code](#formatage-du-code)
     - [Qualité documentaire](#qualite-documentaire)
   - [Politique de langue](#politique-de-langue)
@@ -352,6 +353,41 @@ git pull --ff-only origin main
 git branch -d feat/ma-feature
 git push origin --delete feat/ma-feature
 ```
+
+### Réglages GitHub du dépôt
+
+Le template actif reste [`.github/pull_request_template.md`](../../.github/pull_request_template.md) :
+il est plus adapté au workflow KRAAK que le template du dépôt Artifact Engine et
+ne doit pas être dupliqué. Le dépôt n'autorise que `rebase and merge`, supprime
+les branches fusionnées, permet la mise à jour des branches et active Auto-merge.
+Auto-merge ne contourne ni la review ni les contrôles requis.
+
+Le ruleset actif **Protect Main** et la protection classique de `main` imposent
+des PR, les conversations résolues, les revues Code Owner et les checks requis.
+La protection classique ajoute aussi des checks CI. Garder les deux
+configurations synchronisées lors d'un changement de workflow ou de nom de job,
+sans réduire leurs exigences cumulées.
+
+Le dépôt reste public, avec `main` comme branche par défaut, Issues, Projects
+et Wiki actifs. Les actions GitHub ont une permission `GITHUB_TOKEN` en lecture
+par défaut et ne peuvent pas approuver les PR; les workflows demandant des
+écritures déclarent leurs permissions au niveau du job. Les règles propres au
+produit et aux déploiements restent prioritaires sur les réglages génériques du
+template Artifact Engine.
+
+Les alertes de vulnérabilité Dependabot et les PR de correctifs de sécurité
+sont activées dans les réglages du dépôt. Les mises à jour régulières des
+dépendances npm/pnpm et GitHub Actions sont définies une seule fois dans
+[`.github/dependabot.yml`](../../.github/dependabot.yml), chaque lundi à 09:00
+(Africa/Abidjan). Les mises à jour mineures et correctives de développement et
+des Actions sont groupées; les majeures restent séparées. Toute PR Dependabot
+reste soumise au template, à la review, aux contrôles et, pour les changements
+de packages qui en ont besoin, au processus Changesets.
+
+Le secret scanning et sa protection contre les push sont actifs. L’analyse des
+motifs non associés à un fournisseur reste désactivée : la demande d’activation
+par l’API n’a pas modifié ce réglage; vérifier son admissibilité avant de la
+réactiver.
 
 ---
 
